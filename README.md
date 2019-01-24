@@ -46,28 +46,35 @@ The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student,
 ## Development Infrastructure and Processes
 To work on this project requires some set-up, but it's not bad. First, clone the project or fork it depending on your and our workflows. Second, visit the dockerSetup directory and follow the directions there to create a docker image that contains our LLVM-based development environment. Third, from the top-level project directory, launch a corresponding docker container and obtain a bash terminal. In the docker containder, cd into /pierce. This links to the project directory on your host machine from which you launched the docker image. Now cd into the src directory, type "make clean" just to be sure, then "make". The code should build. To run the code, run "../build/ASTMatcher ../inputs/temp.cpp". Now you can make changes to the code on your host machine, then you back into the container and type "make" again. You can use ordinary git workflows, issuing commands on your host machine, to push your changes to github or to post pull request, depending on how we are working together.
 
-## Obsolete 
+## Organization of the project.
 
-The rest of these instructions are obsolete and will be updated or deleted soon.
+Here is a description of the hierarchy of the files.
+```
+pwd = path/to/Pierce
 
-Here is a description of the ASTParser folder. 
-```path/to/ASTParser
-		|-./src_clang
-		|     |-ASTMatcher.cpp
-		|-./build
-		|       |binary
-		|-./inputs
-		|	|-vec.h
-		|	|-main.cpp
-		|-Makefile
+    ./|--/src(contains the source files of the clang tool)
+      |
+      |--/inputs(contains code we experiment on)
+      |
+      |--/dockerSetup(contians instructions for setting up the docker container)
+      |
+      |--/build(contians the binary format of the bool)
+      |
+      |--README(Introduction for the project)
+      |
+      |--TODO.txt(maintains the todos along the development)
 ```
-FindNamedClass.cpp is the file that contains the source code for the Clang standalone tool that can find the class with a specific class name in the AST tree. It is stored in the ./src directory, assuming the current directory is `PierceProject/ASTParser` You can run the following commands to test things out.
+## Run the program
+
+First, make sure you followed the instructions in the `./dockerSetup` to setup the docker container properly. Then go to the top level directory of this repo.
+Simply run the following command to how the tool works.
 ```
+cd ./src
 make
-./build/ASTMatcher ./inputs/temp.cpp --
-
+../build/ASTMatcher ../inputs/temp.cpp
 ```
 This is an example on the `./inputs/temp.cpp` file and the `--` at the end of the command is to tell information about the compilation database. 
+
 
 
 
