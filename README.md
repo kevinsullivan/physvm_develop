@@ -16,14 +16,29 @@ This project aims to substantially automate the process of building such interpr
 ## System Architecture
 
 ### Code analyzer
+
+Based on LLVM and on the Clang Tooling framework, in particular.
+
 ### Domain model
+
+Currently a mutable store of Euclidean space types (e.g., Vector, Point), and of instances that correspong to code expressions that are intended to represent abstract objects of these types.
+
 ### Interpretation
+
+An associative store that links code elements, identified by what we think of as *code coordinates*, to objects in the domain.
+
 ### Semantic oracle
 
-To do: Add diagram here.
+Currently queries user interactively to provide additional information needed, which can be though of as code annotations, to fully construct a desired interpretation.
 
-## Use Cases
-There are many uses cases for such formalized and computable interpretations of symbolic code. One is to check code for the presence of likely abstract type errors. Another is to improve the generation of test cases, to target only those states that a system might encounter in the real world. A third is to improve program understandability by helping to explain the intended real-world meanings of symbolic expressions in code. There are more.
+### Clients and Use Cases
+
+By *clients* we meantools that use interpretations to provide fundamental new software engineering capabilities. Chief among these are checking of code for abstract type errors. Another is to improve the generation of test cases to target only those states that a system might encounter in the real world. A third is to improve program understandability by helping to explain the intended real-world meanings of symbolic expressions in code. A fourth is to optimize physical simulations given the added constraints that the real-world imposes on the permissible behaviors of a software system. There are more.
+
+
+### Architecture diagram
+
+Stay tuned.
 
 ## Who's Involved
 The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student, Hannah Leung, is carrying out our initial prototyping work as part of her MS Thesis project. Stay tuned for great things.
