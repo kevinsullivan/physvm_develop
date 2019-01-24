@@ -1,5 +1,7 @@
 TODO:
 
+Update .gitignore so that we don't push binaries.
+
 Connect "ASTNode" object to the Clang AST node objects that you're
 finding in the code.
 
