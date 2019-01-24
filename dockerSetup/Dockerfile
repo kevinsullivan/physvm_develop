@@ -30,10 +30,9 @@ RUN git clone --progress --verbose \
 RUN ["apt-get","install","g++"]
 
 # These volumes should be mounted as named volumes.
-VOLUME /llvm/build /peirce
-VOLUME /home
+VOLUME /llvm/build /pierce
 
-WORKDIR /home
+WORKDIR /pierce
 COPY ./build.sh .
 
 RUN ["chmod", "755","./build.sh"]
