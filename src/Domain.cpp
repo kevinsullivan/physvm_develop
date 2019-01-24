@@ -4,6 +4,8 @@
 using namespace std;
 
 // Todo: make this work right; STUBBED out
+string Space::getName(){return name_;}
+
 Vector::Vector() { space_ = *new Space(); }
 
 Vector::Vector(Space& space) { space_ = space; }
@@ -19,7 +21,7 @@ Expression::Expression(Vector& v1, Vector& v2) : v1_(v1), v2_(v2) {}
 //  return value = reference to s
 Space& Domain::addSpace(const string& name) {
     Space* s = new Space(name);
-    spaces.push_front(*s);
+    spaces.push_back(*s);
     return *s;
 }
 
@@ -28,7 +30,7 @@ Space& Domain::addSpace(const string& name) {
 // Postcondition: vectors' = vectors + v
 Vector& Domain::addVector(Space& s) {
     Vector *v = new Vector(s);
-    vectors.push_front(*v);
+    vectors.push_back(*v);
     cout << "DOMAIN: Added vector!\n";
     return *v;
 }

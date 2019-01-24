@@ -10,6 +10,7 @@ class Space {
 public:
 	Space() : name_("") {};
 	Space(string name) : name_(name) {};
+	string getName();
 private:
 	string name_;
 };
