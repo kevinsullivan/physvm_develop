@@ -1,5 +1,5 @@
 FROM ubuntu
-MAINTAINER <peter@goldsborough.me>
+MAINTAINER <hannah.leung@virginia.edu>
 
 # Install packages.
 RUN apt-get update  -y \
