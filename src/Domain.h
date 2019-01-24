@@ -2,12 +2,16 @@
 #define DOMAIN_H
 
 #include <list>
+#include <string>
 
 using namespace std;
 
 class Space {
 public:
-	Space();
+	Space() : name_("") {};
+	Space(string name) : name_(name) {};
+private:
+	string name_;
 };
 
 class Vector {
@@ -30,12 +34,13 @@ public:
 class Domain {
 
 public:
+
 	// Add new space,, s, to domain
 	// Precondition: true
 	// Postcondition: 
 	//	spaces' = spaces + s and
 	//  return value = reference to s
-	Space& addSpace();
+	Space& addSpace(const string& name);
 
 	// Add new vector, v, in space s, to domain
 	// Precondition: s is already in spaces
@@ -52,6 +57,12 @@ public:
 	// Precondition: true
 	// Postcondition: return value true indicates presence of inconsistencies
 	bool isInconsistent();
+
+	/*
+	Methods by which clients can learn what's in this domain.
+	*/
+
+	list<Space>& getSpaces();
 	
 private:
 	list<Space> spaces;

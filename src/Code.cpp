@@ -97,10 +97,10 @@ public:
       // Get space with which to annotate vector instance
       // TODO: Need to connect n to the AST node we just found. How?
       // For now, just fake it, to get a system working.
-      VectorASTNode& n = *new VectorASTNode();
+      VectorASTNode& n = *new VectorASTNode(/* ARG */); // TODO: fill this in
       Space& s = oracle->getSpaceForVector(n);
-      Vector& v = domain->addVector(s);
-      interp->putVectorInterp(n, v);
+      Vector& abst_v = domain->addVector(s);
+      interp->putVectorInterp(n, abst_v);
     }
   }
 private:
@@ -225,8 +225,10 @@ int main(int argc, const char **argv) {
 
   // Initialize the domain, interpretation, and oracle modules
   domain = new Domain();
+  Space& space1 = domain->addSpace("Space1");
+  Space& space2 = domain->addSpace("Space2");
   interp = new Interpretation();
-  oracle = new Oracle();
+  oracle = new Oracle(*domain);
 
   // Analyze the code and build the interpretation
   return Tool.run(newFrontendActionFactory<MyFrontendAction>().get());

@@ -3,8 +3,6 @@
 
 using namespace std;
 
-Space::Space() {};
-
 // Todo: make this work right; STUBBED out
 Vector::Vector() { space_ = *new Space(); }
 
@@ -19,8 +17,8 @@ Expression::Expression(Vector& v1, Vector& v2) : v1_(v1), v2_(v2) {}
 // Postcondition: 
 //	spaces' = spaces + s and
 //  return value = reference to s
-Space& Domain::addSpace() {
-    Space* s = new Space();
+Space& Domain::addSpace(const string& name) {
+    Space* s = new Space(name);
     spaces.push_front(*s);
     return *s;
 }
@@ -46,4 +44,8 @@ Expression& Domain::addExpression(Vector& v1, Vector& v2) {}
 // Postcondition: return value true indicates presence of inconsistencies
 bool Domain::isInconsistent() {
     return false;
+}
+
+list<Space>& Domain::getSpaces() {
+    return spaces;
 }

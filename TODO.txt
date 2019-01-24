@@ -1,0 +1,11 @@
+TODO:
+
+Connect "ASTNode" object to the Clang AST node objects that you're
+finding in the code.
+
+Update the oracle so that it asks you about which spaces vectors belong to. 
+
+DONE:
+
+To do this, the oracle will need to obtain a list of spaces from the domain.
+Add a method to the domain to provide the list of available spaces.

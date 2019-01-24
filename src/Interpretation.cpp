@@ -6,8 +6,8 @@
 
 using namespace std;
 
-void Interpretation::putVectorInterp(const VectorASTNode& n, const Vector& v) {
-    interpVector.insert(std::make_pair(n,v));
+void Interpretation::putVectorInterp(const VectorASTNode& n, const Vector& av) {
+    interpVector.insert(std::make_pair(n,av));
     cout << "INTERPETATION: Linked code vector to abstract vector!\n";
 }
 
