@@ -6,35 +6,47 @@
 
 using namespace std;
 
+// Definition for Space class 
 class Space {
 public:
 	Space() : name_("") {};
 	Space(string name) : name_(name) {};
 	string getName();
-	
+
 private:
 	string name_;
 };
 
+
+
+// Definition for Vector class 
+
 class Vector {
 public:
-	Vector();
-	Vector(Space& space);
 
+	Vector(Space& space): space_(space){}
+	Space& getVecSpace();
 private:
 	Space space_;
 };
+
+
+// Definition for Expression class 
 
 class Expression {
 public:
 	Expression();
 	Expression(Vector& v1, Vector& v2);
 
+	Vector& getVecParam1();
+	Vector& getVecParam2();
 private:
 	Vector& v1_;
 	Vector& v2_;
 };
 
+
+// Definition for Domain class 
 class Domain {
 
 public:
@@ -60,18 +72,20 @@ public:
 	// Check domain for consistency
 	// Precondition: true
 	// Postcondition: return value true indicates presence of inconsistencies
-	bool isInconsistent();
+	bool isInconsistent(Expression& expr);
 
 	/*
 	Methods by which clients can learn what's in this domain.
 	*/
 
-	list<Space>& getSpaces();
+	Space& get_nth_Spaces();
+
+	list<Space>& getAllSpaces();
 	
 private:
 	list<Space> spaces;
 	list<Vector> vectors;
-	list<Expression> expression;
+	list<Expression> expressions;
 };
 
 #endif
