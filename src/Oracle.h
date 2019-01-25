@@ -15,6 +15,8 @@ public:
 	//
 	Space& getSpaceForVector(const VectorASTNode& n);
 
+	
+
 private:
 
 	Domain& dom_;
