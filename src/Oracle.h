@@ -1,8 +1,9 @@
 #ifndef ORACLE_H
 #define ORACLE_H
 
-#include "Code.h"
 #include "Domain.h"
+#include "CodeCoordinate.h"
+
 
 class Oracle
 {
