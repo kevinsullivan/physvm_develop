@@ -8,7 +8,7 @@ Objects of this class will be "keys" in an interpretation
 */
 class VectorASTNode {
 public:
-    VectorASTNode(const clang::Stmt* vecInstStmt):ref_vecInstStmt(vecInstStmt) {}
+    VectorASTNode(const clang::Stmt* vecInstStmt):ptr_vecInstStmt(vecInstStmt) {}
     void setASTNode(const clang::Stmt* vecInstStmt);
     clang::Stmt* getASTNode();
     /*
@@ -18,7 +18,7 @@ public:
         return (this == &other); 
     }
 private: 
-    const clang::Stmt* ref_vecInstStmt;
+    const clang::Stmt* ptr_vecInstStmt;
 };
 
 /*
@@ -41,11 +41,13 @@ Objects of this class will be "keys" in an interpretation
 */
 class ExprASTNode {
 public:
-    ExprASTNode() {}
+    ExprASTNode(const clang::CXXMemberCallExpr* exprCall):ptr_exprCall(exprCall) {}
     // for now, an address-based equality predicate
     bool operator==(const ExprASTNode &other) const { 
         return (this == &other); 
     }
+private:
+    const clang::CXXMemberCallExpr* ptr_exprCall
 };
 
 /*

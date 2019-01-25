@@ -11,25 +11,28 @@ public:
 	Space() : name_("") {};
 	Space(string name) : name_(name) {};
 	string getName();
+	
 private:
 	string name_;
 };
 
 class Vector {
-private:
-	Space space_;
 public:
 	Vector();
 	Vector(Space& space);
+
+private:
+	Space space_;
 };
 
 class Expression {
-private:
-	Vector& v1_;
-	Vector& v2_;
 public:
 	Expression();
 	Expression(Vector& v1, Vector& v2);
+
+private:
+	Vector& v1_;
+	Vector& v2_;
 };
 
 class Domain {
