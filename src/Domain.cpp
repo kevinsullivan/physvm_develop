@@ -12,7 +12,6 @@ string Space::getName(){return name_;}
 Space& Vector::getVecSpace(){return space_;}
 
 
-
 // Expression class member function implementation
 Expression::Expression(Vector& v1, Vector& v2) : v1_(v1), v2_(v2) {}
 Vector& Expression::getVecParam1(){return v1_;}
