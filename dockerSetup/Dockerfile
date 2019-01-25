@@ -27,7 +27,7 @@ RUN git clone --progress --verbose \
     https://github.com/llvm-mirror/clang-tools-extra.git llvm/tools/clang/tools/extra
 
 # install g++
-RUN ["apt-get","install","g++"]
+RUN ["apt-get","install","g++","-y"]
 
 # These volumes should be mounted as named volumes.
 VOLUME /llvm/build /pierce
