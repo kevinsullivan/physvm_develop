@@ -3,6 +3,8 @@
 
 #include "Oracle.h"
 #include "Domain.h"
+#include "CodeCoordinate.h"
+
 #include <string>
 #include <iostream>
 // using namespace std;

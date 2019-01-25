@@ -101,7 +101,7 @@ SRCS := $(wildcard *.cpp)
 # $(patsubst %.cpp,%.o,$(SRCS)): substitute all ".cpp" file name strings to ".o" file name strings
 OBJS := $(patsubst %.cpp,%.o,$(SRCS))
 
-$(BUILDDIR)/ASTMatcher:$(SRC_CLANG_DIR)/Code.cpp
+$(BUILDDIR)/ASTMatcher:$(SRC_CLANG_DIR)/main.cpp
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
 		$(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@
 

@@ -12,7 +12,8 @@
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/raw_ostream.h"
 
-#include "Code.h"
+// #include "Code.h"
+#include "CodeCoordinate.h"
 #include "Domain.h"
 #include "Interpretation.h"
 #include "Oracle.h"
@@ -97,7 +98,7 @@ public:
       // Get space with which to annotate vector instance
       // TODO: Need to connect n to the AST node we just found. How?
       // For now, just fake it, to get a system working.
-      VectorASTNode& n = *new VectorASTNode(/* ARG */); // TODO: fill this in
+      VectorASTNode& n = *new VectorASTNode(callstmt); // TODO: fill this in
       Space& s = oracle->getSpaceForVector(n);
       Vector& abst_v = domain->addVector(s);
       interp->putVectorInterp(n, abst_v);

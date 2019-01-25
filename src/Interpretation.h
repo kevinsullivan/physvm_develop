@@ -1,8 +1,9 @@
 #ifndef INTERPRETATION_H
 #define INTERPRETATION_H
 
-#include "Code.h"
 #include "Domain.h"
+#include "CodeCoordinate.h"
+
 #include <unordered_map>
 
 using namespace std;
