@@ -102,6 +102,7 @@ public:
       Space& s = oracle->getSpaceForVector(n);
       Vector& abst_v = domain->addVector(s);
       interp->putVectorInterp(n, abst_v);
+
     }
   }
 private:
@@ -118,8 +119,12 @@ public:
       // Get a handle on arg #1
       // Get a handle on arg #2
       // Do some more sfuff
+      
       Rewrite.InsertText(dcstmt->getBeginLoc(), "//Found Operation Add \n",true, true);
-      // dcstmt->dump();
+
+      ExprASTNode& exprn = *new ExprASTNode(dcstmt);
+      
+
     }
   }
 private:
