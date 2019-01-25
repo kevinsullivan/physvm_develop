@@ -23,7 +23,7 @@ private:
 
 class Vector {
 public:
-
+	Vector() {}
 	Vector(Space& space): space_(space){}
 	Space& getVecSpace();
 private:
@@ -35,7 +35,7 @@ private:
 
 class Expression {
 public:
-	Expression();
+	Expression() : v1_(*new Vector()), v2_(* new Vector()){}
 	Expression(Vector& v1, Vector& v2);
 
 	Vector& getVecParam1();
