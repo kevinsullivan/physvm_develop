@@ -37,9 +37,7 @@ By *clients* we meantools that use interpretations to provide fundamental new so
 
 
 ### Architecture diagram
-
-.. image:: https://github.com/kevinsullivan/Pierce/master/blueprint.png
-  :align: center
+![ArchitectureDiagram](https://github.com/kevinsullivan/Pierce/blob/master/blueprint.png)
 
 ## Who's Involved
 The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student, Hannah Leung, is carrying out our initial prototyping work as part of her MS Thesis project. Stay tuned for great things.
