@@ -47,7 +47,7 @@ public:
         return (this == &other); 
     }
 private:
-    const clang::CXXMemberCallExpr* ptr_exprCall
+    const clang::CXXMemberCallExpr* ptr_exprCall;
 };
 
 /*
