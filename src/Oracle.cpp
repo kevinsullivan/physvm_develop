@@ -16,7 +16,7 @@ Space& Oracle::getSpaceForVector(const VectorASTNode& n) {
 
 	std::cout<<"Available spaces:\t"<<std::endl;
 
-    list<Space>& candidatespaces = dom_.getSpaces();
+    list<Space>& candidatespaces = dom_.getAllSpaces();
     for(list<Space>::iterator it = candidatespaces.begin();it != candidatespaces.end();++it){
     	std::cout<< it->getName()<<"\t";
 	}

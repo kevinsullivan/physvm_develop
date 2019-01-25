@@ -110,7 +110,7 @@ public:
       // Get a handle on arg #2
       // Do some more sfuff
       
-      ExprASTNode& exprn = *new ExprASTNode(dcstmt);
+      // ExprASTNode& exprn = *new ExprASTNode(dcstmt);
 
     }
   }
