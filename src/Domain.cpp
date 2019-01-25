@@ -1,18 +1,24 @@
 #include <iostream>
+#include <list>
 #include "Domain.h"
 
 using namespace std;
-
-// Todo: make this work right; STUBBED out
+ 
+// Space class member function implementation
 string Space::getName(){return name_;}
 
-Vector::Vector() { space_ = *new Space(); }
 
-Vector::Vector(Space& space) { space_ = space; }
+// Vector class member function implementation
+Space& Vector::getVecSpace(){return space_;}
 
-// Todo: make these work right; STUBBED out
-Expression::Expression() : v1_(*new Vector()), v2_(*new Vector()) {}
+
+
+// Expression class member function implementation
 Expression::Expression(Vector& v1, Vector& v2) : v1_(v1), v2_(v2) {}
+Vector& Expression::getVecParam1(){return v1_;}
+Vector& Expression::getVecParam2(){return v2_;}
+
+// Domain class member function implementation
 
 // Add new space,, s, to domain
 // Precondition: true
@@ -39,15 +45,29 @@ Vector& Domain::addVector(Space& s) {
 // Precondition: v1 and v2 already in vectors
 // Postcondition: expressions' = expressions + e
 //	where e has v1 and v2 as its arguments
-Expression& Domain::addExpression(Vector& v1, Vector& v2) {}
+Expression& Domain::addExpression(Vector& v1, Vector& v2) {
+
+	Expression* expr = new Expression(v1, v2);
+	expressions.push_back(*expr);
+
+	cout<< "DOMAIN: Added Expression!\n";
+	return *expr;
+	
+}
 
 // Check domain for consistency
 // Precondition: true
 // Postcondition: return value true indicates presence of inconsistencies
-bool Domain::isInconsistent() {
+bool Domain::isInconsistent(Expression& expr) {
+    if(expr.getVecParam1().getVecSpace().getName() == expr.getVecParam2().getVecSpace().getName()){
+        cout<<"This expression is consistent!"<<endl;
+    }
+    else{
+        cout<<"This expression is inconsistent!"<<endl;
+    }
     return false;
 }
 
-list<Space>& Domain::getSpaces() {
+list<Space>& Domain::getAllSpaces() {
     return spaces;
 }
