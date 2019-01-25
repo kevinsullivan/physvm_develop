@@ -1,4 +1,4 @@
-# PierceProject
+# PeirceProject
 This repository supports the collaborative development of Pierce, a system for implementing real-world semantics for code. The project name recalls the great American logician, Charles Saunders Peirce, who carried out seminal work on both logic and semiotics: the study of the meanings of symbols.  See https://plato.stanford.edu/entries/peirce-semiotics/. 
 
 ## Overview
