@@ -4,7 +4,8 @@ TODO:
 Hannah's Todo
 
 * get the literal name of each of the vector instance.
-
+* bind the parameters of vec_add expression.
+* add interpretation for expression.
 
 DONE:
 
