@@ -50,24 +50,21 @@ Interpretation *interp;
 
 class TypeVectorHandler : public MatchFinder::MatchCallback{
 public:
-    TypeVectorHandler(Rewriter &Rewrite) : Rewrite(Rewrite) {}
+    TypeVectorHandler() {}
 
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const CXXRecordDecl *typeVector = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("TypeVectorDef")){
 
-      // ACTION: notice Vector class declaration but don't update the interp
-      Rewrite.InsertText(typeVector->getBeginLoc(), "//Found Abstract Vector Type Definition\n",true, true);
+      // NO ACTION
 
     }
   }
-private:
-  Rewriter &Rewrite;
 };
 
 
 class VectorMethodAddHandler: public  MatchFinder::MatchCallback{
 public:
-  VectorMethodAddHandler (Rewriter &Rewrite) : Rewrite(Rewrite) {}
+  VectorMethodAddHandler () {}
 
   //  overrides run to take action when a match occurs
   virtual void run(const MatchFinder::MatchResult &Result) {
@@ -75,60 +72,49 @@ public:
     const CXXMethodDecl *vecAdd = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("VectorMethodAddDef");
     if(vecAdd != NULL) {
 
-      // ACTION: Notice declaration of Vector.add; don't change interpreation
-      Rewrite.InsertText(vecAdd->getBeginLoc(), "//Found Abstract Vector Add Definition\n",true, true);
+      // NO ACTION
+
     }
   }
-private:
-  Rewriter &Rewrite;
 };
 
 
 class InstanceVecHandler:public MatchFinder::MatchCallback{
 
 public:
-  InstanceVecHandler(Rewriter &Rewrite) : Rewrite(Rewrite) {}
+  InstanceVecHandler()  {}
 
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const auto *callstmt = Result.Nodes.getNodeAs<clang::Stmt>("VecInstanceDecl")){
 
-      // ACTION: notice vector instance, updated interpretation!
-      Rewrite.InsertText(callstmt->getBeginLoc(), "//Found Vector Instance\n",true, true);
+      // ACTION:
 
-      // Get space with which to annotate vector instance
-      // TODO: Need to connect n to the AST node we just found. How?
-      // For now, just fake it, to get a system working.
-      VectorASTNode& n = *new VectorASTNode(callstmt); // TODO: fill this in
+      VectorASTNode& n = *new VectorASTNode(callstmt);
       Space& s = oracle->getSpaceForVector(n);
       Vector& abst_v = domain->addVector(s);
       interp->putVectorInterp(n, abst_v);
 
     }
   }
-private:
-  Rewriter &Rewrite;
 };
 
 
 class OpAddHandler: public MatchFinder::MatchCallback{
 public: 
-  OpAddHandler (Rewriter &Rewrite) : Rewrite(Rewrite) {}
+  OpAddHandler () {}
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const auto *dcstmt = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddCall")){
-      // this code runs when an application of Vector.add is detected
+
+      // TODO
       // Get a handle on arg #1
       // Get a handle on arg #2
       // Do some more sfuff
       
-      Rewrite.InsertText(dcstmt->getBeginLoc(), "//Found Operation Add \n",true, true);
-
       ExprASTNode& exprn = *new ExprASTNode(dcstmt);
-      
 
     }
   }
 private:
-  Rewriter &Rewrite;
 };
 
 
@@ -139,8 +125,7 @@ private:
 
 class MyASTConsumer : public ASTConsumer {
 public:
-  MyASTConsumer(Rewriter &R) : HandlerForVecDef(R), HandlerForVecAddDef(R), 
-              HandlerForVecInstanceInit(R), HandlerForVecAdd(R) {
+  MyASTConsumer() {
     /*
     1. What exact queries are needed
     2. What precise forms of AST nodes get passed to handlers
@@ -204,19 +189,15 @@ class MyFrontendAction : public ASTFrontendAction {
 public:
   MyFrontendAction() {}
   void EndSourceFileAction() override {
-    TheRewriter.getEditBuffer(TheRewriter.getSourceMgr().getMainFileID())
-        .write(llvm::outs());
+    // domain->isConsistent()
   }
 
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
                                                  StringRef file) override 
   {
-    TheRewriter.setSourceMgr(CI.getSourceManager(), CI.getLangOpts());
-    return llvm::make_unique<MyASTConsumer>(TheRewriter);
+    return llvm::make_unique<MyASTConsumer>();
   }
 
-private:
-  Rewriter TheRewriter;
 };
 
 
