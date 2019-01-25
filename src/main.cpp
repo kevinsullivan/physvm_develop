@@ -190,7 +190,7 @@ public:
   MyFrontendAction() {}
   void EndSourceFileAction() override {
 
-    bool consistent = domain->isConsistent();
+    bool consistent = domain->isInconsistent();
     cout << (consistent ? "Bad\n" : "Good\n");
   
   }
