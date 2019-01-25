@@ -3,7 +3,7 @@ TODO:
 
 Hannah's Todo
 
-* get the literal name of each of the vector instance.
+* get the name, file, line no. of each vector instance.
 * bind the parameters of vec_add expression.
 * add interpretation for expression.
 
