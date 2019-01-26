@@ -60,7 +60,6 @@ static cl::extrahelp MoreHelp("No additional options available for Peirce.");
 // Vector class
 class TypeVectorHandler : public MatchFinder::MatchCallback {
 public:
-  TypeVectorHandler() {}
   virtual void run(const MatchFinder::MatchResult &Result){
     const CXXRecordDecl *typeVector = 
       Result.Nodes.getNodeAs<clang::CXXRecordDecl>("TypeVectorDef");
@@ -73,8 +72,6 @@ public:
 // Vector.add method
 class VectorMethodAddHandler: public  MatchFinder::MatchCallback{
 public:
-  VectorMethodAddHandler () {}
-  //  overrides run to take action when a match occurs
   virtual void run(const MatchFinder::MatchResult &Result) {
     // kevin's question is why would this ever be null? -- see clang details
     const CXXMethodDecl *vecAdd = 
@@ -88,7 +85,6 @@ public:
 // Vector instance declaration
 class InstanceVecHandler:public MatchFinder::MatchCallback{
 public:
-  InstanceVecHandler()  {}
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const auto *callstmt = 
       Result.Nodes.getNodeAs<clang::Stmt>("VecInstanceDecl")) {
@@ -104,7 +100,6 @@ public:
 // Vector.add application
 class OpAddHandler: public MatchFinder::MatchCallback{
 public: 
-  OpAddHandler () {}
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const auto *dcstmt = 
       Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddCall")) {
