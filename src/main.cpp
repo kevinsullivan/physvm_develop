@@ -77,7 +77,6 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const auto *callstmt = 
       Result.Nodes.getNodeAs<clang::Stmt>("VecInstanceDecl")) {
-
       // ACTION:
       VectorASTNode& n = *new VectorASTNode(callstmt);
       Space& s = oracle->getSpaceForVector(n);
@@ -94,12 +93,10 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const auto *dcstmt = 
       Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddCall")) {
-
       // ACTION
       // Get a handle on arg #1
       // Get a handle on arg #2
       // Do some more stuff
-      
       // ExprASTNode& exprn = *new ExprASTNode(dcstmt);
 
     }
@@ -119,13 +116,11 @@ public:
     3. How do extract additional data when you get a match
     4. What do actually do when you get match?
     */
-
     // Finds Vector class definition
     // Can you match on the class by its name?
     Matcher.
       addMatcher(cxxRecordDecl(hasMethod(hasName("vec_add"))).bind("TypeVectorDef"),
         &HandlerForVecDef);
-
 
     // Match definition of add method in Vector class
     // Can you narrow the scope of this search to Vector::vec_add?
@@ -156,7 +151,6 @@ public:
   void HandleTranslationUnit(ASTContext &Context) override {
     // Run the matchers when we have the whole TU parsed.
     Matcher.matchAST(Context);
-
   }
 private:
   TypeVectorHandler HandlerForVecDef;
@@ -192,14 +186,14 @@ int main(int argc, const char **argv) {
   CommonOptionsParser op(argc, argv, MatcherSampleCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  // Initialize the domain, interpretation, and oracle modules
+  // Initialize domain, interpretation, and oracle
   domain = new Domain();
-  Space& space1 = domain->addSpace("Space1");
-  Space& space2 = domain->addSpace("Space2");
+    Space& space1 = domain->addSpace("Space1");
+    Space& space2 = domain->addSpace("Space2");
   interp = new Interpretation();
   oracle = new Oracle(*domain);
 
-  // Analyze the code and build the interpretation
+  // Analyze code and build interpretation
   return Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 }
 
