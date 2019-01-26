@@ -8,6 +8,7 @@ Hannah's Todo
 * add interpretation for expression
 * generate lean file for analysis
 * make oracle ask about declarations by name, file, line number
+* fix dockerfile to install Lean and its math libraries, e.g., using elan
 
 DONE:
 
