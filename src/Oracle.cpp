@@ -7,27 +7,50 @@
 
 #include <string>
 #include <iostream>
-// using namespace std;
+
+using namespace std;
+
+void printSpaces(vector<Space>& spaces);
+int selectSpace(vector<Space>& spaces);
+int selectSpace(vector<Space>& spaces);
 
 Space& Oracle::getSpaceForVector(const VectorASTNode& n) {
-    /*
-    TODO: Associate the same space with every vector.
-    */
-
-	std::cout<<"Available spaces:\t"<<std::endl;
-
-    list<Space>& candidatespaces = dom_.getAllSpaces();
-    for(list<Space>::iterator it = candidatespaces.begin();it != candidatespaces.end();++it){
-    	std::cout<< it->getName()<<"\t";
+    vector<Space>& spaces = dom_.getAllSpaces();
+	if (spaces.size() == 0) {
+		cerr << "No abstract spaces available for interpretation. Bye!\n";
+		exit(1);
 	}
+	printSpaces(spaces);
+	int whichSpace = selectSpace(spaces);
+	Space& result = spaces[whichSpace];
+    return result;
+}
 
-	std::cout<< "\nPlease annotate the space for "<< "VectorASTNode n"<<std::endl;
-	string selected_space;
-	std::cin>> selected_space;
+void printSpaces(vector<Space>& spaces) {
+	cout << "Available spaces:\t" << std::endl;
+	int size = spaces.size();
+	for (int i = 0; i < size; i++) {
+		cout << i << ". " << spaces[i].getName() << "\n";
+	}
+/*
+	for(vector<Space>::iterator it = spaces.begin();it != spaces.end();++it) {
+		cout<< it->getName()<<"\t";
+	}
+*/
+}
 
-	Space *annotated_space =new Space(selected_space);
-
-    return *annotated_space;
+int selectSpace(vector<Space>& spaces) {
+	int choice = -1;
+	while (choice == -1) {
+		cout<< "\nSelect space for " << "vector" << std::endl;
+		cin >> choice;
+		if (choice < 0 || choice >= spaces.size())
+		{
+			choice = -1;
+			continue;
+		}
+		return choice;
+	}
 }
 
 

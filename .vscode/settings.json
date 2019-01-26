@@ -3,6 +3,8 @@
         "gitignore"
     ],
     "files.associations": {
-        "__locale": "cpp"
+        "__locale": "cpp",
+        "list": "cpp",
+        "iostream": "cpp"
     }
 }
