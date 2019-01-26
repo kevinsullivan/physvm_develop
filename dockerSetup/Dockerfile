@@ -29,6 +29,10 @@ RUN git clone --progress --verbose \
 # install g++
 RUN ["apt-get","install","g++","-y"]
 
+# install lean using elan
+RUN ["apt","install","git","curl","-y"]
+RUN curl https://raw.githubusercontent.com/Kha/elan/master/elan-init.sh -sSf | sh
+
 # These volumes should be mounted as named volumes.
 VOLUME /llvm/build /pierce
 

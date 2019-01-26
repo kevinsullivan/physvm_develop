@@ -10,6 +10,7 @@
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/CommandLine.h"
 
 #include "CodeCoordinate.h"
 #include "Domain.h"
@@ -22,28 +23,42 @@ using namespace clang::driver;
 using namespace clang::tooling;
 
 using namespace std;
+using namespace llvm;
 
-// consider removing this line, doesn't do anything for now to our knowledge
-static llvm::cl::OptionCategory MatcherSampleCategory("Matcher Sample");
+/**************************************************
+Fundamental data structure constructed by this tool
+***************************************************/
 
 /*
-Sharing data via global variables is a bad idea, but we'll do it here
-to get a working system. These variables are initialized in main() and 
-are then updated during the parse tree traversal, as handlers are triggered.
-TODO: Use proper parameter passing rather than global variables here.
+Sharing data via global variables is a bad idea, but we'll 
+do it to get a working system. These variables are initialized 
+in main() and updated during the parse tree traversal, as AST
+node handlers are triggered. 
 */
 Oracle         *oracle;
 Domain         *domain;
 Interpretation *interp;
 
+
+/****************************
+Standard Clang Tooling Set-up
+*****************************/
+
+/*
+Set up a custom category for all command-line options; a help 
+message with Clang's standard common command-line options; and 
+a tool-specific help message.
+*/
+static llvm::cl::OptionCategory MyToolCategory("Peirce options");
+static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
+static cl::extrahelp MoreHelp("No additional options available for Peirce.");
+
 /**********
  * HANDLERS
  *********/
 
-/*
-Found declaration of Vector class
-*/
-class TypeVectorHandler : public MatchFinder::MatchCallback{
+// Vector class
+class TypeVectorHandler : public MatchFinder::MatchCallback {
 public:
   TypeVectorHandler() {}
   virtual void run(const MatchFinder::MatchResult &Result){
@@ -55,7 +70,7 @@ public:
   }
 };
 
-
+// Vector.add method
 class VectorMethodAddHandler: public  MatchFinder::MatchCallback{
 public:
   VectorMethodAddHandler () {}
@@ -70,7 +85,7 @@ public:
   }
 };
 
-
+// Vector instance declaration
 class InstanceVecHandler:public MatchFinder::MatchCallback{
 public:
   InstanceVecHandler()  {}
@@ -86,7 +101,7 @@ public:
   }
 };
 
-
+// Vector.add application
 class OpAddHandler: public MatchFinder::MatchCallback{
 public: 
   OpAddHandler () {}
@@ -104,63 +119,74 @@ public:
 
 
 /*
- * This class contains ASTMatchers to find the code object of interests.
+ * ASTMatchers to find the code object of interests
  */
 
 class MyASTConsumer : public ASTConsumer {
 public:
   MyASTConsumer() {
-    /*
-    1. What exact queries are needed
-    2. What precise forms of AST nodes get passed to handlers
-    3. How do extract additional data when you get a match
-    4. What do actually do when you get match?
-    */
-    // Finds Vector class definition
-    // Can you match on the class by its name?
-    Matcher.
-      addMatcher(cxxRecordDecl(hasMethod(hasName("vec_add"))).bind("TypeVectorDef"),
-        &HandlerForVecDef);
 
-    // Match definition of add method in Vector class
-    // Can you narrow the scope of this search to Vector::vec_add?
-    Matcher.addMatcher(cxxMethodDecl(
-      hasName("vec_add")).bind("VectorMethodAddDef"), &HandlerForVecAddDef);
+    /**************
+    Define Matchers
+    ***************/
 
-    // Match declaration of any instance of class Vector
-    /*
-     You really do have to narrow scope to match only declarations of objects
-     of type Vector.
-    */
-    Matcher.addMatcher(declStmt(containsDeclaration(0, 
-      varDecl(hasInitializer(cxxConstructExpr
-        (argumentCountIs(3)))))).bind("VecInstanceDecl"),
-        &HandlerForVecInstanceInit);
+    DeclarationMatcher match_Vector_decl = 
+      cxxRecordDecl(hasMethod(hasName("vec_add"))).bind("TypeVectorDefFoo");
+    DeclarationMatcher match_Vector_add_decl = 
+      cxxMethodDecl(hasName("vec_add")).bind("VectorMethodAddDef");
+    StatementMatcher match_Vector_instance_decl = 
+      declStmt(
+        containsDeclaration(
+          0, 
+          varDecl(hasInitializer(cxxConstructExpr(argumentCountIs(3))))))
+      .bind("VecInstanceDecl");
+    StatementMatcher match_Vector_add_call =
+      callExpr(callee(namedDecl(hasName("vec_add")))).bind("VectorAddCall");
 
-    // Match on any application of add
-    /*
-      1. Need narrow scope to applications of Vector::vec_add
-      2. Need to extract corresponding arguments as well ...
+    /* TODO: 
+    - Match Vector class by name
+    - Match Vector::vec_add only within class Vector
+    - Match Vector instances by type
+    - Match calls only to *Vector::* vec_add
     */
-    Matcher.addMatcher(callExpr(callee(namedDecl(
-      hasName("vec_add")))).bind("VectorAddCall"),&HandlerForVecAdd);
+
+    /************
+    Bind Handlers
+    ************/
+
+    Matcher.addMatcher(match_Vector_decl, &HandlerForVecDef);
+    Matcher.addMatcher(match_Vector_add_decl, &HandlerForVecAddDef);
+    Matcher.addMatcher(match_Vector_instance_decl, &HandlerForVecInstanceInit);
+    Matcher.addMatcher(match_Vector_add_call, &HandlerForVecAdd);
   } 
 
-  // not relevant at the moment, under development
-  //
+  /******************
+  * Grab AST Context
+  ******************/
+
+  virtual void Initialize(ASTContext& c) override { context_ = &c; }
+
+  // called when ASTs for entire translation unit have been parsed
   void HandleTranslationUnit(ASTContext &Context) override {
-    // Run the matchers when we have the whole TU parsed.
     Matcher.matchAST(Context);
   }
+
 private:
+  ASTContext* context_;
+  MatchFinder Matcher;
   TypeVectorHandler HandlerForVecDef;
   VectorMethodAddHandler HandlerForVecAddDef;
   InstanceVecHandler HandlerForVecInstanceInit;
   OpAddHandler HandlerForVecAdd;
-  MatchFinder Matcher;
 };
 
+/**************************************
+Main entry point into Clang-based tool.
+***************************************/ 
+
 // For each source file provided to the tool, a new FrontendAction is created.
+
+
 class MyFrontendAction : public ASTFrontendAction {
 public:
   MyFrontendAction() {}
@@ -169,8 +195,8 @@ public:
     cout << (consistent ? "Good\n" : "Bad\n");
   }
 
-  std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
-                                                 StringRef file) override 
+  std::unique_ptr<ASTConsumer> 
+    CreateASTConsumer(CompilerInstance &CI, StringRef file) override 
   {
     return llvm::make_unique<MyASTConsumer>();
   }
@@ -183,7 +209,7 @@ public:
 
 int main(int argc, const char **argv) {
   // Initialize the code parsing infrastsructure
-  CommonOptionsParser op(argc, argv, MatcherSampleCategory);
+  CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
   // Initialize domain, interpretation, and oracle
