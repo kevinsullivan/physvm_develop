@@ -165,8 +165,8 @@ class MyFrontendAction : public ASTFrontendAction {
 public:
   MyFrontendAction() {}
   void EndSourceFileAction() override {
-    bool consistent = domain->isInconsistent();
-    cout << (consistent ? "Bad\n" : "Good\n");
+    bool consistent = domain->isConsistent();
+    cout << (consistent ? "Good\n" : "Bad\n");
   }
 
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,

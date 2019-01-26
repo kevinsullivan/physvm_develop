@@ -72,7 +72,7 @@ public:
 	// Check domain for consistency
 	// Precondition: true
 	// Postcondition: return value true indicates presence of inconsistencies
-	bool isInconsistent();
+	bool isConsistent();
 
 	/*
 	Methods by which clients can learn what's in this domain.
