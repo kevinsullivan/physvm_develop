@@ -1,5 +1,5 @@
-#ifndef CODE_H
-#define CODE_H
+#ifndef CODECOORDINATE_H
+#define CODECOORDINATE_H
 
 #include <cstddef>  
 #include "clang/AST/AST.h"

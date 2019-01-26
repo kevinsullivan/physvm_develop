@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include "Domain.h"
+#include "Checker.h"
 
 using namespace std;
  
@@ -54,59 +55,18 @@ Expression& Domain::addExpression(Vector& v1, Vector& v2) {
 	
 }
 
-
-/*
-Lean-specific consistency-checking functionality
-*/
-
-const string leanTmpFileName = "tempJunk.lean";
-
-void writeHeader() 
-{
-    // output the general euclidean space definitions
-}
-
-void writeDomain() {
-    // iterate over vectors and output Lean "def" constructs
-    //  def v1_filename_lino := (mkVector <space>)
-    // iterate over expressions outputting Lean "def" constructs
-    //  def expr123 : Vector <space1> := v1 + v2 
-}
-
-void generateLean(Domain& dom) {
-    // write stuff out to tempJunk.lean 
-    writeHeader();
-    writeDomain();
-}
-
-bool typeCheckLean() {
-    // launch a lean type checking process
-    // get the exit code to determine whether there was an error
-    // return that status accordingly
-    return true;
+list<Space>& Domain::getAllSpaces() {
+    return spaces;
 }
 
 // Check domain for consistency
 // Precondition: true
 // Postcondition: return value true indicates presence of inconsistencies
-bool Domain::isInconsistent() {
-    generateLean(*this);
-    bool error = typeCheckLean();
-    return error;
+// Implementation: Call Lean-specific checking code below (make virtual)
+bool Domain::isConsistent() {
+    Checker* c = new Checker(*this);
+    bool result = c->Check();
+    delete c;
+    return result;
 }
 
-/*
-bool Domain::Reuse(Expression& expr) {
-    if(expr.getVecParam1().getVecSpace().getName() == expr.getVecParam2().getVecSpace().getName()){
-        cout<<"This expression is consistent!"<<endl;
-    }
-    else{
-        cout<<"This expression is inconsistent!"<<endl;
-    }
-    return false;
-}
-*/
-
-list<Space>& Domain::getAllSpaces() {
-    return spaces;
-}

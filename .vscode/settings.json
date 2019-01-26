@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
         "gitignore"
-    ]
+    ],
+    "files.associations": {
+        "__locale": "cpp"
+    }
 }
