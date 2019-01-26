@@ -3,9 +3,11 @@ TODO:
 
 Hannah's Todo
 
-* get the name, file, line no. of each vector instance.
-* bind the parameters of vec_add expression.
-* add interpretation for expression.
+* get the name, file, line no. of each vector instance
+* bind the parameters of vec_add expression
+* add interpretation for expression
+* generate lean file for analysis
+* make oracle ask about declarations by name, file, line number
 
 DONE:
 
