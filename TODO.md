@@ -9,6 +9,8 @@ Hannah's Todo
 * generate lean file for analysis
 * make oracle ask about declarations by name, file, line number
 * fix dockerfile to install Lean and its math libraries, e.g., using elan
+* fix oracle so that it does what it says it's doing: return selected space
+* fix makefile: use cmake and ninja
 
 DONE:
 

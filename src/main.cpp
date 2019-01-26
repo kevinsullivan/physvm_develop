@@ -113,9 +113,10 @@ public:
 };
 
 
-/*
- * ASTMatchers to find the code object of interests
- */
+
+/*******************************************
+ * AST Consumer: set up for and handle parse
+ *******************************************/
 
 class MyASTConsumer : public ASTConsumer {
 public:

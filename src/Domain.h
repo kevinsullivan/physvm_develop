@@ -1,7 +1,7 @@
 #ifndef DOMAIN_H
 #define DOMAIN_H
 
-#include <list>
+#include <vector>
 #include <string>
 
 using namespace std;
@@ -80,12 +80,12 @@ public:
 
 	Space& get_nth_Spaces();
 
-	list<Space>& getAllSpaces();
+	vector<Space>& getAllSpaces();
 	
 private:
-	list<Space> spaces;
-	list<Vector> vectors;
-	list<Expression> expressions;
+	vector<Space> spaces;
+	vector<Vector> vectors;
+	vector<Expression> expressions;
 };
 
 #endif

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <list>
+#include <vector>
 #include "Domain.h"
 #include "Checker.h"
 
@@ -55,7 +55,7 @@ Expression& Domain::addExpression(Vector& v1, Vector& v2) {
 	
 }
 
-list<Space>& Domain::getAllSpaces() {
+vector<Space>& Domain::getAllSpaces() {
     return spaces;
 }
 
