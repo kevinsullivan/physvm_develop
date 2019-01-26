@@ -1,4 +1,3 @@
-
 #include <string>
 #include <iostream>
 #include "clang/AST/AST.h"
@@ -12,7 +11,6 @@
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/raw_ostream.h"
 
-// #include "Code.h"
 #include "CodeCoordinate.h"
 #include "Domain.h"
 #include "Interpretation.h"
@@ -37,7 +35,6 @@ TODO: Use proper parameter passing rather than global variables here.
 Oracle         *oracle;
 Domain         *domain;
 Interpretation *interp;
-
 
 /**********
  * HANDLERS
