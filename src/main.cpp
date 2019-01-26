@@ -98,13 +98,13 @@ public:
       // Get a handle on arg #2
       // Do some more stuff
       // ExprASTNode& exprn = *new ExprASTNode(dcstmt);
-
     }
   }
 };
 
+
 /*
- * The ASTConsumer class contains ASTMatchers to find the list object of interests.
+ * This class contains ASTMatchers to find the code object of interests.
  */
 
 class MyASTConsumer : public ASTConsumer {
@@ -196,5 +196,3 @@ int main(int argc, const char **argv) {
   // Analyze code and build interpretation
   return Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 }
-
-
