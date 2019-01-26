@@ -41,22 +41,19 @@ Interpretation *interp;
 
 /**********
  * HANDLERS
-  declaration of Vector class
-  declaration of Vector.add method
-  declaration of Vector instance
-  application of Vector.add 
  *********/
 
-
+/*
+Found declaration of Vector class
+*/
 class TypeVectorHandler : public MatchFinder::MatchCallback{
 public:
-    TypeVectorHandler() {}
-
+  TypeVectorHandler() {}
   virtual void run(const MatchFinder::MatchResult &Result){
-    if(const CXXRecordDecl *typeVector = Result.Nodes.getNodeAs<clang::CXXRecordDecl>("TypeVectorDef")){
-
+    const CXXRecordDecl *typeVector = 
+      Result.Nodes.getNodeAs<clang::CXXRecordDecl>("TypeVectorDef");
+    if(typeVector != NULL) {
       // NO ACTION
-
     }
   }
 };
@@ -65,35 +62,30 @@ public:
 class VectorMethodAddHandler: public  MatchFinder::MatchCallback{
 public:
   VectorMethodAddHandler () {}
-
   //  overrides run to take action when a match occurs
   virtual void run(const MatchFinder::MatchResult &Result) {
     // kevin's question is why would this ever be null? -- see clang details
-    const CXXMethodDecl *vecAdd = Result.Nodes.getNodeAs<clang::CXXMethodDecl>("VectorMethodAddDef");
+    const CXXMethodDecl *vecAdd = 
+      Result.Nodes.getNodeAs<clang::CXXMethodDecl>("VectorMethodAddDef");
     if(vecAdd != NULL) {
-
       // NO ACTION
-
     }
   }
 };
 
 
 class InstanceVecHandler:public MatchFinder::MatchCallback{
-
 public:
   InstanceVecHandler()  {}
-
   virtual void run(const MatchFinder::MatchResult &Result){
-    if(const auto *callstmt = Result.Nodes.getNodeAs<clang::Stmt>("VecInstanceDecl")){
+    if(const auto *callstmt = 
+      Result.Nodes.getNodeAs<clang::Stmt>("VecInstanceDecl")) {
 
       // ACTION:
-
       VectorASTNode& n = *new VectorASTNode(callstmt);
       Space& s = oracle->getSpaceForVector(n);
       Vector& abst_v = domain->addVector(s);
       interp->putVectorInterp(n, abst_v);
-
     }
   }
 };
@@ -103,21 +95,19 @@ class OpAddHandler: public MatchFinder::MatchCallback{
 public: 
   OpAddHandler () {}
   virtual void run(const MatchFinder::MatchResult &Result){
-    if(const auto *dcstmt = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddCall")){
+    if(const auto *dcstmt = 
+      Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddCall")) {
 
-      // TODO
+      // ACTION
       // Get a handle on arg #1
       // Get a handle on arg #2
-      // Do some more sfuff
+      // Do some more stuff
       
       // ExprASTNode& exprn = *new ExprASTNode(dcstmt);
 
     }
   }
-private:
 };
-
-
 
 /*
  * The ASTConsumer class contains ASTMatchers to find the list object of interests.
@@ -137,13 +127,13 @@ public:
     // Can you match on the class by its name?
     Matcher.
       addMatcher(cxxRecordDecl(hasMethod(hasName("vec_add"))).bind("TypeVectorDef"),
-                 &HandlerForVecDef);
+        &HandlerForVecDef);
 
 
     // Match definition of add method in Vector class
     // Can you narrow the scope of this search to Vector::vec_add?
     Matcher.addMatcher(cxxMethodDecl(
-              hasName("vec_add")).bind("VectorMethodAddDef"), &HandlerForVecAddDef);
+      hasName("vec_add")).bind("VectorMethodAddDef"), &HandlerForVecAddDef);
 
     // Match declaration of any instance of class Vector
     /*
@@ -151,9 +141,9 @@ public:
      of type Vector.
     */
     Matcher.addMatcher(declStmt(containsDeclaration(0, 
-                  varDecl(hasInitializer(cxxConstructExpr
-                    (argumentCountIs(3)))))).bind("VecInstanceDecl"),
-                    &HandlerForVecInstanceInit);
+      varDecl(hasInitializer(cxxConstructExpr
+        (argumentCountIs(3)))))).bind("VecInstanceDecl"),
+        &HandlerForVecInstanceInit);
 
     // Match on any application of add
     /*
@@ -161,8 +151,7 @@ public:
       2. Need to extract corresponding arguments as well ...
     */
     Matcher.addMatcher(callExpr(callee(namedDecl(
-              hasName("vec_add")))).bind("VectorAddCall"),&HandlerForVecAdd);
-
+      hasName("vec_add")))).bind("VectorAddCall"),&HandlerForVecAdd);
   } 
 
   // not relevant at the moment, under development
@@ -172,15 +161,11 @@ public:
     Matcher.matchAST(Context);
 
   }
-
 private:
-
   TypeVectorHandler HandlerForVecDef;
   VectorMethodAddHandler HandlerForVecAddDef;
-  
   InstanceVecHandler HandlerForVecInstanceInit;
   OpAddHandler HandlerForVecAdd;
-
   MatchFinder Matcher;
 };
 
@@ -189,10 +174,8 @@ class MyFrontendAction : public ASTFrontendAction {
 public:
   MyFrontendAction() {}
   void EndSourceFileAction() override {
-
     bool consistent = domain->isInconsistent();
     cout << (consistent ? "Bad\n" : "Good\n");
-  
   }
 
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
@@ -200,7 +183,6 @@ public:
   {
     return llvm::make_unique<MyASTConsumer>();
   }
-
 };
 
 
