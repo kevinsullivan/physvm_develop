@@ -5,6 +5,8 @@
     "files.associations": {
         "__locale": "cpp",
         "list": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "string": "cpp",
+        "iosfwd": "cpp"
     }
 }

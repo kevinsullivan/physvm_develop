@@ -127,14 +127,24 @@ class VectorAddCallHandler: public MatchFinder::MatchCallback{
 public: 
   virtual void run(const MatchFinder::MatchResult &Result){
     //cout << "VectorAddCallHandler called -- checking node\n";
-    const auto *memberexpr = Result.Nodes.getNodeAs<clang::CallExpr>("VecAddCall");
-    if(memberexpr != NULL) {
+    const auto *exp = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VecAddCall");
+    if(exp != NULL) {
       // ACTION
+
+      const Expr* const implicitArg =	exp->getImplicitObjectArgument();
+      const CXXMethodDecl* const methodDecl =	exp->getMethodDecl();
+      const CXXRecordDecl* const recordDecl = exp-> getRecordDecl(); 
+      unsigned numArgs= exp->getNumArgs();
+      const Expr* const* args = exp->getArgs();
+
+
+      cout<<"Found operation application\n"; // at "<<vec_addLoc<<endl;
+    /*  
       cout<<"Processing VectorAddCallHandler -- should say found\n"; 
       if(const auto *param1 = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecAddParam1")){
         //cout<<"Got param1\n"; 
         if(const auto *param2 = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecAddParam2")){
-          //cout<<"Got param2\n"; 
+          // cout<<"Got param2\n"; 
           // get the name for param1
           string param1Name = param1->getNameInfo().getName().getAsString();
           // get the name for param2
@@ -145,6 +155,7 @@ public:
           cout<<"Found operation application at "<<vec_addLoc<<endl;
         }
       }
+    */
     }
   }
 };
@@ -179,20 +190,10 @@ public:
     // Vector::add call
     StatementMatcher match_Vector_add_call =
         cxxMemberCallExpr(
-          hasDescendant(
-            memberExpr(
-              hasDescendant(
-                declRefExpr().bind("VecAddParam1")
-              ),
-              hasDeclaration(
-                namedDecl(
-                  hasName("vec_add")
-                )
-              )
+          hasDeclaration(
+            namedDecl(
+              hasName("vec_add")
             )
-          ),
-          hasDescendant(
-            declRefExpr().bind("VecAddParam2")
           )
         ).bind("VecAddCall");
     /*
