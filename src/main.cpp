@@ -127,9 +127,10 @@ class VectorAddCallHandler: public MatchFinder::MatchCallback{
 public: 
   virtual void run(const MatchFinder::MatchResult &Result){
     //cout << "VectorAddCallHandler called -- checking node\n";
-    if(const auto *memberexpr = Result.Nodes.getNodeAs<clang::Expr>("VecAddCall")) {
+    const auto *memberexpr = Result.Nodes.getNodeAs<clang::CallExpr>("VecAddCall");
+    if(memberexpr != NULL) {
       // ACTION
-      //cout<<"Processing VectorAddCallHandler -- should say found\n"; 
+      cout<<"Processing VectorAddCallHandler -- should say found\n"; 
       if(const auto *param1 = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecAddParam1")){
         //cout<<"Got param1\n"; 
         if(const auto *param2 = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecAddParam2")){
@@ -177,8 +178,23 @@ public:
     
     // Vector::add call
     StatementMatcher match_Vector_add_call =
-        cxxMemberCallExpr(hasDescendant(memberExpr(hasDescendant(declRefExpr().bind("VecAddParam1")),hasDeclaration(namedDecl(hasName("vec_add")))).bind("VecAddCall")),hasDescendant(declRefExpr().bind("VecAddParam2")));
-    
+        cxxMemberCallExpr(
+          hasDescendant(
+            memberExpr(
+              hasDescendant(
+                declRefExpr().bind("VecAddParam1")
+              ),
+              hasDeclaration(
+                namedDecl(
+                  hasName("vec_add")
+                )
+              )
+            )
+          ),
+          hasDescendant(
+            declRefExpr().bind("VecAddParam2")
+          )
+        ).bind("VecAddCall");
     /*
     StatementMatcher match_Vector_add_call =
       callExpr(callee(namedDecl(hasName("vec_add")))).bind("VectorAddCall");
