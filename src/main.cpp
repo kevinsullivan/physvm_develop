@@ -65,6 +65,7 @@ public:
       Result.Nodes.getNodeAs<clang::CXXRecordDecl>("VectorTypeDecl");
     if(typeVector != NULL) {
       // NO ACTION
+      cout << "Found Vec class declaration\n";
     }
   }
 };
@@ -78,6 +79,7 @@ public:
       Result.Nodes.getNodeAs<clang::CXXMethodDecl>("VectorAddMethodDecl");
     if(vecAdd != NULL) {
       // NO ACTION
+      cout << "Found Vec::add method declaration\n";
     }
   }
 };
@@ -89,6 +91,7 @@ public:
     if(const auto *vec_inst_decl = 
       Result.Nodes.getNodeAs<clang::Stmt>("VectorInstanceDecl")) {
       // ACTION:
+      cout << "Found Vec instance declaration\n";
       VectorASTNode& n = *new VectorASTNode(vec_inst_decl);
       ASTContext *con = Result.Context;
       SourceManager& sm = con->getSourceManager();  // not currently used
@@ -110,7 +113,8 @@ public:
 // Vector.add application
 class VectorAddCallHandler: public MatchFinder::MatchCallback{
 public: 
-  virtual void run(const MatchFinder::MatchResult &Result){
+  virtual void run(const MatchFinder::MatchResult &Result) {
+    cout << "Found Vec::add call\n";
     if(const auto *dcstmt = 
       Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddCall")) {
       // ACTION
@@ -132,16 +136,19 @@ public:
   MyASTConsumer() {
 
     /**************
-    Define Matchers
+    Define MATCHERS
     ***************/
 
     // Vector class declaration
     DeclarationMatcher match_Vector_decl = 
+      recordDecl(hasName("Vec")).bind("VectorTypeDecl");
+/*
+    DeclarationMatcher match_Vector_decl = 
       cxxRecordDecl(hasMethod(hasName("vec_add"))).bind("TypeVectorDefFoo");
-
+*/
     // Vector::add method declaration
     DeclarationMatcher match_Vector_add_decl = 
-      cxxMethodDecl(hasName("vec_add")).bind("VectorMethodAddDef");
+      cxxMethodDecl(hasName("vec_add")).bind("VectorAddMethodDecl");
 
     // Vector instance declaration
     StatementMatcher match_Vector_instance_decl = 
@@ -149,7 +156,7 @@ public:
         containsDeclaration(
           0, 
           varDecl(hasInitializer(cxxConstructExpr(argumentCountIs(3))))))
-      .bind("VecInstanceDecl");
+      .bind("VectorInstanceDecl");
 
     // Vector::add call
     StatementMatcher match_Vector_add_call =
