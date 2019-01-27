@@ -1,4 +1,4 @@
-class Vec{
+class Vec {
 
 public:
   Vec(float i= 0.0, float j= 0.0, float k = 0.0):_x (i),_y (j),_z (k){}; 
