@@ -103,17 +103,13 @@ public:
       // ACTION:
       //cout << "Found Vec instance declaration\n";
       VectorASTNode& n = *new VectorASTNode(vec_inst_decl);
-      ASTContext *con = Result.Context;
+      ASTContext *context = Result.Context;
       //SourceManager& sm = con->getSourceManager();  // not currently used
       FullSourceLoc FullLocation = 
-        con->getFullLoc(vec_inst_decl->getBeginLoc());
-      unsigned lineno = 0;
-      unsigned colno = 0;
-      if (FullLocation.isValid()) {
-        lineno = FullLocation.getSpellingLineNumber(); // after postprocessing
-        colno = FullLocation.getSpellingColumnNumber();
-      }
-      Space& s = oracle->getSpaceForVector("",lineno,colno); // fix: need filename
+        context->getFullLoc(vec_inst_decl->getBeginLoc());
+      SourceManager& sm = context->getSourceManager();
+      string where = FullLocation.printToString(sm);
+      Space& s = oracle->getSpaceForVector(where); // fix: need filename
       Vector& abst_v = domain->addVector(s);
       interp->putVectorInterp(n, abst_v);
     }
@@ -135,7 +131,12 @@ public:
       const CXXRecordDecl* const recordDecl = exp-> getRecordDecl(); 
       unsigned numArgs= exp->getNumArgs();
       const Expr* const* args = exp->getArgs();
-      cout<<"Found operation application\n"; // at "<<vec_addLoc<<endl;
+      ASTContext *context = Result.Context;
+      FullSourceLoc FullLocation = 
+        context->getFullLoc(exp->getBeginLoc());
+      SourceManager& sm = context->getSourceManager();
+      string where = FullLocation.printToString(sm);
+      cout<<"Found operation application at "<< where <<endl;
     }
   }
 };
@@ -163,9 +164,9 @@ public:
 
     // Vector instance declaration
     DeclarationMatcher match_Vector_instance_decl = 
-      varDecl(hasInitializer(cxxConstructExpr(argumentCountIs(3))))
+     varDecl(hasInitializer(cxxConstructExpr(hasType(cxxRecordDecl(hasName("Vec"))))))
         .bind("VectorInstanceDecl");
-    
+
     // Vector::add call
     StatementMatcher match_Vector_add_call =
       cxxMemberCallExpr(hasDeclaration(namedDecl(hasName("vec_add"))))
@@ -212,8 +213,7 @@ public:
   }
 
   std::unique_ptr<ASTConsumer> 
-    CreateASTConsumer(CompilerInstance &CI, StringRef file) override 
-  {
+    CreateASTConsumer(CompilerInstance &CI, StringRef file) override {
     return llvm::make_unique<MyASTConsumer>();
   }
 };

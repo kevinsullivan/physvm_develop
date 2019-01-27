@@ -15,7 +15,7 @@ public:
 	// Effects: get space annotation from environment
 	// Postcondition: return value is space to associate with vector
 	//
-	Space& getSpaceForVector(string filename, unsigned int line, unsigned int col);
+	Space& getSpaceForVector(string where);
 
 	
 
