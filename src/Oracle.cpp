@@ -11,10 +11,10 @@
 using namespace std;
 
 void printSpaces(vector<Space>& spaces);
-int selectSpace(vector<Space>& spaces, unsigned line, unsigned col);
+int selectSpace(vector<Space>& spaces, string);
 int selectSpace(vector<Space>& spaces);
 
-Space& Oracle::getSpaceForVector(string filename, unsigned int line, unsigned int col) {
+Space& Oracle::getSpaceForVector(string where) {
     vector<Space>& spaces = dom_.getAllSpaces();
 	if (spaces.size() == 0) {
 		cerr << "No abstract spaces available for interpretation. Bye!\n";
@@ -22,7 +22,7 @@ Space& Oracle::getSpaceForVector(string filename, unsigned int line, unsigned in
 	}
 
 	printSpaces(spaces);
-	int whichSpace = selectSpace(spaces, line, col);
+	int whichSpace = selectSpace(spaces, where);
 	Space& result = spaces[whichSpace];
     return result;
 	cout << "End getSpacesForVector\n";
@@ -36,10 +36,10 @@ void printSpaces(vector<Space>& spaces) {
 	}
 }
 
-int selectSpace(vector<Space>& spaces, unsigned line, unsigned col) {
+int selectSpace(vector<Space>& spaces, string where) {
 	int choice = -1;
 	while (choice == -1) {
-		cout<< "Space for vector, line "<<line << ", col "<< col<< "? ";
+		cout<< "Space for vector at "<< where << "? ";
 		cin >> choice;
 		if (choice < 0 || choice >= (int)spaces.size())
 		{
