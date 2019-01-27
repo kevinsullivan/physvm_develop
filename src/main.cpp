@@ -173,34 +173,24 @@ public:
     ***************/
 
     // Vector class declaration
-    DeclarationMatcher match_Vector_decl = 
-      recordDecl(hasName("Vec")).bind("VectorTypeDecl");
-/*
-    DeclarationMatcher match_Vector_decl = 
-      cxxRecordDecl(hasMethod(hasName("vec_add"))).bind("TypeVectorDefFoo");
-*/
+    DeclarationMatcher match_Vector_decl = recordDecl(hasName("Vec"))
+      .bind("VectorTypeDecl");
+
     // Vector::add method declaration
     DeclarationMatcher match_Vector_add_decl = 
-      cxxMethodDecl(hasName("vec_add")).bind("VectorAddMethodDecl");
+      cxxMethodDecl(hasName("vec_add"))
+        .bind("VectorAddMethodDecl");
 
     // Vector instance declaration
     DeclarationMatcher match_Vector_instance_decl = 
-      varDecl(hasInitializer(cxxConstructExpr(argumentCountIs(3)))).bind("VectorInstanceDecl");
+      varDecl(hasInitializer(cxxConstructExpr(argumentCountIs(3))))
+        .bind("VectorInstanceDecl");
     
     // Vector::add call
     StatementMatcher match_Vector_add_call =
-        cxxMemberCallExpr(
-          hasDeclaration(
-            namedDecl(
-              hasName("vec_add")
-            )
-          )
-        ).bind("VecAddCall");
-    /*
-    StatementMatcher match_Vector_add_call =
-      callExpr(callee(namedDecl(hasName("vec_add")))).bind("VectorAddCall");
-    */
-
+      cxxMemberCallExpr(hasDeclaration(namedDecl(hasName("vec_add"))))
+        .bind("VecAddCall");
+    
     /************
     Bind Handlers
     ************/
