@@ -3,12 +3,36 @@
 
 #include <cstddef>  
 #include "clang/AST/AST.h"
+#include "clang/ASTMatchers/ASTMatchFinder.h"
+#include "clang/ASTMatchers/ASTMatchers.h"
+
+using namespace std;
 
 class VectorASTNode {
 public:
-    VectorASTNode(const clang::VarDecl* vecInstStmt):ptr_vecInstStmt(vecInstStmt) {}
-    void setASTNode(const clang::VarDecl* vecInstStmt);
-    clang::VarDecl* getASTNode();
+    // constructor
+    VectorASTNode(const clang::VarDecl* vecInstStmt, 
+        const MatchFinder::MatchResult &vecInstResult):ptr_vecInstStmt(vecInstStmt),
+                        ref_result(vecInstResult)
+    {
+        setASTNodeName(vecInstStmt);
+        setASTNodeFilePath(vecInstStmt, vecInstResult);
+        setASTNodeMemLoc(vecInstStmt, vecInstResult);
+
+    }
+
+    void setASTNode(const clang::VarDecl* vecInstStmt, const MatchFinder::MatchResult &ref_result);
+    void setASTNodeName(const clang::VarDecl* _vecInstStmt);
+    void setASTNodeFilePath(const clang::VarDecl* _vecInstStmt, const MatchFinder::MatchResult& _ref_result);
+    void setASTNodeMemLoc(const clang::VarDecl* _vecInstStmt, const MatchFinder::MatchResult& _ref_result);
+    
+    VectorASTNode& getASTNode();
+
+    const string& getName();
+    const string& getFilePath();
+    const string& getDeclLoc();
+    const string& getMemLoc();
+
     /*
     Implementing == is required for use as a key in a map
     */
@@ -17,6 +41,13 @@ public:
     }
 private: 
     const clang::VarDecl* ptr_vecInstStmt;
+    const MatchFinder::MatchResult &ref_result;
+
+    const string* name;
+    const string* file;
+    const string* loc;
+    const string* memLoc;
+
 };
 
 /*
@@ -46,6 +77,11 @@ public:
     }
 private:
     const clang::CXXMemberCallExpr* ptr_exprCall;
+    const MatchFinder::MatchResult &ref_result;
+
+    const VectorASTNode& param1;
+    const VectorASTNode& param2;
+
 };
 
 /*

@@ -57,7 +57,9 @@ static cl::extrahelp MoreHelp("No additional options available for Peirce.");
  * HANDLERS
  *********/
 
-// Vector class
+/*
+ Vector class
+*/
 class VectorTypeDeclHandler : public MatchFinder::MatchCallback {
 public:
   virtual void run(const MatchFinder::MatchResult &Result){
@@ -65,12 +67,14 @@ public:
       Result.Nodes.getNodeAs<clang::CXXRecordDecl>("VectorTypeDecl");
     if(typeVector != NULL) {
       // NO ACTION
-      cout << "Found Vec class declaration\n";
+      //cout << "Found Vec class declaration\n";
     }
   }
 };
 
-// Vector.add method
+/*
+ Vector.add method
+*/
 class VectorAddMethodDeclHandler: public  MatchFinder::MatchCallback{
 public:
   virtual void run(const MatchFinder::MatchResult &Result) {
@@ -79,22 +83,28 @@ public:
       Result.Nodes.getNodeAs<clang::CXXMethodDecl>("VectorAddMethodDecl");
     if(vecAdd != NULL) {
       // NO ACTION
-      cout << "Found Vec::add method declaration\n";
+      //cout << "Found Vec::add method declaration\n";
     }
   }
 };
 
-// Vector instance declaration
+/*
+ Vector instance declaration
+*/
 class VectorInstanceDeclHandler:public MatchFinder::MatchCallback{
 public:
   virtual void run(const MatchFinder::MatchResult &Result){
+    //cout << "Checking Vec instance declaration\n";
+    //if(const auto *vec_inst_decl = 
+    //  Result.Nodes.getNodeAs<clang::Stmt>("VectorInstanceDecl")) {
     if(const auto *vec_inst_decl = 
-      Result.Nodes.getNodeAs<clang::Stmt>("VectorInstanceDecl")) {
+      Result.Nodes.getNodeAs<clang::VarDecl>("VectorInstanceDecl")) {
+      
       // ACTION:
-      cout << "Found Vec instance declaration\n";
+      //cout << "Found Vec instance declaration\n";
       VectorASTNode& n = *new VectorASTNode(vec_inst_decl);
       ASTContext *con = Result.Context;
-      SourceManager& sm = con->getSourceManager();  // not currently used
+      //SourceManager& sm = con->getSourceManager();  // not currently used
       FullSourceLoc FullLocation = 
         con->getFullLoc(vec_inst_decl->getBeginLoc());
       unsigned lineno = 0;
@@ -110,22 +120,33 @@ public:
   }
 };
 
-// Vector.add application
+/*
+ Vector::add call
+*/
 class VectorAddCallHandler: public MatchFinder::MatchCallback{
 public: 
-  virtual void run(const MatchFinder::MatchResult &Result) {
-    cout << "Found Vec::add call\n";
-    if(const auto *dcstmt = 
-      Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddCall")) {
+  virtual void run(const MatchFinder::MatchResult &Result){
+    //cout << "VectorAddCallHandler called -- checking node\n";
+    if(const auto *memberexpr = Result.Nodes.getNodeAs<clang::Expr>("VecAddCall")) {
       // ACTION
-      // Get a handle on arg #1
-      // Get a handle on arg #2
-      // Do some more stuff
-      // ExprASTNode& exprn = *new ExprASTNode(dcstmt);
+      //cout<<"Processing VectorAddCallHandler -- should say found\n"; 
+      if(const auto *param1 = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecAddParam1")){
+        //cout<<"Got param1\n"; 
+        if(const auto *param2 = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecAddParam2")){
+          //cout<<"Got param2\n"; 
+          // get the name for param1
+          string param1Name = param1->getNameInfo().getName().getAsString();
+          // get the name for param2
+          string param2Name = param2->getNameInfo().getName().getAsString();
+          // get the name for vec_add
+          // string opName = memberexpr->getMemberNameInfo().getName().getAsString();
+          string vec_addLoc = memberexpr->getExprLoc().printToString(*(Result.SourceManager));
+          cout<<"Found operation application at "<<vec_addLoc<<endl;
+        }
+      }
     }
   }
 };
-
 
 /*******************************************
  * AST Consumer: set up for and handle parse
@@ -151,16 +172,17 @@ public:
       cxxMethodDecl(hasName("vec_add")).bind("VectorAddMethodDecl");
 
     // Vector instance declaration
-    StatementMatcher match_Vector_instance_decl = 
-      declStmt(
-        containsDeclaration(
-          0, 
-          varDecl(hasInitializer(cxxConstructExpr(argumentCountIs(3))))))
-      .bind("VectorInstanceDecl");
-
+    DeclarationMatcher match_Vector_instance_decl = 
+      varDecl(hasInitializer(cxxConstructExpr(argumentCountIs(3)))).bind("VectorInstanceDecl");
+    
     // Vector::add call
     StatementMatcher match_Vector_add_call =
+        cxxMemberCallExpr(hasDescendant(memberExpr(hasDescendant(declRefExpr().bind("VecAddParam1")),hasDeclaration(namedDecl(hasName("vec_add")))).bind("VecAddCall")),hasDescendant(declRefExpr().bind("VecAddParam2")));
+    
+    /*
+    StatementMatcher match_Vector_add_call =
       callExpr(callee(namedDecl(hasName("vec_add")))).bind("VectorAddCall");
+    */
 
     /************
     Bind Handlers

@@ -37,7 +37,6 @@ Space& Domain::addSpace(const string& name) {
 Vector& Domain::addVector(Space& s) {
     Vector *v = new Vector(s);
     vectors.push_back(*v);
-    cout << "DOMAIN: Added vector!\n";
     return *v;
 }
 
@@ -49,8 +48,6 @@ Expression& Domain::addExpression(Vector& v1, Vector& v2) {
 
 	Expression* expr = new Expression(v1, v2);
 	expressions.push_back(*expr);
-
-	cout<< "DOMAIN: Added Expression!\n";
 	return *expr;
 	
 }
