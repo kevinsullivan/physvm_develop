@@ -24,6 +24,7 @@ Hannah's Todo
   - See https://caesr.uwaterloo.ca/misc/boost-llvm-clang.html
   - put "apt-get install -y gdb" in docker file
   - have docker file add /usr/lib/llvm-3.9/bin/ to PATH (for clang-query)
+  - to docker file add code 'ln -s /llvm/build/lib ./lib' in ./peirce
 
 DONE:
 

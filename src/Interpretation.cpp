@@ -1,5 +1,3 @@
-#include "CodeCoordinate.h"
-#include "Domain.h"
 #include "Interpretation.h"
 
 #include <iostream>
