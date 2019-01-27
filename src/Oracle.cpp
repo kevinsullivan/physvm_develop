@@ -39,7 +39,7 @@ void printSpaces(vector<Space>& spaces) {
 int selectSpace(vector<Space>& spaces, unsigned line, unsigned col) {
 	int choice = -1;
 	while (choice == -1) {
-		cout<< "\nSpace for vector, line "<<line << ", col "<< col<< "? ";
+		cout<< "Space for vector, line "<<line << ", col "<< col<< "? ";
 		cin >> choice;
 		if (choice < 0 || choice >= (int)spaces.size())
 		{
