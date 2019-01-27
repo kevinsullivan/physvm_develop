@@ -10,5 +10,5 @@ Afterwards, run the following command to spin up the container. $PWD=path/to/Pie
 ```
 cd path/to/PieceProject
 
-docker run -it --name clang_docker -v llvm-build:/llvm/build -v $PWD:/peirce ubuntu_clang_image /bin/bash
+docker run -it --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --name clang_docker -v llvm-build:/llvm/build -v $PWD:/peirce ubuntu_clang_image /bin/bash
 ```

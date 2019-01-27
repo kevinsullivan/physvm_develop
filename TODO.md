@@ -3,7 +3,12 @@ TODO:
 
 Hannah's Todo
 
-* get the name, file, line no. of each vector instance
+* Improve matchers for correctness in general
+    - Match Vector class by name
+    - Match Vector::vec_add only within class Vector
+    - Match Vector instances by type
+    - Match calls only to *Vector::* vec_add
+ * get the name, file, line no. of each vector instance
 * bind the parameters of vec_add expression
 * add interpretation for expression
 * generate lean file for analysis
@@ -11,6 +16,13 @@ Hannah's Todo
 * fix dockerfile to install Lean and its math libraries, e.g., using elan
 * fix oracle so that it does what it says it's doing: return selected space
 * fix makefile: use cmake and ninja
+* add "apt-get install libboost-all-dev -y" to dockerfile
+* add installing emacs to dockerfile
+* configure LLVM to build with RTTI
+  - set(LLVM_REQUIRES_RTTI 1) in CMakeLists.txt
+  - should also enable exception handling in compiler
+  - See https://caesr.uwaterloo.ca/misc/boost-llvm-clang.html
+  - put "apt-get install -y gdb" in docker file
 
 DONE:
 

@@ -20,7 +20,9 @@ $(info Using LLVM_BIN_PATH = $(LLVM_BIN_PATH))
 $(info -----------------------------------------------)
 
 CXX := g++
-CXXFLAGS := -fno-rtti -O0 -g
+#CXXFLAGS := -fno-rtti -O0 -g -DBOOST_LOG_DYN_LINK
+CXXFLAGS := -O0 -g -Wall
+
 PLUGIN_CXXFLAGS := -fpic
 CPLUS_INCLUDE_PATH := /usr/lib/gcc/x86_64-linux-gnu/7/include
 
@@ -72,6 +74,9 @@ CLANG_LIBS := \
 	-lclangTooling \
 	-lclangFormat \
 	-Wl,--end-group
+
+# Boost needs libs
+#	-lboost_log \
 
 # Internal paths in this project: where to find sources, and where to put
 # build artifacts.
