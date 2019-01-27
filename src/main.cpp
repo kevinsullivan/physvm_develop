@@ -130,32 +130,12 @@ public:
     const auto *exp = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VecAddCall");
     if(exp != NULL) {
       // ACTION
-
       const Expr* const implicitArg =	exp->getImplicitObjectArgument();
       const CXXMethodDecl* const methodDecl =	exp->getMethodDecl();
       const CXXRecordDecl* const recordDecl = exp-> getRecordDecl(); 
       unsigned numArgs= exp->getNumArgs();
       const Expr* const* args = exp->getArgs();
-
-
       cout<<"Found operation application\n"; // at "<<vec_addLoc<<endl;
-    /*  
-      cout<<"Processing VectorAddCallHandler -- should say found\n"; 
-      if(const auto *param1 = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecAddParam1")){
-        //cout<<"Got param1\n"; 
-        if(const auto *param2 = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecAddParam2")){
-          // cout<<"Got param2\n"; 
-          // get the name for param1
-          string param1Name = param1->getNameInfo().getName().getAsString();
-          // get the name for param2
-          string param2Name = param2->getNameInfo().getName().getAsString();
-          // get the name for vec_add
-          // string opName = memberexpr->getMemberNameInfo().getName().getAsString();
-          string vec_addLoc = memberexpr->getExprLoc().printToString(*(Result.SourceManager));
-          cout<<"Found operation application at "<<vec_addLoc<<endl;
-        }
-      }
-    */
     }
   }
 };
