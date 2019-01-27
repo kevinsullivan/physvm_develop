@@ -135,16 +135,23 @@ public:
     Define Matchers
     ***************/
 
+    // Vector class declaration
     DeclarationMatcher match_Vector_decl = 
       cxxRecordDecl(hasMethod(hasName("vec_add"))).bind("TypeVectorDefFoo");
+
+    // Vector::add method declaration
     DeclarationMatcher match_Vector_add_decl = 
       cxxMethodDecl(hasName("vec_add")).bind("VectorMethodAddDef");
+
+    // Vector instance declaration
     StatementMatcher match_Vector_instance_decl = 
       declStmt(
         containsDeclaration(
           0, 
           varDecl(hasInitializer(cxxConstructExpr(argumentCountIs(3))))))
       .bind("VecInstanceDecl");
+
+    // Vector::add call
     StatementMatcher match_Vector_add_call =
       callExpr(callee(namedDecl(hasName("vec_add")))).bind("VectorAddCall");
 
