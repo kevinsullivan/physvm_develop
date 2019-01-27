@@ -20,12 +20,10 @@ void cleanup(aFile*);
 
 // return true if domain is consistent
 bool Checker::Check() {
-    cout << "Start Check()\n";
     aFile* f = openFile();
     generateMath(f, dom_);
     bool status = checkMath(f);
     cleanup(f);
-    cout << "End Check()\n";
     return status;
 }
 
@@ -37,32 +35,24 @@ void writeTheory(FILE*);
 void writeDomain(FILE*, Domain& d);
 
 aFile* openFile() {
-    cout << "Start openFile()\n";
     aFile* f = new aFile;
     string name = std::string(tmpnam(NULL)) + ".lean";
     char * name_cstr = new char [name.length()+1];
     strcpy (name_cstr, name.c_str());
     f->name = name_cstr;
     f->file = fopen(f->name,"w");
-    cout << "End openFile(), f = " << f << "\n";
     return f;
 }
 
 void generateMath(aFile* f, Domain& dom) {
-    cout << "Start generateMath()\n";
     writeTheory(f->file);
     writeDomain(f->file, dom);
     fclose(f->file);
-    cout << "End generateMath()\n";
-    //fflush(f->file);
-    //fsync(fileno(f->file));
 }
 
 void cleanup(aFile* f) {
-    cout << "Start cleanup()\n";
     delete f->name;
     delete f;
-    cout << "End cleanup()\n";
 }
 
 // output Euclidean space header definitions to f
@@ -89,9 +79,7 @@ get the exit code to determine whether there was an error
 return true if there was no error otherwise return false
 */
 bool checkMath(aFile* f) {
-    cout << "Start checkMath()\n";
     int status = system((string("lean ") + string(f->name)).c_str());
-    cout << "End checkMath()\n";
     return (status == 0); 
 }
 

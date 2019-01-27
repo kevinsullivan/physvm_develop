@@ -1,6 +1,7 @@
 #ifndef ORACLE_H
 #define ORACLE_H
 
+#include <string>
 #include "Domain.h"
 #include "CodeCoordinate.h"
 
@@ -14,7 +15,7 @@ public:
 	// Effects: get space annotation from environment
 	// Postcondition: return value is space to associate with vector
 	//
-	Space& getSpaceForVector(const VectorASTNode& n);
+	Space& getSpaceForVector(string filename, unsigned int line, unsigned int col);
 
 	
 
