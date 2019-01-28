@@ -21,7 +21,6 @@ using namespace clang;
 using namespace clang::ast_matchers;
 using namespace clang::driver;
 using namespace clang::tooling;
-
 using namespace std;
 using namespace llvm;
 
@@ -99,16 +98,18 @@ public:
     //  Result.Nodes.getNodeAs<clang::Stmt>("VectorInstanceDecl")) {
     if(const auto *vec_inst_decl = 
       Result.Nodes.getNodeAs<clang::VarDecl>("VectorInstanceDecl")) {
-      
       // ACTION:
       //cout << "Found Vec instance declaration\n";
-      VectorASTNode& n = *new VectorASTNode(vec_inst_decl);
+      VectorASTNode& n = 
+        *new VectorASTNode(vec_inst_decl, Result);
       ASTContext *context = Result.Context;
       //SourceManager& sm = con->getSourceManager();  // not currently used
       FullSourceLoc FullLocation = 
         context->getFullLoc(vec_inst_decl->getBeginLoc());
       SourceManager& sm = context->getSourceManager();
       string where = FullLocation.printToString(sm);
+
+      // HERE'S THE REAL ACTION
       Space& s = oracle->getSpaceForVector(where); // fix: need filename
       Vector& abst_v = domain->addVector(s);
       interp->putVectorInterp(n, abst_v);
