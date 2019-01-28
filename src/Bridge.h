@@ -29,7 +29,7 @@ Abstract superclass for augmented expressions.
 class Expr {
 public:
     Expr(const Space& s) : space_(s) {}
-    Space& getSpace() {return space_;}
+    const Space& getSpace() {return space_;}
 private:
     const Space& space_;
 };
@@ -43,8 +43,9 @@ public:
 
 class VecVarExpr : Expr {
 public:
-    VecVarExpr(Space& s, const clang::Stmt& ast) : Expr(s, ast) {}
+    VecVarExpr(Space& s, const clang::Stmt& ast) : Expr(s),space_(s), ast_(ast) {}
 private:
+	const Space& space_;
     const clang::Stmt& ast_;
 };
 
