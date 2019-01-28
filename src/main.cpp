@@ -93,17 +93,13 @@ public:
 class VectorInstanceDeclHandler:public MatchFinder::MatchCallback{
 public:
   virtual void run(const MatchFinder::MatchResult &Result){
-    //cout << "Checking Vec instance declaration\n";
-    //if(const auto *vec_inst_decl = 
-    //  Result.Nodes.getNodeAs<clang::Stmt>("VectorInstanceDecl")) {
     if(const auto *vec_inst_decl = 
       Result.Nodes.getNodeAs<clang::VarDecl>("VectorInstanceDecl")) {
       // ACTION:
       //cout << "Found Vec instance declaration\n";
-      VectorASTNode& n = 
-        *new VectorASTNode(vec_inst_decl, Result);
+
+      // Get file location information
       ASTContext *context = Result.Context;
-      //SourceManager& sm = con->getSourceManager();  // not currently used
       FullSourceLoc FullLocation = 
         context->getFullLoc(vec_inst_decl->getBeginLoc());
       SourceManager& sm = context->getSourceManager();
@@ -111,7 +107,15 @@ public:
 
       // HERE'S THE REAL ACTION
       Space& s = oracle->getSpaceForVector(where); // fix: need filename
+
+      // Create code coordinate object to use in interp
+      VectorASTNode& n = 
+        *new VectorASTNode(vec_inst_decl, Result);
+
+      // Create corresponding abstract vector in domain 
       Vector& abst_v = domain->addVector(s);
+
+      // Connect them through the interpretation
       interp->putVectorInterp(n, abst_v);
     }
   }
@@ -127,16 +131,39 @@ public:
     const auto *exp = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VecAddCall");
     if(exp != NULL) {
       // ACTION
+
+      // Fields accessible from exp: CURRENTLY UNUSED
       const Expr* const implicitArg =	exp->getImplicitObjectArgument();
       const CXXMethodDecl* const methodDecl =	exp->getMethodDecl();
       const CXXRecordDecl* const recordDecl = exp-> getRecordDecl(); 
       unsigned numArgs= exp->getNumArgs();
       const Expr* const* args = exp->getArgs();
-      ASTContext *context = Result.Context;
+
+      // Get file location information of exp
+      ASTContext* context = Result.Context;
       FullSourceLoc FullLocation = 
         context->getFullLoc(exp->getBeginLoc());
       SourceManager& sm = context->getSourceManager();
       string where = FullLocation.printToString(sm);
+
+      // Create code coordinate object to use in interp
+      ExprASTNode& n = 
+        *new ExprASTNode(exp, Result);
+
+      // Get coord coordinates for arguments
+      // STUBBED OUT: 
+      // These are not the right sub-exprs!
+      // This is not the right space!
+      Space& s = domain->addSpace("STUB Space for Expr");
+      Vector& v1 = domain->addVector(s);
+      Vector& v2 = domain->addVector(s);
+
+      // Create the expression object
+      Expression& abst_e = domain->addExpression(v1,v2);
+
+      // Connect code to absrtaction through interpretation
+      interp->putExpressionInterp(n, abst_e);
+
       cout<<"Found operation application at "<< where <<endl;
     }
   }
