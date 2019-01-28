@@ -6,7 +6,7 @@
 
 // CLASS VECTORASTNODE MEMBER FUNCTIONS IMPLEMENTATION
 
-// VectorASTNode set methods implemetation
+// VectorASTNode set methods implementation
 void VectorASTNode::setASTNode(const clang::VarDecl* vecInstStmt, 
 		const MatchFinder::MatchResult &vecInstResult){
 
@@ -50,10 +50,14 @@ const string& loc VectorASTNode::getDeclLoc(){
 }
 
 
-const string& memLoc_ VectorASTNode::getMemLoc(){
-	return this->memLoc_;
-}
+// int64_t VectorASTNode::getMemLoc() const{
+// 	return memLoc;
+// }
 
+std::size_t VectorASTNodeHasher::operator() (const VectorASTNode& k) const
+{
+	return k.getMemLoc();
+}
 
 
 
