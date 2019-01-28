@@ -150,8 +150,8 @@ public:
       ExprASTNode& n = 
         *new ExprASTNode(exp, Result);
 
+      // STUBBED OUT: Create domain expression and add interp
       // Get coord coordinates for arguments
-      // STUBBED OUT: 
       // These are not the right sub-exprs!
       // This is not the right space!
       Space& s = domain->addSpace("STUB Space for Expr");
@@ -161,7 +161,7 @@ public:
       // Create the expression object
       Expression& abst_e = domain->addExpression(v1,v2);
 
-      // Connect code to absrtaction through interpretation
+      // Connect code to abstraction through interpretation
       interp->putExpressionInterp(n, abst_e);
 
       cout<<"Found operation application at "<< where <<endl;

@@ -126,7 +126,9 @@ $(BUILDDIR)/ASTMatcher:$(SRC_CLANG_DIR)/Checker.cpp
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
 		$(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@
 
-
+$(BUILDDIR)/ASTMatcher:$(SRC_CLANG_DIR)/Bridge.cpp
+	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
+		$(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@
 
 .PHONY: clean format
 
