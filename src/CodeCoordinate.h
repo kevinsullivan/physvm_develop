@@ -6,8 +6,7 @@
 
 class VectorASTNode {
 public:
-    VectorASTNode(const clang::VarDecl* vecInstStmt,
-                    int64_t memLoc_):ptr_vecInstStmt(vecInstStmt),memLoc(memLoc_) 
+    VectorASTNode(const clang::VarDecl* vecInstStmt):ptr_vecInstStmt(vecInstStmt)
     {
         this->memLoc = vecInstStmt->getID();
     }
