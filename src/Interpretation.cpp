@@ -8,8 +8,8 @@ void Interpretation::putVectorInterp(const VectorASTNode& n, Vector& av) {
     interpVector.insert(std::make_pair(n,&av));
 
     // TEST! DELETE THIS
-    cout << "av inserted = " << &av << "\n";
-    cout << "av lookuped = " << getVectorInterp(n) << "\n";
+    // cout << "av inserted = " << &av << "\n";
+    // cout << "av lookuped = " << getVectorInterp(n) << "\n";
 }
 
 Vector* Interpretation::getVectorInterp(const VectorASTNode& n) {
@@ -17,9 +17,9 @@ Vector* Interpretation::getVectorInterp(const VectorASTNode& n) {
 }
 
 void Interpretation::putExpressionInterp(const ExprASTNode& n, Expression& e) {
-    //interpExpression.emplace(n, e);
+    interpExpression.emplace(n, &e);
 }
 
 Expression* Interpretation::getExpressionInterp(const ExprASTNode& n) {
-   //return interpExpression[n]; 
+   return interpExpression[n]; 
 }
