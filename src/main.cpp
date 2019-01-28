@@ -102,7 +102,7 @@ public:
       
       // ACTION:
       //cout << "Found Vec instance declaration\n";
-      VectorASTNode& n = *new VectorASTNode(vec_inst_decl);
+      VectorASTNode& n = *new VectorASTNode(vec_inst_decl,0);
       ASTContext *context = Result.Context;
       //SourceManager& sm = con->getSourceManager();  // not currently used
       FullSourceLoc FullLocation = 
