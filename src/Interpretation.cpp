@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void Interpretation::putVectorInterp(const VectorASTNode& n, Vector& av) {
+void Interpretation::putVectorInterp(const VectorASTNode& n, VecVarExpr& av) {
     interpVector.insert(std::make_pair(n,&av));
 
     // TEST! DELETE THIS
@@ -12,14 +12,14 @@ void Interpretation::putVectorInterp(const VectorASTNode& n, Vector& av) {
     // cout << "av lookuped = " << getVectorInterp(n) << "\n";
 }
 
-Vector* Interpretation::getVectorInterp(const VectorASTNode& n) {
+VecVarExpr* Interpretation::getVectorInterp(const VectorASTNode& n) {
     return interpVector[n];
 }
 
-void Interpretation::putExpressionInterp(const ExprASTNode& n, Expression& e) {
+void Interpretation::putExpressionInterp(const ExprASTNode& n, VecAddExpr& e) {
     interpExpression.emplace(n, &e);
 }
 
-Expression* Interpretation::getExpressionInterp(const ExprASTNode& n) {
+VecAddExpr* Interpretation::getExpressionInterp(const ExprASTNode& n) {
    return interpExpression[n]; 
 }

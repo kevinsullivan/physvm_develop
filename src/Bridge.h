@@ -29,8 +29,8 @@ Abstract superclass for augmented expressions.
 class Expr {
 public:
     Expr(const Space& s) : space_(s) {}
-    const Space& getSpace() {return space_;}
-private:
+    const Space& getSpace();
+protected:
     const Space& space_;
 };
 
@@ -41,25 +41,34 @@ public:
 };
 */
 
-class VecVarExpr : Expr {
+class VecVarExpr : public Expr {
 public:
-    VecVarExpr(Space& s, const clang::Stmt& ast) : Expr(s),space_(s), ast_(ast) {}
+    VecVarExpr(Space& s, const clang::Stmt* ast) : Expr(s),space_(s), ast_(ast) {}
+    const Space& getVecVarSpace();
+
 private:
 	const Space& space_;
-    const clang::Stmt& ast_;
+    const clang::Stmt* ast_;
 };
 
-class VecAddExpr : Expr {
+class VecAddExpr : public Expr {
 public:
    VecAddExpr(
         Space& s, 
-        const clang::Stmt& ast,
+        const clang::Stmt* ast,
         const Expr& arg_left,
         const Expr& arg_right
         ) : Expr(s), ast_(ast), arg_left_(arg_left), arg_right_(arg_right) {}
     VecAddExpr();
+
+    // get methods for projecting two arguments
+	const Expr& getVecAddExprArgL();
+	const Expr& getVecAddExprArgR();
+
+	// get the default space for this VecAddExpr using the space of the arg_left_
+	const Space& getVecAddExprDefaultSpace();
 private:
-    const clang::Stmt& ast_;
+    const clang::Stmt* ast_;
     const Expr& arg_left_;
     const Expr& arg_right_;
 };
@@ -79,13 +88,13 @@ public:
 	// Add new vector, v, in space s, to domain
 	// Precondition: s is already in spaces
 	// Postcondition: vectors' = vectors + v
-	VecVarExpr& addVecVarExpr(Space& s, const clang::Stmt& ast);
+	VecVarExpr& addVecVarExpr(Space& s, const clang::Stmt* ast);
 
 	// Add new plus expression, e, to domain
 	// Precondition: v1 and v2 already in vectors
 	// Postcondition: expressions' = expressions + e
 	//	where e has v1 and v2 as its arguments
-	VecAddExpr& addVecAddExpr(VecVarExpr& v1, VecVarExpr& v2);
+	VecAddExpr& addVecAddExpr(Space& s,const clang::Stmt* ast,Expr& v1, Expr& v2);
 	
     // TODO: Move this into separate type-checker "Client"
     // Check domain for consistency
@@ -97,9 +106,14 @@ public:
 	Methods by which clients can learn what's in this domain.
 	*/
 
+	vector<Space>& getAllSpaces();
+
 private:
 	vector<Space> spaces;
-	vector<Expr> expressions;
+
+	vector<VecVarExpr> vectors;
+	// now the expression vector has pointers to both Exprs, namely VecVarExpr and VecAddExpr -HL
+	vector<VecAddExpr> expressions;
 };
 
 } // end namespace

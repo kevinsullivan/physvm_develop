@@ -2,14 +2,15 @@
 #define ORACLE_H
 
 #include <string>
-#include "Domain.h"
 #include "CodeCoordinate.h"
+#include "Bridge.h"
 
+using namespace bridge;
 
 class Oracle
 {
 public:
-	Oracle(Domain& d) : dom_(d) {};
+	Oracle(Bridge& d) : dom_(d) {};
 
 	// Precondition: true
 	// Effects: get space annotation from environment
@@ -21,7 +22,7 @@ public:
 
 private:
 
-	Domain& dom_;
+	Bridge& dom_;
 };
 
 #endif

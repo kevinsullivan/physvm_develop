@@ -7,26 +7,26 @@
 // CLASS VECTORASTNODE MEMBER FUNCTIONS IMPLEMENTATION
 
 // VectorASTNode set methods implementation
-void VectorASTNode::setASTNode(const clang::VarDecl* vecInstStmt, 
+void VectorASTNode::setASTNode(const clang::CXXConstructExpr* vecInstStmt, 
 		const MatchFinder::MatchResult &vecInstResult){
 
 	this->ptr_vecInstStmt = vecInstStmt;
 	this->ref_result = vecInstResult;
 }
 
-void VectorASTNode::setASTNodeName(const clang::VarDecl* _vecInstStmt){
+void VectorASTNode::setASTNodeName(const clang::CXXConstructExpr* _vecInstStmt){
 
 	this->name_ = vecInstStmt->getNameAsString();
 
 }
-void VectorASTNode::setASTNodeFilePath(const clang::VarDecl* _vecInstStmt, 
+void VectorASTNode::setASTNodeFilePath(const clang::CXXConstructExpr* _vecInstStmt, 
 		const MatchFinder::MatchResult& _ref_result){
 
 	this->filepath_ = _vecInstStmt->getPointOfInstantiation().pringToString(*(_ref_result));
 
 }
 
-void VectorASTNode::setASTNodeMemLoc(const clang::VarDecl* _vecInstStmt, const MatchFinder::MatchResult& _ref_result)
+void VectorASTNode::setASTNodeMemLoc(const clang::CXXConstructExpr* _vecInstStmt, const MatchFinder::MatchResult& _ref_result)
 {
 	return "To be implemented!\n";
 }

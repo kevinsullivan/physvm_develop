@@ -1,14 +1,15 @@
 #ifndef CHECKER_H
 #define CHECKER_H
 
-#include "Domain.h"
+#include "Bridge.h"
+using namespace bridge;
 
 class Checker {
 public:
-    Checker(Domain& d) : dom_(d) {}
+    Checker(Bridge& d) : dom_(d) {}
     bool Check();
 private:
-    Domain& dom_;
+    Bridge& dom_;
 };
 
 #endif
