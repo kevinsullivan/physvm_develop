@@ -1,1 +1,0 @@
-This directory will contain Lean specifications of abstract domains, for use in constructing formalized interpretations of specific C++ programs being analyzed.
