@@ -14,7 +14,7 @@ struct aFile {
 };
 
 aFile* openFile();
-void generateMath(aFile* f, Domain& dom);
+void generateMath(aFile* f, Bridge& dom);
 bool checkMath(aFile*);
 void cleanup(aFile*);
 
@@ -32,7 +32,7 @@ bool Checker::Check() {
  * **********************/
 
 void writeTheory(FILE*);
-void writeDomain(FILE*, Domain& d);
+void writeDomain(FILE*, Bridge& d);
 
 aFile* openFile() {
     aFile* f = new aFile;
@@ -44,7 +44,7 @@ aFile* openFile() {
     return f;
 }
 
-void generateMath(aFile* f, Domain& dom) {
+void generateMath(aFile* f, Bridge& dom) {
     writeTheory(f->file);
     writeDomain(f->file, dom);
     fclose(f->file);
@@ -67,7 +67,7 @@ void writeTheory(FILE* f)
  iterate over expressions outputting Lean "def" constructs
       def expr123 : Vector <space1> := v1 + v2 
 */
-void writeDomain(FILE* f, Domain& d) {
+void writeDomain(FILE* f, Bridge& d) {
 
     // STUB -- write one0line Lean with type error
     fputs ("def s : string := 1\n", f);
@@ -84,7 +84,7 @@ bool checkMath(aFile* f) {
 }
 
 /*
-bool Domain::Reuse(Expression& expr) {
+bool Bridge::Reuse(Expression& expr) {
     if(expr.getVecParam1().getVecSpace().getName() == expr.getVecParam2().getVecSpace().getName()){
         cout<<"This expression is consistent!"<<endl;
     }

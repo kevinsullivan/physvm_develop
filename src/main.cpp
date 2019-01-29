@@ -2,6 +2,7 @@
 #include <iostream>
 #include "clang/AST/AST.h"
 #include "clang/AST/ASTConsumer.h"
+#include "clang/AST/Expr.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/Frontend/CompilerInstance.h"
@@ -13,9 +14,9 @@
 #include "llvm/Support/CommandLine.h"
 
 #include "CodeCoordinate.h"
-#include "Domain.h"
 #include "Interpretation.h"
 #include "Oracle.h"
+#include "Bridge.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -23,6 +24,7 @@ using namespace clang::driver;
 using namespace clang::tooling;
 using namespace std;
 using namespace llvm;
+using namespace bridge;
 
 /**************************************************
 Fundamental data structure constructed by this tool
@@ -35,7 +37,8 @@ in main() and updated during the parse tree traversal, as AST
 node handlers are triggered. 
 */
 Oracle         *oracle;
-Domain         *domain;
+// Domain         *domain;
+Bridge         *bridge_domain;
 Interpretation *interp;
 
 
@@ -94,7 +97,7 @@ class VectorInstanceDeclHandler:public MatchFinder::MatchCallback{
 public:
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const auto *vec_inst_decl = 
-      Result.Nodes.getNodeAs<clang::VarDecl>("VectorInstanceDecl")) {
+      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorInstanceDecl")) {
       // ACTION:
       //cout << "Found Vec instance declaration\n";
 
@@ -112,8 +115,9 @@ public:
       VectorASTNode& n = 
         *new VectorASTNode(vec_inst_decl, Result);
 
-      // Create corresponding abstract vector in domain 
-      Vector& abst_v = domain->addVector(s);
+      // Create corresponding abstract vector in bridge_domain 
+      const clang::Stmt* vecInstStmt = static_cast<const clang::Stmt*>(vec_inst_decl);
+      VecVarExpr& abst_v = bridge_domain->addVecVarExpr(s,vecInstStmt);
 
       // Connect them through the interpretation
       interp->putVectorInterp(n, abst_v);
@@ -130,14 +134,48 @@ public:
     //cout << "VectorAddCallHandler called -- checking node\n";
     const auto *exp = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VecAddCall");
     if(exp != NULL) {
+
       // ACTION
 
       // Fields accessible from exp: CURRENTLY UNUSED
-      const Expr* const implicitArg =	exp->getImplicitObjectArgument();
-      const CXXMethodDecl* const methodDecl =	exp->getMethodDecl();
-      const CXXRecordDecl* const recordDecl = exp-> getRecordDecl(); 
-      unsigned numArgs= exp->getNumArgs();
-      const Expr* const* args = exp->getArgs();
+
+
+
+      // problematic zone
+      const clang::Stmt* exptopNode = static_cast<const clang::Stmt*>(exp);
+
+      const clang::Expr* ptr_argL = exp->getCallee()->IgnoreCasts();
+
+      // if(ptr_argL != NULL)
+      // {
+        // dump out the AST for it (debugging purpose)
+        ptr_argL->dump(*Result.SourceManager);
+
+        // cast the type
+        const clang::Stmt* argL = static_cast<const clang::Stmt*>(ptr_argL);
+
+      // }
+
+      const clang::Expr * ptr_argR = exp->getArg(0);
+
+      // if(ptr_argR != NULL)
+      // {
+        // dump out the AST for it (debugging purpose)
+        ptr_argR->dump(*Result.SourceManager);
+
+        // cast the type
+        const clang::Stmt* argR = static_cast<const clang::Stmt*>(ptr_argR);
+      // }
+      // end of problematic zone
+
+
+
+
+      // const Expr* const implicitArg = exp->getImplicitObjectArgument();
+      // const CXXMethodDecl* const methodDecl = exp->getMethodDecl();
+      // const CXXRecordDecl* const recordDecl = exp-> getRecordDecl(); 
+      // unsigned numArgs= exp->getNumArgs();
+      // const Expr* const* args = exp->getArgs();
 
       // Get file location information of exp
       ASTContext* context = Result.Context;
@@ -150,16 +188,17 @@ public:
       ExprASTNode& n = 
         *new ExprASTNode(exp, Result);
 
-      // STUBBED OUT: Create domain expression and add interp
+      // STUBBED OUT: Create bridge_domain expression and add interp
       // Get coord coordinates for arguments
       // These are not the right sub-exprs!
       // This is not the right space!
-      Space& s = domain->addSpace("STUB Space for Expr");
-      Vector& v1 = domain->addVector(s);
-      Vector& v2 = domain->addVector(s);
+      
+      Space& s = bridge_domain->addSpace("STUB Space for Expr");
+      VecVarExpr& v1 = bridge_domain->addVecVarExpr(s,argL);
+      VecVarExpr& v2 = bridge_domain->addVecVarExpr(s,argR);
 
       // Create the expression object
-      Expression& abst_e = domain->addExpression(v1,v2);
+      VecAddExpr& abst_e = bridge_domain->addVecAddExpr(s,exptopNode,v1,v2);
 
       // Connect code to abstraction through interpretation
       interp->putExpressionInterp(n, abst_e);
@@ -192,14 +231,14 @@ public:
 
     // Vector instance declaration
     DeclarationMatcher match_Vector_instance_decl = 
-     varDecl(hasInitializer(cxxConstructExpr(hasType(cxxRecordDecl(hasName("Vec"))))))
-        .bind("VectorInstanceDecl");
+     varDecl(hasInitializer(cxxConstructExpr(hasType(cxxRecordDecl(hasName("Vec")))).bind("VectorInstanceDecl"))
+        );
 
     // Vector::add call
     StatementMatcher match_Vector_add_call =
       cxxMemberCallExpr(hasDeclaration(namedDecl(hasName("vec_add"))))
         .bind("VecAddCall");
-    
+
     /************
     Bind Handlers
     ************/
@@ -236,7 +275,7 @@ class MyFrontendAction : public ASTFrontendAction {
 public:
   MyFrontendAction() {}
   void EndSourceFileAction() override {
-    bool consistent = domain->isConsistent();
+    bool consistent = bridge_domain->isConsistent();
     cout << (consistent ? "Good\n" : "Bad\n");
   }
 
@@ -255,11 +294,11 @@ int main(int argc, const char **argv) {
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  domain = new Domain();
-    domain->addSpace("Space1");
-    domain->addSpace("Space2");
+  bridge_domain = new Bridge();
+    bridge_domain->addSpace("Space1");
+    bridge_domain->addSpace("Space2");
   interp = new Interpretation();
-  oracle = new Oracle(*domain);
+  oracle = new Oracle(*bridge_domain);
 
   return Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 }

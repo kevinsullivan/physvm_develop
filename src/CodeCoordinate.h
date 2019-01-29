@@ -4,30 +4,32 @@
 #include <cstddef>  
 #include "clang/AST/AST.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
+#include "Bridge.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
+using namespace bridge;
 
 class VectorASTNode {
 public:
-    VectorASTNode(const clang::VarDecl* vecInstStmt, 
+    VectorASTNode(const clang::CXXConstructExpr* vecInstStmt, 
                   const MatchFinder::MatchResult &Result) 
                   : ptr_vecInstStmt(vecInstStmt), 
                   Result_(Result) {
                       id_ = ((clang::Stmt*)vecInstStmt)->getID(*(Result_.Context));
                   }
-    void setASTNode(const clang::VarDecl* vecInstStmt);
-    const clang::VarDecl* getASTNode() const { return ptr_vecInstStmt; }
+    void setASTNode(const clang::CXXConstructExpr* vecInstStmt);
+    const clang::CXXConstructExpr* getASTNode() const { return ptr_vecInstStmt; }
     
 /* Merge away
 
-    VectorASTNode(const clang::VarDecl* vecInstStmt):ptr_vecInstStmt(vecInstStmt)
+    VectorASTNode(const clang::CXXConstructExpr* vecInstStmt):ptr_vecInstStmt(vecInstStmt)
     {
         this->memLoc = vecInstStmt->getID();
     }
 
-    void setASTNode(const clang::VarDecl* vecInstStmt);
-    clang::VarDecl* getASTNode();
+    void setASTNode(const clang::CXXConstructExpr* vecInstStmt);
+    clang::CXXConstructExpr* getASTNode();
 
 
     int64_t getMemLoc() const;
@@ -51,7 +53,7 @@ public:
     int64_t memLoc;
 */
 private: 
-    const clang::VarDecl* ptr_vecInstStmt;
+    const clang::CXXConstructExpr* ptr_vecInstStmt;
     const MatchFinder::MatchResult &Result_;
     int64_t id_;
 };
@@ -110,7 +112,7 @@ struct ExprASTNodeHasher
     {
         std::size_t hash = 
 
-            //(const_cast<clang::VarDecl*>
+            //(const_cast<clang::CXXConstructExpr*>
             //    (k.getASTNode()))
             //        ->getID();
 

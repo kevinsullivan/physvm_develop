@@ -2,13 +2,14 @@
 // implement the member functions in oracle header file
 
 #include "Oracle.h"
-#include "Domain.h"
 #include "CodeCoordinate.h"
+#include "Bridge.h"
 
 #include <string>
 #include <iostream>
 
 using namespace std;
+using namespace bridge;
 
 void printSpaces(vector<Space>& spaces);
 int selectSpace(vector<Space>& spaces, string);
