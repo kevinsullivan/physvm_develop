@@ -140,11 +140,11 @@ public:
       // Fields accessible from exp: CURRENTLY UNUSED
 
 
-
       // problematic zone
       const clang::Stmt* exptopNode = static_cast<const clang::Stmt*>(exp);
 
-      const clang::Expr* ptr_argL = exp->getCallee()->IgnoreCasts();
+      const clang::MemberExpr* temp_ptr_argL = static_cast<const clang::MemberExpr *>(exp->getCallee());
+      const clang::Expr* ptr_argL = temp_ptr_argL->getBase();
 
       // if(ptr_argL != NULL)
       // {
