@@ -25,7 +25,7 @@ Hannah's Todo
   - put "apt-get install -y gdb" in docker file
   - have docker file add /usr/lib/llvm-3.9/bin/ to PATH (for clang-query)
   - to docker file add code 'ln -s /llvm/build/lib ./lib' in ./peirce
-
+* add "apt-get update" to docker setup commands
 DONE:
 
 ~~*Do the same stuff for expressions that we just did for vector instances.~~

@@ -1,0 +1,107 @@
+** v1 **
+
+Enter VectorInstanceDeclHandler:
+CXXConstructExpr is
+CXXConstructExpr 0x556687e0cf88 'class Vec' 'void (float, float, float)'
+|-ImplicitCastExpr 0x556687e0cf40 'float' <FloatingCast>
+| `-FloatingLiteral 0x556687e0cd08 'double' 1.000000e+00
+|-ImplicitCastExpr 0x556687e0cf58 'float' <FloatingCast>
+| `-FloatingLiteral 0x556687e0cd28 'double' 1.000000e+00
+`-ImplicitCastExpr 0x556687e0cf70 'float' <FloatingCast>
+  `-FloatingLiteral 0x556687e0cd48 'double' 1.000000e+00
+
+Available spaces:	
+0. Space1
+1. Space2
+Space for vector at /peirce/src/../inputs/temp.cpp:39:7? Leave VectorInstanceDeclHandler
+
+** v2 **
+
+Enter VectorInstanceDeclHandler:
+CXXConstructExpr is
+CXXConstructExpr 0x556687e0d128 'class Vec' 'void (float, float, float)'
+|-ImplicitCastExpr 0x556687e0d0e0 'float' <FloatingCast>
+| `-FloatingLiteral 0x556687e0d050 'double' 2.000000e+00
+|-ImplicitCastExpr 0x556687e0d0f8 'float' <FloatingCast>
+| `-FloatingLiteral 0x556687e0d070 'double' 2.000000e+00
+`-ImplicitCastExpr 0x556687e0d110 'float' <FloatingCast>
+  `-FloatingLiteral 0x556687e0d090 'double' 2.000000e+00
+
+Available spaces:	
+0. Space1
+1. Space2
+Space for vector at /peirce/src/../inputs/temp.cpp:40:7? Leave VectorInstanceDeclHandler
+
+
+** v3 **
+
+Enter VectorInstanceDeclHandler:
+CXXConstructExpr is
+CXXConstructExpr 0x556687e0df60 'class Vec' 'void (const class Vec &) noexcept'
+`-ImplicitCastExpr 0x556687e0dcf8 'const class Vec' lvalue <NoOp>
+  `-CXXMemberCallExpr 0x556687e0dcd0 'class Vec' lvalue
+    |-MemberExpr 0x556687e0d210 '<bound member function type>' .vec_add 0x556687ddda18
+    | `-DeclRefExpr 0x556687e0d1f0 'class Vec' lvalue Var 0x556687e0cca8 'v1' 'class Vec'
+    `-DeclRefExpr 0x556687e0d240 'class Vec' lvalue Var 0x556687e0cca8 'v1' 'class Vec'
+
+Available spaces:	
+0. Space1
+1. Space2
+Space for vector at /peirce/src/../inputs/temp.cpp:42:12? Leave VectorInstanceDeclHandler
+
+
+** v1.add(v1) **
+
+Enter VectorAddCallHandler
+CXXMemberCallExpr exp is:
+CXXMemberCallExpr 0x556687e0dcd0 'class Vec' lvalue
+|-MemberExpr 0x556687e0d210 '<bound member function type>' .vec_add 0x556687ddda18
+| `-DeclRefExpr 0x556687e0d1f0 'class Vec' lvalue Var 0x556687e0cca8 'v1' 'class Vec'
+`-DeclRefExpr 0x556687e0d240 'class Vec' lvalue Var 0x556687e0cca8 'v1' 'class Vec'
+
+Implicit Argument is:
+DeclRefExpr 0x556687e0d1f0 'class Vec' lvalue Var 0x556687e0cca8 'v1' 'class Vec'
+
+First argument is:
+DeclRefExpr 0x556687e0d240 'class Vec' lvalue Var 0x556687e0cca8 'v1' 'class Vec'
+
+Leaving VectorAddCallHandler
+
+
+Found operation application at /peirce/src/../inputs/temp.cpp:42:12
+
+
+** v4 **
+
+Enter VectorInstanceDeclHandler:
+CXXConstructExpr is
+CXXConstructExpr 0x556687e0e0c8 'class Vec' 'void (const class Vec &) noexcept'
+`-ImplicitCastExpr 0x556687e0e0b0 'const class Vec' lvalue <NoOp>
+  `-CXXMemberCallExpr 0x556687e0e088 'class Vec' lvalue
+    |-MemberExpr 0x556687e0e038 '<bound member function type>' .vec_add 0x556687ddda18
+    | `-DeclRefExpr 0x556687e0e018 'class Vec' lvalue Var 0x556687e0cca8 'v1' 'class Vec'
+    `-DeclRefExpr 0x556687e0e068 'class Vec' lvalue Var 0x556687e0cff0 'v2' 'class Vec'
+
+Available spaces:	
+0. Space1
+1. Space2
+Space for vector at /peirce/src/../inputs/temp.cpp:43:12? Leave VectorInstanceDeclHandler
+
+
+** v1.add(v2) **
+
+Enter VectorAddCallHandler
+CXXMemberCallExpr exp is:
+CXXMemberCallExpr 0x556687e0e088 'class Vec' lvalue
+|-MemberExpr 0x556687e0e038 '<bound member function type>' .vec_add 0x556687ddda18
+| `-DeclRefExpr 0x556687e0e018 'class Vec' lvalue Var 0x556687e0cca8 'v1' 'class Vec'
+`-DeclRefExpr 0x556687e0e068 'class Vec' lvalue Var 0x556687e0cff0 'v2' 'class Vec'
+
+Implicit Argument is:
+DeclRefExpr 0x556687e0e018 'class Vec' lvalue Var 0x556687e0cca8 'v1' 'class Vec'
+
+First argument is:
+DeclRefExpr 0x556687e0e068 'class Vec' lvalue Var 0x556687e0cff0 'v2' 'class Vec'
+
+Leaving VectorAddCallHandler
+Found operation application at /peirce/src/../inputs/temp.cpp:43:12
