@@ -1,0 +1,33 @@
+Enter VectorAddCallHandler
+CXXMemberCallExpr exp is:
+CXXMemberCallExpr 0x55be3777fcd0 'class Vec' lvalue
+|-MemberExpr 0x55be3777f210 '<bound member function type>' .vec_add 0x55be3774fa18
+| `-DeclRefExpr 0x55be3777f1f0 'class Vec' lvalue Var 0x55be3777eca8 'v1' 'class Vec'
+`-DeclRefExpr 0x55be3777f240 'class Vec' lvalue Var 0x55be3777eca8 'v1' 'class Vec'
+
+Implicit Argument is:
+DeclRefExpr 0x55be3777f1f0 'class Vec' lvalue Var 0x55be3777eca8 'v1' 'class Vec'
+
+First argument is:
+DeclRefExpr 0x55be3777f240 'class Vec' lvalue Var 0x55be3777eca8 'v1' 'class Vec'
+
+Leaving VectorAddCallHandler
+Found operation application at /peirce/src/../inputs/temp.cpp:42:12
+
+Enter VectorAddCallHandler
+CXXMemberCallExpr exp is:
+CXXMemberCallExpr 0x55be37780088 'class Vec' lvalue
+|-MemberExpr 0x55be37780038 '<bound member function type>' .vec_add 0x55be3774fa18
+| `-DeclRefExpr 0x55be37780018 'class Vec' lvalue Var 0x55be3777eca8 'v1' 'class Vec'
+`-DeclRefExpr 0x55be37780068 'class Vec' lvalue Var 0x55be3777eff0 'v2' 'class Vec'
+
+Implicit Argument is:
+DeclRefExpr 0x55be37780018 'class Vec' lvalue Var 0x55be3777eca8 'v1' 'class Vec'
+
+First argument is:
+DeclRefExpr 0x55be37780068 'class Vec' lvalue Var 0x55be3777eff0 'v2' 'class Vec'
+
+Leaving VectorAddCallHandler
+Found operation application at /peirce/src/../inputs/temp.cpp:43:12
+sh: 1: lean: not found
+Bad
