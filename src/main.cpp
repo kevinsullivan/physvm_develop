@@ -97,11 +97,11 @@ class VectorInstanceDeclHandler:public MatchFinder::MatchCallback{
 public:
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const auto *vec_inst_decl = 
-      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorInstanceDecl")) {
+      Result.Nodes.getNodeAs<clang::VarDecl>("VectorInstanceDecl")) {
       // ACTION:
       cerr << "\n\nEnter VectorInstanceDeclHandler:\n";
 
-      cerr << "CXXConstructExpr is\n";
+      cerr << "VarDecl is\n";
       vec_inst_decl->dump();
       cerr << "\n";
 
@@ -117,15 +117,15 @@ public:
       Space& s = oracle->getSpaceForVector(where); // fix: need filename
 
       // Create code coordinate object to use in interp
-      VectorASTNode& n = 
-        *new VectorASTNode(vec_inst_decl, Result);
+      //VectorASTNode& n = 
+        //*new VectorASTNode(vec_inst_decl, Result);
 
       // Create corresponding abstract vector in bridge_domain 
-      const clang::Stmt* vecInstStmt = static_cast<const clang::Stmt*>(vec_inst_decl);
-      VecVarExpr& abst_v = bridge_domain->addVecVarExpr(s,vecInstStmt);
+      //const clang::Stmt* vecInstStmt = static_cast<const clang::Stmt*>(vec_inst_decl);
+      //VecVarExpr& abst_v = bridge_domain->addVecVarExpr(s,vecInstStmt);
 
       // Connect them through the interpretation
-      interp->putVectorInterp(n, abst_v);
+      //interp->putVectorInterp(n, abst_v);
       cerr << "Leave VectorInstanceDeclHandler\n";
 
     }
@@ -260,8 +260,7 @@ public:
 
     // Vector instance declaration
     DeclarationMatcher match_Vector_instance_decl = 
-     varDecl(hasInitializer(cxxConstructExpr(hasType(cxxRecordDecl(hasName("Vec")))).bind("VectorInstanceDecl"))
-        );
+     varDecl(hasInitializer(cxxConstructExpr(hasType(cxxRecordDecl(hasName("Vec")))))).bind("VectorInstanceDecl");
 
     // Vector::add call
     StatementMatcher match_Vector_add_call =
