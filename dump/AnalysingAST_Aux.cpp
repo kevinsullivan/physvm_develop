@@ -57,7 +57,36 @@ declStmt(hasDescendant(
             hasDescendant(declRefExpr().bind("VecAddParam2")))))).bind("AssignedValue")))
 
 
+Found the following declstmt:-----
+DeclStmt 0x55e24da0f728
+`-VarDecl 0x55e24da0f550  v5 'class Vec' cinit
+  `-CXXConstructExpr 0x55e24da0f6f8 'class Vec' 'void (const class Vec &) noexcept'
+    `-ImplicitCastExpr 0x55e24da0f6e0 'const class Vec' lvalue <NoOp>
+      `-CXXMemberCallExpr 0x55e24da0f6b8 'class Vec' lvalue
+        |-MemberExpr 0x55e24da0f668 '<bound member function type>' .vec_add 0x55e24d9ded78
+        | `-ParenExpr 0x55e24da0f648 'class Vec' lvalue
+        |   `-CXXMemberCallExpr 0x55e24da0f620 'class Vec' lvalue
+        |     |-MemberExpr 0x55e24da0f5d0 '<bound member function type>' .vec_add 0x55e24d9ded78
+        |     | `-DeclRefExpr 0x55e24da0f5b0 'class Vec' lvalue Var 0x55e24da0e008 'v1' 'class Vec'
+        |     `-DeclRefExpr 0x55e24da0f600 'class Vec' lvalue Var 0x55e24da0e008 'v1' 'class Vec'
+        `-DeclRefExpr 0x55e24da0f698 'class Vec' lvalue Var 0x55e24da0e008 'v1' 'class Vec'
 
+Found the following declstmt:-----
+DeclStmt 0x55e24da0f9a0
+`-VarDecl 0x55e24da0f750  v6 'class Vec' cinit
+  `-CXXConstructExpr 0x55e24da0f970 'class Vec' 'void (const class Vec &) noexcept'
+    `-ImplicitCastExpr 0x55e24da0f958 'const class Vec' lvalue <NoOp>
+      `-CXXMemberCallExpr 0x55e24da0f930 'class Vec' lvalue
+        |-MemberExpr 0x55e24da0f868 '<bound member function type>' .vec_add 0x55e24d9ded78
+        | `-ParenExpr 0x55e24da0f848 'class Vec' lvalue
+        |   `-CXXMemberCallExpr 0x55e24da0f820 'class Vec' lvalue
+        |     |-MemberExpr 0x55e24da0f7d0 '<bound member function type>' .vec_add 0x55e24d9ded78
+        |     | `-DeclRefExpr 0x55e24da0f7b0 'class Vec' lvalue Var 0x55e24da0e008 'v1' 'class Vec'
+        |     `-DeclRefExpr 0x55e24da0f800 'class Vec' lvalue Var 0x55e24da0e008 'v1' 'class Vec'
+        `-CXXMemberCallExpr 0x55e24da0f908 'class Vec' lvalue
+          |-MemberExpr 0x55e24da0f8b8 '<bound member function type>' .vec_add 0x55e24d9ded78
+          | `-DeclRefExpr 0x55e24da0f898 'class Vec' lvalue Var 0x55e24da0e008 'v1' 'class Vec'
+          `-DeclRefExpr 0x55e24da0f8e8 'class Vec' lvalue Var 0x55e24da0e350 'v2' 'class Vec'
 
 
 
