@@ -69,7 +69,7 @@ public:
       Result.Nodes.getNodeAs<clang::CXXRecordDecl>("VectorTypeDecl");
     if(typeVector != NULL) {
       // NO ACTION
-      //cout << "Found Vec class declaration\n";
+      //cerr << "Found Vec class declaration\n";
     }
   }
 };
@@ -85,7 +85,7 @@ public:
       Result.Nodes.getNodeAs<clang::CXXMethodDecl>("VectorAddMethodDecl");
     if(vecAdd != NULL) {
       // NO ACTION
-      //cout << "Found Vec::add method declaration\n";
+      //cerr << "Found Vec::add method declaration\n";
     }
   }
 };
@@ -99,7 +99,12 @@ public:
     if(const auto *vec_inst_decl = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorInstanceDecl")) {
       // ACTION:
-      //cout << "Found Vec instance declaration\n";
+      cerr << "\n\nEnter VectorInstanceDeclHandler:\n";
+
+      cerr << "CXXConstructExpr is\n";
+      vec_inst_decl->dump();
+      cerr << "\n";
+
 
       // Get file location information
       ASTContext *context = Result.Context;
@@ -121,6 +126,8 @@ public:
 
       // Connect them through the interpretation
       interp->putVectorInterp(n, abst_v);
+      cerr << "Leave VectorInstanceDeclHandler\n";
+
     }
   }
 };
@@ -131,20 +138,41 @@ public:
 class VectorAddCallHandler: public MatchFinder::MatchCallback{
 public: 
   virtual void run(const MatchFinder::MatchResult &Result){
-    //cout << "VectorAddCallHandler called -- checking node\n";
+    //cerr << "VectorAddCallHandler called -- checking node\n";
+
+
+    // exp is pointer to matched CXXMemberCallExpr
+
     const auto *exp = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VecAddCall");
     if(exp != NULL) {
 
       // ACTION
+      cerr << "\nEnter VectorAddCallHandler\n"; 
+      
+      cerr << "CXXMemberCallExpr exp is:\n"; exp->dump(); cerr << "\n";
 
-      // Fields accessible from exp: CURRENTLY UNUSED
+      //const clang::MemberExpr *impArg = exp->getImplicitObjectArgument();
+      const clang::Expr *impArg = exp->getImplicitObjectArgument();
+      cerr << "Implicit Argument is:\n"; impArg->dump(); cerr << "\n";
+
+      const clang::Expr* firstArg = exp->getArg(0);
+      cerr << "First argument is:\n"; firstArg->dump(); cerr << "\n";
+
+//      const clang::ValueDecl* firstArgVal = firstArg->getDecl();
+  //    cerr << "First arg's value is:\n"; firstArgVal->dump(); cerr << "\n";
 
 
+      cerr << "Leaving VectorAddCallHandler\n"; 
+ 
+      
+
+/*
       // problematic zone
       const clang::Stmt* exptopNode = static_cast<const clang::Stmt*>(exp);
 
       const clang::MemberExpr* temp_ptr_argL = static_cast<const clang::MemberExpr *>(exp->getCallee());
       const clang::Expr* ptr_argL = temp_ptr_argL->getBase();
+
 
       // if(ptr_argL != NULL)
       // {
@@ -167,8 +195,7 @@ public:
         const clang::Stmt* argR = static_cast<const clang::Stmt*>(ptr_argR);
       // }
       // end of problematic zone
-
-
+ */     
 
 
       // const Expr* const implicitArg = exp->getImplicitObjectArgument();
@@ -193,6 +220,7 @@ public:
       // These are not the right sub-exprs!
       // This is not the right space!
       
+      /*
       Space& s = bridge_domain->addSpace("STUB Space for Expr");
       VecVarExpr& v1 = bridge_domain->addVecVarExpr(s,argL);
       VecVarExpr& v2 = bridge_domain->addVecVarExpr(s,argR);
@@ -202,8 +230,9 @@ public:
 
       // Connect code to abstraction through interpretation
       interp->putExpressionInterp(n, abst_e);
+      */
 
-      cout<<"Found operation application at "<< where <<endl;
+      cerr<<"Found operation application at "<< where <<endl;
     }
   }
 };
@@ -276,7 +305,7 @@ public:
   MyFrontendAction() {}
   void EndSourceFileAction() override {
     bool consistent = bridge_domain->isConsistent();
-    cout << (consistent ? "Good\n" : "Bad\n");
+    cerr << (consistent ? "Good\n" : "Bad\n");
   }
 
   std::unique_ptr<ASTConsumer> 
