@@ -278,6 +278,18 @@ public:
   }
 };
 
+
+class GeneralVectorHandler: public MatchFinder::MatchCallback{
+
+public:
+  virtual void run(const MatchFinder::MatchResult &Result){
+    const auto *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorStatement");
+    std::cout<<"\nFound the following declstmt:-----"<<endl;
+    declstmt->dump();
+
+  }
+};
+
 /*******************************************
  * AST Consumer: set up for and handle parse
  *******************************************/
@@ -299,6 +311,7 @@ public:
       cxxMethodDecl(hasName("vec_add"))
         .bind("VectorAddMethodDecl");
 
+    // OLD HANDLERS THAT HANDLES THE VECTOR CASES SEPARATELY
     // Vector instance declaration
     DeclarationMatcher match_Vector_instance_decl = 
      varDecl(hasInitializer(cxxConstructExpr(hasType(cxxRecordDecl(hasName("Vec")))))).bind("VectorInstanceDecl");
@@ -308,14 +321,24 @@ public:
       cxxMemberCallExpr(hasDeclaration(namedDecl(hasName("vec_add"))))
         .bind("VecAddCall");
 
+    // Add the new matcher that matches the Vector cases in general - instance and vec_ad application
+    StatementMatcher match_Vector_general_decl = 
+      declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("class Vec"))))))).bind("VectorStatement");
+
     /************
     Bind Handlers
     ************/
 
     Matcher.addMatcher(match_Vector_decl, &HandlerForVecDef);
     Matcher.addMatcher(match_Vector_add_decl, &HandlerForVecAddDef);
-    Matcher.addMatcher(match_Vector_instance_decl, &HandlerForVecInstanceInit);
-    Matcher.addMatcher(match_Vector_add_call, &HandlerForVecAdd);
+    
+    // comment out those handlers that handles vectors cases separately 
+    // Matcher.addMatcher(match_Vector_instance_decl, &HandlerForVecInstanceInit);
+    // Matcher.addMatcher(match_Vector_add_call, &HandlerForVecAdd);
+
+    Matcher.addMatcher(match_Vector_general_decl, &HandlerForVector);
+    
+
   } 
 
   /******************************
@@ -330,6 +353,10 @@ public:
 private:
   ASTContext* context_;
   MatchFinder Matcher;
+  // New Handler class that handles the Vector cases in general,
+  // including the instance and the vec_add application
+  GeneralVectorHandler HandlerForVector;
+
   VectorTypeDeclHandler HandlerForVecDef;
   VectorAddMethodDeclHandler HandlerForVecAddDef;
   VectorInstanceDeclHandler HandlerForVecInstanceInit;
