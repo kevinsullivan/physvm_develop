@@ -41,6 +41,7 @@ int main(int argc, char **argv){
   int k = 0;
   Vec v3 = v1.vec_add(v1); // as in the same frame as v1 -- frame 1
   Vec v4 = v1.vec_add(v2); // should be rejected;
-
+  Vec v5 = (v1.vec_add(v1)).vec_add(v1); // should be accepted as well
+  Vec v6 = (v1.vec_add(v1)).vec_add(v1.vec_add(v2));
   return 0;
 }
