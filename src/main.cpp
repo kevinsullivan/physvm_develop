@@ -92,16 +92,32 @@ public:
 
 /*
  Vector instance declaration
+
+ FIX THIS HANDLER -- this will handle all of our work
+
+ Handle Vector DeclStmt
 */
 class VectorInstanceDeclHandler:public MatchFinder::MatchCallback{
 public:
   virtual void run(const MatchFinder::MatchResult &Result){
     if(const auto *vec_inst_decl = 
       Result.Nodes.getNodeAs<clang::VarDecl>("VectorInstanceDecl")) {
+
+/*
+
+        DeclStmt := identifier (ci) + expression (ce)
+        Convert ce into a Bridge Expression be (recursive, cases, md)
+          Note that this is some kind of recursive thing?
+        Convert ci into a Bridge Identifier bi
+          Get metadata from oracle
+        Add a Bridge binding (bi = be)
+        Express = litExpr | varExpr | funExpr
+*/
+
       // ACTION:
       cerr << "\n\nEnter VectorInstanceDeclHandler:\n";
 
-      cerr << "VarDecl is\n";
+      cerr << "VarDecl at address " << std::hex << &vec_inst_decl << " with name " << vec_inst_decl->getNameAsString() << " is\n";
       vec_inst_decl->dump();
       cerr << "\n";
 
@@ -132,9 +148,18 @@ public:
   }
 };
 
-/*
- Vector::add call
-*/
+/****************
+ Vector::add call. CXXMemberCallExpr.
+
+ Examples: 
+ - v1.add(v2)              var add var    
+ - (v1.add(v2)).add(v1)    expr add var
+ - v1.add(v1.add(v2))      var add expr
+ - foo().add(v2)           fun add var
+ - foo().add(foo())        fun add fun
+*****************/
+
+
 class VectorAddCallHandler: public MatchFinder::MatchCallback{
 public: 
   virtual void run(const MatchFinder::MatchResult &Result){
@@ -151,12 +176,28 @@ public:
       
       cerr << "CXXMemberCallExpr exp is:\n"; exp->dump(); cerr << "\n";
 
-      //const clang::MemberExpr *impArg = exp->getImplicitObjectArgument();
-      const clang::Expr *impArg = exp->getImplicitObjectArgument();
-      cerr << "Implicit Argument is:\n"; impArg->dump(); cerr << "\n";
+      // DANGER -- bad cast???
+      const clang::DeclRefExpr *impArgRef = 
+        (DeclRefExpr*) exp->getImplicitObjectArgument();
+/*
+      const clang::Expr *impArgRef = 
+        exp->getImplicitObjectArgument();
+*/
+      cerr << 
+      "Ref to implicit argument is:\n"; impArgRef->dump(); cerr << "\n";
 
-      const clang::Expr* firstArg = exp->getArg(0);
-      cerr << "First argument is:\n"; firstArg->dump(); cerr << "\n";
+      const clang::ValueDecl* theActualDecl = impArgRef->getDecl();
+      cout << "Here's the underlying VarDecl "; theActualDecl->dump(); cout << "\n";
+
+      const clang::Expr* firstArgRef = exp->getArg(0);
+      cerr << "Reference to first argument is:\n"; firstArgRef->dump(); cerr << "\n";
+
+/*
+      const clang::ValueDecl *impArg = impArgRef->getDecl();
+      cerr << "Actual implicit argument from ref is:\n"; impArg->dump(); cerr << "\n";
+
+*/
+
 
 //      const clang::ValueDecl* firstArgVal = firstArg->getDecl();
   //    cerr << "First arg's value is:\n"; firstArgVal->dump(); cerr << "\n";
@@ -250,7 +291,7 @@ public:
     ***************/
 
     // Vector class declaration
-    DeclarationMatcher match_Vector_decl = recordDecl(hasName("Vec"))
+    DeclarationMatcher match_Vector_decl = cxxRecordDecl(hasName("Vec"))
       .bind("VectorTypeDecl");
 
     // Vector::add method declaration
