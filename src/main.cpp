@@ -119,6 +119,9 @@ public:
 
     // separately the cases of initialization and the assignment
     const clang::CXXConstructExpr *CCE_expression = static_cast<const clang::CXXConstructExpr *>(ptr_expression);
+
+    // TODO design the matchers to do case analysis instead of hacking
+    // This is not robust code
     const unsigned numArg = CCE_expression->getNumArgs();
     
     if (numArg > 1) 
@@ -150,16 +153,16 @@ public:
 
       // Construct Expression
       // iterate over the children of this node to get the literal values
+      VecLitExpr& vle = bridge_domain-> addVecLitExpr(s);
 
-      // for(clang::Stmt::const_child_iterator it = CCE_expression->child_begin();
-      //                 it!= CCE_expression->child_end(); ++ it)
-      // {
-      //   cout<<"floating literals AST dump !-----"<<endl;
-
-      //   *it->dump();
-      // }
+      for(clang::Stmt::const_child_iterator it = CCE_expression->child_begin();
+                      it!= CCE_expression->child_end(); ++ it)
+      {
+        double value = static_cast<const clang::FloatingLiteral*>(it->IgnoreImplicit())->getValueAsApproximateDouble();
+        vle.addFloatLit(value);
+      }
       // Add the binding
-      // bridge_domain->addBinding(abst_v);
+      bridge_domain->addLitExprBinding(abst_v,vle);
     }
     else
      // vec_add application

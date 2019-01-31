@@ -34,20 +34,24 @@ protected:
     const Space& space_;
 };
 
-/*
+
 class VecLitExpr : Expr {
 public:
-    VecLitExpr();
+    VecLitExpr(Space& s):Expr(s){}
+    void addFloatLit(float num);
+private:
+	std::vector<float> litVal;
+	// const Space& space_;
 };
-*/
+
 
 class VecVarExpr : public Expr {
 public:
-    VecVarExpr(Space& s, const clang::Stmt* ast) : Expr(s),space_(s), ast_(ast) {}
+    VecVarExpr(Space& s, const clang::Stmt* ast) : Expr(s), ast_(ast) {}
     const Space& getVecVarSpace();
 
 private:
-	const Space& space_;
+	// const Space& space_;
     const clang::Stmt* ast_;
 };
 
@@ -75,16 +79,36 @@ private:
 
 class Binding{
 public:
-	Binding(const VecVarExpr& identifier, const VecAddExpr& expression):
-			identifier_(identifier), expression_(expression){}
+	Binding(const VecVarExpr& identifier):
+			identifier_(identifier){}
 	// Binding(const VecVarExpr& identifier): identifier_(identifier), expression_(0){}
 const VecVarExpr& getIdentifier();
-const VecAddExpr& getExpression();
 
 private:
 	const VecVarExpr& identifier_;
+};
+
+class LitExprBinding:public Binding{
+public:
+	LitExprBinding(const VecVarExpr& vve ,
+		const VecLitExpr& vle):Binding(vve),expression_(vle){}
+
+private:
+	const VecLitExpr& expression_;
+};
+
+class VecAddExprBinding:public Binding{
+public:
+	VecAddExprBinding(const VecVarExpr& vve, 
+		const VecAddExpr& vae):Binding(vve), expression_(vae){}
+
+private:
 	const VecAddExpr& expression_;
 };
+
+
+
+
 
 // Definition for Domain class 
 class Bridge {
@@ -103,6 +127,7 @@ public:
 	// Postcondition: vectors' = vectors + v
 	VecVarExpr& addVecVarExpr(Space& s, const clang::Stmt* ast);
 
+	VecLitExpr& addVecLitExpr(Space& s);
 	// Add new plus expression, e, to domain
 	// Precondition: v1 and v2 already in vectors
 	// Postcondition: expressions' = expressions + e
@@ -114,7 +139,8 @@ public:
 	// Precondition: true
 	// Postcondition: return value true indicates presence of inconsistencies
 
-	Binding& addBinding(const VecVarExpr& identifier, const VecAddExpr& expression);
+	LitExprBinding& addLitExprBinding(const VecVarExpr& identifier, const VecLitExpr& expression);
+	VecAddExprBinding& addVecAddExprBinding(const VecVarExpr& identifier, const VecAddExpr& litexpression);
 
 	bool isConsistent();
 
@@ -126,11 +152,16 @@ public:
 
 private:
 	vector<Space> spaces;
+	// lvalues
+	vector<VecVarExpr> identifiers;
 
-	vector<VecVarExpr> vectors;
-	// now the expression vector has pointers to both Exprs, namely VecVarExpr and VecAddExpr -HL
+	// rvalues
+	vector<VecLitExpr> litexpressions;
 	vector<VecAddExpr> expressions;
-	std::vector<Binding> bindings;
+
+	// bindings
+	vector<LitExprBinding> litbindings;
+	vector<VecAddExprBinding> exprbindings;
 };
 
 } // end namespace
