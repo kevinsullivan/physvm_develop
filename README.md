@@ -70,7 +70,7 @@ Simply run the following command to how the tool works.
 ```
 cd ./src
 make
-../build/ASTMatcher ../inputs/temp.cpp
+../build/ASTMatcher ../inputs/temp.cpp --
 ```
 This is an example on the `./inputs/temp.cpp` file and the `--` at the end of the command is to tell information about the compilation database. 
 

@@ -3,14 +3,9 @@ TODO:
 
 Hannah's Todo
 
-* Improve matchers for correctness in general
-    - Match Vector class by name
-    - Match Vector::vec_add only within class Vector
-    - Match Vector instances by type
-    - Match calls only to *Vector::* vec_add
- * get the name, file, line no. of each vector instance
-* bind the parameters of vec_add expression
-* add interpretation for expression
+* Improve matchers for correctness in general to match on subASTs-(case analysis)
+* build the recursion structure to construct the vec_add expression tree.
+  
 * generate lean file for analysis
 * make oracle ask about declarations by name, file, line number
 * fix dockerfile to install Lean and its math libraries, e.g., using elan
@@ -27,6 +22,17 @@ Hannah's Todo
   - to docker file add code 'ln -s /llvm/build/lib ./lib' in ./peirce
 * add "apt-get update" to docker setup commands
 DONE:
+
+~~    - Match Vector class by name~~
+~~    - Match Vector::vec_add only within class Vector~~
+~~    - Match Vector instances by type~~
+~~    - Match calls only to *Vector::* vec_add~~
+
+~~* add interpretation and binding for expressions.~~
+
+~~* bind the parameters of vec_add expression.~~
+
+~~ * get the name, file, line no. of each vector instance~~
 
 ~~*Do the same stuff for expressions that we just did for vector instances.~~
 
