@@ -13,6 +13,10 @@ string Space::getName(){return name_;}
 // Expr class member function implementation
 const Space& Expr::getSpace(){return space_;}
 
+// VecLitExpr class member function implementation
+void VecLitExpr::addFloatLit(float num){
+    litVal.push_back(num);
+}
 
 
 // VecVarExpr class member function implementation
@@ -31,7 +35,8 @@ const Space& VecAddExpr::getVecAddExprDefaultSpace(){
 // Binding class member function implementation
 
 const VecVarExpr& Binding::getIdentifier(){return identifier_;}
-const VecAddExpr& Binding::getExpression(){return expression_;}
+
+// LitExprBinding class member function implementation
 
 
 
@@ -53,8 +58,14 @@ Space& Bridge::addSpace(const string& name) {
 // Postcondition: vectors' = vectors + v
 VecVarExpr& Bridge::addVecVarExpr(Space& s, const clang::Stmt* ast){
     VecVarExpr *v = new VecVarExpr(s,ast);
-    vectors.push_back(*v);
+    identifiers.push_back(*v);
     return *v;
+}
+
+VecLitExpr& Bridge::addVecLitExpr(Space& s){
+    VecLitExpr *vle = new VecLitExpr(s);
+    litexpressions.push_back(*vle);
+    return *vle;
 }
 
 // Add new plus expression, e, to domain
@@ -70,12 +81,21 @@ VecAddExpr& Bridge::addVecAddExpr(Space& s,const clang::Stmt* ast,
 	
 }
 
-Binding& Bridge::addBinding(const VecVarExpr& identifier, 
+LitExprBinding& Bridge::addLitExprBinding(const VecVarExpr& identifier, 
+                                const VecLitExpr& litexpression)
+{
+    LitExprBinding * bd = new LitExprBinding(identifier, litexpression);
+    litbindings.push_back(*bd);
+    cout<<"Added binding for lit expression!"<<endl;
+    return *bd;
+}
+
+VecAddExprBinding& Bridge::addVecAddExprBinding(const VecVarExpr& identifier, 
                                 const VecAddExpr& expression)
 {
-    Binding* bd = new Binding(identifier,expression);
-    bindings.push_back(* bd);
-    cout<<"Added binding!"<<endl;
+    VecAddExprBinding* bd = new VecAddExprBinding(identifier,expression);
+    exprbindings.push_back(* bd);
+    cout<<"Added binding for add expression!"<<endl;
     return *bd;
 }
 // Check domain for consistency
