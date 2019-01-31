@@ -90,63 +90,6 @@ public:
   }
 };
 
-/*
- Vector instance declaration
-
- FIX THIS HANDLER -- this will handle all of our work
-
- Handle Vector DeclStmt
-*/
-class VectorInstanceDeclHandler:public MatchFinder::MatchCallback{
-public:
-  virtual void run(const MatchFinder::MatchResult &Result){
-    if(const auto *vec_inst_decl = 
-      Result.Nodes.getNodeAs<clang::VarDecl>("VectorInstanceDecl")) {
-
-/*
-
-        DeclStmt := identifier (ci) + expression (ce)
-        Convert ce into a Bridge Expression be (recursive, cases, md)
-          Note that this is some kind of recursive thing?
-        Convert ci into a Bridge Identifier bi
-          Get metadata from oracle
-        Add a Bridge binding (bi = be)
-        Express = litExpr | varExpr | funExpr
-*/
-
-      // ACTION:
-      cerr << "\n\nEnter VectorInstanceDeclHandler:\n";
-
-      cerr << "VarDecl at address " << std::hex << &vec_inst_decl << " with name " << vec_inst_decl->getNameAsString() << " is\n";
-      vec_inst_decl->dump();
-      cerr << "\n";
-
-
-      // Get file location information
-      ASTContext *context = Result.Context;
-      FullSourceLoc FullLocation = 
-        context->getFullLoc(vec_inst_decl->getBeginLoc());
-      SourceManager& sm = context->getSourceManager();
-      string where = FullLocation.printToString(sm);
-
-      // HERE'S THE REAL ACTION
-      Space& s = oracle->getSpaceForVector(where); // fix: need filename
-
-      // Create code coordinate object to use in interp
-      //VectorASTNode& n = 
-        //*new VectorASTNode(vec_inst_decl, Result);
-
-      // Create corresponding abstract vector in bridge_domain 
-      //const clang::Stmt* vecInstStmt = static_cast<const clang::Stmt*>(vec_inst_decl);
-      //VecVarExpr& abst_v = bridge_domain->addVecVarExpr(s,vecInstStmt);
-
-      // Connect them through the interpretation
-      //interp->putVectorInterp(n, abst_v);
-      cerr << "Leave VectorInstanceDeclHandler\n";
-
-    }
-  }
-};
 
 /****************
  Vector::add call. CXXMemberCallExpr.
@@ -160,134 +103,88 @@ public:
 *****************/
 
 
-class VectorAddCallHandler: public MatchFinder::MatchCallback{
-public: 
-  virtual void run(const MatchFinder::MatchResult &Result){
-    //cerr << "VectorAddCallHandler called -- checking node\n";
-
-
-    // exp is pointer to matched CXXMemberCallExpr
-
-    const auto *exp = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VecAddCall");
-    if(exp != NULL) {
-
-      // ACTION
-      cerr << "\nEnter VectorAddCallHandler\n"; 
-      
-      cerr << "CXXMemberCallExpr exp is:\n"; exp->dump(); cerr << "\n";
-
-      // DANGER -- bad cast???
-      const clang::DeclRefExpr *impArgRef = 
-        (DeclRefExpr*) exp->getImplicitObjectArgument();
-/*
-      const clang::Expr *impArgRef = 
-        exp->getImplicitObjectArgument();
-*/
-      cerr << 
-      "Ref to implicit argument is:\n"; impArgRef->dump(); cerr << "\n";
-
-      const clang::ValueDecl* theActualDecl = impArgRef->getDecl();
-      cout << "Here's the underlying VarDecl "; theActualDecl->dump(); cout << "\n";
-
-      const clang::Expr* firstArgRef = exp->getArg(0);
-      cerr << "Reference to first argument is:\n"; firstArgRef->dump(); cerr << "\n";
-
-/*
-      const clang::ValueDecl *impArg = impArgRef->getDecl();
-      cerr << "Actual implicit argument from ref is:\n"; impArg->dump(); cerr << "\n";
-
-*/
-
-
-//      const clang::ValueDecl* firstArgVal = firstArg->getDecl();
-  //    cerr << "First arg's value is:\n"; firstArgVal->dump(); cerr << "\n";
-
-
-      cerr << "Leaving VectorAddCallHandler\n"; 
- 
-      
-
-/*
-      // problematic zone
-      const clang::Stmt* exptopNode = static_cast<const clang::Stmt*>(exp);
-
-      const clang::MemberExpr* temp_ptr_argL = static_cast<const clang::MemberExpr *>(exp->getCallee());
-      const clang::Expr* ptr_argL = temp_ptr_argL->getBase();
-
-
-      // if(ptr_argL != NULL)
-      // {
-        // dump out the AST for it (debugging purpose)
-        ptr_argL->dump(*Result.SourceManager);
-
-        // cast the type
-        const clang::Stmt* argL = static_cast<const clang::Stmt*>(ptr_argL);
-
-      // }
-
-      const clang::Expr * ptr_argR = exp->getArg(0);
-
-      // if(ptr_argR != NULL)
-      // {
-        // dump out the AST for it (debugging purpose)
-        ptr_argR->dump(*Result.SourceManager);
-
-        // cast the type
-        const clang::Stmt* argR = static_cast<const clang::Stmt*>(ptr_argR);
-      // }
-      // end of problematic zone
- */     
-
-
-      // const Expr* const implicitArg = exp->getImplicitObjectArgument();
-      // const CXXMethodDecl* const methodDecl = exp->getMethodDecl();
-      // const CXXRecordDecl* const recordDecl = exp-> getRecordDecl(); 
-      // unsigned numArgs= exp->getNumArgs();
-      // const Expr* const* args = exp->getArgs();
-
-      // Get file location information of exp
-      ASTContext* context = Result.Context;
-      FullSourceLoc FullLocation = 
-        context->getFullLoc(exp->getBeginLoc());
-      SourceManager& sm = context->getSourceManager();
-      string where = FullLocation.printToString(sm);
-
-      // Create code coordinate object to use in interp
-      ExprASTNode& n = 
-        *new ExprASTNode(exp, Result);
-
-      // STUBBED OUT: Create bridge_domain expression and add interp
-      // Get coord coordinates for arguments
-      // These are not the right sub-exprs!
-      // This is not the right space!
-      
-      /*
-      Space& s = bridge_domain->addSpace("STUB Space for Expr");
-      VecVarExpr& v1 = bridge_domain->addVecVarExpr(s,argL);
-      VecVarExpr& v2 = bridge_domain->addVecVarExpr(s,argR);
-
-      // Create the expression object
-      VecAddExpr& abst_e = bridge_domain->addVecAddExpr(s,exptopNode,v1,v2);
-
-      // Connect code to abstraction through interpretation
-      interp->putExpressionInterp(n, abst_e);
-      */
-
-      cerr<<"Found operation application at "<< where <<endl;
-    }
-  }
-};
-
 
 class GeneralVectorHandler: public MatchFinder::MatchCallback{
 
 public:
   virtual void run(const MatchFinder::MatchResult &Result){
-    const auto *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorStatement");
+    const auto *ptr_declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorStatement");
     std::cout<<"\nFound the following declstmt:-----"<<endl;
-    declstmt->dump();
+    // ptr_declstmt->dump();
+
+    // get identifier node 
+    const VarDecl* identifier_VarDecl = dyn_cast<VarDecl>(ptr_declstmt->getSingleDecl());
+    // get expression node 
+    const clang::Expr *ptr_expression = identifier_VarDecl->getInit();
+
+    // separately the cases of initialization and the assignment
+    const clang::CXXConstructExpr *CCE_expression = static_cast<const clang::CXXConstructExpr *>(ptr_expression);
+    const unsigned numArg = CCE_expression->getNumArgs();
+    
+    if (numArg > 1) 
+      // initialization case
+    {
+      cout<<"initialization!"<<endl;
+      // convert the identifier to Bridge identifier
+
+      // Get file location information
+      ASTContext *context = Result.Context;
+      FullSourceLoc FullLocation = 
+        context->getFullLoc(identifier_VarDecl->getBeginLoc());
+      SourceManager& sm = context->getSourceManager();
+      string where = FullLocation.printToString(sm);
+
+      // HERE'S THE REAL ACTION
+      Space& s = oracle->getSpaceForVector(where); // fix: need filename
+
+      // Create code coordinate object to use in interp
+      VectorASTNode& n = 
+        *new VectorASTNode(ptr_declstmt, Result);
+
+      // Create corresponding abstract vector in bridge_domain 
+      const clang::Stmt* vecInstStmt = static_cast<const clang::Stmt*>(ptr_declstmt);
+      VecVarExpr& abst_v = bridge_domain->addVecVarExpr(s,vecInstStmt);
+
+      // Connect them through the interpretation
+      interp->putVectorInterp(n, abst_v);
+
+      // Construct Expression
+      // iterate over the children of this node to get the literal values
+
+      // for(clang::Stmt::const_child_iterator it = CCE_expression->child_begin();
+      //                 it!= CCE_expression->child_end(); ++ it)
+      // {
+      //   cout<<"floating literals AST dump !-----"<<endl;
+
+      //   *it->dump();
+      // }
+      // Add the binding
+      // bridge_domain->addBinding(abst_v);
+    }
+    else
+     // vec_add application
+    {
+      cout<<"vec_add application" <<endl; 
+    }
+    // recursively find the DeclRefExprs
+    // bool VisitDeclRefExpr(DeclRefExpr* DRE) {
+    //   const Decl* D = DRE->getDecl();
+    //   cout<<"Found leave node!\n";
+    //   return true; // returning false will abort the in-depth traversal.
+    // } 
+    // *add expression to the bridge_domain
+    // constructExpression(ptr_expression);
+
+    // *add identifier to bridge_domain
+    
+
+    // *create the binding 
+
 
   }
+// private:
+  // a class for visiting calls recursively 
+
 };
 
 /*******************************************
@@ -303,23 +200,23 @@ public:
     ***************/
 
     // Vector class declaration
-    DeclarationMatcher match_Vector_decl = cxxRecordDecl(hasName("Vec"))
-      .bind("VectorTypeDecl");
+    // DeclarationMatcher match_Vector_decl = cxxRecordDecl(hasName("Vec"))
+    //   .bind("VectorTypeDecl");
 
     // Vector::add method declaration
-    DeclarationMatcher match_Vector_add_decl = 
-      cxxMethodDecl(hasName("vec_add"))
-        .bind("VectorAddMethodDecl");
+    // DeclarationMatcher match_Vector_add_decl = 
+    //   cxxMethodDecl(hasName("vec_add"))
+    //     .bind("VectorAddMethodDecl");
 
     // OLD HANDLERS THAT HANDLES THE VECTOR CASES SEPARATELY
     // Vector instance declaration
-    DeclarationMatcher match_Vector_instance_decl = 
-     varDecl(hasInitializer(cxxConstructExpr(hasType(cxxRecordDecl(hasName("Vec")))))).bind("VectorInstanceDecl");
+    // DeclarationMatcher match_Vector_instance_decl = 
+    //  varDecl(hasInitializer(cxxConstructExpr(hasType(cxxRecordDecl(hasName("Vec")))))).bind("VectorInstanceDecl");
 
     // Vector::add call
-    StatementMatcher match_Vector_add_call =
-      cxxMemberCallExpr(hasDeclaration(namedDecl(hasName("vec_add"))))
-        .bind("VecAddCall");
+    // StatementMatcher match_Vector_add_call =
+    //   cxxMemberCallExpr(hasDeclaration(namedDecl(hasName("vec_add"))))
+    //     .bind("VecAddCall");
 
     // Add the new matcher that matches the Vector cases in general - instance and vec_ad application
     StatementMatcher match_Vector_general_decl = 
@@ -329,8 +226,8 @@ public:
     Bind Handlers
     ************/
 
-    Matcher.addMatcher(match_Vector_decl, &HandlerForVecDef);
-    Matcher.addMatcher(match_Vector_add_decl, &HandlerForVecAddDef);
+    // Matcher.addMatcher(match_Vector_decl, &HandlerForVecDef);
+    // Matcher.addMatcher(match_Vector_add_decl, &HandlerForVecAddDef);
     
     // comment out those handlers that handles vectors cases separately 
     // Matcher.addMatcher(match_Vector_instance_decl, &HandlerForVecInstanceInit);
@@ -357,10 +254,10 @@ private:
   // including the instance and the vec_add application
   GeneralVectorHandler HandlerForVector;
 
-  VectorTypeDeclHandler HandlerForVecDef;
-  VectorAddMethodDeclHandler HandlerForVecAddDef;
-  VectorInstanceDeclHandler HandlerForVecInstanceInit;
-  VectorAddCallHandler HandlerForVecAdd;
+  // VectorTypeDeclHandler HandlerForVecDef;
+  // VectorAddMethodDeclHandler HandlerForVecAddDef;
+  // VectorInstanceDeclHandler HandlerForVecInstanceInit;
+  // VectorAddCallHandler HandlerForVecAdd;
 };
 
 /**************************************

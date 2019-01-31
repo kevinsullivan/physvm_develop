@@ -28,6 +28,12 @@ const Expr& VecAddExpr::getVecAddExprArgR(){return arg_right_;}
 const Space& VecAddExpr::getVecAddExprDefaultSpace(){
 	return space_;
 }
+// Binding class member function implementation
+
+const VecVarExpr& Binding::getIdentifier(){return identifier_;}
+const VecAddExpr& Binding::getExpression(){return expression_;}
+
+
 
 // Bridge class member function implementation
 
@@ -64,7 +70,14 @@ VecAddExpr& Bridge::addVecAddExpr(Space& s,const clang::Stmt* ast,
 	
 }
 
-
+Binding& Bridge::addBinding(const VecVarExpr& identifier, 
+                                const VecAddExpr& expression)
+{
+    Binding* bd = new Binding(identifier,expression);
+    bindings.push_back(* bd);
+    cout<<"Added binding!"<<endl;
+    return *bd;
+}
 // Check domain for consistency
 // Precondition: true
 // Postcondition: return value true indicates presence of inconsistencies

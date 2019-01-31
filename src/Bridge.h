@@ -73,6 +73,19 @@ private:
     const Expr& arg_right_;
 };
 
+class Binding{
+public:
+	Binding(const VecVarExpr& identifier, const VecAddExpr& expression):
+			identifier_(identifier), expression_(expression){}
+	// Binding(const VecVarExpr& identifier): identifier_(identifier), expression_(0){}
+const VecVarExpr& getIdentifier();
+const VecAddExpr& getExpression();
+
+private:
+	const VecVarExpr& identifier_;
+	const VecAddExpr& expression_;
+};
+
 // Definition for Domain class 
 class Bridge {
 
@@ -100,6 +113,9 @@ public:
     // Check domain for consistency
 	// Precondition: true
 	// Postcondition: return value true indicates presence of inconsistencies
+
+	Binding& addBinding(const VecVarExpr& identifier, const VecAddExpr& expression);
+
 	bool isConsistent();
 
 	/*
@@ -114,6 +130,7 @@ private:
 	vector<VecVarExpr> vectors;
 	// now the expression vector has pointers to both Exprs, namely VecVarExpr and VecAddExpr -HL
 	vector<VecAddExpr> expressions;
+	std::vector<Binding> bindings;
 };
 
 } // end namespace
