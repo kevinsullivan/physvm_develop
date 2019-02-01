@@ -22,6 +22,9 @@ private:
 	string name_;
 };
 
+class Var {
+
+};
 
 /*
 Abstract superclass for augmented expressions.
