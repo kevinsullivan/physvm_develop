@@ -90,10 +90,34 @@ public:
   }
 };
 
+/*
+Precondition: consdecl of type CXXConstructExpr* is a pointer to an 
+expression, the value of which is being assigned to a variable in a 
+declaration statement. 
 
+Explanation: By the time control reaches this code, we are assured 
+the argument is an AST node for a Vector-valued expression that is
+going to be used to initialize the value of a variable. The purpose 
+of this code is to make sure that this C++ expression is "lifted" to
+a corresponding expression in the domain/bridge, and that the
+interpretation links this code/AST-node to that domain/bridge object.
 
-// get whatever bridge expression results from handling the CXXConstructExpr
-bridge::Expr* handleExpr(const clang::CXXConstructExpr* consdecl) {
+Postcondition: the return value of this function is pointer to a new 
+object of type bridge::Expr; that object is in the bridge; it might
+itself represent a complex expression tree; it links back to consdecl;
+and the interpretation is updated to like consdecl to the new bridge
+object. This function works recursively to make sure that all of the
+work of handling the top-level CXXConstructExpr is finished by the 
+time this function returns.
+
+Explanation: the way in which this consdecl is turned into a bridge 
+object depends on the specific form of the expression being handled.
+The cases to be handled include literal and add expressions.
+- Vec v1(0.0,0.0,0.0) is a literal expression
+- (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
+*/
+bridge::Expr* handleExpr(const clang::CXXConstructExpr* consdecl, ASTContext *context, SourceManager& sm) {
+  cout << "Is this a CXXConsDecl dump?\n"; consdecl->dump(); cout << "\n";
   return NULL;
 
   /*
@@ -117,7 +141,10 @@ bridge::Expr* handleExpr(const clang::CXXConstructExpr* consdecl) {
  */
 } 
 
-bridge::Var* handleVariable(const VarDecl* vardecl) {
+bridge::Var* handleVariable(const VarDecl* vardecl, ASTContext *context, SourceManager& sm) {
+  // create a bridge variable object 
+  // add interpretation from vardecl to bridge variable object
+  // maybe return a bool or something to indicate success or failure?
   return NULL;
 }
 
@@ -129,39 +156,31 @@ class GeneralVectorHandler: public MatchFinder::MatchCallback{
 
 public:
   virtual void run(const MatchFinder::MatchResult &Result){
-
-    // get pointer to overall variable definition comprising variable (vardecl) and expression (consdecl)
+    /*
+    get DeclStatement from matcher
+    get context 
+    get source manager 
+    get handle on variable declaration, vardecl
+    be sure it has an initializer, then get the CXXConstructExpr initializer
+    get handle on expression used to initialize the variable
+    establish interpretation from consdecl to corresponding expression in the domain bridge
+    establish interpretation from variable in code to corresponding var object in domain bridge
+    finally establish interpretation linking overall declstmt in code to corresponding binding in domain
+    */
     const auto *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorStatement");
-    std::cout<<"\nFound the following declstmt:-----"<<endl;
-
-    // todo:
-    // get context object
-    // get source manager object
-
+    ASTContext *context = Result.Context;
+    SourceManager& sm = context->getSourceManager();
     if (declstmt->isSingleDecl()) {
-
-      // get handle on variable declaration, vardecl
       const VarDecl* vardecl = dyn_cast<VarDecl>(declstmt->getSingleDecl());
-
-      // be sure it has an initializer, then get the CXXConstructExpr initializer
       const clang::CXXConstructExpr* consdecl;
       if (vardecl->hasInit()) {
-        // get handle on expression used to initialize the variable
         consdecl = static_cast<const clang::CXXConstructExpr *>(vardecl->getInit());
-        cout << "Is this a CXXConsDecl dump?\n"; consdecl->dump(); cout << "\n";
       }
-
-      // establish interpretation from consdecl to corresponding expression in the domain bridge
-      bridge::Expr* be = handleExpr(consdecl /*, context, sourcemanager*/ ); 
-
-      // establish interpretation from variable in code to corresponding var object in domain bridge
-      bridge::Var* bv = handleVariable(vardecl /*, context, sourcemanager*/ );
-
-      // finally establish interpretation linking overall declstmt in code to corresponding binding in domain
+      bridge::Expr* be = handleExpr(consdecl, context, sm ); 
+      bridge::Var* bv = handleVariable(vardecl, context, sm );
       bindVariableExpr(bv, be);
-      }
-    else
-    {
+    }
+    else {
       cout << "Something's wrong\n";
     }
   }
