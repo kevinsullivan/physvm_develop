@@ -1,6 +1,8 @@
 #ifndef INTERPRETATION_H
 #define INTERPRETATION_H
 
+#include<iostream>
+
 #include "CodeCoordinate.h"
 #include "Bridge.h"
 
@@ -11,6 +13,15 @@ using namespace bridge;
 
 class Interpretation {
 public:
+
+	void putIdentifier(const VarDecl* vardecl, bridge::Identifier* bi) {
+		std::cout << "In bridge::putIdentifier. STUB.\n";
+	}
+	const bridge::Identifier* getIdentifier() {
+		std::cout << "In bridge::getIdentifier. STUB.\n";
+		return NULL;
+	}
+
 	// Add a vector tuple to the interpretation
 	// Precondition: key not already defined in map
 	// Postcondition: map' = map + (n,v) 
@@ -22,8 +33,7 @@ public:
 	VecVarExpr* getVectorInterp(const VectorASTNode& n);
 
 	// As above but for expressions
-	void putExpressionInterp(const ExprASTNode& n, 
-	VecAddExpr& e);
+	void putExpressionInterp(const ExprASTNode& n, VecAddExpr& e);
 
 	// As above but for expressions
 	VecAddExpr* getExpressionInterp(const ExprASTNode& n);

@@ -22,7 +22,14 @@ private:
 	string name_;
 };
 
-class Var {
+// 
+class Identifier {
+public:
+	Identifier(const clang::VarDecl* vardecl) : vardecl_(vardecl) {}
+	string getNameAsString() { return vardecl_->getNameAsString(); }
+private:
+	const clang::VarDecl* vardecl_;
+	string name_;
 
 };
 

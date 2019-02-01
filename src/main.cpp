@@ -141,14 +141,16 @@ bridge::Expr* handleExpr(const clang::CXXConstructExpr* consdecl, ASTContext *co
  */
 } 
 
-bridge::Var* handleVariable(const VarDecl* vardecl, ASTContext *context, SourceManager& sm) {
+bridge::Identifier* handleIdentifier(const VarDecl* vardecl, ASTContext *context, SourceManager& sm) {
   // create a bridge variable object 
   // add interpretation from vardecl to bridge variable object
   // maybe return a bool or something to indicate success or failure?
-  return NULL;
+  bridge::Identifier* bIdent = new Identifier(vardecl);
+  interp->putIdentifier(vardecl, bIdent);
+  return bIdent;
 }
 
-void bindVariableExpr(bridge::Var* bv, bridge::Expr* be) {
+void handleIdentifierBinding(bridge::Identifier* bv, bridge::Expr* be) {
 }
 
 
@@ -177,8 +179,8 @@ public:
         consdecl = static_cast<const clang::CXXConstructExpr *>(vardecl->getInit());
       }
       bridge::Expr* be = handleExpr(consdecl, context, sm ); 
-      bridge::Var* bv = handleVariable(vardecl, context, sm );
-      bindVariableExpr(bv, be);
+      bridge::Identifier* bi = handleIdentifier(vardecl, context, sm );
+      handleIdentifierBinding(bi, be);
     }
     else {
       cout << "Something's wrong\n";
