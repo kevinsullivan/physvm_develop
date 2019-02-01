@@ -21,19 +21,6 @@ public:
     void setASTNode(const clang::DeclStmt* vecInstStmt);
     const clang::DeclStmt* getASTNode() const { return ptr_vecInstStmt; }
     
-/* Merge away
-
-    VectorASTNode(const clang::DeclStmt* vecInstStmt):ptr_vecInstStmt(vecInstStmt)
-    {
-        this->memLoc = vecInstStmt->getID();
-    }
-
-    void setASTNode(const clang::DeclStmt* vecInstStmt);
-    clang::DeclStmt* getASTNode();
-
-
-    int64_t getMemLoc() const;
-*/
     /*
     Implementing == is required for use as a key in a map
     */
@@ -43,15 +30,6 @@ public:
     }
     ASTContext* getContext() const { return Result_.Context; }
 
-/* Merge away
-        return (this->memLoc == other.memLoc); 
-    }
-
-//when 'int64_t memLoc' becomes private, Hannah got the following err msg:
-//     /tmp/ccQSNVEH.o: In function `VectorASTNodeHasher::operator()(VectorASTNode const&) const':
-// /pierce/src/CodeCoordinate.h:41: undefined reference to `VectorASTNode::getMemLoc() const'
-    int64_t memLoc;
-*/
 private: 
     const clang::DeclStmt* ptr_vecInstStmt;
     const MatchFinder::MatchResult &Result_;
