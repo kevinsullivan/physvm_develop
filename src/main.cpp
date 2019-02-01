@@ -91,29 +91,87 @@ public:
 };
 
 
-/****************
- Vector::add call. CXXMemberCallExpr.
 
- Examples: 
- - v1.add(v2)              var add var    
- - (v1.add(v2)).add(v1)    expr add var
- - v1.add(v1.add(v2))      var add expr
- - foo().add(v2)           fun add var
- - foo().add(foo())        fun add fun
-*****************/
+// get whatever bridge expression results from handling the CXXConstructExpr
+bridge::Expr* handleExpr(const clang::CXXConstructExpr* consdecl) {
+  return NULL;
 
+  /*
+  match consdecl with
+  | literal <CXX three-argument pattern>, handle_literal(consdecl)
+  | variable, handle_var
+  | add expr, handle_add_expr
+ 
+
+  StatementMatcher matchLit = ...;
+  StatementMatcher matchVar = ...;
+  Statement Matcher matchAdd = ...;
+
+  handleXXXLit() {}
+  handleCXXVar() {}
+  HandleCXXAdd() { get left; get right part; handle_left; handle_right; glue them together }
+
+  Matcher CXXConstructExprMatcher 
+
+  CXXConstructExprMatcher.Run(consdecl) // context 
+ */
+} 
+
+bridge::Var* handleVariable(const VarDecl* vardecl) {
+  return NULL;
+}
+
+void bindVariableExpr(bridge::Var* bv, bridge::Expr* be) {
+}
 
 
 class GeneralVectorHandler: public MatchFinder::MatchCallback{
 
 public:
   virtual void run(const MatchFinder::MatchResult &Result){
-    const auto *ptr_declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorStatement");
+
+    // get pointer to overall variable definition comprising variable (vardecl) and expression (consdecl)
+    const auto *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorStatement");
     std::cout<<"\nFound the following declstmt:-----"<<endl;
-    // ptr_declstmt->dump();
+
+    // todo:
+    // get context object
+    // get source manager object
+
+    if (declstmt->isSingleDecl()) {
+
+      // get handle on variable declaration, vardecl
+      const VarDecl* vardecl = dyn_cast<VarDecl>(declstmt->getSingleDecl());
+
+      // be sure it has an initializer, then get the CXXConstructExpr initializer
+      const clang::CXXConstructExpr* consdecl;
+      if (vardecl->hasInit()) {
+        // get handle on expression used to initialize the variable
+        consdecl = static_cast<const clang::CXXConstructExpr *>(vardecl->getInit());
+        cout << "Is this a CXXConsDecl dump?\n"; consdecl->dump(); cout << "\n";
+      }
+
+      // establish interpretation from consdecl to corresponding expression in the domain bridge
+      bridge::Expr* be = handleExpr(consdecl /*, context, sourcemanager*/ ); 
+
+      // establish interpretation from variable in code to corresponding var object in domain bridge
+      bridge::Var* bv = handleVariable(vardecl /*, context, sourcemanager*/ );
+
+      // finally establish interpretation linking overall declstmt in code to corresponding binding in domain
+      bindVariableExpr(bv, be);
+      }
+    else
+    {
+      cout << "Something's wrong\n";
+    }
+  }
+
+  /*
+
+    // declstmt->dump();
 
     // get identifier node 
-    const VarDecl* identifier_VarDecl = dyn_cast<VarDecl>(ptr_declstmt->getSingleDecl());
+    const VarDecl* identifier_VarDecl = dyn_cast<VarDecl>(declstmt->getSingleDecl());
     // get expression node 
     const clang::Expr *ptr_expression = identifier_VarDecl->getInit();
 
@@ -142,10 +200,10 @@ public:
 
       // Create code coordinate object to use in interp
       VectorASTNode& n = 
-        *new VectorASTNode(ptr_declstmt, Result);
+        *new VectorASTNode(declstmt, Result);
 
       // Create corresponding abstract vector in bridge_domain 
-      const clang::Stmt* vecInstStmt = static_cast<const clang::Stmt*>(ptr_declstmt);
+      const clang::Stmt* vecInstStmt = static_cast<const clang::Stmt*>(declstmt);
       VecVarExpr& abst_v = bridge_domain->addVecVarExpr(s,vecInstStmt);
 
       // Connect them through the interpretation
@@ -187,7 +245,7 @@ public:
   }
 // private:
   // a class for visiting calls recursively 
-
+  */
 };
 
 /*******************************************
