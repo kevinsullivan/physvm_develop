@@ -157,3 +157,13 @@ public:
     // Matcher.addMatcher(match_Vector_instance_decl, &HandlerForVecInstanceInit);
     // Matcher.addMatcher(match_Vector_add_call, &HandlerForVecAdd);
 
+===============
+
+
+  // VectorTypeDeclHandler HandlerForVecDef;
+  // VectorAddMethodDeclHandler HandlerForVecAddDef;
+  // VectorInstanceDeclHandler HandlerForVecInstanceInit;
+  // VectorAddCallHandler HandlerForVecAdd;
+
+===============
+
