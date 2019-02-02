@@ -60,6 +60,67 @@ static cl::extrahelp MoreHelp("No additional options available for Peirce.");
  ***************************/
 
 /*
+Function: Add interpretation for Vector identifier
+
+create a bridge variable object 
+add interpretation from vardecl to bridge variable object
+maybe return a bool or something to indicate success or failure?
+*/
+bridge::Identifier* handleCXXConstructIdentifier(const VarDecl* vardecl, ASTContext *context, SourceManager& sm) {
+  bridge::Identifier* bIdent = new Identifier(vardecl);
+  interp->putIdentifier(vardecl, bIdent);
+  return bIdent;
+}
+
+// Function: Add interpretation for binding of Vector identifier to Vector Expression
+void handleCXXConstructIdentifierBinding(bridge::Identifier* bv, bridge::Expr* be) {
+  cout << "Adding interpretation for binding of identifier to expression (STUB)\n";
+}
+
+
+// Class: Match Callback class for handling Vector Literal Expressions
+class HandlerForCXXConstructLitExpr: public MatchFinder::MatchCallback {
+public:
+  virtual void run(const MatchFinder::MatchResult &Result){
+    const auto *litexpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
+    ASTContext *context = Result.Context;
+    SourceManager& sm = context->getSourceManager();
+    cout << "Handing Vector Lit Expression (STUB)\n";
+  }
+};
+
+// Class: Match Callback class for handling Vector Add Expressions
+class HandlerForCXXConstructAddExpr: public MatchFinder::MatchCallback {
+public:
+  virtual void run(const MatchFinder::MatchResult &Result){
+    const auto *addexpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorAddExpr");
+    ASTContext *context = Result.Context;
+    SourceManager& sm = context->getSourceManager();
+    cout << "Handling Vector Add Expr. Should recurse implicit parameter and argument. STUB.\n";
+  }
+};
+
+/*
+
+*/
+class CXXExprMatcher {
+public:
+  CXXExprMatcher() {
+    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(argumentCountIs(3)),
+      &litHandler_);
+    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(hasDescendant(cxxMemberCallExpr(hasDescendant(memberExpr(hasDeclaration(namedDecl(hasName("vec_add")))))))),
+      &addHandler_);
+  };
+  void match(const clang::CXXConstructExpr* consdecl, ASTContext *context) {
+    CXXConstructExprMatcher_.match(*consdecl, *context);
+  }
+private:
+    MatchFinder CXXConstructExprMatcher_;
+    HandlerForCXXConstructLitExpr litHandler_;
+    HandlerForCXXConstructAddExpr addHandler_;
+};
+
+/*
 Precondition: consdecl of type CXXConstructExpr* is a pointer to an 
 expression, the value of which is being assigned to a variable in a 
 declaration statement. 
@@ -85,11 +146,14 @@ The cases to be handled include literal and add expressions.
 - Vec v1(0.0,0.0,0.0) is a literal expression
 - (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
 */
-bridge::Expr* handleCXXConstructExpr(
-  const clang::CXXConstructExpr* consdecl, ASTContext *context, SourceManager& sm) {
-
-  cout << "Is this a CXXConsDecl dump?\n"; consdecl->dump(); cout << "\n";
-  return NULL;
+bridge::Expr* handleCXXConstructExpr(const clang::CXXConstructExpr* consdecl, ASTContext *context, SourceManager& sm) {
+  cout << "Pattern matching Vector CXXConstructExpr and calling appropriate handler\n";
+  CXXExprMatcher *matcher = new CXXExprMatcher();
+  matcher->match(consdecl, context);
+  // postcondition: consdecl now has an interpretation
+  // How do we get BI to return to user? Look it up
+  // bridge::Expr* bi = interp->getExpr(consdecl);
+  return NULL; /* STUB */
 
   /*
   match consdecl with
@@ -104,27 +168,11 @@ bridge::Expr* handleCXXConstructExpr(
   handleXXXLit() {}
   handleCXXVar() {}
   HandleCXXAdd() { get left; get right part; handle_left; handle_right; glue them together }
-
-  Matcher CXXConstructExprMatcher 
-
-  CXXConstructExprMatcher.Run(consdecl) // context 
- */
+  */
 } 
 
-bridge::Identifier* handleCXXConstructIdentifier(
-  const VarDecl* vardecl, ASTContext *context, SourceManager& sm) {
 
-  // create a bridge variable object 
-  // add interpretation from vardecl to bridge variable object
-  // maybe return a bool or something to indicate success or failure?
-  bridge::Identifier* bIdent = new Identifier(vardecl);
-  interp->putIdentifier(vardecl, bIdent);
-  return bIdent;
-}
 
-void handleCXXConstructIdentifierBinding(bridge::Identifier* bv, bridge::Expr* be) {
-  // interp->add
-}
 
 /*************************
  * Handle Vector DeclStmts
