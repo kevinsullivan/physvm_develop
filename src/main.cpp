@@ -69,6 +69,7 @@ maybe return a bool or something to indicate success or failure?
 bridge::Identifier* handleCXXConstructIdentifier(const VarDecl* vardecl, ASTContext *context, SourceManager& sm) {
   bridge::Identifier* bIdent = new Identifier(vardecl);
   interp->putIdentifier(vardecl, bIdent);
+  cout << "Created bridge identifier\n";
   return bIdent;
 }
 
@@ -101,7 +102,6 @@ public:
 };
 
 /*
-
 */
 class CXXExprMatcher {
 public:
@@ -147,12 +147,13 @@ The cases to be handled include literal and add expressions.
 - (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
 */
 bridge::Expr* handleCXXConstructExpr(const clang::CXXConstructExpr* consdecl, ASTContext *context, SourceManager& sm) {
-  cout << "Pattern matching Vector CXXConstructExpr and calling appropriate handler\n";
+  cout << "Pattern matching Vector CXXConstructExpr and calling appropriate handler.\n";
   CXXExprMatcher *matcher = new CXXExprMatcher();
   matcher->match(consdecl, context);
   // postcondition: consdecl now has an interpretation
   // How do we get BI to return to user? Look it up
   // bridge::Expr* bi = interp->getExpr(consdecl);
+  cout << "Returning domain expression object (STUBBED OUT)\n";
   return NULL; /* STUB */
 
   /*
@@ -201,9 +202,11 @@ public:
       if (vardecl->hasInit()) {
         consdecl = static_cast<const clang::CXXConstructExpr *>(vardecl->getInit());
       }
+      cout << "Handling vector declaration statement\n";
       bridge::Expr* be = handleCXXConstructExpr(consdecl, context, sm ); 
       bridge::Identifier* bi = handleCXXConstructIdentifier(vardecl, context, sm );
       handleCXXConstructIdentifierBinding(bi, be);
+      cout << "Done handling vector declaration statement\n\n";
     }
     else {
       cout << "STUB: Something's wrong\n";
