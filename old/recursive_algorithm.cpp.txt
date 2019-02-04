@@ -1,0 +1,60 @@
+/*
+StatementMatcher LoopMatcher =
+    forStmt(hasLoopInit(declStmt(
+                hasSingleDecl(varDecl(hasInitializer(integerLiteral(equals(0))))
+                                  .bind("initVarName")))),
+            hasIncrement(unaryOperator(
+                hasOperatorName("++"),
+                hasUnaryOperand(declRefExpr(
+                    to(varDecl(hasType(isInteger())).bind("incVarName")))))),
+            hasCondition(binaryOperator(
+                hasOperatorName("<"),
+                hasLHS(ignoringParenImpCasts(declRefExpr(
+                    to(varDecl(hasType(isInteger())).bind("condVarName"))))),
+                hasRHS(expr(hasType(isInteger())))))).bind("forLoop");
+*/
+
+/*
+CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(hasDescendant(cxxMemberCallExpr).bind("MemberCallExpr"),(hasDescendant(memberExpr).bind("MemberExpr")),(hasDeclaration(namedDecl(hasName))).bind("vec_add"))
+*/
+
+/*
+CXXMemberCallExpr := CXXMemberCallExprLeft  + CXXMemberCallExprRight 
+CXXMemberCallExprLeft := MemberExpr
+CXXmemberCallExprRight := (DeclRefExpr | CXXMemberCallExpr)
+MemberExpr := DeclRefExpr | CXXMemberCallExpr
+
+handleCXX_MCE (mce : MCE ){
+  match mce with 
+    | (left, right) := {
+        lExpr = handleMCELeft();
+        rExpr = handleMCERight();
+        addExpr = domain insert expression "add lExpr rExpr"
+        return addExpr;
+      }
+};
+
+handleMCELeft (me : MemberExpr ) {
+  match me with
+    | DeclRefExpr var := {
+        lookup and return domain(var)
+    }
+    | CXXMemberCallExpr e := {
+      return result of recursive call, handleCXX_MCE(e);
+    }
+};
+
+handleMCERight (Expr e) {
+  match e with
+    | DeclRefExpr (VarDecl v) {
+      lookup and return domain(v)
+    }
+    | CXXMemberCallExpr e {
+      return result of handleCXX_MCE(e)
+    }
+}
+
+
+*/
+
+

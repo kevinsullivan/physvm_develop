@@ -18,6 +18,11 @@ public:
 	//
 	Space& getSpaceForVector(string where);
 
+	Space& getSpaceForAddExpression(bridge::Expr * left_br, bridge::Expr * right_br)
+	{
+		return *new Space("");
+	}
+
 	
 
 private:
