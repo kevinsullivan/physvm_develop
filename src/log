@@ -1,0 +1,89 @@
+Error while trying to load a compilation database:
+Could not auto-detect compilation database for file "../inputs/temp.4.cpp"
+No compilation database found in /peirce/src/../inputs or any parent directory
+fixed-compilation-database: Error while opening fixed database: No such file or directory
+json-compilation-database: Error while opening JSON database: No such file or directory
+Running without flags.
+Handling vector declaration statement
+Pattern matching Vector CXXConstructExpr.
+Pattern Matching on CXXConstructExpr: Start
+Handing Vector Lit Expression (STUB)
+Pattern Matching on CXXConstructExpr: Done
+Returning domain expression object (STUBBED OUT)
+In interpretation::putIdentifier. STUB.
+Created bridge identifier
+Adding interpretation for binding of identifier to expression (STUB)
+Done handling vector declaration statement
+
+Handling vector declaration statement
+Pattern matching Vector CXXConstructExpr.
+Pattern Matching on CXXConstructExpr: Start
+Handing Vector Lit Expression (STUB)
+Pattern Matching on CXXConstructExpr: Done
+Returning domain expression object (STUBBED OUT)
+In interpretation::putIdentifier. STUB.
+Created bridge identifier
+Adding interpretation for binding of identifier to expression (STUB)
+Done handling vector declaration statement
+
+Handling vector declaration statement
+Pattern matching Vector CXXConstructExpr.
+Pattern Matching on CXXConstructExpr: Start
+Handling Vector Add CXXMemberCallExpr. STUB.
+HandlerForCXXConstructAddExpr::run
+HandlerForCXXConstructAddExpr::run, left is
+ParenExpr 0x55c1741d38d8 'class Vec' lvalue
+`-CXXMemberCallExpr 0x55c1741d38b0 'class Vec' lvalue
+  |-MemberExpr 0x55c1741d2df0 '<bound member function type>' .vec_add 0x55c1741a35a8
+  | `-DeclRefExpr 0x55c1741d2dd0 'class Vec' lvalue Var 0x55c1741d2888 'v1' 'class Vec'
+  `-DeclRefExpr 0x55c1741d2e20 'class Vec' lvalue Var 0x55c1741d2888 'v1' 'class Vec'
+Handling Member Expr (left) of add call. Matching and dispatching.
+CXXMemberCallExprMemberExprMatcher::match start
+ParenExpr 0x55c1741d38d8 'class Vec' lvalue
+`-CXXMemberCallExpr 0x55c1741d38b0 'class Vec' lvalue
+  |-MemberExpr 0x55c1741d2df0 '<bound member function type>' .vec_add 0x55c1741a35a8
+  | `-DeclRefExpr 0x55c1741d2dd0 'class Vec' lvalue Var 0x55c1741d2888 'v1' 'class Vec'
+  `-DeclRefExpr 0x55c1741d2e20 'class Vec' lvalue Var 0x55c1741d2888 'v1' 'class Vec'
+Handling Vector Add CXXMemberCallExpr. STUB.
+HandlerForCXXConstructAddExpr::run
+HandlerForCXXConstructAddExpr::run, left is
+DeclRefExpr 0x55c1741d2dd0 'class Vec' lvalue Var 0x55c1741d2888 'v1' 'class Vec'
+Handling Member Expr (left) of add call. Matching and dispatching.
+CXXMemberCallExprMemberExprMatcher::match start
+DeclRefExpr 0x55c1741d2dd0 'class Vec' lvalue Var 0x55c1741d2888 'v1' 'class Vec'
+Handling Vector Add Member Call Right Arg Expr. Handle ref'ed decl. STUB.
+CXXMemberCallExprMemberExprMatcher::match finish
+Back from handling Member Expr (left) of add call. Matching and dispatching.
+Got null left bridge pointer (STUB)
+HandlerForCXXConstructAddExpr::run, right is
+DeclRefExpr 0x55c1741d2e20 'class Vec' lvalue Var 0x55c1741d2888 'v1' 'class Vec'
+Handling Arg[0] (right) of add call. Matching and dispatching.
+CXXMemberCallExprArg0RightMatcher::match start
+Handling Vector Add Member Call Right Arg Expr. Handle ref'ed decl. STUB.
+CXXMemberCallExprArg0RightMatcher::match finish
+Back from handling Arg[0] (right) of add call. Matched and dispatched.
+Got null right bridge pointer (STUB)
+CXXMemberCallExprMemberExprMatcher::match finish
+Back from handling Member Expr (left) of add call. Matching and dispatching.
+Got null left bridge pointer (STUB)
+HandlerForCXXConstructAddExpr::run, right is
+CXXMemberCallExpr 0x55c1741d3998 'class Vec' lvalue
+|-MemberExpr 0x55c1741d3948 '<bound member function type>' .vec_add 0x55c1741a35a8
+| `-DeclRefExpr 0x55c1741d3928 'class Vec' lvalue Var 0x55c1741d2888 'v1' 'class Vec'
+`-DeclRefExpr 0x55c1741d3978 'class Vec' lvalue Var 0x55c1741d2bd0 'v2' 'class Vec'
+Handling Arg[0] (right) of add call. Matching and dispatching.
+CXXMemberCallExprArg0RightMatcher::match start
+Handling Vector Add CXXMemberCallExpr. STUB.
+Error in HandlerForCXXConstructAddExpr::run. No add expression pointer
+CXXMemberCallExprArg0RightMatcher::match finish
+Back from handling Arg[0] (right) of add call. Matched and dispatched.
+Got null right bridge pointer (STUB)
+Pattern Matching on CXXConstructExpr: Done
+Returning domain expression object (STUBBED OUT)
+In interpretation::putIdentifier. STUB.
+Created bridge identifier
+Adding interpretation for binding of identifier to expression (STUB)
+Done handling vector declaration statement
+
+sh: 1: lean: not found
+STUB: Bad

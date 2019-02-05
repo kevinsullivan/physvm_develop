@@ -86,7 +86,7 @@ LitExprBinding& Bridge::addLitExprBinding(const VecVarExpr& identifier,
 {
     LitExprBinding * bd = new LitExprBinding(identifier, litexpression);
     litbindings.push_back(*bd);
-    cout<<"Added binding for lit expression!"<<endl;
+    cerr<<"Added binding for lit expression!"<<endl;
     return *bd;
 }
 
@@ -95,7 +95,7 @@ VecAddExprBinding& Bridge::addVecAddExprBinding(const VecVarExpr& identifier,
 {
     VecAddExprBinding* bd = new VecAddExprBinding(identifier,expression);
     exprbindings.push_back(* bd);
-    cout<<"Added binding for add expression!"<<endl;
+    cerr<<"Added binding for add expression!"<<endl;
     return *bd;
 }
 // Check domain for consistency

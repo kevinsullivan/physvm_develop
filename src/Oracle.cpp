@@ -26,21 +26,21 @@ Space& Oracle::getSpaceForVector(string where) {
 	int whichSpace = selectSpace(spaces, where);
 	Space& result = spaces[whichSpace];
     return result;
-	cout << "End getSpacesForVector\n";
+	cerr << "End getSpacesForVector\n";
 }
 
 void printSpaces(vector<Space>& spaces) {
-	cout << "Available spaces:\t" << std::endl;
+	cerr << "Available spaces:\t" << std::endl;
 	int size = spaces.size();
 	for (int i = 0; i < size; i++) {
-		cout << i << ". " << spaces[i].getName() << "\n";
+		cerr << i << ". " << spaces[i].getName() << "\n";
 	}
 }
 
 int selectSpace(vector<Space>& spaces, string where) {
 	int choice = -1;
 	while (choice == -1) {
-		cout<< "Space for vector at "<< where << "? ";
+		cerr<< "Space for vector at "<< where << "? ";
 		cin >> choice;
 		if (choice < 0 || choice >= (int)spaces.size())
 		{

@@ -15,10 +15,10 @@ class Interpretation {
 public:
 
 	void putIdentifier(const VarDecl* vardecl, bridge::Identifier* bi) {
-		std::cout << "In interpretation::putIdentifier. STUB.\n";
+		std::cerr << "In interpretation::putIdentifier. STUB.\n";
 	}
 	const bridge::Identifier* getIdentifier() {
-		std::cout << "In interpretation::getIdentifier. STUB.\n";
+		std::cerr << "In interpretation::getIdentifier. STUB.\n";
 		return NULL;
 	}
 
