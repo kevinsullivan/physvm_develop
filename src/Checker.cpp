@@ -86,10 +86,10 @@ bool checkMath(aFile* f) {
 /*
 bool Bridge::Reuse(Expression& expr) {
     if(expr.getVecParam1().getVecSpace().getName() == expr.getVecParam2().getVecSpace().getName()){
-        cout<<"This expression is consistent!"<<endl;
+        cerr<<"This expression is consistent!"<<endl;
     }
     else{
-        cout<<"This expression is inconsistent!"<<endl;
+        cerr<<"This expression is inconsistent!"<<endl;
     }
     return false;
 }
