@@ -54,7 +54,7 @@ const Identifier& Binding::getIdentifier() {return identifier_;}
 Space& Bridge::addSpace(const string& name) {
     Space* s = new Space(name);
     spaces.push_back(*s);
-    cerr << "Added space to domain bridge at address " << std::hex << s << "\n";
+//    cerr << "Added space to domain bridge at address " << std::hex << s << "\n";
     return *s;
 }
 

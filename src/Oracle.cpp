@@ -17,18 +17,24 @@ int selectSpace(vector<Space>& spaces);
 
 Space& Oracle::getSpaceForVector(string where) {
 	cerr << "getSpaceForVector should take AST argument\n";
+	return this->getSpace();
+}
+
+Space& Oracle::getSpace() {
     vector<Space>& spaces = dom_.getAllSpaces();
 	if (spaces.size() == 0) {
 		cerr << "No abstract spaces available for interpretation. Bye!\n";
 		exit(1);
 	}
-
 	printSpaces(spaces);
-	int whichSpace = selectSpace(spaces, where);
+	int whichSpace = selectSpace(spaces);
 	Space& result = spaces[whichSpace];
     return result;
 	cerr << "End getSpacesForVector\n";
 }
+
+
+
 
 void printSpaces(vector<Space>& spaces) {
 	cerr << "Available spaces:\t" << std::endl;
@@ -38,10 +44,10 @@ void printSpaces(vector<Space>& spaces) {
 	}
 }
 
-int selectSpace(vector<Space>& spaces, string where) {
+int selectSpace(vector<Space>& spaces) {
 	int choice = -1;
 	while (choice == -1) {
-		cerr<< "Space for vector at "<< where << "? ";
+		cerr<< "Space? ";
 		cin >> choice;
 		if (choice < 0 || choice >= (int)spaces.size())
 		{
