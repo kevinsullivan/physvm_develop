@@ -3,15 +3,18 @@
 
 #include <cstddef>  
 #include "clang/AST/AST.h"
-//#include "clang/ASTMatchers/ASTMatchFinder.h"
 #include <vector>
 #include <string>
+
+#include "CodeCoordinate.h"
 
 using namespace std;
 
 namespace bridge {
 
-// Definition for Space class 
+/*
+Named space. Later on this will become a full-fledged Euclidean space object.
+*/
 class Space {
 public:
 	Space() : name_("") {};
@@ -22,20 +25,24 @@ private:
 	string name_;
 };
 
-// 
+
+/*
+The next set of definitions provides a basis for representing code 
+expressions lifted to domain expressions.
+*/
+
 class Identifier {
 public:
-	Identifier(const clang::VarDecl* vardecl) : vardecl_(vardecl) {}
-	string getNameAsString() { return vardecl_->getNameAsString(); }
+	Identifier(Space& space, const clang::VarDecl* vardecl);
+	string getNameAsString() 
+	{ return vardecl_->getNameAsString(); }
 private:
+	Space& space_;
 	const clang::VarDecl* vardecl_;
 	string name_;
 
 };
 
-/*
-Abstract superclass for augmented expressions.
-*/
 class Expr {
 public:
     Expr(const Space& s) : space_(s) {}
@@ -45,15 +52,20 @@ protected:
 };
 
 
-class VecLitExpr : Expr {
+class VecLitExpr : public Expr {
 public:
-    VecLitExpr(Space& s):Expr(s){}
+    VecLitExpr(Space& s, const LitASTNode* ast) : space_(s), Expr(s) { ast_ = ast; }
     void addFloatLit(float num);
 private:
-	std::vector<float> litVal;
-	// const Space& space_;
+	//std::vector<float> litVal;
+	const LitASTNode* ast_;
+	const Space& space_;
 };
 
+
+/*
+BIG TODO : Have Bridge objects connect back to ast ***containers***, as in VecLitExpr here.
+*/
 
 class VecVarExpr : public Expr {
 public:
@@ -75,7 +87,6 @@ public:
         ) : Expr(s), ast_(ast), arg_left_(arg_left), arg_right_(arg_right) {}
     VecAddExpr();
 
-    // get methods for projecting two arguments
 	const Expr& getVecAddExprArgL();
 	const Expr& getVecAddExprArgR();
 
@@ -87,91 +98,43 @@ private:
     const Expr& arg_right_;
 };
 
-class Binding{
+class Binding {
 public:
-	Binding(const VecVarExpr& identifier):
-			identifier_(identifier){}
-	// Binding(const VecVarExpr& identifier): identifier_(identifier), expression_(0){}
-const VecVarExpr& getIdentifier();
 
+	Binding(const clang::VarDecl* vardecl, const Identifier& identifier, const Expr& expr):
+			vardecl_(vardecl), identifier_(identifier), expr_(expr) {}
+	const clang::VarDecl* getVarDecl() {return vardecl_; } 
+	const bridge::Expr& getDomExpr() { return expr_; }
+	const Identifier& getIdentifier();
 private:
-	const VecVarExpr& identifier_;
+	const clang::VarDecl* vardecl_;
+	const Identifier& identifier_;
+	const Expr& expr_;
 };
 
-class LitExprBinding:public Binding{
-public:
-	LitExprBinding(const VecVarExpr& vve ,
-		const VecLitExpr& vle):Binding(vve),expression_(vle){}
-
-private:
-	const VecLitExpr& expression_;
-};
-
-class VecAddExprBinding:public Binding{
-public:
-	VecAddExprBinding(const VecVarExpr& vve, 
-		const VecAddExpr& vae):Binding(vve), expression_(vae){}
-
-private:
-	const VecAddExpr& expression_;
-};
-
-
-
-
+/*
+A Bridge is a lifted version of selected code represented as a collection 
+of C++ objects. It should be isomorphic to the domain, and domain models 
+(e.g., in Lean) should be producible using a Bridge as an input.
+*/
 
 // Definition for Domain class 
+
 class Bridge {
-
 public:
-
-	// Add new space,, s, to domain
-	// Precondition: true
-	// Postcondition: 
-	//	spaces' = spaces + s and
-	//  return value = reference to s
 	Space& addSpace(const string& name);
-
-	// Add new vector, v, in space s, to domain
-	// Precondition: s is already in spaces
-	// Postcondition: vectors' = vectors + v
-	VecVarExpr& addVecVarExpr(Space& s, const clang::Stmt* ast);
-
-	VecLitExpr& addVecLitExpr(Space& s);
-	// Add new plus expression, e, to domain
-	// Precondition: v1 and v2 already in vectors
-	// Postcondition: expressions' = expressions + e
-	//	where e has v1 and v2 as its arguments
-	VecAddExpr& addVecAddExpr(Space& s,const clang::Stmt* ast,Expr& v1, Expr& v2);
-	
-    // TODO: Move this into separate type-checker "Client"
-    // Check domain for consistency
-	// Precondition: true
-	// Postcondition: return value true indicates presence of inconsistencies
-
-	LitExprBinding& addLitExprBinding(const VecVarExpr& identifier, const VecLitExpr& expression);
-	VecAddExprBinding& addVecAddExprBinding(const VecVarExpr& identifier, const VecAddExpr& litexpression);
-
+	Expr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
+	Identifier& addIdentifier(Space& s, const clang::VarDecl* ast);
+	Expr& addVecAddExpr(
+		bridge::Space&, const clang::Stmt*, const bridge::Expr&, const bridge::Expr&);
+	Binding& addBinding(const clang::VarDecl* vardecl, const Identifier& identifier, const Expr& expression);
 	bool isConsistent();
-
-	/*
-	Methods by which clients can learn what's in this domain.
-	*/
-
 	vector<Space>& getAllSpaces();
-
 private:
 	vector<Space> spaces;
-	// lvalues
 	vector<VecVarExpr> identifiers;
-
-	// rvalues
-	vector<VecLitExpr> litexpressions;
-	vector<VecAddExpr> expressions;
-
-	// bindings
-	vector<LitExprBinding> litbindings;
-	vector<VecAddExprBinding> exprbindings;
+	vector<Expr> expressions;
+	vector<Binding> bindings;
 };
 
 } // end namespace

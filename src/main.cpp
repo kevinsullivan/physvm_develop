@@ -64,18 +64,29 @@ create a bridge variable object
 add interpretation from vardecl to bridge variable object
 maybe return a bool or something to indicate success or failure?
 */
-bridge::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl, ASTContext *context, SourceManager &sm)
+bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTContext *context, SourceManager &sm)
 {
-  bridge::Identifier *bIdent = new Identifier(vardecl);
+
+/*
+  main.cpp:69:56: error: no matching function for call to 'Oracle::getSpaceForIdentifier(const clang::VarDecl*&)'
+   Space& space = *oracle->getSpaceForIdentifier(vardecl);
+*/
+  Space& space = oracle->getSpaceForIdentifier(vardecl);
+  bridge::Identifier& bIdent = bridge_domain->addIdentifier(space, vardecl);
   interp->putIdentifier(vardecl, bIdent);
-  cerr << "Created bridge identifier\n";
-  return bIdent;
+  cerr << "handleCXXConstructIdentifier: Currently identifiers link back to full vardecls. Probably better to link back just to IdentifierInfo.\n";
+  return &bIdent;
 }
 
 // Function: Add interpretation for binding of Vector identifier to Vector Expression
-void handleCXXConstructIdentifierBinding(bridge::Identifier *bv, bridge::Expr *be)
+void handleCXXConstructIdentifierBinding(const clang::VarDecl *vardecl, bridge::Identifier *bv, bridge::Expr *be)
 {
-  cerr << "Adding interpretation for binding of identifier to expression (STUB)\n";
+  bridge::Binding& binding = *new bridge::Binding(vardecl, *bv, *be);
+  interp->putBindingInterp(vardecl, binding);
+
+  /*main.cpp:79:44: error: no matching function for call to 'Interpretation::putBindingInterp(const clang::VarDecl*&, bridge::Binding*&)'
+   interp->putBindingInterp(vardecl, binding);
+  */
 }
 
 // Class: Match Callback class for handling Vector Literal Expressions
@@ -87,7 +98,16 @@ public:
     const auto *litexpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
-    cerr << "Handing Vector Lit Expression (STUB)\n";
+
+    // Get space for literal expression
+    // Create ast container object for AST Node
+    // Create bridge node for lifted AST expression
+    // Add (ast container, bridge node) to interpretation
+    Space& space = oracle->getSpaceForLitVector(litexpr);
+    LitASTNode* ast = new LitASTNode(litexpr);
+    bridge::VecLitExpr* br_lit = new bridge::VecLitExpr(space, ast);
+    interp->putLitInterp(*ast, *br_lit);
+    //cerr << "HandlerForCXXConstructLitExpr: STUB\n";
   }
 };
 
@@ -105,13 +125,12 @@ class HandlerForCXXMemberCallExprRight_DeclRefExpr : public MatchFinder::MatchCa
 public:
   virtual void run(const MatchFinder::MatchResult &Result) {
     const auto *memcallexpr_right_expr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-    cerr << "Handling Vector Add Member Call Right Arg Expr. Handle ref'ed decl. STUB.\n";
+    cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Handle Vector Add Member Call Right Arg Expr. STUB.\n";
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
     // get refd decl
     // handle it
   }
-//  HandlerForCXXMemberCallExprRight_DeclRefExpr dcrHandler_;
 };
 
 /*
@@ -120,7 +139,7 @@ class HandlerForCXXMemberCallExprRight_MemberCallExpr : public MatchFinder::Matc
 {
 public:
   virtual void run(const MatchFinder::MatchResult &Result) {
-    cerr << "Handling Vector Add Member Call, Right Arg Expr is Add Member Call Expr. STUB.\n";
+    cerr << "HandlerForCXXMemberCallExprRight_MemberCallExpr: Handling Vector Add Member Call, Right Arg Expr is Add Member Call Expr. STUB.\n";
   /*
     a_matcher->match_on_memcallexpr_right_expr()
     if (memcallexpr_right_expr == NULL)
@@ -130,7 +149,7 @@ public:
     }
     
   */
-    cerr << "Done Handling Vector Add Member Call, Right Arg Expr is Add Member Call Expr. STUB.\n";
+    cerr << "HandlerForCXXMemberCallExprRight_MemberCallExpr: Done Handling Vector Add Member Call, Right Arg Expr is Add Member Call Expr. STUB.\n";
     return;
   }
 };
@@ -148,7 +167,7 @@ public:
   //  Get left and right children of add expression and handle them by calls to other handlers
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    cerr << "Handling Vector Add CXXMemberCallExpr. STUB.\n";
+    cerr << "HandlerForCXXConstructAddExpr: Partial STUB.\n";
     
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
@@ -159,7 +178,7 @@ public:
       cerr << "Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
       return;
     }
-    cerr << "HandlerForCXXConstructAddExpr::run\n"; 
+    //cerr << "HandlerForCXXConstructAddExpr::run\n"; 
     //cerr << "addexpr is\n"; addexpr->dump();
 
     const clang::Expr *left = addexpr->getImplicitObjectArgument();
@@ -168,7 +187,7 @@ public:
       cerr << "Null left clang pointer\n";
       return;
     }
-    cerr << "HandlerForCXXConstructAddExpr::run, left is elided\n";
+    //cerr << "HandlerForCXXConstructAddExpr::run, left is elided\n";
     //left->dump();
 
     bridge::Expr *left_br = handle_member_expr_of_add_call(left, *context, sm);
@@ -184,7 +203,7 @@ public:
       cerr << "Got null right clang pointer\n";
       return;
     }
-    cerr << "HandlerForCXXConstructAddExpr::run, right is elided\n";
+    //cerr << "HandlerForCXXConstructAddExpr::run, right is elided\n";
     //right->dump();
 
 
@@ -227,9 +246,9 @@ public:
 
   void match(const clang::Expr& call_rhs, ASTContext& context)
   {
-    cerr << "CXXMemberCallExprArg0RightMatcher::match start\n";
+    //cerr << "CXXMemberCallExprArg0RightMatcher::match start\n";
     CXXMemberCallExprArg0RightMatcher_.match(call_rhs, context);
-    cerr << "CXXMemberCallExprArg0RightMatcher::match finish\n";
+    //cerr << "CXXMemberCallExprArg0RightMatcher::match finish\n";
   }
 
 private:
@@ -243,16 +262,12 @@ Handle the single argument to an add application
 */
 bridge::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext& context, SourceManager &sm)
 {
-  cerr << "Handling Arg[0] (right) of add call. Matching and dispatching.\n";
+  //cerr << "Handling Arg[0] (right) of add call. Matching and dispatching.\n";
   CXXMemberCallExprArg0RightMatcher call_right_arg0_matcher;
   call_right_arg0_matcher.match(*right,context);
-
-  // no matching function 'CXXMemberCallExprArg0RightMatcher::match(const clang::Expr&, clang::ASTContext&)
-  cerr << "Back from handling Arg[0] (right) of add call. Matched and dispatched.\n";
-  return NULL;  // STUB!!!!!!!!!!!!
+  cerr << "handle_arg0_of_add_call: STUB Returing Null bridge::Expr.\n";
+  return NULL;  
 }
-
-
 
 // -----------------//
 
@@ -287,10 +302,10 @@ public:
 
   void match(const clang::Expr& call_rhs, ASTContext& context)
   {
-    cerr << "CXXMemberCallExprMemberExprMatcher::match start\n";\
+    //cerr << "CXXMemberCallExprMemberExprMatcher::match start\n";\
     //call_rhs.dump();
     CXXMemberCallExprMemberExprMatcher_.match(call_rhs, context);
-    cerr << "CXXMemberCallExprMemberExprMatcher::match finish\n";
+    //cerr << "CXXMemberCallExprMemberExprMatcher::match finish\n";
   }
 
 private:
@@ -304,43 +319,12 @@ Handle the single argument to an add application
 */
 bridge::Expr* handle_member_expr_of_add_call(const clang::Expr *left, ASTContext& context, SourceManager& sm)
 {
-  cerr << "Handling Member Expr (left) of add call. Matching and dispatching.\n";
+  //cerr << "Handling Member Expr (left) of add call. Matching and dispatching.\n";
   CXXMemberCallExprMemberExprMatcher call_expr_mem_expr_matcher;
   call_expr_mem_expr_matcher.match(*left,context);
-  cerr << "Back from handling Member Expr (left) of add call. Matching and dispatching.\n";
-  return NULL;  // STUB!!!!!!!!!!!!
+  cerr << "handle_member_expr_of_add_call:  STUB returning NULL.\n";
+  return NULL; 
 }
-
-
-/***
-//  Example:
-//  class HandleMatch : public MatchFinder::MatchCallback {
-//  public:
-//    virtual void Run(const MatchFinder::MatchResult &Result) {
-//      const CXXRecordDecl *Class =
-//          Result.Nodes.GetDeclAs<CXXRecordDecl>("id");
-//      ...
-//    }
-//  };
-//
-//  int main(int argc, char **argv) {
-//    ClangTool Tool(argc, argv);
-//    MatchFinder finder;
-//    finder.AddMatcher(Id("id", record(hasName("::a_namespace::AClass"))),
-//                      new HandleMatch);
-//    return Tool.Run(newFrontendActionFactory(&finder));
-//  }
-// 
-***/
-
-
-/*
-On call to ->match(), dispatch on structure of top-level definitions
-  match CXXConstructExpr with 
-    | literal := litHandler  
-    | add_call := addHandler 
-  end
-*/
 
 /********************/
 
@@ -396,29 +380,15 @@ The cases to be handled include literal and add expressions.
 */
 bridge::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
 {
-  cerr << "Pattern matching Vector CXXConstructExpr.\n";
+  //cerr << "Pattern matching Vector CXXConstructExpr.\n";
   CXXConstructExprMatcher *matcher = new CXXConstructExprMatcher();
   matcher->match(consdecl, context);
   // postcondition: consdecl now has an interpretation
   // How do we get BI to return to user? Look it up
   // bridge::Expr* bi = interp->getExpr(consdecl);
-  cerr << "Returning domain expression object (STUBBED OUT)\n";
-  return NULL; /* STUB */
-
-  /*
-  match consdecl with
-  | literal <CXX three-argument pattern>, handle_literal(consdecl)
-  | variable, handle_var
-  | add expr, handle_add_expr
  
-  StatementMatcher matchLit = ...;
-  StatementMatcher matchVar = ...;
-  Statement Matcher matchAdd = ...;
-
-  handleXXXLit() {}
-  handleCXXVar() {}
-  HandleCXXAdd() { get left; get right part; handle_left; handle_right; glue them together }
-  */
+  cerr << "handleCXXConstructExpr: STUB returning NULL OUT)\n";
+  return NULL; 
 }
 
 /*************************
@@ -446,22 +416,24 @@ public:
     SourceManager &sm = context->getSourceManager();
     if (declstmt->isSingleDecl())
     {
-      const VarDecl *vardecl = dyn_cast<VarDecl>(declstmt->getSingleDecl());
+      const VarDecl* vardecl = dyn_cast<VarDecl>(declstmt->getSingleDecl());
       const clang::CXXConstructExpr *consdecl;
       if (vardecl->hasInit())
       {
         consdecl = static_cast<const clang::CXXConstructExpr *>(vardecl->getInit());
       }
-      // TODO: Fill in logic for error condition in preceding conditional
-      cerr << "Handling vector declaration statement\n";
+      else {
+        cerr << "VectorDeclStmtHandler.run: add error handling\n";
+      }
+      //cerr << "Handling vector declaration statement\n";
       bridge::Expr *be = handleCXXConstructExpr(consdecl, context, sm);
       bridge::Identifier *bi = handleCXXConstructIdentifier(vardecl, context, sm);
-      handleCXXConstructIdentifierBinding(bi, be);
-      cerr << "Done handling vector declaration statement\n\n";
+      handleCXXConstructIdentifierBinding(vardecl, bi, be);
+      //cerr << "Done handling vector declaration statement\n\n";
     }
     else
     {
-      cerr << "STUB: Something's wrong\n";
+      cerr << "VectorDeclStmtHandler.run: Something's wrong\n";
     }
   }
 };
@@ -500,7 +472,7 @@ public:
   void EndSourceFileAction() override
   {
     bool consistent = bridge_domain->isConsistent();
-    cerr << (consistent ? "STUB: Good\n" : "STUB: Bad\n");
+    cerr << (consistent ? "STUB Analysis result: Good\n" : "STUB: Bad\n");
   }
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
@@ -518,8 +490,8 @@ int main(int argc, const char **argv)
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
   bridge_domain = new Bridge();
-  bridge_domain->addSpace("Space1");
-  bridge_domain->addSpace("Space2");
+  bridge_domain->addSpace("S1");
+  bridge_domain->addSpace("S2");
   interp = new Interpretation();
   oracle = new Oracle(*bridge_domain);
   return Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
