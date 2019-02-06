@@ -19,7 +19,7 @@ const Space& bridge::Expr::getSpace(){return space_;}
 	{ return vardecl_->getNameAsString(); }
 */
 
-Identifier::Identifier(Space& space, const clang::VarDecl* vardecl) : 
+Identifier::Identifier(Space& space, const VarDeclASTNode* vardecl) : 
     space_(space), vardecl_(vardecl) {
 }
 
@@ -86,10 +86,10 @@ bridge::Expr& Bridge::addVecAddExpr(Space& s, const clang::Stmt* ast, const Expr
 }
 
 
-Identifier& Bridge::addIdentifier(Space& s, const clang::VarDecl* ast)
+Identifier& Bridge::addIdentifier(Space& s, const VarDeclASTNode* ast)
 {
     Identifier& id = *new Identifier(s, ast);
-    
+    // add id to bridge!
 }
 
 /*

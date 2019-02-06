@@ -13,9 +13,9 @@ using namespace bridge;
 class Interpretation {
 public:
 
-	void putIdentifier(const VarDecl* vardecl, bridge::Identifier& bi);
+	void putIdentInterp(const VarDeclASTNode& key, bridge::Identifier& bi);
 
-	const bridge::Identifier* getIdentifier();
+	const bridge::Identifier* getIdentInterp(const VarDeclASTNode& key);
 
 	// Add a vector tuple to the interpretation
 	// Precondition: key not already defined in map
@@ -52,10 +52,11 @@ public:
 
 private:
 	// We implement an interpretation as a collection of typed maps
+	unordered_map<VarDeclASTNode, bridge::Identifier*, VarDeclASTNodeHasher> interpIdent;
 	unordered_map<LitASTNode, VecLitExpr*, LitASTNodeHasher> interpLit;
 	unordered_map<VectorASTNode, VecVarExpr*, VectorASTNodeHasher> interpVector;
 	unordered_map<ExprASTNode, VecAddExpr*, ExprASTNodeHasher> interpExpression;
-	unordered_map<VectorVarDeclNode, Identifier*, VectorVarDeclNodeHasher> interpIdentifier;
+//	unordered_map<VarDeclASTNode, Identifier*, VectorVarDeclNodeHasher> interpIdentifier;
 
 //	and now for bindings
 //	unordered_map<VectorVarDeclNode, Identifier*, VectorVarDeclNodeHasher> interpIdentifier;

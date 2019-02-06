@@ -170,33 +170,29 @@ VectorVarDeclNode, Identifier*, VarDeclHasher
 /*
 Objects of this class will be "keys" in an interpretation
 */
-class VectorVarDeclNode {
+class VarDeclASTNode {
 public:
-    VectorVarDeclNode(const clang::VarDecl* varDecl, 
-                const MatchFinder::MatchResult &Result) 
-                : varDecl_(varDecl), Result_(Result) {
-                    id_ = ((clang::Stmt*)varDecl)->getID(*(Result_.Context));
-                }
+    VarDeclASTNode(const clang::VarDecl* varDecl) 
+                : varDecl_(varDecl) {            
+    }
+
     const clang::VarDecl* getVarDeclNode() const {return varDecl_; }
 
     // for now, an address-based equality predicate
-    bool operator==(const VectorVarDeclNode &other) const { 
-        return (id_ == other.id_); 
+    bool operator==(const VarDeclASTNode &other) const { 
+        return (varDecl_ == other.varDecl_); 
     }
-    ASTContext* getContext() const { return Result_.Context; }
 private:
     const clang::VarDecl* varDecl_;
-    const MatchFinder::MatchResult &Result_;
-    int64_t id_;
 };
 
 /*
 Provide has function for ExprASTNodeHasher class, as required
 for the use of objects of this class as keys in a map.
 */
-struct VectorVarDeclNodeHasher
+struct VarDeclASTNodeHasher
 {
-    std::size_t operator()(const VectorVarDeclNode& k) const
+    std::size_t operator()(const VarDeclASTNode& k) const
     {
         std::size_t hash = 101010;
         cerr << "VectorVarDeclNodeHasher has function needs fixing\n";
