@@ -20,21 +20,26 @@ public:
 
 	Space& getSpaceForAddExpression(bridge::Expr * left_br, bridge::Expr * right_br)
 	{
-		cerr << "Returning stub space for expression.\n";
-		return *new Space("Stub Space for Expression");
+		//cerr << "Returning stub space for expression.\n";
+		cout << "Space for add expression?\n";
+		getSpace();
 	}
 
 	Space& getSpaceForIdentifier(const clang::VarDecl* v) {
-		cerr << "Returning stub space for identifier.\n";
-		return *new Space("Stub Space for Identifier");
+		//cerr << "Returning stub space for identifier.\n";
+		cout << "Space for identifier?\n";
+		return getSpace();
 	}
 
 	Space& getSpaceForLitVector(const clang::CXXConstructExpr* v) {
-		cerr << "Returning stub space for identifier.\n";
-		return *new Space("Stub Space for Identifier");
+		//cerr << "Space for literal?\n";
+		cout << "Space for literal?\n";
+		return getSpace();
 	}
 
 private:
+
+	Space& getSpace();
 	Bridge& dom_;
 };
 
