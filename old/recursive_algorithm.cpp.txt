@@ -1,4 +1,20 @@
 /*
+  match consdecl with
+  | literal <CXX three-argument pattern>, handle_literal(consdecl)
+  | variable, handle_var
+  | add expr, handle_add_expr
+ 
+  StatementMatcher matchLit = ...;
+  StatementMatcher matchVar = ...;
+  Statement Matcher matchAdd = ...;
+
+  handleXXXLit() {}
+  handleCXXVar() {}
+  HandleCXXAdd() { get left; get right part; handle_left; handle_right; glue them together }
+  */
+
+
+/*
 StatementMatcher LoopMatcher =
     forStmt(hasLoopInit(declStmt(
                 hasSingleDecl(varDecl(hasInitializer(integerLiteral(equals(0))))

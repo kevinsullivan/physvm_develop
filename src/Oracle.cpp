@@ -16,6 +16,7 @@ int selectSpace(vector<Space>& spaces, string);
 int selectSpace(vector<Space>& spaces);
 
 Space& Oracle::getSpaceForVector(string where) {
+	cerr << "getSpaceForVector should take AST argument\n";
     vector<Space>& spaces = dom_.getAllSpaces();
 	if (spaces.size() == 0) {
 		cerr << "No abstract spaces available for interpretation. Bye!\n";

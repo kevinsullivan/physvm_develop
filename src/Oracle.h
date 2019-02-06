@@ -20,13 +20,21 @@ public:
 
 	Space& getSpaceForAddExpression(bridge::Expr * left_br, bridge::Expr * right_br)
 	{
-		return *new Space("");
+		cerr << "Returning stub space for expression.\n";
+		return *new Space("Stub Space for Expression");
 	}
 
-	
+	Space& getSpaceForIdentifier(const clang::VarDecl* v) {
+		cerr << "Returning stub space for identifier.\n";
+		return *new Space("Stub Space for Identifier");
+	}
+
+	Space& getSpaceForLitVector(const clang::CXXConstructExpr* v) {
+		cerr << "Returning stub space for identifier.\n";
+		return *new Space("Stub Space for Identifier");
+	}
 
 private:
-
 	Bridge& dom_;
 };
 
