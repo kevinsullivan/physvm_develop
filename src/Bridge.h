@@ -33,12 +33,13 @@ expressions lifted to domain expressions.
 
 class Identifier {
 public:
-	Identifier(Space& space, const clang::VarDecl* vardecl);
-	string getNameAsString() 
+	Identifier(Space& space, const VarDeclASTNode* vardecl);
+/*	string getNameAsString() 
 	{ return vardecl_->getNameAsString(); }
+*/
 private:
 	Space& space_;
-	const clang::VarDecl* vardecl_;
+	const VarDeclASTNode* vardecl_;
 	string name_;
 
 };
@@ -124,7 +125,7 @@ class Bridge {
 public:
 	Space& addSpace(const string& name);
 	Expr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
-	Identifier& addIdentifier(Space& s, const clang::VarDecl* ast);
+	Identifier& addIdentifier(Space& s, const VarDeclASTNode* ast);
 	Expr& addVecAddExpr(
 		bridge::Space&, const clang::Stmt*, const bridge::Expr&, const bridge::Expr&);
 	Binding& addBinding(const clang::VarDecl* vardecl, const Identifier& identifier, const Expr& expression);

@@ -5,6 +5,17 @@
 using namespace std;
 
 
+void Interpretation::putIdentInterp(const VarDeclASTNode& key, bridge::Identifier& v) {
+    interpIdent.insert(std::make_pair(key,&v));
+    cerr << "Put Ident Interp.\n";
+}
+
+const bridge::Identifier* Interpretation::getIdentInterp(const VarDeclASTNode& n) 
+{
+    return interpIdent[n];
+    cerr << "Get Ident Interp.\n";
+}
+
 void Interpretation::putLitInterp(const LitASTNode& n, VecLitExpr& v) {
     interpLit.insert(std::make_pair(n,&v));
     cerr << "Put Lit Interp.\n";
@@ -35,24 +46,14 @@ VecAddExpr* Interpretation::getExpressionInterp(const ExprASTNode& n) {
    return interpExpression[n]; 
 }
 
-void Interpretation::putIdentifier(const VarDecl* vardecl, bridge::Identifier& bi) {
-    
+void Interpretation::putIdentifier(VarDeclASTNode* vardecl_container_key, bridge::Identifier& bi) {
     std::cerr << "In interpretation::putIdentifier. STUB.\n";
 }
 
-const bridge::Identifier* Interpretation::getIdentifier() {
+const bridge::Identifier* Interpretation::getIdentifier(VarDeclASTNode* key) {
     std::cerr << "In interpretation::getIdentifier. STUB.\n";
     return NULL;
 }
-
-/*
-Interpretation.cpp: At global scope:
-Interpretation.cpp:37:71: error: 'void bridge::putBindingInterp(const clang::VarDecl*, const bridge::Binding&)' should have been declared inside 'bridge'
- void bridge::putBindingInterp(const VarDecl *vardecl, const Binding& b)
-                                                                       ^
-Interpretation.cpp:42:57: error: 'bridge::Binding* bridge::getBindingInterp(const clang::VarDecl&)' should have been declared inside 'bridge'
- Binding* bridge::getBindingInterp(const VarDecl& vardecl) {
-*/      
 
 void Interpretation::putBindingInterp(const VarDecl *vardecl, const Binding& b)
 {

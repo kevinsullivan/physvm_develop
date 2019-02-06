@@ -38,7 +38,6 @@ public:
 	}
 
 private:
-
 	Space& getSpace();
 	Bridge& dom_;
 };

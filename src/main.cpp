@@ -69,8 +69,9 @@ TODO: Better to link back just to IdentifierInfo
 bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTContext *context, SourceManager &sm)
 {
   Space& space = oracle->getSpaceForIdentifier(vardecl);
-  bridge::Identifier& bIdent = bridge_domain->addIdentifier(space, vardecl);
-  interp->putIdentifier(vardecl, bIdent);
+  VarDeclASTNode* ast_container = new VarDeclASTNode(vardecl);
+  bridge::Identifier& bIdent = bridge_domain->addIdentifier(space, ast_container);
+  interp->putIdentifier(ast_container, bIdent);
   return &bIdent;
 }
 
@@ -100,9 +101,9 @@ public:
     // Create bridge node for lifted AST expression
     // Add (ast container, bridge node) to interpretation
     Space& space = oracle->getSpaceForLitVector(litexpr);
-    LitASTNode* ast = new LitASTNode(litexpr);
-    bridge::VecLitExpr* br_lit = new bridge::VecLitExpr(space, ast);
-    interp->putLitInterp(*ast, *br_lit);
+    LitASTNode* ast_container = new LitASTNode(litexpr);
+    bridge::VecLitExpr* br_lit = new bridge::VecLitExpr(space, ast_container);
+    interp->putLitInterp(*ast_container, *br_lit);
     //cerr << "HandlerForCXXConstructLitExpr: STUB\n";
   }
 };
