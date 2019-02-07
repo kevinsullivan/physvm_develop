@@ -31,7 +31,7 @@ public:
 		return getSpace();
 	}
 
-	Space& getSpaceForLitVector(const clang::CXXConstructExpr* v) {
+	Space& getSpaceForLitVector(const clang::Expr* v) {
 		//cerr << "Space for literal?\n";
 		cout << "Space for literal?\n";
 		return getSpace();

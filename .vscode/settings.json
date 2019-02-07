@@ -11,6 +11,10 @@
         "functional": "cpp",
         "ios": "cpp",
         "vector": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "iterator": "cpp",
+        "locale": "cpp",
+        "__split_buffer": "cpp",
+        "algorithm": "cpp"
     }
 }
