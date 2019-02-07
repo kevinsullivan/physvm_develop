@@ -140,27 +140,12 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result) {
     const auto *declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
     cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
-    ASTContext *context = Result.Context;
-    SourceManager &sm = context->getSourceManager();
-    // Note: we put VarDecl into interp but get ValueDecl superclass pointer here
-
+    // ASTContext *context = Result.Context;
+    // SourceManager &sm = context->getSourceManager();
     const ExprASTNode wrapper(declRefExpr);
     bridge::Expr& be = bridge_domain->addVecVarExpr(&wrapper);
     interp->putExpressionInterp(wrapper, be);
     // postcondition, be can now be found through interpret with wrapped declRefExpr as key
-  }
-};
-
-/*
-*/
-class HandlerForCXXMemberCallExprRight_MemberCallExpr : public MatchFinder::MatchCallback
-{
-public:
-  virtual void run(const MatchFinder::MatchResult &Result) {
-        const auto *memcallexpr_right_expr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
-
-    cerr << "HandlerForCXXMemberCallExprRight_MemberCallExpr: STUB.\n";
-    return;
   }
 };
 
