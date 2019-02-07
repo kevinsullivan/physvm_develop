@@ -71,7 +71,7 @@ bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTCont
   Space& space = oracle->getSpaceForIdentifier(vardecl);
   VarDeclASTNode* ast_container = new VarDeclASTNode(vardecl);
   bridge::Identifier& bIdent = bridge_domain->addIdentifier(space, ast_container);
-  interp->putIdentifier(ast_container, bIdent);
+  interp->putIdentInterp(*ast_container, bIdent);
   return &bIdent;
 }
 
