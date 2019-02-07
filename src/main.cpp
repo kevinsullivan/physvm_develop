@@ -138,14 +138,16 @@ class HandlerForCXXMemberCallExprRight_DeclRefExpr : public MatchFinder::MatchCa
 {
 public:
   virtual void run(const MatchFinder::MatchResult &Result) {
-    const auto *memcallexpr_right_expr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-    cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: STUB. AST: \n";
+    const auto *declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+    cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
     // Note: we put VarDecl into interp but get ValueDecl superclass pointer here
-    const ValueDecl* theDecl = memcallexpr_right_expr->getDecl();
-    theDecl->dump();
-    // handle it
+
+    const ExprASTNode wrapper(declRefExpr);
+    bridge::Expr& be = bridge_domain->addVecVarExpr(&wrapper);
+    interp->putExpressionInterp(wrapper, be);
+    // postcondition, be can now be found through interpret with wrapped declRefExpr as key
   }
 };
 
@@ -177,6 +179,8 @@ public:
     
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
+
+    const CXXConstructExpr *consexpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorAddExpr");
 
     const CXXMemberCallExpr *addexpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (addexpr == NULL)
@@ -220,7 +224,10 @@ public:
       //return;
     }
 
-    ExprASTNode* ast = new ExprASTNode(addexpr); 
+    
+
+    //ExprASTNode* ast = new ExprASTNode(addexpr); 
+    ExprASTNode* ast = new ExprASTNode(consexpr); 
     Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
     bridge::Expr& br_add_expr = bridge_domain->addVecAddExpr(s, ast, *left_br, *right_br);
     interp->putExpressionInterp(*ast, br_add_expr);
@@ -270,13 +277,15 @@ Handle the single argument to an add application
 */
 bridge::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext& context, SourceManager &sm)
 {
-  cerr << "handle_arg0_of_add_call (match).\n";
+  cerr << "handle_arg0_of_add_call (match).\n"; right->dump();
   CXXMemberCallExprArg0RightMatcher call_right_arg0_matcher;
   call_right_arg0_matcher.match(*right,context);
+
   // postcondition: look up right in interp and return corresponding value
-  // TO DO: architectural changes means we need to wrap right in container
-  cerr << "END: handle_arg0_of_add_call: STUB return Null.\n";
-  return NULL;  
+  ExprASTNode wrapper(right);
+  bridge::Expr* expr = interp->getExpressionInterp(wrapper);
+  cerr << "END: handle_arg0_of_add_call: returning " << std::hex << expr << ". STUB?\n";
+  return expr;
 }
 
 
@@ -329,10 +338,12 @@ bridge::Expr* handle_member_expr_of_add_call(const clang::Expr *left, ASTContext
   cerr << "handle_member_expr_of_add_call\n";
   CXXMemberCallExprMemberExprMatcher call_expr_mem_expr_matcher;
   call_expr_mem_expr_matcher.match(*left,context);
+
   // postcondition: look up left in interp and return corresponding value
-  // TO DO: architectural changes means we need to wrap left in container
-  cerr << "handle_member_expr_of_add_call:  STUB returning NULL.\n";
-  return NULL; 
+  ExprASTNode wrapper(left);
+  bridge::Expr* expr = interp->getExpressionInterp(wrapper);
+  cerr << "END: handle_member_expr_of_add_call: returning " << std::hex << expr << ". STUB?\n";
+  return expr;
 }
 
 /********************/
@@ -348,7 +359,7 @@ public:
   {
     CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(argumentCountIs(3)).bind("VectorLitExpr"), &litHandler_);
     // v1 = v2
-    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(hasDescendant(cxxMemberCallExpr(hasDescendant(memberExpr(hasDeclaration(namedDecl(hasName("vec_add")))))).bind("MemberCallExpr"))), &addHandler_);
+    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(hasDescendant(cxxMemberCallExpr(hasDescendant(memberExpr(hasDeclaration(namedDecl(hasName("vec_add")))))).bind("MemberCallExpr"))).bind("VectorAddExpr"), &addHandler_);
   };
   void match(const clang::CXXConstructExpr *consdecl, ASTContext *context) {
     cout << "Pattern Matching on CXXConstructExpr: Start\n";
@@ -389,6 +400,7 @@ The cases to be handled include literal and add expressions.
 */
 bridge::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
 {
+  cerr << "handleCXXConstructExpr: Start handleCXXConstructExpr\n";
   //cerr << "Pattern matching Vector CXXConstructExpr.\n";
   CXXConstructExprMatcher *matcher = new CXXConstructExprMatcher();
   matcher->match(consdecl, context);

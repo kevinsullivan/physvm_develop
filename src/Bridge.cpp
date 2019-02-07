@@ -81,18 +81,31 @@ bridge::VecLitExpr& Bridge::addLitExpr(Space& s, const LitASTNode* ast) {
 // Add new vector, v, in space s, to domain
 // Precondition: s is already in spaces
 // Postcondition: vectors' = vectors + v
-bridge::Expr& Bridge::addVecExpr(Space& s, ExprASTNode* e)
-{
+bridge::Expr& Bridge::addVecExpr(Space& s, ExprASTNode* e) {
     bridge::Expr* be = new bridge::Expr(s, e);
     expressions.push_back(*be);
-    cerr << "Added Vec Expr to domain bridge at address " << std::hex << e << "\n";
+    cerr << "Added Vec Expr to domain bridge key address " << std::hex << e << "\n";
     return *be;
 }
+
+// precondition: variable already interpreted
+Space& getSpaceOfVarExpr(const ExprASTNode* ast) {
+    cerr << "STUB: Bridge: getSpaceOfVarExpr in Bridge.cpp\n";
+    return *new Space("");
+}
+bridge::Expr& Bridge::addVecVarExpr(const ExprASTNode* ast) {
+    Space& s = getSpaceOfVarExpr(ast);
+    bridge::Expr* be = new bridge::Expr(s, ast);
+    expressions.push_back(*be);
+    cerr << "Added Vec Expr to domain bridge key address " << std::hex << &ast << "\n";
+    return *be;
+}
+
 
 bridge::Expr& Bridge::addVecAddExpr(Space& s, ExprASTNode* e, bridge::Expr& left, bridge:: Expr& right) {
     bridge::Expr* be = new bridge::VecAddExpr(s, e, left, right);
     expressions.push_back(*be);
-    cerr << "Added Vec Add Expr to domain bridge at address " << std::hex << e << "\n";
+    cerr << "Added Vec Add Expr to domain bridge key address " << std::hex << e << "\n";
     return *be;
 }
 
