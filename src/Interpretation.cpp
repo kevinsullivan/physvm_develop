@@ -46,14 +46,17 @@ VecAddExpr* Interpretation::getExpressionInterp(const ExprASTNode& n) {
    return interpExpression[n]; 
 }
 
-void Interpretation::putIdentifier(VarDeclASTNode* vardecl_container_key, bridge::Identifier& bi) {
+
+/*
+void Interpretation::putIdentInterp(const VarDeclASTNode& vardecl_container_key, bridge::Identifier& bi) {
     std::cerr << "In interpretation::putIdentifier. STUB.\n";
 }
 
-const bridge::Identifier* Interpretation::getIdentifier(VarDeclASTNode* key) {
+const bridge::Identifier* Interpretation::getIdentInterp(const VarDeclASTNode& key) {
     std::cerr << "In interpretation::getIdentifier. STUB.\n";
     return NULL;
 }
+*/
 
 void Interpretation::putBindingInterp(const VarDecl *vardecl, const Binding& b)
 {

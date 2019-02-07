@@ -22,6 +22,9 @@ Hannah's Todo
   - to docker file add code 'ln -s /llvm/build/lib ./lib' in ./peirce
 * add "apt-get update" to docker setup commands
 * Make code consistent in use of * and & for parameters
+* Fix memory leaks -- not deleting anything at the moment
+
+
 DONE:
 
 ~~    - Match Vector class by name~~
