@@ -53,11 +53,12 @@ VecVarExpr* Interpretation::getVectorInterp(const VectorASTNode& n) {
  * Add Expression
  ****************/
 
-void Interpretation::putExpressionInterp(const ExprASTNode& n, VecAddExpr& e) {
-    interpExpression.emplace(n, &e);
+void Interpretation::putExpressionInterp(const ExprASTNode& n, bridge::Expr& e) {
+//    interpExpression.emplace(n, &e);
+    interpExpression.insert(std::make_pair(n, &e));
 }
 
-VecAddExpr* Interpretation::getExpressionInterp(const ExprASTNode& n) {
+bridge::Expr* Interpretation::getExpressionInterp(const ExprASTNode& n) {
    return interpExpression[n]; 
 }
 

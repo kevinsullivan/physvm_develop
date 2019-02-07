@@ -46,21 +46,19 @@ private:
 
 class Expr {
 public:
-    Expr(const Space& s) : space_(s) {}
+    Expr(const Space& s, const ExprASTNode* ast) : space_(s), ast_(ast) {}
     const Space& getSpace();
 protected:
     const Space& space_;
+	const ExprASTNode* ast_;
 };
 
 
 class VecLitExpr : public Expr {
 public:
-    VecLitExpr(Space& s, const LitASTNode* ast) : space_(s), Expr(s) { ast_ = ast; }
+    VecLitExpr(Space& s, const LitASTNode* ast) : Expr(s, ast) { }
     void addFloatLit(float num);
 private:
-	//std::vector<float> litVal;
-	const LitASTNode* ast_;
-	const Space& space_;
 };
 
 
@@ -70,31 +68,27 @@ BIG TODO : Have Bridge objects connect back to ast ***containers***, as in VecLi
 
 class VecVarExpr : public Expr {
 public:
-    VecVarExpr(Space& s, const clang::Stmt* ast) : Expr(s), ast_(ast) {}
-    const Space& getVecVarSpace();
-
+    VecVarExpr(Space& s, const ExprASTNode* ast) : bridge::Expr(s, ast) {}
 private:
-	// const Space& space_;
-    const clang::Stmt* ast_;
 };
+
 
 class VecAddExpr : public Expr {
 public:
    VecAddExpr(
         Space& s, 
-        const clang::Stmt* ast,
+        const ExprASTNode* ast,
         const Expr& arg_left,
         const Expr& arg_right
-        ) : Expr(s), ast_(ast), arg_left_(arg_left), arg_right_(arg_right) {}
-    VecAddExpr();
+        ) : Expr(s, ast), arg_left_(arg_left), arg_right_(arg_right) {	
+	}
 
 	const Expr& getVecAddExprArgL();
 	const Expr& getVecAddExprArgR();
 
 	// get the default space for this VecAddExpr using the space of the arg_left_
-	const Space& getVecAddExprDefaultSpace();
+	//const Space& getVecAddExprDefaultSpace();
 private:
-    const clang::Stmt* ast_;
     const Expr& arg_left_;
     const Expr& arg_right_;
 };
@@ -106,7 +100,6 @@ the *domain* Identifier and Expression objects being bound.
 */
 class Binding {
 public:
-
 	Binding(VarDeclASTNode* ast_wrapper, const bridge::Identifier& identifier, const bridge::Expr& expr):
 			ast_wrapper_(ast_wrapper), identifier_(identifier), expr_(expr) {}
 	const VarDeclASTNode* getVarDecl() {return ast_wrapper_; } 
@@ -129,16 +122,16 @@ of C++ objects. It should be isomorphic to the domain, and domain models
 class Bridge {
 public:
 	Space& addSpace(const string& name);
-	Expr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
+	//VecLitExpr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
 	Identifier& addIdentifier(Space& s, const VarDeclASTNode* ast);
-	Expr& addVecAddExpr(
-		bridge::Space&, const clang::Stmt*, const bridge::Expr&, const bridge::Expr&);
+	Expr& addVecExpr(Space& s, ExprASTNode* e);
+	Expr& addVecAddExpr(Space& s, ExprASTNode* e, bridge::Expr& left_, bridge:: Expr& right_);
 	Binding& addBinding(VarDeclASTNode* vardecl, const Identifier& identifier, const Expr& expression);
 	bool isConsistent();
 	vector<Space>& getAllSpaces();
 private:
 	vector<Space> spaces;
-	vector<VecVarExpr> identifiers;
+	vector<Identifier> identifiers;
 	vector<Expr> expressions;
 	vector<Binding> bindings;
 };

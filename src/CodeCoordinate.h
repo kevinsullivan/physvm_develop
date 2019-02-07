@@ -65,23 +65,16 @@ Objects of this class will be "keys" in an interpretation
 */
 class ExprASTNode {
 public:
-    ExprASTNode(const clang::CXXMemberCallExpr* exprCall, 
-                const MatchFinder::MatchResult &Result) 
-                : ptr_exprCall(exprCall), Result_(Result) {
-                    id_ = ((clang::Stmt*)exprCall)->getID(*(Result_.Context));
-                }
-    const clang::CXXMemberCallExpr* getASTNode() const {return ptr_exprCall; }
-
-    // for now, an address-based equality predicate
-    bool operator==(const ExprASTNode &other) const { 
-        return (id_ == other.id_); 
+    ExprASTNode(const clang::Expr* expr) 
+                : expr_(expr) {
     }
-    ASTContext* getContext() const { return Result_.Context; }
-private:
-    const clang::CXXMemberCallExpr* ptr_exprCall;
-    const MatchFinder::MatchResult &Result_;
-    int64_t id_;
+    const clang::Expr* getASTNode() const {return expr_; }
 
+    bool operator==(const ExprASTNode &other) const { 
+        return (expr_ == other.expr_); 
+    }
+private:
+    const clang::Expr* expr_;
 };
 
 /*
@@ -92,15 +85,8 @@ struct ExprASTNodeHasher
 {
     std::size_t operator()(const ExprASTNode& k) const
     {
-        std::size_t hash = 
-
-            //(const_cast<clang::DeclStmt*>
-            //    (k.getASTNode()))
-            //        ->getID();
-
-            (const_cast<clang::CXXMemberCallExpr*>
-                (k.getASTNode()))
-                    ->getID(*k.getContext());
+        std::size_t hash = 10101010;
+        cerr << "ExprASTNodeHasher: Fix has function\n";
         return hash;
     }
 };
@@ -118,10 +104,9 @@ Objects of this class will be "keys" in an interpretation.
 
 NOTE TODO: Delete MatchFinder and id_ stuff from other classes
 */
-class LitASTNode {
+class LitASTNode : public ExprASTNode {
 public:
-    LitASTNode(const clang::CXXConstructExpr* constrExpr):
-        constrExpr_(constrExpr) {
+    LitASTNode(const clang::CXXConstructExpr* constrExpr) : ExprASTNode(constrExpr), constrExpr_(constrExpr) {
     }
     const clang::CXXConstructExpr* getASTNode() const {return constrExpr_; }
 
