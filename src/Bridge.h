@@ -124,6 +124,7 @@ public:
 	Space& addSpace(const string& name);
 	//VecLitExpr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
 	Identifier& addIdentifier(Space& s, const VarDeclASTNode* ast);
+	Expr& addVecVarExpr(const ExprASTNode* ast);
 	Expr& addVecExpr(Space& s, ExprASTNode* e);
 	Expr& addVecAddExpr(Space& s, ExprASTNode* e, bridge::Expr& left_, bridge:: Expr& right_);
 	Binding& addBinding(VarDeclASTNode* vardecl, const Identifier& identifier, const Expr& expression);
