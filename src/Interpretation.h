@@ -45,10 +45,10 @@ public:
 	VecAddExpr* getExpressionInterp(const ExprASTNode& n);
 
 	// As above but for variable declaration bindings
-	void putBindingInterp(const VarDecl *vardecl, const Binding& b);
+	void putBindingInterp(VarDeclASTNode *vardecl_wrapper, Binding& b);
 
 	// As above but for expressions
-	Binding* getBindingInterp(const VarDecl& vardecl);
+	Binding* getBindingInterp(VarDeclASTNode& vardecl_wrapper);
 
 private:
 	// We implement an interpretation as a collection of typed maps
@@ -56,10 +56,7 @@ private:
 	unordered_map<LitASTNode, VecLitExpr*, LitASTNodeHasher> interpLit;
 	unordered_map<VectorASTNode, VecVarExpr*, VectorASTNodeHasher> interpVector;
 	unordered_map<ExprASTNode, VecAddExpr*, ExprASTNodeHasher> interpExpression;
-//	unordered_map<VarDeclASTNode, Identifier*, VectorVarDeclNodeHasher> interpIdentifier;
-
-//	and now for bindings
-//	unordered_map<VectorVarDeclNode, Identifier*, VectorVarDeclNodeHasher> interpIdentifier;
+	unordered_map<VarDeclASTNode, bridge::Binding*, VarDeclASTNodeHasher> interpBinding;
 };
 
 #endif

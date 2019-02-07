@@ -98,7 +98,7 @@ Bridge.cpp:84:22: error: invalid initialization of non-const reference of type b
 */
 
 
-Binding& Bridge::addBinding(const clang::VarDecl* v, const Identifier& i, 
+Binding& Bridge::addBinding(VarDeclASTNode* v, const Identifier& i, 
                                 const bridge::Expr& e)
 {
     Binding * bd = new Binding(v, i, e);

@@ -53,9 +53,10 @@ static llvm::cl::OptionCategory MyToolCategory("Peirce options");
 static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 static cl::extrahelp MoreHelp("No additional options available for Peirce.");
 
-/***************************
- * CXXConstructExpr HANDLERS
- ***************************/
+
+/*************
+ * IDENTIFIERS
+ *************/
 
 /*
 Function: Add interpretation for Vector identifier
@@ -64,7 +65,7 @@ create a bridge variable object
 add interpretation from vardecl to bridge variable object
 maybe return a bool or something to indicate success or failure?
 
-TODO: Better to link back just to IdentifierInfo
+TODO: Maybe better to link back just to IdentifierInfo, rather than to full VarDecl
 */
 bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTContext *context, SourceManager &sm)
 {
@@ -76,15 +77,15 @@ bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTCont
 }
 
 // Function: Add interpretation for binding of Vector identifier to Vector Expression
-void handleCXXConstructIdentifierBinding(const clang::VarDecl *vardecl, bridge::Identifier *bv, bridge::Expr *be)
-{
-  bridge::Binding& binding = *new bridge::Binding(vardecl, *bv, *be);
-  interp->putBindingInterp(vardecl, binding);
-
-  /*main.cpp:79:44: error: no matching function for call to 'Interpretation::putBindingInterp(const clang::VarDecl*&, bridge::Binding*&)'
-   interp->putBindingInterp(vardecl, binding);
-  */
+void handleCXXConstructIdentifierBinding(const clang::VarDecl *vardecl, bridge::Identifier *bv, bridge::Expr *be) {
+  VarDeclASTNode* vardecl_wrapper = new VarDeclASTNode(vardecl);
+  bridge::Binding& binding = *new bridge::Binding(vardecl_wrapper, *bv, *be);
+  interp->putBindingInterp(vardecl_wrapper, binding);
 }
+
+/*****************************
+ * CXXConstructExpr (LITERALS) 
+ *****************************/
 
 // Class: Match Callback class for handling Vector Literal Expressions
 class HandlerForCXXConstructLitExpr : public MatchFinder::MatchCallback
@@ -108,8 +109,6 @@ public:
   }
 };
 
-/*********************/
-
 /*******************************
  * Handle Member Call Expression
  *******************************/
@@ -122,10 +121,12 @@ class HandlerForCXXMemberCallExprRight_DeclRefExpr : public MatchFinder::MatchCa
 public:
   virtual void run(const MatchFinder::MatchResult &Result) {
     const auto *memcallexpr_right_expr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-    cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: STUB.\n";
+    cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: STUB. AST: \n";
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
-    // get refd decl
+    // Note: we put VarDecl into interp but get ValueDecl superclass pointer here
+    const ValueDecl* theDecl = memcallexpr_right_expr->getDecl();
+    theDecl->dump();
     // handle it
   }
 };
@@ -136,6 +137,8 @@ class HandlerForCXXMemberCallExprRight_MemberCallExpr : public MatchFinder::Matc
 {
 public:
   virtual void run(const MatchFinder::MatchResult &Result) {
+        const auto *memcallexpr_right_expr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
+
     cerr << "HandlerForCXXMemberCallExprRight_MemberCallExpr: STUB.\n";
     return;
   }
@@ -227,7 +230,7 @@ public:
 
     // case: arg0 is a cxx member call expression 
     // action: invoke addHandler_::run as a match finder action  
-    const StatementMatcher CXXMemberCallExprPattern = cxxMemberCallExpr();
+    const StatementMatcher CXXMemberCallExprPattern = cxxMemberCallExpr().bind("MemberCallExpr");
     CXXMemberCallExprArg0RightMatcher_.addMatcher(CXXMemberCallExprPattern, &mce_handler_);
   }
 

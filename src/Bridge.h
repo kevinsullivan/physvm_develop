@@ -99,16 +99,21 @@ private:
     const Expr& arg_right_;
 };
 
+/*
+Domain representation of binding of identifier to expression.
+Takes clang::VarDecl establishing binding (in a wrapper) and 
+the *domain* Identifier and Expression objects being bound.
+*/
 class Binding {
 public:
 
-	Binding(const clang::VarDecl* vardecl, const Identifier& identifier, const Expr& expr):
-			vardecl_(vardecl), identifier_(identifier), expr_(expr) {}
-	const clang::VarDecl* getVarDecl() {return vardecl_; } 
+	Binding(VarDeclASTNode* ast_wrapper, const bridge::Identifier& identifier, const bridge::Expr& expr):
+			ast_wrapper_(ast_wrapper), identifier_(identifier), expr_(expr) {}
+	const VarDeclASTNode* getVarDecl() {return ast_wrapper_; } 
 	const bridge::Expr& getDomExpr() { return expr_; }
-	const Identifier& getIdentifier();
+	const bridge::Identifier& getIdentifier();
 private:
-	const clang::VarDecl* vardecl_;
+	const VarDeclASTNode* ast_wrapper_;
 	const Identifier& identifier_;
 	const Expr& expr_;
 };
@@ -128,7 +133,7 @@ public:
 	Identifier& addIdentifier(Space& s, const VarDeclASTNode* ast);
 	Expr& addVecAddExpr(
 		bridge::Space&, const clang::Stmt*, const bridge::Expr&, const bridge::Expr&);
-	Binding& addBinding(const clang::VarDecl* vardecl, const Identifier& identifier, const Expr& expression);
+	Binding& addBinding(VarDeclASTNode* vardecl, const Identifier& identifier, const Expr& expression);
 	bool isConsistent();
 	vector<Space>& getAllSpaces();
 private:
