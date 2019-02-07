@@ -37,6 +37,6 @@ public:
 int main(int argc, char **argv){
 
   Vec v1(1.0,1.0,1.0); 
-  Vec v = v1.vec_add(v1);
+  Vec v2 = v1.vec_add(v1);
   return 0;
 }
