@@ -90,9 +90,15 @@ bridge::Expr& Bridge::addVecExpr(Space& s, ExprASTNode* e) {
 
 // precondition: variable already interpreted
 Space& getSpaceOfVarExpr(const ExprASTNode* ast) {
+    // look up variable (ast) in identifiers table
+    // Space& s = getSpaceOf(ast,identifiers);
+    // return s;
+
+    // get and return the space assigned to that object
     cerr << "STUB: Bridge: getSpaceOfVarExpr in Bridge.cpp\n";
     return *new Space("");
 }
+
 bridge::Expr& Bridge::addVecVarExpr(const ExprASTNode* ast) {
     Space& s = getSpaceOfVarExpr(ast);
     bridge::Expr* be = new bridge::Expr(s, ast);
@@ -100,7 +106,6 @@ bridge::Expr& Bridge::addVecVarExpr(const ExprASTNode* ast) {
     cerr << "Added Vec Expr to domain bridge key address " << std::hex << &ast << "\n";
     return *be;
 }
-
 
 bridge::Expr& Bridge::addVecAddExpr(Space& s, ExprASTNode* e, bridge::Expr& left, bridge:: Expr& right) {
     bridge::Expr* be = new bridge::VecAddExpr(s, e, left, right);
