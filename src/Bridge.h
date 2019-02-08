@@ -56,7 +56,7 @@ public:
     const Space& getSpace();
 	virtual string toString() {
 		if (ast_ != NULL) {
-			cerr << "Bridge::Expr::toString: ExprASTNode pointer is " << std::hex << ast_ << "\n";
+			//cerr << "Bridge::Expr::toString: ExprASTNode pointer is " << std::hex << ast_ << "\n";
 			return ast_->toString();
 		}
 		else {

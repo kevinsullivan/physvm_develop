@@ -10,7 +10,7 @@ using namespace std;
 
 void Interpretation::putIdentInterp(const VarDeclASTNode& key, bridge::Identifier& v) {
     interpIdent.insert(std::make_pair(key,&v));
-    cerr << "Put Ident Interp.\n";
+    //cerr << "Put Ident Interp.\n";
 }
 
 const bridge::Identifier* Interpretation::getIdentInterp(const VarDeclASTNode& n) 
