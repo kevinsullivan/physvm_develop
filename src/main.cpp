@@ -65,10 +65,7 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
     //cerr << "HandlerForCXXConstructLitExpr. AST:\n";
-    const clang::Expr *litexpr = Result.Nodes.getNodeAs<clang::Expr>("VectorLitExpr");
-//    const auto *litexpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
-
-    //litexpr->dump();
+    const clang::CXXConstructExpr *litexpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
 
     //ASTContext *context = Result.Context;
     //SourceManager &sm = context->getSourceManager();
@@ -78,11 +75,9 @@ public:
     // Create bridge node for lifted AST expression
     // Add (ast container, bridge node) to interpretation
     Space& space = oracle->getSpaceForLitVector(litexpr);
-    ExprASTNode* litexpr_wrapper = new ExprASTNode(litexpr);
+    ExprASTNode* litexpr_wrapper = new LitASTNode(litexpr);
     bridge::Expr& br_lit = bridge_domain->addVecLitExpr(space, litexpr_wrapper); 
     interp->putExpressionInterp(*litexpr_wrapper, br_lit);
-    // bridge::VecLitExpr& br_lit = bridge_domain->addExpr(space, litexpr_wrapper); 
-    // interp->putLitInterp(*litexpr_wrapper, br_lit);
     //cerr << "END HandlerForCXXConstructLitExpr\n";
   }
 };
@@ -142,7 +137,7 @@ public:
     //cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
     // ASTContext *context = Result.Context;
     // SourceManager &sm = context->getSourceManager();
-    const ExprASTNode* wrapper = new ExprASTNode(declRefExpr);
+    const ExprASTNode* wrapper = new VarDeclRefASTNode(declRefExpr);
     bridge::Expr& be = bridge_domain->addVecVarExpr(wrapper);
     interp->putExpressionInterp(*wrapper, be);
     // postcondition, be can now be found through interpret with wrapped declRefExpr as key
@@ -209,10 +204,8 @@ public:
       //return;
     }
 
-    
-
     //ExprASTNode* ast = new ExprASTNode(addexpr); 
-    ExprASTNode* ast = new ExprASTNode(consexpr); 
+    ExprASTNode* ast = new CXXConstructExprASTNode(consexpr); 
     Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
     bridge::Expr& br_add_expr = bridge_domain->addVecAddExpr(s, ast, *left_br, *right_br);
     interp->putExpressionInterp(*ast, br_add_expr);
