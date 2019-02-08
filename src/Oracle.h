@@ -22,7 +22,7 @@ public:
 	{
 		//cerr << "Returning stub space for expression.\n";
 		cout << "Space for add expression?\n";
-		getSpace();
+		return getSpace();
 	}
 
 	Space& getSpaceForIdentifier(const clang::VarDecl* v) {

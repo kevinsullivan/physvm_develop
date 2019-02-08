@@ -19,8 +19,12 @@ class Space {
 public:
 	Space() : name_("") {};
 	Space(string name) : name_(name) {};
-	string getName();
-
+	string getName() const;
+    friend ostream & operator << (ostream &out, const Space &s)
+	{ 
+    out << s.getName(); 
+    return out; 
+	} 
 private:
 	string name_;
 };
@@ -34,11 +38,13 @@ expressions lifted to domain expressions.
 class Identifier {
 public:
 	Identifier(Space& space, const VarDeclASTNode* vardecl);
+	Space* getSpace() { return space_; }
+	string getName();
 /*	string getNameAsString() 
 	{ return vardecl_->getNameAsString(); }
 */
 private:
-	Space& space_;
+	Space* space_;
 	const VarDeclASTNode* vardecl_;
 	string name_;
 
@@ -48,6 +54,15 @@ class Expr {
 public:
     Expr(const Space& s, const ExprASTNode* ast) : space_(s), ast_(ast) {}
     const Space& getSpace();
+	virtual string toString() {
+		if (ast_ != NULL) {
+			cerr << "Bridge::Expr::toString: ExprASTNode pointer is " << std::hex << ast_ << "\n";
+			return ast_->toString();
+		}
+		else {
+			return "bridge.Expr:toString() NULL ast_\n";	
+		}
+	}
 protected:
     const Space& space_;
 	const ExprASTNode* ast_;
@@ -125,15 +140,18 @@ public:
 	//VecLitExpr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
 	Identifier& addIdentifier(Space& s, const VarDeclASTNode* ast);
 	Expr& addVecVarExpr(const ExprASTNode* ast);
-	Expr& addVecExpr(Space& s, ExprASTNode* e);
+	Expr& addVecLitExpr(Space& s, ExprASTNode* e);
 	Expr& addVecAddExpr(Space& s, ExprASTNode* e, bridge::Expr& left_, bridge:: Expr& right_);
 	Binding& addBinding(VarDeclASTNode* vardecl, const Identifier& identifier, const Expr& expression);
+
+	void dump(); // print contents on cerr
+
 	bool isConsistent();
 	vector<Space>& getAllSpaces();
 private:
 	vector<Space> spaces;
 	vector<Identifier> identifiers;
-	vector<Expr> expressions;
+	vector<Expr*> expressions;
 	vector<Binding> bindings;
 };
 

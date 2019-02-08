@@ -5,60 +5,10 @@
 #include <iostream>             // for cheap logging only
 #include "clang/AST/AST.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
-//#include "Bridge.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
 using namespace std;
-//using namespace bridge;
-
-
-class VectorASTNode {
-public:
-    VectorASTNode(const clang::DeclStmt* vecInstStmt, 
-                  const MatchFinder::MatchResult &Result) 
-                  : ptr_vecInstStmt(vecInstStmt), 
-                  Result_(Result) {
-                      id_ = ((clang::Stmt*)vecInstStmt)->getID(*(Result_.Context));
-    }
-
-    void setASTNode(const clang::DeclStmt* vecInstStmt);
-    const clang::DeclStmt* getASTNode() const { return ptr_vecInstStmt; }
-    
-    /*
-    Implementing == is required for use as a key in a map
-    */
-    
-    bool operator==(const VectorASTNode &other) const { 
-        return (id_ == other.id_); 
-    }
-    ASTContext* getContext() const { return Result_.Context; }
-
-private: 
-    const clang::DeclStmt* ptr_vecInstStmt;
-    const MatchFinder::MatchResult &Result_;
-    int64_t id_;
-};
-
-/*
-Provide has function for VectorASTNode class, as required
-for the use of objects of this class as keys in a map.
-*/
-struct VectorASTNodeHasher
-{
-// public:
-    std::size_t operator() (const VectorASTNode& k) const
-    {
-        std::size_t hash = 
-            ((clang::Stmt*)(k.getASTNode()))
-                ->getID(*k.getContext());
-        return hash;
-/*
-        return k.memLoc;
-*/
-    }
-};
-
 
 /*
 Objects of this class will be "keys" in an interpretation
@@ -68,10 +18,13 @@ public:
     ExprASTNode(const clang::Expr* expr) 
                 : expr_(expr) {
     }
-    const clang::Expr* getASTNode() const {return expr_; }
+    const clang::Expr* getASTNode() const { return expr_; }
 
     bool operator==(const ExprASTNode &other) const { 
         return (expr_ == other.expr_); 
+    }
+    virtual string toString() const { 
+        return "ExprASTNode::toPrint";
     }
 private:
     const clang::Expr* expr_;
@@ -155,13 +108,13 @@ VectorVarDeclNode, Identifier*, VarDeclHasher
 /*
 Objects of this class will be "keys" in an interpretation
 */
-class VarDeclASTNode {
+class VarDeclASTNode : ExprASTNode {
 public:
     VarDeclASTNode(const clang::VarDecl* varDecl) 
                 : varDecl_(varDecl) {            
     }
 
-    const clang::VarDecl* getVarDeclNode() const {return varDecl_; }
+    const clang::VarDecl* getVarDecl() const {return varDecl_; }
 
     // for now, an address-based equality predicate
     bool operator==(const VarDeclASTNode &other) const { 

@@ -106,25 +106,13 @@ SRCS := $(wildcard *.cpp)
 # $(patsubst %.cpp,%.o,$(SRCS)): substitute all ".cpp" file name strings to ".o" file name strings
 OBJS := $(patsubst %.cpp,%.o,$(SRCS))
 
-$(BUILDDIR)/ASTMatcher:$(SRC_CLANG_DIR)/main.cpp
+$(BUILDDIR)/ASTMatcher: $(SRC_CLANG_DIR)/$(SRCS)
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
 		$(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@
 
-$(BUILDDIR)/ASTMatcher:$(SRC_CLANG_DIR)/Oracle.cpp
+%.o : %.cpp %.h
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
-		$(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@
-
-$(BUILDDIR)/ASTMatcher:$(SRC_CLANG_DIR)/Interpretation.cpp
-	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
-		$(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@
-
-$(BUILDDIR)/ASTMatcher:$(SRC_CLANG_DIR)/Checker.cpp
-	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
-		$(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@
-
-$(BUILDDIR)/ASTMatcher:$(SRC_CLANG_DIR)/Bridge.cpp
-	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
-		$(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@
+		$(CLANG_LIBS) $(LLVM_LDFLAGS) -c $@
 
 .PHONY: clean format
 
