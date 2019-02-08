@@ -68,7 +68,7 @@ public:
     const clang::Expr *litexpr = Result.Nodes.getNodeAs<clang::Expr>("VectorLitExpr");
 //    const auto *litexpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
 
-    litexpr->dump();
+    //litexpr->dump();
 
     //ASTContext *context = Result.Context;
     //SourceManager &sm = context->getSourceManager();
@@ -103,7 +103,7 @@ TODO: Maybe better to link back just to IdentifierInfo, rather than to full VarD
 bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTContext *context, SourceManager &sm)
 {
   //cerr << "handleCXXConstructIdentifier\n";
-  vardecl->dump();
+  //vardecl->dump();
   Space& space = oracle->getSpaceForIdentifier(vardecl);
   VarDeclASTNode* ast_container = new VarDeclASTNode(vardecl);
   bridge::Identifier& bIdent = bridge_domain->addIdentifier(space, ast_container);
@@ -119,7 +119,7 @@ bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTCont
 // Function: Add interpretation for binding of Vector identifier to Vector Expression
 void handleCXXConstructIdentifierBinding(const clang::VarDecl *vardecl, bridge::Identifier *bi, bridge::Expr *be) {
   //cerr << "handleCXXConstructIdentifierBinding\n";
-  vardecl->dump();
+  //vardecl->dump();
   VarDeclASTNode* vardecl_wrapper = new VarDeclASTNode(vardecl);
   bridge::Binding& binding = bridge_domain->addBinding(vardecl_wrapper, *bi, *be);
 //  bridge::Binding& binding = *new bridge::Binding(vardecl_wrapper, *bv, *be);
@@ -347,9 +347,9 @@ public:
     CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(hasDescendant(cxxMemberCallExpr(hasDescendant(memberExpr(hasDeclaration(namedDecl(hasName("vec_add")))))).bind("MemberCallExpr"))).bind("VectorAddExpr"), &addHandler_);
   };
   void match(const clang::CXXConstructExpr *consdecl, ASTContext *context) {
-    cout << "Pattern Matching on CXXConstructExpr: Start\n";
+    //cout << "Pattern Matching on CXXConstructExpr: Start\n";
     CXXConstructExprMatcher_.match(*consdecl, *context);
-    cout << "END Pattern Matching on CXXConstructExpr\n";
+    //cout << "END Pattern Matching on CXXConstructExpr\n";
   }
 private:
   MatchFinder CXXConstructExprMatcher_;

@@ -24,7 +24,7 @@ public:
         return (expr_ == other.expr_); 
     }
     virtual string toString() const { 
-        return "ExprASTNode::toPrint";
+        return "ExprASTNode::toPrint -- Error should not be called";
     }
 private:
     const clang::Expr* expr_;
@@ -39,7 +39,7 @@ struct ExprASTNodeHasher
     std::size_t operator()(const ExprASTNode& k) const
     {
         std::size_t hash = 10101010;
-        cerr << "ExprASTNodeHasher: Fix has function\n";
+// TODO Fix hash function
         return hash;
     }
 };
@@ -65,8 +65,11 @@ public:
 
     // for now, an address-based equality predicate
     bool operator==(const LitASTNode &other) const { 
-        cerr << "LitASTNode::operator==(), address comparison on underlying AST nodes.\n";
+
         return (constrExpr_ == other.constrExpr_); 
+    }
+    virtual string toString() const { 
+        return "LitASTNode::toPrint";
     }
 private:
     const clang::CXXConstructExpr* constrExpr_;
@@ -93,7 +96,7 @@ struct LitASTNodeHasher
                 (k.getASTNode()))
                     ->getID(*k.getContext());
 */
-        cerr << "LitASTNodeHasher: Replace hash function\n";
+        // TODO: Replace hash function\n";
         return hash;
     }
 };
@@ -108,17 +111,24 @@ VectorVarDeclNode, Identifier*, VarDeclHasher
 /*
 Objects of this class will be "keys" in an interpretation
 */
-class VarDeclASTNode : ExprASTNode {
+class VarDeclASTNode {
 public:
     VarDeclASTNode(const clang::VarDecl* varDecl) 
                 : varDecl_(varDecl) {            
     }
+/*
+    CodeCoordinate.h:114:35: error: no matching function for call to 'ExprASTNode::ExprASTNode()'
+                 : varDecl_(varDecl) {
+                     */
 
     const clang::VarDecl* getVarDecl() const {return varDecl_; }
 
     // for now, an address-based equality predicate
     bool operator==(const VarDeclASTNode &other) const { 
         return (varDecl_ == other.varDecl_); 
+    }
+    virtual string toString() const { 
+        return "VarDeclASTNode::toPrint";
     }
 private:
     const clang::VarDecl* varDecl_;
@@ -133,13 +143,7 @@ struct VarDeclASTNodeHasher
     std::size_t operator()(const VarDeclASTNode& k) const
     {
         std::size_t hash = 101010;
-        cerr << "VectorVarDeclNodeHasher has function needs fixing\n";
-/*
-        std::size_t hash = 
-            (const_cast<clang::VarDecl*>
-                (k.getVarDeclNode()))
-                    ->getID(*k.getContext());
-*/
+        // TODO Fix hash function 
         return hash;
     }
 };

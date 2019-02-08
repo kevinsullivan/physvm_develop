@@ -58,7 +58,7 @@ Space &Bridge::addSpace(const string &name)
 {
     Space *s = new Space(name);
     spaces.push_back(*s);
-    cerr << "Added space to domain bridge at address " << std::hex << s << "\n";
+    //cerr << "Added space to domain bridge at address " << std::hex << s << "\n";
     return *s;
 }
 
@@ -87,18 +87,18 @@ Space &getSpaceOfVarExpr(const ExprASTNode *ast)
     // return s;
 
     // get and return the space assigned to that object
-    cerr << "STUB: Bridge: getSpaceOfVarExpr in Bridge.cpp\n";
+    //cerr << "STUB: Bridge: getSpaceOfVarExpr in Bridge.cpp\n";
     return *new Space("");
 }
 
 bridge::Expr &Bridge::addVecLitExpr(Space &s, ExprASTNode *e)
 {
     bridge::Expr *be = new bridge::Expr(s, e);
-    cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
-    dump();
+    //cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
+    //dump();
     expressions.push_back(be);
-    cerr << "... dump after is ...\n";
-    dump();
+    //cerr << "... dump after is ...\n";
+    //dump();
     return *be;
 }
 
@@ -106,22 +106,18 @@ bridge::Expr &Bridge::addVecVarExpr(const ExprASTNode *ast)
 {
     Space &s = getSpaceOfVarExpr(ast);
     bridge::Expr *be = new bridge::Expr(s, ast);
-    cerr << "Adding Vec Var Expr to domain, address " << std::hex << be << " dump before is ... \n";
-    dump();
+    //cerr << "Adding Vec Var Expr to domain, address " << std::hex << be << " dump before is ... \n";
+    //dump();
     expressions.push_back(be);
-    cerr << "... dump after is ...\n";
-    dump();
+    //cerr << "... dump after is ...\n";
+    //dump();
     return *be;
 }
 
 bridge::Expr &Bridge::addVecAddExpr(Space &s, ExprASTNode *e, bridge::Expr &left, bridge::Expr &right)
 {
     bridge::Expr *be = new bridge::VecAddExpr(s, e, left, right);
-    cerr << "Adding Vec Add Expr to domain, address " << std::hex << be << " dump before is ... \n";
-    dump();
     expressions.push_back(be);
-    cerr << "... dump after is ... \n";
-    dump();
     return *be;
 }
 
@@ -129,8 +125,6 @@ Identifier &Bridge::addIdentifier(Space &s, const VarDeclASTNode *ast)
 {
     Identifier *id = new Identifier(s, ast);
     identifiers.push_back(*id);
-    cerr << "Added Identifier to domain bridge at address "
-         << id << "\n";
     return *id;
 }
 
@@ -139,23 +133,16 @@ Binding &Bridge::addBinding(VarDeclASTNode *v, const Identifier &i,
 {
     Binding *bd = new Binding(v, i, e);
     bindings.push_back(*bd);
-    cerr << "Added binding from ident at " << std::hex << &i << " to expr at " << std::hex << &e << " into domain bridge" << endl;
     return *bd;
 }
 
 void Bridge::dump()
 {
-    cerr << "BRIDGE DUMP:\n";
     for (auto e: expressions ){
-        cerr << "Dumping expr at " << std::hex << e << "\n";
-    	if (e != NULL) {
-             cerr << e->toString() << "\n";
-        }
-        else {
-            cerr << "Bridge::dump():: NULL Expr pointer!\n";
-        }
+        cerr << e->toString() << "\n";
     }
 }
+
 // Check domain for consistency
 // Precondition: true
 // Postcondition: return value true indicates presence of inconsistencies
