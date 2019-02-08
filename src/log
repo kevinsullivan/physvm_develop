@@ -1,1 +1,120 @@
-bash: root@715b762cfa16:/peirce/src#: No such file or directory
+Error while trying to load a compilation database:
+Could not auto-detect compilation database for file "../inputs/temp.6.cpp"
+No compilation database found in /peirce/src/../inputs or any parent directory
+fixed-compilation-database: Error while opening fixed database: No such file or directory
+json-compilation-database: Error while opening JSON database: No such file or directory
+Running without flags.
+Added space to domain bridge at address 0x564e57d58430
+Added space to domain bridge at address 0x564e57d58490
+handleCXXConstructExpr: Start handleCXXConstructExpr
+Pattern Matching on CXXConstructExpr: Start
+HandlerForCXXConstructLitExpr. AST:
+CXXConstructExpr 0x564e57debb38 'class Vec' 'void (float, float, float)'
+|-ImplicitCastExpr 0x564e57debaf0 'float' <FloatingCast>
+| `-FloatingLiteral 0x564e57deb8b8 'double' 1.000000e+00
+|-ImplicitCastExpr 0x564e57debb08 'float' <FloatingCast>
+| `-FloatingLiteral 0x564e57deb8d8 'double' 1.000000e+00
+`-ImplicitCastExpr 0x564e57debb20 'float' <FloatingCast>
+  `-FloatingLiteral 0x564e57deb8f8 'double' 1.000000e+00
+Space for literal?
+Available spaces:	
+0. S1
+1. S2
+Space? Added Vec Expr to domain bridge key address 0x564e57deca40
+ExprASTNodeHasher: Fix has function
+END HandlerForCXXConstructLitExpr
+END Pattern Matching on CXXConstructExpr
+ExprASTNodeHasher: Fix has function
+handleCXXConstructExpr: Returning Expr at 0x564e57decb70
+handleCXXConstructIdentifier
+VarDecl 0x564e57deb858 </peirce/src/../inputs/temp.6.cpp:39:3, col:21> col:7 used v1 'Vec' callinit
+`-CXXConstructExpr 0x564e57debb38 <col:7, col:21> 'Vec' 'void (float, float, float)'
+  |-ImplicitCastExpr 0x564e57debaf0 <col:10> 'float' <FloatingCast>
+  | `-FloatingLiteral 0x564e57deb8b8 <col:10> 'double' 1.000000e+00
+  |-ImplicitCastExpr 0x564e57debb08 <col:14> 'float' <FloatingCast>
+  | `-FloatingLiteral 0x564e57deb8d8 <col:14> 'double' 1.000000e+00
+  `-ImplicitCastExpr 0x564e57debb20 <col:18> 'float' <FloatingCast>
+    `-FloatingLiteral 0x564e57deb8f8 <col:18> 'double' 1.000000e+00
+Space for identifier?
+Available spaces:	
+0. S1
+1. S2
+Space? Added Identifier to domain bridge at address 0x564e57decaf0
+VectorVarDeclNodeHasher has function needs fixing
+Put Ident Interp.
+END: handleCXXConstructIdentifier
+handleCXXConstructIdentifierBinding
+VarDecl 0x564e57deb858 </peirce/src/../inputs/temp.6.cpp:39:3, col:21> col:7 used v1 'Vec' callinit
+`-CXXConstructExpr 0x564e57debb38 <col:7, col:21> 'Vec' 'void (float, float, float)'
+  |-ImplicitCastExpr 0x564e57debaf0 <col:10> 'float' <FloatingCast>
+  | `-FloatingLiteral 0x564e57deb8b8 <col:10> 'double' 1.000000e+00
+  |-ImplicitCastExpr 0x564e57debb08 <col:14> 'float' <FloatingCast>
+  | `-FloatingLiteral 0x564e57deb8d8 <col:14> 'double' 1.000000e+00
+  `-ImplicitCastExpr 0x564e57debb20 <col:18> 'float' <FloatingCast>
+    `-FloatingLiteral 0x564e57deb8f8 <col:18> 'double' 1.000000e+00
+Added binding from ident at 0x564e57decaf0 to expr at 0x564e57decb70 into domain bridge
+VectorVarDeclNodeHasher has function needs fixing
+END: handleCXXConstructIdentifierBinding
+handleCXXConstructExpr: Start handleCXXConstructExpr
+Pattern Matching on CXXConstructExpr: Start
+HandlerForCXXConstructAddExpr.
+handle_member_expr_of_add_call
+HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = 0x564e57debc00
+STUB: Bridge: getSpaceOfVarExpr in Bridge.cpp
+Added Vec Expr to domain at address 0x7ffe39587f30
+Expr toString is Error in ExprASTNode::toPrint
+ExprASTNodeHasher: Fix has function
+ExprASTNodeHasher: Fix has function
+END: handle_member_expr_of_add_call: returning 0x564e57df1ad0. STUB?
+handle_arg0_of_add_call (match).
+DeclRefExpr 0x564e57debc50 'class Vec' lvalue Var 0x564e57deb858 'v1' 'class Vec'
+HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = 0x564e57debc50
+STUB: Bridge: getSpaceOfVarExpr in Bridge.cpp
+Added Vec Expr to domain at address 0x7ffe39587f30
+Expr toString is Error in ExprASTNode::toPrint
+ExprASTNodeHasher: Fix has function
+ExprASTNodeHasher: Fix has function
+END: handle_arg0_of_add_call: returning 0x564e57decb90. STUB?
+Space for add expression?
+Available spaces:	
+0. S1
+1. S2
+Space? Added Vec Add Expr to domain bridge key address 0x564e57df1960
+Expr toString is Error in ExprASTNode::toPrint
+ExprASTNodeHasher: Fix has function
+END Pattern Matching on CXXConstructExpr
+ExprASTNodeHasher: Fix has function
+handleCXXConstructExpr: Returning Expr at 0x564e57df1150
+handleCXXConstructIdentifier
+VarDecl 0x564e57debba0 </peirce/src/../inputs/temp.6.cpp:40:3, col:25> col:7 v2 'Vec' cinit
+`-CXXConstructExpr 0x564e57dece48 <col:12, col:25> 'Vec' 'void (const Vec &) noexcept'
+  `-ImplicitCastExpr 0x564e57debc98 <col:12, col:25> 'const Vec' lvalue <NoOp>
+    `-CXXMemberCallExpr 0x564e57debc70 <col:12, col:25> 'Vec' lvalue
+      |-MemberExpr 0x564e57debc20 <col:12, col:15> '<bound member function type>' .vec_add 0x564e57dbc578
+      | `-DeclRefExpr 0x564e57debc00 <col:12> 'Vec' lvalue Var 0x564e57deb858 'v1' 'Vec'
+      `-DeclRefExpr 0x564e57debc50 <col:23> 'Vec' lvalue Var 0x564e57deb858 'v1' 'Vec'
+Space for identifier?
+Available spaces:	
+0. S1
+1. S2
+Space? Added Identifier to domain bridge at address 0x564e57df10a0
+VectorVarDeclNodeHasher has function needs fixing
+Put Ident Interp.
+END: handleCXXConstructIdentifier
+handleCXXConstructIdentifierBinding
+VarDecl 0x564e57debba0 </peirce/src/../inputs/temp.6.cpp:40:3, col:25> col:7 v2 'Vec' cinit
+`-CXXConstructExpr 0x564e57dece48 <col:12, col:25> 'Vec' 'void (const Vec &) noexcept'
+  `-ImplicitCastExpr 0x564e57debc98 <col:12, col:25> 'const Vec' lvalue <NoOp>
+    `-CXXMemberCallExpr 0x564e57debc70 <col:12, col:25> 'Vec' lvalue
+      |-MemberExpr 0x564e57debc20 <col:12, col:15> '<bound member function type>' .vec_add 0x564e57dbc578
+      | `-DeclRefExpr 0x564e57debc00 <col:12> 'Vec' lvalue Var 0x564e57deb858 'v1' 'Vec'
+      `-DeclRefExpr 0x564e57debc50 <col:23> 'Vec' lvalue Var 0x564e57deb858 'v1' 'Vec'
+Added binding from ident at 0x564e57df10a0 to expr at 0x564e57df1150 into domain bridge
+VectorVarDeclNodeHasher has function needs fixing
+END: handleCXXConstructIdentifierBinding
+sh: 1: lean: not found
+STUB: Bad
+BRIDGE DUMP:
+Dumping expr at 0x564e57decb70
+Error in ExprASTNode::toPrint
+Dumping expr at 0x564e57df1ad0
