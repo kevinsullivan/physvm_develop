@@ -32,9 +32,7 @@ public:
 private:
 	// We implement an interpretation as a collection of typed maps
 	unordered_map<VarDeclASTNode, bridge::Identifier*, VarDeclASTNodeHasher> interpIdent;
-	unordered_map<LitASTNode, VecLitExpr*, LitASTNodeHasher> interpLit;
-	unordered_map<VectorASTNode, VecVarExpr*, VectorASTNodeHasher> interpVector;
-	unordered_map<ExprASTNode, bridge::Expr*, ExprASTNodeHasher> interpExpression; //add?
+	unordered_map<ExprASTNode, bridge::Expr*, ExprASTNodeHasher> interpExpression; 
 	unordered_map<VarDeclASTNode, bridge::Binding*, VarDeclASTNodeHasher> interpBinding;
 };
 

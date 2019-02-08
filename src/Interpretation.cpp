@@ -19,36 +19,6 @@ const bridge::Identifier* Interpretation::getIdentInterp(const VarDeclASTNode& n
     cerr << "Get Ident Interp.\n";
 }
 
-/**********
- * Literals
- **********/
-
-void Interpretation::putLitInterp(const LitASTNode& n, VecLitExpr& v) {
-    interpLit.insert(std::make_pair(n,&v));
-    cerr << "Put Lit Interp.\n";
-}
-
-VecLitExpr* Interpretation::getLitInterp(const LitASTNode& n) {
-    return interpLit[n];
-    cerr << "Get Lit Interp.\n";
-}
-
-/**********
- * Not sure
- **********/
-
-void Interpretation::putVectorInterp(const VectorASTNode& n, VecVarExpr& av) {
-    interpVector.insert(std::make_pair(n,&av));
-
-    // TEST! DELETE THIS
-    // cerr << "av inserted = " << &av << "\n";
-    // cerr << "av lookuped = " << getVectorInterp(n) << "\n";
-}
-
-VecVarExpr* Interpretation::getVectorInterp(const VectorASTNode& n) {
-    return interpVector[n];
-}
-
 /****************
  * Add Expression
  ****************/
