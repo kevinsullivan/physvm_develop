@@ -20,6 +20,7 @@ public:
 	Space() : name_("") {};
 	Space(string name) : name_(name) {};
 	string getName() const;
+	string toString() const { return getName(); } 
     friend ostream & operator << (ostream &out, const Space &s)
 	{ 
     out << s.getName(); 
@@ -38,11 +39,9 @@ expressions lifted to domain expressions.
 class Identifier {
 public:
 	Identifier(Space& space, const IdentifierASTNode* vardecl);
-	Space* getSpace() { return space_; }
+	Space* getSpace() const { return space_; }
+	string toString() const;
 	string getName() const;
-/*	string getNameAsString() 
-	{ return vardecl_->getNameAsString(); }
-*/
 private:
 	Space* space_;
 	const IdentifierASTNode* vardecl_;
@@ -54,11 +53,11 @@ private:
 class Expr {
 public:
     Expr(const Space& s, const ExprASTNode* ast) : space_(s), ast_(ast) {}
-    const Space& getSpace();
+    const Space& getSpace() const;
 	virtual string toString() const {
 		if (ast_ != NULL) {
 			//cerr << "Bridge::Expr::toString: ExprASTNode pointer is " << std::hex << ast_ << "\n";
-			return ast_->toString();
+			return "(" + ast_->toString() + " : " + space_.getName() + ")";
 		}
 		else {
 			return "bridge.Expr:toString() NULL ast_\n";	
@@ -74,6 +73,9 @@ class VecLitExpr : public Expr {
 public:
     VecLitExpr(Space& s, const LitASTNode* ast) : Expr(s, ast) { }
     void addFloatLit(float num);
+	virtual string toString() const {
+		return "(" + ast_->toString() + " : " + getSpace().toString() + ")";
+	}
 private:
 };
 
@@ -81,10 +83,13 @@ private:
 /*
 BIG TODO : Have Bridge objects connect back to ast ***containers***, as in VecLitExpr here.
 */
-
+// Note: No printing of space, as it's inferred
 class VecVarExpr : public Expr {
 public:
     VecVarExpr(Space& s, const ExprASTNode* ast) : bridge::Expr(s, ast) {}
+	virtual string toString() const {
+		return "(" + ast_->toString() + " )";
+	}
 private:
 };
 
@@ -122,7 +127,7 @@ public:
 	const bridge::Expr& getDomExpr() { return expr_; }
 	const bridge::Identifier& getIdentifier();
 	string toString() const {
-		return identifier_.getName() + " := " + expr_.toString();
+		return "def " + identifier_.toString() + " := " + expr_.toString();
 	}
 private:
 	const BindingASTNode* ast_wrapper_;
@@ -143,9 +148,9 @@ public:
 	Space& addSpace(const string& name);
 	//VecLitExpr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
 	Identifier& addIdentifier(Space& s, const IdentifierASTNode* ast);
-	Expr& addVecVarExpr(const ExprASTNode* ast);
-	Expr& addVecLitExpr(Space& s, ExprASTNode* e);
-	Expr& addVecAddExpr(Space& s, ExprASTNode* e, bridge::Expr& left_, bridge:: Expr& right_);
+	Expr& addVecVarExpr(const VarDeclRefASTNode* ast);
+	Expr& addVecLitExpr(Space& s, LitASTNode* e);
+	Expr& addVecAddExpr(Space& s, VectorAddExprASTNode* e, bridge::Expr& left_,bridge:: Expr& right_);
 	Binding& addBinding(BindingASTNode* vardecl, const Identifier& identifier, const Expr& expression);
 
 	void dumpExpressions(); // print contents on cerr

@@ -8,7 +8,7 @@ using namespace bridge;
 
 string Space::getName() const { return name_; }
 
-const Space &bridge::Expr::getSpace() { return space_; }
+const Space &bridge::Expr::getSpace() const { return space_; }
 
 Identifier::Identifier(Space &space, const IdentifierASTNode *vardecl) : space_(&space), vardecl_(vardecl)
 {
@@ -16,7 +16,12 @@ Identifier::Identifier(Space &space, const IdentifierASTNode *vardecl) : space_(
 
 string Identifier::getName() const
 {
-    return vardecl_->getVarDecl()->getNameAsString();
+    return "(" + vardecl_->getVarDecl()->getNameAsString() + " : " + space_->getName() + ")";
+}
+
+string Identifier::toString() const
+{
+    return getName();
 }
 
 // TODO: currently UNUSED
@@ -49,23 +54,7 @@ Space &Bridge::addSpace(const string &name)
 }
 
 
-/******
- * TODO
- * ****/
-
-// precondition: variable already interpreted
-Space &getSpaceOfVarExpr(const ExprASTNode *ast)
-{
-    // look up variable (ast) in identifiers table
-    // Space& s = getSpaceOf(ast,identifiers);
-    // return s;
-
-    // get and return the space assigned to that object
-    //cerr << "STUB: Bridge: getSpaceOfVarExpr in Bridge.cpp\n";
-    return *new Space("");
-}
-
-bridge::Expr &Bridge::addVecLitExpr(Space &s, ExprASTNode *e)
+bridge::Expr &Bridge::addVecLitExpr(Space &s, LitASTNode *e)
 {
     bridge::Expr *be = new bridge::Expr(s, e);
     //cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
@@ -76,7 +65,20 @@ bridge::Expr &Bridge::addVecLitExpr(Space &s, ExprASTNode *e)
     return *be;
 }
 
-bridge::Expr &Bridge::addVecVarExpr(const ExprASTNode *ast)
+// precondition: variable already interpreted
+Space &getSpaceOfVarExpr(const ExprASTNode *ast)
+{
+    // look up variable (ast) in identifiers table
+    // Space& s = getSpaceOf(ast,identifiers);
+    // return s;
+
+    // get and return the space assigned to that object
+    //cerr << "STUB: Bridge: getSpaceOfVarExpr in Bridge.cpp\n";
+    return *new Space("_");
+}
+
+// TODO: Change arg type to be more precise
+bridge::Expr &Bridge::addVecVarExpr(const VarDeclRefASTNode *ast)
 {
     Space &s = getSpaceOfVarExpr(ast);
     bridge::Expr *be = new bridge::Expr(s, ast);
@@ -88,7 +90,7 @@ bridge::Expr &Bridge::addVecVarExpr(const ExprASTNode *ast)
     return *be;
 }
 
-bridge::Expr &Bridge::addVecAddExpr(Space &s, ExprASTNode *e, bridge::Expr &left, bridge::Expr &right)
+bridge::Expr &Bridge::addVecAddExpr(Space &s, VectorAddExprASTNode *e, bridge::Expr &left, bridge::Expr &right)
 {
     bridge::Expr *be = new bridge::VecAddExpr(s, e, left, right);
     expressions.push_back(be);
@@ -114,7 +116,7 @@ Binding &Bridge::addBinding(BindingASTNode *v, const Identifier &i,
 void Bridge::dumpIdentifiers()
 {
     for (auto i: identifiers ){
-        cerr << i.getName() << "\n";
+        cerr << i.toString() << "\n";
     }
 }
 

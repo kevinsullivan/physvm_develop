@@ -50,7 +50,7 @@ struct ExprASTNodeHasher
 };
 
 // TODO -- don't need to store pointers in superclass
-
+// TODO -- change name to LitExprASTNode
 class LitASTNode : public ExprASTNode {
 public:
     LitASTNode(const clang::CXXConstructExpr* constrExpr) : ExprASTNode(constrExpr), constrExpr_(constrExpr) {
@@ -63,7 +63,7 @@ public:
         return (constrExpr_ == other.constrExpr_); 
     }
     virtual string toString() const { 
-        return "mk_vector 0";
+        return "(mk_vector 0)";
     }
 private:
     const clang::CXXConstructExpr* constrExpr_;
