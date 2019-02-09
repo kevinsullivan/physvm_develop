@@ -39,7 +39,7 @@ class Identifier {
 public:
 	Identifier(Space& space, const IdentifierASTNode* vardecl);
 	Space* getSpace() { return space_; }
-	string getName();
+	string getName() const;
 /*	string getNameAsString() 
 	{ return vardecl_->getNameAsString(); }
 */
@@ -50,11 +50,12 @@ private:
 
 };
 
+// TODO - Change name of this class? BridgeExpr?
 class Expr {
 public:
     Expr(const Space& s, const ExprASTNode* ast) : space_(s), ast_(ast) {}
     const Space& getSpace();
-	virtual string toString() {
+	virtual string toString() const {
 		if (ast_ != NULL) {
 			//cerr << "Bridge::Expr::toString: ExprASTNode pointer is " << std::hex << ast_ << "\n";
 			return ast_->toString();
@@ -120,6 +121,9 @@ public:
 	const BindingASTNode* getVarDecl() {return ast_wrapper_; } 
 	const bridge::Expr& getDomExpr() { return expr_; }
 	const bridge::Identifier& getIdentifier();
+	string toString() const {
+		return identifier_.getName() + " := " + expr_.toString();
+	}
 private:
 	const BindingASTNode* ast_wrapper_;
 	const Identifier& identifier_;
@@ -144,7 +148,9 @@ public:
 	Expr& addVecAddExpr(Space& s, ExprASTNode* e, bridge::Expr& left_, bridge:: Expr& right_);
 	Binding& addBinding(BindingASTNode* vardecl, const Identifier& identifier, const Expr& expression);
 
-	void dump(); // print contents on cerr
+	void dumpExpressions(); // print contents on cerr
+	void dumpIdentifiers(); // print contents on cerr
+	void dumpBindings(); // print contents on cerr
 
 	bool isConsistent();
 	vector<Space>& getAllSpaces();

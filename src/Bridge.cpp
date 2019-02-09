@@ -14,23 +14,17 @@ Identifier::Identifier(Space &space, const IdentifierASTNode *vardecl) : space_(
 {
 }
 
-string Identifier::getName()
+string Identifier::getName() const
 {
     return vardecl_->getVarDecl()->getNameAsString();
 }
-// UNUSED -- fix
-// VecLitExpr class member function implementation
+
+// TODO: currently UNUSED
 void VecLitExpr::addFloatLit(float num)
 {
     cerr << "Stub: add floats to litvalexpr\n";
 }
 
-// VecVarExpr class member function implementation
-// const Space& VecVarExpr::getVecVarSpace(){ return space_;}
-
-// VecAddExpr class member function implementation
-
-// forward references
 const bridge::Expr &VecAddExpr::getVecAddExprArgL()
 {
     return arg_left_;
@@ -41,14 +35,6 @@ const bridge::Expr &VecAddExpr::getVecAddExprArgR()
     return arg_right_;
 }
 
-// FOR STUBS. Fix/Remove.
-//
-//const Space& VecAddExpr::getVecAddExprDefaultSpace(){
-//	return space_;
-//}
-
-// Binding class member function implementation
-//
 const Identifier &Binding::getIdentifier()
 {
     return identifier_;
@@ -62,22 +48,10 @@ Space &Bridge::addSpace(const string &name)
     return *s;
 }
 
-/*
-BIG TODO : Rewrite all routines here to take AST container nodes,
-as illustrated in addLitExpr just below.
-*/
 
-/*
-// Add new vector, v, in space s, to domain
-// Precondition: s is already in spaces
-// Postcondition: vectors' = vectors + v
-bridge::VecLitExpr& Bridge::addLitExpr(Space& s, const LitASTNode* ast) {
-    VecLitExpr *v = new VecLitExpr(s,ast);
-    expressions.push_back(*v);
-    cerr << "Added Vec Lit Expr to domain bridge at address " << std::hex << v << "\n";
-    return *v;
-}
-*/
+/******
+ * TODO
+ * ****/
 
 // precondition: variable already interpreted
 Space &getSpaceOfVarExpr(const ExprASTNode *ast)
@@ -136,10 +110,25 @@ Binding &Bridge::addBinding(BindingASTNode *v, const Identifier &i,
     return *bd;
 }
 
-void Bridge::dump()
+// TODO: Use pointers everywhere here?
+void Bridge::dumpIdentifiers()
+{
+    for (auto i: identifiers ){
+        cerr << i.getName() << "\n";
+    }
+}
+
+void Bridge::dumpExpressions()
 {
     for (auto e: expressions ){
         cerr << e->toString() << "\n";
+    }
+}
+
+void Bridge::dumpBindings()
+{
+    for (auto b: bindings ){
+        cerr << b.toString() << "\n";
     }
 }
 

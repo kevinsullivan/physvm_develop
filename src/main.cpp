@@ -40,6 +40,10 @@ Oracle *oracle;
 Bridge *bridge_domain;
 Interpretation *interp;
 
+unordered_map <const clang::Expr*, const ExprASTNode*> expr_wrappers;
+unordered_map <const clang::Decl*, const ExprASTNode*> decl_wrappers;
+
+
 /****************************
 Standard Clang Tooling Set-up
 *****************************/
@@ -76,6 +80,7 @@ public:
     // Add (ast container, bridge node) to interpretation
     Space& space = oracle->getSpaceForLitVector(litexpr);
     ExprASTNode* litexpr_wrapper = new LitASTNode(litexpr);
+    expr_wrappers.insert(std::make_pair(litexpr,litexpr_wrapper));
     bridge::Expr& br_lit = bridge_domain->addVecLitExpr(space, litexpr_wrapper); 
     interp->putExpressionInterp(*litexpr_wrapper, br_lit);
     //cerr << "END HandlerForCXXConstructLitExpr\n";
@@ -101,6 +106,7 @@ bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTCont
   //vardecl->dump();
   Space& space = oracle->getSpaceForIdentifier(vardecl);
   IdentifierASTNode* ast_container = new IdentifierASTNode(vardecl);
+  decl_wrappers.insert(std::make_pair(vardecl,ast_container));
   bridge::Identifier& bIdent = bridge_domain->addIdentifier(space, ast_container);
   interp->putIdentInterp(*ast_container, bIdent);
   //cerr << "END: handleCXXConstructIdentifier\n";
@@ -116,6 +122,7 @@ void handleCXXConstructIdentifierBinding(const clang::VarDecl *vardecl, bridge::
   //cerr << "handleCXXConstructIdentifierBinding\n";
   //vardecl->dump();
   BindingASTNode* vardecl_wrapper = new BindingASTNode(vardecl);
+  decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
   bridge::Binding& binding = bridge_domain->addBinding(vardecl_wrapper, *bi, *be);
   interp->putBindingInterp(vardecl_wrapper, binding);
   //cerr << "END: handleCXXConstructIdentifierBinding\n";
@@ -137,6 +144,7 @@ public:
     // ASTContext *context = Result.Context;
     // SourceManager &sm = context->getSourceManager();
     const ExprASTNode* wrapper = new VarDeclRefASTNode(declRefExpr);
+    expr_wrappers.insert(std::make_pair(declRefExpr, wrapper));
     bridge::Expr& be = bridge_domain->addVecVarExpr(wrapper);
     interp->putExpressionInterp(*wrapper, be);
     // postcondition, be can now be found through interpret with wrapped declRefExpr as key
@@ -203,8 +211,11 @@ public:
       //return;
     }
 
-    //ExprASTNode* ast = new ExprASTNode(addexpr); 
-    ExprASTNode* ast = new CXXConstructExprASTNode(consexpr); 
+    // pre-condition: these objects are already in these maps
+    const ExprASTNode *left_wrapper = expr_wrappers[left];
+    const ExprASTNode *right_wrapper = expr_wrappers[right];
+
+    ExprASTNode* ast = new VectorAddExprASTNode(consexpr, left_wrapper, right_wrapper); 
     Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
     bridge::Expr& br_add_expr = bridge_domain->addVecAddExpr(s, ast, *left_br, *right_br);
     interp->putExpressionInterp(*ast, br_add_expr);
@@ -498,5 +509,10 @@ int main(int argc, const char **argv)
   interp = new Interpretation();
   oracle = new Oracle(*bridge_domain);
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
-  bridge_domain->dump();
+  cerr << "Identifiers\n";
+  bridge_domain->dumpIdentifiers();
+  cerr << "Expressions\n";
+  bridge_domain->dumpExpressions();
+  cerr << "Bindings\n";
+  bridge_domain->dumpBindings();
 }
