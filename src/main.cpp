@@ -79,7 +79,7 @@ public:
     // Create bridge node for lifted AST expression
     // Add (ast container, bridge node) to interpretation
     Space& space = oracle->getSpaceForLitVector(litexpr);
-    ExprASTNode* litexpr_wrapper = new LitASTNode(litexpr);
+    LitASTNode* litexpr_wrapper = new LitASTNode(litexpr);
     expr_wrappers.insert(std::make_pair(litexpr,litexpr_wrapper));
     bridge::Expr& br_lit = bridge_domain->addVecLitExpr(space, litexpr_wrapper); 
     interp->putExpressionInterp(*litexpr_wrapper, br_lit);
@@ -143,7 +143,7 @@ public:
     //cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
     // ASTContext *context = Result.Context;
     // SourceManager &sm = context->getSourceManager();
-    const ExprASTNode* wrapper = new VarDeclRefASTNode(declRefExpr);
+    const VarDeclRefASTNode* wrapper = new VarDeclRefASTNode(declRefExpr);
     expr_wrappers.insert(std::make_pair(declRefExpr, wrapper));
     bridge::Expr& be = bridge_domain->addVecVarExpr(wrapper);
     interp->putExpressionInterp(*wrapper, be);
@@ -215,7 +215,7 @@ public:
     const ExprASTNode *left_wrapper = expr_wrappers[left];
     const ExprASTNode *right_wrapper = expr_wrappers[right];
 
-    ExprASTNode* ast = new VectorAddExprASTNode(consexpr, left_wrapper, right_wrapper); 
+    VectorAddExprASTNode* ast = new VectorAddExprASTNode(consexpr, left_wrapper, right_wrapper); 
     Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
     bridge::Expr& br_add_expr = bridge_domain->addVecAddExpr(s, ast, *left_br, *right_br);
     interp->putExpressionInterp(*ast, br_add_expr);

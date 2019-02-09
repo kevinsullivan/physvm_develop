@@ -21,19 +21,23 @@ public:
 	Space& getSpaceForAddExpression(bridge::Expr * left_br, bridge::Expr * right_br)
 	{
 		//cerr << "Returning stub space for expression.\n";
-		cout << "Space for add expression?\n";
+		cerr << "Space for add expression?\n";
+		cerr << "Left is \n" << left_br->toString() << "\n";
+		cerr << "Right is \n" << right_br->toString() << "\n";
 		return getSpace();
 	}
 
 	Space& getSpaceForIdentifier(const clang::VarDecl* v) {
 		//cerr << "Returning stub space for identifier.\n";
-		cout << "Space for identifier?\n";
+		cerr << "Space for identifier?\n";
+		v->dump();
 		return getSpace();
 	}
 
 	Space& getSpaceForLitVector(const clang::Expr* v) {
 		//cerr << "Space for literal?\n";
-		cout << "Space for literal?\n";
+		cerr << "Space for literal?\n";
+		v->dump();
 		return getSpace();
 	}
 
