@@ -37,7 +37,7 @@ expressions lifted to domain expressions.
 
 class Identifier {
 public:
-	Identifier(Space& space, const VarDeclASTNode* vardecl);
+	Identifier(Space& space, const IdentifierASTNode* vardecl);
 	Space* getSpace() { return space_; }
 	string getName();
 /*	string getNameAsString() 
@@ -45,7 +45,7 @@ public:
 */
 private:
 	Space* space_;
-	const VarDeclASTNode* vardecl_;
+	const IdentifierASTNode* vardecl_;
 	string name_;
 
 };
@@ -115,13 +115,13 @@ the *domain* Identifier and Expression objects being bound.
 */
 class Binding {
 public:
-	Binding(VarDeclASTNode* ast_wrapper, const bridge::Identifier& identifier, const bridge::Expr& expr):
+	Binding(BindingASTNode* ast_wrapper, const bridge::Identifier& identifier, const bridge::Expr& expr):
 			ast_wrapper_(ast_wrapper), identifier_(identifier), expr_(expr) {}
-	const VarDeclASTNode* getVarDecl() {return ast_wrapper_; } 
+	const BindingASTNode* getVarDecl() {return ast_wrapper_; } 
 	const bridge::Expr& getDomExpr() { return expr_; }
 	const bridge::Identifier& getIdentifier();
 private:
-	const VarDeclASTNode* ast_wrapper_;
+	const BindingASTNode* ast_wrapper_;
 	const Identifier& identifier_;
 	const Expr& expr_;
 };
@@ -138,11 +138,11 @@ class Bridge {
 public:
 	Space& addSpace(const string& name);
 	//VecLitExpr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
-	Identifier& addIdentifier(Space& s, const VarDeclASTNode* ast);
+	Identifier& addIdentifier(Space& s, const IdentifierASTNode* ast);
 	Expr& addVecVarExpr(const ExprASTNode* ast);
 	Expr& addVecLitExpr(Space& s, ExprASTNode* e);
 	Expr& addVecAddExpr(Space& s, ExprASTNode* e, bridge::Expr& left_, bridge:: Expr& right_);
-	Binding& addBinding(VarDeclASTNode* vardecl, const Identifier& identifier, const Expr& expression);
+	Binding& addBinding(BindingASTNode* vardecl, const Identifier& identifier, const Expr& expression);
 
 	void dump(); // print contents on cerr
 

@@ -8,12 +8,12 @@ using namespace std;
  * Identifiers
  *************/
 
-void Interpretation::putIdentInterp(const VarDeclASTNode& key, bridge::Identifier& v) {
+void Interpretation::putIdentInterp(const IdentifierASTNode& key, bridge::Identifier& v) {
     interpIdent.insert(std::make_pair(key,&v));
     //cerr << "Put Ident Interp.\n";
 }
 
-const bridge::Identifier* Interpretation::getIdentInterp(const VarDeclASTNode& n) 
+const bridge::Identifier* Interpretation::getIdentInterp(const IdentifierASTNode& n) 
 {
     return interpIdent[n];
     cerr << "Get Ident Interp.\n";
@@ -37,13 +37,13 @@ bridge::Expr* Interpretation::getExpressionInterp(const ExprASTNode& n) {
  *********/
 
 // TODO: Make first arg a reference &
-void Interpretation::putBindingInterp(VarDeclASTNode *key, Binding& b)
+void Interpretation::putBindingInterp(BindingASTNode *key, Binding& b)
 {
     interpBinding.insert(std::make_pair(*key,&b));
     //cerr << "Interpretation::putBindingInterp called but stubbed out.\n";
 }
 
-Binding* Interpretation::getBindingInterp(VarDeclASTNode& key) {
+Binding* Interpretation::getBindingInterp(BindingASTNode& key) {
    return interpBinding[key];     
    //cerr << "Interpretation::getBindingInterp called but stubbed out. Returning NULL.\n";
 }

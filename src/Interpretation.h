@@ -13,8 +13,8 @@ using namespace bridge;
 class Interpretation {
 public:
 
-	void putIdentInterp(const VarDeclASTNode& key, bridge::Identifier& bi);
-	const bridge::Identifier* getIdentInterp(const VarDeclASTNode& key);
+	void putIdentInterp(const IdentifierASTNode& key, bridge::Identifier& bi);
+	const bridge::Identifier* getIdentInterp(const IdentifierASTNode& key);
 
 	// ??? delete ???
 	/*
@@ -28,8 +28,8 @@ public:
 	void putExpressionInterp(const ExprASTNode& n, bridge::Expr& e);
 	bridge::Expr* getExpressionInterp(const ExprASTNode& n);
 
-	void putBindingInterp(VarDeclASTNode *vardecl_wrapper, Binding& b);
-	Binding* getBindingInterp(VarDeclASTNode& vardecl_wrapper);
+	void putBindingInterp(BindingASTNode *vardecl_wrapper, Binding& b);
+	Binding* getBindingInterp(BindingASTNode& vardecl_wrapper);
 
 private:
 	/* 
@@ -37,9 +37,9 @@ private:
 	turn, are currently just containers for pointers to AST
 	nodes, adding operator==() and hash functions.
 	*/
-	unordered_map<VarDeclASTNode, bridge::Identifier*, VarDeclASTNodeHasher> interpIdent;
+	unordered_map<IdentifierASTNode, bridge::Identifier*, IdentifierASTNodeHasher> interpIdent;
 	unordered_map<ExprASTNode, bridge::Expr*, ExprASTNodeHasher> interpExpression; 
-	unordered_map<VarDeclASTNode, bridge::Binding*, VarDeclASTNodeHasher> interpBinding;
+	unordered_map<BindingASTNode, bridge::Binding*, BindingASTNodeHasher> interpBinding;
 };
 
 #endif
