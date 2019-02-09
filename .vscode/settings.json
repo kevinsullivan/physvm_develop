@@ -15,6 +15,9 @@
         "iterator": "cpp",
         "locale": "cpp",
         "__split_buffer": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "__hash_table": "cpp",
+        "unordered_map": "cpp",
+        "memory": "cpp"
     }
 }
