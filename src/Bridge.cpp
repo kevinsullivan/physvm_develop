@@ -10,7 +10,7 @@ string Space::getName() const { return name_; }
 
 const Space &bridge::Expr::getSpace() { return space_; }
 
-Identifier::Identifier(Space &space, const VarDeclASTNode *vardecl) : space_(&space), vardecl_(vardecl)
+Identifier::Identifier(Space &space, const IdentifierASTNode *vardecl) : space_(&space), vardecl_(vardecl)
 {
 }
 
@@ -121,14 +121,14 @@ bridge::Expr &Bridge::addVecAddExpr(Space &s, ExprASTNode *e, bridge::Expr &left
     return *be;
 }
 
-Identifier &Bridge::addIdentifier(Space &s, const VarDeclASTNode *ast)
+Identifier &Bridge::addIdentifier(Space &s, const IdentifierASTNode *ast)
 {
     Identifier *id = new Identifier(s, ast);
     identifiers.push_back(*id);
     return *id;
 }
 
-Binding &Bridge::addBinding(VarDeclASTNode *v, const Identifier &i,
+Binding &Bridge::addBinding(BindingASTNode *v, const Identifier &i,
                             const bridge::Expr &e)
 {
     Binding *bd = new Binding(v, i, e);

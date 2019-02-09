@@ -44,10 +44,7 @@ private:
     const clang::Decl* decl_;
 };
 
-/*
-Provide has function for ExprASTNodeHasher class, as required
-for the use of objects of this class as keys in a map.
-*/
+
 struct ExprASTNodeHasher
 {
     std::size_t operator()(const ExprASTNode& k) const
@@ -58,6 +55,7 @@ struct ExprASTNodeHasher
     }
 };
 
+// TODO -- don't need to store pointers in superclass
 
 class LitASTNode : public ExprASTNode {
 public:
@@ -71,16 +69,13 @@ public:
         return (constrExpr_ == other.constrExpr_); 
     }
     virtual string toString() const { 
-        return "LitASTNode::toPrint";
+        return "Literal";
     }
 private:
     const clang::CXXConstructExpr* constrExpr_;
 };
 
-/*
-Provide has function for ExprASTNodeHasher class, as required
-for the use of objects of this class as keys in a map.
-*/
+
 struct LitASTNodeHasher
 {
     std::size_t operator()(const LitASTNode& k) const
@@ -91,32 +86,29 @@ struct LitASTNodeHasher
     }
 };
 
-
-class VarDeclASTNode : public ExprASTNode {
+// TODO -- Binding hides VarDecl
+class BindingASTNode : public ExprASTNode {
 public:
-    VarDeclASTNode(const clang::VarDecl* varDecl) 
+    BindingASTNode(const clang::VarDecl* varDecl) 
                 : ExprASTNode(varDecl), varDecl_(varDecl) {            
     }
-    const clang::VarDecl* getVarDecl() const {return varDecl_; }
+    const clang::VarDecl* getVarDecl() const {return varDecl_;}
 
     // for now, an address-based equality predicate
-    bool operator==(const VarDeclASTNode &other) const { 
+    bool operator==(const BindingASTNode &other) const { 
         return (varDecl_ == other.varDecl_); 
     }
     virtual string toString() const { 
-        return "VarDeclASTNode::toPrint";
+        return "Binding";
     }
 private:
     const clang::VarDecl* varDecl_;
 };
 
-/*
-Provide has function for ExprASTNodeHasher class, as required
-for the use of objects of this class as keys in a map.
-*/
-struct VarDeclASTNodeHasher
+
+struct BindingASTNodeHasher
 {
-    std::size_t operator()(const VarDeclASTNode& k) const
+    std::size_t operator()(const BindingASTNode& k) const
     {
         std::size_t hash = 101010;
         // TODO Fix hash function 
@@ -125,6 +117,39 @@ struct VarDeclASTNodeHasher
 };
 
 //---------------
+
+// Identifier implemented as VarDecl
+class IdentifierASTNode : public ExprASTNode {
+public:
+    IdentifierASTNode(const clang::VarDecl* varDecl) 
+                : ExprASTNode(varDecl), varDecl_(varDecl) {            
+    }
+    const clang::VarDecl* getVarDecl() const {return varDecl_; }
+
+    // for now, an address-based equality predicate
+    bool operator==(const IdentifierASTNode &other) const { 
+        return (varDecl_ == other.varDecl_); 
+    }
+    virtual string toString() const { 
+        return "Identifier";
+    }
+private:
+    const clang::VarDecl* varDecl_;
+};
+
+
+struct IdentifierASTNodeHasher
+{
+    std::size_t operator()(const IdentifierASTNode& k) const
+    {
+        std::size_t hash = 101010;
+        // TODO Fix hash function 
+        return hash;
+    }
+};
+
+
+// ToDo -- change name to VarExpr (implemented as VarDeclRef)
 
 class VarDeclRefASTNode : public ExprASTNode {
 public:
@@ -138,16 +163,13 @@ public:
         return (varDeclRef_ == other.varDeclRef_); 
     }
     virtual string toString() const { 
-        return "VarDeclRefASTNode::toPrint";
+        return "Variable Expression";
     }
 private:
     const clang::DeclRefExpr* varDeclRef_;
 };
 
-/*
-Provide has function for ExprASTNodeHasher class, as required
-for the use of objects of this class as keys in a map.
-*/
+
 struct VarDeclRefASTNodeHasher
 {
     std::size_t operator()(const VarDeclRefASTNode& k) const
@@ -158,11 +180,8 @@ struct VarDeclRefASTNodeHasher
     }
 };
 
-//-----------------
 
-//---------------
-
-// For Add expressions
+// TODO -- Change to AddExpr, implemented as CXXConstructExpr
 
 class CXXConstructExprASTNode : public ExprASTNode {
 public:
@@ -176,7 +195,7 @@ public:
         return (cxxConstructExpr_ == other.cxxConstructExpr_); 
     }
     virtual string toString() const { 
-        return "CXXConstructExprASTNode::toPrint";
+        return "Add Expression";
     }
 private:
     const clang::CXXConstructExpr* cxxConstructExpr_;
@@ -195,7 +214,5 @@ struct CXXConstructExprASTNodeHasher
         return hash;
     }
 };
-
-
 
 #endif

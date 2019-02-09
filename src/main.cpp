@@ -100,7 +100,7 @@ bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTCont
   //cerr << "handleCXXConstructIdentifier\n";
   //vardecl->dump();
   Space& space = oracle->getSpaceForIdentifier(vardecl);
-  VarDeclASTNode* ast_container = new VarDeclASTNode(vardecl);
+  IdentifierASTNode* ast_container = new IdentifierASTNode(vardecl);
   bridge::Identifier& bIdent = bridge_domain->addIdentifier(space, ast_container);
   interp->putIdentInterp(*ast_container, bIdent);
   //cerr << "END: handleCXXConstructIdentifier\n";
@@ -115,9 +115,8 @@ bridge::Identifier* handleCXXConstructIdentifier(const VarDecl *vardecl, ASTCont
 void handleCXXConstructIdentifierBinding(const clang::VarDecl *vardecl, bridge::Identifier *bi, bridge::Expr *be) {
   //cerr << "handleCXXConstructIdentifierBinding\n";
   //vardecl->dump();
-  VarDeclASTNode* vardecl_wrapper = new VarDeclASTNode(vardecl);
+  BindingASTNode* vardecl_wrapper = new BindingASTNode(vardecl);
   bridge::Binding& binding = bridge_domain->addBinding(vardecl_wrapper, *bi, *be);
-//  bridge::Binding& binding = *new bridge::Binding(vardecl_wrapper, *bv, *be);
   interp->putBindingInterp(vardecl_wrapper, binding);
   //cerr << "END: handleCXXConstructIdentifierBinding\n";
 }
