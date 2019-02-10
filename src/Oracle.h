@@ -18,7 +18,7 @@ public:
 	//
 	Space& getSpaceForVector(string where);
 
-	Space& getSpaceForAddExpression(bridge::Expr * left_br, bridge::Expr * right_br)
+	Space& getSpaceForAddExpression(const bridge::Expr * left_br, const bridge::Expr * right_br)
 	{
 		//cerr << "Returning stub space for expression.\n";
 		cerr << "Space for add expression?\n";

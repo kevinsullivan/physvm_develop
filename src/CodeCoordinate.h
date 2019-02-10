@@ -18,23 +18,28 @@ Subclasses should be defined for each kind of AST node to
 be lifted to a corresponding bridge type.
 */
 
-enum ast_type {EXPR, DECL} ;
+enum ast_type {EXPR, STMT, DECL} ;
 
+// TODO: Change name to ASTNode, as can now be either EXPR or STMT
 class ExprASTNode {
 public:
     ExprASTNode() : expr_(NULL) {}
-    ExprASTNode(const clang::Expr* expr) : expr_(expr) {}
-    ExprASTNode(const clang::Decl* decl) : decl_(decl) {}
+    ExprASTNode(const clang::Expr* expr) : expr_(expr) { ast_type_ = EXPR; }
+    ExprASTNode(const clang::Stmt* decl) : stmt_(decl) { ast_type_ = STMT; }
+    ExprASTNode(const clang::Decl* decl) : decl_(decl) { ast_type_ = DECL; }
     const clang::Expr* getASTNode() const { return expr_; }
-    bool operator==(const ExprASTNode &other) const { 
-        return (expr_ == other.expr_); 
+    bool operator==(const ExprASTNode &other) const {
+        if      (ast_type_ == EXPR) { return (expr_ == other.expr_); }
+        else if (ast_type_ == STMT) { return (stmt_ == other.stmt_); }
+        else                        { return (decl_ == other.decl_); }
     }
     virtual string toString() const { 
-        return "ExprASTNode::toPrint -- Error should not be called";
+        return "ASTNode::toPrint: Error: should not be called.";
     }
 private:
     ast_type ast_type_;
     const clang::Expr* expr_;
+    const clang::Stmt* stmt_;
     const clang::Decl* decl_;
 };
 
@@ -149,20 +154,20 @@ struct VarDeclRefASTNodeHasher
 
 class VectorAddExprASTNode : public ExprASTNode {
 public:
-    VectorAddExprASTNode(const clang::CXXConstructExpr* exp, const ExprASTNode *left, const ExprASTNode *right) 
-                : ExprASTNode(exp), cxxConstructExpr_(exp), left_(left), right_(right) {            
+    VectorAddExprASTNode(const clang::CXXMemberCallExpr* exp, const ExprASTNode *left, const ExprASTNode *right) 
+                : ExprASTNode(exp), cxxMemberCallExpr_(exp), left_(left), right_(right) {            
     }
-    const clang::CXXConstructExpr* getXXConstructExpr() const {return cxxConstructExpr_; }
+    const clang::CXXMemberCallExpr* getCXXMemberCallExpr() const {return cxxMemberCallExpr_; }
 
     // for now, an address-based equality predicate
     bool operator==(const VectorAddExprASTNode &other) const { 
-        return (cxxConstructExpr_ == other.cxxConstructExpr_); 
+        return (cxxMemberCallExpr_ == other.cxxMemberCallExpr_); 
     }
     virtual string toString() const { 
         return "add (" + left_->toString() + ") (" + right_->toString() + ")"; 
     }
 private:
-    const clang::CXXConstructExpr* cxxConstructExpr_;
+    const clang::CXXMemberCallExpr* cxxMemberCallExpr_;
     const ExprASTNode* left_;
     const ExprASTNode* right_;
 };
@@ -182,6 +187,37 @@ struct VectorAddExprASTNodeHasher
 };
 
 // TODO -- Binding hides VarDecl
+class BindingASTNode : public ExprASTNode {
+public:
+    BindingASTNode(const clang::DeclStmt* declStmt) 
+                : ExprASTNode(declStmt), declStmt_(declStmt) {            
+    }
+    const clang::DeclStmt* getDeclStmt() const {return declStmt_;}
+
+    // for now, an address-based equality predicate
+    bool operator==(const BindingASTNode &other) const { 
+        return (declStmt_ == other.declStmt_); 
+    }
+    virtual string toString() const { 
+        return "Binding";
+    }
+private:
+    const clang::DeclStmt* declStmt_;
+};
+
+
+struct BindingASTNodeHasher
+{
+    std::size_t operator()(const BindingASTNode& k) const
+    {
+        std::size_t hash = 101010;
+        // TODO Fix hash function 
+        return hash;
+    }
+};
+
+/*
+
 class BindingASTNode : public ExprASTNode {
 public:
     BindingASTNode(const clang::VarDecl* varDecl) 
@@ -211,6 +247,6 @@ struct BindingASTNodeHasher
     }
 };
 
-
+*/
 
 #endif
