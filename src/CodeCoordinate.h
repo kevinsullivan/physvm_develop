@@ -85,6 +85,12 @@ struct LitASTNodeHasher
     }
 };
 
+
+
+
+
+
+
 //---------------
 
 // Identifier implemented as VarDecl
@@ -150,7 +156,7 @@ struct VarDeclRefASTNodeHasher
 };
 
 
-// TODO -- Change to AddExpr, implemented as CXXConstructExpr
+// TODO -- Change to AddMemberCallExpr, implemented as CXXMemberCallExpr
 
 class VectorAddExprASTNode : public ExprASTNode {
 public:
@@ -185,6 +191,38 @@ struct VectorAddExprASTNodeHasher
         return hash;
     }
 };
+
+// TODO weak typing of ExprASTNode argument
+class AddConstructASTNode : public ExprASTNode {
+public:
+    AddConstructASTNode(const clang::CXXConstructExpr* constrExpr, const ExprASTNode* addExpr) : ExprASTNode(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {
+    }
+    const clang::CXXConstructExpr* getASTNode() const {return constrExpr_; }
+
+    // for now, an address-based equality predicate
+    bool operator==(const AddConstructASTNode &other) const { 
+
+        return (constrExpr_ == other.constrExpr_); 
+    }
+    virtual string toString() const { 
+        return "AddConstructNode";
+    }
+private:
+    const clang::CXXConstructExpr* constrExpr_;
+    const ExprASTNode* addExpr_;;
+};
+
+
+struct AddConstructASTNodeHasher
+{
+    std::size_t operator()(const AddConstructASTNode& k) const
+    {
+        // TODO -- fix
+        std::size_t hash = 10101010;
+        return hash;
+    }
+};
+
 
 // TODO -- Binding hides VarDecl
 class BindingASTNode : public ExprASTNode {

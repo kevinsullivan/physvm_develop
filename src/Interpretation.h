@@ -32,8 +32,10 @@ class Interpretation
 	Binding *getBindingInterp(BindingASTNode &vardecl_wrapper);
 
 	void dumpExpressions() {
-		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it)
-			std::cerr << " " << it->first->toString() << ":" << it->second->toString();
+		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
+			//std::cerr << std::hex << &it->first << " : " << std::hex << it.second << "\n";
+			cerr << "InterpExpr!\n";
+		}
 		std::cerr << std::endl;
 	}
 
@@ -44,7 +46,7 @@ class Interpretation
 	nodes, adding operator==() and hash functions.
 	*/
 	unordered_map<IdentifierASTNode, bridge::Identifier *, IdentifierASTNodeHasher> interpIdent;
-	unordered_map<const ExprASTNode*, const bridge::Expr *> interpExpression;
+	unordered_map<const ExprASTNode, const bridge::Expr *, ExprASTNodeHasher> interpExpression;
 	unordered_map<BindingASTNode, bridge::Binding *, BindingASTNodeHasher> interpBinding;
 };
 
