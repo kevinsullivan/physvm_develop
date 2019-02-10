@@ -33,7 +33,7 @@ class Interpretation
 
 	void dumpExpressions() {
 		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it)
-			std::cerr << " " << it->first.toString() << ":" << it->second->toString();
+			std::cerr << " " << it->first->toString() << ":" << it->second->toString();
 		std::cerr << std::endl;
 	}
 
@@ -44,7 +44,7 @@ class Interpretation
 	nodes, adding operator==() and hash functions.
 	*/
 	unordered_map<IdentifierASTNode, bridge::Identifier *, IdentifierASTNodeHasher> interpIdent;
-	unordered_map<ExprASTNode, const bridge::Expr *, ExprASTNodeHasher> interpExpression;
+	unordered_map<const ExprASTNode*, const bridge::Expr *> interpExpression;
 	unordered_map<BindingASTNode, bridge::Binding *, BindingASTNodeHasher> interpBinding;
 };
 
