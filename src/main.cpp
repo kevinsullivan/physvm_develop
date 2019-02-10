@@ -87,55 +87,6 @@ public:
   }
 };
 
-/*************
- * IDENTIFIERS
- *************/
-
-/*
-Function: Add interpretation for Vector identifier
-
-create a bridge variable object 
-add interpretation from vardecl to bridge variable object
-maybe return a bool or something to indicate success or failure?
-
-TODO: Maybe better to link back just to IdentifierInfo, rather than to full VarDecl
-
-bridge::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl, ASTContext *context, SourceManager &sm)
-{
-  //cerr << "handleCXXConstructIdentifier\n";
-  //vardecl->dump();
-  Space &space = oracle->getSpaceForIdentifier(vardecl);
-  IdentifierASTNode *ast_container = new IdentifierASTNode(vardecl);
-  decl_wrappers.insert(std::make_pair(vardecl, ast_container));
-  bridge::Identifier &bIdent = bridge_domain->addIdentifier(space, ast_container);
-  interp->putIdentInterp(*ast_container, bIdent);
-  //cerr << "END: handleCXXConstructIdentifier\n";
-  return &bIdent;
-}
-*/
-
-/*********
- * BINDING
- *********/
-
-/* INLINED BELOW
-
-// Function: Add interpretation for binding of Vector identifier to Vector Expression
-void handleCXXConstructIdentifierBinding(const clang::VarDecl *vardecl, bridge::Identifier *bi, bridge::Expr *be)
-{
-  cerr << "handleCXXConstructIdentifierBinding-- HEY!\n";
-  cerr << "Here's vardecl\n";
-  vardecl->dump();
-  cerr << "Here's bi " << bi->toString() << "\n";
-  cerr << "Here's be " << be->toString() << "\n";
-  BindingASTNode *vardecl_wrapper = new BindingASTNode(vardecl);
-  decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
-  bridge::Binding &binding = bridge_domain->addBinding(vardecl_wrapper, *bi, *be);
-  interp->putBindingInterp(vardecl_wrapper, binding);
-  cerr << "END: handleCXXConstructIdentifierBinding\n";
-}
-*/
-
 /*******************************
  * Handle Member Call Expression
  *******************************/
@@ -144,7 +95,7 @@ void handleCXXConstructIdentifierBinding(const clang::VarDecl *vardecl, bridge::
 const bridge::Expr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
 const bridge::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm);
 
-const clang::Expr *handleMemberCallExpr(const CXXMemberCallExpr *addexpr, ASTContext *context, SourceManager &sm)
+const bridge::Expr *handleMemberCallExpr(const CXXMemberCallExpr *addexpr, ASTContext *context, SourceManager &sm)
 {
   const clang::Expr *left = addexpr->getImplicitObjectArgument();
   if (!left)
@@ -193,6 +144,7 @@ const clang::Expr *handleMemberCallExpr(const CXXMemberCallExpr *addexpr, ASTCon
   const bridge::Expr &br_add_expr = bridge_domain->addVecAddExpr(s, wrapper, *left_br, *right_br);
   interp->putExpressionInterp(*wrapper, br_add_expr);
   expr_wrappers.insert(std::make_pair(addexpr, wrapper));
+  return &br_add_expr;
 }
 
 /*
@@ -291,7 +243,7 @@ public:
   //  Get left and right children of add expression and handle them by calls to other handlers
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    cerr << "HandlerForCXXConstructAddExpr.\n";
+    cerr << "!!!!!!!!!!!!!!!!!!!!!!!! HandlerForCXXConstructAddExpr !!!!!!!!!!!!!!!!!!!!!!.\n";
 
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
@@ -315,12 +267,12 @@ public:
     //cerr << "HandlerForCXXConstructAddExpr::run\n";
     //cerr << "addexpr is\n"; addexpr->dump();
 
-    const clang::Expr *memberCallExpr = handleMemberCallExpr(addexpr, context, sm);
-
-    // KEVIN TODO FILL IN
-
-    //cerr << "Added Add Expr to Bridge and Domain, keyed by "
-  }
+    const bridge::Expr *memberCallExpr = handleMemberCallExpr(addexpr, context, sm);
+    const ExprASTNode* addexprWrapper =expr_wrappers[addexpr]; 
+    const AddConstructASTNode* wrapper = new AddConstructASTNode(consdecl, addexprWrapper);      
+    expr_wrappers.insert(std::make_pair(consdecl,wrapper));
+    interp->putExpressionInterp(*wrapper, *memberCallExpr);
+    }
 };
 
 /***** Handle Right Expr of expr.add(expr) Call Expr ******/
@@ -435,7 +387,7 @@ const bridge::Expr *handle_member_expr_of_add_call(const clang::Expr *left, ASTC
   call_expr_mem_expr_matcher.match(*left, context);
 
   // postcondition: look up left in interp and return corresponding value
-  ExprASTNode *wrapper = new ExprASTNode(left);
+  const ExprASTNode *wrapper = new ExprASTNode(left);
   const bridge::Expr *expr = interp->getExpressionInterp(*wrapper);
   expr_wrappers.insert(std::make_pair(left, wrapper));
   //cerr << "END: handle_member_expr_of_add_call: returning " << std::hex << expr << ". STUB?\n";
