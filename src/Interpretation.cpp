@@ -24,12 +24,11 @@ const bridge::Identifier* Interpretation::getIdentInterp(const IdentifierASTNode
  ****************/
 
 void Interpretation::putExpressionInterp(const ExprASTNode& n, const bridge::Expr& e) {
-//    interpExpression.emplace(n, &e);
-    interpExpression.insert(std::make_pair(n, &e));
+    interpExpression.insert(std::make_pair(&n, &e));
 }
 
 const bridge::Expr* Interpretation::getExpressionInterp(const ExprASTNode& n) {
-   return interpExpression[n]; 
+   return interpExpression[&n]; 
 }
 
 /*********
