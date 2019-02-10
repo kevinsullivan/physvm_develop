@@ -1,7 +1,7 @@
 #ifndef INTERPRETATION_H
 #define INTERPRETATION_H
 
-#include<iostream>
+#include <iostream>
 #include "CodeCoordinate.h"
 #include "Bridge.h"
 
@@ -10,11 +10,11 @@
 using namespace std;
 using namespace bridge;
 
-class Interpretation {
-public:
-
-	void putIdentInterp(const IdentifierASTNode& key, bridge::Identifier& bi);
-	const bridge::Identifier* getIdentInterp(const IdentifierASTNode& key);
+class Interpretation
+{
+  public:
+	void putIdentInterp(const IdentifierASTNode &key, bridge::Identifier &bi);
+	const bridge::Identifier *getIdentInterp(const IdentifierASTNode &key);
 
 	// ??? delete ???
 	/*
@@ -22,24 +22,30 @@ public:
 	VecVarExpr* getVectorInterp(const VectorASTNode& n);
 	*/
 
-	void putLitInterp(const LitASTNode& n, VecLitExpr& v);
-	VecLitExpr* getLitInterp(const LitASTNode& n);
+	void putLitInterp(const LitASTNode &n, VecLitExpr &v);
+	VecLitExpr *getLitInterp(const LitASTNode &n);
 
-	void putExpressionInterp(const ExprASTNode& n, bridge::Expr& e);
-	bridge::Expr* getExpressionInterp(const ExprASTNode& n);
+	void putExpressionInterp(const ExprASTNode &n, const bridge::Expr &e);
+	const bridge::Expr *getExpressionInterp(const ExprASTNode &n);
 
-	void putBindingInterp(BindingASTNode *vardecl_wrapper, Binding& b);
-	Binding* getBindingInterp(BindingASTNode& vardecl_wrapper);
+	void putBindingInterp(BindingASTNode *vardecl_wrapper, Binding &b);
+	Binding *getBindingInterp(BindingASTNode &vardecl_wrapper);
 
-private:
+	void dumpExpressions() {
+		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it)
+			std::cerr << " " << it->first.toString() << ":" << it->second->toString();
+		std::cerr << std::endl;
+	}
+
+  private:
 	/* 
 	We implement an interpretation as a collection of typed maps. The keys are "Code Coordinate" objects, which, in 
 	turn, are currently just containers for pointers to AST
 	nodes, adding operator==() and hash functions.
 	*/
-	unordered_map<IdentifierASTNode, bridge::Identifier*, IdentifierASTNodeHasher> interpIdent;
-	unordered_map<ExprASTNode, bridge::Expr*, ExprASTNodeHasher> interpExpression; 
-	unordered_map<BindingASTNode, bridge::Binding*, BindingASTNodeHasher> interpBinding;
+	unordered_map<IdentifierASTNode, bridge::Identifier *, IdentifierASTNodeHasher> interpIdent;
+	unordered_map<ExprASTNode, const bridge::Expr *, ExprASTNodeHasher> interpExpression;
+	unordered_map<BindingASTNode, bridge::Binding *, BindingASTNodeHasher> interpBinding;
 };
 
 #endif

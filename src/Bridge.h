@@ -107,6 +107,10 @@ public:
 	const Expr& getVecAddExprArgL();
 	const Expr& getVecAddExprArgR();
 
+	virtual string toString() const {
+		return "(add " + arg_left_.toString() + " " + arg_right_.toString() + ")";
+	}
+
 	// get the default space for this VecAddExpr using the space of the arg_left_
 	//const Space& getVecAddExprDefaultSpace();
 private:
@@ -149,8 +153,8 @@ public:
 	//VecLitExpr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
 	Identifier& addIdentifier(Space& s, const IdentifierASTNode* ast);
 	Expr& addVecVarExpr(const VarDeclRefASTNode* ast);
-	Expr& addVecLitExpr(Space& s, LitASTNode* e);
-	Expr& addVecAddExpr(Space& s, VectorAddExprASTNode* e, bridge::Expr& left_,bridge:: Expr& right_);
+	Expr& addVecLitExpr(Space& s, const LitASTNode* e);
+	Expr& addVecAddExpr(Space& s, VectorAddExprASTNode* e, const bridge::Expr& left_, const bridge:: Expr& right_);
 	Binding& addBinding(BindingASTNode* vardecl, const Identifier& identifier, const Expr& expression);
 
 	void dumpExpressions(); // print contents on cerr

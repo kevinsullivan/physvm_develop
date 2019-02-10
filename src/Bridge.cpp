@@ -54,7 +54,7 @@ Space &Bridge::addSpace(const string &name)
 }
 
 
-bridge::Expr &Bridge::addVecLitExpr(Space &s, LitASTNode *e)
+bridge::Expr &Bridge::addVecLitExpr(Space &s, const LitASTNode *e)
 {
     bridge::Expr *be = new bridge::Expr(s, e);
     //cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
@@ -82,7 +82,7 @@ bridge::Expr &Bridge::addVecVarExpr(const VarDeclRefASTNode *ast)
 {
     Space &s = getSpaceOfVarExpr(ast);
     bridge::Expr *be = new bridge::Expr(s, ast);
-    //cerr << "Adding Vec Var Expr to domain, address " << std::hex << be << " dump before is ... \n";
+    cerr << "Adding Vec Var Expr to domain, address " << std::hex << be << ": " << be->toString() << "\n";
     //dump();
     expressions.push_back(be);
     //cerr << "... dump after is ...\n";
@@ -90,10 +90,14 @@ bridge::Expr &Bridge::addVecVarExpr(const VarDeclRefASTNode *ast)
     return *be;
 }
 
-bridge::Expr &Bridge::addVecAddExpr(Space &s, VectorAddExprASTNode *e, bridge::Expr &left, bridge::Expr &right)
+bridge::Expr &Bridge::addVecAddExpr(Space &s, VectorAddExprASTNode *e, const bridge::Expr &left, const bridge::Expr &right)
 {
     bridge::Expr *be = new bridge::VecAddExpr(s, e, left, right);
+    cerr << "Adding Vec ADD Expr to expressions, address " << std::hex << be << "\n";
+    cerr << "Add Expr added is " << be->toString() << "\n";
+    //dump();
     expressions.push_back(be);
+    cerr << "Done adding Add Expr to expressions\n";
     return *be;
 }
 
@@ -107,6 +111,9 @@ Identifier &Bridge::addIdentifier(Space &s, const IdentifierASTNode *ast)
 Binding &Bridge::addBinding(BindingASTNode *v, const Identifier &i,
                             const bridge::Expr &e)
 {
+    cerr << "Bridge::addBinding ";
+    cerr << "identifier is " << i.toString();
+    cerr << " expression is " << e.toString() << "\n";
     Binding *bd = new Binding(v, i, e);
     bindings.push_back(*bd);
     return *bd;
