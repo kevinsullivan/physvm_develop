@@ -1,4 +1,4 @@
-// CodeCoordinate class function implementation
+// CodeCoords class function implementation
 #include <cstddef>  
 #include <string>
 

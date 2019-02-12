@@ -13,10 +13,10 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/CommandLine.h"
 
-#include "CodeCoordinate.h"
-#include "Interpretation.h"
+#include "CodeCoords.h"
+#include "CodeToDomain.h"
 #include "Oracle.h"
-#include "Bridge.h"
+#include "Domain.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -24,7 +24,7 @@ using namespace clang::driver;
 using namespace clang::tooling;
 using namespace std;
 using namespace llvm;
-using namespace bridge;
+using namespace domain;
 
 /**************************************************
 Fundamental data structure constructed by this tool
@@ -37,8 +37,8 @@ in main() and updated during the parse tree traversal, as AST
 node handlers are triggered. 
 */
 Oracle *oracle;
-Bridge *bridge_domain;
-Interpretation *interp;
+Domain *domain_domain;
+CodeToDomain *interp;
 
 unordered_map<const clang::Expr *, const ExprASTNode *> expr_wrappers;
 unordered_map<const clang::Stmt *, const ExprASTNode *> stmt_wrappers;
@@ -79,14 +79,14 @@ public:
     // Get space for literal expression
     // Create ast container object for literal AST Node
     // Add tuple from Clang AST to AST wrapper / key
-    // Create bridge domain node for lifted AST expression
-    // Add (ast container, bridge node) to interpretation
+    // Create domain node for lifted AST expression
+    // Add (ast container, domain node) to interpretation
     //
     Space &space = oracle->getSpaceForLitVector(consdecl);
     LitASTNode *consdecl_wrapper = new LitASTNode(consdecl);  
     expr_wrappers.insert(std::make_pair(consdecl, consdecl_wrapper));// TODO: Name, consdecl is expr
     expr_wrappers.insert(std::make_pair(consdecl, consdecl_wrapper));
-    bridge::Expr &br_lit = bridge_domain->addVecLitExpr(space, consdecl_wrapper);
+    domain::Expr &br_lit = domain_domain->addVecLitExpr(space, consdecl_wrapper);
     interp->putExpressionInterp(*consdecl_wrapper, br_lit);
     cerr << "END HandlerForCXXConstructLitExpr\n";
   }
@@ -97,8 +97,8 @@ public:
  *******************************/
 
 //Forward-reference handlers for member (left) and argument (expressions) of add application
-const bridge::Expr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
-const bridge::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm);
+const domain::Expr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
+const domain::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm);
 
 
 
@@ -115,7 +115,7 @@ Postcondition:
 
 Approach:
 */
-const bridge::Expr *handleMemberCallExpr(const CXXMemberCallExpr *addexpr, ASTContext *context, SourceManager &sm)
+const domain::Expr *handleMemberCallExpr(const CXXMemberCallExpr *addexpr, ASTContext *context, SourceManager &sm)
 {
   // Get child AST nodes
   //
@@ -134,15 +134,15 @@ const bridge::Expr *handleMemberCallExpr(const CXXMemberCallExpr *addexpr, ASTCo
 
   // Handle left and right children
   //
-  const bridge::Expr *left_br = handle_member_expr_of_add_call(left, *context, sm);
+  const domain::Expr *left_br = handle_member_expr_of_add_call(left, *context, sm);
   if (!left_br) {
-    cerr << "Got null left bridge pointer (STUB)\n";
+    cerr << "Got null left domain pointer (STUB)\n";
     return NULL;
   }
 
-  const bridge::Expr *right_br = handle_arg0_of_add_call(right, *context, sm);
+  const domain::Expr *right_br = handle_arg0_of_add_call(right, *context, sm);
   if (!right_br) {
-    cerr << "Got null right bridge pointer (STUB)\n";
+    cerr << "Got null right domain pointer (STUB)\n";
     return NULL;
   }
   //
@@ -170,7 +170,7 @@ const bridge::Expr *handleMemberCallExpr(const CXXMemberCallExpr *addexpr, ASTCo
   cerr << "Expression added was \n"; addexpr->dump();
 
   Space &space = oracle->getSpaceForAddExpression(left_br, right_br);
-  const bridge::Expr &br_add_expr = bridge_domain->addVecAddExpr(space, wrapper, *left_br, *right_br);
+  const domain::Expr &br_add_expr = domain_domain->addVecAddExpr(space, wrapper, *left_br, *right_br);
   cerr << "New expression now adding is " << br_add_expr.toString() << "\n";
   interp->putExpressionInterp(*wrapper, br_add_expr);
   cerr << "FINISHED: adding member call expression to system\n";
@@ -191,7 +191,7 @@ public:
     // SourceManager &sm = context->getSourceManager();
     const VarDeclRefASTNode *wrapper = new VarDeclRefASTNode(declRefExpr);
     expr_wrappers.insert(std::make_pair(declRefExpr, wrapper));
-    bridge::Expr &be = bridge_domain->addVecVarExpr(wrapper);
+    domain::Expr &be = domain_domain->addVecVarExpr(wrapper);
     interp->putExpressionInterp(*wrapper, be);
     // postcondition, be can now be found through interpret with wrapped declRefExpr as key
   }
@@ -216,13 +216,13 @@ public:
       return;
     }
 
-    const bridge::Expr* memberCallExpr = handleMemberCallExpr(memcall, context, sm);
+    const domain::Expr* memberCallExpr = handleMemberCallExpr(memcall, context, sm);
 
     // TESTING
     const ExprASTNode* addexprWrapper = expr_wrappers[memcall];
     if (!addexprWrapper) {cerr << "Badd Wrapperr\n"; }
     const VectorAddExprASTNode* wrapper = new VectorAddExprASTNode(memcall, NULL, NULL); 
-    const bridge::Expr *isThere = interp->getExpressionInterp(*wrapper);
+    const domain::Expr *isThere = interp->getExpressionInterp(*wrapper);
     if (!isThere) {cerr << "Missing exprr"; }
 /*
     const clang::Expr *left = memcall->getImplicitObjectArgument();
@@ -242,17 +242,17 @@ public:
     }
     
 
-    const bridge::Expr *left_br = handle_member_expr_of_add_call(left, *context, sm);
+    const domain::Expr *left_br = handle_member_expr_of_add_call(left, *context, sm);
     if (!left_br)
     {
-      cerr << "Got null left bridge pointer (STUB)\n";
+      cerr << "Got null left domain pointer (STUB)\n";
       //return;
     }
 
-    const bridge::Expr *right_br = handle_arg0_of_add_call(right, *context, sm);
+    const domain::Expr *right_br = handle_arg0_of_add_call(right, *context, sm);
     if (!right_br)
     {
-      cerr << "Got null right bridge pointer (STUB)\n";
+      cerr << "Got null right domain pointer (STUB)\n";
       //return;
     }
 
@@ -267,7 +267,7 @@ public:
     cerr << "Joe Blow\n";
     VectorAddExprASTNode *ast = new VectorAddExprASTNode(memcall, left_wrapper, right_wrapper);
     Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
-    const bridge::Expr &br_add_expr = bridge_domain->addVecAddExpr(s, ast, *left_br, *right_br);
+    const domain::Expr &br_add_expr = domain_domain->addVecAddExpr(s, ast, *left_br, *right_br);
     interp->putExpressionInterp(*ast, br_add_expr);
     expr_wrappers.insert(std::make_pair(memcall, ast));
 */
@@ -309,7 +309,7 @@ public:
       return;
     }
 
-    const bridge::Expr *memberCallExpr = handleMemberCallExpr(addexpr, context, sm);
+    const domain::Expr *memberCallExpr = handleMemberCallExpr(addexpr, context, sm);
     const ExprASTNode* addexprWrapper =expr_wrappers[addexpr]; 
     const AddConstructASTNode* wrapper = new AddConstructASTNode(consdecl, addexprWrapper);      
     expr_wrappers.insert(std::make_pair(consdecl,wrapper));
@@ -360,7 +360,7 @@ private:
 /*
 Handle the single argument to an add application 
 */
-const bridge::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm)
+const domain::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm)
 {
   cerr << "handle_arg0_of_add_call (match).\n";
   right->dump(); // KJS
@@ -369,7 +369,7 @@ const bridge::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext
 
   // postcondition: look up right in interp and return corresponding value
   const ExprASTNode *wrapper = new ExprASTNode(right);
-  const bridge::Expr *expr = interp->getExpressionInterp(*wrapper);
+  const domain::Expr *expr = interp->getExpressionInterp(*wrapper);
   expr_wrappers.insert(std::make_pair(right, wrapper));
   //cerr << "END: handle_arg0_of_add_call: returning " << std::hex << expr << ". STUB?\n";
   return expr;
@@ -431,7 +431,7 @@ Precondition:
 Postcondition: member call expression is "in the system".
 Strategy: Pattern matching on structure of member expressions
 */
-const bridge::Expr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context, SourceManager &sm)
+const domain::Expr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context, SourceManager &sm)
 {
   cerr << "START: handle_member_expr_of_add_call by matching: " << std::hex << memexpr << "\n";
   memexpr->dump();
@@ -457,7 +457,7 @@ const bridge::Expr *handle_member_expr_of_add_call(const clang::Expr *memexpr, A
   cerr << "Now looking it up at " << std::hex << memexpr << "\n";
   const ExprASTNode *wrapper = expr_wrappers[memexpr];//new ExprASTNode(memexpr);
   if (wrapper == NULL) {cerr << "Oops\n";}
-  const bridge::Expr *expr = interp->getExpressionInterp(*wrapper);
+  const domain::Expr *expr = interp->getExpressionInterp(*wrapper);
   if (expr == NULL) {cerr << "Didn't find match result\n";}
 
  
@@ -508,7 +508,7 @@ private:
 
 //--------------------
 
-//const bridge::Expr* handleMemberCall
+//const domain::Expr* handleMemberCall
 
 //--------------------
 
@@ -521,24 +521,24 @@ Explanation: By the time control reaches this code, we are assured
 the argument is an AST node for a Vector-valued expression that is
 going to be used to initialize the value of a variable. The purpose 
 of this code is to make sure that this C++ expression is "lifted" to
-a corresponding expression in the domain/bridge, and that the
-interpretation links this code/AST-node to that domain/bridge object.
+a corresponding expression in the domain, and that the
+interpretation links this code/AST-node to that domain object.
 
 Postcondition: the return value of this function is pointer to a new 
-object of type bridge::Expr; that object is in the bridge; it might
+object of type domain::Expr; that object is in the domain; it might
 itself represent a complex expression tree; it links back to consdecl;
-and the interpretation is updated to like consdecl to the new bridge
+and the interpretation is updated to like consdecl to the new domain
 object. This function works recursively to make sure that all of the
 work of handling the top-level CXXConstructExpr is finished by the 
 time this function returns.
 
-Explanation: the way in which this consdecl is turned into a bridge 
+Explanation: the way in which this consdecl is turned into a domain 
 object depends on the specific form of the expression being handled.
 The cases to be handled include literal and add expressions.
 - Vec v1(0.0,0.0,0.0) is a literal expression
 - (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
 
-bridge::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
+domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
 {
   //cerr << "handleCXXConstructExpr: Start handleCXXConstructExpr\n";
   //cerr << "Pattern matching Vector CXXConstructExpr.\n";
@@ -546,17 +546,17 @@ bridge::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, AS
   matcher.match(consdecl, context);
   // postcondition: consdecl now has an interpretation
   // How do we get BI to return to user? Look it up
-  // bridge::Expr* bi = interp->getExpr(consdecl);
+  // domain::Expr* bi = interp->getExpr(consdecl);
   // TO DO: Architectural change means we need to wrap consdecl to map it
 
   const ExprASTNode *ast = new ExprASTNode(consdecl);   // TODO -- BETTER TYPE!
-  bridge::Expr *be = interp->getExpressionInterp(*ast);
+  domain::Expr *be = interp->getExpressionInterp(*ast);
   //cerr << "handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
   return be;
 }
 */
 
-const bridge::Expr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
+const domain::Expr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
 {
   //cerr << "handleCXXConstructExpr: Start handleCXXConstructExpr\n";
   //cerr << "Pattern matching Vector CXXConstructExpr.\n";
@@ -564,11 +564,11 @@ const bridge::Expr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, A
   matcher.match(consdecl, context);
   // postcondition: consdecl now has an interpretation
   // How do we get BI to return to user? Look it up
-  // bridge::Expr* bi = interp->getExpr(consdecl);
+  // domain::Expr* bi = interp->getExpr(consdecl);
   // TO DO: Architectural change means we need to wrap consdecl to map it
 
   const ExprASTNode *wrapper = new ExprASTNode(consdecl); // TODO -- BETTER TYPE!
-  const bridge::Expr *be = interp->getExpressionInterp(*wrapper);
+  const domain::Expr *be = interp->getExpressionInterp(*wrapper);
   expr_wrappers.insert(std::make_pair(consdecl, wrapper));
   //cerr << "handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
   return be;
@@ -605,7 +605,7 @@ public:
     Space &space = oracle->getSpaceForIdentifier(vardecl);
     IdentifierASTNode *ast_container = new IdentifierASTNode(vardecl);
     decl_wrappers.insert(std::make_pair(vardecl, ast_container));
-    bridge::Identifier &bi = bridge_domain->addIdentifier(space, ast_container);
+    domain::Identifier &bi = domain_domain->addIdentifier(space, ast_container);
     interp->putIdentInterp(*ast_container, bi);
     //cerr << "END: handleCXXConstructIdentifier\n";
 
@@ -621,24 +621,24 @@ public:
 
     //get result of match, which should be a lit or add expr
     const ExprASTNode *wrapper = new ExprASTNode(consdecl);   
-    const bridge::Expr *be = interp->getExpressionInterp(*wrapper);
+    const domain::Expr *be = interp->getExpressionInterp(*wrapper);
     if (be == NULL)
     {
       cerr << "NULL expression in DeclStmt.\n";
     }
     BindingASTNode *declstmt_wrapper = new BindingASTNode(declstmt);
     stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
-    bridge::Binding &binding = bridge_domain->addBinding(declstmt_wrapper, bi, *be);
+    domain::Binding &binding = domain_domain->addBinding(declstmt_wrapper, bi, *be);
     interp->putBindingInterp(declstmt_wrapper, binding);
 
 
-    cerr << "VectorDeclStmtHandler:: Post Bridge State \n"; //declstmt->dump();
-     cerr << "Bridge expressions:\n";
-    bridge_domain->dumpExpressions(); // print contents on cerr
-    cerr << "Bridge Identifiers\n";
-    bridge_domain->dumpIdentifiers(); // print contents on cerr
-    cerr << "Bridge Bindings\n";
-    bridge_domain->dumpBindings(); // print contents on cerr
+    cerr << "VectorDeclStmtHandler:: Post Domain State \n"; //declstmt->dump();
+     cerr << "Domain expressions:\n";
+    domain_domain->dumpExpressions(); // print contents on cerr
+    cerr << "Domain Identifiers\n";
+    domain_domain->dumpIdentifiers(); // print contents on cerr
+    cerr << "Domain Bindings\n";
+    domain_domain->dumpBindings(); // print contents on cerr
     cerr << "InterpExpressions\n";
     interp->dumpExpressions();
     }
@@ -677,7 +677,7 @@ public:
   MyFrontendAction() {}
   void EndSourceFileAction() override
   {
-    bool consistent = bridge_domain->isConsistent();
+    bool consistent = domain_domain->isConsistent();
     cerr << (consistent ? "STUB Analysis result: Good\n" : "STUB: Bad\n");
   }
   std::unique_ptr<ASTConsumer>
@@ -695,16 +695,16 @@ int main(int argc, const char **argv)
 {
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
-  bridge_domain = new Bridge();
-  bridge_domain->addSpace("S1");
-  bridge_domain->addSpace("S2");
-  interp = new Interpretation();
-  oracle = new Oracle(*bridge_domain);
+  domain_domain = new Domain();
+  domain_domain->addSpace("S1");
+  domain_domain->addSpace("S2");
+  interp = new CodeToDomain();
+  oracle = new Oracle(*domain_domain);
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
   cerr << "Identifiers\n";
-  bridge_domain->dumpIdentifiers();
+  domain_domain->dumpIdentifiers();
   cerr << "Expressions\n";
-  bridge_domain->dumpExpressions();
+  domain_domain->dumpExpressions();
   cerr << "Bindings\n";
-  bridge_domain->dumpBindings();
+  domain_domain->dumpBindings();
 }

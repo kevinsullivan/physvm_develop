@@ -1,5 +1,5 @@
-#ifndef BRIDGE_H
-#define BRIDGE_H
+#ifndef domain_H
+#define domain_H
 
 #include <cstddef>  
 #include "clang/AST/AST.h"
@@ -141,7 +141,7 @@ private:
 
 /*
 A Domain is a lifted version of selected code represented as a collection 
-of C++ objects. It should be isomorphic to the domain, and domain models 
+of C++ objects. It should be isomorphic to the dom, and dom models 
 (e.g., in Lean) should be producible using a Domain as an input.
 */
 
@@ -154,7 +154,7 @@ public:
 	Identifier* addIdentifier(Space& s, const IdentifierASTNode* ast);
 	Expr& addVecVarExpr(const VarDeclRefASTNode* ast);
 	Expr* addVecLitExpr(Space& s, const LitASTNode* e);
-	Expr& addVecAddExpr(Space& s, VectorAddExprASTNode* e, const domain::Expr& left_, const domain:: Expr& right_);
+	Expr& addVecAddExpr(Space& s, VectorAddExprASTNode* e, const dom::Expr& left_, const domain:: Expr& right_);
 	Binding& addBinding(const BindingASTNode* vardecl, const Identifier* identifier, const Expr* expression);
 	void dump() {
 		cerr << "Domain expressions:\n";

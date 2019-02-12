@@ -12,7 +12,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/CommandLine.h"
 
-#include "CodeCoordinate.h"
+#include "CodeCoords.h"
 #include "Domain.h"
 #include "Interpretation.h"
 #include "Oracle.h"

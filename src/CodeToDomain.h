@@ -2,19 +2,18 @@
 #define INTERPRETATION_H
 
 #include <iostream>
-#include "CodeCoordinate.h"
-#include "Bridge.h"
+#include "CodeCoords.h"
+#include "Domain.h"
 
 #include <unordered_map>
 
-using namespace std;
-using namespace bridge;
+using namespace domain;
 
-class Interpretation
+class CodeToDomain
 {
   public:
-	void putIdentifierInterp(const IdentifierASTNode *key, bridge::Identifier *bi);
-	const bridge::Identifier *getIdentifierInterp(const IdentifierASTNode *key);
+	void putIdentifierInterp(const IdentifierASTNode *key, domain::Identifier *bi);
+	const domain::Identifier *getIdentifierInterp(const IdentifierASTNode *key);
 
 	// ??? delete ???
 	/*
@@ -25,8 +24,8 @@ class Interpretation
 	void putLitInterp(const LitASTNode &n, VecLitExpr &v);
 	VecLitExpr *getLitInterp(const LitASTNode &n) const;
 
-	void putExpressionInterp(const ExprASTNode *n, const bridge::Expr *e);
-	const bridge::Expr *getExpressionInterp(const ExprASTNode* n);
+	void putExpressionInterp(const ExprASTNode *n, const domain::Expr *e);
+	const domain::Expr *getExpressionInterp(const ExprASTNode* n);
 
 	void putBindingInterp(BindingASTNode *vardecl_wrapper, Binding &b);
 	const Binding *getBindingInterp(const BindingASTNode* vardecl_wrapper);
@@ -45,9 +44,9 @@ class Interpretation
 	turn, are currently just containers for pointers to AST
 	nodes, adding operator==() and hash functions.
 	*/
-	unordered_map<IdentifierASTNode, bridge::Identifier *, IdentifierASTNodeHasher> interpIdent;
-	unordered_map<const ExprASTNode, const bridge::Expr *, ExprASTNodeHasher> interpExpression;
-	unordered_map<BindingASTNode, bridge::Binding *, BindingASTNodeHasher> interpBinding;
+	unordered_map<IdentifierASTNode, domain::Identifier *, IdentifierASTNodeHasher> interpIdent;
+	unordered_map<const ExprASTNode, const domain::Expr *, ExprASTNodeHasher> interpExpression;
+	unordered_map<BindingASTNode, domain::Binding *, BindingASTNodeHasher> interpBinding;
 };
 
 #endif

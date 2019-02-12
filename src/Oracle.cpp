@@ -2,14 +2,14 @@
 // implement the member functions in oracle header file
 
 #include "Oracle.h"
-#include "CodeCoordinate.h"
-#include "Bridge.h"
+#include "CodeCoords.h"
+#include "Domain.h"
 
 #include <string>
 #include <iostream>
 
 using namespace std;
-using namespace bridge;
+using namespace domain;
 
 void printSpaces(vector<Space>& spaces);
 int selectSpace(vector<Space>& spaces, string);
@@ -21,7 +21,7 @@ Space& Oracle::getSpaceForVector(string where) {
 }
 
 Space& Oracle::getSpace() {
-    vector<Space>& spaces = dom_.getAllSpaces();
+    vector<Space>& spaces = dom_->getAllSpaces();
 	if (spaces.size() == 0) {
 		cerr << "No abstract spaces available for interpretation. Bye!\n";
 		exit(1);

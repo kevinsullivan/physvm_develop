@@ -18,6 +18,7 @@
         "algorithm": "cpp",
         "__hash_table": "cpp",
         "unordered_map": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "system_error": "cpp"
     }
 }
