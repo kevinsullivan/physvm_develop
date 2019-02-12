@@ -13,8 +13,8 @@ using namespace bridge;
 class Interpretation
 {
   public:
-	void putIdentInterp(const IdentifierASTNode &key, bridge::Identifier &bi);
-	const bridge::Identifier *getIdentInterp(const IdentifierASTNode &key);
+	void putIdentifierInterp(const IdentifierASTNode *key, bridge::Identifier *bi);
+	const bridge::Identifier *getIdentifierInterp(const IdentifierASTNode *key);
 
 	// ??? delete ???
 	/*
@@ -23,15 +23,15 @@ class Interpretation
 	*/
 
 	void putLitInterp(const LitASTNode &n, VecLitExpr &v);
-	VecLitExpr *getLitInterp(const LitASTNode &n);
+	VecLitExpr *getLitInterp(const LitASTNode &n) const;
 
-	void putExpressionInterp(const ExprASTNode &n, const bridge::Expr &e);
-	const bridge::Expr *getExpressionInterp(const ExprASTNode &n);
+	void putExpressionInterp(const ExprASTNode *n, const bridge::Expr *e);
+	const bridge::Expr *getExpressionInterp(const ExprASTNode* n);
 
 	void putBindingInterp(BindingASTNode *vardecl_wrapper, Binding &b);
-	Binding *getBindingInterp(BindingASTNode &vardecl_wrapper);
+	const Binding *getBindingInterp(const BindingASTNode* vardecl_wrapper);
 
-	void dumpExpressions() {
+	void dumpExpressions() const {
 		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
 			//std::cerr << std::hex << &it->first << " : " << std::hex << it.second << "\n";
 			cerr << "InterpExpr!\n";

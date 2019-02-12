@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace bridge {
-
+	
 /*
 Named space. Later on this will become a full-fledged Euclidean space object.
 */
@@ -38,21 +38,21 @@ expressions lifted to domain expressions.
 
 class Identifier {
 public:
-	Identifier(Space& space, const IdentifierASTNode* vardecl);
+	Identifier(Space& space, const IdentifierASTNode* vardecl) : space_(&space), vardecl_(vardecl) {}
 	Space* getSpace() const { return space_; }
-	string toString() const;
+	const IdentifierASTNode* getVarDeclWrapper() const { return vardecl_; }
+	string toString() const { return getName(); }
 	string getName() const;
 private:
 	Space* space_;
 	const IdentifierASTNode* vardecl_;
-	string name_;
-
 };
 
 // TODO - Change name of this class? BridgeExpr?
 class Expr {
 public:
     Expr(const Space& s, const ExprASTNode* ast) : space_(s), ast_(ast) {}
+	const ExprASTNode* getExprASTNode() const { return ast_; }
     const Space& getSpace() const;
 	virtual string toString() const {
 		if (ast_ != NULL) {
@@ -125,18 +125,18 @@ the *domain* Identifier and Expression objects being bound.
 */
 class Binding {
 public:
-	Binding(BindingASTNode* ast_wrapper, const bridge::Identifier& identifier, const bridge::Expr& expr):
+	Binding(const BindingASTNode* ast_wrapper, const bridge::Identifier* identifier, const bridge::Expr* expr):
 			ast_wrapper_(ast_wrapper), identifier_(identifier), expr_(expr) {}
-	const BindingASTNode* getVarDecl() {return ast_wrapper_; } 
-	const bridge::Expr& getDomExpr() { return expr_; }
-	const bridge::Identifier& getIdentifier();
+	const BindingASTNode* getVarDecl() const {return ast_wrapper_; } 
+	const bridge::Expr* getDomExpr() const { return expr_; }
+	const bridge::Identifier* getIdentifier() { return identifier_; }
 	string toString() const {
-		return "def " + identifier_.toString() + " := " + expr_.toString();
+		return "def " + identifier_->toString() + " := " + expr_->toString();
 	}
 private:
 	const BindingASTNode* ast_wrapper_;
-	const Identifier& identifier_;
-	const Expr& expr_;
+	const Identifier* identifier_;
+	const Expr* expr_;
 };
 
 /*
@@ -151,12 +151,19 @@ class Bridge {
 public:
 	Space& addSpace(const string& name);
 	//VecLitExpr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
-	Identifier& addIdentifier(Space& s, const IdentifierASTNode* ast);
+	Identifier* addIdentifier(Space& s, const IdentifierASTNode* ast);
 	Expr& addVecVarExpr(const VarDeclRefASTNode* ast);
-	Expr& addVecLitExpr(Space& s, const LitASTNode* e);
+	Expr* addVecLitExpr(Space& s, const LitASTNode* e);
 	Expr& addVecAddExpr(Space& s, VectorAddExprASTNode* e, const bridge::Expr& left_, const bridge:: Expr& right_);
-	Binding& addBinding(BindingASTNode* vardecl, const Identifier& identifier, const Expr& expression);
-
+	Binding& addBinding(const BindingASTNode* vardecl, const Identifier* identifier, const Expr* expression);
+	void dump() {
+		cerr << "Bridge expressions:\n";
+		dumpExpressions(); // print contents on cerr
+		cerr << "Bridge Identifiers\n";
+		dumpIdentifiers(); // print contents on cerr
+		cerr << "Bridge Bindings\n";
+		dumpBindings(); // print contents on cerr
+	}
 	void dumpExpressions(); // print contents on cerr
 	void dumpIdentifiers(); // print contents on cerr
 	void dumpBindings(); // print contents on cerr

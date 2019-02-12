@@ -56,6 +56,7 @@ struct ExprASTNodeHasher
 
 // TODO -- don't need to store pointers in superclass
 // TODO -- change name to LitExprASTNode
+// TODO -- Fix naming based on current arg type
 class LitASTNode : public ExprASTNode {
 public:
     LitASTNode(const clang::CXXConstructExpr* constrExpr) : ExprASTNode(constrExpr), constrExpr_(constrExpr) {
@@ -227,9 +228,8 @@ struct AddConstructASTNodeHasher
 // TODO -- Binding hides VarDecl
 class BindingASTNode : public ExprASTNode {
 public:
-    BindingASTNode(const clang::DeclStmt* declStmt) 
-                : ExprASTNode(declStmt), declStmt_(declStmt) {            
-    }
+    BindingASTNode(const clang::DeclStmt* declStmt, const IdentifierASTNode *bv, const ExprASTNode *be) : declStmt_(declStmt), bv_(bv), be_(be), ExprASTNode(declStmt) { }
+
     const clang::DeclStmt* getDeclStmt() const {return declStmt_;}
 
     // for now, an address-based equality predicate
@@ -237,10 +237,12 @@ public:
         return (declStmt_ == other.declStmt_); 
     }
     virtual string toString() const { 
-        return "Binding";
+        return "Binding (STUB: refine)";
     }
 private:
     const clang::DeclStmt* declStmt_;
+    const IdentifierASTNode *bv_;
+    const ExprASTNode *be_;
 };
 
 
