@@ -70,16 +70,16 @@ maybe return a bool or something to indicate success or failure?
 domain::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
                                                  ASTContext *context,
                                                  SourceManager &sm) {
-  /*
-  To do: hide this wrapper stuff?
-  */
+ return interp_.mkVecIdent(vardecl);
 
+/*
   cerr << "START domain::Identifier *handleCXXConstructIdentifier. VarDecl is \n";
   if (!vardecl) { 
       cerr << "domain::Identifier *handleCXXConstructIdentifier: Null vardecl\n";}
   else { 
       vardecl->dump(); 
     }
+
   domain::Space &space = interp_.oracle_->getSpaceForIdentifier(vardecl);
   coords::VecIdent *vardecl_wrapper = new coords::VecIdent(vardecl);
   cerr << "handleCXXConstructIdentifier: Created vardecl wrapper at " << std::hex << vardecl_wrapper << " for clang vardecl at " << std::hex << vardecl << "; toString is : " << vardecl_wrapper->toString() << "\n";
@@ -92,6 +92,7 @@ domain::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
   //  interp->putIdentifier(vardecl, bIdent);
   //  cout << "Created domain identifier\n";
   //  return bIdent;
+  */
 }
 
 // Function: Add interpretation for binding of Vector identifier to Vector

@@ -14,15 +14,16 @@ public:
         code2coords_ = new code2coords::CodeToCoords();
     }
 
-    const coords::VecIdent *addVecIdent(const clang::VarDecl *code) {
+    domain::Identifier *mkVecIdent(const clang::VarDecl *code) {
         cerr << "BEG interp::VecIdent *addVecIdent\n";
         domain::Space &space = oracle_->getSpaceForIdentifier(code);
         const coords::VecIdent *coords = coords_->makeCoordsForVecIdent(code);
         // TO DO: normalize domain, factor out need to know coords
         domain::Identifier* ident = domain_->addIdentifier(space, coords); 
         coords2dom_->putIdentifierInterp(coords, ident);
+        cerr << "domain::Identifier *mkVecIdent: Coord object at " << std::hex << coords << " for code identifer at " << std::hex << code << "; coord toString is : " << coords->toString() << "\n";    
         cerr << "END interp::VecIdent *addVecIdent\n";
-        return coords;
+        return ident;
     }
 
     // TODO: Encapsulate
