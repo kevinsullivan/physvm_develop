@@ -12,8 +12,8 @@ using namespace domain;
 class CodeToDomain
 {
   public:
-	void putIdentifierInterp(const IdentifierASTNode *key, domain::Identifier *bi);
-	const domain::Identifier *getIdentifierInterp(const IdentifierASTNode *key);
+	void putIdentifierInterp(const coords::IdentifierASTNode *key, domain::Identifier *bi);
+	const domain::Identifier *getIdentifierInterp(const coords::IdentifierASTNode *key);
 
 	// ??? delete ???
 	/*
@@ -21,14 +21,14 @@ class CodeToDomain
 	VecVarExpr* getVectorInterp(const VectorASTNode& n);
 	*/
 
-	void putLitInterp(const LitASTNode &n, VecLitExpr &v);
-	VecLitExpr *getLitInterp(const LitASTNode &n) const;
+	void putLitInterp(const coords::LitASTNode &n, VecLitExpr &v);
+	VecLitExpr *getLitInterp(const coords::LitASTNode &n) const;
 
-	void putExpressionInterp(const ExprASTNode *n, const domain::Expr *e);
-	const domain::Expr *getExpressionInterp(const ExprASTNode* n);
+	void putExpressionInterp(const coords::ExprASTNode *n, const domain::Expr *e);
+	const domain::Expr *getExpressionInterp(const coords::ExprASTNode* n);
 
-	void putBindingInterp(BindingASTNode *vardecl_wrapper, Binding &b);
-	const Binding *getBindingInterp(const BindingASTNode* vardecl_wrapper);
+	void putBindingInterp(coords::BindingASTNode *vardecl_wrapper, Binding &b);
+	const Binding *getBindingInterp(const coords::BindingASTNode* vardecl_wrapper);
 
 	void dumpExpressions() const {
 		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
@@ -44,9 +44,9 @@ class CodeToDomain
 	turn, are currently just containers for pointers to AST
 	nodes, adding operator==() and hash functions.
 	*/
-	unordered_map<IdentifierASTNode, domain::Identifier *, IdentifierASTNodeHasher> interpIdent;
-	unordered_map<const ExprASTNode, const domain::Expr *, ExprASTNodeHasher> interpExpression;
-	unordered_map<BindingASTNode, domain::Binding *, BindingASTNodeHasher> interpBinding;
+	unordered_map<coords::IdentifierASTNode, domain::Identifier *, coords::IdentifierASTNodeHasher> interpIdent;
+	unordered_map<const coords::ExprASTNode, const domain::Expr *, coords::ExprASTNodeHasher> interpExpression;
+	unordered_map<coords::BindingASTNode, domain::Binding *, coords::BindingASTNodeHasher> interpBinding;
 };
 
 #endif

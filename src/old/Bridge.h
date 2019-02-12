@@ -51,12 +51,12 @@ private:
 // TODO - Change name of this class? DomainExpr?
 class Expr {
 public:
-    Expr(const Space& s, const ExprASTNode* ast) : space_(s), ast_(ast) {}
-	const ExprASTNode* getExprASTNode() const { return ast_; }
+    Expr(const Space& s, const coords::ExprASTNode* ast) : space_(s), ast_(ast) {}
+	const coords::ExprASTNode* getExprASTNode() const { return ast_; }
     const Space& getSpace() const;
 	virtual string toString() const {
 		if (ast_ != NULL) {
-			//cerr << "Domain::Expr::toString: ExprASTNode pointer is " << std::hex << ast_ << "\n";
+			//cerr << "Domain::Expr::toString: coords::ExprASTNode pointer is " << std::hex << ast_ << "\n";
 			return "(" + ast_->toString() + " : " + space_.getName() + ")";
 		}
 		else {
@@ -65,13 +65,13 @@ public:
 	}
 protected:
     const Space& space_;
-	const ExprASTNode* ast_;
+	const coords::ExprASTNode* ast_;
 };
 
 
 class VecLitExpr : public Expr {
 public:
-    VecLitExpr(Space& s, const LitASTNode* ast) : Expr(s, ast) { }
+    VecLitExpr(Space& s, const coords::LitASTNode* ast) : Expr(s, ast) { }
     void addFloatLit(float num);
 	virtual string toString() const {
 		return "(" + ast_->toString() + " : " + getSpace().toString() + ")";
@@ -86,7 +86,7 @@ BIG TODO : Have Domain objects connect back to ast ***containers***, as in VecLi
 // Note: No printing of space, as it's inferred
 class VecVarExpr : public Expr {
 public:
-    VecVarExpr(Space& s, const ExprASTNode* ast) : domain::Expr(s, ast) {}
+    VecVarExpr(Space& s, const coords::ExprASTNode* ast) : domain::Expr(s, ast) {}
 	virtual string toString() const {
 		return "(" + ast_->toString() + " )";
 	}
@@ -98,7 +98,7 @@ class VecAddExpr : public Expr {
 public:
    VecAddExpr(
         Space& s, 
-        const ExprASTNode* ast,
+        const coords::ExprASTNode* ast,
         const Expr& arg_left,
         const Expr& arg_right
         ) : Expr(s, ast), arg_left_(arg_left), arg_right_(arg_right) {	
@@ -150,10 +150,10 @@ of C++ objects. It should be isomorphic to the domain, and domain models
 class Domain {
 public:
 	Space& addSpace(const string& name);
-	//VecLitExpr& addLitExpr(Space& s, const LitASTNode* ast);		/* BIG TODO: Fix others */
+	//VecLitExpr& addLitExpr(Space& s, const coords::LitASTNode* ast);		/* BIG TODO: Fix others */
 	Identifier* addIdentifier(Space& s, const IdentifierASTNode* ast);
 	Expr& addVecVarExpr(const VarDeclRefASTNode* ast);
-	Expr* addVecLitExpr(Space& s, const LitASTNode* e);
+	Expr* addVecLitExpr(Space& s, const coords::LitASTNode* e);
 	Expr& addVecAddExpr(Space& s, VectorAddExprASTNode* e, const domain::Expr& left_, const domain:: Expr& right_);
 	Binding& addBinding(const BindingASTNode* vardecl, const Identifier* identifier, const Expr* expression);
 	void dump() {
