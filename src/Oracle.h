@@ -2,15 +2,15 @@
 #define ORACLE_H
 
 #include <string>
-#include "CodeCoordinate.h"
-#include "Bridge.h"
+#include "CodeCoords.h"
+#include "Domain.h"
 
-using namespace bridge;
+using namespace domain;
 
 class Oracle
 {
 public:
-	Oracle(Bridge& d) : dom_(d) {};
+	Oracle(Domain* d) : dom_(d) {};
 
 	// Precondition: true
 	// Effects: get space annotation from environment
@@ -18,7 +18,7 @@ public:
 	//
 	Space& getSpaceForVector(string where);
 
-	Space& getSpaceForAddExpression(const bridge::Expr * left_br, const bridge::Expr * right_br)
+	Space& getSpaceForAddExpression(const domain::Expr * left_br, const domain::Expr * right_br)
 	{
 		//cerr << "Returning stub space for expression.\n";
 		cerr << "Space for add expression?\n";
@@ -43,7 +43,7 @@ public:
 
 private:
 	Space& getSpace();
-	Bridge& dom_;
+	Domain* dom_;
 };
 
 #endif

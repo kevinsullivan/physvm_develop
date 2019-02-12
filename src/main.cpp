@@ -10,21 +10,26 @@
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/raw_ostream.h"
+
 #include <iostream>
 #include <string>
 
-#include "Bridge.h"
-#include "CodeCoordinate.h"
-#include "Interpretation.h"
+#include "Domain.h"
+#include "CodeCoords.h"
+#include "CodeToDomain.h"
 #include "Oracle.h"
+#include "Code.h"
+#include "CodeToCoords.h"
 
+using namespace std;
+
+using namespace llvm;
 using namespace clang;
 using namespace clang::ast_matchers;
 using namespace clang::driver;
 using namespace clang::tooling;
-using namespace std;
-using namespace llvm;
-using namespace bridge;
+
+//using namespace domain;
 
 /**************************************************
 Fundamental data structure constructed by this tool
@@ -36,14 +41,47 @@ do it to get a working system. These variables are initialized
 in main() and updated during the parse tree traversal, as AST
 node handlers are triggered.
 */
-Oracle *oracle;
-Bridge *bridge_domain;
-Interpretation *interp;
 
-// Map AST nodes to keys used in interp
-unordered_map<const clang::Expr *, const ExprASTNode *> expr_wrappers;
-unordered_map<const clang::Stmt *, const ExprASTNode *> stmt_wrappers;
-unordered_map<const clang::Decl *, const ExprASTNode *> decl_wrappers;
+class Interpretation {
+public:
+    Interpretation() {
+        code = new Code();
+        domain = new Domain();
+        oracle = new Oracle(domain);
+        code2dom = new CodeToDomain();
+        code2coords = new CodeToCoords();
+    }
+
+    IdentifierASTNode *addVecIdent(onst clang::VarDecl *vardecl) {
+        Space &space = interp.oracle->getSpaceForIdentifier(vardecl);
+        IdentifierASTNode *vardecl_wrapper = new IdentifierASTNode(vardecl);
+        cerr << "handleCXXConstructIdentifier: Created vardecl wrapper at " << std::hex << vardecl_wrapper << " for clang vardecl at " << std::hex << vardecl << "; toString is : " << vardecl_wrapper->toString() << "\n";
+        interp.code2coords->decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
+        domain::Identifier* br_id = interp.domain->addIdentifier(space, vardecl_wrapper);
+        interp.code2dom->putIdentifierInterp(vardecl_wrapper, br_id);
+        cerr << "END domain::Identifier *handleCXXConstructIdentifier\n";
+    }
+    
+/*
+    Coords addVecLitExpr(Code code);
+    Coords addVecVarExpr(Code code);
+    Coords addVecVecAddExpr(Coords left, Coords right);
+    Coords addVecBinding(Code code, Coords coords);
+
+    void codeToCoords();   // code->coords
+    void coordsToInterp(); // coords->domain
+*/
+
+
+    Code *code;                 // imaginary
+    //CodeCoords coords;
+    Oracle *oracle;
+    Domain *domain;
+    CodeToDomain *code2dom;       // augmented AST to domain 
+    CodeToCoords *code2coords;
+} interp;
+
+
 
 /****************************
 Standard Clang Tooling Set-up
@@ -65,34 +103,34 @@ static cl::extrahelp MoreHelp("No additional options available for Peirce.");
 /*
 Function: Add interpretation for Vector identifier
 
-create a bridge variable object
-add interpretation from vardecl to bridge variable object
+create a domain variable object
+add interpretation from vardecl to domain variable object
 maybe return a bool or something to indicate success or failure?
 */
-bridge::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
+domain::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
                                                  ASTContext *context,
                                                  SourceManager &sm) {
   /*
   To do: hide this wrapper stuff?
   */
 
-  cerr << "START bridge::Identifier *handleCXXConstructIdentifier. VarDecl is \n";
+  cerr << "START domain::Identifier *handleCXXConstructIdentifier. VarDecl is \n";
   if (!vardecl) { 
-      cerr << "bridge::Identifier *handleCXXConstructIdentifier: Null vardecl\n";}
+      cerr << "domain::Identifier *handleCXXConstructIdentifier: Null vardecl\n";}
   else { 
       vardecl->dump(); 
     }
-  Space &space = oracle->getSpaceForIdentifier(vardecl);
+  Space &space = interp.oracle->getSpaceForIdentifier(vardecl);
   IdentifierASTNode *vardecl_wrapper = new IdentifierASTNode(vardecl);
   cerr << "handleCXXConstructIdentifier: Created vardecl wrapper at " << std::hex << vardecl_wrapper << " for clang vardecl at " << std::hex << vardecl << "; toString is : " << vardecl_wrapper->toString() << "\n";
-  decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
-  bridge::Identifier* br_id = bridge_domain->addIdentifier(space, vardecl_wrapper);
-  interp->putIdentifierInterp(vardecl_wrapper, br_id);
-  cerr << "END bridge::Identifier *handleCXXConstructIdentifier\n";
+  interp.code2coords->decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
+  domain::Identifier* br_id = interp.domain->addIdentifier(space, vardecl_wrapper);
+  interp.code2dom->putIdentifierInterp(vardecl_wrapper, br_id);
+  cerr << "END domain::Identifier *handleCXXConstructIdentifier\n";
 
-  //  bridge::Identifier *bIdent = new Identifier(vardecl);
+  //  domain::Identifier *bIdent = new Identifier(vardecl);
   //  interp->putIdentifier(vardecl, bIdent);
-  //  cout << "Created bridge identifier\n";
+  //  cout << "Created domain identifier\n";
   //  return bIdent;
 }
 
@@ -100,8 +138,8 @@ bridge::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
 // Expression
 void handleCXXConstructIdentifierBinding(
         const clang::DeclStmt* declstmt,
-        const bridge::Identifier *bv,
-        const bridge::Expr *be) {
+        const domain::Identifier *bv,
+        const domain::Expr *be) {
   cerr << "START: handleCXXConstructIdentifierBinding: Adding interp for binding\n.";
   if (!be || !bv) { cerr << "handleCXXConstructIdentifierBinding: null argument\n";}
   
@@ -121,10 +159,10 @@ void handleCXXConstructIdentifierBinding(
   const ExprASTNode* be_wrapper = be->getExprASTNode();
 
   BindingASTNode *declstmt_wrapper = new BindingASTNode(declstmt, bv_wrapper, be_wrapper);
-  stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
-  bridge::Binding &binding =
-      bridge_domain->addBinding(declstmt_wrapper, bv, be);
-  interp->putBindingInterp(declstmt_wrapper, binding);
+  interp.code2coords->stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
+  domain::Binding &binding =
+      interp.domain->addBinding(declstmt_wrapper, bv, be);
+  interp.code2dom->putBindingInterp(declstmt_wrapper, binding);
   cerr << "DONE: handleCXXConstructIdentifierBinding: Adding interp for binding\n";
 }
 
@@ -137,11 +175,11 @@ public:
     cerr << "START HandlerForCXXConstructLitExpr::run on " << std::hex << litexpr << "\n";
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
-    Space &space = oracle->getSpaceForLitVector(litexpr);
+    Space &space = interp.oracle->getSpaceForLitVector(litexpr);
     LitASTNode *litexpr_wrapper = new LitASTNode(litexpr);  
-    expr_wrappers.insert(std::make_pair(litexpr, litexpr_wrapper));
-    bridge::Expr* br_lit = bridge_domain->addVecLitExpr(space, litexpr_wrapper);
-    interp->putExpressionInterp(litexpr_wrapper, br_lit);
+    interp.code2coords->expr_wrappers.insert(std::make_pair(litexpr, litexpr_wrapper));
+    domain::Expr* br_lit = interp.domain->addVecLitExpr(space, litexpr_wrapper);
+    interp.code2dom->putExpressionInterp(litexpr_wrapper, br_lit);
     cerr << "DONE HandlerForCXXConstructLitExpr::run\n";
   }
 };
@@ -271,7 +309,7 @@ private:
 
 // BEGIN OF HANDLER HELPER FUNCTIONS
 
-bridge::Expr *handle_left_of_add_call(const clang::Expr *left,
+domain::Expr *handle_left_of_add_call(const clang::Expr *left,
                                       ASTContext *context) {
   cout << "Handling LEFT of add call----Left Hand Side\n";
   CXXMemberCallExprLeftMatcher *leftmatcher =
@@ -279,14 +317,14 @@ bridge::Expr *handle_left_of_add_call(const clang::Expr *left,
   leftmatcher->match(left, context);
 }
 
-bridge::Expr *handle_right_of_add_call(const clang::Expr *right,
+domain::Expr *handle_right_of_add_call(const clang::Expr *right,
                                        ASTContext *context) {
   cout << "Handling RIGHT of add call----Right Hand Side\n";
   CXXMemberCallExprRightMatcher *rightmatcher =
       new CXXMemberCallExprRightMatcher();
   rightmatcher->match(right, context);
 
-  // STUB OUT the implementation for the bridge::Expr object
+  // STUB OUT the implementation for the domain::Expr object
   return NULL;
 }
 
@@ -384,19 +422,19 @@ void HandlerForCXXMemberCallExpr::run(const MatchFinder::MatchResult &Result) {
     return;
   }
 
-  bridge::Expr *left_br = handle_left_of_add_call(left, context);
-  bridge::Expr *right_br = handle_right_of_add_call(right, context);
+  domain::Expr *left_br = handle_left_of_add_call(left, context);
+  domain::Expr *right_br = handle_right_of_add_call(right, context);
 
   if (!left) {
-    cout << "Null left bridge pointer\n";
+    cout << "Null left domain pointer\n";
     return;
   } else if (!right) {
-    cout << "Null right bridge pointer\n";
+    cout << "Null right domain pointer\n";
     return;
   }
 
-  //  Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
-  //  bridge_domain->addVecAddExpr(s, addexpr, *left_br, *right_br);
+  //  Space &s = interp.code2dom->getSpaceForAddExpression(left_br, right_br);
+  //  domain->addVecAddExpr(s, addexpr, *left_br, *right_br);
 
   cerr << "STUB: HandlerForCXXMemberCallExpr::run(const "
           "MatchFinder::MatchResult &Result)\n";
@@ -566,20 +604,20 @@ Explanation: By the time control reaches this code, we are assured
 the argument is an AST node for a Vector-valued expression that is
 going to be used to initialize the value of a variable. The purpose
 of this code is to make sure that this C++ expression is "lifted" to
-a corresponding expression in the domain/bridge, and that the
-interpretation links this code/AST-node to that domain/bridge object.
+a corresponding expression in the domain, and that the
+interpretation links this code/AST-node to that domain object.
 
 Postcondition: the return value of this function is pointer to a new
-object of type bridge::Expr; that object is in the bridge; it might
+object of type domain::Expr; that object is in the domain; it might
 itself represent a complex expression tree; it links back to consdecl;
-and the interpretation is updated to like consdecl to the new bridge
+and the interpretation is updated to like consdecl to the new domain
 object. This function works recursively to make sure that all of the
 work of handling the top-level CXXConstructExpr is finished by the
 time this function returns.
 
 Explanation: This function works by first pattern matching on consdecl
 any by then retrieving the results of that operation (side effects, I'm
-afraid. The way in which this consdecl is turned into a bridge object 
+afraid. The way in which this consdecl is turned into a domain object 
 depends on the specific form of the expression being handled, but that
 is the concern of the handler code invoked implicitly from here. As far
 as this code is concerned, all it picks up is an expression. The cases 
@@ -587,7 +625,7 @@ handled by pattern matching include literal and add expressions.
 - Vec v1(0.0,0.0,0.0) is a literal expression
 - (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
 */
-const bridge::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
+const domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
                                      ASTContext *context, SourceManager &sm) {
   cout << "Pattern matching Vector CXXConstructExpr at " << std::hex << consdecl << " and dispatching to handler.\n";
   CXXConstructExprMatcher *matcher = new CXXConstructExprMatcher();
@@ -600,14 +638,14 @@ const bridge::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consde
         cerr << "handleCXXConstructExpr: match post failure, NULL consdecl.\n";
     }
 
-    if (!expr_wrappers[consdecl]) {
+    if (!interp.code2coords->expr_wrappers[consdecl]) {
         cerr << "handleCXXConstructExpr: match post failure, NULL wrapper.\n";
     }
   
   // Get code coordinates for given Clang AST node
-   const ExprASTNode *wrapper_key = expr_wrappers[consdecl];
+   const ExprASTNode *wrapper_key = interp.code2coords->expr_wrappers[consdecl];
   // Return domain object for code at these coordinates
-  return interp->getExpressionInterp(wrapper_key);
+  return interp.code2dom->getExpressionInterp(wrapper_key);
 
   //cout << "Returning domain expression object (STUBBED OUT)\n";
   //return NULL; /* STUB */
@@ -644,8 +682,8 @@ public:
     be sure it has an initializer, then get the CXXConstructExpr initializer
     get handle on expression used to initialize the variable
     establish interpretation from consdecl to corresponding expression in the
-    domain bridge establish interpretation from variable in code to
-    corresponding var object in domain bridge finally establish interpretation
+    domain establish interpretation from variable in code to
+    corresponding var object in domain finally establish interpretation
     linking overall declstmt in code to corresponding binding in domain
     */
     const auto *declstmt =
@@ -662,8 +700,8 @@ public:
       }
       // TODO: Fill in logic for error condition in preceding conditional
       cout << "Handling vector declaration statement\n";
-      const bridge::Expr *be = handleCXXConstructExpr(consdecl, context, sm);
-      const bridge::Identifier *bi =
+      const domain::Expr *be = handleCXXConstructExpr(consdecl, context, sm);
+      const domain::Identifier *bi =
           handleCXXConstructIdentifier(vardecl, context, sm);
       handleCXXConstructIdentifierBinding(declstmt, bi, be);
       cout << "Done handling vector declaration statement\n\n";
@@ -704,7 +742,7 @@ class MyFrontendAction : public ASTFrontendAction {
 public:
   MyFrontendAction() {}
   void EndSourceFileAction() override {
-    bool consistent = bridge_domain->isConsistent();
+    bool consistent = interp.domain->isConsistent();
     cerr << (consistent ? "STUB: Good\n" : "STUB: Bad\n");
   }
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
@@ -720,10 +758,14 @@ public:
 int main(int argc, const char **argv) {
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
-  bridge_domain = new Bridge();
-  bridge_domain->addSpace("Space1");
-  bridge_domain->addSpace("Space2");
-  interp = new Interpretation();
-  oracle = new Oracle(*bridge_domain);
+
+  //InterpForm* interp = new InterpForm();
+  interp.domain->addSpace("Space1");
+  interp.domain->addSpace("Space2");
+
   return Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
+
+  //interp.domain = new Domain();
+  //interp.code2dom = new CodeToDomain();
+  //interp.oracle = new Oracle(*interp.domain);
 }

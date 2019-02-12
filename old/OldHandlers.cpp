@@ -53,7 +53,7 @@ public:
       // initialization case
     {
       cout<<"initialization!"<<endl;
-      // convert the identifier to Bridge identifier
+      // convert the identifier to Domain identifier
 
       // Get file location information
       ASTContext *context = Result.Context;
@@ -69,16 +69,16 @@ public:
       VectorASTNode& n = 
         *new VectorASTNode(declstmt, Result);
 
-      // Create corresponding abstract vector in bridge_domain 
+      // Create corresponding abstract vector in domain 
       const clang::Stmt* vecInstStmt = static_cast<const clang::Stmt*>(declstmt);
-      VecVarExpr& abst_v = bridge_domain->addVecVarExpr(s,vecInstStmt);
+      VecVarExpr& abst_v = domain->addVecVarExpr(s,vecInstStmt);
 
       // Connect them through the interpretation
       interp->putVectorInterp(n, abst_v);
 
       // Construct Expression
       // iterate over the children of this node to get the literal values
-      VecLitExpr& vle = bridge_domain-> addVecLitExpr(s);
+      VecLitExpr& vle = domain-> addVecLitExpr(s);
 
       for(clang::Stmt::const_child_iterator it = CCE_expression->child_begin();
                       it!= CCE_expression->child_end(); ++ it)
@@ -87,7 +87,7 @@ public:
         vle.addFloatLit(value);
       }
       // Add the binding
-      bridge_domain->addLitExprBinding(abst_v,vle);
+      domain->addLitExprBinding(abst_v,vle);
     }
     else
      // vec_add application
@@ -100,10 +100,10 @@ public:
     //   cout<<"Found leave node!\n";
     //   return true; // returning false will abort the in-depth traversal.
     // } 
-    // *add expression to the bridge_domain
+    // *add expression to the domain
     // constructExpression(ptr_expression);
 
-    // *add identifier to bridge_domain
+    // *add identifier to domain
     
 
     // *create the binding 

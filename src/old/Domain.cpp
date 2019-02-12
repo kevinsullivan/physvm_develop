@@ -8,7 +8,7 @@ using namespace domain;
 
 string Space::getName() const { return name_; }
 
-const Space &domain::Expr::getSpace() const { return space_; }
+const Space &bridge::Expr::getSpace() const { return space_; }
 
 
 string Identifier::getName() const
@@ -23,12 +23,12 @@ void VecLitExpr::addFloatLit(float num)
     cerr << "Stub: add floats to litvalexpr\n";
 }
 
-const domain::Expr &VecAddExpr::getVecAddExprArgL()
+const bridge::Expr &VecAddExpr::getVecAddExprArgL()
 {
     return arg_left_;
 }
 
-const domain::Expr &VecAddExpr::getVecAddExprArgR()
+const bridge::Expr &VecAddExpr::getVecAddExprArgR()
 {
     return arg_right_;
 }
@@ -43,14 +43,14 @@ Space &Domain::addSpace(const string &name)
 {
     Space *s = new Space(name);
     spaces.push_back(*s);
-    //cerr << "Added space to domain at address " << std::hex << s << "\n";
+    //cerr << "Added space to domain bridge at address " << std::hex << s << "\n";
     return *s;
 }
 
 
-domain::Expr *Domain::addVecLitExpr(Space &s, const LitASTNode *e)
+bridge::Expr *Domain::addVecLitExpr(Space &s, const LitASTNode *e)
 {
-    domain::Expr *be = new domain::Expr(s, e);
+    bridge::Expr *be = new bridge::Expr(s, e);
     //cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
     //dump();
     expressions.push_back(be);
@@ -72,10 +72,10 @@ Space &getSpaceOfVarExpr(const ExprASTNode *ast)
 }
 
 // TODO: Change arg type to be more precise
-domain::Expr &Domain::addVecVarExpr(const VarDeclRefASTNode *ast)
+bridge::Expr &Domain::addVecVarExpr(const VarDeclRefASTNode *ast)
 {
     Space &s = getSpaceOfVarExpr(ast);
-    domain::Expr *be = new domain::Expr(s, ast);
+    bridge::Expr *be = new bridge::Expr(s, ast);
     cerr << "Adding Vec Var Expr to domain, address " << std::hex << be << ": " << be->toString() << "\n";
     //dump();
     expressions.push_back(be);
@@ -84,9 +84,9 @@ domain::Expr &Domain::addVecVarExpr(const VarDeclRefASTNode *ast)
     return *be;
 }
 
-domain::Expr &Domain::addVecAddExpr(Space &s, VectorAddExprASTNode *e, const domain::Expr &left, const domain::Expr &right)
+bridge::Expr &Domain::addVecAddExpr(Space &s, VectorAddExprASTNode *e, const bridge::Expr &left, const bridge::Expr &right)
 {
-    domain::Expr *be = new domain::VecAddExpr(s, e, left, right);
+    bridge::Expr *be = new bridge::VecAddExpr(s, e, left, right);
     cerr << "Domain::addVecAddExpr:: Adding Vec ADD Expr to expressions, address " << std::hex << be << "\n";
     cerr << "Domain::addVecAddExpr:: Add Expr added is " << be->toString() << "\n";
     //dump();
@@ -102,14 +102,14 @@ Identifier *Domain::addIdentifier(Space &s, const IdentifierASTNode *ast)
     return id;
 }
 
-Binding &Domain::addBinding(const BindingASTNode *v, const Identifier* i, const domain::Expr* e)
+Binding &Domain::addBinding(const BindingASTNode *v, const Identifier* i, const bridge::Expr* e)
 {
     cerr << "Domain::addBinding ";
     cerr << "identifier is " << i->toString();
     cerr << " expression is " << e->toString() << "\n";
     Binding *bd = new Binding(v, i, e);
 /*
-Domain.cpp:116:38: error: no matching function for call to 'domain::Binding::Binding(const BindingASTNode*&, const domain::Identifier*&, const domain::Expr*&)'
+Domain.cpp:116:38: error: no matching function for call to 'bridge::Binding::Binding(const BindingASTNode*&, const bridge::Identifier*&, const bridge::Expr*&)'
      Binding *bd = new Binding(v, i, e);
                                       ^
 */
