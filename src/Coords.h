@@ -14,7 +14,7 @@ namespace coords {
 
 /*
 ABSTRACT
-Objects of this class will be "keys" in an interpretation.
+Objects of these class will be "keys" in an interpretation.
 Subclasses should be defined for each kind of AST node to
 be lifted to a corresponding domain type.
 */
@@ -88,14 +88,14 @@ struct LitASTNodeHasher {
 //---------------
 
 // Identifier implemented as VarDecl
-class IdentifierASTNode : public ExprASTNode {
+class VecIdent : public ExprASTNode {
 public:
-  IdentifierASTNode(const clang::VarDecl *varDecl)
+  VecIdent(const clang::VarDecl *varDecl)
       : ExprASTNode(varDecl), varDecl_(varDecl) {}
   const clang::VarDecl *getVarDecl() const { return varDecl_; }
 
   // for now, an address-based equality predicate
-  bool operator==(const IdentifierASTNode &other) const {
+  bool operator==(const VecIdent &other) const {
     return (varDecl_ == other.varDecl_);
   }
   virtual string toString() const { return varDecl_->getNameAsString(); }
@@ -105,7 +105,7 @@ private:
 };
 
 struct IdentifierASTNodeHasher {
-  std::size_t operator()(const IdentifierASTNode &k) const {
+  std::size_t operator()(const VecIdent &k) const {
     std::size_t hash = 101010;
     // TODO Fix hash function
     return hash;
@@ -209,7 +209,7 @@ struct AddConstructASTNodeHasher {
 // TODO -- Binding hides VarDecl
 class BindingASTNode : public ExprASTNode {
 public:
-  BindingASTNode(const clang::DeclStmt *declStmt, const IdentifierASTNode *bv,
+  BindingASTNode(const clang::DeclStmt *declStmt, const VecIdent *bv,
                  const ExprASTNode *be)
       : declStmt_(declStmt), bv_(bv), be_(be), ExprASTNode(declStmt) {}
 
@@ -223,7 +223,7 @@ public:
 
 private:
   const clang::DeclStmt *declStmt_;
-  const IdentifierASTNode *bv_;
+  const VecIdent *bv_;
   const ExprASTNode *be_;
 };
 
@@ -235,6 +235,17 @@ struct BindingASTNodeHasher {
   }
 };
 
+class Coords {
+  public:
+    Coords() {}
+    const VecIdent *makeCoordsForVecIdent(const clang::VarDecl *ident);
+  private:
+    unordered_map<const clang::Expr *, const coords::ExprASTNode *> exprCoords_;
+    unordered_map<const clang::Stmt *, const coords::ExprASTNode *> stmtCoords_;
+    unordered_map<const clang::Decl *, const coords::ExprASTNode *> declCoords_;
+};
+
 } // namespace codecoords
+
 
 #endif

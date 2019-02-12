@@ -1,6 +1,8 @@
 #ifndef CODETOCOORDS_H
 #define CODETOCOORDS_H
 
+namespace code2coords {
+
 class CodeToCoords {
 public:
     void overrideExpr(const clang::Expr *e, const coords::ExprASTNode *c) {
@@ -14,5 +16,7 @@ public:
     unordered_map<const clang::Stmt *, const coords::ExprASTNode *> stmt_wrappers;
     unordered_map<const clang::Decl *, const coords::ExprASTNode *> decl_wrappers;
 };
+
+} // namespace
 
 #endif

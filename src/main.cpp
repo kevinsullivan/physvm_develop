@@ -14,12 +14,13 @@
 #include <iostream>
 #include <string>
 
-#include "Domain.h"
-#include "CodeCoords.h"
-#include "CodeToDomain.h"
-#include "Oracle.h"
 #include "Code.h"
+#include "Coords.h"
 #include "CodeToCoords.h"
+#include "Oracle.h"
+#include "Domain.h"
+#include "CoordsToDomain.h"
+#include "Interpretation.h"
 
 using namespace std;
 
@@ -29,11 +30,11 @@ using namespace clang::ast_matchers;
 using namespace clang::driver;
 using namespace clang::tooling;
 
-//using namespace domain;
-
 /**************************************************
 Fundamental data structure constructed by this tool
 ***************************************************/
+
+interp::Interpretation interp_;
 
 /*
 Sharing data via global variables is a bad idea, but we'll
@@ -41,47 +42,6 @@ do it to get a working system. These variables are initialized
 in main() and updated during the parse tree traversal, as AST
 node handlers are triggered.
 */
-
-class Interpretation {
-public:
-    Interpretation() {
-        code = new Code();
-        domain = new Domain();
-        oracle = new Oracle(domain);
-        code2dom = new CodeToDomain();
-        code2coords = new CodeToCoords();
-    }
-
-    coords::IdentifierASTNode *addVecIdent(const clang::VarDecl *vardecl) {
-        Space &space = oracle->getSpaceForIdentifier(vardecl);
-        coords::IdentifierASTNode *vardecl_wrapper = new coords::IdentifierASTNode(vardecl);
-        cerr << "handleCXXConstructIdentifier: Created vardecl wrapper at " << std::hex << vardecl_wrapper << " for clang vardecl at " << std::hex << vardecl << "; toString is : " << vardecl_wrapper->toString() << "\n";
-        code2coords->decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
-        domain::Identifier* br_id = domain->addIdentifier(space, vardecl_wrapper);
-        code2dom->putIdentifierInterp(vardecl_wrapper, br_id);
-        cerr << "END domain::Identifier *handleCXXConstructIdentifier\n";
-    }
-    
-/*
-    Coords addVecLitExpr(Code code);
-    Coords addVecVarExpr(Code code);
-    Coords addVecVecAddExpr(Coords left, Coords right);
-    Coords addVecBinding(Code code, Coords coords);
-
-    void codeToCoords();   // code->coords
-    void coordsToInterp(); // coords->domain
-*/
-
-
-    Code *code;                 // imaginary
-    //CodeCoords coords;
-    Oracle *oracle;
-    Domain *domain;
-    CodeToDomain *code2dom;       // augmented AST to domain 
-    CodeToCoords *code2coords;
-} interp;
-
-
 
 /****************************
 Standard Clang Tooling Set-up
@@ -120,12 +80,12 @@ domain::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
   else { 
       vardecl->dump(); 
     }
-  Space &space = interp.oracle->getSpaceForIdentifier(vardecl);
-  coords::IdentifierASTNode *vardecl_wrapper = new coords::IdentifierASTNode(vardecl);
+  domain::Space &space = interp_.oracle_->getSpaceForIdentifier(vardecl);
+  coords::VecIdent *vardecl_wrapper = new coords::VecIdent(vardecl);
   cerr << "handleCXXConstructIdentifier: Created vardecl wrapper at " << std::hex << vardecl_wrapper << " for clang vardecl at " << std::hex << vardecl << "; toString is : " << vardecl_wrapper->toString() << "\n";
-  interp.code2coords->decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
-  domain::Identifier* br_id = interp.domain->addIdentifier(space, vardecl_wrapper);
-  interp.code2dom->putIdentifierInterp(vardecl_wrapper, br_id);
+  interp_.code2coords_->decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
+  domain::Identifier* br_id = interp_.domain_->addIdentifier(space, vardecl_wrapper);
+  interp_.coords2dom_->putIdentifierInterp(vardecl_wrapper, br_id);
   cerr << "END domain::Identifier *handleCXXConstructIdentifier\n";
 
   //  domain::Identifier *bIdent = new Identifier(vardecl);
@@ -144,7 +104,7 @@ void handleCXXConstructIdentifierBinding(
   if (!be || !bv) { cerr << "handleCXXConstructIdentifierBinding: null argument\n";}
   
   
-  const coords::IdentifierASTNode* bv_wrapper = bv->getVarDeclWrapper();
+  const coords::VecIdent* bv_wrapper = bv->getVarDeclWrapper();
   cerr << "handleCXXConstructIdentifierBinding: identifier at " << std::hex << bv << " wrapped addr is " << std::hex << bv_wrapper->getASTNode() << "\n";
   cerr << "handleCXXConstructIdentifierBinding: wrapped dump is \n"; bv_wrapper->getASTNode()->dump();
   cerr << "handleCXXConstructIdentifierBinding: name is " << bv_wrapper->toString() << "\n";
@@ -159,10 +119,10 @@ void handleCXXConstructIdentifierBinding(
   const coords::ExprASTNode* be_wrapper = be->getExprASTNode();
 
   coords::BindingASTNode *declstmt_wrapper = new coords::BindingASTNode(declstmt, bv_wrapper, be_wrapper);
-  interp.code2coords->stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
+  interp_.code2coords_->stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
   domain::Binding &binding =
-      interp.domain->addBinding(declstmt_wrapper, bv, be);
-  interp.code2dom->putBindingInterp(declstmt_wrapper, binding);
+      interp_.domain_->addBinding(declstmt_wrapper, bv, be);
+  interp_.coords2dom_->putBindingInterp(declstmt_wrapper, binding);
   cerr << "DONE: handleCXXConstructIdentifierBinding: Adding interp for binding\n";
 }
 
@@ -175,11 +135,11 @@ public:
     cerr << "START HandlerForCXXConstructLitExpr::run on " << std::hex << litexpr << "\n";
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
-    Space &space = interp.oracle->getSpaceForLitVector(litexpr);
+    domain::Space &space = interp_.oracle_->getSpaceForLitVector(litexpr);
     coords::LitASTNode *litexpr_wrapper = new coords::LitASTNode(litexpr);  
-    interp.code2coords->expr_wrappers.insert(std::make_pair(litexpr, litexpr_wrapper));
-    domain::Expr* br_lit = interp.domain->addVecLitExpr(space, litexpr_wrapper);
-    interp.code2dom->putExpressionInterp(litexpr_wrapper, br_lit);
+    interp_.code2coords_->expr_wrappers.insert(std::make_pair(litexpr, litexpr_wrapper));
+    domain::Expr* br_lit = interp_.domain_->addVecLitExpr(space, litexpr_wrapper);
+    interp_.coords2dom_->putExpressionInterp(litexpr_wrapper, br_lit);
     cerr << "DONE HandlerForCXXConstructLitExpr::run\n";
   }
 };
@@ -433,7 +393,7 @@ void HandlerForCXXMemberCallExpr::run(const MatchFinder::MatchResult &Result) {
     return;
   }
 
-  //  Space &s = interp.code2dom->getSpaceForAddExpression(left_br, right_br);
+  //  domain::Space &s = interp_.coords2dom_->getSpaceForAddExpression(left_br, right_br);
   //  domain->addVecAddExpr(s, addexpr, *left_br, *right_br);
 
   cerr << "STUB: HandlerForCXXMemberCallExpr::run(const "
@@ -638,14 +598,14 @@ const domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consde
         cerr << "handleCXXConstructExpr: match post failure, NULL consdecl.\n";
     }
 
-    if (!interp.code2coords->expr_wrappers[consdecl]) {
+    if (!interp_.code2coords_->expr_wrappers[consdecl]) {
         cerr << "handleCXXConstructExpr: match post failure, NULL wrapper.\n";
     }
   
   // Get code coordinates for given Clang AST node
-   const coords::ExprASTNode *wrapper_key = interp.code2coords->expr_wrappers[consdecl];
+   const coords::ExprASTNode *wrapper_key = interp_.code2coords_->expr_wrappers[consdecl];
   // Return domain object for code at these coordinates
-  return interp.code2dom->getExpressionInterp(wrapper_key);
+  return interp_.coords2dom_->getExpressionInterp(wrapper_key);
 
   //cout << "Returning domain expression object (STUBBED OUT)\n";
   //return NULL; /* STUB */
@@ -742,7 +702,7 @@ class MyFrontendAction : public ASTFrontendAction {
 public:
   MyFrontendAction() {}
   void EndSourceFileAction() override {
-    bool consistent = interp.domain->isConsistent();
+    bool consistent = interp_.domain_->isConsistent();
     cerr << (consistent ? "STUB: Good\n" : "STUB: Bad\n");
   }
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
@@ -760,12 +720,12 @@ int main(int argc, const char **argv) {
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
   //InterpForm* interp = new InterpForm();
-  interp.domain->addSpace("Space1");
-  interp.domain->addSpace("Space2");
+  interp_.domain_->addSpace("Space1");
+  interp_.domain_->addSpace("Space2");
 
   return Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
-  //interp.domain = new Domain();
-  //interp.code2dom = new CodeToDomain();
-  //interp.oracle = new Oracle(*interp.domain);
+  //interp_.domain_ = new Domain();
+  //interp_.coords2dom_ = new CoordsToDomain();
+  //interp_.oracle_ = new Oracle(*interp_.domain_);
 }

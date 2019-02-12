@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-#include "CodeCoords.h"
+#include "Coords.h"
 
 using namespace std;
 
@@ -38,14 +38,14 @@ expressions lifted to domain expressions.
 
 class Identifier {
 public:
-	Identifier(Space& space, const coords::IdentifierASTNode* vardecl) : space_(&space), vardecl_(vardecl) {}
+	Identifier(Space& space, const coords::VecIdent* vardecl) : space_(&space), vardecl_(vardecl) {}
 	Space* getSpace() const { return space_; }
-	const coords::IdentifierASTNode* getVarDeclWrapper() const { return vardecl_; }
+	const coords::VecIdent* getVarDeclWrapper() const { return vardecl_; }
 	string toString() const { return getName(); }
 	string getName() const;
 private:
 	Space* space_;
-	const coords::IdentifierASTNode* vardecl_;
+	const coords::VecIdent* vardecl_;
 };
 
 // TODO - Change name of this class? DomainExpr?
@@ -151,7 +151,7 @@ class Domain {
 public:
 	Space& addSpace(const string& name);
 	//VecLitExpr& addLitExpr(Space& s, const coords::coords::LitASTNode* ast);		/* BIG TODO: Fix others */
-	Identifier* addIdentifier(Space& s, const coords::IdentifierASTNode* ast);
+	Identifier* addIdentifier(Space& s, const coords::VecIdent* ast);
 	Expr& addVecVarExpr(const coords::VarDeclRefASTNode* ast);
 	Expr* addVecLitExpr(Space& s, const coords::LitASTNode* e);
 	Expr& addVecAddExpr(Space& s, coords::VectorAddExprASTNode* e, const domain::Expr& left_, const domain:: Expr& right_);
