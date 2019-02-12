@@ -22,19 +22,19 @@ public:
 	{
 		//cerr << "Returning stub space for expression.\n";
 		cerr << "Space for add expression?\n";
-		cerr << "Left is \n" << left_br->toString() << "\n";
-		cerr << "Right is \n" << right_br->toString() << "\n";
+	//	cerr << "Right is \n" << right_br->toString() << "\n";
+	//	cerr << "Left is \n" << left_br->toString() << "\n";
 		return getSpace();
 	}
 
 	Space& getSpaceForIdentifier(const clang::VarDecl* v) {
 		//cerr << "Returning stub space for identifier.\n";
 		cerr << "Space for identifier?\n";
-		v->dump();
+		//v->dump();
 		return getSpace();
 	}
 
-	Space& getSpaceForLitVector(const clang::Expr* v) {
+	Space& getSpaceForLitVector(const clang::CXXConstructExpr* v) {
 		//cerr << "Space for literal?\n";
 		cerr << "Space for literal?\n";
 		v->dump();

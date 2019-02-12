@@ -8,14 +8,15 @@ using namespace std;
  * Identifiers
  *************/
 
-void Interpretation::putIdentInterp(const IdentifierASTNode& key, bridge::Identifier& v) {
-    interpIdent.insert(std::make_pair(key,&v));
+void Interpretation::putIdentifierInterp(const IdentifierASTNode *key, bridge::Identifier *v) {
+    cerr << "Interpretation::putIdentifierInterp: " << key->toString() << "\n";
+    interpIdent.insert(std::make_pair(*key, v));
     //cerr << "Put Ident Interp.\n";
 }
 
-const bridge::Identifier* Interpretation::getIdentInterp(const IdentifierASTNode& n) 
+const bridge::Identifier* Interpretation::getIdentifierInterp(const IdentifierASTNode* n) 
 {
-    return interpIdent[n];
+    return interpIdent[*n];
     cerr << "Get Ident Interp.\n";
 }
 
@@ -23,12 +24,13 @@ const bridge::Identifier* Interpretation::getIdentInterp(const IdentifierASTNode
  * Add Expression
  ****************/
 
-void Interpretation::putExpressionInterp(const ExprASTNode& n, const bridge::Expr& e) {
-    interpExpression.insert(std::make_pair(n, &e));
+void Interpretation::putExpressionInterp(const ExprASTNode* n, const bridge::Expr* e) {
+    interpExpression.insert(std::make_pair(*n, e));
 }
 
-const bridge::Expr* Interpretation::getExpressionInterp(const ExprASTNode& n) {
-   return interpExpression[n]; 
+const bridge::Expr* Interpretation::getExpressionInterp
+        (const ExprASTNode* n)  {
+   return interpExpression[*n]; 
 }
 
 /*********
@@ -42,7 +44,8 @@ void Interpretation::putBindingInterp(BindingASTNode *key, Binding& b)
     //cerr << "Interpretation::putBindingInterp called but stubbed out.\n";
 }
 
-Binding* Interpretation::getBindingInterp(BindingASTNode& key) {
-   return interpBinding[key];     
+
+const Binding* Interpretation::getBindingInterp(const BindingASTNode* key)  {
+   return interpBinding[*key];     
    //cerr << "Interpretation::getBindingInterp called but stubbed out. Returning NULL.\n";
 }

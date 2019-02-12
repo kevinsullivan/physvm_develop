@@ -37,8 +37,8 @@ public:
 int main(int argc, char **argv){
 
   Vec v1(1.0,1.0,1.0); 
-  Vec v2(2.0,2.0,2.0);
-  Vec v3(3.0,3.0,3.0);
-  Vec v4 = (v1.vec_add(v2)).vec_add(v3);
+  Vec v2(1.0,1.0,1.0); 
+  Vec v3(1.0,1.0,1.0); 
+  Vec v4 = v1.vec_add(v2).vec_add(v3);
   return 0;
 }

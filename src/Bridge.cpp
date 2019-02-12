@@ -10,18 +10,11 @@ string Space::getName() const { return name_; }
 
 const Space &bridge::Expr::getSpace() const { return space_; }
 
-Identifier::Identifier(Space &space, const IdentifierASTNode *vardecl) : space_(&space), vardecl_(vardecl)
-{
-}
 
 string Identifier::getName() const
 {
-    return "(" + vardecl_->getVarDecl()->getNameAsString() + " : " + space_->getName() + ")";
-}
-
-string Identifier::toString() const
-{
-    return getName();
+    cerr << "Identifier::getName(): vardecl_  addr is " << std::hex << vardecl_->getVarDecl() << "\n";
+    return "(" + vardecl_->toString() + " : " + space_->getName() + ")";
 }
 
 // TODO: currently UNUSED
@@ -40,10 +33,11 @@ const bridge::Expr &VecAddExpr::getVecAddExprArgR()
     return arg_right_;
 }
 
-const Identifier &Binding::getIdentifier()
+/*const Identifier &Binding::getIdentifier()
 {
     return identifier_;
 }
+*/
 
 Space &Bridge::addSpace(const string &name)
 {
@@ -54,7 +48,7 @@ Space &Bridge::addSpace(const string &name)
 }
 
 
-bridge::Expr &Bridge::addVecLitExpr(Space &s, const LitASTNode *e)
+bridge::Expr *Bridge::addVecLitExpr(Space &s, const LitASTNode *e)
 {
     bridge::Expr *be = new bridge::Expr(s, e);
     //cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
@@ -62,7 +56,7 @@ bridge::Expr &Bridge::addVecLitExpr(Space &s, const LitASTNode *e)
     expressions.push_back(be);
     //cerr << "... dump after is ...\n";
     //dump();
-    return *be;
+    return be;
 }
 
 // precondition: variable already interpreted
@@ -93,28 +87,32 @@ bridge::Expr &Bridge::addVecVarExpr(const VarDeclRefASTNode *ast)
 bridge::Expr &Bridge::addVecAddExpr(Space &s, VectorAddExprASTNode *e, const bridge::Expr &left, const bridge::Expr &right)
 {
     bridge::Expr *be = new bridge::VecAddExpr(s, e, left, right);
-    cerr << "Adding Vec ADD Expr to expressions, address " << std::hex << be << "\n";
-    cerr << "Add Expr added is " << be->toString() << "\n";
+    cerr << "Bridge::addVecAddExpr:: Adding Vec ADD Expr to expressions, address " << std::hex << be << "\n";
+    cerr << "Bridge::addVecAddExpr:: Add Expr added is " << be->toString() << "\n";
     //dump();
     expressions.push_back(be);
-    cerr << "Done adding Add Expr to expressions\n";
+    cerr << "Bridge::addVecAddExpr:: Done adding Add Expr to expressions\n";
     return *be;
 }
 
-Identifier &Bridge::addIdentifier(Space &s, const IdentifierASTNode *ast)
+Identifier *Bridge::addIdentifier(Space &s, const IdentifierASTNode *ast)
 {
     Identifier *id = new Identifier(s, ast);
     identifiers.push_back(*id);
-    return *id;
+    return id;
 }
 
-Binding &Bridge::addBinding(BindingASTNode *v, const Identifier &i,
-                            const bridge::Expr &e)
+Binding &Bridge::addBinding(const BindingASTNode *v, const Identifier* i, const bridge::Expr* e)
 {
     cerr << "Bridge::addBinding ";
-    cerr << "identifier is " << i.toString();
-    cerr << " expression is " << e.toString() << "\n";
+    cerr << "identifier is " << i->toString();
+    cerr << " expression is " << e->toString() << "\n";
     Binding *bd = new Binding(v, i, e);
+/*
+Bridge.cpp:116:38: error: no matching function for call to 'bridge::Binding::Binding(const BindingASTNode*&, const bridge::Identifier*&, const bridge::Expr*&)'
+     Binding *bd = new Binding(v, i, e);
+                                      ^
+*/
     bindings.push_back(*bd);
     return *bd;
 }
