@@ -24,8 +24,8 @@ class CoordsToDomain
 	void putLitInterp(const coords::LitASTNode &n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(const coords::LitASTNode &n) const;
 
-	void putExpressionInterp(const coords::ExprASTNode *n, const domain::Expr *e);
-	const domain::Expr *getExpressionInterp(const coords::ExprASTNode* n);
+	void putExpressionInterp(const coords::ExprASTNode *n, domain::Expr *e);
+	domain::Expr *getExpressionInterp(const coords::ExprASTNode* n);
 
 	void putBindingInterp(coords::BindingASTNode *vardecl_wrapper, domain::Binding &b);
 	const domain::Binding *getBindingInterp(const coords::BindingASTNode* vardecl_wrapper);
@@ -45,7 +45,7 @@ class CoordsToDomain
 	nodes, adding operator==() and hash functions.
 	*/
 	unordered_map<coords::VecIdent, domain::Identifier *, coords::IdentifierASTNodeHasher> interpIdent;
-	unordered_map<const coords::ExprASTNode, const domain::Expr *, coords::ExprASTNodeHasher> interpExpression;
+	unordered_map<const coords::ExprASTNode, domain::Expr *, coords::ExprASTNodeHasher> interpExpression;
 	unordered_map<coords::BindingASTNode, domain::Binding *, coords::BindingASTNodeHasher> interpBinding;
 };
 

@@ -1,9 +1,9 @@
-#ifndef CODETOCOORDS_H
-#define CODETOCOORDS_H
+#ifndef ASTTOCOORDS_H
+#define ASTTOCOORDS_H
 
-namespace code2coords {
+namespace ast2coords {
 
-class CodeToCoords {
+class ASTToCoords {
 public:
     void overrideExpr(const clang::Expr *e, const coords::ExprASTNode *c) {
     }

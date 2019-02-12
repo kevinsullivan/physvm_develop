@@ -1,6 +1,6 @@
-#include "clang/AST/AST.h"
-#include "clang/AST/ASTConsumer.h"
-#include "clang/AST/Expr.h"
+#include <iostream>
+#include <string>
+
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/Frontend/CompilerInstance.h"
@@ -11,15 +11,7 @@
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/raw_ostream.h"
 
-#include <iostream>
-#include <string>
 
-#include "AST.h"
-#include "Coords.h"
-#include "CodeToCoords.h"
-#include "Oracle.h"
-#include "Domain.h"
-#include "CoordsToDomain.h"
 #include "Interpretation.h"
 
 using namespace std;
@@ -71,36 +63,17 @@ domain::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
                                                  ASTContext *context,
                                                  SourceManager &sm) {
  return interp_.mkVecIdent(vardecl);
-
-/*
-  cerr << "START domain::Identifier *handleCXXConstructIdentifier. VarDecl is \n";
-  if (!vardecl) { 
-      cerr << "domain::Identifier *handleCXXConstructIdentifier: Null vardecl\n";}
-  else { 
-      vardecl->dump(); 
-    }
-
-  domain::Space &space = interp_.oracle_->getSpaceForIdentifier(vardecl);
-  coords::VecIdent *vardecl_wrapper = new coords::VecIdent(vardecl);
-  cerr << "handleCXXConstructIdentifier: Created vardecl wrapper at " << std::hex << vardecl_wrapper << " for clang vardecl at " << std::hex << vardecl << "; toString is : " << vardecl_wrapper->toString() << "\n";
-  interp_.code2coords_->decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
-  domain::Identifier* br_id = interp_.domain_->addIdentifier(space, vardecl_wrapper);
-  interp_.coords2dom_->putIdentifierInterp(vardecl_wrapper, br_id);
-  cerr << "END domain::Identifier *handleCXXConstructIdentifier\n";
-
-  //  domain::Identifier *bIdent = new Identifier(vardecl);
-  //  interp->putIdentifier(vardecl, bIdent);
-  //  cout << "Created domain identifier\n";
-  //  return bIdent;
-  */
 }
 
 // Function: Add interpretation for binding of Vector identifier to Vector
 // Expression
 void handleCXXConstructIdentifierBinding(
         const clang::DeclStmt* declstmt,
-        const domain::Identifier *bv,
-        const domain::Expr *be) {
+        domain::Identifier *bv,
+        domain::Expr *be) {
+
+    interp_.mkVecBinding(declstmt,bv,be); // no retval
+/* 
   cerr << "START: handleCXXConstructIdentifierBinding: Adding interp for binding\n.";
   if (!be || !bv) { cerr << "handleCXXConstructIdentifierBinding: null argument\n";}
   
@@ -120,11 +93,12 @@ void handleCXXConstructIdentifierBinding(
   const coords::ExprASTNode* be_wrapper = be->getExprASTNode();
 
   coords::BindingASTNode *declstmt_wrapper = new coords::BindingASTNode(declstmt, bv_wrapper, be_wrapper);
-  interp_.code2coords_->stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
+  interp_.ast2coords_->stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
   domain::Binding &binding =
       interp_.domain_->addBinding(declstmt_wrapper, bv, be);
   interp_.coords2dom_->putBindingInterp(declstmt_wrapper, binding);
   cerr << "DONE: handleCXXConstructIdentifierBinding: Adding interp for binding\n";
+*/
 }
 
 // Class: Match Callback class for handling Vector Literal Expressions
@@ -138,7 +112,7 @@ public:
     SourceManager &sm = context->getSourceManager();
     domain::Space &space = interp_.oracle_->getSpaceForLitVector(litexpr);
     coords::LitASTNode *litexpr_wrapper = new coords::LitASTNode(litexpr);  
-    interp_.code2coords_->expr_wrappers.insert(std::make_pair(litexpr, litexpr_wrapper));
+    interp_.ast2coords_->expr_wrappers.insert(std::make_pair(litexpr, litexpr_wrapper));
     domain::Expr* br_lit = interp_.domain_->addVecLitExpr(space, litexpr_wrapper);
     interp_.coords2dom_->putExpressionInterp(litexpr_wrapper, br_lit);
     cerr << "DONE HandlerForCXXConstructLitExpr::run\n";
@@ -586,7 +560,7 @@ handled by pattern matching include literal and add expressions.
 - Vec v1(0.0,0.0,0.0) is a literal expression
 - (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
 */
-const domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
+domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
                                      ASTContext *context, SourceManager &sm) {
   cout << "Pattern matching Vector CXXConstructExpr at " << std::hex << consdecl << " and dispatching to handler.\n";
   CXXConstructExprMatcher *matcher = new CXXConstructExprMatcher();
@@ -599,12 +573,12 @@ const domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consde
         cerr << "handleCXXConstructExpr: match post failure, NULL consdecl.\n";
     }
 
-    if (!interp_.code2coords_->expr_wrappers[consdecl]) {
+    if (!interp_.ast2coords_->expr_wrappers[consdecl]) {
         cerr << "handleCXXConstructExpr: match post failure, NULL wrapper.\n";
     }
   
   // Get code coordinates for given Clang AST node
-   const coords::ExprASTNode *wrapper_key = interp_.code2coords_->expr_wrappers[consdecl];
+   const coords::ExprASTNode *wrapper_key = interp_.ast2coords_->expr_wrappers[consdecl];
   // Return domain object for code at these coordinates
   return interp_.coords2dom_->getExpressionInterp(wrapper_key);
 
@@ -661,8 +635,8 @@ public:
       }
       // TODO: Fill in logic for error condition in preceding conditional
       cout << "Handling vector declaration statement\n";
-      const domain::Expr *be = handleCXXConstructExpr(consdecl, context, sm);
-      const domain::Identifier *bi =
+      domain::Expr *be = handleCXXConstructExpr(consdecl, context, sm);
+      domain::Identifier *bi =
           handleCXXConstructIdentifier(vardecl, context, sm);
       handleCXXConstructIdentifierBinding(declstmt, bi, be);
       cout << "Done handling vector declaration statement\n\n";
