@@ -52,13 +52,13 @@ public:
         code2coords = new CodeToCoords();
     }
 
-    IdentifierASTNode *addVecIdent(onst clang::VarDecl *vardecl) {
-        Space &space = interp.oracle->getSpaceForIdentifier(vardecl);
-        IdentifierASTNode *vardecl_wrapper = new IdentifierASTNode(vardecl);
+    coords::IdentifierASTNode *addVecIdent(const clang::VarDecl *vardecl) {
+        Space &space = oracle->getSpaceForIdentifier(vardecl);
+        coords::IdentifierASTNode *vardecl_wrapper = new coords::IdentifierASTNode(vardecl);
         cerr << "handleCXXConstructIdentifier: Created vardecl wrapper at " << std::hex << vardecl_wrapper << " for clang vardecl at " << std::hex << vardecl << "; toString is : " << vardecl_wrapper->toString() << "\n";
-        interp.code2coords->decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
-        domain::Identifier* br_id = interp.domain->addIdentifier(space, vardecl_wrapper);
-        interp.code2dom->putIdentifierInterp(vardecl_wrapper, br_id);
+        code2coords->decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
+        domain::Identifier* br_id = domain->addIdentifier(space, vardecl_wrapper);
+        code2dom->putIdentifierInterp(vardecl_wrapper, br_id);
         cerr << "END domain::Identifier *handleCXXConstructIdentifier\n";
     }
     
@@ -121,7 +121,7 @@ domain::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
       vardecl->dump(); 
     }
   Space &space = interp.oracle->getSpaceForIdentifier(vardecl);
-  IdentifierASTNode *vardecl_wrapper = new IdentifierASTNode(vardecl);
+  coords::IdentifierASTNode *vardecl_wrapper = new coords::IdentifierASTNode(vardecl);
   cerr << "handleCXXConstructIdentifier: Created vardecl wrapper at " << std::hex << vardecl_wrapper << " for clang vardecl at " << std::hex << vardecl << "; toString is : " << vardecl_wrapper->toString() << "\n";
   interp.code2coords->decl_wrappers.insert(std::make_pair(vardecl, vardecl_wrapper));
   domain::Identifier* br_id = interp.domain->addIdentifier(space, vardecl_wrapper);
@@ -144,7 +144,7 @@ void handleCXXConstructIdentifierBinding(
   if (!be || !bv) { cerr << "handleCXXConstructIdentifierBinding: null argument\n";}
   
   
-  const IdentifierASTNode* bv_wrapper = bv->getVarDeclWrapper();
+  const coords::IdentifierASTNode* bv_wrapper = bv->getVarDeclWrapper();
   cerr << "handleCXXConstructIdentifierBinding: identifier at " << std::hex << bv << " wrapped addr is " << std::hex << bv_wrapper->getASTNode() << "\n";
   cerr << "handleCXXConstructIdentifierBinding: wrapped dump is \n"; bv_wrapper->getASTNode()->dump();
   cerr << "handleCXXConstructIdentifierBinding: name is " << bv_wrapper->toString() << "\n";
@@ -156,9 +156,9 @@ void handleCXXConstructIdentifierBinding(
 
 
 
-  const ExprASTNode* be_wrapper = be->getExprASTNode();
+  const coords::ExprASTNode* be_wrapper = be->getExprASTNode();
 
-  BindingASTNode *declstmt_wrapper = new BindingASTNode(declstmt, bv_wrapper, be_wrapper);
+  coords::BindingASTNode *declstmt_wrapper = new coords::BindingASTNode(declstmt, bv_wrapper, be_wrapper);
   interp.code2coords->stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
   domain::Binding &binding =
       interp.domain->addBinding(declstmt_wrapper, bv, be);
@@ -176,7 +176,7 @@ public:
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
     Space &space = interp.oracle->getSpaceForLitVector(litexpr);
-    LitASTNode *litexpr_wrapper = new LitASTNode(litexpr);  
+    coords::LitASTNode *litexpr_wrapper = new coords::LitASTNode(litexpr);  
     interp.code2coords->expr_wrappers.insert(std::make_pair(litexpr, litexpr_wrapper));
     domain::Expr* br_lit = interp.domain->addVecLitExpr(space, litexpr_wrapper);
     interp.code2dom->putExpressionInterp(litexpr_wrapper, br_lit);
@@ -643,7 +643,7 @@ const domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consde
     }
   
   // Get code coordinates for given Clang AST node
-   const ExprASTNode *wrapper_key = interp.code2coords->expr_wrappers[consdecl];
+   const coords::ExprASTNode *wrapper_key = interp.code2coords->expr_wrappers[consdecl];
   // Return domain object for code at these coordinates
   return interp.code2dom->getExpressionInterp(wrapper_key);
 

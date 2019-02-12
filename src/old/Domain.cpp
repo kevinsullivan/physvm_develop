@@ -48,7 +48,7 @@ Space &Domain::addSpace(const string &name)
 }
 
 
-bridge::Expr *Domain::addVecLitExpr(Space &s, const LitASTNode *e)
+bridge::Expr *Domain::addVecLitExpr(Space &s, const coords::LitASTNode *e)
 {
     bridge::Expr *be = new bridge::Expr(s, e);
     //cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
@@ -60,7 +60,7 @@ bridge::Expr *Domain::addVecLitExpr(Space &s, const LitASTNode *e)
 }
 
 // precondition: variable already interpreted
-Space &getSpaceOfVarExpr(const ExprASTNode *ast)
+Space &getSpaceOfVarExpr(const coords::ExprASTNode *ast)
 {
     // look up variable (ast) in identifiers table
     // Space& s = getSpaceOf(ast,identifiers);
@@ -72,7 +72,7 @@ Space &getSpaceOfVarExpr(const ExprASTNode *ast)
 }
 
 // TODO: Change arg type to be more precise
-bridge::Expr &Domain::addVecVarExpr(const VarDeclRefASTNode *ast)
+bridge::Expr &Domain::addVecVarExpr(const coords::VarDeclRefASTNode *ast)
 {
     Space &s = getSpaceOfVarExpr(ast);
     bridge::Expr *be = new bridge::Expr(s, ast);
@@ -95,7 +95,7 @@ bridge::Expr &Domain::addVecAddExpr(Space &s, VectorAddExprASTNode *e, const bri
     return *be;
 }
 
-Identifier *Domain::addIdentifier(Space &s, const IdentifierASTNode *ast)
+Identifier *Domain::addIdentifier(Space &s, const coords::IdentifierASTNode *ast)
 {
     Identifier *id = new Identifier(s, ast);
     identifiers.push_back(*id);
