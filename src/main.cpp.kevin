@@ -14,7 +14,7 @@
 #include "llvm/Support/CommandLine.h"
 
 #include "CodeCoords.h"
-#include "CodeToDomain.h"
+#include "CoordsToDomain.h"
 #include "Oracle.h"
 #include "Domain.h"
 
@@ -38,7 +38,7 @@ node handlers are triggered.
 */
 Oracle *oracle;
 Domain *domain_domain;
-CodeToDomain *interp;
+CoordsToDomain *interp;
 
 unordered_map<const clang::Expr *, const ExprASTNode *> expr_wrappers;
 unordered_map<const clang::Stmt *, const ExprASTNode *> stmt_wrappers;
@@ -82,7 +82,7 @@ public:
     // Create domain node for lifted AST expression
     // Add (ast container, domain node) to interpretation
     //
-    Space &space = oracle->getSpaceForLitVector(consdecl);
+    domain::Space &space = oracle->getSpaceForLitVector(consdecl);
     LitASTNode *consdecl_wrapper = new LitASTNode(consdecl);  
     expr_wrappers.insert(std::make_pair(consdecl, consdecl_wrapper));// TODO: Name, consdecl is expr
     expr_wrappers.insert(std::make_pair(consdecl, consdecl_wrapper));
@@ -169,7 +169,7 @@ const domain::Expr *handleMemberCallExpr(const CXXMemberCallExpr *addexpr, ASTCo
   cerr << "Added add expr at " << std::hex << addexpr << " to expr_wrappers\n";
   cerr << "Expression added was \n"; addexpr->dump();
 
-  Space &space = oracle->getSpaceForAddExpression(left_br, right_br);
+  domain::Space &space = oracle->getSpaceForAddExpression(left_br, right_br);
   const domain::Expr &br_add_expr = domain_domain->addVecAddExpr(space, wrapper, *left_br, *right_br);
   cerr << "New expression now adding is " << br_add_expr.toString() << "\n";
   interp->putExpressionInterp(*wrapper, br_add_expr);
@@ -266,7 +266,7 @@ public:
 
     cerr << "Joe Blow\n";
     VectorAddExprASTNode *ast = new VectorAddExprASTNode(memcall, left_wrapper, right_wrapper);
-    Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
+    domain::Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
     const domain::Expr &br_add_expr = domain_domain->addVecAddExpr(s, ast, *left_br, *right_br);
     interp->putExpressionInterp(*ast, br_add_expr);
     expr_wrappers.insert(std::make_pair(memcall, ast));
@@ -602,8 +602,8 @@ public:
 
     // IDENTIFIER -- should call handle identifier (TODO:)
     //
-    Space &space = oracle->getSpaceForIdentifier(vardecl);
-    IdentifierASTNode *ast_container = new IdentifierASTNode(vardecl);
+    domain::Space &space = oracle->getSpaceForIdentifier(vardecl);
+    VecIdent *ast_container = new VecIdent(vardecl);
     decl_wrappers.insert(std::make_pair(vardecl, ast_container));
     domain::Identifier &bi = domain_domain->addIdentifier(space, ast_container);
     interp->putIdentInterp(*ast_container, bi);
@@ -698,7 +698,7 @@ int main(int argc, const char **argv)
   domain_domain = new Domain();
   domain_domain->addSpace("S1");
   domain_domain->addSpace("S2");
-  interp = new CodeToDomain();
+  interp = new CoordsToDomain();
   oracle = new Oracle(*domain_domain);
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
   cerr << "Identifiers\n";

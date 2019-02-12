@@ -19,6 +19,7 @@
         "__hash_table": "cpp",
         "unordered_map": "cpp",
         "memory": "cpp",
-        "system_error": "cpp"
+        "system_error": "cpp",
+        "cstddef": "cpp"
     }
 }

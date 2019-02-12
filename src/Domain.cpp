@@ -95,7 +95,7 @@ domain::Expr &Domain::addVecAddExpr(Space &s, coords::VectorAddExprASTNode *e, c
     return *be;
 }
 
-Identifier *Domain::addIdentifier(Space &s, const coords::IdentifierASTNode *ast)
+Identifier *Domain::addIdentifier(Space &s, const coords::VecIdent *ast)
 {
     Identifier *id = new Identifier(s, ast);
     identifiers.push_back(*id);

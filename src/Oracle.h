@@ -2,23 +2,23 @@
 #define ORACLE_H
 
 #include <string>
-#include "CodeCoords.h"
+#include "Coords.h"
 #include "Domain.h"
 
-using namespace domain;
+namespace oracle {
 
 class Oracle
 {
 public:
-	Oracle(Domain* d) : dom_(d) {};
+	Oracle(domain::Domain* d) : dom_(d) {};
 
 	// Precondition: true
 	// Effects: get space annotation from environment
 	// Postcondition: return value is space to associate with vector
 	//
-	Space& getSpaceForVector(string where);
+	domain::Space& getSpaceForVector(string where);
 
-	Space& getSpaceForAddExpression(const domain::Expr * left_br, const domain::Expr * right_br)
+	domain::Space& getSpaceForAddExpression(const domain::Expr * left_br, const domain::Expr * right_br)
 	{
 		//cerr << "Returning stub space for expression.\n";
 		cerr << "Space for add expression?\n";
@@ -27,14 +27,14 @@ public:
 		return getSpace();
 	}
 
-	Space& getSpaceForIdentifier(const clang::VarDecl* v) {
+	domain::Space& getSpaceForIdentifier(const clang::VarDecl* v) {
 		//cerr << "Returning stub space for identifier.\n";
 		cerr << "Space for identifier?\n";
 		//v->dump();
 		return getSpace();
 	}
 
-	Space& getSpaceForLitVector(const clang::CXXConstructExpr* v) {
+	domain::Space& getSpaceForLitVector(const clang::CXXConstructExpr* v) {
 		//cerr << "Space for literal?\n";
 		cerr << "Space for literal?\n";
 		v->dump();
@@ -42,8 +42,10 @@ public:
 	}
 
 private:
-	Space& getSpace();
-	Domain* dom_;
+	domain::Space& getSpace();
+	domain::Domain* dom_;
 };
+
+} // namespace
 
 #endif
