@@ -25,12 +25,12 @@ const domain::Identifier* CoordsToDomain::getIdentifierInterp(const coords::VecI
  * Add Expression
  ****************/
 
-void CoordsToDomain::putExpressionInterp(const coords::ExprASTNode* n, domain::Expr* e) {
+void CoordsToDomain::putExpressionInterp(const coords::VectorExpr* n, domain::Expr* e) {
     interpExpression.insert(std::make_pair(*n, e));
 }
 
 domain::Expr* CoordsToDomain::getExpressionInterp
-        (const coords::ExprASTNode* n)  {
+        (const coords::VectorExpr* n)  {
    return interpExpression[*n]; 
 }
 
@@ -39,14 +39,14 @@ domain::Expr* CoordsToDomain::getExpressionInterp
  *********/
 
 // TODO: Make first arg a reference &
-void CoordsToDomain::putBindingInterp(coords::BindingASTNode *key, domain::Binding& b)
+void CoordsToDomain::putBindingInterp(coords::Binding *key, domain::Binding& b)
 {
     interpBinding.insert(std::make_pair(*key,&b));
     //cerr << "CoordsToDomain::putBindingInterp called but stubbed out.\n";
 }
 
 
-const domain::Binding* CoordsToDomain::getBindingInterp(const coords::BindingASTNode* key)  {
+const domain::Binding* CoordsToDomain::getBindingInterp(const coords::Binding* key)  {
    return interpBinding[*key];     
    //cerr << "CoordsToDomain::getBindingInterp called but stubbed out. Returning NULL.\n";
 }

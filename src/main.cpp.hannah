@@ -539,7 +539,7 @@ domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
     }
   
   // Get code coordinates for given Clang AST node
-   const coords::ExprASTNode *wrapper_key = interp_.ast2coords_->expr_wrappers[consdecl];
+   const coords::VectorExpr *wrapper_key = interp_.ast2coords_->expr_wrappers[consdecl];
   // Return domain object for code at these coordinates
   return interp_.coords2dom_->getExpressionInterp(wrapper_key);
 

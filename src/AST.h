@@ -9,7 +9,7 @@ namespace ast {
 // TODO: Prefix with Vec
 //
 using Vector = const clang::CXXConstructExpr;
-using Literal = const clang::CXXConstructExpr;
+using VectorLiteral = const clang::CXXConstructExpr;
 using Ident = const clang::VarDecl;
 using Stmt  = const clang::DeclStmt;
 using Expr = const clang::Expr;

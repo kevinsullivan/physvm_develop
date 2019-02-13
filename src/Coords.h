@@ -5,6 +5,8 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include <cstddef>
 #include <iostream> // for cheap logging only
+#include "AST.h"
+
 
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -21,15 +23,17 @@ be lifted to a corresponding domain type.
 
 enum ast_type { EXPR, STMT, DECL };
 
-// TODO: Change name to ASTNode, as can now be either EXPR or STMT
-class ExprASTNode {
+// TODO: Change name to , as can now be either EXPR or STMT
+class VectorExpr {
 public:
-  ExprASTNode() : expr_(NULL) {}
-  ExprASTNode(const clang::Expr *expr) : expr_(expr) { ast_type_ = EXPR; }
-  ExprASTNode(const clang::Stmt *decl) : stmt_(decl) { ast_type_ = STMT; }
-  ExprASTNode(const clang::Decl *decl) : decl_(decl) { ast_type_ = DECL; }
-  const clang::Expr *getASTNode() const { return expr_; }
-  bool operator==(const ExprASTNode &other) const {
+  VectorExpr() : expr_(NULL) {}
+  VectorExpr(const clang::Expr *expr) : expr_(expr) { ast_type_ = EXPR; }
+  VectorExpr(const clang::Stmt *decl) : stmt_(decl) { ast_type_ = STMT; }
+  VectorExpr(const clang::Decl *decl) : decl_(decl) { ast_type_ = DECL; }
+
+  const clang::Expr *get() const { return expr_; }
+
+  bool operator==(const VectorExpr &other) const {
     if (ast_type_ == EXPR) {
       return (expr_ == other.expr_);
     } else if (ast_type_ == STMT) {
@@ -39,7 +43,7 @@ public:
     }
   }
   virtual string toString() const {
-    return "ASTNode::toPrint: Error: should not be called.";
+    return "::toPrint: Error: should not be called.";
   }
 
 private:
@@ -49,8 +53,8 @@ private:
   const clang::Decl *decl_;
 };
 
-struct ExprASTNodeHasher {
-  std::size_t operator()(const ExprASTNode &k) const {
+struct VectorExprHasher {
+  std::size_t operator()(const VectorExpr &k) const {
     std::size_t hash = 10101010;
     // TODO Fix hash function
     return hash;
@@ -58,13 +62,13 @@ struct ExprASTNodeHasher {
 };
 
 // TODO: this is ctor; separate contents
-class LitASTNode : public ExprASTNode {
+class VectorLit : public VectorExpr {
 public:
-  LitASTNode(const clang::CXXConstructExpr *constrExpr)
-      : ExprASTNode(constrExpr), constrExpr_(constrExpr) {}
-  const clang::CXXConstructExpr *getASTNode() const { return constrExpr_; }
+  VectorLit(const clang::CXXConstructExpr *constrExpr)
+      : VectorExpr(constrExpr), constrExpr_(constrExpr) {}
+  const clang::CXXConstructExpr *get() const { return constrExpr_; }
 
-  bool operator==(const LitASTNode &other) const {
+  bool operator==(const VectorLit &other) const {
 
     return (constrExpr_ == other.constrExpr_);
   }
@@ -74,8 +78,8 @@ private:
   const clang::CXXConstructExpr *constrExpr_;
 };
 
-struct LitASTNodeHasher {
-  std::size_t operator()(const LitASTNode &k) const {
+struct VectorLitHasher {
+  std::size_t operator()(const VectorLit &k) const {
     // TODO -- fix
     std::size_t hash = 10101010;
     return hash;
@@ -85,10 +89,10 @@ struct LitASTNodeHasher {
 //---------------
 
 // Identifier implemented as VarDecl
-class VecIdent : public ExprASTNode {
+class VecIdent : public VectorExpr {
 public:
   VecIdent(const clang::VarDecl *varDecl)
-      : ExprASTNode(varDecl), varDecl_(varDecl) {}
+      : VectorExpr(varDecl), varDecl_(varDecl) {}
   const clang::VarDecl *getVarDecl() const { return varDecl_; }
 
   // for now, an address-based equality predicate
@@ -101,7 +105,7 @@ private:
   const clang::VarDecl *varDecl_;
 };
 
-struct IdentifierASTNodeHasher {
+struct IdentifierHasher {
   std::size_t operator()(const VecIdent &k) const {
     std::size_t hash = 101010;
     // TODO Fix hash function
@@ -111,14 +115,14 @@ struct IdentifierASTNodeHasher {
 
 // ToDo -- change name to VariableExpr (implemented as VarDeclRef)
 
-class VarDeclRefASTNode : public ExprASTNode {
+class VarDeclRef : public VectorExpr {
 public:
-  VarDeclRefASTNode(const clang::DeclRefExpr *varDeclRef)
-      : ExprASTNode(varDeclRef), varDeclRef_(varDeclRef) {}
+  VarDeclRef(const clang::DeclRefExpr *varDeclRef)
+      : VectorExpr(varDeclRef), varDeclRef_(varDeclRef) {}
   const clang::DeclRefExpr *getVarDeclRef() const { return varDeclRef_; }
 
   // for now, an address-based equality predicate
-  bool operator==(const VarDeclRefASTNode &other) const {
+  bool operator==(const VarDeclRef &other) const {
     return (varDeclRef_ == other.varDeclRef_);
   }
   virtual string toString() const {
@@ -129,8 +133,8 @@ private:
   const clang::DeclRefExpr *varDeclRef_;
 };
 
-struct VarDeclRefASTNodeHasher {
-  std::size_t operator()(const VarDeclRefASTNode &k) const {
+struct VarDeclRefHasher {
+  std::size_t operator()(const VarDeclRef &k) const {
     std::size_t hash = 101010;
     // TODO Fix hash function
     return hash;
@@ -139,17 +143,17 @@ struct VarDeclRefASTNodeHasher {
 
 // TODO -- Change to AddMemberCallExpr, implemented as CXXMemberCallExpr
 
-class VectorAddExprASTNode : public ExprASTNode {
+class VectorAddExpr : public VectorExpr {
 public:
-  VectorAddExprASTNode(const clang::CXXMemberCallExpr *exp,
-                       const ExprASTNode *left, const ExprASTNode *right)
-      : ExprASTNode(exp), cxxMemberCallExpr_(exp), left_(left), right_(right) {}
+  VectorAddExpr(const clang::CXXMemberCallExpr *exp,
+                       const VectorExpr *left, const VectorExpr *right)
+      : VectorExpr(exp), cxxMemberCallExpr_(exp), left_(left), right_(right) {}
   const clang::CXXMemberCallExpr *getCXXMemberCallExpr() const {
     return cxxMemberCallExpr_;
   }
 
   // for now, an address-based equality predicate
-  bool operator==(const VectorAddExprASTNode &other) const {
+  bool operator==(const VectorAddExpr &other) const {
     return (cxxMemberCallExpr_ == other.cxxMemberCallExpr_);
   }
   virtual string toString() const {
@@ -158,32 +162,32 @@ public:
 
 private:
   const clang::CXXMemberCallExpr *cxxMemberCallExpr_;
-  const ExprASTNode *left_;
-  const ExprASTNode *right_;
+  const VectorExpr *left_;
+  const VectorExpr *right_;
 };
 
 /*
-Provide has function for ExprASTNodeHasher class, as required
+Provide has function for ExprHasher class, as required
 for the use of objects of this class as keys in a map.
 */
-struct VectorAddExprASTNodeHasher {
-  std::size_t operator()(const VectorAddExprASTNode &k) const {
+struct VectorAddExprHasher {
+  std::size_t operator()(const VectorAddExpr &k) const {
     std::size_t hash = 101010;
     // TODO Fix hash function
     return hash;
   }
 };
 
-// TODO weak typing of ExprASTNode argument
-class AddConstructASTNode : public ExprASTNode {
+// TODO weak typing of Expr argument
+class AddConstruct : public VectorExpr {
 public:
-  AddConstructASTNode(const clang::CXXConstructExpr *constrExpr,
-                      const ExprASTNode *addExpr)
-      : ExprASTNode(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {}
-  const clang::CXXConstructExpr *getASTNode() const { return constrExpr_; }
+  AddConstruct(const clang::CXXConstructExpr *constrExpr,
+                      const VectorExpr *addExpr)
+      : VectorExpr(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {}
+  const clang::CXXConstructExpr *get() const { return constrExpr_; }
 
   // for now, an address-based equality predicate
-  bool operator==(const AddConstructASTNode &other) const {
+  bool operator==(const AddConstruct &other) const {
 
     return (constrExpr_ == other.constrExpr_);
   }
@@ -191,39 +195,39 @@ public:
 
 private:
   const clang::CXXConstructExpr *constrExpr_;
-  const ExprASTNode *addExpr_;
+  const VectorExpr *addExpr_;
   ;
 };
 
-// TODO weak typing of ExprASTNode argument
-class VectorASTNode : public ExprASTNode {
+// TODO weak typing of Expr argument
+class Vector : public VectorExpr {
 public:
-  VectorASTNode(const clang::CXXConstructExpr *constrExpr)
-      : ExprASTNode(constrExpr), constrExpr_(constrExpr) {}
-  const clang::CXXConstructExpr *getASTNode() const { return constrExpr_; }
+  Vector(const clang::CXXConstructExpr *constrExpr)
+      : VectorExpr(constrExpr), constrExpr_(constrExpr) {}
+  const clang::CXXConstructExpr *get() const { return constrExpr_; }
 
   // for now, an address-based equality predicate
-  bool operator==(const VectorASTNode &other) const {
+  bool operator==(const Vector &other) const {
 
     return (constrExpr_ == other.constrExpr_);
   }
-  virtual string toString() const { return "VectorASTNode"; }
+  virtual string toString() const { return "Vector"; }
 
 private:
   const clang::CXXConstructExpr *constrExpr_;
-  const ExprASTNode *expr_;
+  const VectorExpr *expr_;
   ;
 };
 
 /*
-Coords.h: In constructor 'coords::VectorASTNode::VectorASTNode(const clang::CXXConstructExpr*, const coords::ExprASTNode*)':
-Coords.h:203:59: error: class 'coords::VectorASTNode' does not have any field named 'addExpr_'
-       : ExprASTNode(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {}
+Coords.h: In constructor 'coords::Vector::Vector(const clang::CXXConstructExpr*, const coords::VectorExpr*)':
+Coords.h:203:59: error: class 'coords::Vector' does not have any field named 'addExpr_'
+       : Expr(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {}
             
 */
 
-struct VectorASTNodeHasher {
-  std::size_t operator()(const VectorASTNode &k) const {
+struct VectorHasher {
+  std::size_t operator()(const Vector &k) const {
     // TODO -- fix
     std::size_t hash = 10101010;
     return hash;
@@ -231,16 +235,16 @@ struct VectorASTNodeHasher {
 };
 
 // TODO -- Binding hides VarDecl
-class BindingASTNode : public ExprASTNode {
+class Binding : public VectorExpr {
 public:
-  BindingASTNode(const clang::DeclStmt *declStmt, const VecIdent *bv,
-                 const ExprASTNode *be)
-      : declStmt_(declStmt), bv_(bv), be_(be), ExprASTNode(declStmt) {}
+  Binding(const clang::DeclStmt *declStmt, const VecIdent *bv,
+                 const VectorExpr *be)
+      : declStmt_(declStmt), bv_(bv), be_(be), VectorExpr(declStmt) {}
 
   const clang::DeclStmt *getDeclStmt() const { return declStmt_; }
 
   // for now, an address-based equality predicate
-  bool operator==(const BindingASTNode &other) const {
+  bool operator==(const Binding &other) const {
     return (declStmt_ == other.declStmt_);
   }
   virtual string toString() const { return "Binding (STUB: refine)"; }
@@ -248,11 +252,11 @@ public:
 private:
   const clang::DeclStmt *declStmt_;
   const VecIdent *bv_;
-  const ExprASTNode *be_;
+  const VectorExpr *be_;
 };
 
-struct BindingASTNodeHasher {
-  std::size_t operator()(const BindingASTNode &k) const {
+struct BindingHasher {
+  std::size_t operator()(const Binding &k) const {
     std::size_t hash = 101010;
     // TODO Fix hash function
     return hash;

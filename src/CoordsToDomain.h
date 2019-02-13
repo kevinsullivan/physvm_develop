@@ -17,18 +17,18 @@ class CoordsToDomain
 
 	// ??? delete ???
 	/*
-	void putVectorInterp(const VectorASTNode& n, VecVarExpr& v);
-	VecVarExpr* getVectorInterp(const VectorASTNode& n);
+	void putVectorInterp(const Vector& n, VecVarExpr& v);
+	VecVarExpr* getVectorInterp(const Vector& n);
 	*/
 
-	void putLitInterp(const coords::LitASTNode &n, domain::VecLitExpr &v);
-	domain::VecLitExpr *getLitInterp(const coords::LitASTNode &n) const;
+	void putVectorLitInterp(const coords::VectorLit &n, domain::VecLitExpr &v);
+	domain::VecLitExpr *getLitInterp(const coords::VectorLit &n) const;
 
-	void putExpressionInterp(const coords::ExprASTNode *n, domain::Expr *e);
-	domain::Expr *getExpressionInterp(const coords::ExprASTNode* n);
+	void putExpressionInterp(const coords::VectorExpr *n, domain::Expr *e);
+	domain::Expr *getExpressionInterp(const coords::VectorExpr* n);
 
-	void putBindingInterp(coords::BindingASTNode *vardecl_wrapper, domain::Binding &b);
-	const domain::Binding *getBindingInterp(const coords::BindingASTNode* vardecl_wrapper);
+	void putBindingInterp(coords::Binding *vardecl_wrapper, domain::Binding &b);
+	const domain::Binding *getBindingInterp(const coords::Binding* vardecl_wrapper);
 
 	void dumpExpressions() const {
 		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
@@ -40,12 +40,18 @@ class CoordsToDomain
 
   private:
 	/* 
-	We implement an interpretation as a collection of typed maps. The keys are "Code Coordinate" objects, which, in turn, are currently just containers for pointers to 
-	AST nodes, adding operator==() and hash functions.
+	We implement an interpretation as a collection of typed maps. 
+	The keys are "Code Coordinate" objects, which, in turn, are 
+	currently just containers for pointers to AST nodes, basically
+	just adding operator==() and hash functions.
+
+	TODO: Compare with ast2coords. There it's clear that every
+	AST node maps to a coords::VectorExpr. But here we distinguish
+	between different kinds of coords. Re-evaluate.
 	*/
-	unordered_map<coords::VecIdent, domain::Identifier *, coords::IdentifierASTNodeHasher> interpIdent;
-	unordered_map<const coords::ExprASTNode, domain::Expr *, coords::ExprASTNodeHasher> interpExpression;
-	unordered_map<coords::BindingASTNode, domain::Binding *, coords::BindingASTNodeHasher> interpBinding;
+	unordered_map<coords::VecIdent, domain::Identifier *, coords::IdentifierHasher> interpIdent;
+	unordered_map<coords::VectorExpr, domain::Expr *, coords::VectorExprHasher> interpExpression;
+	unordered_map<coords::Binding, domain::Binding *, coords::BindingHasher> interpBinding;
 };
 
 } // namespace

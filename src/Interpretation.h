@@ -17,29 +17,30 @@ public:
     // TODO: Have this take coord, not domain, arguments
     void mkVecBinding(ast::Stmt *ast, domain::Identifier *id, domain::Expr *exp);
     // TODO: Use AST.h name in next method
-    void mkVector(CXXConstructExpr *ctor_ast, ASTContext context); 
-    void mkVector(ast::Literal *ast, ASTContext *context); 
+    void mkVector(CXXConstructExpr *ctor_ast, ASTContext *context); 
+    void mkVector(ast::VectorLiteral *ast, ASTContext *context); 
     void mkVecAddExpr(ast::AddExpr *ast, domain::Expr *mem, domain::Expr *arg);
-    void mkVecExpr(ast::Expr *ast);
+    void mkVecExpr(ast::Expr *ast, ASTContext *context);
     // TODO: Use AST.h name in next method return
-    const coords::ExprASTNode *getCoords(ast::Expr *expr)  
+    const coords::VectorExpr *getCoords(ast::Expr *expr)  
     {
         ast2coords_->getASTExprCoords(expr);
     }
 
     // Precondition: coords2domain_ is defined for exp
     //
-    Expr* getExpressionInterp(ast::Expr* exp) {
+    domain::Expr* getExpressionInterp(ast::Expr* ast) {
         // we use these objects as key for query purposes
-        const ExprASTNode *coords = new ExprASTNode(memexpr);
-        domain::Expr* expr = coords2domain_[coords];
+        const coords::Expr *coords = new coords::Expr(ast);
+        domain::Expr* dom = coords2dom::getExpressionInterp(coords);
         if (expr == NULL) {
             cerr << "Interpretation::getExpressionInterp. Error. Undefined for key!\n";
         }
+        return dom;
     }
 //private:
     // TO DO: normalize domain, factor out need to know coords
-    coords::Coords* coords_;
+    //coords::Coords* coords_;
     domain::Domain *domain_;
     oracle::Oracle *oracle_;
     ast2coords::ASTToCoords *ast2coords_;
