@@ -198,9 +198,8 @@ private:
 // TODO weak typing of ExprASTNode argument
 class VectorASTNode : public ExprASTNode {
 public:
-  VectorASTNode(const clang::CXXConstructExpr *constrExpr,
-                      const ExprASTNode *addExpr)
-      : ExprASTNode(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {}
+  VectorASTNode(const clang::CXXConstructExpr *constrExpr)
+      : ExprASTNode(constrExpr), constrExpr_(constrExpr) {}
   const clang::CXXConstructExpr *getASTNode() const { return constrExpr_; }
 
   // for now, an address-based equality predicate
@@ -215,6 +214,13 @@ private:
   const ExprASTNode *expr_;
   ;
 };
+
+/*
+Coords.h: In constructor 'coords::VectorASTNode::VectorASTNode(const clang::CXXConstructExpr*, const coords::ExprASTNode*)':
+Coords.h:203:59: error: class 'coords::VectorASTNode' does not have any field named 'addExpr_'
+       : ExprASTNode(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {}
+            
+*/
 
 struct VectorASTNodeHasher {
   std::size_t operator()(const VectorASTNode &k) const {

@@ -1,11 +1,12 @@
 #include "ASTToCoords.h"
 
-
-const VecIdent *ASTToCoords::makeCoordsForVecIdent(const clang::VarDecl *ident) {
+// Create right coordinates object and "add to system" (update ast_to_coords map)
+const coords::VecIdent *ASTToCoords::makeCoordsForVecIdent(const ast::Ident *ident) {
     VecIdent *vecCoords = new coords::VecIdent(ident);
     overrideDecl(ident,vecCoords);                          // TO DO Canonicalize
     return vecCoords;
 }
+
 
 void ASTToCoords::overrideExpr(const clang::Expr *e, const coords::ExprASTNode *c) {
     expr_coords.insert(std::make_pair(e, c));
@@ -25,3 +26,5 @@ const coords::ExprASTNode *ASTToCoords::getASTExprCoords(ast::Expr* e) {
     return expr_coords[e];
 }
 
+ASTToCoords.cpp:4:25: error: 'ASTToCoords' has not been declared
+ const coords::VecIdent *ASTToCoords::makeCoordsForVecIdent(const ast::Ident *ident) {
