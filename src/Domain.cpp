@@ -48,7 +48,7 @@ Space &Domain::addSpace(const string &name)
 }
 
 
-domain::Expr *Domain::addVecLitExpr(Space &s, const coords::LitASTNode *e)
+domain::Expr *Domain::addVecLitExpr(Space &s, const coords::VectorLit *e)
 {
     domain::Expr *be = new domain::Expr(s, e);
     //cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
@@ -60,7 +60,7 @@ domain::Expr *Domain::addVecLitExpr(Space &s, const coords::LitASTNode *e)
 }
 
 // precondition: variable already interpreted
-Space &getSpaceOfVarExpr(const coords::ExprASTNode *ast)
+Space &getSpaceOfVarExpr(const coords::VectorExpr *ast)
 {
     // look up variable (ast) in identifiers table
     // Space& s = getSpaceOf(ast,identifiers);
@@ -72,7 +72,7 @@ Space &getSpaceOfVarExpr(const coords::ExprASTNode *ast)
 }
 
 // TODO: Change arg type to be more precise
-domain::Expr &Domain::addVecVarExpr(const coords::VarDeclRefASTNode *ast)
+domain::Expr &Domain::addVecVarExpr(const coords::VarDeclRef *ast)
 {
     Space &s = getSpaceOfVarExpr(ast);
     domain::Expr *be = new domain::Expr(s, ast);
@@ -84,7 +84,7 @@ domain::Expr &Domain::addVecVarExpr(const coords::VarDeclRefASTNode *ast)
     return *be;
 }
 
-domain::Expr *Domain::addVecAddExpr(Space &s, coords::VectorAddExprASTNode *e, domain::Expr *mem, domain::Expr *arg)
+domain::Expr *Domain::addVecAddExpr(Space &s, coords::VectorAddExpr *e, domain::Expr *mem, domain::Expr *arg)
 {
     domain::Expr *be = new domain::VecAddExpr(s, e, mem, arg);
     expressions.push_back(be);
@@ -103,14 +103,14 @@ Identifier *Domain::addIdentifier(Space &s, const coords::VecIdent *ast)
 
 // TODO: Should be binding to Vector, not Expr
 // 
-Binding &Domain::addBinding(const coords::BindingASTNode *v, const Identifier* i, const domain::Expr* e)
+Binding &Domain::addBinding(const coords::Binding *v, const Identifier* i, const domain::Expr* e)
 {
     cerr << "Domain::addBinding ";
     cerr << "identifier is " << i->toString();
     cerr << " expression is " << e->toString() << "\n";
     Binding *bd = new Binding(v, i, e);
 /*
-Domain.cpp:116:38: error: no matching function for call to 'domain::Binding::Binding(const coords::BindingASTNode*&, const domain::Identifier*&, const domain::Expr*&)'
+Domain.cpp:116:38: error: no matching function for call to 'domain::Binding::Binding(const coords::Binding*&, const domain::Identifier*&, const domain::Expr*&)'
      Binding *bd = new Binding(v, i, e);
                                       ^
 */
@@ -118,7 +118,7 @@ Domain.cpp:116:38: error: no matching function for call to 'domain::Binding::Bin
     return *bd;
 }
 
-Vector* Domain::addVector(coords VectorASTNode* coords, domain::Expr *expr) {
+Vector* Domain::addVector(coords Vector* coords, domain::Expr *expr) {
     Vector* vec = new Vector(coords, expr);
     vectors.push_back(*vec);
 }

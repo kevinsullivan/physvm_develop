@@ -84,9 +84,9 @@ const domain::Expr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTContex
   cerr << "main::handleMemberCallExpr: End\n";
 
     // TESTING
-/*    const ExprASTNode* addexprWrapper = expr_wrappers[memcall];
+/*    const Expr* addexprWrapper = expr_wrappers[memcall];
     if (!addexprWrapper) {cerr << "Badd Wrapperr\n"; }
-    const VectorAddExprASTNode* wrapper = new VectorAddExprASTNode(memcall, NULL, NULL); 
+    const VectorAddExpr* wrapper = new VectorAddExpr(memcall, NULL, NULL); 
     const domain::Expr *isThere = interp->getExpressionInterp(*wrapper);
     if (!isThere) {cerr << "Missing exprr"; }
 */
@@ -109,7 +109,7 @@ public:
     cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
     // ASTContext *context = Result.Context;
     // SourceManager &sm = context->getSourceManager();
-    const VarDeclRefASTNode *wrapper = new VarDeclRefASTNode(declRefExpr);
+    const VarDeclRef *wrapper = new VarDeclRef(declRefExpr);
     expr_wrappers.insert(std::make_pair(declRefExpr, wrapper));
     domain::Expr &be = domain_domain->addVecVarExpr(wrapper);
     interp->putExpressionInterp(*wrapper, be);
@@ -401,7 +401,7 @@ domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, AS
   // domain::Expr* bi = interp->getExpr(consdecl);
   // TO DO: Architectural change means we need to wrap consdecl to map it
 
-  const ExprASTNode *ast = new ExprASTNode(consdecl);   // TODO -- BETTER TYPE!
+  const Expr *ast = new Expr(consdecl);   // TODO -- BETTER TYPE!
   domain::Expr *be = interp->getExpressionInterp(*ast);
   //cerr << "handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
   return be;
@@ -460,7 +460,7 @@ public:
     //cerr << "END: handleCXXConstructIdentifier\n";
 */
 
-    // CONSTRUCTOR (Lit | Add)
+    // CONSTRUCTOR (VectorLit | Add)
     //
     cerr << "VectorDeclStmtHandler: start matching on consdecl\n";
     CXXConstructExprMatcher matcher;
@@ -476,7 +476,7 @@ public:
     //
     interp_->mkVecBinding(declstmt, id, expr);
 
-/*    BindingASTNode *declstmt_wrapper = new BindingASTNode(declstmt);
+/*    Binding *declstmt_wrapper = new Binding(declstmt);
     stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
     domain::Binding &binding = domain_domain->addBinding(declstmt_wrapper, bi, *be);
     interp->putBindingInterp(declstmt_wrapper, binding);

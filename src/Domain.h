@@ -51,12 +51,12 @@ private:
 // TODO - Change name of this class? DomainExpr?
 class Expr {
 public:
-    Expr(const Space& s, const coords::ExprASTNode* ast) : space_(s), ast_(ast) {}
-	const coords::ExprASTNode* getExprASTNode() const { return ast_; }
+    Expr(const Space& s, const coords::VectorExpr* ast) : space_(s), ast_(ast) {}
+	const coords::VectorExpr* getExpr() const { return ast_; }
     const Space& getSpace() const;
 	virtual string toString() const {
 		if (ast_ != NULL) {
-			//cerr << "Domain::Expr::toString: coords::ExprASTNode pointer is " << std::hex << ast_ << "\n";
+			//cerr << "Domain::Expr::toString: coords::VectorExpr pointer is " << std::hex << ast_ << "\n";
 			return "(" + ast_->toString() + " : " + space_.getName() + ")";
 		}
 		else {
@@ -65,14 +65,14 @@ public:
 	}
 protected:
     const Space& space_;
-	const coords::ExprASTNode* ast_;
+	const coords::VectorExpr* ast_;
 };
 
 
 // Expr?? It's a Ctor
 class VecLitExpr : public Expr {
 public:
-    VecLitExpr(Space& s, const coords::LitASTNode* ast) : Expr(s, ast) { }
+    VecLitExpr(Space& s, const coords::VectorLit* ast) : Expr(s, ast) { }
     void addFloatLit(float num);
 	virtual string toString() const {
 		return "(" + ast_->toString() + " : " + getSpace().toString() + ")";
@@ -87,7 +87,7 @@ BIG TODO : Have Domain objects connect back to ast ***containers***, as in VecLi
 // Note: No printing of space, as it's inferred
 class VecVarExpr : public Expr {
 public:
-    VecVarExpr(Space& s, const coords::ExprASTNode* ast) : domain::Expr(s, ast) {}
+    VecVarExpr(Space& s, const coords::VectorExpr* ast) : domain::Expr(s, ast) {}
 	virtual string toString() const {
 		return "(" + ast_->toString() + " )";
 	}
@@ -98,7 +98,7 @@ private:
 class VecAddExpr : public Expr {
 public:
    VecAddExpr(
-        Space& s, const coords::ExprASTNode* ast, Expr *mem, Expr *arg) : 
+        Space& s, const coords::VectorExpr* ast, Expr *mem, Expr *arg) : 
 			Expr(s, ast), arg_(arg), mem_(mem) {	
 	}
 
@@ -106,14 +106,14 @@ public:
 	const Expr& getArgExpr();
 
 	virtual string toString() const {
-		return "(add " + mem_->toString() + " " + arg_.toString() + ")";
+		return "(add " + mem_->toString() + " " + arg_->toString() + ")";
 	}
 
 	// get the default space for this VecAddExpr using the space of the arg_left_
 	//const Space& getVecAddExprDefaultSpace();
 private:
-    Expr* arg_left_;
-    Expr* arg_right_;
+    Expr* arg_;
+    Expr* mem_;
 };
 
 /*
@@ -123,43 +123,44 @@ the *domain* Identifier and Expression objects being bound.
 */
 class Binding {
 public:
-	Binding(const coords::BindingASTNode* ast_wrapper, const domain::Identifier* identifier, const domain::Expr* expr):
+	Binding(const coords::Binding* ast_wrapper, const domain::Identifier* identifier, const domain::Expr* expr):
 			ast_wrapper_(ast_wrapper), identifier_(identifier), expr_(expr) {}
-	const coords::BindingASTNode* getVarDecl() const {return ast_wrapper_; } 
+	const coords::Binding* getVarDecl() const {return ast_wrapper_; } 
 	const domain::Expr* getDomExpr() const { return expr_; }
 	const domain::Identifier* getIdentifier() { return identifier_; }
 	string toString() const {
 		return "def " + identifier_->toString() + " := " + expr_->toString();
 	}
 private:
-	const coords::BindingASTNode* ast_wrapper_;
+	const coords::Binding* ast_wrapper_;
 	const Identifier* identifier_;
 	const Expr* expr_;
 };
 
 /*
 Domain representation of binding of identifier to expression.
-Takes clang::VarDecl establishing binding (in a wrapper) and 
-the *domain* Identifier and Expression objects being bound.
 */
+enum VecCtorType {VEC_EXPR, VEC_LIT, VEC_VAR } ]; 
 
-class domain::Vector  {
+class Vector  {
 public:
-	Vector(Space& s, const coords::AddConstructASTNode* coords, domain::Expr* expr):
-		space_(&s), coords_(coords), expr_(expr) { tag_ = domain::EXPR; }
-	bool isExpr() { return (tag_ == domain::EXPR); } 
-	bool isLit() { return (tag_ == domain::LIT); } 
+	Vector(Space& s, const coords::AddConstruct* coords, domain::Expr* expr):
+		space_(&s), coords_(coords), expr_(expr) { 
+			tag_ = domain::EXPR; 
+	}
+	bool isExpr() { return (tag_ == VEC_EXPR); } 
+	bool isLit() { return (tag_ == VEC_LIT); } 
 	Space* getSpace() {return space_; }
-	const coords::VectorASTNode* getVector() const {return ast_wrapper_; } 
-	const domain::Vector* getDomVector() const { return expr_; }
+	const coords::Vector* getVector() const {return coords_; } 
+	const domain::Expr* getDomExpr() const { return expr_; }
 	string toString() const {
-		return "def " + identifier_->toString() + " := " + expr_->toString();
+		return expr_->toString();
 	}
 private:
-//	const Space* space_; // INFER
-	const coords::AddConstructASTNode* coords_;
-	const domain::VecCtorType tag_;
+	const Space* space_; // INFER
+	const coords::AddConstruct* coords_;
 	const domain::Expr* expr_; // child
+	const VecCtorType tag_;
 };
 
 /*
@@ -173,16 +174,16 @@ of C++ objects. It should be isomorphic to the domain, and domain models
 class Domain {
 public:
 	Space& addSpace(const string& name);
-	//VecLitExpr& addLitExpr(Space& s, const coords::coords::LitASTNode* ast);		/* BIG TODO: Fix others */
+	//VecLitExpr& addLitExpr(Space& s, const coords::coords::Lit* ast);		/* BIG TODO: Fix others */
 	Identifier* addIdentifier(Space& s, const coords::VecIdent* ast);
-	Expr& addVecVarExpr(const coords::VarDeclRefASTNode* ast);
+	Expr& addVecVarExpr(const coords::VarDeclRef* ast);
 	// should be addVecLit*Ctor*, with contained lit data 
-	Expr* addVecLitExpr(Space& s, const coords::LitASTNode* e);
-	Expr* addVecAddExpr(Space& s, coords::VectorAddExprASTNode* e, domain::Expr& left_, domain::Expr& right_);
+	Expr* addVecLitExpr(Space& s, const coords::VectorLit* e);
+	Expr* addVecAddExpr(Space& s, coords::VectorAddExpr* e, domain::Expr& left_, domain::Expr& right_);
 	// coords for container, domain object for child, lit | expr
 	// if lit, child is -- empty? -- else coords and domain Expr
-	Vector* addVector(coords VectorASTNode* v, domain::Expr *vec);
-	Binding& addBinding(const coords::BindingASTNode* vardecl, const Identifier* identifier, const Expr* expression);
+	Vector* addVector(coords Vector* v, domain::Expr *vec);
+	Binding& addBinding(const coords::Binding* vardecl, const Identifier* identifier, const Expr* expression);
 	void dump() {
 		cerr << "Domain expressions:\n";
 		dumpExpressions(); // print contents on cerr
