@@ -84,14 +84,13 @@ domain::Expr &Domain::addVecVarExpr(const coords::VarDeclRefASTNode *ast)
     return *be;
 }
 
-domain::Expr &Domain::addVecAddExpr(Space &s, coords::VectorAddExprASTNode *e, const domain::Expr &left, const domain::Expr &right)
+domain::Expr *Domain::addVecAddExpr(Space &s, coords::VectorAddExprASTNode *e, domain::Expr *mem, domain::Expr *arg)
 {
-    domain::Expr *be = new domain::VecAddExpr(s, e, left, right);
-    cerr << "Domain::addVecAddExpr:: Adding Vec ADD Expr to expressions, address " << std::hex << be << "\n";
-    cerr << "Domain::addVecAddExpr:: Add Expr added is " << be->toString() << "\n";
-    //dump();
+    domain::Expr *be = new domain::VecAddExpr(s, e, mem, arg);
     expressions.push_back(be);
-    cerr << "Domain::addVecAddExpr:: Done adding Add Expr to expressions\n";
+    cerr << "Domain::addVecAddExpr:: Add. Coords are "
+        << std::hex << e << " Domain Expr at " << std::hex << be << "\n";
+    cerr << "Domain::addVecAddExpr:: Expr string is " << be->toString() << "\n";
     return *be;
 }
 
@@ -102,6 +101,8 @@ Identifier *Domain::addIdentifier(Space &s, const coords::VecIdent *ast)
     return id;
 }
 
+// TODO: Should be binding to Vector, not Expr
+// 
 Binding &Domain::addBinding(const coords::BindingASTNode *v, const Identifier* i, const domain::Expr* e)
 {
     cerr << "Domain::addBinding ";
@@ -116,6 +117,12 @@ Domain.cpp:116:38: error: no matching function for call to 'domain::Binding::Bin
     bindings.push_back(*bd);
     return *bd;
 }
+
+Vector* Domain::addVector(coords VectorASTNode* coords, domain::Expr *expr) {
+    Vector* vec = new Vector(coords, expr);
+    vectors.push_back(*vec);
+}
+
 
 // TODO: Use pointers everywhere here?
 void Domain::dumpIdentifiers()
