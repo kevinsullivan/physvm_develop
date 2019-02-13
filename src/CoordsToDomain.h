@@ -40,9 +40,8 @@ class CoordsToDomain
 
   private:
 	/* 
-	We implement an interpretation as a collection of typed maps. The keys are "Code Coordinate" objects, which, in 
-	turn, are currently just containers for pointers to AST
-	nodes, adding operator==() and hash functions.
+	We implement an interpretation as a collection of typed maps. The keys are "Code Coordinate" objects, which, in turn, are currently just containers for pointers to 
+	AST nodes, adding operator==() and hash functions.
 	*/
 	unordered_map<coords::VecIdent, domain::Identifier *, coords::IdentifierASTNodeHasher> interpIdent;
 	unordered_map<const coords::ExprASTNode, domain::Expr *, coords::ExprASTNodeHasher> interpExpression;

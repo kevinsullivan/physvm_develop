@@ -69,6 +69,7 @@ protected:
 };
 
 
+// Expr?? It's a Ctor
 class VecLitExpr : public Expr {
 public:
     VecLitExpr(Space& s, const coords::LitASTNode* ast) : Expr(s, ast) { }
@@ -97,25 +98,22 @@ private:
 class VecAddExpr : public Expr {
 public:
    VecAddExpr(
-        Space& s, 
-        const coords::ExprASTNode* ast,
-        const Expr& arg_left,
-        const Expr& arg_right
-        ) : Expr(s, ast), arg_left_(arg_left), arg_right_(arg_right) {	
+        Space& s, const coords::ExprASTNode* ast, Expr *mem, Expr *arg) : 
+			Expr(s, ast), arg_(arg), mem_(mem) {	
 	}
 
-	const Expr& getVecAddExprArgL();
-	const Expr& getVecAddExprArgR();
+	const Expr& getMemberExpr();
+	const Expr& getArgExpr();
 
 	virtual string toString() const {
-		return "(add " + arg_left_.toString() + " " + arg_right_.toString() + ")";
+		return "(add " + mem_->toString() + " " + arg_.toString() + ")";
 	}
 
 	// get the default space for this VecAddExpr using the space of the arg_left_
 	//const Space& getVecAddExprDefaultSpace();
 private:
-    const Expr& arg_left_;
-    const Expr& arg_right_;
+    Expr* arg_left_;
+    Expr* arg_right_;
 };
 
 /*
@@ -140,6 +138,31 @@ private:
 };
 
 /*
+Domain representation of binding of identifier to expression.
+Takes clang::VarDecl establishing binding (in a wrapper) and 
+the *domain* Identifier and Expression objects being bound.
+*/
+
+class domain::Vector  {
+public:
+	Vector(Space& s, const coords::AddConstructASTNode* coords, domain::Expr* expr):
+		space_(&s), coords_(coords), expr_(expr) { tag_ = domain::EXPR; }
+	bool isExpr() { return (tag_ == domain::EXPR); } 
+	bool isLit() { return (tag_ == domain::LIT); } 
+	Space* getSpace() {return space_; }
+	const coords::VectorASTNode* getVector() const {return ast_wrapper_; } 
+	const domain::Vector* getDomVector() const { return expr_; }
+	string toString() const {
+		return "def " + identifier_->toString() + " := " + expr_->toString();
+	}
+private:
+//	const Space* space_; // INFER
+	const coords::AddConstructASTNode* coords_;
+	const domain::VecCtorType tag_;
+	const domain::Expr* expr_; // child
+};
+
+/*
 A Domain is a lifted version of selected code represented as a collection 
 of C++ objects. It should be isomorphic to the domain, and domain models 
 (e.g., in Lean) should be producible using a Domain as an input.
@@ -153,8 +176,12 @@ public:
 	//VecLitExpr& addLitExpr(Space& s, const coords::coords::LitASTNode* ast);		/* BIG TODO: Fix others */
 	Identifier* addIdentifier(Space& s, const coords::VecIdent* ast);
 	Expr& addVecVarExpr(const coords::VarDeclRefASTNode* ast);
+	// should be addVecLit*Ctor*, with contained lit data 
 	Expr* addVecLitExpr(Space& s, const coords::LitASTNode* e);
-	Expr& addVecAddExpr(Space& s, coords::VectorAddExprASTNode* e, const domain::Expr& left_, const domain:: Expr& right_);
+	Expr* addVecAddExpr(Space& s, coords::VectorAddExprASTNode* e, domain::Expr& left_, domain::Expr& right_);
+	// coords for container, domain object for child, lit | expr
+	// if lit, child is -- empty? -- else coords and domain Expr
+	Vector* addVector(coords VectorASTNode* v, domain::Expr *vec);
 	Binding& addBinding(const coords::BindingASTNode* vardecl, const Identifier* identifier, const Expr* expression);
 	void dump() {
 		cerr << "Domain expressions:\n";
@@ -175,6 +202,7 @@ private:
 	vector<Identifier> identifiers;
 	vector<Expr*> expressions;
 	vector<Binding> bindings;
+	vector<Vector*> vectors;
 };
 
 } // end namespace

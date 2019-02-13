@@ -57,16 +57,13 @@ struct ExprASTNodeHasher {
   }
 };
 
-// TODO -- don't need to store pointers in superclass
-// TODO -- change name to LitExprASTNode
-// TODO -- Fix naming based on current arg type
+// TODO: this is ctor; separate contents
 class LitASTNode : public ExprASTNode {
 public:
   LitASTNode(const clang::CXXConstructExpr *constrExpr)
       : ExprASTNode(constrExpr), constrExpr_(constrExpr) {}
   const clang::CXXConstructExpr *getASTNode() const { return constrExpr_; }
 
-  // for now, an address-based equality predicate
   bool operator==(const LitASTNode &other) const {
 
     return (constrExpr_ == other.constrExpr_);
@@ -198,8 +195,29 @@ private:
   ;
 };
 
-struct AddConstructASTNodeHasher {
-  std::size_t operator()(const AddConstructASTNode &k) const {
+// TODO weak typing of ExprASTNode argument
+class VectorASTNode : public ExprASTNode {
+public:
+  VectorASTNode(const clang::CXXConstructExpr *constrExpr,
+                      const ExprASTNode *addExpr)
+      : ExprASTNode(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {}
+  const clang::CXXConstructExpr *getASTNode() const { return constrExpr_; }
+
+  // for now, an address-based equality predicate
+  bool operator==(const VectorASTNode &other) const {
+
+    return (constrExpr_ == other.constrExpr_);
+  }
+  virtual string toString() const { return "VectorASTNode"; }
+
+private:
+  const clang::CXXConstructExpr *constrExpr_;
+  const ExprASTNode *expr_;
+  ;
+};
+
+struct VectorASTNodeHasher {
+  std::size_t operator()(const VectorASTNode &k) const {
     // TODO -- fix
     std::size_t hash = 10101010;
     return hash;
@@ -233,16 +251,6 @@ struct BindingASTNodeHasher {
     // TODO Fix hash function
     return hash;
   }
-};
-
-class Coords {
-  public:
-    Coords() {}
-    const VecIdent *makeCoordsForVecIdent(const clang::VarDecl *ident);
-  private:
-    unordered_map<const clang::Expr *, const coords::ExprASTNode *> exprCoords_;
-    unordered_map<const clang::Stmt *, const coords::ExprASTNode *> stmtCoords_;
-    unordered_map<const clang::Decl *, const coords::ExprASTNode *> declCoords_;
 };
 
 } // namespace codecoords

@@ -15,7 +15,6 @@
 #include "Interpretation.h"
 
 using namespace std;
-
 using namespace llvm;
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -28,639 +27,489 @@ Fundamental data structure constructed by this tool
 
 interp::Interpretation interp_;
 
-/*
-Sharing data via global variables is a bad idea, but we'll
-do it to get a working system. These variables are initialized
-in main() and updated during the parse tree traversal, as AST
-node handlers are triggered.
-*/
-
 /****************************
 Standard Clang Tooling Set-up
 *****************************/
 
-/*
-Set up a custom category for all command-line options; a help
-message with Clang's standard common command-line options; and
-a tool-specific help message.
-*/
 static llvm::cl::OptionCategory MyToolCategory("Peirce options");
 static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 static cl::extrahelp MoreHelp("No additional options available for Peirce.");
 
-/***************************
- * CXXConstructExpr HANDLERS
- ***************************/
+/*****************************
+ * CXXConstructExpr (LITERALS) 
+ *****************************/
+
+// In Clang, a vector literal is a ctor applied to numerical args.
+// There is no subordinate expression as there is when the value
+// is given by an expression. For architectural conformity ???
+//
+class HandlerForCXXConstructLitExpr : public MatchFinder::MatchCallback
+{
+public:
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    ASTContext *context = Result.Context;
+    const clang::CXXConstructExpr *lit_ast = 
+      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
+    interp_.mkVecLiteral(lit_ast, context);
+  }
+};
+
+/*******************************
+ * Handle Member Call Expression
+ *******************************/
+
+//Forward-reference handlers for member (left) and argument (expressions) of add application
+const domain::Expr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
+const domain::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm);
 
 /*
-Function: Add interpretation for Vector identifier
-
-create a domain variable object
-add interpretation from vardecl to domain variable object
-maybe return a bool or something to indicate success or failure?
 */
-domain::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
-                                                 ASTContext *context,
-                                                 SourceManager &sm) {
- return interp_.mkVecIdent(vardecl);
+const domain::Expr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTContext *context, SourceManager &sm)
+{
+  cerr << "main::handleMemberCallExpr: Start, recurse on mem and arg\n";
+  const clang::Expr *memast = ast->getImplicitObjectArgument();
+  const clang::Expr *argast = ast->getArg(0);
+  cerr << "Member expr AST is (dump)\n";
+  memast->dump();
+  cerr << "Arg AST is (dump)\n";
+  argast->dump();
+
+  const domain::Expr *left_br = handle_member_expr_of_add_call(memast, *context, sm);
+  const domain::Expr *right_br = handle_arg0_of_add_call(argast, *context, sm);
+  if (!left || !right || !left_br || !right_br) {
+    cerr << "main::handleMemberCallExpr. Null pointer error.\n";
+    return NULL;
+  }
+  cerr << "main::handleMemberCallExpr: End\n";
+
+    // TESTING
+/*    const ExprASTNode* addexprWrapper = expr_wrappers[memcall];
+    if (!addexprWrapper) {cerr << "Badd Wrapperr\n"; }
+    const VectorAddExprASTNode* wrapper = new VectorAddExprASTNode(memcall, NULL, NULL); 
+    const domain::Expr *isThere = interp->getExpressionInterp(*wrapper);
+    if (!isThere) {cerr << "Missing exprr"; }
+*/
+
+  // Update interpretation
+  // Return new domain (add) expression object
+  return interp_.mkVecAddExpr(ast, mem_coords, arg_coords);
 }
 
-// Function: Add interpretation for binding of Vector identifier to Vector
-// Expression
-void handleCXXConstructIdentifierBinding(
-        const clang::DeclStmt* declstmt,
-        domain::Identifier *bv,
-        domain::Expr *be) {
+/*
+TODO: CONSIDER inlining this code.
+WHY DO I EVEN HAVE THIS? HANDLED BY RECURSION ABOVE.
 
-    interp_.mkVecBinding(declstmt,bv,be); // no retval
-/* 
-  cerr << "START: handleCXXConstructIdentifierBinding: Adding interp for binding\n.";
-  if (!be || !bv) { cerr << "handleCXXConstructIdentifierBinding: null argument\n";}
-  
-  
-  const coords::VecIdent* bv_wrapper = bv->getVarDeclWrapper();
-  cerr << "handleCXXConstructIdentifierBinding: identifier at " << std::hex << bv << " wrapped addr is " << std::hex << bv_wrapper->getASTNode() << "\n";
-  cerr << "handleCXXConstructIdentifierBinding: wrapped dump is \n"; bv_wrapper->getASTNode()->dump();
-  cerr << "handleCXXConstructIdentifierBinding: name is " << bv_wrapper->toString() << "\n";
-  cerr<<"On to the next bit\n";
-  
-
-
-
-
-
-
-  const coords::ExprASTNode* be_wrapper = be->getExprASTNode();
-
-  coords::BindingASTNode *declstmt_wrapper = new coords::BindingASTNode(declstmt, bv_wrapper, be_wrapper);
-  interp_.ast2coords_->stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
-  domain::Binding &binding =
-      interp_.domain_->addBinding(declstmt_wrapper, bv, be);
-  interp_.coords2dom_->putBindingInterp(declstmt_wrapper, binding);
-  cerr << "DONE: handleCXXConstructIdentifierBinding: Adding interp for binding\n";
-*/
-}
-
-// Class: Match Callback class for handling Vector Literal Expressions
-class HandlerForCXXConstructLitExpr : public MatchFinder::MatchCallback {
+class HandlerForCXXMemberCallExprRight_DeclRefExpr : public MatchFinder::MatchCallback
+{
 public:
-  virtual void run(const MatchFinder::MatchResult &Result) {
-    const auto *litexpr =
-        Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
-    cerr << "START HandlerForCXXConstructLitExpr::run on " << std::hex << litexpr << "\n";
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    const auto *declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+    cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
+    // ASTContext *context = Result.Context;
+    // SourceManager &sm = context->getSourceManager();
+    const VarDeclRefASTNode *wrapper = new VarDeclRefASTNode(declRefExpr);
+    expr_wrappers.insert(std::make_pair(declRefExpr, wrapper));
+    domain::Expr &be = domain_domain->addVecVarExpr(wrapper);
+    interp->putExpressionInterp(*wrapper, be);
+    // postcondition, be can now be found through interpret with wrapped declRefExpr as key
+  }
+};
+*/
+
+//CXXMemberCallExpr := CXXMemberCallExprLeft + CXXMemberCallExprRight
+class HandlerForCXXAddMemberCall : public MatchFinder::MatchCallback
+{
+public:
+  //  Get left and right children of add expression and handle them by calls to other handlers
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    cerr << "HandlerForCXXAddMemberCall.\n";
+
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
-    domain::Space &space = interp_.oracle_->getSpaceForLitVector(litexpr);
-    coords::LitASTNode *litexpr_wrapper = new coords::LitASTNode(litexpr);  
-    interp_.ast2coords_->expr_wrappers.insert(std::make_pair(litexpr, litexpr_wrapper));
-    domain::Expr* br_lit = interp_.domain_->addVecLitExpr(space, litexpr_wrapper);
-    interp_.coords2dom_->putExpressionInterp(litexpr_wrapper, br_lit);
-    cerr << "DONE HandlerForCXXConstructLitExpr::run\n";
-  }
-};
-
-/*********************/
-// BEGIN OF HANDLER SECTION FOR VEC_ADD APPLICATION
-/*********************/
-// Handlers classes that inheritated from the MatchFinder::MatchCallbacks
-// There should be 4 of these
-// HandlerForDeclRefExpr
-// HandlerForMemberExpr
-// HandlerForCXXMemberCallExprLeft
-// HandlerForCXXMemberCallExprRight
-
-/*********************/
-// BEGIN OF FORWARD DECLARATION FOR ALL THE HANDLERS AND MATCHERS
-/*********************/
-
-// declarations of the Handlers
-class HandlerForDeclRefExpr;
-class HandlerForMemberExpr;
-class HandlerForCXXMemberCallExprLeft;
-class HandlerForCXXMemberCallExprRight;
-class HandlerForCXXMemberCallExpr;
-
-// declarations of the Matchers
-class CXXMemberCallExprLeftMatcher;
-class CXXMemberCallExprRightMatcher;
-class MemberExprMatcher;
-
-/*********************/
-// END OF FORWARD DECLARATION FOR ALL THE HANDLERS AND MATCHERS
-/*********************/
-
-/*********************/
-// BEGIN OF DECLARATION FOR ALL THE HANDLERS AND MATCHERS
-/*********************/
-
-// declarations of the Handlers
-class HandlerForDeclRefExpr : public MatchFinder::MatchCallback {
-public:
-  HandlerForDeclRefExpr() {}
-  virtual void run(const MatchFinder::MatchResult &Result);
-};
-
-class HandlerForMemberExpr : public MatchFinder::MatchCallback {
-public:
-  HandlerForMemberExpr() {}
-  virtual void run(const MatchFinder::MatchResult &Result);
-};
-
-class HandlerForCXXMemberCallExprLeft : public MatchFinder::MatchCallback {
-public:
-  HandlerForCXXMemberCallExprLeft() {}
-  virtual void run(const MatchFinder::MatchResult &Result);
-};
-
-class HandlerForCXXMemberCallExprRight : public MatchFinder::MatchCallback {
-public:
-  HandlerForCXXMemberCallExprRight() {}
-  virtual void run(const MatchFinder::MatchResult &Result);
-};
-
-class HandlerForCXXMemberCallExpr : public MatchFinder::MatchCallback {
-public:
-  HandlerForCXXMemberCallExpr() {}
-  virtual void run(const MatchFinder::MatchResult &Result);
-};
-
-// declarations of the Matchers-----------------------------------
-
-// Precondition: when you have a big node that contains a CXXMembercallExpr
-// as sub node, use this matcher to get the CXXMembercallExpr node and it will
-// send the right handler for it.
-
-class CXXMemberCallExprMatcher {
-public:
-  CXXMemberCallExprMatcher();
-  void match(const clang::Expr *node, ASTContext *context);
-
-private:
-  MatchFinder cxxMemberCallExprMatcher_;
-  HandlerForCXXMemberCallExpr cxxMemberCallExprHandler;
-};
-
-class CXXMemberCallExprLeftMatcher {
-public:
-  CXXMemberCallExprLeftMatcher();
-  void match(const clang::Expr *call_lhs, ASTContext *context);
-
-private:
-  MatchFinder CXXMemberCallExprLeftMatcher_;
-  HandlerForMemberExpr memberexprHandler;
-};
-
-class CXXMemberCallExprRightMatcher {
-public:
-  CXXMemberCallExprRightMatcher();
-  void match(const clang::Expr *call_rhs, ASTContext *context);
-
-private:
-  MatchFinder CXXMemberCallExprRightMatcher_;
-  HandlerForDeclRefExpr declRefExprHandler;
-  HandlerForCXXMemberCallExpr cxxMemberCallExprHandler;
-};
-
-class MemberExprMatcher {
-
-public:
-  MemberExprMatcher();
-  void match(const clang::Expr *membernode, ASTContext *context);
-
-private:
-  MatchFinder MemberExprMatcher_;
-  HandlerForDeclRefExpr declRefExprHandler;
-  HandlerForCXXMemberCallExpr cxxMemberCallExprHandler;
-};
-
-/*********************/
-// END OF DECLARATION FOR ALL THE HANDLERS AND MATCHERS
-/*********************/
-
-/*********************/
-// BEGIN OF IMPLEMENTATION FOR ALL THE HANDLERS AND MATCHERS OF OBJECTS THAT
-// APPEAR IN THE GRAMMAR
-/*********************/
-
-// BEGIN OF HANDLER HELPER FUNCTIONS
-
-domain::Expr *handle_left_of_add_call(const clang::Expr *left,
-                                      ASTContext *context) {
-  cout << "Handling LEFT of add call----Left Hand Side\n";
-  CXXMemberCallExprLeftMatcher *leftmatcher =
-      new CXXMemberCallExprLeftMatcher();
-  leftmatcher->match(left, context);
-}
-
-domain::Expr *handle_right_of_add_call(const clang::Expr *right,
-                                       ASTContext *context) {
-  cout << "Handling RIGHT of add call----Right Hand Side\n";
-  CXXMemberCallExprRightMatcher *rightmatcher =
-      new CXXMemberCallExprRightMatcher();
-  rightmatcher->match(right, context);
-
-  // STUB OUT the implementation for the domain::Expr object
-  return NULL;
-}
-
-// END OF HANDLER HELPER FUNCTIONS
-
-void HandlerForDeclRefExpr::run(const MatchFinder::MatchResult &Result) {
-  const auto *declRefexpr =
-      Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-  if (declRefexpr != NULL) {
-    cout << ">>>>>>>>>>>>>>>DeclRefExpr on the right hand side "
-            "found>>>>>>>>>>>>>>>\n";
-    cout << "The name of this class should be DeclRefExpr, in fact it is "
-         << declRefexpr->getStmtClassName() << endl;
-    // TODO do return node from the look up in the domain
-  } else {
-    cout << "DeclRefExpr is NULL!\n" << endl;
-    return;
-  }
-}
-
-void HandlerForMemberExpr::run(const MatchFinder::MatchResult &Result) {
-
-  const auto *declRefexpr =
-      Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-  if (declRefexpr != NULL) {
-    cout << "<<<<<<<<<<<DeclRefExpr on the left hand side found<<<<<<<<<<<\n";
-    cout << "The name of this class should be DeclRefExpr, in fact it is "
-         << declRefexpr->getStmtClassName() << endl;
-    // TODO do recursion on this node
-  }
-
-  const auto *cxxMemberCallExpr =
-      Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("CXXMemberCallExpr");
-  if (cxxMemberCallExpr != NULL) {
-    cout
-        << " The name of this class should be CXXMemberCallExpr, in fact it is "
-        << cxxMemberCallExpr->getStmtClassName() << endl;
-    CXXMemberCallExprMatcher *matcher = new CXXMemberCallExprMatcher();
-    matcher->match(cxxMemberCallExpr, Result.Context);
-  }
-}
-
-void HandlerForCXXMemberCallExprRight::run(
-    const MatchFinder::MatchResult &Result) {
-
-  const auto *declRefexpr =
-      Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-  if (declRefexpr != NULL) {
-    cout << "The name of this class should be DeclRefExpr, in fact it is "
-         << declRefexpr->getStmtClassName() << endl;
-    // TODO do recursion on this node
-  }
-
-  const auto *cxxMemberCallExpr =
-      Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("CXXMemberCallExpr");
-  if (cxxMemberCallExpr != NULL) {
-    cout
-        << " The name of this class should be CXXMemberCallExpr, in fact it is "
-        << cxxMemberCallExpr->getStmtClassName() << endl;
-    CXXMemberCallExprMatcher *matcher = new CXXMemberCallExprMatcher();
-    matcher->match(cxxMemberCallExpr, Result.Context);
-  }
-}
-
-void HandlerForCXXMemberCallExpr::run(const MatchFinder::MatchResult &Result) {
-  const auto *addexpr =
-      Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("CXXMemberCallExpr");
-  if (addexpr == NULL) {
-    cout << "Error in HandlerForCXXConstructAddExpr::run. No add expression "
-            "pointer\n";
-    return;
-  }
-  ASTContext *context = Result.Context;
-  SourceManager &sm = context->getSourceManager();
-  // cout << "Handling Vector Add (Member Call) Expr. Recurse on implicit
-  // parameter and argument. STUB.\n";
-  cout << "===================Entered the top-level node -- CXXMemberCallExpr "
-          "================"
-       << endl;
-  cout << "parent class Name is " << addexpr->getStmtClassName() << endl;
-  // const clang::Expr *left = addexpr->getImplicitObjectArgument(); This does
-  // not give us what we want
-  const auto *temp = *(addexpr->child_begin());
-  const clang::Expr *left = static_cast<const clang::Expr *>(temp);
-  // cout<<"Left child class Name is "<<left->getStmtClassName()<<endl;
-
-  const clang::Expr *right = addexpr->getArg(0);
-  // cout<<"Right child class Name is "<<right->getStmtClassName()<<endl;
-
-  if (!left) {
-    cout << "Null left clang pointer\n";
-    return;
-  } else if (!right) {
-    cout << "Null right clang pointer\n";
-    return;
-  }
-
-  domain::Expr *left_br = handle_left_of_add_call(left, context);
-  domain::Expr *right_br = handle_right_of_add_call(right, context);
-
-  if (!left) {
-    cout << "Null left domain pointer\n";
-    return;
-  } else if (!right) {
-    cout << "Null right domain pointer\n";
-    return;
-  }
-
-  //  domain::Space &s = interp_.coords2dom_->getSpaceForAddExpression(left_br, right_br);
-  //  domain->addVecAddExpr(s, addexpr, *left_br, *right_br);
-
-  cerr << "STUB: HandlerForCXXMemberCallExpr::run(const "
-          "MatchFinder::MatchResult &Result)\n";
-  // insert this into interpretation table
-}
-
-////////////////////MATCHER
-///IMPLEMENTATION////////////////////////////////////////////
-
-/*********************/
-// BEGIN OF MATCHER SECTION FOR VEC_ADD APPLICATION
-/*********************/
-// There should exist the matchers for the following kind
-// CXXMemberCallExprMatcher
-// CXXMemberCallExprLeftMatcher
-// CXXMemberCallExprRightMatcher
-// MemberExprMatcher
-
-CXXMemberCallExprMatcher::CXXMemberCallExprMatcher() {
-  StatementMatcher cxxMemberCallExprMatcherOuterPattern = cxxConstructExpr(
-      hasDescendant(cxxMemberCallExpr(hasDescendant(memberExpr(hasDeclaration(
-                                          namedDecl(hasName("vec_add"))))))
-                        .bind("CXXMemberCallExpr")));
-  cxxMemberCallExprMatcher_.addMatcher(cxxMemberCallExprMatcherOuterPattern,
-                                       &cxxMemberCallExprHandler);
-
-  StatementMatcher cxxMemberCallExprMatcherInnerPattern =
-      cxxMemberCallExpr().bind("CXXMemberCallExpr");
-  cxxMemberCallExprMatcher_.addMatcher(cxxMemberCallExprMatcherInnerPattern,
-                                       &cxxMemberCallExprHandler);
-}
-void CXXMemberCallExprMatcher::match(const clang::Expr *node,
-                                     ASTContext *context) {
-  cxxMemberCallExprMatcher_.match(*node, *context);
-}
-
-CXXMemberCallExprLeftMatcher::CXXMemberCallExprLeftMatcher() {
-
-  // On the lhs, the node is MemberExpr
-  // there are 2 possible cases of the MemberExpr children
-  // case 1 -- DeclRefExpr
-  StatementMatcher declRefExprMatcher =
-      memberExpr(hasDescendant(declRefExpr().bind("DeclRefExpr")));
-
-  CXXMemberCallExprLeftMatcher_.addMatcher(declRefExprMatcher,
-                                           &memberexprHandler);
-
-  // case 2 -- innerCXXMemberCallExpr
-  StatementMatcher innerCXXMemberCallExprMatcher =
-      memberExpr(hasDescendant(cxxMemberCallExpr().bind("CXXMemberCallExpr")));
-
-  CXXMemberCallExprLeftMatcher_.addMatcher(innerCXXMemberCallExprMatcher,
-                                           &memberexprHandler);
-}
-
-void CXXMemberCallExprLeftMatcher::match(const clang::Expr *call_lhs,
-                                         ASTContext *context) {
-  CXXMemberCallExprLeftMatcher_.match(*call_lhs, *context);
-}
-
-CXXMemberCallExprRightMatcher::CXXMemberCallExprRightMatcher() {
-  // on the rhs
-  // matcher to retrieve declRefexpr with ID -- DeclRefExpr
-  StatementMatcher declRefExprMatcher = declRefExpr().bind("DeclRefExpr");
-  CXXMemberCallExprRightMatcher_.addMatcher(declRefExprMatcher,
-                                            &declRefExprHandler);
-
-  // matcher to retrieve CXXMemberCallExpr with ID -- CXXMemberCallExpr
-  StatementMatcher innerCXXMemberCallExprMatcher =
-      cxxMemberCallExpr(hasDescendant(memberExpr(
-                            hasDeclaration(namedDecl(hasName("vec_add"))))))
-          .bind("CXXMemberCallExpr");
-
-  CXXMemberCallExprRightMatcher_.addMatcher(innerCXXMemberCallExprMatcher,
-                                            &cxxMemberCallExprHandler);
-}
-
-void CXXMemberCallExprRightMatcher::match(const clang::Expr *call_rhs,
-                                          ASTContext *context) {
-  CXXMemberCallExprRightMatcher_.match(*call_rhs, *context);
-}
-
-MemberExprMatcher::MemberExprMatcher() {
-
-  StatementMatcher declRefExprMatcher = declRefExpr().bind("DeclRefExpr");
-
-  MemberExprMatcher_.addMatcher(declRefExprMatcher, &declRefExprHandler);
-
-  StatementMatcher innerCXXMemberCallExprMatcher =
-      parenExpr(hasDescendant(cxxMemberCallExpr().bind("CXXMemberCallExpr")));
-
-  MemberExprMatcher_.addMatcher(innerCXXMemberCallExprMatcher,
-                                &cxxMemberCallExprHandler);
-}
-
-void MemberExprMatcher::match(const clang::Expr *cxxmembernode,
-                              ASTContext *context) {
-  MemberExprMatcher_.match(*cxxmembernode, *context);
-
-  cout << "===========Inside the MemberExpr Matcher ============" << endl;
-}
-
-/*********************/
-// END OF IMPLEMENTATION FOR ALL THE HANDLERS AND MATCHERS OF OBJECTS THAT
-// APPEAR IN THE GRAMMAR
-/*********************/
-
-class HandlerForCXXConstructAddExpr : public MatchFinder::MatchCallback {
-public:
-  HandlerForCXXConstructAddExpr() {}
-  virtual void run(const MatchFinder::MatchResult &Result) {
-    const auto *cxxConstructExpr =
-        Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VecAddConstructor");
-    if (cxxConstructExpr != NULL) {
-      // cxxConstructExpr->dump();
-      // This is the entrance to the recursion call
-      CXXMemberCallExprMatcher *matcher = new CXXMemberCallExprMatcher();
-      matcher->match(cxxConstructExpr, Result.Context);
-    } else {
-      cout << "VecAddConstructor pointer is NULL" << endl;
+    const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
+    if (memcall == NULL)
+    {
+      cerr << "HandlerForCXXAddMemberCall::run: null memcall\n";
+      return;
     }
+    const domain::Expr* memberCallExpr = handleMemberCallExpr(memcall, context, sm);
   }
 };
 
-class CXXConstructExprMatcher {
+/*
+Precondition: Provided with match result of type CXXConstructAddExpr
+Postcondition: underlying add expression in system, as child of this node, also in system
+Strategy:
+  - Extract member expression on left, value expression on right
+  - Get both of them into the system
+  - Add node at this level to the system
+*/
+class HandlerForCXXConstructAddExpr : public MatchFinder::MatchCallback
+{
 public:
-  CXXConstructExprMatcher() {
+  //  Get left and right children of add expression and handle them by calls to other handlers
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    cerr << "main::HandlerForCXXConstructAddExpr: START\n";
+    ASTContext *context = Result.Context;
+    SourceManager &sm = context->getSourceManager();
 
-    // literal
-    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(argumentCountIs(3)).bind("VectorLitExpr"),
-                                        &litHandler_);
+    // Need separate nodes for these constructors?
+    //
+    const CXXConstructExpr *expr_ctor_ast = 
+      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorConstructAddExpr");
+    if (consdecl == NULL)
+    {
+      cerr << "Error in HandlerForCXXConstructAddExpr::run. No constructor declaration pointer\n";
+      return;
+    }
 
-    // member call
-    StatementMatcher membercall =
-        cxxConstructExpr(
-            hasDescendant(cxxMemberCallExpr(hasDescendant(
-                memberExpr(hasDeclaration(namedDecl(hasName("vec_add"))))))))
-            .bind("VecAddConstructor");
+    const CXXMemberCallExpr *expr_ctor_ast = 
+      Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
+    if (addexpr == NULL)
+    {
+      cerr << "Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
+      cerr << "Surrounding CXXConstructExpr is "; expr_ctor_ast->dump();
+      return;
+    }
 
-    CXXConstructExprMatcher_.addMatcher(membercall, &addHandler_);
+    // Recursively handle member call expression
+    const domain::Expr *memberCallExpr = handleMemberCallExpr(expr_ctor_ast, context, sm);
+
+    // add vector with domain call expression as child 
+    return interp_.mkVector(expr_ctor_ast, context);
+  }
+};
+
+/***** Handle Right Expr of expr.add(expr) Call Expr ******/
+
+/*
+handle_arg0_of_add_call:
+
+match mem call right expr with
+  | decl ref expr ==> decl_ref_expr_handler_
+  | cxx member call expr ==> addHandler_
+*/
+class CXXMemberCallExprArg0Matcher
+{
+public:
+  CXXMemberCallExprArg0Matcher()
+  {
+
+    // case: arg0 is a declaration reference expression
+    // action: invoke dre_handler_::run as a match finder action
+    const StatementMatcher DeclRefExprPattern = declRefExpr().bind("DeclRefExpr");
+    CXXMemberCallExprArg0Matcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
+
+    // case: arg0 is a cxx member call expression
+    // action: invoke addHandler_::run as a match finder action
+    const StatementMatcher CXXMemberCallExprPattern = cxxMemberCallExpr().bind("MemberCallExpr");
+    CXXMemberCallExprArg0Matcher_.addMatcher(CXXMemberCallExprPattern, &mce_handler_);
   }
 
-  /*
-(cxxConstructExpr (hasDescendant (cxxMemberCallExpr)), (hasDescendant
-(memberExpr)), (hasDeclaration(namedDecl(hasName("add")))))
-*/
-  void match(const clang::CXXConstructExpr *consdecl, ASTContext *context) {
-    CXXConstructExprMatcher_.match(*consdecl, *context);
+  void match(const clang::Expr &call_rhs, ASTContext &context)
+  {
+    cerr << "CXXMemberCallExprArg0Matcher::match start\n";
+    CXXMemberCallExprArg0Matcher_.match(call_rhs, context);
+    cerr << "CXXMemberCallExprArg0Matcher::match finish\n";
+  }
 
-    // cout<<"Inside CXXConstructExprMatcher, the top-level node is "<<
-    // consdecl->getStmtClassName()<<endl; --works
+private:
+  MatchFinder CXXMemberCallExprArg0Matcher_;
+  HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
+  HandlerForCXXAddMemberCall mce_handler_;
+};
+
+/*
+Handle the single argument to an add application 
+*/
+const domain::Expr *handle_arg0_of_add_call(const clang::Expr *arg, ASTContext &context, SourceManager &sm)
+{
+  cerr << "domain::Expr *handle_arg0_of_add_call. START matcher.\n";
+  arg->dump(); // KJS
+
+  CXXMemberCallExprArg0Matcher call_right_arg0_matcher;
+  call_right_arg0_matcher.match(*arg, context);
+  // postcondition, arg is now "in the system" as a domain expression
+  // find and return resulting domain expression
+  //
+  // TODO: Clear this up, move next line into getExpressionInterp
+  //
+  return domain::Expr *expr = interp_->getExpressionInterp(arg);
+}
+
+/*
+handle_member_expr_of_add_call:
+
+match mem call expr with
+  | decl ref expr ==> decl_ref_expr_handler_
+  | cxx member call expr ==> addHandler_
+
+     // case 1: arg0 is a declaration reference expression
+    // action: invoke dre_handler_::run as a match finder action
+    // case 2: arg0 is a cxx member call expression
+    // action: invoke addHandler_::run as a match finder action
+*/
+class CXXMemberCallExprMemberExprMatcher
+{
+public:
+  CXXMemberCallExprMemberExprMatcher()
+  {
+      const StatementMatcher DeclRefExprPattern = declRefExpr().bind("DeclRefExpr");
+    CXXMemberCallExprMemberExprMatcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
+    
+    //const StatementMatcher DeclRefExprPattern = memberExpr(parenExpr(declRefExpr().bind("LeftDeclRefExpr")));
+
+    const StatementMatcher ParenCXXMemberCallExprPattern = parenExpr(hasDescendant(cxxMemberCallExpr().bind("MemberCallExpr")));
+
+    const StatementMatcher CXXMemberCallExprPattern = cxxMemberCallExpr().bind("MemberCallExpr");
+
+    CXXMemberCallExprMemberExprMatcher_.addMatcher(CXXMemberCallExprPattern, &mce_handler_);
+
+    CXXMemberCallExprMemberExprMatcher_.addMatcher(ParenCXXMemberCallExprPattern, &mce_handler_);
+  }
+
+  void match(const clang::Expr &call_rhs, ASTContext &context)
+  {
+    // NO MATCH HAPPENING HERE!
+    cerr << "main::CXXMemberCallExprMemberExprMatcher. START matching.\n";
+    cerr << "Matching on ast (dum).\n"
+      call_rhs.dump();
+    CXXMemberCallExprMemberExprMatcher_.match(call_rhs, context);
+    cerr << "main::CXXMemberCallExprMemberExprMatcher. DONE matching.\n";
+  // Postcondtion: member expression in call now "in system" as dom Expr
+  }
+
+private:
+  MatchFinder CXXMemberCallExprMemberExprMatcher_;
+  HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
+  HandlerForCXXAddMemberCall mce_handler_;
+};
+
+/*
+Precondition:
+Postcondition: member call expression is "in the system".
+Strategy: Pattern matching on structure of member expressions
+*/
+domain::Expr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context, SourceManager &sm)
+{
+  cerr << "domain::Expr *handle_member_expr_of_add_call at " << std::hex << memexpr << "\n";
+  if (memexpr == NULL)
+  {
+    cerr << "domain::Expr *handle_member_expr_of_add_call: Error.Null argument\n";
+  }
+  cerr << "domain::Expr *handle_member_expr_of_add_call ast is (dump)\n";
+  memexpr->dump();
+
+
+  // PROBLEM ZONE
+  /*
+      Match on structure of member expression.
+    | vardeclref     :=
+    | membercallexpr :=
+  */
+  cerr << "domain::Expr *handle_member_expr_of_add_call: match memexpr START.\n"; CXXMemberCallExprMemberExprMatcher call_expr_mem_expr_matcher;
+  call_expr_mem_expr_matcher.match(*memexpr, context);
+  cerr << "domain::Expr *handle_member_expr_of_add_call: match memexpr DONE.\n"; 
+  //
+  // Postcondition: member expression is "in the system" as dom expr
+  // keyed by memexpr (by an AST wrapper around memexpr).
+  // Test postcondition.
+
+  domain::Expr *expr = interp_->getExpressionInterp(memexpr); 
+  cerr << "domain::Expr *handle_member_expr_of_add_call. Done. domain::Expr at " 
+    << std::hex << expr << "\n";  
+  return expr;
+ }
+
+
+/*
+Implements pattern matching and dispatch on CXXConstructExpr
+
+match CXXConstructExpr with
+  | literal 3-float initializer ==> lit_handler
+  | cxx member call expr (member_expr.add(arg0_expr)==> mem_call_expr_handler
+*/
+class CXXConstructExprMatcher // (Constructor = Lit | Add left right )
+{
+public:
+  CXXConstructExprMatcher()
+  {
+    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(argumentCountIs(3)).bind("VectorLitExpr"), &litHandler_);
+    // KEVBOB
+    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(hasDescendant(cxxMemberCallExpr(hasDescendant(memberExpr(hasDeclaration(namedDecl(hasName("vec_add")))))).bind("MemberCallExpr"))).bind("VectorAddExpr"), &addHandler_);
+  };
+  void match(const clang::CXXConstructExpr *consdecl, ASTContext *context)
+  {
+    cerr << "START: Pattern Matching on CXXConstructExpr (Lit | Add): Start\n";
+    CXXConstructExprMatcher_.match(*consdecl, *context);
+    cerr << "DONE: Pattern Matching on CXXConstructExpr (Lit | Add): Start\n";
+    //
+    // Postcondition: identifier and lit or add expression binding is in system
+    // Nothing else to do, client will pick up resulting expression via interp
   }
 
 private:
   MatchFinder CXXConstructExprMatcher_;
   HandlerForCXXConstructLitExpr litHandler_;
-  // HandlerForCXXMemberCallExpr cxxmembercallHandler_;
   HandlerForCXXConstructAddExpr addHandler_;
 };
 
-/*
-Precondition: consdecl of type CXXConstructExpr* is a pointer to an
-expression, the value of which is being assigned to a variable in a
-declaration statement.
+//--------------------
 
-Explanation: By the time control reaches this code, we are assured
+//const domain::Expr* handleMemberCall
+
+//--------------------
+
+/*
+Precondition: consdecl of type CXXConstructExpr* is a pointer to an 
+expression, the value of which is being assigned to a variable in a 
+declaration statement. 
+
+Explanation: By the time control reaches this code, we are assured 
 the argument is an AST node for a Vector-valued expression that is
-going to be used to initialize the value of a variable. The purpose
+going to be used to initialize the value of a variable. The purpose 
 of this code is to make sure that this C++ expression is "lifted" to
 a corresponding expression in the domain, and that the
 interpretation links this code/AST-node to that domain object.
 
-Postcondition: the return value of this function is pointer to a new
+Postcondition: the return value of this function is pointer to a new 
 object of type domain::Expr; that object is in the domain; it might
 itself represent a complex expression tree; it links back to consdecl;
 and the interpretation is updated to like consdecl to the new domain
 object. This function works recursively to make sure that all of the
-work of handling the top-level CXXConstructExpr is finished by the
+work of handling the top-level CXXConstructExpr is finished by the 
 time this function returns.
 
-Explanation: This function works by first pattern matching on consdecl
-any by then retrieving the results of that operation (side effects, I'm
-afraid. The way in which this consdecl is turned into a domain object 
-depends on the specific form of the expression being handled, but that
-is the concern of the handler code invoked implicitly from here. As far
-as this code is concerned, all it picks up is an expression. The cases 
-handled by pattern matching include literal and add expressions.
+Explanation: the way in which this consdecl is turned into a domain 
+object depends on the specific form of the expression being handled.
+The cases to be handled include literal and add expressions.
 - Vec v1(0.0,0.0,0.0) is a literal expression
 - (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
+
+domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
+{
+  //cerr << "handleCXXConstructExpr: Start handleCXXConstructExpr\n";
+  //cerr << "Pattern matching Vector CXXConstructExpr.\n";
+  CXXConstructExprMatcher matcher;
+  matcher.match(consdecl, context);
+  // postcondition: consdecl now has an interpretation
+  // How do we get BI to return to user? Look it up
+  // domain::Expr* bi = interp->getExpr(consdecl);
+  // TO DO: Architectural change means we need to wrap consdecl to map it
+
+  const ExprASTNode *ast = new ExprASTNode(consdecl);   // TODO -- BETTER TYPE!
+  domain::Expr *be = interp->getExpressionInterp(*ast);
+  //cerr << "handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
+  return be;
+}
 */
-domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
-                                     ASTContext *context, SourceManager &sm) {
-  cout << "Pattern matching Vector CXXConstructExpr at " << std::hex << consdecl << " and dispatching to handler.\n";
-  CXXConstructExprMatcher *matcher = new CXXConstructExprMatcher();
-  matcher->match(consdecl, context);
-  /* 
-     postcondition: as side effect of match,
-     consdecl now has wrapper and interpretation.
-  */
-    if (!consdecl) {
-        cerr << "handleCXXConstructExpr: match post failure, NULL consdecl.\n";
-    }
 
-    if (!interp_.ast2coords_->expr_wrappers[consdecl]) {
-        cerr << "handleCXXConstructExpr: match post failure, NULL wrapper.\n";
-    }
-  
-  // Get code coordinates for given Clang AST node
-   const coords::ExprASTNode *wrapper_key = interp_.ast2coords_->expr_wrappers[consdecl];
-  // Return domain object for code at these coordinates
-  return interp_.coords2dom_->getExpressionInterp(wrapper_key);
-
-  //cout << "Returning domain expression object (STUBBED OUT)\n";
-  //return NULL; /* STUB */
-
-  /*
-  match consdecl with
-  | literal <CXX three-argument pattern>, handle_literal(consdecl)
-  | variable, handle_var
-  | add expr, handle_add_expr
-
-  StatementMatcher matchLit = ...;
-  StatementMatcher matchVar = ...;
-  Statement Matcher matchAdd = ...;
-
-  handleXXXLit() {}
-  handleCXXVar() {}
-  HandleCXXAdd() { get left; get right part; handle_left; handle_right; glue
-  them together }
-  */
+const domain::Expr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
+{
+  cerr << "domain::handleCXXDeclStmt: START. Matching.\n";
+  CXXConstructExprMatcher matcher;
+  matcher.match(consdecl, context);
+  //
+  // postcondition: consdecl now "in the system" (has interpretation)
+  // Fetch and return result
+  //
+  const domain::Expr *expr = interp->getExpressionInterp(consdecl);
+  cerr << "domain::handleCXXDeclStmt: DONE. domain::Expr at " 
+    << std::hex << expr << "\n";
+  return expr;
 }
 
 /*************************
  * Handle Vector DeclStmts
  *************************/
 
-class VectorDeclStmtHandler : public MatchFinder::MatchCallback {
+/*
+Precondition: Receives a Vector DeclStmt object to handle
+Postcondition:
+*/
+
+class VectorDeclStmtHandler : public MatchFinder::MatchCallback
+{
 public:
-  virtual void run(const MatchFinder::MatchResult &Result) {
-    /*
-    get DeclStatement from matcher
-    get context
-    get source manager
-    get handle on variable declaration, vardecl
-    be sure it has an initializer, then get the CXXConstructExpr initializer
-    get handle on expression used to initialize the variable
-    establish interpretation from consdecl to corresponding expression in the
-    domain establish interpretation from variable in code to
-    corresponding var object in domain finally establish interpretation
-    linking overall declstmt in code to corresponding binding in domain
-    */
-    const auto *declstmt =
-        Result.Nodes.getNodeAs<clang::DeclStmt>("VectorStatement");
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    cerr << "VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
+    declstmt->dump();
+
+    const clang::DeclStmt *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
+    const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
+    const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
+
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
-    if (declstmt->isSingleDecl()) {
 
-      const VarDecl *vardecl = dyn_cast<VarDecl>(declstmt->getSingleDecl());
-      const clang::CXXConstructExpr *consdecl;
-      if (vardecl->hasInit()) {
-        consdecl =
-            static_cast<const clang::CXXConstructExpr *>(vardecl->getInit());
-      }
-      // TODO: Fill in logic for error condition in preceding conditional
-      cout << "Handling vector declaration statement\n";
-      domain::Expr *be = handleCXXConstructExpr(consdecl, context, sm);
-      domain::Identifier *bi =
-          handleCXXConstructIdentifier(vardecl, context, sm);
-      handleCXXConstructIdentifierBinding(declstmt, bi, be);
-      cout << "Done handling vector declaration statement\n\n";
-    } else {
-      cout << "VectorDeclStmtHandler::run(): Something's wrong\n";
+    // IDENTIFIER -- should call handle identifier (TODO:)
+    //
+    domain::Identifier *id = interp_->mkVecIdent(vardecl);
+
+/*
+    domain::Space &space = oracle->getSpaceForIdentifier(vardecl);
+    VecIdent *ast_container = new VecIdent(vardecl);
+    decl_wrappers.insert(std::make_pair(vardecl, ast_container));
+    domain::Identifier &bi = domain_domain->addIdentifier(space, ast_container);
+    interp->putIdentInterp(*ast_container, bi);
+    //cerr << "END: handleCXXConstructIdentifier\n";
+*/
+
+    // CONSTRUCTOR (Lit | Add)
+    //
+    cerr << "VectorDeclStmtHandler: start matching on consdecl\n";
+    CXXConstructExprMatcher matcher;
+    matcher.match(consdecl, context);
+    cerr << "VectorDeclStmtHandler: done matching on consdecl\n";
+    //
+    // Postcondition: domain vector expression now in system
+    // fetch result. Checking occurs in getExpressionInterp.
+    //
+    const domain::Expr *expr = interp->getExpressionInterp(consdecl);
+  
+    // add domain::Binding for variable declaration statement in code
+    //
+    interp_->mkVecBinding(declstmt, id, expr);
+
+/*    BindingASTNode *declstmt_wrapper = new BindingASTNode(declstmt);
+    stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
+    domain::Binding &binding = domain_domain->addBinding(declstmt_wrapper, bi, *be);
+    interp->putBindingInterp(declstmt_wrapper, binding);
+
+
+    cerr << "VectorDeclStmtHandler:: Post Domain State \n"; //declstmt->dump();
+     cerr << "Domain expressions:\n";
+    domain_domain->dumpExpressions(); // print contents on cerr
+    cerr << "Domain Identifiers\n";
+    domain_domain->dumpIdentifiers(); // print contents on cerr
+    cerr << "Domain Bindings\n";
+    domain_domain->dumpBindings(); // print contents on cerr
+    cerr << "InterpExpressions\n";
+    interp->dumpExpressions();
+*/
     }
-  }
 };
 
 /********************************************
  * Top-level analyzer: Match Vector DeclStmts
  ********************************************/
 
-class MyASTConsumer : public ASTConsumer {
+class MyASTConsumer : public ASTConsumer
+{
 public:
-  MyASTConsumer() {
+  MyASTConsumer()
+  {
     StatementMatcher match_Vector_general_decl =
-        declStmt(hasDescendant(varDecl(hasDescendant(
-                     cxxConstructExpr(hasType(asString("class Vec")))))))
-            .bind("VectorStatement");
-    VectorDeclStmtMatcher.addMatcher(match_Vector_general_decl,
-                                     &HandlerForVectorDeclStmt);
+        declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("class Vec"))).bind("CXXConstructExpr"))).bind("VarDecl"))).bind("VectorDeclStatement");
+    VectorDeclStmtMatcher.addMatcher(match_Vector_general_decl, &HandlerForVectorDeclStmt);
   }
-  void HandleTranslationUnit(ASTContext &Context) override {
+  void HandleTranslationUnit(ASTContext &Context) override
+  {
     VectorDeclStmtMatcher.matchAST(Context);
   }
 
@@ -670,37 +519,43 @@ private:
 };
 
 /*******************************
- * Main Clang Tooling entry point
- ********************************/
+* Main Clang Tooling entry point
+********************************/
 
-class MyFrontendAction : public ASTFrontendAction {
+class MyFrontendAction : public ASTFrontendAction
+{
 public:
   MyFrontendAction() {}
-  void EndSourceFileAction() override {
-    bool consistent = interp_.domain_->isConsistent();
-    cerr << (consistent ? "STUB: Good\n" : "STUB: Bad\n");
+  void EndSourceFileAction() override
+  {
+    bool consistent = domain_domain->isConsistent();
+    cerr << (consistent ? "STUB Analysis result: Good\n" : "STUB: Bad\n");
   }
-  std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
-                                                 StringRef file) override {
+  std::unique_ptr<ASTConsumer>
+  CreateASTConsumer(CompilerInstance &CI, StringRef file) override
+  {
     return llvm::make_unique<MyASTConsumer>();
   }
 };
 
 /*****
- * Main
- ******/
+* Main
+******/
 
-int main(int argc, const char **argv) {
+int main(int argc, const char **argv)
+{
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  //InterpForm* interp = new InterpForm();
-  interp_.domain_->addSpace("Space1");
-  interp_.domain_->addSpace("Space2");
+  interp_->addSpace("S1");
+  interp_->addSpace("S2");
+  
+  Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
-  return Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
-
-  //interp_.domain_ = new Domain();
-  //interp_.coords2dom_ = new CoordsToDomain();
-  //interp_.oracle_ = new Oracle(*interp_.domain_);
-}
+/*  cerr << "Identifiers\n";
+  domain_domain->dumpIdentifiers();
+  cerr << "Expressions\n";
+  domain_domain->dumpExpressions();
+  cerr << "Bindings\n";
+  domain_domain->dumpBindings();
+*/}
