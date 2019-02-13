@@ -8,7 +8,6 @@ namespace ast {
 // TODO: Remove const if we want to modify AST
 // TODO: Prefix with Vec
 //
-
 using Vector = const clang::CXXConstructExpr;
 using Literal = const clang::CXXConstructExpr;
 using Ident = const clang::VarDecl;

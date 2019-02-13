@@ -2,6 +2,7 @@
 #define ASTTOCOORDS_H
 
 #include "clang/AST/AST.h"
+#include "Coords.h"
 #include "AST.h"
 
 namespace ast2coords {
@@ -9,7 +10,8 @@ namespace ast2coords {
 class ASTToCoords {
 public:
 
-    const VecIdent *makeCoordsForVecIdent(const ast::Ident *ident);
+    const coords::VecIdent *makeCoordsForVecIdent(const ast::Ident *ident);
+    const coords::ExprASTNode *getASTExprCoords(ast::Expr* e) 
 
 // protected
 // TODO: Use AST.h type aliases
@@ -17,7 +19,6 @@ public:
     void overrideExpr(const clang::Expr *e, const coords::ExprASTNode *c);
     void overrideStmt(const clang::Stmt *s, const coords::ExprASTNode *c);
     void overrideDecl(const clang::Decl *d, const coords::ExprASTNode *c);
-    const coords::ExprASTNode *getASTExprCoords(ast::Expr* e);
 
 // private
     unordered_map<const clang::Expr *, const coords::ExprASTNode *> expr_coords;

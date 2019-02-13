@@ -15,7 +15,6 @@
 #include "Interpretation.h"
 
 using namespace std;
-
 using namespace llvm;
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -227,7 +226,6 @@ domain::Expr *handle_right_of_add_call(const clang::Expr *right,
 }
 
 // END OF HANDLER HELPER FUNCTIONS
-
 void HandlerForDeclRefExpr::run(const MatchFinder::MatchResult &Result) {
   const auto *declRefexpr =
       Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
