@@ -27,8 +27,8 @@ class CoordsToDomain
 	void putExpressionInterp(const coords::VecExpr *n, domain::VecExpr *e);
 	domain::VecExpr *getExpressionInterp(const coords::VecExpr* n);
 
-	void putBindingInterp(coords::Binding *vardecl_wrapper, domain::Binding &b);
-	const domain::Binding *getBindingInterp(const coords::Binding* vardecl_wrapper);
+	void putVecDefInterp(coords::VecDef *vardecl_wrapper, domain::VecDef &b);
+	const domain::VecDef *getVecDefInterp(const coords::VecDef* vardecl_wrapper);
 
 	void dumpExpressions() const {
 		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
@@ -51,7 +51,7 @@ class CoordsToDomain
 	*/
 	unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
 	unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
-	unordered_map<coords::Binding, domain::Binding *, coords::BindingHasher> interpBinding;
+	unordered_map<coords::VecDef, domain::VecDef *, coords::VecDefHasher> interpVecDef;
 };
 
 } // namespace

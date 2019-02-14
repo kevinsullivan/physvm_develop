@@ -35,18 +35,18 @@ domain::VecExpr* CoordsToDomain::getExpressionInterp
 }
 
 /*********
- * Binding
+ * VecDef
  *********/
 
 // TODO: Make first arg a reference &
-void CoordsToDomain::putBindingInterp(coords::Binding *key, domain::Binding& b)
+void CoordsToDomain::putVecDefInterp(coords::VecDef *key, domain::VecDef& b)
 {
-    interpBinding.insert(std::make_pair(*key,&b));
-    //cerr << "CoordsToDomain::putBindingInterp called but stubbed out.\n";
+    interpVecDef.insert(std::make_pair(*key,&b));
+    //cerr << "CoordsToDomain::putVecDefInterp called but stubbed out.\n";
 }
 
 
-const domain::Binding* CoordsToDomain::getBindingInterp(const coords::Binding* key)  {
-   return interpBinding[*key];     
-   //cerr << "CoordsToDomain::getBindingInterp called but stubbed out. Returning NULL.\n";
+const domain::VecDef* CoordsToDomain::getVecDefInterp(const coords::VecDef* key)  {
+   return interpVecDef[*key];     
+   //cerr << "CoordsToDomain::getVecDefInterp called but stubbed out. Returning NULL.\n";
 }

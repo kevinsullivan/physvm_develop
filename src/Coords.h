@@ -29,6 +29,8 @@ public:
   VecExpr(const clang::Stmt *decl) : stmt_(decl) { ast_type_ = STMT; }
   VecExpr(const clang::Decl *decl) : decl_(decl) { ast_type_ = DECL; }
 
+  // TODO: Currently only using clang::Expr class. Why?
+  //
   const clang::Expr *get() const { return expr_; }
 
   bool operator==(const VecExpr &other) const {
@@ -89,18 +91,21 @@ struct VecLitExprHasher {
 // VecIdent implemented as VarDecl
 class VecIdent : public VecExpr {
 public:
-  VecIdent(const ast::VecIdent *varDecl)
-      : VecExpr(varDecl), varDecl_(varDecl) {}
-  const VecIdent *getVarDecl() const { return varDecl_; }
+  VecIdent(const ast::VecIdent *ident)
+      : VecExpr(ident), ident_(ident) {}
 
-  // for now, an address-based equality predicate
+  const ast::VecIdent *getAST() const { return ident_; }
+
+  // AST node address determines identity
   bool operator==(const VecIdent &other) const {
-    return (varDecl_ == other.varDecl_);
+    return (ident_ == other.ident_);
   }
-  virtual string toString() const { return varDecl_->getNameAsString(); }
+  virtual string toString() const { 
+    return ident_->getNameAsString(); 
+  }
 
 private:
-  const ast::VecIdent *varDecl_;
+  const ast::VecIdent *ident_;
 };
 
 struct VecIdentHasher {
@@ -203,9 +208,9 @@ private:
 // TODO weak typing of Expr argument
 class Vector : public VecExpr {
 public:
-  Vector(const clang::CXXConstructExpr *constrExpr)
+  Vector(const ast::Vector *constrExpr)
       : VecExpr(constrExpr), constrExpr_(constrExpr) {}
-  const clang::CXXConstructExpr *get() const { return constrExpr_; }
+  const ast::Vector *get() const { return constrExpr_; }
 
   // for now, an address-based equality predicate
   bool operator==(const Vector &other) const {
@@ -215,17 +220,10 @@ public:
   virtual string toString() const { return "Vector"; }
 
 private:
-  const clang::CXXConstructExpr *constrExpr_;
+  const ast::Vector *constrExpr_;
   const VecExpr *expr_;
   ;
 };
-
-/*
-Coords.h: In constructor 'coords::Vector::Vector(const clang::CXXConstructExpr*, const coords::VecExpr*)':
-Coords.h:203:59: error: class 'coords::Vector' does not have any field named 'addExpr_'
-       : Expr(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {}
-            
-*/
 
 struct VectorHasher {
   std::size_t operator()(const Vector &k) const {
@@ -235,29 +233,28 @@ struct VectorHasher {
   }
 };
 
-// TODO -- Binding hides VarDecl
-class Binding : public VecExpr {
+// TODO -- VecDef hides VarDecl
+class VecDef : public VecExpr {
 public:
-  Binding(const ast::VecDef *declStmt, const VecIdent *bv,
-                 const VecExpr *be)
+  VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
 
-  const VecDef *getDeclStmt() const { return declStmt_; }
+  const ast::VecDef *getAST() const { return declStmt_; }
 
-  // for now, an address-based equality predicate
-  bool operator==(const Binding &other) const {
+  // AST node address-based equality predicate
+  bool operator==(const VecDef &other) const {
     return (declStmt_ == other.declStmt_);
   }
-  virtual string toString() const { return "Binding (STUB: refine)"; }
+  virtual string toString() const { return "VecDef (STUB: refine)"; }
 
 private:
-  const VecDef *declStmt_;
+  const ast::VecDef *declStmt_;
   const VecIdent *bv_;
   const VecExpr *be_;
 };
 
-struct BindingHasher {
-  std::size_t operator()(const Binding &k) const {
+struct VecDefHasher {
+  std::size_t operator()(const VecDef &k) const {
     std::size_t hash = 101010;
     // TODO Fix hash function
     return hash;
