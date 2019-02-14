@@ -25,7 +25,7 @@ const domain::Identifier* CoordsToDomain::getIdentifierInterp(const coords::VecI
  * Add Expression
  ****************/
 
-void CoordsToDomain::putExpressionInterp(const coords::VectorExpr* n, domain::Expr* e) {
+void CoordsToDomain::putExpressionInterp(const coords::VecExpr* n, domain::Expr* e) {
     interpExpression.insert(std::make_pair(*n, e));
 }
 

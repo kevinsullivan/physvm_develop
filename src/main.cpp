@@ -86,7 +86,7 @@ const domain::Expr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTContex
     // TESTING
 /*    const Expr* addexprWrapper = expr_wrappers[memcall];
     if (!addexprWrapper) {cerr << "Badd Wrapperr\n"; }
-    const VectorAddExpr* wrapper = new VectorAddExpr(memcall, NULL, NULL); 
+    const VecVecAddExpr* wrapper = new VecVecAddExpr(memcall, NULL, NULL); 
     const domain::Expr *isThere = interp->getExpressionInterp(*wrapper);
     if (!isThere) {cerr << "Missing exprr"; }
 */
@@ -135,6 +135,7 @@ public:
       cerr << "HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
+    // recursive helper function
     const domain::Expr* memberCallExpr = handleMemberCallExpr(memcall, context, sm);
   }
 };
@@ -428,6 +429,8 @@ const domain::Expr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, A
  *************************/
 
 /*
+Role: Handles top-level vector declaration statements
+
 Precondition: Receives a Vector DeclStmt object to handle
 Postcondition:
 */

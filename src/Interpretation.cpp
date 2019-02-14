@@ -16,7 +16,7 @@ Establish interpretation for Vec identifier in AST
 - create coordinates
 - lift Vec to domain
 */
-domain::Identifier *Interpretation::mkVecIdent(ast::Ident *ast)
+domain::Identifier *Interpretation::mkVecIdent(ast::VecIdent *ast)
 {
     cerr << "BEG interp::VecIdent *addVecIdent\n";
     domain::Space &space = oracle_->getSpaceForIdentifier(ast);
@@ -30,7 +30,7 @@ domain::Identifier *Interpretation::mkVecIdent(ast::Ident *ast)
     return dom;
 }
 
-void Interpretation::mkVecBinding(ast::Stmt *ast, domain::Identifier *id, domain::Expr *exp)
+void Interpretation::mkVecBinding(ast::VecDef *ast, domain::Identifier *id, domain::Expr *exp)
 {
     cerr << "START: Interpretation::mkVecBinding.\n.";
     if (!exp || !id)
@@ -38,9 +38,9 @@ void Interpretation::mkVecBinding(ast::Stmt *ast, domain::Identifier *id, domain
         cerr << "Interpretation::mkVecBinding: null argument\n";
     }
     const coords::VecIdent *id_coords = id->getVarDeclWrapper();
-    const coords::VectorExpr *exp_coords = exp->getExpr();
+    const coords::VecExpr *exp_coords = exp->getExpr();
     coords::Binding *bind_coords = new coords::Binding(ast, id_coords, exp_coords);
-    ast2coords_->stmt_wrappers.insert(std::make_pair(ast, bind_coords));
+    ast2coords_->overrideStmt(ast, bind_coords);
     domain::Binding &binding =
         domain_->addBinding(bind_coords, id, exp);
     coords2dom_->putBindingInterp(bind_coords, binding);
@@ -71,43 +71,43 @@ void Interpretation::mkVecAddExpr(ast::AddExpr *ast, domain::Expr *mem, domain::
   //
   // TODO: Abstract
   //
-  const coords::VectorExpr *mem_coords = getCoords(mem);
-  const coords::VectorExpr *arg_coords = interp_.getCoords(arg);
+  const coords::VecExpr *mem_coords = mem->getCoords();
+  const coords::VecExpr *arg_coords = arg->getCoords();
   if (mem_coords == NULL || arg_coords == NULL) {
     cerr << "Interpretation::mkVecAddExpr: bad coordinates. Mem coords " 
         << std::hex << mem_coords << " arg coords " 
         << std::hex << arg_coords << "\n";
   }
 
-  coords::VectorAddExpr *expr_coords = 
-    new coords::VectorAddExpr(ast, mem_coords, arg_coords);
+  coords::VecVecAddExpr *expr_coords = 
+    new coords::VecVecAddExpr(ast, mem_coords, arg_coords);
   ast2coords_->overrideExpr(ast, expr_coords);
   domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
-  const domain::Expr *dom_add_expr = domain_->addVecAddExpr(space, mem, arg);
+  domain::Expr *dom_add_expr = domain_->addVecAddExpr(space, expr_coords, mem, arg);
   coords2dom_->putExpressionInterp(expr_coords, dom_add_expr);
 
   cerr << "Interpretation::mkVecAddExpr: Coords at " 
-    << std::hex << addexpr << "\n";
-  cerr << "Interpretation::mkVecAddExpr: Expression added was \n"; 
+    << std::hex << expr_coords << "\n";
   cerr << "Interpretation::mkVecAddExpr: Adding add expr to domain: " 
     << dom_add_expr->toString() << "\n";
   cerr << "FINISHED: adding member call expression to system\n";
 }
 
 // TODO: Factor this stuff out of preceding procedures
-void Interpretation::mkVecExpr(ast::Expr *ast, ASTContext *context) {
+void Interpretation::mkVecExpr(ast::VecExpr *ast, ASTContext *context) {
     cerr << "Interpretation::mkVecExpr. START";
-    coords::Vector *coords = new coords::Vector(ast);  
-      ast2coords_->overrideExpr(ast, coords);
-    domain::Expr *vec = domain_->addVecExpr(coords);
-    coords2dom_->putExpressionInterp(coords, vec);
+    coords::Vector *vcoords = new coords::Vector(ast);  
+    ast2coords_->overrideExpr(ast, vcoords);
+    // WARNING: Is following code right? Or meant for CTORs?
+    domain::Expr *vec = domain_->addVector(vcoords);
+    coords2dom_->putExpressionInterp(vcoords, vec);
     cerr << "Interpretation::mkVecExpr. DONE.\n";
 }
 
 
 /* Future work
 void Interpretation::mkVecVarExpr(ast, mem_coords, arg_coords) {
-    const coords::VarDeclRef *var_coords = new VarDeclRef(ast);
+    const coords::VecVarExpr *var_coords = new VarDeclRef(ast);
     ast2coords_->overrideExpr(ast, var_coords));
     domain::Expr &be = domain_domain->addVecVarExpr(var_coords);
     coords2dom_->putExpressionInterp(*wrapper, be);
@@ -116,23 +116,23 @@ void Interpretation::mkVecVarExpr(ast, mem_coords, arg_coords) {
 
 void Interpretation::mkVector(ast::VectorLiteral *ast, ASTContext *context) {
     cerr << "Interpretation::mkVector(VectorLit). START";
-    coords::Vector *coords = new coords::Vector(ast);  // ???ctor!
-    ast2coords_->expr_wrappers.insert(std::make_pair(ast, coords));
-    domain::Vector* vec = domain_->addVector(coords);
-    coords2dom_->putVectorInterp(coords, vec);
+    coords::Vector *vec_coords = new coords::Vector(ast);  // ???ctor!
+    ast2coords_->overrideExpr(ast, vec_coords);
+    domain::Vector* vec = domain_->addVector(vec_coords);
+    coords2dom_->putVectorInterp(vec_coords, vec);
     cerr << "DONE Interpretation::mkVector(VectorLit)\n";
 }
 
 void Interpretation::mkVector(CXXConstructExpr *ctor_ast, ASTContext *context) {
-    cerr << "Interpretation::mkVector(Expr). START";
-    coords::Vector *coords = new coords::Vector(ast);  // ???ctor!
-    ast2coords_->expr_wrappers.insert(std::make_pair(ast, coords));
-    domain::Vector* vec = domain_->addVector(coords);
-    coords2dom_->putVectorInterp(coords, vec);
+    cerr << "Interpretation::mkVector(Expr). START\n";
+    coords::Vector *vcoords = new coords::Vector(ast);  // ???ctor!
+    ast2coords_->overrideExpr(ast, vcoords);
+    domain::Vector* vec = domain_->addVector(vcoords);
+    coords2dom_->putVectorInterp(vcoords, vec);
     cerr << "DONE Interpretation::mkVector(Expr)\n";
 }
 
-const coords::VectorExpr *getCoords(ast::Expr *expr)  // fix ret type name
+const coords::VecExpr *Interpretation::getCoords(ast::VecExpr *expr)  // fix ret type name
 {
     return ast2coords_->getASTExprCoords(expr);
 }

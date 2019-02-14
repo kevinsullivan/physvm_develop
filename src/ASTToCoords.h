@@ -10,23 +10,23 @@ namespace ast2coords {
 class ASTToCoords {
 public:
 
-    const coords::VecIdent *makeCoordsForVecIdent(const ast::Ident *ident);
-    const coords::VectorExpr *getASTExprCoords(ast::Expr* e);
+    const coords::VecIdent *makeCoordsForVecIdent(const ast::VecIdent *ident);
+    const coords::VecExpr *getASTExprCoords(ast::Expr* e);
 
 // protected
 // TODO: Use AST.h type aliases
 //
-    void overrideExpr(const clang::Expr *e, const coords::VectorExpr *c);
-    void overrideStmt(const clang::Stmt *s, const coords::VectorExpr *c);
-    void overrideDecl(const clang::Decl *d, const coords::VectorExpr *c);
+    void overrideExpr(const clang::Expr *e, const coords::VecExpr *c);
+    void overrideStmt(const clang::Stmt *s, const coords::VecExpr *c);
+    void overrideDecl(const clang::Decl *d, const coords::VecExpr *c);
 
 // private
 //
-// TODO: Note and rethink: everything in coords is coords::VectorExpr.
+// TODO: Note and rethink: everything in coords is coords::VecExpr.
 //
-    unordered_map<const clang::Expr *, const coords::VectorExpr *> expr_coords;
-    unordered_map<const clang::Stmt *, const coords::VectorExpr *> stmt_coords;
-    unordered_map<const clang::Decl *, const coords::VectorExpr *> decl_coords;
+    unordered_map<const clang::Expr *, const coords::VecExpr *> expr_coords;
+    unordered_map<const clang::Stmt *, const coords::VecExpr *> stmt_coords;
+    unordered_map<const clang::Decl *, const coords::VecExpr *> decl_coords;
 };
 
 // TODO: Refactor to use AST.h abstractions
