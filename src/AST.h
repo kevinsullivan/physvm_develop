@@ -26,7 +26,7 @@ using VecVarExpr = const clang::DeclRefExpr;
 Domain                  Coords              AST
 ------                  ------              ---
 Space
-Expr                    VecExpr          (base class, union type)
+Expr                    VecExpr (super)     tagged union type
 VecLitExpr              VectorLit           ast::VecLitExpr
 Identifier              VecIdent            ast::VecIdent
 VecVarExpr              VecVarExpr          ast::VecVarExpr          
