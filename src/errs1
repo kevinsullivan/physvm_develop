@@ -1754,14 +1754,14 @@ Coords.h:205:3: note:   initializing argument 1 of 'coords::Vector::Vector(const
 Interpretation.cpp:102:50: error: expression cannot be used as a function
      domain::Expr *vec = domain_->addVector(coords);
                                                   ^
-Interpretation.cpp: In member function 'void interp::Interpretation::mkVector(ast::VectorLiteral*, clang::ASTContext*)':
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector(ast::VecLitExpr*, clang::ASTContext*)':
 Interpretation.cpp:120:18: error: 'class ast2coords::ASTToCoords' has no member named 'expr_wrappers'
      ast2coords_->expr_wrappers.insert(std::make_pair(ast, vec_coords));
                   ^~~~~~~~~~~~~
 Interpretation.cpp:121:56: error: expression cannot be used as a function
      domain::Vector* vec = domain_->addVector(vec_coords);
                                                         ^
-Interpretation.cpp:122:18: error: 'class coords2domain::CoordsToDomain' has no member named 'putVectorInterp'; did you mean 'putVectorLitInterp'?
+Interpretation.cpp:122:18: error: 'class coords2domain::CoordsToDomain' has no member named 'putVectorInterp'; did you mean 'putVecLitExprInterp'?
      coords2dom_->putVectorInterp(vec_coords, vec);
                   ^~~~~~~~~~~~~~~
                   putVectorLitInterp

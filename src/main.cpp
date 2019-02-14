@@ -463,7 +463,7 @@ public:
     //cerr << "END: handleCXXConstructIdentifier\n";
 */
 
-    // CONSTRUCTOR (VectorLit | Add)
+    // CONSTRUCTOR (VecLitExpr | Add)
     //
     cerr << "VectorDeclStmtHandler: start matching on consdecl\n";
     CXXConstructExprMatcher matcher;

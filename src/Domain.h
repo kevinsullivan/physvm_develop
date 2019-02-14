@@ -75,7 +75,7 @@ protected:
 // VecExpr?? It's a Ctor
 class VecLitExpr : public VecExpr {
 public:
-    VecLitExpr(Space& s, const coords::VectorLit* ast) : VecExpr(s, ast) { }
+    VecLitExpr(Space& s, const coords::VecLitExpr* ast) : VecExpr(s, ast) { }
     void addFloatLit(float num);
 	virtual string toString() const {
 		return "(" + ast_->toString() + " : " + getSpace().toString() + ")";
@@ -189,7 +189,7 @@ public:
 	Identifier* addIdentifier(Space& s, const coords::VecIdent* ast);
 	VecExpr& addVecVarExpr(const coords::VecVarExpr* ast);
 	// should be addVecLit*Ctor*, with contained lit data 
-	VecExpr* addVecLitExpr(Space& s, const coords::VectorLit* e);
+	VecExpr* addVecLitExpr(Space& s, const coords::VecLitExpr* e);
 	VecExpr* addVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
 	// coords for container, domain object for child, lit | expr
 	// if lit, child is -- empty? -- else coords and domain VecExpr
