@@ -18,7 +18,7 @@ public:
     void mkVecBinding(ast::VecDef *ast, domain::Identifier *id, domain::VecExpr *exp);
     // TODO: Use AST.h name in next method
     void mkVector(CXXConstructExpr *ctor_ast, ASTContext *context); 
-    void mkVector(ast::VectorLiteral *ast, ASTContext *context); 
+    void mkVector(ast::VecLitExpr *ast, ASTContext *context); 
     void mkVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
     void mkVecExpr(ast::VecExpr *ast, ASTContext *context);
     // TODO: Use AST.h name in next method return

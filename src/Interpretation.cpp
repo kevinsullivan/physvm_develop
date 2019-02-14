@@ -114,13 +114,13 @@ void Interpretation::mkVecVarExpr(ast, mem_coords, arg_coords) {
 }
 */
 
-void Interpretation::mkVector(ast::VectorLiteral *ast, ASTContext *context) {
-    cerr << "Interpretation::mkVector(VectorLit). START";
+void Interpretation::mkVector(ast::VecLitExpreral *ast, ASTContext *context) {
+    cerr << "Interpretation::mkVector(VecLitExpr). START";
     coords::Vector *vec_coords = new coords::Vector(ast);  // ???ctor!
     ast2coords_->overrideExpr(ast, vec_coords);
     domain::Vector* vec = domain_->addVector(vec_coords);
     coords2dom_->putVectorInterp(vec_coords, vec);
-    cerr << "DONE Interpretation::mkVector(VectorLit)\n";
+    cerr << "DONE Interpretation::mkVector(VecLitExpr)\n";
 }
 
 void Interpretation::mkVector(CXXConstructExpr *ctor_ast, ASTContext *context) {

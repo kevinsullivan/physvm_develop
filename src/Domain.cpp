@@ -48,7 +48,7 @@ Space &Domain::addSpace(const string &name)
 }
 
 
-domain::VecExpr *Domain::addVecLitExpr(Space &s, const coords::VectorLit *e)
+domain::VecExpr *Domain::addVecLitExpr(Space &s, const coords::VecLitExpr *e)
 {
     domain::VecExpr *be = new domain::VecExpr(s, e);
     //cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";

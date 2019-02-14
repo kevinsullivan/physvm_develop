@@ -60,13 +60,13 @@ struct VecExprHasher {
 };
 
 // TODO: this is ctor; separate contents
-class VectorLit : public VecExpr {
+class VecLitExpr : public VecExpr {
 public:
-  VectorLit(const ast::VecLitExpr *constrExpr)
+  VecLitExpr(const ast::VecLitExpr *constrExpr)
       : VecExpr(constrExpr), constrExpr_(constrExpr) {}
   const ast::VecLitExpr *get() const { return constrExpr_; }
 
-  bool operator==(const VectorLit &other) const {
+  bool operator==(const VecLitExpr &other) const {
 
     return (constrExpr_ == other.constrExpr_);
   }
@@ -76,8 +76,8 @@ private:
   const ast::VecLitExpr *constrExpr_;
 };
 
-struct VectorLitHasher {
-  std::size_t operator()(const VectorLit &k) const {
+struct VecLitExprHasher {
+  std::size_t operator()(const VecLitExpr &k) const {
     // TODO -- fix
     std::size_t hash = 10101010;
     return hash;
