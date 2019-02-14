@@ -30,7 +30,7 @@ VecExpr                 VecExpr (super)     tagged union type
 VecLitExpr              VecLitExpr          ast::VecLitExpr
 VecIdent                VecIdent            ast::VecIdent
 VecVarExpr              VecVarExpr          ast::VecVarExpr          
-VecVecAddExpr           VectorAddExpr       ast::VecVecVecVecVecAddExpr,coords:VecExpr
+VecVecAddExpr           VecVecAddExpr       ast::VecVecAddExpr,coords:VecExpr
 Vector                  AddConstruct        (unused? nope, see Domain Vector)
                         Vector              clang::CXXConstructExpr 
 Binding                 Binding             ast::VecDef
