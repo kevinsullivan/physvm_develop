@@ -147,7 +147,7 @@ enum VecCtorType {VEC_EXPR, VEC_LIT, VEC_VAR, VEC_NONE } ;
 
 class Vector  {
 public:
-	Vector(const Space& s, const coords::AddConstruct* coords, domain::VecExpr* expr) :
+	Vector(const Space& s, const coords::Vector* coords, domain::VecExpr* expr) :
 		space_(&s), coords_(coords), expr_(expr), tag_(VEC_NONE) { 
 	}
 	bool isExpr() { return (tag_ == VEC_EXPR); } 
@@ -156,20 +156,15 @@ public:
 	//
 	// TODO: Normalize coords out of this class
 	//
-	const coords::Vector* getCoords() const {return coords_; /* const coords::AddConstruct* */} 
-	const domain::VecExpr* getVecExpr() const { return expr_; /* domain::VecExpr* */ }
-
-	/*
-	Domain.h:160:50: error: cannot convert 'const coords::AddConstruct* const' to 'const coords::Vector*' in return
-  const coords::Vector* getCoords() const {return coords_; }
-    */
+	const coords::Vector* getCoords() const {return coords_; } 
+	const domain::VecExpr* getVecExpr() const { return expr_; }
 
 	string toString() const {
 		return expr_->toString();
 	}
 private:
-	const Space* space_; // INFER
-	const coords::AddConstruct* coords_; //TODO: WRONG
+	const Space* space_; // INFER?
+	const coords::Vector* coords_; 
 	const domain::VecExpr* expr_; // child
 	VecCtorType tag_;
 };
