@@ -36,9 +36,9 @@ The next set of definitions provides a basis for representing code
 expressions lifted to domain expressions.
 */
 
-class Identifier {
+class VecIdent {
 public:
-	Identifier(Space& space, const coords::VecIdent* vardecl) : space_(&space), vardecl_(vardecl) {}
+	VecIdent(Space& space, const coords::VecIdent* vardecl) : space_(&space), vardecl_(vardecl) {}
 	Space* getSpace() const { return space_; }
 	const coords::VecIdent* getVarDeclWrapper() const { return vardecl_; }
 	string toString() const { return getName(); }
@@ -122,21 +122,21 @@ private:
 /*
 Domain representation of binding of identifier to expression.
 Takes clang::VarDecl establishing binding (in a wrapper) and 
-the *domain* Identifier and Expression objects being bound.
+the *domain* VecIdent and Expression objects being bound.
 */
 class Binding {
 public:
-	Binding(const coords::Binding* ast_wrapper, const domain::Identifier* identifier, const domain::VecExpr* expr):
+	Binding(const coords::Binding* ast_wrapper, const domain::VecIdent* identifier, const domain::VecExpr* expr):
 			ast_wrapper_(ast_wrapper), identifier_(identifier), expr_(expr) {}
 	const coords::Binding* getVarDecl() const {return ast_wrapper_; } 
 	const domain::VecExpr* getVecExpr() const { return expr_; }
-	const domain::Identifier* getIdentifier() { return identifier_; }
+	const domain::VecIdent* getVecIdent() { return identifier_; }
 	string toString() const {
 		return "def " + identifier_->toString() + " := " + expr_->toString();
 	}
 private:
 	const coords::Binding* ast_wrapper_;
-	const Identifier* identifier_;
+	const VecIdent* identifier_;
 	const VecExpr* expr_;
 };
 
@@ -186,7 +186,7 @@ class Domain {
 public:
 	Space& addSpace(const string& name);
 	//VecLitExpr& addLitExpr(Space& s, const coords::coords::Lit* ast);		/* BIG TODO: Fix others */
-	Identifier* addIdentifier(Space& s, const coords::VecIdent* ast);
+	VecIdent* addVecIdent(Space& s, const coords::VecIdent* ast);
 	VecExpr& addVecVarExpr(const coords::VecVarExpr* ast);
 	// should be addVecLit*Ctor*, with contained lit data 
 	VecExpr* addVecLitExpr(Space& s, const coords::VecLitExpr* e);
@@ -194,24 +194,24 @@ public:
 	// coords for container, domain object for child, lit | expr
 	// if lit, child is -- empty? -- else coords and domain VecExpr
 	Vector* addVector(coords::Vector* v, domain::VecExpr *vec);
-	Binding& addBinding(const coords::Binding* vardecl, const Identifier* identifier, const VecExpr* expression);
+	Binding& addBinding(const coords::Binding* vardecl, const VecIdent* identifier, const VecExpr* expression);
 	void dump() {
 		cerr << "Domain expressions:\n";
 		dumpExpressions(); // print contents on cerr
-		cerr << "Domain Identifiers\n";
-		dumpIdentifiers(); // print contents on cerr
+		cerr << "Domain VecIdents\n";
+		dumpVecIdents(); // print contents on cerr
 		cerr << "Domain Bindings\n";
 		dumpBindings(); // print contents on cerr
 	}
 	void dumpExpressions(); // print contents on cerr
-	void dumpIdentifiers(); // print contents on cerr
+	void dumpVecIdents(); // print contents on cerr
 	void dumpBindings(); // print contents on cerr
 
 	bool isConsistent();
 	vector<Space>& getAllSpaces();
 private:
 	vector<Space> spaces;
-	vector<Identifier> identifiers;
+	vector<VecIdent> identifiers;
 	vector<VecExpr*> expressions;
 	vector<Binding> bindings;
 	vector<Vector*> vectors;

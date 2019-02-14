@@ -12,8 +12,8 @@ namespace coords2domain {
 class CoordsToDomain
 {
   public:
-	void putIdentifierInterp(const coords::VecIdent *key, domain::Identifier *bi);
-	const domain::Identifier *getIdentifierInterp(const coords::VecIdent *key);
+	void putVecIdentInterp(const coords::VecIdent *key, domain::VecIdent *bi);
+	const domain::VecIdent *getVecIdentInterp(const coords::VecIdent *key);
 
 	// ??? delete ???
 	/*
@@ -49,7 +49,7 @@ class CoordsToDomain
 	AST node maps to a coords::VecExpr. But here we distinguish
 	between different kinds of coords. Re-evaluate.
 	*/
-	unordered_map<coords::VecIdent, domain::Identifier *, coords::IdentifierHasher> interpIdent;
+	unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
 	unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
 	unordered_map<coords::Binding, domain::Binding *, coords::BindingHasher> interpBinding;
 };

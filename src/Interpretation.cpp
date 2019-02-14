@@ -16,21 +16,21 @@ Establish interpretation for Vec identifier in AST
 - create coordinates
 - lift Vec to domain
 */
-domain::Identifier *Interpretation::mkVecIdent(ast::VecIdent *ast)
+domain::VecIdent *Interpretation::mkVecIdent(ast::VecIdent *ast)
 {
     cerr << "BEG interp::VecIdent *addVecIdent\n";
-    domain::Space &space = oracle_->getSpaceForIdentifier(ast);
+    domain::Space &space = oracle_->getSpaceForVecIdent(ast);
     const coords::VecIdent *coords = ast2coords_->makeCoordsForVecIdent(ast);
-    domain::Identifier *dom = domain_->addIdentifier(space, coords);
-    coords2dom_->putIdentifierInterp(coords, dom);
+    domain::VecIdent *dom = domain_->addVecIdent(space, coords);
+    coords2dom_->putVecIdentInterp(coords, dom);
 
-    cerr << "domain::Identifier *mkVecIdent: AST at " << std::hex << ast << "; Coords at " << std::hex << coords << ";  coords.toString is " << coords->toString() << "; dom at " << std::hex << dom << "\n";
+    cerr << "domain::VecIdent *mkVecIdent: AST at " << std::hex << ast << "; Coords at " << std::hex << coords << ";  coords.toString is " << coords->toString() << "; dom at " << std::hex << dom << "\n";
     cerr << "END interp::VecIdent *addVecIdent\n";
 
     return dom;
 }
 
-void Interpretation::mkVecBinding(ast::VecDef *ast, domain::Identifier *id, domain::VecExpr *exp)
+void Interpretation::mkVecBinding(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *exp)
 {
     cerr << "START: Interpretation::mkVecBinding.\n.";
     if (!exp || !id)

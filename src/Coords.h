@@ -86,7 +86,7 @@ struct VecLitExprHasher {
 
 //---------------
 
-// Identifier implemented as VarDecl
+// VecIdent implemented as VarDecl
 class VecIdent : public VecExpr {
 public:
   VecIdent(const ast::VecIdent *varDecl)
@@ -103,7 +103,7 @@ private:
   const ast::VecIdent *varDecl_;
 };
 
-struct IdentifierHasher {
+struct VecIdentHasher {
   std::size_t operator()(const VecIdent &k) const {
     std::size_t hash = 101010;
     // TODO Fix hash function

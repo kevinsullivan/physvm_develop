@@ -452,15 +452,15 @@ public:
 
     // IDENTIFIER -- should call handle identifier (TODO:)
     //
-    domain::Identifier *id = interp_->mkVecIdent(vardecl);
+    domain::VecIdent *id = interp_->mkVecIdent(vardecl);
 
 /*
-    domain::Space &space = oracle->getSpaceForIdentifier(vardecl);
+    domain::Space &space = oracle->getSpaceForVecIdent(vardecl);
     VecIdent *ast_container = new VecIdent(vardecl);
     decl_wrappers.insert(std::make_pair(vardecl, ast_container));
-    domain::Identifier &bi = domain_domain->addIdentifier(space, ast_container);
+    domain::VecIdent &bi = domain_domain->addVecIdent(space, ast_container);
     interp->putIdentInterp(*ast_container, bi);
-    //cerr << "END: handleCXXConstructIdentifier\n";
+    //cerr << "END: handleCXXConstructVecIdent\n";
 */
 
     // CONSTRUCTOR (VecLitExpr | Add)
@@ -488,8 +488,8 @@ public:
     cerr << "VectorDeclStmtHandler:: Post Domain State \n"; //declstmt->dump();
      cerr << "Domain expressions:\n";
     domain_domain->dumpExpressions(); // print contents on cerr
-    cerr << "Domain Identifiers\n";
-    domain_domain->dumpIdentifiers(); // print contents on cerr
+    cerr << "Domain VecIdents\n";
+    domain_domain->dumpVecIdents(); // print contents on cerr
     cerr << "Domain Bindings\n";
     domain_domain->dumpBindings(); // print contents on cerr
     cerr << "InterpExpressions\n";
@@ -555,8 +555,8 @@ int main(int argc, const char **argv)
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
-/*  cerr << "Identifiers\n";
-  domain_domain->dumpIdentifiers();
+/*  cerr << "VecIdents\n";
+  domain_domain->dumpVecIdents();
   cerr << "Expressions\n";
   domain_domain->dumpExpressions();
   cerr << "Bindings\n";
