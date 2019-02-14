@@ -60,7 +60,7 @@ domain::Expr *Domain::addVecLitExpr(Space &s, const coords::VectorLit *e)
 }
 
 // precondition: variable already interpreted
-Space &getSpaceOfVarExpr(const coords::VectorExpr *ast)
+Space &getSpaceOfVarExpr(const coords::VecExpr *ast)
 {
     // look up variable (ast) in identifiers table
     // Space& s = getSpaceOf(ast,identifiers);
@@ -72,7 +72,7 @@ Space &getSpaceOfVarExpr(const coords::VectorExpr *ast)
 }
 
 // TODO: Change arg type to be more precise
-domain::Expr &Domain::addVecVarExpr(const coords::VarDeclRef *ast)
+domain::Expr &Domain::addVecVarExpr(const coords::VecVarExpr *ast)
 {
     Space &s = getSpaceOfVarExpr(ast);
     domain::Expr *be = new domain::Expr(s, ast);
@@ -84,7 +84,7 @@ domain::Expr &Domain::addVecVarExpr(const coords::VarDeclRef *ast)
     return *be;
 }
 
-domain::Expr *Domain::addVecAddExpr(Space &s, coords::VectorAddExpr *e, domain::Expr *mem, domain::Expr *arg)
+domain::Expr *Domain::addVecAddExpr(Space &s, coords::VecVecAddExpr *e, domain::Expr *mem, domain::Expr *arg)
 {
     domain::Expr *be = new domain::VecAddExpr(s, e, mem, arg);
     expressions.push_back(be);

@@ -32,28 +32,18 @@ Coords.h:240:3: warning:   when initialized here [-Wreorder]
 In file included from Oracle.h:6:0,
                  from Interpretation.h:7,
                  from Interpretation.cpp:1:
-Domain.h: At global scope:
-Domain.h:163:16: error: 'VecCtorType' in namespace 'domain' does not name a type
-  const domain::VecCtorType tag_;
-                ^~~~~~~~~~~
-Domain.h:143:36: note: 'domain::VecCtorType' declared here
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
-Domain.h: In constructor 'domain::Vector::Vector(domain::Space&, const coords::AddConstruct*, domain::Expr*)':
-Domain.h:148:3: error: class 'domain::Vector' does not have any field named 'space_'
-   space_(&s), coords_(coords), expr_(expr) {
-   ^~~~~~
-Domain.h:149:4: error: 'tag_' was not declared in this scope
-    tag_ = domain::EXPR;
-    ^~~~
-Domain.h:149:4: note: suggested alternative: 'tanl'
-    tag_ = domain::EXPR;
-    ^~~~
-    tanl
-Domain.h:149:19: error: 'EXPR' is not a member of 'domain'
-    tag_ = domain::EXPR;
-                   ^~~~
-Domain.h:149:19: note: suggested alternative:
+Domain.h: In constructor 'domain::Vector::Vector(const domain::Space&, const coords::AddConstruct*, domain::Expr*)':
+Domain.h:151:50: error: 'NONE' was not declared in this scope
+   space_(&s), coords_(coords), expr_(expr), tag_(NONE) {
+                                                  ^~~~
+Domain.h:151:50: note: suggested alternative: 'NAN'
+   space_(&s), coords_(coords), expr_(expr), tag_(NONE) {
+                                                  ^~~~
+                                                  NAN
+Domain.h:152:11: error: 'EXPR' was not declared in this scope
+    tag_ = EXPR;
+           ^~~~
+Domain.h:152:11: note: suggested alternative:
 In file included from Interpretation.h:5:0,
                  from Interpretation.cpp:1:
 Coords.h:24:17: note:   'EXPR'
@@ -62,85 +52,24 @@ Coords.h:24:17: note:   'EXPR'
 In file included from Oracle.h:6:0,
                  from Interpretation.h:7,
                  from Interpretation.cpp:1:
-Domain.h: In member function 'bool domain::Vector::isExpr()':
-Domain.h:151:26: error: 'tag_' was not declared in this scope
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-Domain.h:151:26: note: suggested alternative: 'tanl'
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-                          tanl
-Domain.h: In member function 'bool domain::Vector::isLit()':
-Domain.h:152:25: error: 'tag_' was not declared in this scope
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-Domain.h:152:25: note: suggested alternative: 'tanl'
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-                         tanl
-Domain.h: In member function 'domain::Space* domain::Vector::getSpace()':
-Domain.h:153:28: error: 'space_' was not declared in this scope
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-Domain.h:153:28: note: suggested alternative: 'Space'
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-                            Space
-Domain.h: In member function 'const coords::Vector* domain::Vector::getVector() const':
-Domain.h:154:50: error: 'ast_wrapper_' was not declared in this scope
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-Domain.h:154:50: note: suggested alternative: 'towupper_l'
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-                                                  towupper_l
-Domain.h: In member function 'const domain::Vector* domain::Vector::getDomVector() const':
-Domain.h:155:54: error: cannot convert 'const domain::Expr* const' to 'const domain::Vector*' in return
-  const domain::Vector* getDomVector() const { return expr_; }
-                                                      ^~~~~
-Domain.h: In member function 'std::__cxx11::string domain::Vector::toString() const':
-Domain.h:157:19: error: 'identifier_' was not declared in this scope
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-Domain.h:157:19: note: suggested alternative: 'Identifier'
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-                   Identifier
+Domain.h: In member function 'const coords::Vector* domain::Vector::getCoords() const':
+Domain.h:160:50: error: cannot convert 'const coords::AddConstruct* const' to 'const coords::Vector*' in return
+  const coords::Vector* getCoords() const {return coords_; }
+                                                  ^~~~~~~
 Domain.h: At global scope:
-Domain.h:185:10: error: expected ';' at end of member declaration
+Domain.h:191:10: error: expected ';' at end of member declaration
   Vector* addVector(coords Vector* v, domain::Expr *vec);
           ^~~~~~~~~
-Domain.h:185:27: error: expected ')' before 'Vector'
+Domain.h:191:27: error: expected ')' before 'Vector'
   Vector* addVector(coords Vector* v, domain::Expr *vec);
                            ^~~~~~
-In file included from Interpretation.h:9:0,
-                 from Interpretation.cpp:1:
-CoordsToDomain.h:24:40: error: 'Lit' in namespace 'coords' does not name a type
-  void putVectorLitInterp(const coords::Lit &n, domain::VecLitExpr &v);
-                                        ^~~
-CoordsToDomain.h:25:10: error: 'VectorLitExpr' in namespace 'domain' does not name a type
-  domain::VectorLitExpr *getLitInterp(const coords::VectorLit &n) const;
-          ^~~~~~~~~~~~~
 In file included from Interpretation.cpp:1:0:
 Interpretation.h: In member function 'const coords::VectorExpr* interp::Interpretation::getCoords(ast::Expr*)':
 Interpretation.h:28:5: warning: no return statement in function returning non-void [-Wreturn-type]
      }
      ^
 Interpretation.h: In member function 'domain::Expr* interp::Interpretation::getExpressionInterp(ast::Expr*)':
-Interpretation.h:34:23: error: 'Expr' in namespace 'coords' does not name a type
-         const coords::Expr *coords = new coords::Expr(ast);
-                       ^~~~
-Interpretation.h:35:29: error: 'coords2domain_' was not declared in this scope
-         domain::Expr* dom = coords2domain_[coords];
-                             ^~~~~~~~~~~~~~
-Interpretation.h:35:29: note: suggested alternative: 'coords2dom_'
-         domain::Expr* dom = coords2domain_[coords];
-                             ^~~~~~~~~~~~~~
-                             coords2dom_
-Interpretation.h:35:50: error: expected primary-expression before ']' token
-         domain::Expr* dom = coords2domain_[coords];
-                                                  ^
-Interpretation.h:36:18: error: no match for 'operator==' (operand types are 'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' and 'long int')
+Interpretation.h:37:18: error: no match for 'operator==' (operand types are 'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' and 'long int')
          if (expr == NULL) {
                   ^
 In file included from /usr/include/c++/7/set:62:0,
@@ -173,7 +102,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::multiset<_Key, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::multiset<_Key, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/set:61:0,
@@ -206,7 +135,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::set<_Key, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::set<_Key, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
@@ -241,7 +170,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
@@ -276,7 +205,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/stack:61:0,
@@ -313,7 +242,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::stack<_Tp, _Seq>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::stack<_Tp, _Seq>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/deque:64:0,
@@ -351,7 +280,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::deque<_Tp, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::deque<_Tp, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/deque:64:0,
@@ -389,7 +318,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Deque_iterator<_Tp, _Ref, _Ptr>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Deque_iterator<_Tp, _Ref, _Ptr>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/deque:64:0,
@@ -427,7 +356,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Deque_iterator<_Tp, _Ref, _Ptr>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Deque_iterator<_Tp, _Ref, _Ptr>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/map:62:0,
@@ -465,7 +394,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::multimap<_Key, _Tp, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::multimap<_Key, _Tp, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/map:61:0,
@@ -503,7 +432,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::map<_Key, _Tp, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::map<_Key, _Tp, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/map:60:0,
@@ -541,7 +470,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/map:60:0,
@@ -579,7 +508,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Rb_tree_iterator<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Rb_tree_iterator<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/list:63:0,
@@ -617,7 +546,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::list<_Tp, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::list<_Tp, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/list:63:0,
@@ -655,7 +584,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_List_iterator<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_List_iterator<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/vector:64:0,
@@ -691,7 +620,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::vector<_Tp, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::vector<_Tp, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/functional:58:0,
@@ -729,7 +658,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   mismatched types 'const std::function<_Res(_ArgTypes ...)>' and 'long int'
+Interpretation.h:37:21: note:   mismatched types 'const std::function<_Res(_ArgTypes ...)>' and 'long int'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/functional:58:0,
@@ -767,7 +696,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::function<_Res(_ArgTypes ...)>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::function<_Res(_ArgTypes ...)>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:81:0,
@@ -804,7 +733,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   mismatched types 'const std::shared_ptr<_Tp>' and 'long int'
+Interpretation.h:37:21: note:   mismatched types 'const std::shared_ptr<_Tp>' and 'long int'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:81:0,
@@ -841,7 +770,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::shared_ptr<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::shared_ptr<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:81:0,
@@ -878,7 +807,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::shared_ptr<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::shared_ptr<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/shared_ptr.h:52:0,
@@ -916,7 +845,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   mismatched types 'const std::__shared_ptr<_Tp, _Lp>' and 'long int'
+Interpretation.h:37:21: note:   mismatched types 'const std::__shared_ptr<_Tp, _Lp>' and 'long int'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/shared_ptr.h:52:0,
@@ -954,7 +883,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__shared_ptr<_Tp, _Lp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__shared_ptr<_Tp, _Lp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/shared_ptr.h:52:0,
@@ -992,7 +921,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__shared_ptr<_Tp1, _Lp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__shared_ptr<_Tp1, _Lp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:80:0,
@@ -1029,7 +958,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   mismatched types 'const std::unique_ptr<_Tp, _Dp>' and 'long int'
+Interpretation.h:37:21: note:   mismatched types 'const std::unique_ptr<_Tp, _Dp>' and 'long int'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:80:0,
@@ -1066,7 +995,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unique_ptr<_Tp, _Dp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unique_ptr<_Tp, _Dp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:80:0,
@@ -1103,7 +1032,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unique_ptr<_Tp, _Dp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unique_ptr<_Tp, _Dp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/unique_ptr.h:37:0,
@@ -1141,7 +1070,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::tuple<_Tps ...>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::tuple<_Tps ...>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/tuple:39:0,
@@ -1180,7 +1109,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::array<_Tp, _Nm>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::array<_Tp, _Nm>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/iterator:66:0,
@@ -1218,7 +1147,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::istream_iterator<_Tp, _CharT, _Traits, _Dist>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::istream_iterator<_Tp, _CharT, _Traits, _Dist>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/locale_facets.h:48:0,
@@ -1260,7 +1189,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::istreambuf_iterator<_CharT, _Traits>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::istreambuf_iterator<_CharT, _Traits>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/ios_base.h:46:0,
@@ -1329,7 +1258,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:52:0,
@@ -1366,7 +1295,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   mismatched types 'const _CharT*' and 'clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>'
+Interpretation.h:37:21: note:   mismatched types 'const _CharT*' and 'clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:52:0,
@@ -1403,7 +1332,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:52:0,
@@ -1440,7 +1369,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:41:0,
@@ -1477,7 +1406,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::allocator<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::allocator<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:41:0,
@@ -1514,7 +1443,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::allocator<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::allocator<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/char_traits.h:40:0,
@@ -1552,7 +1481,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::fpos<_StateT>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::fpos<_StateT>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
@@ -1591,7 +1520,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::move_iterator<_IteratorL>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::move_iterator<_IteratorL>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
@@ -1630,7 +1559,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::move_iterator<_IteratorL>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::move_iterator<_IteratorL>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
@@ -1669,7 +1598,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::reverse_iterator<_Iterator>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::reverse_iterator<_Iterator>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
@@ -1708,7 +1637,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::reverse_iterator<_Iterator>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::reverse_iterator<_Iterator>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/utility:70:0,
@@ -1747,7 +1676,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::pair<_T1, _T2>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::pair<_T1, _T2>'
          if (expr == NULL) {
                      ^
 In file included from /llvm/tools/clang/include/clang/Basic/Diagnostic.h:19:0,
@@ -1793,109 +1722,51 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
                  from AST.h:1,
                  from Interpretation.h:4,
                  from Interpretation.cpp:1:
-Interpretation.h:36:21: note:   'clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'clang::CanQual<T>'
+Interpretation.h:37:21: note:   'clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'clang::CanQual<T>'
          if (expr == NULL) {
                      ^
-Interpretation.cpp: In member function 'domain::Identifier* interp::Interpretation::mkVecIdent(ast::Ident*)':
-Interpretation.cpp:23:48: error: expected primary-expression before '->' token
-     const coords::VecIdent *coords = ast2coords->makeCoordsForVecIdent(ast);
-                                                ^~
-Interpretation.cpp: In member function 'void interp::Interpretation::mkVecBinding(ast::Stmt*, domain::Identifier*, domain::Expr*)':
-Interpretation.cpp:43:18: error: 'class ast2coords::ASTToCoords' has no member named 'stmt_wrappers'
-     ast2coords_->stmt_wrappers.insert(std::make_pair(ast, bind_coords));
-                  ^~~~~~~~~~~~~
-Interpretation.cpp: In member function 'void interp::Interpretation::mkVecAddExpr(ast::AddExpr*, domain::Expr*, domain::Expr*)':
-Interpretation.cpp:74:42: error: 'interp_' was not declared in this scope
-   const coords::VectorExpr *mem_coords = interp_.getCoords(mem);
-                                          ^~~~~~~
-Interpretation.cpp:83:9: error: 'coords' does not name a type; did you mean 'cos'?
-     new coords VectorAddExpr(ast, mem_coords, arg_coords);
-         ^~~~~~
-         cos
-Interpretation.cpp:84:46: error: expected ';' before ')' token
-   ast2coords_->overrideExpr(ast, expr_coords));
-                                              ^
-Interpretation.cpp:85:60: error: 'left_br' was not declared in this scope
-   domain::Space &space = oracle_->getSpaceForAddExpression(left_br, right_br);
-                                                            ^~~~~~~
-Interpretation.cpp:85:69: error: 'right_br' was not declared in this scope
-   domain::Space &space = oracle_->getSpaceForAddExpression(left_br, right_br);
-                                                                     ^~~~~~~~
-Interpretation.cpp:86:75: error: no matching function for call to 'domain::Domain::addVecAddExpr(domain::Space&, domain::Expr*&, domain::Expr*&)'
-   const domain::Expr *br_add_expr = domain_->addVecAddExpr(space, mem, arg);
-                                                                           ^
-In file included from Oracle.h:6:0,
-                 from Interpretation.h:7,
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecExpr(ast::Expr*, clang::ASTContext*)':
+Interpretation.cpp:99:53: error: invalid conversion from 'ast::Expr* {aka const clang::Expr*}' to 'const clang::CXXConstructExpr*' [-fpermissive]
+     coords::Vector *vcoords = new coords::Vector(ast);
+                                                     ^
+In file included from Interpretation.h:5:0,
                  from Interpretation.cpp:1:
-Domain.h:182:8: note: candidate: domain::Expr* domain::Domain::addVecAddExpr(domain::Space&, coords::VectorAddExpr*, domain::Expr&, domain::Expr&)
-  Expr* addVecAddExpr(Space& s, coords::VectorAddExpr* e, domain::Expr& left_, domain::Expr& right_);
-        ^~~~~~~~~~~~~
-Domain.h:182:8: note:   candidate expects 4 arguments, 3 provided
-Interpretation.cpp:87:36: error: 'wrapper' was not declared in this scope
-   coords2dom_->putExpressionInterp(wrapper, br_add_expr);
-                                    ^~~~~~~
-Interpretation.cpp:87:36: note: suggested alternative: 'toupper'
-   coords2dom_->putExpressionInterp(wrapper, br_add_expr);
-                                    ^~~~~~~
-                                    toupper
-Interpretation.cpp:90:20: error: 'addexpr' was not declared in this scope
-     << std::hex << addexpr << "\n";
-                    ^~~~~~~
-Interpretation.cpp:90:20: note: suggested alternative: 'ldexpl'
-     << std::hex << addexpr << "\n";
-                    ^~~~~~~
-                    ldexpl
-Interpretation.cpp:93:20: error: request for member 'toString' in 'br_add_expr', which is of pointer type 'const domain::Expr*' (maybe you meant to use '->' ?)
-     << br_add_expr.toString() << "\n";
-                    ^~~~~~~~
-Interpretation.cpp:95:11: error: return-statement with a value, in function returning 'void' [-fpermissive]
-   return &br_add_expr;
-           ^~~~~~~~~~~
-Interpretation.cpp: At global scope:
-Interpretation.cpp:99:6: error: prototype for 'void interp::Interpretation::mkVecExpr(ast::Expr*, clang::ASTContext*)' does not match any in class 'interp::Interpretation'
- void Interpretation::mkVecExpr(ast::Expr *ast, ASTContext *context) {
-      ^~~~~~~~~~~~~~
-In file included from Interpretation.cpp:1:0:
-Interpretation.h:23:10: error: candidate is: void interp::Interpretation::mkVecExpr(ast::Expr*)
-     void mkVecExpr(ast::Expr *ast);
-          ^~~~~~~~~
+Coords.h:205:3: note:   initializing argument 1 of 'coords::Vector::Vector(const clang::CXXConstructExpr*)'
+   Vector(const clang::CXXConstructExpr *constrExpr)
+   ^~~~~~
+Interpretation.cpp:102:51: error: expression cannot be used as a function
+     domain::Expr *vec = domain_->addVector(vcoords);
+                                                   ^
 Interpretation.cpp: In member function 'void interp::Interpretation::mkVector(ast::VectorLiteral*, clang::ASTContext*)':
-Interpretation.cpp:121:18: error: 'class ast2coords::ASTToCoords' has no member named 'expr_wrappers'
-     ast2coords_->expr_wrappers.insert(std::make_pair(ast, coords));
-                  ^~~~~~~~~~~~~
-Interpretation.cpp:122:52: error: expression cannot be used as a function
-     domain::Vector* vec = domain_->addVector(coords);
-                                                    ^
-Interpretation.cpp:123:18: error: 'class coords2domain::CoordsToDomain' has no member named 'putVectorInterp'; did you mean 'putVectorLitInterp'?
-     coords2dom_->putVectorInterp(coords, vec);
+Interpretation.cpp:121:56: error: expression cannot be used as a function
+     domain::Vector* vec = domain_->addVector(vec_coords);
+                                                        ^
+Interpretation.cpp:122:18: error: 'class coords2domain::CoordsToDomain' has no member named 'putVectorInterp'; did you mean 'putVectorLitInterp'?
+     coords2dom_->putVectorInterp(vec_coords, vec);
+                  ^~~~~~~~~~~~~~~
+                  putVectorLitInterp
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector(clang::CXXConstructExpr*, clang::ASTContext*)':
+Interpretation.cpp:128:53: error: expected primary-expression before ')' token
+     coords::Vector *vcoords = new coords::Vector(ast);  // ???ctor!
+                                                     ^
+Interpretation.cpp:129:34: error: expected primary-expression before ',' token
+     ast2coords_->overrideExpr(ast, vcoords);
+                                  ^
+Interpretation.cpp:130:53: error: expression cannot be used as a function
+     domain::Vector* vec = domain_->addVector(vcoords);
+                                                     ^
+Interpretation.cpp:131:18: error: 'class coords2domain::CoordsToDomain' has no member named 'putVectorInterp'; did you mean 'putVectorLitInterp'?
+     coords2dom_->putVectorInterp(vcoords, vec);
                   ^~~~~~~~~~~~~~~
                   putVectorLitInterp
 Interpretation.cpp: At global scope:
-Interpretation.cpp:127:6: error: prototype for 'void interp::Interpretation::mkVector(clang::CXXConstructExpr*, clang::ASTContext*)' does not match any in class 'interp::Interpretation'
- void Interpretation::mkVector(CXXConstructExpr *ctor_ast, ASTContext *context) {
-      ^~~~~~~~~~~~~~
-Interpretation.cpp:118:6: error: candidates are: void interp::Interpretation::mkVector(ast::VectorLiteral*, clang::ASTContext*)
- void Interpretation::mkVector(ast::VectorLiteral *ast, ASTContext *context) {
-      ^~~~~~~~~~~~~~
+Interpretation.cpp:135:27: error: redefinition of 'const coords::VectorExpr* interp::Interpretation::getCoords(ast::Expr*)'
+ const coords::VectorExpr *Interpretation::getCoords(ast::Expr *expr)  // fix ret type name
+                           ^~~~~~~~~~~~~~
 In file included from Interpretation.cpp:1:0:
-Interpretation.h:20:10: error:                 void interp::Interpretation::mkVector(clang::CXXConstructExpr*, clang::ASTContext)
-     void mkVector(CXXConstructExpr *ctor_ast, ASTContext context);
-          ^~~~~~~~
-Interpretation.cpp: In function 'const coords::VectorExpr* getCoords(ast::Expr*)':
-Interpretation.cpp:138:12: error: 'ast2coords_' was not declared in this scope
-     return ast2coords_->getASTExprCoords(expr);
-            ^~~~~~~~~~~
-Interpretation.cpp:138:12: note: suggested alternative: 'getCoords'
-     return ast2coords_->getASTExprCoords(expr);
-            ^~~~~~~~~~~
-            getCoords
-In file included from Oracle.h:6:0,
-                 from Interpretation.h:7,
-                 from Interpretation.cpp:1:
-Domain.h: At global scope:
-Domain.h:143:36: warning: 'domain::VecCtorType' defined but not used [-Wunused-variable]
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
+Interpretation.h:25:31: note: 'const coords::VectorExpr* interp::Interpretation::getCoords(ast::Expr*)' previously defined here
+     const coords::VectorExpr *getCoords(ast::Expr *expr)
+                               ^~~~~~~~~
 In file included from Oracle.h:5:0,
                  from Oracle.cpp:4:
 Coords.h: In constructor 'coords::Binding::Binding(const clang::DeclStmt*, const coords::VecIdent*, const coords::VectorExpr*)':
@@ -1910,28 +1781,18 @@ Coords.h:240:3: warning:   when initialized here [-Wreorder]
    ^~~~~~~
 In file included from Oracle.h:6:0,
                  from Oracle.cpp:4:
-Domain.h: At global scope:
-Domain.h:163:16: error: 'VecCtorType' in namespace 'domain' does not name a type
-  const domain::VecCtorType tag_;
-                ^~~~~~~~~~~
-Domain.h:143:36: note: 'domain::VecCtorType' declared here
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
-Domain.h: In constructor 'domain::Vector::Vector(domain::Space&, const coords::AddConstruct*, domain::Expr*)':
-Domain.h:148:3: error: class 'domain::Vector' does not have any field named 'space_'
-   space_(&s), coords_(coords), expr_(expr) {
-   ^~~~~~
-Domain.h:149:4: error: 'tag_' was not declared in this scope
-    tag_ = domain::EXPR;
-    ^~~~
-Domain.h:149:4: note: suggested alternative: 'tanl'
-    tag_ = domain::EXPR;
-    ^~~~
-    tanl
-Domain.h:149:19: error: 'EXPR' is not a member of 'domain'
-    tag_ = domain::EXPR;
-                   ^~~~
-Domain.h:149:19: note: suggested alternative:
+Domain.h: In constructor 'domain::Vector::Vector(const domain::Space&, const coords::AddConstruct*, domain::Expr*)':
+Domain.h:151:50: error: 'NONE' was not declared in this scope
+   space_(&s), coords_(coords), expr_(expr), tag_(NONE) {
+                                                  ^~~~
+Domain.h:151:50: note: suggested alternative: 'NAN'
+   space_(&s), coords_(coords), expr_(expr), tag_(NONE) {
+                                                  ^~~~
+                                                  NAN
+Domain.h:152:11: error: 'EXPR' was not declared in this scope
+    tag_ = EXPR;
+           ^~~~
+Domain.h:152:11: note: suggested alternative:
 In file included from Oracle.h:5:0,
                  from Oracle.cpp:4:
 Coords.h:24:17: note:   'EXPR'
@@ -1939,60 +1800,17 @@ Coords.h:24:17: note:   'EXPR'
                  ^~~~
 In file included from Oracle.h:6:0,
                  from Oracle.cpp:4:
-Domain.h: In member function 'bool domain::Vector::isExpr()':
-Domain.h:151:26: error: 'tag_' was not declared in this scope
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-Domain.h:151:26: note: suggested alternative: 'tanl'
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-                          tanl
-Domain.h: In member function 'bool domain::Vector::isLit()':
-Domain.h:152:25: error: 'tag_' was not declared in this scope
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-Domain.h:152:25: note: suggested alternative: 'tanl'
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-                         tanl
-Domain.h: In member function 'domain::Space* domain::Vector::getSpace()':
-Domain.h:153:28: error: 'space_' was not declared in this scope
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-Domain.h:153:28: note: suggested alternative: 'Space'
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-                            Space
-Domain.h: In member function 'const coords::Vector* domain::Vector::getVector() const':
-Domain.h:154:50: error: 'ast_wrapper_' was not declared in this scope
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-Domain.h:154:50: note: suggested alternative: 'towupper_l'
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-                                                  towupper_l
-Domain.h: In member function 'const domain::Vector* domain::Vector::getDomVector() const':
-Domain.h:155:54: error: cannot convert 'const domain::Expr* const' to 'const domain::Vector*' in return
-  const domain::Vector* getDomVector() const { return expr_; }
-                                                      ^~~~~
-Domain.h: In member function 'std::__cxx11::string domain::Vector::toString() const':
-Domain.h:157:19: error: 'identifier_' was not declared in this scope
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-Domain.h:157:19: note: suggested alternative: 'Identifier'
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-                   Identifier
+Domain.h: In member function 'const coords::Vector* domain::Vector::getCoords() const':
+Domain.h:160:50: error: cannot convert 'const coords::AddConstruct* const' to 'const coords::Vector*' in return
+  const coords::Vector* getCoords() const {return coords_; }
+                                                  ^~~~~~~
 Domain.h: At global scope:
-Domain.h:185:10: error: expected ';' at end of member declaration
+Domain.h:191:10: error: expected ';' at end of member declaration
   Vector* addVector(coords Vector* v, domain::Expr *vec);
           ^~~~~~~~~
-Domain.h:185:27: error: expected ')' before 'Vector'
+Domain.h:191:27: error: expected ')' before 'Vector'
   Vector* addVector(coords Vector* v, domain::Expr *vec);
                            ^~~~~~
-Domain.h:143:36: warning: 'domain::VecCtorType' defined but not used [-Wunused-variable]
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
 In file included from Domain.h:9:0,
                  from Checker.h:4,
                  from Checker.cpp:9:
@@ -2008,28 +1826,18 @@ Coords.h:240:3: warning:   when initialized here [-Wreorder]
    ^~~~~~~
 In file included from Checker.h:4:0,
                  from Checker.cpp:9:
-Domain.h: At global scope:
-Domain.h:163:16: error: 'VecCtorType' in namespace 'domain' does not name a type
-  const domain::VecCtorType tag_;
-                ^~~~~~~~~~~
-Domain.h:143:36: note: 'domain::VecCtorType' declared here
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
-Domain.h: In constructor 'domain::Vector::Vector(domain::Space&, const coords::AddConstruct*, domain::Expr*)':
-Domain.h:148:3: error: class 'domain::Vector' does not have any field named 'space_'
-   space_(&s), coords_(coords), expr_(expr) {
-   ^~~~~~
-Domain.h:149:4: error: 'tag_' was not declared in this scope
-    tag_ = domain::EXPR;
-    ^~~~
-Domain.h:149:4: note: suggested alternative: 'tanl'
-    tag_ = domain::EXPR;
-    ^~~~
-    tanl
-Domain.h:149:19: error: 'EXPR' is not a member of 'domain'
-    tag_ = domain::EXPR;
-                   ^~~~
-Domain.h:149:19: note: suggested alternative:
+Domain.h: In constructor 'domain::Vector::Vector(const domain::Space&, const coords::AddConstruct*, domain::Expr*)':
+Domain.h:151:50: error: 'NONE' was not declared in this scope
+   space_(&s), coords_(coords), expr_(expr), tag_(NONE) {
+                                                  ^~~~
+Domain.h:151:50: note: suggested alternative: 'NAN'
+   space_(&s), coords_(coords), expr_(expr), tag_(NONE) {
+                                                  ^~~~
+                                                  NAN
+Domain.h:152:11: error: 'EXPR' was not declared in this scope
+    tag_ = EXPR;
+           ^~~~
+Domain.h:152:11: note: suggested alternative:
 In file included from Domain.h:9:0,
                  from Checker.h:4,
                  from Checker.cpp:9:
@@ -2038,60 +1846,17 @@ Coords.h:24:17: note:   'EXPR'
                  ^~~~
 In file included from Checker.h:4:0,
                  from Checker.cpp:9:
-Domain.h: In member function 'bool domain::Vector::isExpr()':
-Domain.h:151:26: error: 'tag_' was not declared in this scope
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-Domain.h:151:26: note: suggested alternative: 'tanl'
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-                          tanl
-Domain.h: In member function 'bool domain::Vector::isLit()':
-Domain.h:152:25: error: 'tag_' was not declared in this scope
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-Domain.h:152:25: note: suggested alternative: 'tanl'
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-                         tanl
-Domain.h: In member function 'domain::Space* domain::Vector::getSpace()':
-Domain.h:153:28: error: 'space_' was not declared in this scope
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-Domain.h:153:28: note: suggested alternative: 'Space'
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-                            Space
-Domain.h: In member function 'const coords::Vector* domain::Vector::getVector() const':
-Domain.h:154:50: error: 'ast_wrapper_' was not declared in this scope
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-Domain.h:154:50: note: suggested alternative: 'towupper_l'
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-                                                  towupper_l
-Domain.h: In member function 'const domain::Vector* domain::Vector::getDomVector() const':
-Domain.h:155:54: error: cannot convert 'const domain::Expr* const' to 'const domain::Vector*' in return
-  const domain::Vector* getDomVector() const { return expr_; }
-                                                      ^~~~~
-Domain.h: In member function 'std::__cxx11::string domain::Vector::toString() const':
-Domain.h:157:19: error: 'identifier_' was not declared in this scope
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-Domain.h:157:19: note: suggested alternative: 'Identifier'
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-                   Identifier
+Domain.h: In member function 'const coords::Vector* domain::Vector::getCoords() const':
+Domain.h:160:50: error: cannot convert 'const coords::AddConstruct* const' to 'const coords::Vector*' in return
+  const coords::Vector* getCoords() const {return coords_; }
+                                                  ^~~~~~~
 Domain.h: At global scope:
-Domain.h:185:10: error: expected ';' at end of member declaration
+Domain.h:191:10: error: expected ';' at end of member declaration
   Vector* addVector(coords Vector* v, domain::Expr *vec);
           ^~~~~~~~~
-Domain.h:185:27: error: expected ')' before 'Vector'
+Domain.h:191:27: error: expected ')' before 'Vector'
   Vector* addVector(coords Vector* v, domain::Expr *vec);
                            ^~~~~~
-Domain.h:143:36: warning: 'domain::VecCtorType' defined but not used [-Wunused-variable]
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
 In file included from CoordsToDomain.h:5:0,
                  from CoordsToDomain.cpp:1:
 Coords.h: In constructor 'coords::Binding::Binding(const clang::DeclStmt*, const coords::VecIdent*, const coords::VectorExpr*)':
@@ -2106,28 +1871,18 @@ Coords.h:240:3: warning:   when initialized here [-Wreorder]
    ^~~~~~~
 In file included from CoordsToDomain.h:6:0,
                  from CoordsToDomain.cpp:1:
-Domain.h: At global scope:
-Domain.h:163:16: error: 'VecCtorType' in namespace 'domain' does not name a type
-  const domain::VecCtorType tag_;
-                ^~~~~~~~~~~
-Domain.h:143:36: note: 'domain::VecCtorType' declared here
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
-Domain.h: In constructor 'domain::Vector::Vector(domain::Space&, const coords::AddConstruct*, domain::Expr*)':
-Domain.h:148:3: error: class 'domain::Vector' does not have any field named 'space_'
-   space_(&s), coords_(coords), expr_(expr) {
-   ^~~~~~
-Domain.h:149:4: error: 'tag_' was not declared in this scope
-    tag_ = domain::EXPR;
-    ^~~~
-Domain.h:149:4: note: suggested alternative: 'tanl'
-    tag_ = domain::EXPR;
-    ^~~~
-    tanl
-Domain.h:149:19: error: 'EXPR' is not a member of 'domain'
-    tag_ = domain::EXPR;
-                   ^~~~
-Domain.h:149:19: note: suggested alternative:
+Domain.h: In constructor 'domain::Vector::Vector(const domain::Space&, const coords::AddConstruct*, domain::Expr*)':
+Domain.h:151:50: error: 'NONE' was not declared in this scope
+   space_(&s), coords_(coords), expr_(expr), tag_(NONE) {
+                                                  ^~~~
+Domain.h:151:50: note: suggested alternative: 'NAN'
+   space_(&s), coords_(coords), expr_(expr), tag_(NONE) {
+                                                  ^~~~
+                                                  NAN
+Domain.h:152:11: error: 'EXPR' was not declared in this scope
+    tag_ = EXPR;
+           ^~~~
+Domain.h:152:11: note: suggested alternative:
 In file included from CoordsToDomain.h:5:0,
                  from CoordsToDomain.cpp:1:
 Coords.h:24:17: note:   'EXPR'
@@ -2135,69 +1890,17 @@ Coords.h:24:17: note:   'EXPR'
                  ^~~~
 In file included from CoordsToDomain.h:6:0,
                  from CoordsToDomain.cpp:1:
-Domain.h: In member function 'bool domain::Vector::isExpr()':
-Domain.h:151:26: error: 'tag_' was not declared in this scope
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-Domain.h:151:26: note: suggested alternative: 'tanl'
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-                          tanl
-Domain.h: In member function 'bool domain::Vector::isLit()':
-Domain.h:152:25: error: 'tag_' was not declared in this scope
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-Domain.h:152:25: note: suggested alternative: 'tanl'
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-                         tanl
-Domain.h: In member function 'domain::Space* domain::Vector::getSpace()':
-Domain.h:153:28: error: 'space_' was not declared in this scope
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-Domain.h:153:28: note: suggested alternative: 'Space'
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-                            Space
-Domain.h: In member function 'const coords::Vector* domain::Vector::getVector() const':
-Domain.h:154:50: error: 'ast_wrapper_' was not declared in this scope
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-Domain.h:154:50: note: suggested alternative: 'towupper_l'
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-                                                  towupper_l
-Domain.h: In member function 'const domain::Vector* domain::Vector::getDomVector() const':
-Domain.h:155:54: error: cannot convert 'const domain::Expr* const' to 'const domain::Vector*' in return
-  const domain::Vector* getDomVector() const { return expr_; }
-                                                      ^~~~~
-Domain.h: In member function 'std::__cxx11::string domain::Vector::toString() const':
-Domain.h:157:19: error: 'identifier_' was not declared in this scope
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-Domain.h:157:19: note: suggested alternative: 'Identifier'
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-                   Identifier
+Domain.h: In member function 'const coords::Vector* domain::Vector::getCoords() const':
+Domain.h:160:50: error: cannot convert 'const coords::AddConstruct* const' to 'const coords::Vector*' in return
+  const coords::Vector* getCoords() const {return coords_; }
+                                                  ^~~~~~~
 Domain.h: At global scope:
-Domain.h:185:10: error: expected ';' at end of member declaration
+Domain.h:191:10: error: expected ';' at end of member declaration
   Vector* addVector(coords Vector* v, domain::Expr *vec);
           ^~~~~~~~~
-Domain.h:185:27: error: expected ')' before 'Vector'
+Domain.h:191:27: error: expected ')' before 'Vector'
   Vector* addVector(coords Vector* v, domain::Expr *vec);
                            ^~~~~~
-In file included from CoordsToDomain.cpp:1:0:
-CoordsToDomain.h:24:40: error: 'Lit' in namespace 'coords' does not name a type
-  void putVectorLitInterp(const coords::Lit &n, domain::VecLitExpr &v);
-                                        ^~~
-CoordsToDomain.h:25:10: error: 'VectorLitExpr' in namespace 'domain' does not name a type
-  domain::VectorLitExpr *getLitInterp(const coords::VectorLit &n) const;
-          ^~~~~~~~~~~~~
-In file included from CoordsToDomain.h:6:0,
-                 from CoordsToDomain.cpp:1:
-Domain.h:143:36: warning: 'domain::VecCtorType' defined but not used [-Wunused-variable]
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
 In file included from Interpretation.h:5:0,
                  from main.cpp:15:
 Coords.h: In constructor 'coords::Binding::Binding(const clang::DeclStmt*, const coords::VecIdent*, const coords::VectorExpr*)':
@@ -2213,28 +1916,18 @@ Coords.h:240:3: warning:   when initialized here [-Wreorder]
 In file included from Oracle.h:6:0,
                  from Interpretation.h:7,
                  from main.cpp:15:
-Domain.h: At global scope:
-Domain.h:163:16: error: 'VecCtorType' in namespace 'domain' does not name a type
-  const domain::VecCtorType tag_;
-                ^~~~~~~~~~~
-Domain.h:143:36: note: 'domain::VecCtorType' declared here
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
-Domain.h: In constructor 'domain::Vector::Vector(domain::Space&, const coords::AddConstruct*, domain::Expr*)':
-Domain.h:148:3: error: class 'domain::Vector' does not have any field named 'space_'
-   space_(&s), coords_(coords), expr_(expr) {
-   ^~~~~~
-Domain.h:149:4: error: 'tag_' was not declared in this scope
-    tag_ = domain::EXPR;
-    ^~~~
-Domain.h:149:4: note: suggested alternative: 'tanl'
-    tag_ = domain::EXPR;
-    ^~~~
-    tanl
-Domain.h:149:19: error: 'EXPR' is not a member of 'domain'
-    tag_ = domain::EXPR;
-                   ^~~~
-Domain.h:149:19: note: suggested alternative:
+Domain.h: In constructor 'domain::Vector::Vector(const domain::Space&, const coords::AddConstruct*, domain::Expr*)':
+Domain.h:151:50: error: 'NONE' was not declared in this scope
+   space_(&s), coords_(coords), expr_(expr), tag_(VEC_NONE) {
+                                                  ^~~~
+Domain.h:151:50: note: suggested alternative: 'NAN'
+   space_(&s), coords_(coords), expr_(expr), tag_(VEC_NONE) {
+                                                  ^~~~
+                                                  NAN
+Domain.h:152:11: error: 'EXPR' was not declared in this scope
+    tag_ = EXPR;
+           ^~~~
+Domain.h:152:11: note: suggested alternative:
 In file included from Interpretation.h:5:0,
                  from main.cpp:15:
 Coords.h:24:17: note:   'EXPR'
@@ -2243,85 +1936,24 @@ Coords.h:24:17: note:   'EXPR'
 In file included from Oracle.h:6:0,
                  from Interpretation.h:7,
                  from main.cpp:15:
-Domain.h: In member function 'bool domain::Vector::isExpr()':
-Domain.h:151:26: error: 'tag_' was not declared in this scope
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-Domain.h:151:26: note: suggested alternative: 'tanl'
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-                          tanl
-Domain.h: In member function 'bool domain::Vector::isLit()':
-Domain.h:152:25: error: 'tag_' was not declared in this scope
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-Domain.h:152:25: note: suggested alternative: 'tanl'
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-                         tanl
-Domain.h: In member function 'domain::Space* domain::Vector::getSpace()':
-Domain.h:153:28: error: 'space_' was not declared in this scope
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-Domain.h:153:28: note: suggested alternative: 'Space'
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-                            Space
-Domain.h: In member function 'const coords::Vector* domain::Vector::getVector() const':
-Domain.h:154:50: error: 'ast_wrapper_' was not declared in this scope
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-Domain.h:154:50: note: suggested alternative: 'towupper_l'
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-                                                  towupper_l
-Domain.h: In member function 'const domain::Vector* domain::Vector::getDomVector() const':
-Domain.h:155:54: error: cannot convert 'const domain::Expr* const' to 'const domain::Vector*' in return
-  const domain::Vector* getDomVector() const { return expr_; }
-                                                      ^~~~~
-Domain.h: In member function 'std::__cxx11::string domain::Vector::toString() const':
-Domain.h:157:19: error: 'identifier_' was not declared in this scope
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-Domain.h:157:19: note: suggested alternative: 'Identifier'
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-                   Identifier
+Domain.h: In member function 'const coords::Vector* domain::Vector::getCoords() const':
+Domain.h:160:50: error: cannot convert 'const coords::AddConstruct* const' to 'const coords::Vector*' in return
+  const coords::Vector* getCoords() const {return coords_; }
+                                                  ^~~~~~~
 Domain.h: At global scope:
-Domain.h:185:10: error: expected ';' at end of member declaration
+Domain.h:191:10: error: expected ';' at end of member declaration
   Vector* addVector(coords Vector* v, domain::Expr *vec);
           ^~~~~~~~~
-Domain.h:185:27: error: expected ')' before 'Vector'
+Domain.h:191:27: error: expected ')' before 'Vector'
   Vector* addVector(coords Vector* v, domain::Expr *vec);
                            ^~~~~~
-In file included from Interpretation.h:9:0,
-                 from main.cpp:15:
-CoordsToDomain.h:24:40: error: 'Lit' in namespace 'coords' does not name a type
-  void putVectorLitInterp(const coords::Lit &n, domain::VecLitExpr &v);
-                                        ^~~
-CoordsToDomain.h:25:10: error: 'VectorLitExpr' in namespace 'domain' does not name a type
-  domain::VectorLitExpr *getLitInterp(const coords::VectorLit &n) const;
-          ^~~~~~~~~~~~~
 In file included from main.cpp:15:0:
 Interpretation.h: In member function 'const coords::VectorExpr* interp::Interpretation::getCoords(ast::Expr*)':
 Interpretation.h:28:5: warning: no return statement in function returning non-void [-Wreturn-type]
      }
      ^
 Interpretation.h: In member function 'domain::Expr* interp::Interpretation::getExpressionInterp(ast::Expr*)':
-Interpretation.h:34:23: error: 'Expr' in namespace 'coords' does not name a type
-         const coords::Expr *coords = new coords::Expr(ast);
-                       ^~~~
-Interpretation.h:35:29: error: 'coords2domain_' was not declared in this scope
-         domain::Expr* dom = coords2domain_[coords];
-                             ^~~~~~~~~~~~~~
-Interpretation.h:35:29: note: suggested alternative: 'coords2dom_'
-         domain::Expr* dom = coords2domain_[coords];
-                             ^~~~~~~~~~~~~~
-                             coords2dom_
-Interpretation.h:35:50: error: expected primary-expression before ']' token
-         domain::Expr* dom = coords2domain_[coords];
-                                                  ^
-Interpretation.h:36:18: error: no match for 'operator==' (operand types are 'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' and 'long int')
+Interpretation.h:37:18: error: no match for 'operator==' (operand types are 'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' and 'long int')
          if (expr == NULL) {
                   ^
 In file included from /usr/include/c++/7/set:62:0,
@@ -2349,7 +1981,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::multiset<_Key, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::multiset<_Key, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/set:61:0,
@@ -2377,7 +2009,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::set<_Key, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::set<_Key, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
@@ -2407,7 +2039,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
@@ -2437,7 +2069,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/stack:61:0,
@@ -2469,7 +2101,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::stack<_Tp, _Seq>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::stack<_Tp, _Seq>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/deque:64:0,
@@ -2502,7 +2134,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::deque<_Tp, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::deque<_Tp, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/deque:64:0,
@@ -2535,7 +2167,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Deque_iterator<_Tp, _Ref, _Ptr>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Deque_iterator<_Tp, _Ref, _Ptr>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/deque:64:0,
@@ -2568,7 +2200,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Deque_iterator<_Tp, _Ref, _Ptr>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Deque_iterator<_Tp, _Ref, _Ptr>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/map:62:0,
@@ -2601,7 +2233,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::multimap<_Key, _Tp, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::multimap<_Key, _Tp, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/map:61:0,
@@ -2634,7 +2266,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::map<_Key, _Tp, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::map<_Key, _Tp, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/map:60:0,
@@ -2667,7 +2299,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/map:60:0,
@@ -2700,7 +2332,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Rb_tree_iterator<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_Rb_tree_iterator<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/list:63:0,
@@ -2733,7 +2365,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::list<_Tp, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::list<_Tp, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/list:63:0,
@@ -2766,7 +2398,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_List_iterator<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::_List_iterator<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/vector:64:0,
@@ -2797,7 +2429,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::vector<_Tp, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::vector<_Tp, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/functional:58:0,
@@ -2830,7 +2462,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   mismatched types 'const std::function<_Res(_ArgTypes ...)>' and 'long int'
+Interpretation.h:37:21: note:   mismatched types 'const std::function<_Res(_ArgTypes ...)>' and 'long int'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/functional:58:0,
@@ -2863,7 +2495,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::function<_Res(_ArgTypes ...)>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::function<_Res(_ArgTypes ...)>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:81:0,
@@ -2895,7 +2527,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   mismatched types 'const std::shared_ptr<_Tp>' and 'long int'
+Interpretation.h:37:21: note:   mismatched types 'const std::shared_ptr<_Tp>' and 'long int'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:81:0,
@@ -2927,7 +2559,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::shared_ptr<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::shared_ptr<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:81:0,
@@ -2959,7 +2591,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::shared_ptr<_Tp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::shared_ptr<_Tp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/shared_ptr.h:52:0,
@@ -2992,7 +2624,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   mismatched types 'const std::__shared_ptr<_Tp, _Lp>' and 'long int'
+Interpretation.h:37:21: note:   mismatched types 'const std::__shared_ptr<_Tp, _Lp>' and 'long int'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/shared_ptr.h:52:0,
@@ -3025,7 +2657,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__shared_ptr<_Tp, _Lp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__shared_ptr<_Tp, _Lp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/shared_ptr.h:52:0,
@@ -3058,7 +2690,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__shared_ptr<_Tp1, _Lp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__shared_ptr<_Tp1, _Lp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:80:0,
@@ -3090,7 +2722,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   mismatched types 'const std::unique_ptr<_Tp, _Dp>' and 'long int'
+Interpretation.h:37:21: note:   mismatched types 'const std::unique_ptr<_Tp, _Dp>' and 'long int'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:80:0,
@@ -3122,7 +2754,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unique_ptr<_Tp, _Dp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unique_ptr<_Tp, _Dp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/memory:80:0,
@@ -3154,7 +2786,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unique_ptr<_Tp, _Dp>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::unique_ptr<_Tp, _Dp>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/unique_ptr.h:37:0,
@@ -3187,7 +2819,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::tuple<_Tps ...>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::tuple<_Tps ...>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/tuple:39:0,
@@ -3221,7 +2853,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::array<_Tp, _Nm>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::array<_Tp, _Nm>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/iterator:66:0,
@@ -3254,7 +2886,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::istream_iterator<_Tp, _CharT, _Traits, _Dist>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::istream_iterator<_Tp, _CharT, _Traits, _Dist>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/locale_facets.h:48:0,
@@ -3281,7 +2913,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::istreambuf_iterator<_CharT, _Traits>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::istreambuf_iterator<_CharT, _Traits>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/ios_base.h:46:0,
@@ -3330,7 +2962,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:52:0,
@@ -3358,7 +2990,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   mismatched types 'const _CharT*' and 'clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>'
+Interpretation.h:37:21: note:   mismatched types 'const _CharT*' and 'clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:52:0,
@@ -3386,7 +3018,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:52:0,
@@ -3414,7 +3046,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:41:0,
@@ -3442,7 +3074,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::allocator<_CharT>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::allocator<_CharT>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/string:41:0,
@@ -3470,7 +3102,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::allocator<_CharT>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::allocator<_CharT>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
@@ -3497,7 +3129,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::move_iterator<_IteratorL>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::move_iterator<_IteratorL>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
@@ -3524,7 +3156,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::move_iterator<_IteratorL>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::move_iterator<_IteratorL>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
@@ -3551,7 +3183,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::reverse_iterator<_Iterator>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::reverse_iterator<_Iterator>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
@@ -3578,7 +3210,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::reverse_iterator<_Iterator>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::reverse_iterator<_Iterator>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/bits/stl_algobase.h:64:0,
@@ -3605,7 +3237,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::pair<_T1, _T2>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::pair<_T1, _T2>'
          if (expr == NULL) {
                      ^
 In file included from /usr/include/c++/7/iosfwd:40:0,
@@ -3631,7 +3263,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::fpos<_StateT>'
+Interpretation.h:37:21: note:   'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'const std::fpos<_StateT>'
          if (expr == NULL) {
                      ^
 In file included from /llvm/tools/clang/include/clang/Basic/Diagnostic.h:19:0,
@@ -3671,7 +3303,7 @@ In file included from /usr/include/strings.h:23:0,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
                  from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
                  from main.cpp:4:
-Interpretation.h:36:21: note:   'clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'clang::CanQual<T>'
+Interpretation.h:37:21: note:   'clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'clang::CanQual<T>'
          if (expr == NULL) {
                      ^
 main.cpp: In member function 'virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
@@ -3801,13 +3433,6 @@ main.cpp:550:10: error: base operand of '->' has non-pointer type 'interp::Inter
 main.cpp:551:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
    interp_->addSpace("S2");
           ^~
-In file included from Oracle.h:6:0,
-                 from Interpretation.h:7,
-                 from main.cpp:15:
-Domain.h: At global scope:
-Domain.h:143:36: warning: 'domain::VecCtorType' defined but not used [-Wunused-variable]
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
 In file included from Domain.h:9:0,
                  from Checker.h:4,
                  from Domain.cpp:3:
@@ -3823,28 +3448,11 @@ Coords.h:240:3: warning:   when initialized here [-Wreorder]
    ^~~~~~~
 In file included from Checker.h:4:0,
                  from Domain.cpp:3:
-Domain.h: At global scope:
-Domain.h:163:16: error: 'VecCtorType' in namespace 'domain' does not name a type
-  const domain::VecCtorType tag_;
-                ^~~~~~~~~~~
-Domain.h:143:36: note: 'domain::VecCtorType' declared here
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
-Domain.h: In constructor 'domain::Vector::Vector(domain::Space&, const coords::AddConstruct*, domain::Expr*)':
-Domain.h:148:3: error: class 'domain::Vector' does not have any field named 'space_'
-   space_(&s), coords_(coords), expr_(expr) {
-   ^~~~~~
-Domain.h:149:4: error: 'tag_' was not declared in this scope
-    tag_ = domain::EXPR;
-    ^~~~
-Domain.h:149:4: note: suggested alternative: 'tanl'
-    tag_ = domain::EXPR;
-    ^~~~
-    tanl
-Domain.h:149:19: error: 'EXPR' is not a member of 'domain'
-    tag_ = domain::EXPR;
-                   ^~~~
-Domain.h:149:19: note: suggested alternative:
+Domain.h: In constructor 'domain::Vector::Vector(const domain::Space&, const coords::AddConstruct*, domain::Expr*)':
+Domain.h:152:11: error: 'EXPR' was not declared in this scope
+    tag_ = EXPR;
+           ^~~~
+Domain.h:152:11: note: suggested alternative:
 In file included from Domain.h:9:0,
                  from Checker.h:4,
                  from Domain.cpp:3:
@@ -3853,55 +3461,15 @@ Coords.h:24:17: note:   'EXPR'
                  ^~~~
 In file included from Checker.h:4:0,
                  from Domain.cpp:3:
-Domain.h: In member function 'bool domain::Vector::isExpr()':
-Domain.h:151:26: error: 'tag_' was not declared in this scope
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-Domain.h:151:26: note: suggested alternative: 'tanl'
-  bool isExpr() { return (tag_ == VEC_EXPR); }
-                          ^~~~
-                          tanl
-Domain.h: In member function 'bool domain::Vector::isLit()':
-Domain.h:152:25: error: 'tag_' was not declared in this scope
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-Domain.h:152:25: note: suggested alternative: 'tanl'
-  bool isLit() { return (tag_ == VEC_LIT); }
-                         ^~~~
-                         tanl
-Domain.h: In member function 'domain::Space* domain::Vector::getSpace()':
-Domain.h:153:28: error: 'space_' was not declared in this scope
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-Domain.h:153:28: note: suggested alternative: 'Space'
-  Space* getSpace() {return space_; }
-                            ^~~~~~
-                            Space
-Domain.h: In member function 'const coords::Vector* domain::Vector::getVector() const':
-Domain.h:154:50: error: 'ast_wrapper_' was not declared in this scope
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-Domain.h:154:50: note: suggested alternative: 'towupper_l'
-  const coords::Vector* getVector() const {return ast_wrapper_; }
-                                                  ^~~~~~~~~~~~
-                                                  towupper_l
-Domain.h: In member function 'const domain::Vector* domain::Vector::getDomVector() const':
-Domain.h:155:54: error: cannot convert 'const domain::Expr* const' to 'const domain::Vector*' in return
-  const domain::Vector* getDomVector() const { return expr_; }
-                                                      ^~~~~
-Domain.h: In member function 'std::__cxx11::string domain::Vector::toString() const':
-Domain.h:157:19: error: 'identifier_' was not declared in this scope
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-Domain.h:157:19: note: suggested alternative: 'Identifier'
-   return "def " + identifier_->toString() + " := " + expr_->toString();
-                   ^~~~~~~~~~~
-                   Identifier
+Domain.h: In member function 'const coords::Vector* domain::Vector::getCoords() const':
+Domain.h:160:50: error: cannot convert 'const coords::AddConstruct* const' to 'const coords::Vector*' in return
+  const coords::Vector* getCoords() const {return coords_; }
+                                                  ^~~~~~~
 Domain.h: At global scope:
-Domain.h:185:10: error: expected ';' at end of member declaration
+Domain.h:191:10: error: expected ';' at end of member declaration
   Vector* addVector(coords Vector* v, domain::Expr *vec);
           ^~~~~~~~~
-Domain.h:185:27: error: expected ')' before 'Vector'
+Domain.h:191:27: error: expected ')' before 'Vector'
   Vector* addVector(coords Vector* v, domain::Expr *vec);
                            ^~~~~~
 Domain.cpp:26:51: error: no 'const domain::Expr& domain::VecAddExpr::getVecAddExprArgL()' member function declared in class 'domain::VecAddExpr'
@@ -3910,14 +3478,11 @@ Domain.cpp:26:51: error: no 'const domain::Expr& domain::VecAddExpr::getVecAddEx
 Domain.cpp:31:51: error: no 'const domain::Expr& domain::VecAddExpr::getVecAddExprArgR()' member function declared in class 'domain::VecAddExpr'
  const domain::Expr &VecAddExpr::getVecAddExprArgR()
                                                    ^
-Domain.cpp:87:15: error: prototype for 'domain::Expr* domain::Domain::addVecAddExpr(domain::Space&, coords::VectorAddExpr*, domain::Expr*, domain::Expr*)' does not match any in class 'domain::Domain'
- domain::Expr *Domain::addVecAddExpr(Space &s, coords::VectorAddExpr *e, domain::Expr *mem, domain::Expr *arg)
-               ^~~~~~
-In file included from Checker.h:4:0,
-                 from Domain.cpp:3:
-Domain.h:182:8: error: candidate is: domain::Expr* domain::Domain::addVecAddExpr(domain::Space&, coords::VectorAddExpr*, domain::Expr&, domain::Expr&)
-  Expr* addVecAddExpr(Space& s, coords::VectorAddExpr* e, domain::Expr& left_, domain::Expr& right_);
-        ^~~~~~~~~~~~~
+Domain.cpp: In member function 'domain::Expr* domain::Domain::addVecAddExpr(domain::Space&, coords::VectorAddExpr*, domain::Expr*, domain::Expr*)':
+Domain.cpp:94:13: error: cannot convert 'domain::Expr' to 'domain::Expr*' in return
+     return *be;
+             ^~
+Domain.cpp: At global scope:
 Domain.cpp:121:27: error: 'domain::Vector* domain::Domain::addVector' is not a static data member of 'class domain::Domain'
  Vector* Domain::addVector(coords Vector* coords, domain::Expr *expr) {
                            ^~~~~~
@@ -3930,10 +3495,5 @@ Domain.cpp:121:63: error: expected primary-expression before '*' token
 Domain.cpp:121:68: error: expression list treated as compound expression in initializer [-fpermissive]
  Vector* Domain::addVector(coords Vector* coords, domain::Expr *expr) {
                                                                     ^
-In file included from Checker.h:4:0,
-                 from Domain.cpp:3:
-Domain.h:143:36: warning: 'domain::VecCtorType' defined but not used [-Wunused-variable]
- enum {VEC_EXPR, VEC_LIT, VEC_VAR } VecCtorType;
-                                    ^~~~~~~~~~~
 Makefile:110: recipe for target '../build/ASTMatcher' failed
 make: *** [../build/ASTMatcher] Error 1

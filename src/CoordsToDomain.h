@@ -24,8 +24,8 @@ class CoordsToDomain
 	void putVectorLitInterp(const coords::VectorLit &n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(const coords::VectorLit &n) const;
 
-	void putExpressionInterp(const coords::VectorExpr *n, domain::Expr *e);
-	domain::Expr *getExpressionInterp(const coords::VectorExpr* n);
+	void putExpressionInterp(const coords::VecExpr *n, domain::Expr *e);
+	domain::Expr *getExpressionInterp(const coords::VecExpr* n);
 
 	void putBindingInterp(coords::Binding *vardecl_wrapper, domain::Binding &b);
 	const domain::Binding *getBindingInterp(const coords::Binding* vardecl_wrapper);
@@ -46,11 +46,11 @@ class CoordsToDomain
 	just adding operator==() and hash functions.
 
 	TODO: Compare with ast2coords. There it's clear that every
-	AST node maps to a coords::VectorExpr. But here we distinguish
+	AST node maps to a coords::VecExpr. But here we distinguish
 	between different kinds of coords. Re-evaluate.
 	*/
 	unordered_map<coords::VecIdent, domain::Identifier *, coords::IdentifierHasher> interpIdent;
-	unordered_map<coords::VectorExpr, domain::Expr *, coords::VectorExprHasher> interpExpression;
+	unordered_map<coords::VecExpr, domain::Expr *, coords::VecExprHasher> interpExpression;
 	unordered_map<coords::Binding, domain::Binding *, coords::BindingHasher> interpBinding;
 };
 
