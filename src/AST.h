@@ -23,28 +23,39 @@ using VecVarExpr = const clang::DeclRefExpr;
 #endif
 
 /*
-Coords
-------
-VectorExpr (common base class)
-VectorLit 
-VecIdent 
-VarDeclRef 
-VectorAddExpr 
-AddConstruct : VectorExpr (no hasher, unused?)
-Vector
-Binding
+Domain                  Coords              AST
+------                  ------              ---
+Space
+Expr                    VecExpr          (base class, union type)
+VecLitExpr              VectorLit           ast::VecLitExpr
+Identifier              VecIdent            ast::VecIdent
+VecVarExpr              VecVarExpr          ast::VecVarExpr          
+VecAddExpr              VectorAddExpr       ast::VecVecAddExpr,coords:VecExpr
+Vector                  AddConstruct        (unused? nope, see Domain Vector)
+                        Vector              clang::CXXConstructExpr 
+Binding                 Binding             ast::VecDef
 */
 
 /*
-Domain
-------
+Domain              Coords
+------              ------
 Space
-Identifier
-Expr
-VecLitExpr
-VecVarExpr
-VecAddExpr
-Binding
-Vector
-Domain
+Identifier          VecIdent
+Expr                VecExpr
+VecLitExpr          VectorLit
+VecVarExpr          VecVarExpr
+VecAddExpr          VecAddExpr
+Binding             Binding
+Vector              AddConstruct
+*/
+
+/*
+Interpretation
+--------------
+mkVecIdent          ast::VecIdent
+mkVecBinding        ast::VecDef, dom::it, dom::expr
+mkVecAddExpr        ast::AddExpr, ast::AddExpr, dom::Expr
+mkVecExpr           ast::VecExpr
+mkVector            ast::VectorLiteral
+mkVector            CXXXConstructExpr
 */

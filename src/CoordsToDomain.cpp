@@ -30,7 +30,7 @@ void CoordsToDomain::putExpressionInterp(const coords::VecExpr* n, domain::Expr*
 }
 
 domain::Expr* CoordsToDomain::getExpressionInterp
-        (const coords::VectorExpr* n)  {
+        (const coords::VecExpr* n)  {
    return interpExpression[*n]; 
 }
 
