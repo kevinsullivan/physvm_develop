@@ -93,7 +93,7 @@ const domain::VecExpr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTCon
 
   // Update interpretation
   // Return new domain (add) expression object
-  return interp_.mkVecAddExpr(ast, mem_coords, arg_coords);
+  return interp_.mkVecVecAddExpr(ast, mem_coords, arg_coords);
 }
 
 /*

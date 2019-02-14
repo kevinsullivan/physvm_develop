@@ -19,7 +19,7 @@ public:
     // TODO: Use AST.h name in next method
     void mkVector(CXXConstructExpr *ctor_ast, ASTContext *context); 
     void mkVector(ast::VecLitExpr *ast, ASTContext *context); 
-    void mkVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
+    void mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
     void mkVecExpr(ast::VecExpr *ast, ASTContext *context);
     // TODO: Use AST.h name in next method return
     const coords::VecExpr *getCoords(ast::VecExpr *expr)  

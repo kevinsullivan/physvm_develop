@@ -87,7 +87,7 @@ Domain Grammar
 --------------
 
 Expr (lit, var, fn) -- used to build inductively defined expression trees in domain language
-Interpretation::mkVecAddExpr : ast -> mem_coords -> arg_coords -> domain::Expr
+Interpretation::mkVecVecAddExpr : ast -> mem_coords -> arg_coords -> domain::Expr
 
 
 member_expr_of_add_call CXXMemberCallExpr

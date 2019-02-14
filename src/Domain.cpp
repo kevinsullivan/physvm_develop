@@ -23,12 +23,12 @@ void VecLitExpr::addFloatLit(float num)
     cerr << "Stub: add floats to litvalexpr\n";
 }
 
-const domain::VecExpr &VecAddExpr::getVecAddExprArgL()
+const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgL()
 {
     return arg_left_;
 }
 
-const domain::VecExpr &VecAddExpr::getVecAddExprArgR()
+const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgR()
 {
     return arg_right_;
 }
@@ -84,13 +84,13 @@ domain::VecExpr &Domain::addVecVarExpr(const coords::VecVarExpr *ast)
     return *be;
 }
 
-domain::VecExpr *Domain::addVecAddExpr(Space &s, coords::VecVecAddExpr *e, domain::VecExpr *mem, domain::VecExpr *arg)
+domain::VecExpr *Domain::addVecVecAddExpr(Space &s, coords::VecVecAddExpr *e, domain::VecExpr *mem, domain::VecExpr *arg)
 {
-    domain::VecExpr *be = new domain::VecAddExpr(s, e, mem, arg);
+    domain::VecExpr *be = new domain::VecVecAddExpr(s, e, mem, arg);
     expressions.push_back(be);
-    cerr << "Domain::addVecAddExpr:: Add. Coords are "
+    cerr << "Domain::addVecVecAddExpr:: Add. Coords are "
         << std::hex << e << " Domain VecExpr at " << std::hex << be << "\n";
-    cerr << "Domain::addVecAddExpr:: VecExpr string is " << be->toString() << "\n";
+    cerr << "Domain::addVecVecAddExpr:: VecExpr string is " << be->toString() << "\n";
     return *be;
 }
 
