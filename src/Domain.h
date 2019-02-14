@@ -8,7 +8,7 @@
 
 #include "Coords.h"
 
-using namespace std;
+//using namespace std;
 
 namespace domain {
 	
@@ -18,9 +18,9 @@ Named space. Later on this will become a full-fledged Euclidean space object.
 class Space {
 public:
 	Space() : name_("") {};
-	Space(string name) : name_(name) {};
-	string getName() const;
-	string toString() const { return getName(); } 
+	Space(std::string name) : name_(name) {};
+	std::string getName() const;
+	std::string toString() const { return getName(); } 
     friend ostream & operator << (ostream &out, const Space &s)
 	{ 
     out << s.getName(); 
@@ -41,8 +41,8 @@ public:
 	VecIdent(Space& space, const coords::VecIdent* vardecl) : space_(&space), vardecl_(vardecl) {}
 	Space* getSpace() const { return space_; }
 	const coords::VecIdent* getVarDeclWrapper() const { return vardecl_; }
-	string toString() const { return getName(); }
-	string getName() const;
+	std::string toString() const { return getName(); }
+	std::string getName() const;
 private:
 	Space* space_;
 	const coords::VecIdent* vardecl_;
@@ -54,7 +54,7 @@ public:
     VecExpr(const Space& s, const coords::VecExpr* ast) : space_(s), ast_(ast) {}
 	const coords::VecExpr* getVecExpr() const { return ast_; }
     const Space& getSpace() const;
-	virtual string toString() const {
+	virtual std::string toString() const {
 		if (ast_ != NULL) {
 			//cerr << "Domain::VecExpr::toString: coords::VecVecExpr pointer is " << std::hex << ast_ << "\n";
 			return "(" + ast_->toString() + " : " + space_.getName() + ")";
@@ -77,7 +77,7 @@ class VecLitExpr : public VecExpr {
 public:
     VecLitExpr(Space& s, const coords::VecLitExpr* ast) : VecExpr(s, ast) { }
     void addFloatLit(float num);
-	virtual string toString() const {
+	virtual std::string toString() const {
 		return "(" + ast_->toString() + " : " + getSpace().toString() + ")";
 	}
 private:
@@ -91,7 +91,7 @@ BIG TODO : Have Domain objects connect back to ast ***containers***, as in VecLi
 class VecVarExpr : public VecExpr {
 public:
     VecVarExpr(Space& s, const coords::VecExpr* ast) : domain::VecExpr(s, ast) {}
-	virtual string toString() const {
+	virtual std::string toString() const {
 		return "(" + ast_->toString() + " )";
 	}
 private:
@@ -108,7 +108,7 @@ public:
 	const VecExpr& getMemberVecExpr();
 	const VecExpr& getArgVecExpr();
 
-	virtual string toString() const {
+	virtual std::string toString() const {
 		return "(add " + mem_->toString() + " " + arg_->toString() + ")";
 	}
 
@@ -131,7 +131,7 @@ public:
 	const coords::VecDef* getVarDecl() const {return ast_wrapper_; } 
 	const domain::VecExpr* getVecExpr() const { return expr_; }
 	const domain::VecIdent* getVecIdent() { return identifier_; }
-	string toString() const {
+	std::string toString() const {
 		return "def " + identifier_->toString() + " := " + expr_->toString();
 	}
 private:
@@ -159,7 +159,7 @@ public:
 	const coords::Vector* getCoords() const {return coords_; } 
 	const domain::VecExpr* getVecExpr() const { return expr_; }
 
-	string toString() const {
+	std::std::string toString() const {
 		return expr_->toString();
 	}
 private:
@@ -179,7 +179,7 @@ of C++ objects. It should be isomorphic to the domain, and domain models
 
 class Domain {
 public:
-	Space& addSpace(const string& name);
+	Space& addSpace(const std::string& name);
 	//VecLitExpr& addLitExpr(Space& s, const coords::coords::Lit* ast);		/* BIG TODO: Fix others */
 	VecIdent* addVecIdent(Space& s, const coords::VecIdent* ast);
 	VecExpr& addVecVarExpr(const coords::VecVarExpr* ast);

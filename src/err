@@ -7,44 +7,16 @@ g++ -O0 -g -Wall `/llvm/build/bin/llvm-config --cxxflags` -I/llvm/tools/clang/in
 	-Wl,--start-group -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangDriver -lclangEdit -lclangFrontend -lclangFrontendTool -lclangLex -lclangParse -lclangSema -lclangEdit -lclangRewrite -lclangRewriteFrontend -lclangStaticAnalyzerFrontend -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangCrossTU -lclangIndex -lclangSerialization -lclangToolingCore -lclangTooling -lclangFormat -Wl,--end-group `/llvm/build/bin/llvm-config --ldflags --libs --system-libs` -o ../build/ASTMatcher
 In file included from ASTToCoords.h:5:0,
                  from ASTToCoords.cpp:1:
-Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getVarDecl() const':
-Coords.h:96:47: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
-   const VecIdent *getVarDecl() const { return varDecl_; }
-                                               ^~~~~~~~
-Coords.h: At global scope:
-Coords.h:240:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *getDeclStmt() const { return declStmt_; }
-         ^~~~~~
-         Vector
-Coords.h:249:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *declStmt_;
-         ^~~~~~
-         Vector
-Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
-Coords.h:238:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
-       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
-         ^~~~~~~~~
-Coords.h:251:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:253:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
    const VecExpr *be_;
                   ^~~
-Coords.h:238:64: warning:   base 'coords::VecExpr' [-Wreorder]
+Coords.h:240:64: warning:   base 'coords::VecExpr' [-Wreorder]
        : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
                                                                 ^
-Coords.h:236:3: warning:   when initialized here [-Wreorder]
-   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
-   ^~~~~~~
-Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
-Coords.h:244:13: error: 'declStmt_' was not declared in this scope
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-Coords.h:244:13: note: suggested alternative: 'decl_'
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-             decl_
-Coords.h:244:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
-     return (declStmt_ == other.declStmt_);
-                                ^~~~~~~~~
-                                decl_
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
 In file included from ASTToCoords.cpp:1:0:
 ASTToCoords.h: At global scope:
 ASTToCoords.h:14:28: error: expected ';' at end of member declaration
@@ -66,44 +38,16 @@ ASTToCoords.cpp:28:65: error: 'e' was not declared in this scope
                                                                  ^
 In file included from Interpretation.h:5:0,
                  from Interpretation.cpp:1:
-Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getVarDecl() const':
-Coords.h:96:47: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
-   const VecIdent *getVarDecl() const { return varDecl_; }
-                                               ^~~~~~~~
-Coords.h: At global scope:
-Coords.h:240:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *getDeclStmt() const { return declStmt_; }
-         ^~~~~~
-         Vector
-Coords.h:249:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *declStmt_;
-         ^~~~~~
-         Vector
-Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
-Coords.h:238:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
-       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
-         ^~~~~~~~~
-Coords.h:251:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:253:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
    const VecExpr *be_;
                   ^~~
-Coords.h:238:64: warning:   base 'coords::VecExpr' [-Wreorder]
+Coords.h:240:64: warning:   base 'coords::VecExpr' [-Wreorder]
        : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
                                                                 ^
-Coords.h:236:3: warning:   when initialized here [-Wreorder]
-   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
-   ^~~~~~~
-Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
-Coords.h:244:13: error: 'declStmt_' was not declared in this scope
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-Coords.h:244:13: note: suggested alternative: 'decl_'
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-             decl_
-Coords.h:244:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
-     return (declStmt_ == other.declStmt_);
-                                ^~~~~~~~~
-                                decl_
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
 In file included from Interpretation.h:6:0,
                  from Interpretation.cpp:1:
 ASTToCoords.h: At global scope:
@@ -173,7 +117,7 @@ Interpretation.cpp:99:53: error: invalid conversion from 'ast::VecExpr* {aka con
                                                      ^
 In file included from Interpretation.h:5:0,
                  from Interpretation.cpp:1:
-Coords.h:208:3: note:   initializing argument 1 of 'coords::Vector::Vector(ast::Vector*)'
+Coords.h:211:3: note:   initializing argument 1 of 'coords::Vector::Vector(ast::Vector*)'
    Vector(const ast::Vector *constrExpr)
    ^~~~~~
 Interpretation.cpp:102:54: error: no matching function for call to 'domain::Domain::addVector(coords::Vector*&)'
@@ -239,125 +183,41 @@ Interpretation.h:25:28: note: 'const coords::VecExpr* interp::Interpretation::ge
                             ^~~~~~~~~
 In file included from Oracle.h:5:0,
                  from Oracle.cpp:4:
-Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getVarDecl() const':
-Coords.h:96:47: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
-   const VecIdent *getVarDecl() const { return varDecl_; }
-                                               ^~~~~~~~
-Coords.h: At global scope:
-Coords.h:240:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *getDeclStmt() const { return declStmt_; }
-         ^~~~~~
-         Vector
-Coords.h:249:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *declStmt_;
-         ^~~~~~
-         Vector
-Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
-Coords.h:238:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
-       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
-         ^~~~~~~~~
-Coords.h:251:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:253:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
    const VecExpr *be_;
                   ^~~
-Coords.h:238:64: warning:   base 'coords::VecExpr' [-Wreorder]
+Coords.h:240:64: warning:   base 'coords::VecExpr' [-Wreorder]
        : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
                                                                 ^
-Coords.h:236:3: warning:   when initialized here [-Wreorder]
-   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
-   ^~~~~~~
-Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
-Coords.h:244:13: error: 'declStmt_' was not declared in this scope
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-Coords.h:244:13: note: suggested alternative: 'decl_'
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-             decl_
-Coords.h:244:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
-     return (declStmt_ == other.declStmt_);
-                                ^~~~~~~~~
-                                decl_
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
 In file included from Domain.h:9:0,
                  from Checker.h:4,
                  from Checker.cpp:9:
-Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getVarDecl() const':
-Coords.h:96:47: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
-   const VecIdent *getVarDecl() const { return varDecl_; }
-                                               ^~~~~~~~
-Coords.h: At global scope:
-Coords.h:240:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *getDeclStmt() const { return declStmt_; }
-         ^~~~~~
-         Vector
-Coords.h:249:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *declStmt_;
-         ^~~~~~
-         Vector
-Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
-Coords.h:238:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
-       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
-         ^~~~~~~~~
-Coords.h:251:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:253:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
    const VecExpr *be_;
                   ^~~
-Coords.h:238:64: warning:   base 'coords::VecExpr' [-Wreorder]
+Coords.h:240:64: warning:   base 'coords::VecExpr' [-Wreorder]
        : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
                                                                 ^
-Coords.h:236:3: warning:   when initialized here [-Wreorder]
-   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
-   ^~~~~~~
-Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
-Coords.h:244:13: error: 'declStmt_' was not declared in this scope
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-Coords.h:244:13: note: suggested alternative: 'decl_'
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-             decl_
-Coords.h:244:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
-     return (declStmt_ == other.declStmt_);
-                                ^~~~~~~~~
-                                decl_
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
 In file included from CoordsToDomain.h:5:0,
                  from CoordsToDomain.cpp:1:
-Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getVarDecl() const':
-Coords.h:96:47: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
-   const VecIdent *getVarDecl() const { return varDecl_; }
-                                               ^~~~~~~~
-Coords.h: At global scope:
-Coords.h:240:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *getDeclStmt() const { return declStmt_; }
-         ^~~~~~
-         Vector
-Coords.h:249:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *declStmt_;
-         ^~~~~~
-         Vector
-Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
-Coords.h:238:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
-       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
-         ^~~~~~~~~
-Coords.h:251:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:253:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
    const VecExpr *be_;
                   ^~~
-Coords.h:238:64: warning:   base 'coords::VecExpr' [-Wreorder]
+Coords.h:240:64: warning:   base 'coords::VecExpr' [-Wreorder]
        : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
                                                                 ^
-Coords.h:236:3: warning:   when initialized here [-Wreorder]
-   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
-   ^~~~~~~
-Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
-Coords.h:244:13: error: 'declStmt_' was not declared in this scope
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-Coords.h:244:13: note: suggested alternative: 'decl_'
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-             decl_
-Coords.h:244:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
-     return (declStmt_ == other.declStmt_);
-                                ^~~~~~~~~
-                                decl_
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
 In file included from CoordsToDomain.cpp:1:0:
 CoordsToDomain.h: At global scope:
 CoordsToDomain.h:24:40: error: 'VectorLit' in namespace 'coords' does not name a type
@@ -368,44 +228,16 @@ CoordsToDomain.h:25:49: error: 'VectorLit' in namespace 'coords' does not name a
                                                  ^~~~~~~~~
 In file included from Interpretation.h:5:0,
                  from main.cpp:15:
-Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getVarDecl() const':
-Coords.h:96:47: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
-   const VecIdent *getVarDecl() const { return varDecl_; }
-                                               ^~~~~~~~
-Coords.h: At global scope:
-Coords.h:240:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *getDeclStmt() const { return declStmt_; }
-         ^~~~~~
-         Vector
-Coords.h:249:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *declStmt_;
-         ^~~~~~
-         Vector
-Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
-Coords.h:238:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
-       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
-         ^~~~~~~~~
-Coords.h:251:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:253:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
    const VecExpr *be_;
                   ^~~
-Coords.h:238:64: warning:   base 'coords::VecExpr' [-Wreorder]
+Coords.h:240:64: warning:   base 'coords::VecExpr' [-Wreorder]
        : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
                                                                 ^
-Coords.h:236:3: warning:   when initialized here [-Wreorder]
-   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
-   ^~~~~~~
-Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
-Coords.h:244:13: error: 'declStmt_' was not declared in this scope
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-Coords.h:244:13: note: suggested alternative: 'decl_'
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-             decl_
-Coords.h:244:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
-     return (declStmt_ == other.declStmt_);
-                                ^~~~~~~~~
-                                decl_
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
 In file included from Interpretation.h:6:0,
                  from main.cpp:15:
 ASTToCoords.h: At global scope:
@@ -551,7 +383,7 @@ main.cpp:476:41: error: expected primary-expression before '->' token
      const domain::VecExpr *expr = interp->getExpressionInterp(consdecl);
                                          ^~
 main.cpp:480:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
-     interp_->mkVecBinding(declstmt, id, expr);
+     interp_->mkVecDef(declstmt, id, expr);
             ^~
 main.cpp:451:20: warning: unused variable 'sm' [-Wunused-variable]
      SourceManager &sm = context->getSourceManager();
@@ -570,44 +402,16 @@ main.cpp:554:10: error: base operand of '->' has non-pointer type 'interp::Inter
 In file included from Domain.h:9:0,
                  from Checker.h:4,
                  from Domain.cpp:3:
-Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getVarDecl() const':
-Coords.h:96:47: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
-   const VecIdent *getVarDecl() const { return varDecl_; }
-                                               ^~~~~~~~
-Coords.h: At global scope:
-Coords.h:240:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *getDeclStmt() const { return declStmt_; }
-         ^~~~~~
-         Vector
-Coords.h:249:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
-   const VecDef *declStmt_;
-         ^~~~~~
-         Vector
-Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
-Coords.h:238:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
-       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
-         ^~~~~~~~~
-Coords.h:251:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:253:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
    const VecExpr *be_;
                   ^~~
-Coords.h:238:64: warning:   base 'coords::VecExpr' [-Wreorder]
+Coords.h:240:64: warning:   base 'coords::VecExpr' [-Wreorder]
        : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
                                                                 ^
-Coords.h:236:3: warning:   when initialized here [-Wreorder]
-   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
-   ^~~~~~~
-Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
-Coords.h:244:13: error: 'declStmt_' was not declared in this scope
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-Coords.h:244:13: note: suggested alternative: 'decl_'
-     return (declStmt_ == other.declStmt_);
-             ^~~~~~~~~
-             decl_
-Coords.h:244:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
-     return (declStmt_ == other.declStmt_);
-                                ^~~~~~~~~
-                                decl_
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
 Domain.cpp: At global scope:
 Domain.cpp:14:8: error: 'Identifier' has not been declared
  string Identifier::getName() const
@@ -642,18 +446,18 @@ Domain.cpp:97:1: error: 'Identifier' does not name a type; did you mean 'nextaft
  Identifier *Domain::addIdentifier(Space &s, const coords::VecIdent *ast)
  ^~~~~~~~~~
  nextafter
-Domain.cpp:106:61: error: 'Identifier' does not name a type; did you mean 'nextafter'?
- Binding &Domain::addBinding(const coords::Binding *v, const Identifier* i, const domain::VecExpr* e)
-                                                             ^~~~~~~~~~
-                                                             nextafter
-Domain.cpp:106:10: error: prototype for 'domain::Binding& domain::Domain::addBinding(const coords::Binding*, const int*, const domain::VecExpr*)' does not match any in class 'domain::Domain'
- Binding &Domain::addBinding(const coords::Binding *v, const Identifier* i, const domain::VecExpr* e)
-          ^~~~~~
+Domain.cpp:106:58: error: 'Identifier' does not name a type; did you mean 'nextafter'?
+ VecDef &Domain::addVecDef(const coords::VecDef *v, const Identifier* i, const domain::VecExpr* e)
+                                                          ^~~~~~~~~~
+                                                          nextafter
+Domain.cpp:106:9: error: prototype for 'domain::VecDef& domain::Domain::addVecDef(const coords::VecDef*, const int*, const domain::VecExpr*)' does not match any in class 'domain::Domain'
+ VecDef &Domain::addVecDef(const coords::VecDef *v, const Identifier* i, const domain::VecExpr* e)
+         ^~~~~~
 In file included from Checker.h:4:0,
                  from Domain.cpp:3:
-Domain.h:192:11: error: candidate is: domain::Binding& domain::Domain::addBinding(const coords::Binding*, const domain::VecIdent*, const domain::VecExpr*)
-  Binding& addBinding(const coords::Binding* vardecl, const VecIdent* identifier, const VecExpr* expression);
-           ^~~~~~~~~~
+Domain.h:192:10: error: candidate is: domain::VecDef& domain::Domain::addVecDef(const coords::VecDef*, const domain::VecIdent*, const domain::VecExpr*)
+  VecDef& addVecDef(const coords::VecDef* vardecl, const VecIdent* identifier, const VecExpr* expression);
+          ^~~~~~~~~
 Domain.cpp:121:27: error: 'domain::Vector* domain::Domain::addVector' is not a static data member of 'class domain::Domain'
  Vector* Domain::addVector(coords Vector* coords, domain::VecExpr *expr) {
                            ^~~~~~

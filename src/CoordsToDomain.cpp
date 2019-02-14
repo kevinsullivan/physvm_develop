@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-using namespace std;
-using namespace coords2domain;
+//using namespace std;
+//using namespace coords2domain;
 
 /*************
  * VecIdents

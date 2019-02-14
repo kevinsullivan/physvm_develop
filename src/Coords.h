@@ -8,9 +8,9 @@
 #include "AST.h"
 
 
-using namespace clang;
-using namespace clang::ast_matchers;
-using namespace std;
+//using namespace clang;
+//using namespace clang::ast_matchers;
+//using namespace std;
 
 namespace coords {
 
@@ -42,7 +42,7 @@ public:
       return (decl_ == other.decl_);
     }
   }
-  virtual string toString() const {
+  virtual std::std::string toString() const {
     return "::toPrint: Error: should not be called.";
   }
 
@@ -72,7 +72,7 @@ public:
 
     return (constrExpr_ == other.constrExpr_);
   }
-  virtual string toString() const { return "(mk_vector 0)"; }
+  virtual std::string toString() const { return "(mk_vector 0)"; }
 
 private:
   const ast::VecLitExpr *constrExpr_;
@@ -100,7 +100,7 @@ public:
   bool operator==(const VecIdent &other) const {
     return (ident_ == other.ident_);
   }
-  virtual string toString() const { 
+  virtual std::string toString() const { 
     return ident_->getNameAsString(); 
   }
 
@@ -128,7 +128,7 @@ public:
   bool operator==(const VecVarExpr &other) const {
     return (varDeclRef_ == other.varDeclRef_);
   }
-  virtual string toString() const {
+  virtual std::string toString() const {
     return varDeclRef_->getDecl()->getNameAsString();
   }
 
@@ -159,7 +159,7 @@ public:
   bool operator==(const VecVecAddExpr &other) const {
     return (cxxMemberCallExpr_ == other.cxxMemberCallExpr_);
   }
-  virtual string toString() const {
+  virtual std::string toString() const {
     return "add (" + left_->toString() + ") (" + right_->toString() + ")";
   }
 
@@ -196,7 +196,7 @@ public:
 
     return (constrExpr_ == other.constrExpr_);
   }
-  virtual string toString() const { return "AddConstructNode"; }
+  virtual std::string toString() const { return "AddConstructNode"; }
 
 private:
   ast::VecCtor*constrExpr_;
@@ -217,7 +217,7 @@ public:
 
     return (constrExpr_ == other.constrExpr_);
   }
-  virtual string toString() const { return "Vector"; }
+  virtual std::string toString() const { return "Vector"; }
 
 private:
   const ast::Vector *constrExpr_;
@@ -245,7 +245,7 @@ public:
   bool operator==(const VecDef &other) const {
     return (declStmt_ == other.declStmt_);
   }
-  virtual string toString() const { return "VecDef (STUB: refine)"; }
+  virtual std::string toString() const { return "VecDef (STUB: refine)"; }
 
 private:
   const ast::VecDef *declStmt_;

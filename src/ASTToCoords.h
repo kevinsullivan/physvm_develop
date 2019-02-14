@@ -9,13 +9,12 @@ namespace ast2coords {
 
 class ASTToCoords {
 public:
-
-    const coords::VecIdent *makeCoordsForVecIdent(const ast::VecIdent *ident);
-    const coords::VecExpr *getASTExprCoords(ast::Expr* e);
+    const coords::VecIdent *makeCoordsForVecIdent(const VecIdent *ident);
+    const coords::VecExpr *getASTExprCoords(Expr* e);
 
 // protected
 // TODO: Use AST.h type aliases
-//
+// Note: All coords are coords::VecExpr
     void overrideExpr(const clang::Expr *e, const coords::VecExpr *c);
     void overrideStmt(const clang::Stmt *s, const coords::VecExpr *c);
     void overrideDecl(const clang::Decl *d, const coords::VecExpr *c);
