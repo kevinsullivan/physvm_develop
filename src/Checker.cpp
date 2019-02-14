@@ -36,7 +36,7 @@ void writeDomain(FILE*, Domain& d);
 
 aFile* openFile() {
     aFile* f = new aFile;
-    string name = std::string(tmpnam(NULL)) + ".lean";
+    std::string name = std::string(tmpnam(NULL)) + ".lean";
     char * name_cstr = new char [name.length()+1];
     strcpy (name_cstr, name.c_str());
     f->name = name_cstr;
@@ -79,7 +79,7 @@ get the exit code to determine whether there was an error
 return true if there was no error otherwise return false
 */
 bool checkMath(aFile* f) {
-    int status = system((string("lean ") + string(f->name)).c_str());
+    int status = system((std::string("lean ") + string(f->name)).c_str());
     return (status == 0); 
 }
 

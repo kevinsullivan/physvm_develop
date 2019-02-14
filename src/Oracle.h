@@ -16,7 +16,7 @@ public:
 	// Effects: get space annotation from environment
 	// Postcondition: return value is space to associate with vector
 	//
-	domain::Space& getSpaceForVector(string where);
+	domain::Space& getSpaceForVector(std::string where);
 
 	domain::Space& getSpaceForAddExpression(const domain::VecExpr * left_br, const domain::VecExpr * right_br)
 	{

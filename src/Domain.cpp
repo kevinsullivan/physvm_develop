@@ -6,12 +6,12 @@
 using namespace std;
 using namespace domain;
 
-string Space::getName() const { return name_; }
+std::string Space::getName() const { return name_; }
 
 const Space &domain::VecExpr::getSpace() const { return space_; }
 
 
-string Identifier::getName() const
+std::string Identifier::getName() const
 {
     cerr << "Identifier::getName(): vardecl_  addr is " << std::hex << vardecl_->getVarDecl() << "\n";
     return "(" + vardecl_->toString() + " : " + space_->getName() + ")";

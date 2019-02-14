@@ -12,10 +12,10 @@ using namespace std;
 using namespace oracle;
 
 void printSpaces(vector<domain::Space>& spaces);
-int selectSpace(vector<domain::Space>& spaces, string);
+int selectSpace(vector<domain::Space>& spaces, std::string);
 int selectSpace(vector<domain::Space>& spaces);
 
-domain::Space& Oracle::getSpaceForVector(string where) {
+domain::Space& Oracle::getSpaceForVector(std::string where) {
 	cerr << "getSpaceForVector should take AST argument\n";
 	return this->getSpace();
 }
