@@ -40,11 +40,11 @@ Binding                 Binding             ast::VecDef
 Domain              Coords
 ------              ------
 Space
-VecIdent          VecIdent
+VecIdent            VecIdent
 Expr                VecExpr
 VecLitExpr          VecLitExpr
 VecVarExpr          VecVarExpr
-VecVecAddExpr          VecVecVecAddExpr
+VecVecAddExpr       VecVecVecAddExpr
 Binding             Binding
 Vector              AddConstruct
 */
