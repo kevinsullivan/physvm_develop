@@ -27,7 +27,7 @@ public:
 		return getSpace();
 	}
 
-	domain::Space& getSpaceForIdentifier(const clang::VarDecl* v) {
+	domain::Space& getSpaceForVecIdent(const clang::VarDecl* v) {
 		//cerr << "Returning stub space for identifier.\n";
 		cerr << "Space for identifier?\n";
 		//v->dump();

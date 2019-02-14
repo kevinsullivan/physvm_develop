@@ -54,18 +54,18 @@ static cl::extrahelp MoreHelp("No additional options available for Peirce.");
 /*
 Function: Add interpretation for Vector identifier
 */
-domain::Identifier *handleCXXConstructIdentifier(const VarDecl *vardecl,
+domain::VecIdent *handleCXXConstructVecIdent(const VarDecl *vardecl,
                                                  ASTContext *context,
                                                  SourceManager &sm) {
  return interp_.mkVecIdent(vardecl);
 }
 
 /*
-Function: Add interpretation for binding of Identifier to Vector xpression
+Function: Add interpretation for binding of VecIdent to Vector xpression
 */
-void handleCXXConstructIdentifierBinding(
+void handleCXXConstructVecIdentBinding(
         const clang::DeclStmt* declstmt,
-        domain::Identifier *bv,
+        domain::VecIdent *bv,
         domain::VecExpr *be) {
     interp_.mkVecBinding(declstmt,bv,be); // no retval
 }
@@ -597,9 +597,9 @@ public:
       // TODO: Fill in logic for error condition in preceding conditional
       cout << "Handling vector declaration statement\n";
       domain::VecExpr *be = handleCXXConstructExpr(consdecl, context, sm);
-      domain::Identifier *bi =
-          handleCXXConstructIdentifier(vardecl, context, sm);
-      handleCXXConstructIdentifierBinding(declstmt, bi, be);
+      domain::VecIdent *bi =
+          handleCXXConstructVecIdent(vardecl, context, sm);
+      handleCXXConstructVecIdentBinding(declstmt, bi, be);
       cout << "Done handling vector declaration statement\n\n";
     } else {
       cout << "VectorDeclStmtHandler::run(): Something's wrong\n";

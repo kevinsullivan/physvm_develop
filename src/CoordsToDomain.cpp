@@ -6,16 +6,16 @@ using namespace std;
 using namespace coords2domain;
 
 /*************
- * Identifiers
+ * VecIdents
  *************/
 
-void CoordsToDomain::putIdentifierInterp(const coords::VecIdent *key, domain::Identifier *v) {
-    cerr << "CoordsToDomain::putIdentifierInterp: " << key->toString() << "\n";
+void CoordsToDomain::putVecIdentInterp(const coords::VecIdent *key, domain::VecIdent *v) {
+    cerr << "CoordsToDomain::putVecIdentInterp: " << key->toString() << "\n";
     interpIdent.insert(std::make_pair(*key, v));
     //cerr << "Put Ident Interp.\n";
 }
 
-const domain::Identifier* CoordsToDomain::getIdentifierInterp(const coords::VecIdent* n) 
+const domain::VecIdent* CoordsToDomain::getVecIdentInterp(const coords::VecIdent* n) 
 {
     return interpIdent[*n];
     cerr << "Get Ident Interp.\n";
