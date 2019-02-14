@@ -66,7 +66,7 @@ Function: Add interpretation for binding of Identifier to Vector xpression
 void handleCXXConstructIdentifierBinding(
         const clang::DeclStmt* declstmt,
         domain::Identifier *bv,
-        domain::Expr *be) {
+        domain::VecExpr *be) {
     interp_.mkVecBinding(declstmt,bv,be); // no retval
 }
 
@@ -207,7 +207,7 @@ private:
 
 // BEGIN OF HANDLER HELPER FUNCTIONS
 
-domain::Expr *handle_left_of_add_call(const clang::Expr *left,
+domain::VecExpr *handle_left_of_add_call(const clang::Expr *left,
                                       ASTContext *context) {
   cout << "Handling LEFT of add call----Left Hand Side\n";
   CXXMemberCallExprLeftMatcher *leftmatcher =
@@ -215,13 +215,13 @@ domain::Expr *handle_left_of_add_call(const clang::Expr *left,
   leftmatcher->match(left, context);
 }
 
-domain::Expr *handle_right_of_add_call(const clang::Expr *right,
+domain::VecExpr *handle_right_of_add_call(const clang::Expr *right,
                                        ASTContext *context) {
   cout << "Handling RIGHT of add call----Right Hand Side\n";
   CXXMemberCallExprRightMatcher *rightmatcher =
       new CXXMemberCallExprRightMatcher();
   rightmatcher->match(right, context);
-  // STUB OUT the implementation for the domain::Expr object
+  // STUB OUT the implementation for the domain::VecExpr object
   return NULL;
 }
 
@@ -318,8 +318,8 @@ void HandlerForCXXMemberCallExpr::run(const MatchFinder::MatchResult &Result) {
     return;
   }
 
-  domain::Expr *left_br = handle_left_of_add_call(left, context);
-  domain::Expr *right_br = handle_right_of_add_call(right, context);
+  domain::VecExpr *left_br = handle_left_of_add_call(left, context);
+  domain::VecExpr *right_br = handle_right_of_add_call(right, context);
 
   if (!left) {
     cout << "Null left domain pointer\n";
@@ -504,7 +504,7 @@ a corresponding expression in the domain, and that the
 interpretation links this code/AST-node to that domain object.
 
 Postcondition: the return value of this function is pointer to a new
-object of type domain::Expr; that object is in the domain; it might
+object of type domain::VecExpr; that object is in the domain; it might
 itself represent a complex expression tree; it links back to consdecl;
 and the interpretation is updated to like consdecl to the new domain
 object. This function works recursively to make sure that all of the
@@ -521,7 +521,7 @@ handled by pattern matching include literal and add expressions.
 - Vec v1(0.0,0.0,0.0) is a literal expression
 - (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
 */
-domain::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
+domain::VecExpr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
                                      ASTContext *context, SourceManager &sm) {
   cout << "Pattern matching Vector CXXConstructExpr at " << std::hex << consdecl << " and dispatching to handler.\n";
   CXXConstructExprMatcher *matcher = new CXXConstructExprMatcher();
@@ -596,7 +596,7 @@ public:
       }
       // TODO: Fill in logic for error condition in preceding conditional
       cout << "Handling vector declaration statement\n";
-      domain::Expr *be = handleCXXConstructExpr(consdecl, context, sm);
+      domain::VecExpr *be = handleCXXConstructExpr(consdecl, context, sm);
       domain::Identifier *bi =
           handleCXXConstructIdentifier(vardecl, context, sm);
       handleCXXConstructIdentifierBinding(declstmt, bi, be);

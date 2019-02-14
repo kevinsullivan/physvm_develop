@@ -25,11 +25,11 @@ const domain::Identifier* CoordsToDomain::getIdentifierInterp(const coords::VecI
  * Add Expression
  ****************/
 
-void CoordsToDomain::putExpressionInterp(const coords::VecExpr* n, domain::Expr* e) {
+void CoordsToDomain::putExpressionInterp(const coords::VecExpr* n, domain::VecExpr* e) {
     interpExpression.insert(std::make_pair(*n, e));
 }
 
-domain::Expr* CoordsToDomain::getExpressionInterp
+domain::VecExpr* CoordsToDomain::getExpressionInterp
         (const coords::VecExpr* n)  {
    return interpExpression[*n]; 
 }

@@ -8,7 +8,7 @@ using namespace domain;
 
 string Space::getName() const { return name_; }
 
-const Space &domain::Expr::getSpace() const { return space_; }
+const Space &domain::VecExpr::getSpace() const { return space_; }
 
 
 string Identifier::getName() const
@@ -23,12 +23,12 @@ void VecLitExpr::addFloatLit(float num)
     cerr << "Stub: add floats to litvalexpr\n";
 }
 
-const domain::Expr &VecAddExpr::getVecAddExprArgL()
+const domain::VecExpr &VecAddExpr::getVecAddExprArgL()
 {
     return arg_left_;
 }
 
-const domain::Expr &VecAddExpr::getVecAddExprArgR()
+const domain::VecExpr &VecAddExpr::getVecAddExprArgR()
 {
     return arg_right_;
 }
@@ -48,9 +48,9 @@ Space &Domain::addSpace(const string &name)
 }
 
 
-domain::Expr *Domain::addVecLitExpr(Space &s, const coords::VectorLit *e)
+domain::VecExpr *Domain::addVecLitExpr(Space &s, const coords::VectorLit *e)
 {
-    domain::Expr *be = new domain::Expr(s, e);
+    domain::VecExpr *be = new domain::VecExpr(s, e);
     //cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
     //dump();
     expressions.push_back(be);
@@ -72,10 +72,10 @@ Space &getSpaceOfVarExpr(const coords::VecExpr *ast)
 }
 
 // TODO: Change arg type to be more precise
-domain::Expr &Domain::addVecVarExpr(const coords::VecVarExpr *ast)
+domain::VecExpr &Domain::addVecVarExpr(const coords::VecVarExpr *ast)
 {
     Space &s = getSpaceOfVarExpr(ast);
-    domain::Expr *be = new domain::Expr(s, ast);
+    domain::VecExpr *be = new domain::VecExpr(s, ast);
     cerr << "Adding Vec Var Expr to domain, address " << std::hex << be << ": " << be->toString() << "\n";
     //dump();
     expressions.push_back(be);
@@ -84,13 +84,13 @@ domain::Expr &Domain::addVecVarExpr(const coords::VecVarExpr *ast)
     return *be;
 }
 
-domain::Expr *Domain::addVecAddExpr(Space &s, coords::VecVecAddExpr *e, domain::Expr *mem, domain::Expr *arg)
+domain::VecExpr *Domain::addVecAddExpr(Space &s, coords::VecVecAddExpr *e, domain::VecExpr *mem, domain::VecExpr *arg)
 {
-    domain::Expr *be = new domain::VecAddExpr(s, e, mem, arg);
+    domain::VecExpr *be = new domain::VecAddExpr(s, e, mem, arg);
     expressions.push_back(be);
     cerr << "Domain::addVecAddExpr:: Add. Coords are "
-        << std::hex << e << " Domain Expr at " << std::hex << be << "\n";
-    cerr << "Domain::addVecAddExpr:: Expr string is " << be->toString() << "\n";
+        << std::hex << e << " Domain VecExpr at " << std::hex << be << "\n";
+    cerr << "Domain::addVecAddExpr:: VecExpr string is " << be->toString() << "\n";
     return *be;
 }
 
@@ -103,14 +103,14 @@ Identifier *Domain::addIdentifier(Space &s, const coords::VecIdent *ast)
 
 // TODO: Should be binding to Vector, not Expr
 // 
-Binding &Domain::addBinding(const coords::Binding *v, const Identifier* i, const domain::Expr* e)
+Binding &Domain::addBinding(const coords::Binding *v, const Identifier* i, const domain::VecExpr* e)
 {
     cerr << "Domain::addBinding ";
     cerr << "identifier is " << i->toString();
     cerr << " expression is " << e->toString() << "\n";
     Binding *bd = new Binding(v, i, e);
 /*
-Domain.cpp:116:38: error: no matching function for call to 'domain::Binding::Binding(const coords::Binding*&, const domain::Identifier*&, const domain::Expr*&)'
+Domain.cpp:116:38: error: no matching function for call to 'domain::Binding::Binding(const coords::Binding*&, const domain::Identifier*&, const domain::VecExpr*&)'
      Binding *bd = new Binding(v, i, e);
                                       ^
 */
@@ -118,7 +118,7 @@ Domain.cpp:116:38: error: no matching function for call to 'domain::Binding::Bin
     return *bd;
 }
 
-Vector* Domain::addVector(coords Vector* coords, domain::Expr *expr) {
+Vector* Domain::addVector(coords Vector* coords, domain::VecExpr *expr) {
     Vector* vec = new Vector(coords, expr);
     vectors.push_back(*vec);
 }

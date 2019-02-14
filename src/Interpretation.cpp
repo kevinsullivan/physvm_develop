@@ -30,7 +30,7 @@ domain::Identifier *Interpretation::mkVecIdent(ast::VecIdent *ast)
     return dom;
 }
 
-void Interpretation::mkVecBinding(ast::VecDef *ast, domain::Identifier *id, domain::Expr *exp)
+void Interpretation::mkVecBinding(ast::VecDef *ast, domain::Identifier *id, domain::VecExpr *exp)
 {
     cerr << "START: Interpretation::mkVecBinding.\n.";
     if (!exp || !id)
@@ -56,7 +56,7 @@ void Interpretation::mkVecBinding(ast::VecDef *ast, domain::Identifier *id, doma
 }
 
 // FIX
-void Interpretation::mkVecAddExpr(ast::AddExpr *ast, domain::Expr *mem, domain::Expr *arg) {
+void Interpretation::mkVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
 
   cerr << "Interpretation::mkVecAddExpr: START: adding\n";
   cerr << "Interpretation::mkVecAddExpr: Member is " << mem->toString() << " \n";
@@ -83,7 +83,7 @@ void Interpretation::mkVecAddExpr(ast::AddExpr *ast, domain::Expr *mem, domain::
     new coords::VecVecAddExpr(ast, mem_coords, arg_coords);
   ast2coords_->overrideExpr(ast, expr_coords);
   domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
-  domain::Expr *dom_add_expr = domain_->addVecAddExpr(space, expr_coords, mem, arg);
+  domain::VecExpr *dom_add_expr = domain_->addVecAddExpr(space, expr_coords, mem, arg);
   coords2dom_->putExpressionInterp(expr_coords, dom_add_expr);
 
   cerr << "Interpretation::mkVecAddExpr: Coords at " 
@@ -99,7 +99,7 @@ void Interpretation::mkVecExpr(ast::VecExpr *ast, ASTContext *context) {
     coords::Vector *vcoords = new coords::Vector(ast);  
     ast2coords_->overrideExpr(ast, vcoords);
     // WARNING: Is following code right? Or meant for CTORs?
-    domain::Expr *vec = domain_->addVector(vcoords);
+    domain::VecExpr *vec = domain_->addVector(vcoords);
     coords2dom_->putExpressionInterp(vcoords, vec);
     cerr << "Interpretation::mkVecExpr. DONE.\n";
 }
@@ -109,7 +109,7 @@ void Interpretation::mkVecExpr(ast::VecExpr *ast, ASTContext *context) {
 void Interpretation::mkVecVarExpr(ast, mem_coords, arg_coords) {
     const coords::VecVarExpr *var_coords = new VarDeclRef(ast);
     ast2coords_->overrideExpr(ast, var_coords));
-    domain::Expr &be = domain_domain->addVecVarExpr(var_coords);
+    domain::VecExpr &be = domain_domain->addVecVarExpr(var_coords);
     coords2dom_->putExpressionInterp(*wrapper, be);
 }
 */

@@ -24,8 +24,8 @@ class CoordsToDomain
 	void putVectorLitInterp(const coords::VectorLit &n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(const coords::VectorLit &n) const;
 
-	void putExpressionInterp(const coords::VecExpr *n, domain::Expr *e);
-	domain::Expr *getExpressionInterp(const coords::VecExpr* n);
+	void putExpressionInterp(const coords::VecExpr *n, domain::VecExpr *e);
+	domain::VecExpr *getExpressionInterp(const coords::VecExpr* n);
 
 	void putBindingInterp(coords::Binding *vardecl_wrapper, domain::Binding &b);
 	const domain::Binding *getBindingInterp(const coords::Binding* vardecl_wrapper);
@@ -50,7 +50,7 @@ class CoordsToDomain
 	between different kinds of coords. Re-evaluate.
 	*/
 	unordered_map<coords::VecIdent, domain::Identifier *, coords::IdentifierHasher> interpIdent;
-	unordered_map<coords::VecExpr, domain::Expr *, coords::VecExprHasher> interpExpression;
+	unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
 	unordered_map<coords::Binding, domain::Binding *, coords::BindingHasher> interpBinding;
 };
 
