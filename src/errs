@@ -1,0 +1,673 @@
+-----------------------------------------------
+Using LLVM_SRC_PATH = /llvm
+Using LLVM_BUILD_PATH = /llvm/build
+Using LLVM_BIN_PATH = /llvm/build/bin
+-----------------------------------------------
+g++ -O0 -g -Wall `/llvm/build/bin/llvm-config --cxxflags` -I/llvm/tools/clang/include -I/llvm/build/tools/clang/include ASTToCoords.cpp AST.cpp Interpretation.cpp Oracle.cpp Checker.cpp CoordsToDomain.cpp main.cpp Domain.cpp \
+	-Wl,--start-group -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangDriver -lclangEdit -lclangFrontend -lclangFrontendTool -lclangLex -lclangParse -lclangSema -lclangEdit -lclangRewrite -lclangRewriteFrontend -lclangStaticAnalyzerFrontend -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangCrossTU -lclangIndex -lclangSerialization -lclangToolingCore -lclangTooling -lclangFormat -Wl,--end-group `/llvm/build/bin/llvm-config --ldflags --libs --system-libs` -o ../build/ASTMatcher
+In file included from ASTToCoords.h:5:0,
+                 from ASTToCoords.cpp:1:
+Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getCoords() const':
+Coords.h:97:54: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
+   const coords::VecIdent *getCoords() const { return ident_; }
+                                                      ^~~~~~
+Coords.h: At global scope:
+Coords.h:243:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *getDeclStmt() const { return declStmt_; }
+         ^~~~~~
+         Vector
+Coords.h:252:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *declStmt_;
+         ^~~~~~
+         Vector
+Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:241:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+         ^~~~~~~~~
+Coords.h:254:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
+   ^~~~~~~
+Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
+Coords.h:247:13: error: 'declStmt_' was not declared in this scope
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+Coords.h:247:13: note: suggested alternative: 'decl_'
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+             decl_
+Coords.h:247:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
+     return (declStmt_ == other.declStmt_);
+                                ^~~~~~~~~
+                                decl_
+In file included from ASTToCoords.cpp:1:0:
+ASTToCoords.h: At global scope:
+ASTToCoords.h:14:28: error: expected ';' at end of member declaration
+     const coords::VecExpr *getASTExprCoords(ast::Expr* e);
+                            ^~~~~~~~~~~~~~~~
+ASTToCoords.h:14:54: error: expected ')' before '*' token
+     const coords::VecExpr *getASTExprCoords(ast::Expr* e);
+                                                      ^
+ASTToCoords.cpp:28:59: error: 'const coords::VecExpr* ast2coords::ASTToCoords::getASTExprCoords' is not a static data member of 'class ast2coords::ASTToCoords'
+ const coords::VecExpr *ASTToCoords::getASTExprCoords(ast::Expr* e) {
+                                                           ^~~~
+ASTToCoords.cpp:28:59: error: 'Expr' is not a member of 'ast'
+ASTToCoords.cpp:28:59: note: suggested alternative: 'VecExpr'
+ const coords::VecExpr *ASTToCoords::getASTExprCoords(ast::Expr* e) {
+                                                           ^~~~
+                                                           VecExpr
+ASTToCoords.cpp:28:65: error: 'e' was not declared in this scope
+ const coords::VecExpr *ASTToCoords::getASTExprCoords(ast::Expr* e) {
+                                                                 ^
+In file included from Interpretation.h:5:0,
+                 from Interpretation.cpp:1:
+Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getCoords() const':
+Coords.h:97:54: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
+   const coords::VecIdent *getCoords() const { return ident_; }
+                                                      ^~~~~~
+Coords.h: At global scope:
+Coords.h:243:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *getDeclStmt() const { return declStmt_; }
+         ^~~~~~
+         Vector
+Coords.h:252:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *declStmt_;
+         ^~~~~~
+         Vector
+Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:241:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+         ^~~~~~~~~
+Coords.h:254:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
+   ^~~~~~~
+Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
+Coords.h:247:13: error: 'declStmt_' was not declared in this scope
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+Coords.h:247:13: note: suggested alternative: 'decl_'
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+             decl_
+Coords.h:247:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
+     return (declStmt_ == other.declStmt_);
+                                ^~~~~~~~~
+                                decl_
+In file included from Interpretation.h:6:0,
+                 from Interpretation.cpp:1:
+ASTToCoords.h: At global scope:
+ASTToCoords.h:14:28: error: expected ';' at end of member declaration
+     const coords::VecExpr *getASTExprCoords(ast::Expr* e);
+                            ^~~~~~~~~~~~~~~~
+ASTToCoords.h:14:54: error: expected ')' before '*' token
+     const coords::VecExpr *getASTExprCoords(ast::Expr* e);
+                                                      ^
+In file included from Interpretation.h:9:0,
+                 from Interpretation.cpp:1:
+CoordsToDomain.h:24:40: error: 'VectorLit' in namespace 'coords' does not name a type
+  void putVectorLitInterp(const coords::VectorLit &n, domain::VecLitExpr &v);
+                                        ^~~~~~~~~
+CoordsToDomain.h:25:49: error: 'VectorLit' in namespace 'coords' does not name a type
+  domain::VecLitExpr *getLitInterp(const coords::VectorLit &n) const;
+                                                 ^~~~~~~~~
+In file included from Interpretation.cpp:1:0:
+Interpretation.h:22:31: error: 'ast::AddExpr' has not been declared
+     void mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
+                               ^~~~~~~
+Interpretation.h: In member function 'const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)':
+Interpretation.h:27:43: error: expression cannot be used as a function
+         ast2coords_->getASTExprCoords(expr);
+                                           ^
+Interpretation.h:28:5: warning: no return statement in function returning non-void [-Wreturn-type]
+     }
+     ^
+Interpretation.h: In member function 'domain::VecExpr* interp::Interpretation::getExpressionInterp(ast::VecExpr*)':
+Interpretation.h:37:13: error: no match for 'operator!' (operand type is 'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>')
+         if (!expr) {
+             ^~~~~
+Interpretation.h:37:13: note: candidate: operator!(bool) <built-in>
+Interpretation.h:37:13: note:   no known conversion for argument 1 from 'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' to 'bool'
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecDef(ast::VecDef*, domain::VecIdent*, domain::VecExpr*)':
+Interpretation.cpp:41:46: error: 'class domain::VecExpr' has no member named 'getExpr'; did you mean 'VecExpr'?
+     const coords::VecExpr *exp_coords = exp->getExpr();
+                                              ^~~~~~~
+                                              VecExpr
+Interpretation.cpp: At global scope:
+Interpretation.cpp:59:43: error: variable or field 'mkVecVecAddExpr' declared void
+ void Interpretation::mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
+                                           ^~~~~~~
+Interpretation.cpp:59:43: error: 'AddExpr' is not a member of 'ast'
+Interpretation.cpp:59:43: note: suggested alternative: 'VecExpr'
+ void Interpretation::mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
+                                           ^~~~~~~
+                                           VecExpr
+Interpretation.cpp:59:55: error: expected primary-expression before ',' token
+ void Interpretation::mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
+                                                       ^
+Interpretation.cpp:59:73: error: expected primary-expression before '*' token
+ void Interpretation::mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
+                                                                         ^
+Interpretation.cpp:59:74: error: 'mem' was not declared in this scope
+ void Interpretation::mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
+                                                                          ^~~
+Interpretation.cpp:59:95: error: expected primary-expression before '*' token
+ void Interpretation::mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
+                                                                                               ^
+Interpretation.cpp:59:96: error: 'arg' was not declared in this scope
+ void Interpretation::mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
+                                                                                                ^~~
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecExpr(ast::VecExpr*, clang::ASTContext*)':
+Interpretation.cpp:99:53: error: invalid conversion from 'ast::VecExpr* {aka const clang::Expr*}' to 'ast::Vector* {aka const clang::CXXConstructExpr*}' [-fpermissive]
+     coords::Vector *vcoords = new coords::Vector(ast);
+                                                     ^
+In file included from Interpretation.h:5:0,
+                 from Interpretation.cpp:1:
+Coords.h:211:3: note:   initializing argument 1 of 'coords::Vector::Vector(ast::Vector*)'
+   Vector(const ast::Vector *constrExpr)
+   ^~~~~~
+Interpretation.cpp:102:54: error: no matching function for call to 'domain::Domain::addVector(coords::Vector*&)'
+     domain::VecExpr *vec = domain_->addVector(vcoords);
+                                                      ^
+In file included from Oracle.h:6:0,
+                 from Interpretation.h:7,
+                 from Interpretation.cpp:1:
+Domain.h:191:10: note: candidate: domain::Vector* domain::Domain::addVector(coords::Vector*, domain::VecExpr*)
+  Vector* addVector(coords::Vector* v, domain::VecExpr *vec);
+          ^~~~~~~~~
+Domain.h:191:10: note:   candidate expects 2 arguments, 1 provided
+Interpretation.cpp: At global scope:
+Interpretation.cpp:117:36: error: variable or field 'mkVector' declared void
+ void Interpretation::mkVector(ast::VecLitExpreral *ast, ASTContext *context) {
+                                    ^~~~~~~~~~~~~~
+Interpretation.cpp:117:36: error: 'VecLitExpreral' is not a member of 'ast'
+Interpretation.cpp:117:36: note: suggested alternative: 'VecLitExpr'
+ void Interpretation::mkVector(ast::VecLitExpreral *ast, ASTContext *context) {
+                                    ^~~~~~~~~~~~~~
+                                    VecLitExpr
+Interpretation.cpp:117:55: error: expected primary-expression before ',' token
+ void Interpretation::mkVector(ast::VecLitExpreral *ast, ASTContext *context) {
+                                                       ^
+Interpretation.cpp:117:68: error: expected primary-expression before '*' token
+ void Interpretation::mkVector(ast::VecLitExpreral *ast, ASTContext *context) {
+                                                                    ^
+Interpretation.cpp:117:69: error: 'context' was not declared in this scope
+ void Interpretation::mkVector(ast::VecLitExpreral *ast, ASTContext *context) {
+                                                                     ^~~~~~~
+Interpretation.cpp:117:69: note: suggested alternative: 'on_exit'
+ void Interpretation::mkVector(ast::VecLitExpreral *ast, ASTContext *context) {
+                                                                     ^~~~~~~
+                                                                     on_exit
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector(clang::CXXConstructExpr*, clang::ASTContext*)':
+Interpretation.cpp:128:53: error: expected primary-expression before ')' token
+     coords::Vector *vcoords = new coords::Vector(ast);  // ???ctor!
+                                                     ^
+Interpretation.cpp:129:34: error: expected primary-expression before ',' token
+     ast2coords_->overrideExpr(ast, vcoords);
+                                  ^
+Interpretation.cpp:130:53: error: no matching function for call to 'domain::Domain::addVector(coords::Vector*&)'
+     domain::Vector* vec = domain_->addVector(vcoords);
+                                                     ^
+In file included from Oracle.h:6:0,
+                 from Interpretation.h:7,
+                 from Interpretation.cpp:1:
+Domain.h:191:10: note: candidate: domain::Vector* domain::Domain::addVector(coords::Vector*, domain::VecExpr*)
+  Vector* addVector(coords::Vector* v, domain::VecExpr *vec);
+          ^~~~~~~~~
+Domain.h:191:10: note:   candidate expects 2 arguments, 1 provided
+Interpretation.cpp:131:18: error: 'class coords2domain::CoordsToDomain' has no member named 'putVectorInterp'; did you mean 'putVectorLitInterp'?
+     coords2dom_->putVectorInterp(vcoords, vec);
+                  ^~~~~~~~~~~~~~~
+                  putVectorLitInterp
+Interpretation.cpp: At global scope:
+Interpretation.cpp:135:24: error: redefinition of 'const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)'
+ const coords::VecExpr *Interpretation::getCoords(ast::VecExpr *expr)  // fix ret type name
+                        ^~~~~~~~~~~~~~
+In file included from Interpretation.cpp:1:0:
+Interpretation.h:25:28: note: 'const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)' previously defined here
+     const coords::VecExpr *getCoords(ast::VecExpr *expr)
+                            ^~~~~~~~~
+In file included from Oracle.h:5:0,
+                 from Oracle.cpp:4:
+Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getCoords() const':
+Coords.h:97:54: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
+   const coords::VecIdent *getCoords() const { return ident_; }
+                                                      ^~~~~~
+Coords.h: At global scope:
+Coords.h:243:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *getDeclStmt() const { return declStmt_; }
+         ^~~~~~
+         Vector
+Coords.h:252:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *declStmt_;
+         ^~~~~~
+         Vector
+Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:241:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+         ^~~~~~~~~
+Coords.h:254:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
+   ^~~~~~~
+Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
+Coords.h:247:13: error: 'declStmt_' was not declared in this scope
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+Coords.h:247:13: note: suggested alternative: 'decl_'
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+             decl_
+Coords.h:247:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
+     return (declStmt_ == other.declStmt_);
+                                ^~~~~~~~~
+                                decl_
+In file included from Domain.h:9:0,
+                 from Checker.h:4,
+                 from Checker.cpp:9:
+Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getCoords() const':
+Coords.h:97:54: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
+   const coords::VecIdent *getCoords() const { return ident_; }
+                                                      ^~~~~~
+Coords.h: At global scope:
+Coords.h:243:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *getDeclStmt() const { return declStmt_; }
+         ^~~~~~
+         Vector
+Coords.h:252:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *declStmt_;
+         ^~~~~~
+         Vector
+Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:241:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+         ^~~~~~~~~
+Coords.h:254:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
+   ^~~~~~~
+Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
+Coords.h:247:13: error: 'declStmt_' was not declared in this scope
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+Coords.h:247:13: note: suggested alternative: 'decl_'
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+             decl_
+Coords.h:247:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
+     return (declStmt_ == other.declStmt_);
+                                ^~~~~~~~~
+                                decl_
+In file included from CoordsToDomain.h:5:0,
+                 from CoordsToDomain.cpp:1:
+Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getCoords() const':
+Coords.h:97:54: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
+   const coords::VecIdent *getCoords() const { return ident_; }
+                                                      ^~~~~~
+Coords.h: At global scope:
+Coords.h:243:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *getDeclStmt() const { return declStmt_; }
+         ^~~~~~
+         Vector
+Coords.h:252:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *declStmt_;
+         ^~~~~~
+         Vector
+Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:241:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+         ^~~~~~~~~
+Coords.h:254:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
+   ^~~~~~~
+Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
+Coords.h:247:13: error: 'declStmt_' was not declared in this scope
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+Coords.h:247:13: note: suggested alternative: 'decl_'
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+             decl_
+Coords.h:247:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
+     return (declStmt_ == other.declStmt_);
+                                ^~~~~~~~~
+                                decl_
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h: At global scope:
+CoordsToDomain.h:24:40: error: 'VectorLit' in namespace 'coords' does not name a type
+  void putVectorLitInterp(const coords::VectorLit &n, domain::VecLitExpr &v);
+                                        ^~~~~~~~~
+CoordsToDomain.h:25:49: error: 'VectorLit' in namespace 'coords' does not name a type
+  domain::VecLitExpr *getLitInterp(const coords::VectorLit &n) const;
+                                                 ^~~~~~~~~
+In file included from Interpretation.h:5:0,
+                 from main.cpp:15:
+Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getCoords() const':
+Coords.h:97:54: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
+   const coords::VecIdent *getCoords() const { return ident_; }
+                                                      ^~~~~~
+Coords.h: At global scope:
+Coords.h:243:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *getDeclStmt() const { return declStmt_; }
+         ^~~~~~
+         Vector
+Coords.h:252:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *declStmt_;
+         ^~~~~~
+         Vector
+Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:241:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+         ^~~~~~~~~
+Coords.h:254:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
+   ^~~~~~~
+Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
+Coords.h:247:13: error: 'declStmt_' was not declared in this scope
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+Coords.h:247:13: note: suggested alternative: 'decl_'
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+             decl_
+Coords.h:247:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
+     return (declStmt_ == other.declStmt_);
+                                ^~~~~~~~~
+                                decl_
+In file included from Interpretation.h:6:0,
+                 from main.cpp:15:
+ASTToCoords.h: At global scope:
+ASTToCoords.h:14:28: error: expected ';' at end of member declaration
+     const coords::VecExpr *getASTExprCoords(ast::Expr* e);
+                            ^~~~~~~~~~~~~~~~
+ASTToCoords.h:14:54: error: expected ')' before '*' token
+     const coords::VecExpr *getASTExprCoords(ast::Expr* e);
+                                                      ^
+In file included from Interpretation.h:9:0,
+                 from main.cpp:15:
+CoordsToDomain.h:24:40: error: 'VectorLit' in namespace 'coords' does not name a type
+  void putVectorLitInterp(const coords::VectorLit &n, domain::VecLitExpr &v);
+                                        ^~~~~~~~~
+CoordsToDomain.h:25:49: error: 'VectorLit' in namespace 'coords' does not name a type
+  domain::VecLitExpr *getLitInterp(const coords::VectorLit &n) const;
+                                                 ^~~~~~~~~
+In file included from main.cpp:15:0:
+Interpretation.h:22:31: error: 'ast::AddExpr' has not been declared
+     void mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
+                               ^~~~~~~
+Interpretation.h: In member function 'const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)':
+Interpretation.h:27:43: error: expression cannot be used as a function
+         ast2coords_->getASTExprCoords(expr);
+                                           ^
+Interpretation.h:28:5: warning: no return statement in function returning non-void [-Wreturn-type]
+     }
+     ^
+Interpretation.h: In member function 'domain::VecExpr* interp::Interpretation::getExpressionInterp(ast::VecExpr*)':
+Interpretation.h:37:13: error: no match for 'operator!' (operand type is 'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>')
+         if (!expr) {
+             ^~~~~
+Interpretation.h:37:13: note: candidate: operator!(bool) <built-in>
+Interpretation.h:37:13: note:   no known conversion for argument 1 from 'const clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' to 'bool'
+main.cpp: In member function 'virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:54:13: error: 'class interp::Interpretation' has no member named 'mkVecLiteral'; did you mean 'mkVector'?
+     interp_.mkVecLiteral(lit_ast, context);
+             ^~~~~~~~~~~~
+             mkVector
+main.cpp: In function 'const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)':
+main.cpp:96:39: error: 'mem_coords' was not declared in this scope
+   return interp_.mkVecVecAddExpr(ast, mem_coords, arg_coords);
+                                       ^~~~~~~~~~
+main.cpp:96:39: note: suggested alternative: 'memrchr'
+   return interp_.mkVecVecAddExpr(ast, mem_coords, arg_coords);
+                                       ^~~~~~~~~~
+                                       memrchr
+main.cpp:96:51: error: 'arg_coords' was not declared in this scope
+   return interp_.mkVecVecAddExpr(ast, mem_coords, arg_coords);
+                                                   ^~~~~~~~~~
+main.cpp: In member function 'virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:139:28: warning: unused variable 'memberCallExpr' [-Wunused-variable]
+     const domain::VecExpr* memberCallExpr = handleMemberCallExpr(memcall, context, sm);
+                            ^~~~~~~~~~~~~~
+main.cpp: In member function 'virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:165:9: error: 'consdecl' was not declared in this scope
+     if (consdecl == NULL)
+         ^~~~~~~~
+main.cpp:165:9: note: suggested alternative: 'cosl'
+     if (consdecl == NULL)
+         ^~~~~~~~
+         cosl
+main.cpp:171:30: error: conflicting declaration 'const clang::CXXMemberCallExpr* expr_ctor_ast'
+     const CXXMemberCallExpr *expr_ctor_ast =
+                              ^~~~~~~~~~~~~
+main.cpp:163:29: note: previous declaration as 'const clang::CXXConstructExpr* expr_ctor_ast'
+     const CXXConstructExpr *expr_ctor_ast =
+                             ^~~~~~~~~~~~~
+main.cpp:173:9: error: 'addexpr' was not declared in this scope
+     if (addexpr == NULL)
+         ^~~~~~~
+main.cpp:173:9: note: suggested alternative: 'ldexpl'
+     if (addexpr == NULL)
+         ^~~~~~~
+         ldexpl
+main.cpp:181:92: error: cannot convert 'const clang::CXXConstructExpr*' to 'const clang::CXXMemberCallExpr*' for argument '1' to 'const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)'
+     const domain::VecExpr *memberCallExpr = handleMemberCallExpr(expr_ctor_ast, context, sm);
+                                                                                            ^
+main.cpp:181:28: warning: unused variable 'memberCallExpr' [-Wunused-variable]
+     const domain::VecExpr *memberCallExpr = handleMemberCallExpr(expr_ctor_ast, context, sm);
+                            ^~~~~~~~~~~~~~
+main.cpp: At global scope:
+main.cpp:223:3: error: 'HandlerForCXXMemberCallExprRight_DeclRefExpr' does not name a type
+   HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.cpp: In constructor 'CXXMemberCallExprArg0Matcher::CXXMemberCallExprArg0Matcher()':
+main.cpp:206:67: error: 'dre_handler_' was not declared in this scope
+     CXXMemberCallExprArg0Matcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
+                                                                   ^~~~~~~~~~~~
+main.cpp:206:67: note: suggested alternative: 'mce_handler_'
+     CXXMemberCallExprArg0Matcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
+                                                                   ^~~~~~~~~~~~
+                                                                   mce_handler_
+main.cpp: In function 'const domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)':
+main.cpp:242:26: error: expected primary-expression before '*' token
+   return domain::VecExpr *expr = interp_->getExpressionInterp(arg);
+                          ^
+main.cpp:242:41: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   return domain::VecExpr *expr = interp_->getExpressionInterp(arg);
+                                         ^~
+main.cpp: At global scope:
+main.cpp:289:3: error: 'HandlerForCXXMemberCallExprRight_DeclRefExpr' does not name a type
+   HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.cpp: In constructor 'CXXMemberCallExprMemberExprMatcher::CXXMemberCallExprMemberExprMatcher()':
+main.cpp:263:73: error: 'dre_handler_' was not declared in this scope
+     CXXMemberCallExprMemberExprMatcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
+                                                                         ^~~~~~~~~~~~
+main.cpp:263:73: note: suggested alternative: 'mce_handler_'
+     CXXMemberCallExprMemberExprMatcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
+                                                                         ^~~~~~~~~~~~
+                                                                         mce_handler_
+main.cpp: In member function 'void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)':
+main.cpp:281:7: error: expected ';' before 'call_rhs'
+       call_rhs.dump();
+       ^~~~~~~~
+main.cpp: In function 'domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)':
+main.cpp:298:18: error: ambiguating new declaration of 'domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
+ domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context, SourceManager &sm)
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.cpp:63:24: note: old declaration 'const domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
+ const domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.cpp:323:34: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   domain::VecExpr *expr = interp_->getExpressionInterp(memexpr);
+                                  ^~
+main.cpp: In function 'const domain::VecExpr* handleCXXDeclStmt(const clang::CXXConstructExpr*, clang::ASTContext*, clang::SourceManager&)':
+main.cpp:421:39: error: expected primary-expression before '->' token
+   const domain::VecExpr *expr = interp->getExpressionInterp(consdecl);
+                                       ^~
+main.cpp: In member function 'virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:444:5: error: 'declstmt' was not declared in this scope
+     declstmt->dump();
+     ^~~~~~~~
+main.cpp:444:5: note: suggested alternative: 'decltype'
+     declstmt->dump();
+     ^~~~~~~~
+     decltype
+main.cpp:455:35: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     domain::VecIdent *id = interp_->mkVecIdent(vardecl);
+                                   ^~
+main.cpp:476:41: error: expected primary-expression before '->' token
+     const domain::VecExpr *expr = interp->getExpressionInterp(consdecl);
+                                         ^~
+main.cpp:480:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     interp_->mkVecDef(declstmt, id, expr);
+            ^~
+main.cpp:451:20: warning: unused variable 'sm' [-Wunused-variable]
+     SourceManager &sm = context->getSourceManager();
+                    ^~
+main.cpp: In member function 'virtual void MyFrontendAction::EndSourceFileAction()':
+main.cpp:534:23: error: 'domain_domain' was not declared in this scope
+     bool consistent = domain_domain->isConsistent();
+                       ^~~~~~~~~~~~~
+main.cpp: In function 'int main(int, const char**)':
+main.cpp:553:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   interp_->addSpace("S1");
+          ^~
+main.cpp:554:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   interp_->addSpace("S2");
+          ^~
+In file included from Domain.h:9:0,
+                 from Checker.h:4,
+                 from Domain.cpp:3:
+Coords.h: In member function 'const coords::VecIdent* coords::VecIdent::getCoords() const':
+Coords.h:97:54: error: cannot convert 'ast::VecIdent* const {aka const clang::VarDecl* const}' to 'const coords::VecIdent*' in return
+   const coords::VecIdent *getCoords() const { return ident_; }
+                                                      ^~~~~~
+Coords.h: At global scope:
+Coords.h:243:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *getDeclStmt() const { return declStmt_; }
+         ^~~~~~
+         Vector
+Coords.h:252:9: error: 'VecDef' does not name a type; did you mean 'Vector'?
+   const VecDef *declStmt_;
+         ^~~~~~
+         Vector
+Coords.h: In constructor 'coords::Binding::Binding(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:241:9: error: class 'coords::Binding' does not have any field named 'declStmt_'
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+         ^~~~~~~~~
+Coords.h:254:18: warning: 'coords::Binding::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:239:3: warning:   when initialized here [-Wreorder]
+   Binding(const ast::VecDef *declStmt, const VecIdent *bv,
+   ^~~~~~~
+Coords.h: In member function 'bool coords::Binding::operator==(const coords::Binding&) const':
+Coords.h:247:13: error: 'declStmt_' was not declared in this scope
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+Coords.h:247:13: note: suggested alternative: 'decl_'
+     return (declStmt_ == other.declStmt_);
+             ^~~~~~~~~
+             decl_
+Coords.h:247:32: error: 'const class coords::Binding' has no member named 'declStmt_'; did you mean 'decl_'?
+     return (declStmt_ == other.declStmt_);
+                                ^~~~~~~~~
+                                decl_
+Domain.cpp: At global scope:
+Domain.cpp:14:8: error: 'Identifier' has not been declared
+ string Identifier::getName() const
+        ^~~~~~~~~~
+Domain.cpp:14:30: error: non-member function 'std::__cxx11::string getName()' cannot have cv-qualifier
+ string Identifier::getName() const
+                              ^~~~~
+Domain.cpp: In function 'std::__cxx11::string getName()':
+Domain.cpp:16:72: error: 'vardecl_' was not declared in this scope
+     cerr << "Identifier::getName(): vardecl_  addr is " << std::hex << vardecl_->getVarDecl() << "\n";
+                                                                        ^~~~~~~~
+Domain.cpp:17:49: error: 'space_' was not declared in this scope
+     return "(" + vardecl_->toString() + " : " + space_->getName() + ")";
+                                                 ^~~~~~
+Domain.cpp:17:49: note: suggested alternative: 'isspace_l'
+     return "(" + vardecl_->toString() + " : " + space_->getName() + ")";
+                                                 ^~~~~~
+                                                 isspace_l
+Domain.cpp: At global scope:
+Domain.cpp:26:60: error: no 'const domain::VecExpr& domain::VecVecAddExpr::getVecVecAddExprArgL()' member function declared in class 'domain::VecVecAddExpr'
+ const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgL()
+                                                            ^
+Domain.cpp:31:60: error: no 'const domain::VecExpr& domain::VecVecAddExpr::getVecVecAddExprArgR()' member function declared in class 'domain::VecVecAddExpr'
+ const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgR()
+                                                            ^
+Domain.cpp: In member function 'domain::VecExpr* domain::Domain::addVecVecAddExpr(domain::Space&, coords::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)':
+Domain.cpp:94:13: error: cannot convert 'domain::VecExpr' to 'domain::VecExpr*' in return
+     return *be;
+             ^~
+Domain.cpp: At global scope:
+Domain.cpp:97:1: error: 'Identifier' does not name a type; did you mean 'nextafter'?
+ Identifier *Domain::addIdentifier(Space &s, const coords::VecIdent *ast)
+ ^~~~~~~~~~
+ nextafter
+Domain.cpp:106:61: error: 'Identifier' does not name a type; did you mean 'nextafter'?
+ Binding &Domain::addBinding(const coords::Binding *v, const Identifier* i, const domain::VecExpr* e)
+                                                             ^~~~~~~~~~
+                                                             nextafter
+Domain.cpp:106:10: error: prototype for 'domain::Binding& domain::Domain::addBinding(const coords::Binding*, const int*, const domain::VecExpr*)' does not match any in class 'domain::Domain'
+ Binding &Domain::addBinding(const coords::Binding *v, const Identifier* i, const domain::VecExpr* e)
+          ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:192:11: error: candidate is: domain::Binding& domain::Domain::addBinding(const coords::Binding*, const domain::VecIdent*, const domain::VecExpr*)
+  Binding& addBinding(const coords::Binding* vardecl, const VecIdent* identifier, const VecExpr* expression);
+           ^~~~~~~~~~
+Domain.cpp:121:27: error: 'domain::Vector* domain::Domain::addVector' is not a static data member of 'class domain::Domain'
+ Vector* Domain::addVector(coords Vector* coords, domain::VecExpr *expr) {
+                           ^~~~~~
+Domain.cpp:121:34: error: expected primary-expression before 'Vector'
+ Vector* Domain::addVector(coords Vector* coords, domain::VecExpr *expr) {
+                                  ^~~~~~
+Domain.cpp:121:66: error: expected primary-expression before '*' token
+ Vector* Domain::addVector(coords Vector* coords, domain::VecExpr *expr) {
+                                                                  ^
+Domain.cpp:121:71: error: expression list treated as compound expression in initializer [-fpermissive]
+ Vector* Domain::addVector(coords Vector* coords, domain::VecExpr *expr) {
+                                                                       ^
+Domain.cpp:128:30: error: no 'void domain::Domain::dumpIdentifiers()' member function declared in class 'domain::Domain'
+ void Domain::dumpIdentifiers()
+                              ^
+Makefile:110: recipe for target '../build/ASTMatcher' failed
+make: *** [../build/ASTMatcher] Error 1

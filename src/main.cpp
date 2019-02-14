@@ -475,14 +475,14 @@ public:
     //
     const domain::VecExpr *expr = interp->getExpressionInterp(consdecl);
   
-    // add domain::Binding for variable declaration statement in code
+    // add domain::VecDef for variable declaration statement in code
     //
-    interp_->mkVecBinding(declstmt, id, expr);
+    interp_->mkVecDef(declstmt, id, expr);
 
-/*    Binding *declstmt_wrapper = new Binding(declstmt);
+/*    VecDef *declstmt_wrapper = new VecDef(declstmt);
     stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
-    domain::Binding &binding = domain_domain->addBinding(declstmt_wrapper, bi, *be);
-    interp->putBindingInterp(declstmt_wrapper, binding);
+    domain::VecDef &binding = domain_domain->addVecDef(declstmt_wrapper, bi, *be);
+    interp->putVecDefInterp(declstmt_wrapper, binding);
 
 
     cerr << "VectorDeclStmtHandler:: Post Domain State \n"; //declstmt->dump();
@@ -490,8 +490,8 @@ public:
     domain_domain->dumpExpressions(); // print contents on cerr
     cerr << "Domain VecIdents\n";
     domain_domain->dumpVecIdents(); // print contents on cerr
-    cerr << "Domain Bindings\n";
-    domain_domain->dumpBindings(); // print contents on cerr
+    cerr << "Domain VecDefs\n";
+    domain_domain->dumpVecDefs(); // print contents on cerr
     cerr << "InterpExpressions\n";
     interp->dumpExpressions();
 */
@@ -559,6 +559,6 @@ int main(int argc, const char **argv)
   domain_domain->dumpVecIdents();
   cerr << "Expressions\n";
   domain_domain->dumpExpressions();
-  cerr << "Bindings\n";
-  domain_domain->dumpBindings();
+  cerr << "VecDefs\n";
+  domain_domain->dumpVecDefs();
 */}

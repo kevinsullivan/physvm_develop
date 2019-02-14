@@ -30,29 +30,29 @@ domain::VecIdent *Interpretation::mkVecIdent(ast::VecIdent *ast)
     return dom;
 }
 
-void Interpretation::mkVecBinding(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *exp)
+void Interpretation::mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *exp)
 {
-    cerr << "START: Interpretation::mkVecBinding.\n.";
+    cerr << "START: Interpretation::mkVecDef.\n.";
     if (!exp || !id)
     {
-        cerr << "Interpretation::mkVecBinding: null argument\n";
+        cerr << "Interpretation::mkVecDef: null argument\n";
     }
     const coords::VecIdent *id_coords = id->getVarDeclWrapper();
     const coords::VecExpr *exp_coords = exp->getExpr();
-    coords::Binding *bind_coords = new coords::Binding(ast, id_coords, exp_coords);
+    coords::VecDef *bind_coords = new coords::VecDef(ast, id_coords, exp_coords);
     ast2coords_->overrideStmt(ast, bind_coords);
-    domain::Binding &binding =
-        domain_->addBinding(bind_coords, id, exp);
-    coords2dom_->putBindingInterp(bind_coords, binding);
+    domain::VecDef &binding =
+        domain_->addVecDef(bind_coords, id, exp);
+    coords2dom_->putVecDefInterp(bind_coords, binding);
     cerr << 
-        "Interpretation::mkVecBinding: identifier at " << 
+        "Interpretation::mkVecDef: identifier at " << 
         std::hex << id << 
         " wrapped addr is " << std::hex << id_coords->get() <<
         "\n";
-    cerr << "Interpretation::mkVecBinding: wrapped dump is \n";
+    cerr << "Interpretation::mkVecDef: wrapped dump is \n";
     id_coords->get()->dump();
-    cerr << "Interpretation::mkVecBinding: name is " << id_coords->toString() << "\n";
-    cerr << "DONE: Interpretation::mkVecBinding..\n";
+    cerr << "Interpretation::mkVecDef: name is " << id_coords->toString() << "\n";
+    cerr << "DONE: Interpretation::mkVecDef..\n";
 }
 
 // FIX

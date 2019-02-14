@@ -3417,7 +3417,7 @@ main.cpp:473:38: error: expected primary-expression before '->' token
      const domain::Expr *expr = interp->getExpressionInterp(consdecl);
                                       ^~
 main.cpp:477:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
-     interp_->mkVecBinding(declstmt, id, expr);
+     interp_->mkVecDef(declstmt, id, expr);
             ^~
 main.cpp:448:20: warning: unused variable 'sm' [-Wunused-variable]
      SourceManager &sm = context->getSourceManager();

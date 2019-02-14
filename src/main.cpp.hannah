@@ -63,11 +63,11 @@ domain::VecIdent *handleCXXConstructVecIdent(const VarDecl *vardecl,
 /*
 Function: Add interpretation for binding of VecIdent to Vector xpression
 */
-void handleCXXConstructVecIdentBinding(
+void handleCXXConstructVecDef(
         const clang::DeclStmt* declstmt,
         domain::VecIdent *bv,
         domain::VecExpr *be) {
-    interp_.mkVecBinding(declstmt,bv,be); // no retval
+    interp_.mkVecDef(declstmt,bv,be); // no retval
 }
 
 // Class: Match Callback class for handling Vector Literal Expressions
@@ -599,7 +599,7 @@ public:
       domain::VecExpr *be = handleCXXConstructExpr(consdecl, context, sm);
       domain::VecIdent *bi =
           handleCXXConstructVecIdent(vardecl, context, sm);
-      handleCXXConstructVecIdentBinding(declstmt, bi, be);
+      handleCXXConstructVecDef(declstmt, bi, be);
       cout << "Done handling vector declaration statement\n\n";
     } else {
       cout << "VectorDeclStmtHandler::run(): Something's wrong\n";

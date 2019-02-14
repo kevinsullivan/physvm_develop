@@ -33,7 +33,7 @@ const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgR()
     return arg_right_;
 }
 
-/*const Identifier &Binding::getIdentifier()
+/*const Identifier &VecDef::getIdentifier()
 {
     return identifier_;
 }
@@ -103,15 +103,15 @@ Identifier *Domain::addIdentifier(Space &s, const coords::VecIdent *ast)
 
 // TODO: Should be binding to Vector, not Expr
 // 
-Binding &Domain::addBinding(const coords::Binding *v, const Identifier* i, const domain::VecExpr* e)
+VecDef &Domain::addVecDef(const coords::VecDef *v, const Identifier* i, const domain::VecExpr* e)
 {
-    cerr << "Domain::addBinding ";
+    cerr << "Domain::addVecDef ";
     cerr << "identifier is " << i->toString();
     cerr << " expression is " << e->toString() << "\n";
-    Binding *bd = new Binding(v, i, e);
+    VecDef *bd = new VecDef(v, i, e);
 /*
-Domain.cpp:116:38: error: no matching function for call to 'domain::Binding::Binding(const coords::Binding*&, const domain::Identifier*&, const domain::VecExpr*&)'
-     Binding *bd = new Binding(v, i, e);
+Domain.cpp:116:38: error: no matching function for call to 'domain::VecDef::VecDef(const coords::VecDef*&, const domain::Identifier*&, const domain::VecExpr*&)'
+     VecDef *bd = new VecDef(v, i, e);
                                       ^
 */
     bindings.push_back(*bd);
@@ -139,7 +139,7 @@ void Domain::dumpExpressions()
     }
 }
 
-void Domain::dumpBindings()
+void Domain::dumpVecDefs()
 {
     for (auto b: bindings ){
         cerr << b.toString() << "\n";

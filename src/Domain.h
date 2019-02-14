@@ -124,18 +124,18 @@ Domain representation of binding of identifier to expression.
 Takes clang::VarDecl establishing binding (in a wrapper) and 
 the *domain* VecIdent and Expression objects being bound.
 */
-class Binding {
+class VecDef {
 public:
-	Binding(const coords::Binding* ast_wrapper, const domain::VecIdent* identifier, const domain::VecExpr* expr):
+	VecDef(const coords::VecDef* ast_wrapper, const domain::VecIdent* identifier, const domain::VecExpr* expr):
 			ast_wrapper_(ast_wrapper), identifier_(identifier), expr_(expr) {}
-	const coords::Binding* getVarDecl() const {return ast_wrapper_; } 
+	const coords::VecDef* getVarDecl() const {return ast_wrapper_; } 
 	const domain::VecExpr* getVecExpr() const { return expr_; }
 	const domain::VecIdent* getVecIdent() { return identifier_; }
 	string toString() const {
 		return "def " + identifier_->toString() + " := " + expr_->toString();
 	}
 private:
-	const coords::Binding* ast_wrapper_;
+	const coords::VecDef* ast_wrapper_;
 	const VecIdent* identifier_;
 	const VecExpr* expr_;
 };
@@ -189,18 +189,18 @@ public:
 	// coords for container, domain object for child, lit | expr
 	// if lit, child is -- empty? -- else coords and domain VecExpr
 	Vector* addVector(coords::Vector* v, domain::VecExpr *vec);
-	Binding& addBinding(const coords::Binding* vardecl, const VecIdent* identifier, const VecExpr* expression);
+	VecDef& addVecDef(const coords::VecDef* vardecl, const VecIdent* identifier, const VecExpr* expression);
 	void dump() {
 		cerr << "Domain expressions:\n";
 		dumpExpressions(); // print contents on cerr
 		cerr << "Domain VecIdents\n";
 		dumpVecIdents(); // print contents on cerr
-		cerr << "Domain Bindings\n";
-		dumpBindings(); // print contents on cerr
+		cerr << "Domain VecDefs\n";
+		dumpVecDefs(); // print contents on cerr
 	}
 	void dumpExpressions(); // print contents on cerr
 	void dumpVecIdents(); // print contents on cerr
-	void dumpBindings(); // print contents on cerr
+	void dumpVecDefs(); // print contents on cerr
 
 	bool isConsistent();
 	vector<Space>& getAllSpaces();
@@ -208,7 +208,7 @@ private:
 	vector<Space> spaces;
 	vector<VecIdent> identifiers;
 	vector<VecExpr*> expressions;
-	vector<Binding> bindings;
+	vector<VecDef> bindings;
 	vector<Vector*> vectors;
 };
 

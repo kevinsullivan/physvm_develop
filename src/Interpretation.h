@@ -15,7 +15,7 @@ public:
     Interpretation();
     domain::VecIdent *mkVecIdent(ast::VecIdent *ast);
     // TODO: Have this take coord, not domain, arguments
-    void mkVecBinding(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *exp);
+    void mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *exp);
     // TODO: Use AST.h name in next method
     void mkVector(CXXConstructExpr *ctor_ast, ASTContext *context); 
     void mkVector(ast::VecLitExpr *ast, ASTContext *context); 

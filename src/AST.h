@@ -11,13 +11,15 @@ namespace ast {
 // TODO: Remove const if we want to modify AST
 // TODO: Prefix with Vec
 //
+// What is the invariant needed for lookups to work?
+//
 using VecDef  = const clang::DeclStmt;
+using Vector = const clang::CXXConstructExpr;
 using VecIdent = const clang::VarDecl;
-using VecCtor = const clang::CXXConstructExpr;
 using VecExpr = const clang::Expr;
 using VecLitExpr = const clang::CXXConstructExpr;
-using VecVecAddExpr = const clang::CXXMemberCallExpr;
 using VecVarExpr = const clang::DeclRefExpr;
+using VecVecAddExpr = const clang::CXXMemberCallExpr;
 } // namespace
 
 #endif
@@ -27,13 +29,14 @@ Domain                  Coords              AST
 ------                  ------              ---
 Space
 VecExpr                 VecExpr (super)     tagged union type
-VecLitExpr              VecLitExpr          ast::VecLitExpr
-VecIdent                VecIdent            ast::VecIdent
-VecVarExpr              VecVarExpr          ast::VecVarExpr          
-VecVecAddExpr           VecVecAddExpr       ast::VecVecAddExpr,coords:VecExpr
-Vector                  AddConstruct        (unused? nope, see Domain Vector)
-                        Vector              clang::CXXConstructExpr 
-Binding                 Binding             ast::VecDef
+VecLitExpr              VecLitExpr          VecLitExpr
+VecIdent                VecIdent            VecIdent
+VecVarExpr              VecVarExpr          VecVarExpr          
+VecVecAddExpr           VecVecAddExpr       VecVecAddExpr
+Vector                  Vector              Vector 
+VecDef                 VecDef             VecDef
+
+I'm afraid Vector and VecExpr are going to have the same address. There's an invariant that has to hold for search in the maps to work. What exactly is it?
 */
 
 /*
@@ -45,15 +48,15 @@ Expr                VecExpr
 VecLitExpr          VecLitExpr
 VecVarExpr          VecVarExpr
 VecVecAddExpr       VecVecVecAddExpr
-Binding             Binding
-Vector              AddConstruct
+VecDef             VecDef
+Vector              Vector
 */
 
 /*
 Interpretation
 --------------
 mkVecIdent          ast::VecIdent
-mkVecBinding        ast::VecDef, dom::it, dom::expr
+mkVecDef        ast::VecDef, dom::it, dom::expr
 mkVecAddExpr        ast::AddExpr, ast::AddExpr, dom::Expr
 mkVecExpr           ast::VecExpr
 mkVector            ast::VecLitExpr

@@ -1721,7 +1721,7 @@ In file included from /usr/include/x86_64-linux-gnu/bits/_G_config.h:19:0,
 Interpretation.h:37:21: note:   'clang::ast_matchers::internal::VariadicDynCastAllOfMatcher<clang::Stmt, clang::Expr>' is not derived from 'clang::CanQual<T>'
          if (expr == NULL) {
                      ^
-Interpretation.cpp: In member function 'void interp::Interpretation::mkVecBinding(ast::Stmt*, domain::Identifier*, domain::Expr*)':
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecDef(ast::Stmt*, domain::Identifier*, domain::Expr*)':
 Interpretation.cpp:43:47: error: no matching function for call to 'ast2coords::ASTToCoords::overrideExpr(ast::Stmt*&, coords::Binding*&)'
      ast2coords_->overrideExpr(ast, bind_coords);
                                                ^
@@ -3408,7 +3408,7 @@ main.cpp:473:38: error: expected primary-expression before '->' token
      const domain::Expr *expr = interp->getExpressionInterp(consdecl);
                                       ^~
 main.cpp:477:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
-     interp_->mkVecBinding(declstmt, id, expr);
+     interp_->mkVecDef(declstmt, id, expr);
             ^~
 main.cpp:448:20: warning: unused variable 'sm' [-Wunused-variable]
      SourceManager &sm = context->getSourceManager();
