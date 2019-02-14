@@ -28,9 +28,9 @@ Domain                  Coords              AST
 Space
 VecExpr                 VecExpr (super)     tagged union type
 VecLitExpr              VecLitExpr          ast::VecLitExpr
-VecIdent              VecIdent            ast::VecIdent
+VecIdent                VecIdent            ast::VecIdent
 VecVarExpr              VecVarExpr          ast::VecVarExpr          
-VecAddExpr              VectorAddExpr       ast::VecVecAddExpr,coords:VecExpr
+VecVecAddExpr           VectorAddExpr       ast::VecVecVecVecVecAddExpr,coords:VecExpr
 Vector                  AddConstruct        (unused? nope, see Domain Vector)
                         Vector              clang::CXXConstructExpr 
 Binding                 Binding             ast::VecDef
@@ -44,7 +44,7 @@ VecIdent          VecIdent
 Expr                VecExpr
 VecLitExpr          VecLitExpr
 VecVarExpr          VecVarExpr
-VecAddExpr          VecAddExpr
+VecVecAddExpr          VecVecVecAddExpr
 Binding             Binding
 Vector              AddConstruct
 */

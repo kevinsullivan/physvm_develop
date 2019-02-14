@@ -56,10 +56,10 @@ void Interpretation::mkVecBinding(ast::VecDef *ast, domain::VecIdent *id, domain
 }
 
 // FIX
-void Interpretation::mkVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
+void Interpretation::mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
 
-  cerr << "Interpretation::mkVecAddExpr: START: adding\n";
-  cerr << "Interpretation::mkVecAddExpr: Member is " << mem->toString() << " \n";
+  cerr << "Interpretation::mkVecVecAddExpr: START: adding\n";
+  cerr << "Interpretation::mkVecVecAddExpr: Member is " << mem->toString() << " \n";
   cerr << "Argument is " << arg->toString() << "\n";
   cerr << "AST is (dump)";
   ast->dump();
@@ -74,7 +74,7 @@ void Interpretation::mkVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domai
   const coords::VecExpr *mem_coords = mem->getCoords();
   const coords::VecExpr *arg_coords = arg->getCoords();
   if (mem_coords == NULL || arg_coords == NULL) {
-    cerr << "Interpretation::mkVecAddExpr: bad coordinates. Mem coords " 
+    cerr << "Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords " 
         << std::hex << mem_coords << " arg coords " 
         << std::hex << arg_coords << "\n";
   }
@@ -83,12 +83,12 @@ void Interpretation::mkVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domai
     new coords::VecVecAddExpr(ast, mem_coords, arg_coords);
   ast2coords_->overrideExpr(ast, expr_coords);
   domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
-  domain::VecExpr *dom_add_expr = domain_->addVecAddExpr(space, expr_coords, mem, arg);
+  domain::VecExpr *dom_add_expr = domain_->addVecVecAddExpr(space, expr_coords, mem, arg);
   coords2dom_->putExpressionInterp(expr_coords, dom_add_expr);
 
-  cerr << "Interpretation::mkVecAddExpr: Coords at " 
+  cerr << "Interpretation::mkVecVecAddExpr: Coords at " 
     << std::hex << expr_coords << "\n";
-  cerr << "Interpretation::mkVecAddExpr: Adding add expr to domain: " 
+  cerr << "Interpretation::mkVecVecAddExpr: Adding add expr to domain: " 
     << dom_add_expr->toString() << "\n";
   cerr << "FINISHED: adding member call expression to system\n";
 }

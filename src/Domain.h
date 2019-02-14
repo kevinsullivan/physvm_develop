@@ -98,9 +98,9 @@ private:
 };
 
 
-class VecAddExpr : public VecExpr {
+class VecVecAddExpr : public VecExpr {
 public:
-   VecAddExpr(
+   VecVecAddExpr(
         Space& s, const coords::VecExpr* ast, VecExpr *mem, VecExpr *arg) : 
 			VecExpr(s, ast), arg_(arg), mem_(mem) {	
 	}
@@ -113,7 +113,7 @@ public:
 	}
 
 	// get the default space for this VecAddVecExpr using the space of the arg_left_
-	//const Space& getVecAddExprDefaultSpace();
+	//const Space& getVecVecAddExprDefaultSpace();
 private:
     VecExpr* arg_;
     VecExpr* mem_;
@@ -190,7 +190,7 @@ public:
 	VecExpr& addVecVarExpr(const coords::VecVarExpr* ast);
 	// should be addVecLit*Ctor*, with contained lit data 
 	VecExpr* addVecLitExpr(Space& s, const coords::VecLitExpr* e);
-	VecExpr* addVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
+	VecExpr* addVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
 	// coords for container, domain object for child, lit | expr
 	// if lit, child is -- empty? -- else coords and domain VecExpr
 	Vector* addVector(coords::Vector* v, domain::VecExpr *vec);
