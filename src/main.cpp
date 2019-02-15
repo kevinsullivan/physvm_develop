@@ -51,6 +51,8 @@ public:
     ASTContext *context = Result.Context;
     const clang::CXXConstructExpr *lit_ast = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
+
+    // TODO -- separate interp for vector from lit
     interp_.mkVector(lit_ast, context);
   }
 };
@@ -82,14 +84,6 @@ const domain::VecExpr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTCon
     return NULL;
   }
   std::cerr << "main::handleMemberCallExpr: End\n";
-
-    // TESTING
-/*    const Expr* addexprWrapper = expr_wrappers[memcall];
-    if (!addexprWrapper) {std::cerr << "Badd Wrapperr\n"; }
-    const VecVecAddExpr* wrapper = new VecVecAddExpr(memcall, NULL, NULL); 
-    const domain::VecExpr *isThere = interp->getExpressionInterp(*wrapper);
-    if (!isThere) {std::cerr << "Missing exprr"; }
-*/
 
   // Update interpretation
   interp_.mkVecVecAddExpr(ast, left_br, right_br);
@@ -131,7 +125,8 @@ public:
       return;
     }
     // recursive helper function
-    const domain::VecExpr* memberCallExpr = handleMemberCallExpr(memcall, context, sm);
+    /*const domain::VecExpr* memberCallExpr = */
+    handleMemberCallExpr(memcall, context, sm);
   }
 };
 
@@ -163,17 +158,17 @@ public:
       return;
     }
 
-    const CXXMemberCallExpr *vec_vec_add_ctor_ast = 
+    const CXXMemberCallExpr *vec_vec_add_member_call_ast = 
       Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (vec_vec_add_ctor_ast == NULL)
     {
       std::cerr << "Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
-      std::cerr << "Surrounding CXXConstructExpr is "; vec_vec_add_ctor_ast->dump();
+      std::cerr << "Surrounding CXXConstructExpr is "; vec_vec_add_member_call_ast->dump();
       return;
     }
 
     // Recursively handle member call expression
-    const domain::VecExpr *memberCallExpr = handleMemberCallExpr(vec_vec_add_ctor_ast, context, sm);
+    const domain::VecExpr *memberCallExpr = handleMemberCallExpr(vec_vec_add_member_call_ast, context, sm);
 
     // Probably want to fetch VecExpr just constructed and 
     // incorporate it as a chile of the overall node we're making
@@ -181,7 +176,7 @@ public:
 
     // RIGHT HERE, WASSUP?
     // add vector with domain call expression as child 
-    return interp_.mkVector(vec_vec_add_ctor_ast, memberCallExpr, context);
+    return interp_.mkVector(vec_vec_add_member_call_ast, memberCallExpr, context);
   }
 };
 
@@ -239,7 +234,7 @@ const domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *arg, ASTContex
   //
   // TODO: Clear this up, move next line into getExpressionInterp
   //
-  return domain::VecExpr *expr = interp_->getExpressionInterp(arg);
+  return interp_->getExpressionInterp(arg);
 }
 
 /*
@@ -409,7 +404,7 @@ domain::VecExpr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
 }
 */
 
-const domain::VecExpr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
+const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *context, SourceManager &sm)
 {
   std::cerr << "domain::handleCXXDeclStmt: START. Matching.\n";
   CXXConstructExprMatcher matcher;

@@ -25,16 +25,22 @@ using VecVecAddExpr = const clang::CXXMemberCallExpr;
 #endif
 
 /*
-Domain          Coords              AST             Interp
-------          ------              ---             -------
+Domain          Coords              AST             Interp              Clang               Main
+------          ------              ---             -------             -----               ----
 Space
-VecExpr         VecExpr (super)     union           mkVecExpr
+VecExpr         VecExpr (super)     union           mkVecExpr           
 VecLitExpr      VecLitExpr          VecLitExpr      (uses mkVector)
-VecIdent        VecIdent            VecIdent        mkVecIdent
-VecVarExpr      VecVarExpr          VecVarExpr      mkVecVarExpr   
-VecVecAddExpr   VecVecAddExpr       VecVecAddExpr   mkVecVecAddExpr
-Vector          Vector              Vector          mkVector
-VecDef          VecDef              VecDef          mkVecDef
+VecIdent        VecIdent            VecIdent        mkVecIdent          CXXConstructExpr    HandlerForCXXConstructLitExpr
+VecVarExpr      VecVarExpr          VecVarExpr      mkVecVarExpr        DeclRefExpr         HandlerForCXXMemberCallExprRight_DeclRefExpr
+VecVecAddExpr   VecVecAddExpr       VecVecAddExpr   mkVecVecAddExpr     CXXMemberCallExpr   HandlerForCXXAddMemberCall, handleMemberCallExpr
+Vector          Vector              Vector          mkVector            CXXConstructExpr    HandlerForCXXConstructAddExpr (recurse member)
+VecDef          VecDef              VecDef          mkVecDef            CXXConstructExpr    VectorDeclStmtHandler, handleCXXDeclStmt (rec)     
+
+                                                                                            CXXMemberCallExprArg0Matcher
+                                                                                            handle_arg0_of_add_call (recurse)
+                                                                                            CXXMemberCallExprMemberExprMatcher (paren or)
+                                                                                            handle_member_expr_of_add_call (Expr*)
+                                                                                            CXXConstructExprMatcher (|lit | add)
 
 I'm afraid Vector and VecExpr are going to have the same address. There's an invariant that has to hold for search in the maps to work. What exactly is it?
 */
