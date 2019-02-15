@@ -60,7 +60,7 @@ domain::VecExpr *Domain::addVecLitExpr(Space &s, const coords::VecLitExpr *e)
 }
 
 
-
+// TODO: STUB
 // precondition: variable already interpreted
 Space &getSpaceOfVarExpr(const coords::VecExpr *ast)
 {
@@ -73,7 +73,6 @@ Space &getSpaceOfVarExpr(const coords::VecExpr *ast)
     return *new Space("_");
 }
 
-// TODO: Change arg type to be more precise
 domain::VecExpr *Domain::addVecVarExpr(Space &s, const coords::VecVarExpr *ast)
 {
     domain::VecExpr *var = new domain::VecExpr(s, ast);
