@@ -140,10 +140,75 @@ Domain representation of binding of identifier to expression.
 */
 enum VecCtorType {VEC_EXPR, VEC_LIT, VEC_VAR, VEC_NONE } ; 
 
+
+/*
+This is a sum type capable of representing different kinds of fully constructed vectors.
+*/
 class Vector  {
 public:
-	Vector(const Space& s, const coords::Vector* coords, domain::VecExpr* expr) :
-		space_(&s), coords_(coords), expr_(expr), tag_(VEC_NONE) { 
+	Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+		space_(&s), coords_(coords), tag_(tag) { 
+	}
+	bool isLit() { return (tag_ == VEC_LIT); } 
+	bool isExpr() { return (tag_ == VEC_EXPR); } 
+	bool isVar { return (tag_ == VEC_EXPR); } 
+	const Space* getSpace() {return space_; }
+	const coords::Vector* getCoords() const {return coords_; } 
+
+	// precondition tag_ == VEC_EXPR
+	const domain::VecExpr* getVecExpr() const { 
+		if (tag_ != VEC_EXPR) {
+			std::cerr << "domain::Vector::getVecExpr: Error. Wrong union discriminator.\n";
+		}
+		return expr_; }
+
+	virtual std::string toString() const {
+		return "domain::Vector::toString: Error. Should not be called. Abstract.\n";
+	}
+private:
+	const Space* space_; // INFER?
+	const coords::Vector* coords_; 
+	const domain::VecExpr* expr_; // only valid if tag_ == VEC_EXPR
+	VecCtorType tag_;
+};
+
+
+
+class Vector_Lit : public Vector {
+public:
+	Vector_Lit(const Space& s, const coords::Vector* coords) :
+		space_(&s), coords_(coords), tag_(VEC_LIT) { 
+	}
+	std::string toString() const {
+		return "domain::Vector_Lit::toString: STUB.\n";
+	}
+};
+
+
+
+/*
+Todo: Rename to reflect
+*/
+class Vector_Expr : public Vector  {
+public:
+	Vector_Expr(const Space& s, const coords::Vector* coords, domain::VecExpr* expr) :
+		space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) { 
+	}
+	const domain::VecExpr* getVecExpr() const { return expr_; }
+	std::string toString() const {
+		return expr_->toString();
+	}
+private:
+	const domain::VecExpr* expr_; // vec expr from which vector is constructed
+};
+
+/*
+Future?
+
+class Vector_Var : public Vector {
+public:
+	Vector_Var(const Space& s, const coords::Vector* coords, domain::VecVarExpr* expr) :
+		space_(&s), coords_(coords), expr_(expr), tag_(VEC_VAR) { 
 	}
 	bool isExpr() { return (tag_ == VEC_EXPR); } 
 	bool isLit() { return (tag_ == VEC_LIT); } 
@@ -163,6 +228,9 @@ private:
 	const domain::VecExpr* expr_; // child
 	VecCtorType tag_;
 };
+*/
+
+
 
 /*
 A Domain is a lifted version of selected code represented as a collection 
