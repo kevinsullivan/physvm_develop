@@ -17,11 +17,13 @@ std::string VecIdent::getName() const
     return "(" + vardecl_->toString() + " : " + space_->getName() + ")";
 }
 
+/*
 // TODO: currently UNUSED
-void VecLitExpr::addFloatLit(float num)
+void VecLitExpr::mkFloatLit(float num)
 {
     std::cerr << "Stub: add floats to litvalexpr\n";
 }
+*/
 
 const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgL()
 {
@@ -39,7 +41,7 @@ const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgR()
 }
 */
 
-Space &Domain::addSpace(const string &name)
+Space &Domain::mkSpace(const string &name)
 {
     Space *s = new Space(name);
     spaces.push_back(*s);
@@ -48,7 +50,7 @@ Space &Domain::addSpace(const string &name)
 }
 
 
-domain::VecExpr *Domain::addVecLitExpr(Space &s, const coords::VecLitExpr *e)
+domain::VecExpr *Domain::mkVecLitExpr(Space &s, const coords::VecLitExpr *e)
 {
     domain::VecExpr *be = new domain::VecExpr(s, e);
     //std::cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
@@ -73,7 +75,7 @@ Space &getSpaceOfVarExpr(const coords::VecExpr *ast)
     return *new Space("_");
 }
 
-domain::VecExpr *Domain::addVecVarExpr(Space &s, const coords::VecVarExpr *ast)
+domain::VecExpr *Domain::mkVecVarExpr(Space &s, const coords::VecVarExpr *ast)
 {
     domain::VecExpr *var = new domain::VecExpr(s, ast);
     std::cerr << "Adding Vec Var Expr to domain, address " << std::hex << var << ": " << var->toString() << "\n";
@@ -84,17 +86,17 @@ domain::VecExpr *Domain::addVecVarExpr(Space &s, const coords::VecVarExpr *ast)
     return var;
 }
 
-domain::VecExpr *Domain::addVecVecAddExpr(Space &s, coords::VecVecAddExpr *e, domain::VecExpr *mem, domain::VecExpr *arg)
+domain::VecExpr *Domain::mkVecVecAddExpr(Space &s, coords::VecVecAddExpr *e, domain::VecExpr *mem, domain::VecExpr *arg)
 {
     domain::VecExpr *be = new domain::VecVecAddExpr(s, e, mem, arg);
     expressions.push_back(be);
-    std::cerr << "Domain::addVecVecAddExpr:: Add. Coords are "
+    std::cerr << "Domain::mkVecVecAddExpr:: Add. Coords are "
         << std::hex << e << " Domain VecExpr at " << std::hex << be << "\n";
-    std::cerr << "Domain::addVecVecAddExpr:: VecExpr string is " << be->toString() << "\n";
+    std::cerr << "Domain::mkVecVecAddExpr:: VecExpr string is " << be->toString() << "\n";
     return *be;
 }
 
-VecIdent *Domain::addVecIdent(Space &s, const coords::VecIdent *ast)
+VecIdent *Domain::mkVecIdent(Space &s, const coords::VecIdent *ast)
 {
     VecIdent *id = new VecIdent(s, ast);
     identifiers.push_back(*id);
@@ -103,9 +105,9 @@ VecIdent *Domain::addVecIdent(Space &s, const coords::VecIdent *ast)
 
 // TODO: Should be binding to Vector, not Expr
 // 
-VecDef &Domain::addVecDef(const coords::VecDef *v, const VecIdent* i, const domain::VecExpr* e)
+VecDef &Domain::mkVecDef(const coords::VecDef *v, const VecIdent* i, const domain::VecExpr* e)
 {
-    std::cerr << "Domain::addVecDef ";
+    std::cerr << "Domain::mkVecDef ";
     std::cerr << "identifier is " << i->toString();
     std::cerr << " expression is " << e->toString() << "\n";
     VecDef *bd = new VecDef(v, i, e);
@@ -118,9 +120,19 @@ Domain.cpp:116:38: error: no matching function for call to 'domain::VecDef::VecD
     return *bd;
 }
 
-Vector* Domain::addVector(coords Vector* coords, domain::VecExpr *expr) {
-    Vector* vec = new Vector(coords, expr);
+
+// TODO: Change all "adds" in this file to "mk/put"
+Vector* Domain::mkVector_Lit(Space& space, coords::Vector* coords) {
+    Vector* vec = new domain::Vector_Lit(space, coords);
     vectors.push_back(*vec);
+    return vec;
+}
+
+// TODO: Change all "adds" in this file to "mk/put"
+Vector* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::Expr* exp) {
+    Vector* vec = new domain::Vector_Expr(space, coords, expr);
+    vectors.push_back(*vec);
+    return vec;
 }
 
 

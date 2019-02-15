@@ -25,6 +25,8 @@ void ASTToCoords::overrideDecl(const clang::Decl *d, const coords::VecExpr *c) {
     decl_coords.insert(std::make_pair(d, c));
 }
 
+/*
 const coords::VecExpr *ASTToCoords::getCoords(ast::Expr* e) {
     return expr_coords[e];
 }
+*/

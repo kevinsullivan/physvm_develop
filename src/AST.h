@@ -9,8 +9,6 @@
 namespace ast {
 
 // TODO: Remove const if we want to modify AST
-// TODO: Prefix with Vec
-//
 // What is the invariant needed for lookups to work?
 //
 using VecDef  = const clang::DeclStmt;

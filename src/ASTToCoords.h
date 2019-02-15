@@ -1,16 +1,16 @@
 #ifndef ASTTOCOORDS_H
 #define ASTTOCOORDS_H
 
+#include "AST.h"
 #include "clang/AST/AST.h"
 #include "Coords.h"
-#include "AST.h"
 
 namespace ast2coords {
 
 class ASTToCoords {
 public:
     const coords::VecIdent *makeCoordsForVecIdent(const ast::VecIdent *ident);
-    const coords::VecExpr *getCoords(ast::Expr* e);
+//    const coords::VecExpr *getCoords(ast::Expr* e);
 
 // protected
 // TODO: Use AST.h type aliases

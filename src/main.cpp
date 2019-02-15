@@ -52,8 +52,10 @@ public:
     const clang::CXXConstructExpr *lit_ast = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
 
-    // TODO -- separate interp for vector from lit
-    interp_.mkVector(lit_ast, context);
+    // NOTE: No literal expression in clang, just constructed object
+    // NOTE: def will always be of identifier to constructed object
+    //
+    interp_.mkVector_Lit(lit_ast, context);
   }
 };
 
@@ -85,15 +87,12 @@ const domain::VecExpr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTCon
   }
   std::cerr << "main::handleMemberCallExpr: End\n";
 
-  // Update interpretation
   interp_.mkVecVecAddExpr(ast, left_br, right_br);
-  // Return new domain (add) expression object
-  return interp_.getExpressionInterp(ast);
+  return interp_.getVecExpr(ast);
 }
 
 /*
-TODO: CONSIDER inlining this code.
-WHY DO I EVEN HAVE THIS? HANDLED BY RECURSION ABOVE.
+TODO: CONSIDER inlining this code?
 */
 class HandlerForCXXMemberCallExprRight_DeclRefExpr : public MatchFinder::MatchCallback
 {
@@ -102,7 +101,9 @@ public:
   {
     const auto *declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
     std::cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
-    //ASTContext *context = Result.Context;
+
+    // TODO: Should we be passing context objects with these AST nodes? Do they persist?
+    //
     interp_->mkVecVarExpr(declRefExpr);
   }
 };
@@ -131,6 +132,8 @@ public:
 };
 
 /*
+A Vector object constructed from a member expression
+
 Precondition: Provided with match result of type CXXConstructAddExpr
 Postcondition: underlying add expression in system, as child of this node, also in system
 Strategy:
@@ -174,9 +177,7 @@ public:
     // incorporate it as a chile of the overall node we're making
 
 
-    // RIGHT HERE, WASSUP?
-    // add vector with domain call expression as child 
-    return interp_.mkVector(vec_vec_add_member_call_ast, memberCallExpr, context);
+    return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr, context);
   }
 };
 
@@ -232,9 +233,9 @@ const domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *arg, ASTContex
   // postcondition, arg is now "in the system" as a domain expression
   // find and return resulting domain expression
   //
-  // TODO: Clear this up, move next line into getExpressionInterp
+  // TODO: Clear this up, move next line into getVecExpr
   //
-  return interp_->getExpressionInterp(arg);
+  return interp_->getVecExpr(arg);
 }
 
 /*
@@ -315,7 +316,7 @@ domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTC
   // keyed by memexpr (by an AST wrapper around memexpr).
   // Test postcondition.
 
-  domain::VecExpr *expr = interp_->getExpressionInterp(memexpr); 
+  domain::VecExpr *expr = interp_->getVecExpr(memexpr); 
   std::cerr << "domain::VecExpr *handle_member_expr_of_add_call. Done. domain::VecExpr at " 
     << std::hex << expr << "\n";  
   return expr;
@@ -398,7 +399,7 @@ domain::VecExpr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
   // TO DO: Architectural change means we need to wrap consdecl to map it
 
   const Expr *ast = new Expr(consdecl);   // TODO -- BETTER TYPE!
-  domain::VecExpr *be = interp->getExpressionInterp(*ast);
+  domain::VecExpr *be = interp->getVecExpr(*ast);
   //std::cerr << "handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
   return be;
 }
@@ -413,7 +414,7 @@ const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *co
   // postcondition: consdecl now "in the system" (has interpretation)
   // Fetch and return result
   //
-  const domain::VecExpr *expr = interp->getExpressionInterp(consdecl);
+  const domain::VecExpr *expr = interp->getVecExpr(consdecl);
   std::cerr << "domain::handleCXXDeclStmt: DONE. domain::VecExpr at " 
     << std::hex << expr << "\n";
   return expr;
@@ -466,9 +467,9 @@ public:
     std::cerr << "VectorDeclStmtHandler: done matching on consdecl\n";
     //
     // Postcondition: domain vector expression now in system
-    // fetch result. Checking occurs in getExpressionInterp.
+    // fetch result. Checking occurs in getVecExpr.
     //
-    const domain::VecExpr *expr = interp->getExpressionInterp(consdecl);
+    const domain::VecExpr *expr = interp->getVecExpr(consdecl);
   
     // add domain::VecDef for variable declaration statement in code
     //
@@ -477,7 +478,7 @@ public:
 /*    VecDef *declstmt_wrapper = new VecDef(declstmt);
     stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
     domain::VecDef &binding = domain_domain->addVecDef(declstmt_wrapper, bi, *be);
-    interp->putVecDefInterp(declstmt_wrapper, binding);
+    interp->putVecDef(declstmt_wrapper, binding);
 
 
     std::cerr << "VectorDeclStmtHandler:: Post Domain State \n"; //declstmt->dump();
