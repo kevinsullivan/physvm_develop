@@ -12,31 +12,29 @@ namespace coords2domain {
 class CoordsToDomain
 {
   public:
-	void putVecIdentInterp(const coords::VecIdent *key, domain::VecIdent *bi);
-	const domain::VecIdent *getVecIdentInterp(const coords::VecIdent *key);
 
-	// ??? delete ???
-	/*
-	void putVectorInterp(const Vector& n, VecVarExpr& v);
-	VecVarExpr* getVectorInterp(const Vector& n);
-	*/
+	void putVecIdent(const coords::VecIdent *key, domain::VecIdent *bi);
+	const domain::VecIdent *getVecIdent(const coords::VecIdent *key);
 
-	void putVecLitExprInterp(const coords::VecLitExpr &n, domain::VecLitExpr &v);
+	void PutVecExpr(const coords::VecExpr *n, domain::VecExpr *e);
+	domain::VecExpr *getVecExpr(const coords::VecExpr* n);
+
+	void putVecLitExpr(const coords::VecLitExpr &n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(const coords::VecLitExpr &n) const;
 
-	void putExpressionInterp(const coords::VecExpr *n, domain::VecExpr *e);
-	domain::VecExpr *getExpressionInterp(const coords::VecExpr* n);
+	void PutVecVarExpr(const coords::VecVarExpr *n, domain::VecVarExpr *e);
+	domain::VecVarExpr *getVecExpr(const coords::VecVarExpr* n);
 
-	void putVecDefInterp(coords::VecDef *vardecl_wrapper, domain::VecDef &b);
-	const domain::VecDef *getVecDefInterp(const coords::VecDef* vardecl_wrapper);
+	void PutVecVecAddExpr(const coords::VecVarExpr *n, domain::VecVecAddExpr *e);
+	domain::VecVecAddExpr *getVecVecAddExpr(const coords::VecVarExpr* n);
 
-	void dumpExpressions() const {
-		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
-			//std::std::cerr << std::hex << &it->first << " : " << std::hex << it.second << "\n";
-			std::cerr << "InterpExpr!\n";
-		}
-		std::cerr << std::endl;
-	}
+	void putVector(coords::Vector *vardecl_wrapper, domain::Vector *b);
+	const domain::Vector *getVector(const coords::VecDef* vardecl_wrapper);
+
+	void putVecDef(coords::VecDef *vardecl_wrapper, domain::VecDef *b);
+	const domain::VecDef *getVecDef(const coords::VecDef* vardecl_wrapper);
+
+	void dump();
 
   private:
 	/* 

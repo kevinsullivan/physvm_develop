@@ -16,27 +16,27 @@ namespace interp {
 class Interpretation {
 public:
     Interpretation();
-    domain::VecIdent *mkVecIdent(ast::VecIdent *ast);
-    // TODO: Have this take coord, not domain, arguments
-    void mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *exp);
-    // TODO: Use AST.h name in next method
-    void mkVector(ast::Vector* ast, clang::ASTContext *context); 
-    void mkVecVarExpr(ast::VecVar *ast, clang::ASTContext *c);
-    //void mkVector(ast::VecLitExpr *ast, clang::ASTContext *context);
+ 
+    void mkVecIdent(ast::VecIdent *ast);
+    void mkVecLitExpr(ast::VecVarExpr *ast, clang::ASTContext *c);
+    void mkVecVarExpr(ast::VecVarExpr *ast, clang::ASTContext *c);
     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
-    void mkVecExpr(ast::VecExpr *ast, clang::ASTContext *context);
-    // TODO: Use AST.h name in next method return
+    void mkVector_Lit(ast::VecLitExpr *ast, clang::ASTContext *context);
+    void mkVector_Expr(ast::VecLitExpr *ast, clang::ASTContext *context);
+//    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);
+    void mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *exp);
+
     const coords::VecExpr *getCoords(ast::VecExpr *expr);
     
 
     // Precondition: coords2domain_ is defined for exp
     //
-    domain::VecExpr* getExpressionInterp(ast::VecExpr* ast) {
+    domain::VecExpr* getVecExpr(ast::VecExpr* ast) {
         // we use these objects as key for query purposes
         const coords::VecExpr *coords = new coords::VecExpr(ast);
-        domain::VecExpr* dom = coords2dom_->getExpressionInterp(coords);
+        domain::VecExpr* dom = coords2dom_->getVecExpr(coords);
         if (!dom) {
-            std::cerr << "Interpretation::getExpressionInterp. Error. Undefined for key!\n";
+            std::cerr << "Interpretation::getVecExpr. Error. Undefined for key!\n";
         }
         return dom;
     }

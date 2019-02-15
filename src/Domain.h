@@ -174,17 +174,19 @@ of C++ objects. It should be isomorphic to the domain, and domain models
 
 class Domain {
 public:
-	Space& addSpace(const std::string& name);
+	Space& mkSpace(const std::string& name);
 	//VecLitExpr& addLitExpr(Space& s, const coords::coords::Lit* ast);		/* BIG TODO: Fix others */
-	VecIdent* addVecIdent(Space& s, const coords::VecIdent* ast);
-	VecExpr& addVecVarExpr(Space& s, const coords::VecVarExpr* ast);
-	// should be addVecLit*Ctor*, with contained lit data 
-	VecExpr* addVecLitExpr(Space& s, const coords::VecLitExpr* e);
-	VecExpr* addVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
+	VecIdent* mkVecIdent(Space& s, const coords::VecIdent* ast);
+	VecExpr* mkVecVarExpr(Space& s, const coords::VecVarExpr* ast);
+	// should be mkVecLit*Ctor*, with contained lit data 
+	VecExpr* mkVecLitExpr(Space& s, const coords::VecLitExpr* e);
+	VecExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
 	// coords for container, domain object for child, lit | expr
 	// if lit, child is -- empty? -- else coords and domain VecExpr
-	Vector* addVector(coords::Vector* v, domain::VecExpr *vec);
-	VecDef& addVecDef(const coords::VecDef* vardecl, const VecIdent* identifier, const VecExpr* expression);
+	Vector* mkVector_Lit(coords::Vector* v/*, domain::VecExpr *vec*/);
+	Vector* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
+	//Vector* mkVector_Var(coords::Vector* v/*, domain::VecExpr *vec*/);
+	VecDef& mkVecDef(const coords::VecDef* vardecl, const VecIdent* identifier, const VecExpr* expression);
 	void dump() {
 		std::cerr << "Domain expressions:\n";
 		dumpExpressions(); // print contents on std::cerr
@@ -198,7 +200,7 @@ public:
 	void dumpVecDefs(); // print contents on std::cerr
 
 	bool isConsistent();
-	const std::vector<Space>& getAllSpaces();
+	std::vector<Space>& getAllSpaces();
 private:
 	std::vector<Space> spaces;
 	std::vector<VecIdent> identifiers;

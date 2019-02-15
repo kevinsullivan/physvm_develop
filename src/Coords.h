@@ -1,5 +1,5 @@
-#ifndef CODECOORDS_H
-#define CODECOORDS_H
+#ifndef COORDS_H
+#define COORDS_H
 
 #include "clang/AST/AST.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"

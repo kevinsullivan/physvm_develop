@@ -58,7 +58,7 @@ handleMemberCallExpr(CXXMemberCallExpr *mce_ast) {
 
 domain::VecExpr *handle_member_expr_of_add_call(clang::Expr *ast) {
     match ast with CXXMemberCallExprMemberExprMatcher.match(ast)
-    return interp_->getExpressionInterp(memexpr)   
+    return interp_->getVecExpr(memexpr)   
 }
 
 // problem here, parens
@@ -81,7 +81,7 @@ HandlerForCXXAddMemberCall(ast: cxxMemberCallExpr) {
 domain::VecExpr *handle_arg0_of_add_call(clang::Expr *ast) {
     match ast with CXXMemberCallExprArg0Matcher.match(ast)
     // return value now in interp
-    return interp_->getExpressionInterp(ast)
+    return interp_->getVecExpr(ast)
 }
 
 CXXMemberCallExprArg0Matcher(Expr* ast) {

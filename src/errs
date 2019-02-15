@@ -1,12 +1,12 @@
 -----------------------------------------------
 Using LLVM_SRC_PATH = /llvm
-UsinLVM_BUILD_PATH = /llvm/build
+Using LLVM_BUILD_PATH = /llvm/build
 Using LLVM_BIN_PATH = /llvm/build/bin
 -----------------------------------------------
 g++ -O0 -g -Wall `/llvm/build/bin/llvm-config --cxxflags` -I/llvm/tools/clang/include -I/llvm/build/tools/clang/include ASTToCoords.cpp AST.cpp Interpretation.cpp Oracle.cpp Checker.cpp CoordsToDomain.cpp main.cpp Domain.cpp \
 	-Wl,--start-group -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangDriver -lclangEdit -lclangFrontend -lclangFrontendTool -lclangLex -lclangParse -lclangSema -lclangEdit -lclangRewrite -lclangRewriteFrontend -lclangStaticAnalyzerFrontend -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangCrossTU -lclangIndex -lclangSerialization -lclangToolingCore -lclangTooling -lclangFormat -Wl,--end-group `/llvm/build/bin/llvm-config --ldflags --libs --system-libs` -o ../build/ASTMatcher
 In file included from ASTToCoords.h:5:0,
-                 from ASTToCoords.cpp:1:
+                 from ASTToCoord.cpp:1:
 Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
 Coords.h:254:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
    const VecExpr *be_;
@@ -57,24 +57,36 @@ ASTToCoords.h:13:28: error: expected ';' at end of member declaration
 ASTToCoords.h:13:47: error: expected ')' before '*' token
      const coords::VecExpr *getCoords(ast::Expr* e);
                                                ^
-In file included from Interpretation.h:10:0,
-                 from Interpretation.cpp:1:
-CoordsToDomain.h: In member function 'void coords2domain::CoordsToDomain::dumpExpressions() const':
-CoordsToDomain.h:38:8: error: 'std::std' has not been declared
-   std::std::cerr << std::endl;
-        ^~~
+In file included from Interpretation.cpp:1:0:
+Interpretation.h:24:28: error: 'ast::VecVar' has not been declared
+     void mkVecVarExpr(ast::VecVar *ast, clang::ASTContext *c);
+                            ^~~~~~
+Interpretation.cpp:63:40: error: variable or field 'mkVecVarExpr' declared void
+ void Interpretation::mkVecVarExpr(ast::VecVar *ast, clang::ASTContext *c) {
+                                        ^~~~~~
+Interpretation.cpp:63:40: error: 'VecVar' is not a member of 'ast'
+Interpretation.cpp:63:40: note: suggested alternative: 'Vector'
+ void Interpretation::mkVecVarExpr(ast::VecVar *ast, clang::ASTContext *c) {
+                                        ^~~~~~
+                                        Vector
+Interpretation.cpp:63:51: error: expected primary-expression before ',' token
+ void Interpretation::mkVecVarExpr(ast::VecVar *ast, clang::ASTContext *c) {
+                                                   ^
+Interpretation.cpp:63:71: error: expected primary-expression before '*' token
+ void Interpretation::mkVecVarExpr(ast::VecVar *ast, clang::ASTContext *c) {
+                                                                       ^
+Interpretation.cpp:63:72: error: 'c' was not declared in this scope
+ void Interpretation::mkVecVarExpr(ast::VecVar *ast, clang::ASTContext *c) {
+                                                                        ^
 Interpretation.cpp: In member function 'void interp::Interpretation::mkVecExpr(ast::VecExpr*, clang::ASTContext*)':
-Interpretation.cpp:103:53: error: invalid conversion from 'ast::VecExpr* {aka const clang::Expr*}' to 'ast::Vector* {aka const clang::CXXConstructExpr*}' [-fpermissive]
-     coords::Vector *vcoords = new coords::Vector(ast);
-                                                     ^
-In file included from Interpretation.h:6:0,
-                 from Interpretation.cpp:1:
-Coords.h:212:3: note:   initializing argument 1 of 'coords::Vector::Vector(ast::Vector*)'
-   Vector(const ast::Vector *constrExpr)
-   ^~~~~~
-Interpretation.cpp:106:54: error: no matching function for call to 'domain::Domain::addVector(coords::Vector*&)'
-     domain::VecExpr *vec = domain_->addVector(vcoords);
-                                                      ^
+Interpretation.cpp:115:37: error: 'class domain::Domain' has no member named 'addVecExpr'; did you mean 'addVecVarExpr'?
+     domain::VecExpr *vec = domain_->addVecExpr(vcoords);
+                                     ^~~~~~~~~~
+                                     addVecVarExpr
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector(ast::Vector*, clang::ASTContext*)':
+Interpretation.cpp:134:56: error: no matching function for call to 'domain::Domain::addVector(coords::Vector*&)'
+     domain::Vector* vec = domain_->addVector(vec_coords);
+                                                        ^
 In file included from Oracle.h:7:0,
                  from Interpretation.h:8,
                  from Interpretation.cpp:1:
@@ -82,19 +94,12 @@ Domain.h:186:10: note: candidate: domain::Vector* domain::Domain::addVector(coor
   Vector* addVector(coords::Vector* v, domain::VecExpr *vec);
           ^~~~~~~~~
 Domain.h:186:10: note:   candidate expects 2 arguments, 1 provided
-Interpretation.cpp: At global scope:
-Interpretation.cpp:121:49: error: 'ASTContext' has not been declared
- void Interpretation::mkVector(ast::Vector *ast, ASTContext *context) {
-                                                 ^~~~~~~~~~
-Interpretation.cpp:121:6: error: prototype for 'void interp::Interpretation::mkVector(ast::Vector*, int*)' does not match any in class 'interp::Interpretation'
- void Interpretation::mkVector(ast::Vector *ast, ASTContext *context) {
-      ^~~~~~~~~~~~~~
-In file included from Interpretation.cpp:1:0:
-Interpretation.h:23:10: error: candidate is: void interp::Interpretation::mkVector(ast::Vector*, clang::ASTContext*)
-     void mkVector(ast::Vector* ast, clang::ASTContext *context);
-          ^~~~~~~~
+Interpretation.cpp:135:18: error: 'class coords2domain::CoordsToDomain' has no member named 'putVectorInterp'; did you mean 'putVecDef'?
+     coords2dom_->putVectorInterp(vec_coords, vec);
+                  ^~~~~~~~~~~~~~~
+                  putVecDef
 Interpretation.cpp: In member function 'const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)':
-Interpretation.cpp:143:39: error: expression cannot be used as a function
+Interpretation.cpp:152:39: error: expression cannot be used as a function
      return ast2coords_->getCoords(expr);
                                        ^
 In file included from Oracle.h:6:0,
@@ -110,26 +115,14 @@ Coords.h:240:3: warning:   when initialized here [-Wreorder]
    VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
    ^~~~~~
 Oracle.cpp: In member function 'domain::Space& oracle::Oracle::getSpace()':
-Oracle.cpp:29:14: error: binding reference of type 'std::vector<domain::Space>&' to 'const std::vector<domain::Space>' discards qualifiers
-  printSpaces(spaces);
-              ^~~~~~
-Oracle.cpp:14:6: note:   initializing argument 1 of 'void printSpaces(std::vector<domain::Space>&)'
- void printSpaces(vector<domain::Space>& spaces);
-      ^~~~~~~~~~~
-Oracle.cpp:30:31: error: binding reference of type 'std::vector<domain::Space>&' to 'const std::vector<domain::Space>' discards qualifiers
-  int whichSpace = selectSpace(spaces);
-                               ^~~~~~
-Oracle.cpp:16:5: note:   initializing argument 1 of 'int selectSpace(std::vector<domain::Space>&)'
- int selectSpace(vector<domain::Space>& spaces);
-     ^~~~~~~~~~~
-Oracle.cpp:31:43: error: binding reference of type 'domain::Space&' to 'const value_type {aka const domain::Space}' discards qualifiers
-  domain::Space& result = spaces[whichSpace];
-                                           ^
+Oracle.cpp:24:55: error: binding reference of type 'std::vector<domain::Space>&' to 'const std::vector<domain::Space>' discards qualifiers
+     vector<domain::Space>& spaces = dom_->getAllSpaces();
+                                     ~~~~~~~~~~~~~~~~~~^~
 In file included from Domain.h:9:0,
                  from Checker.h:4,
                  from Checker.cpp:9:
 Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
-Coords.h:254:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+Coords.h:254:18: warning: 'coords::VeDef::be_' will be initialized after [-Wreorder]
    const VecExpr *be_;
                   ^~~
 Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
@@ -138,41 +131,6 @@ Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
 Coords.h:240:3: warning:   when initialized here [-Wreorder]
    VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
    ^~~~~~
-Checker.cpp: At global scope:
-Checker.cpp:18:29: error: 'Domain' has not been declared
- void generateMath(aFile* f, Domain& dom);
-                             ^~~~~~
-Checker.cpp: In member function 'bool Checker::Check()':
-Checker.cpp:25:21: error: invalid initialization of reference of type 'int&' from expression of type 'domain::Domain'
-     generateMath(f, dom_);
-                     ^~~~
-Checker.cpp:18:6: note: in passing argument 2 of 'void generateMath(aFile*, int&)'
- void generateMath(aFile* f, Domain& dom);
-      ^~~~~~~~~~~~
-Checker.cpp: At global scope:
-Checker.cpp:36:25: error: 'Domain' has not been declared
- void writeDomain(FILE*, Domain& d);
-                         ^~~~~~
-Checker.cpp:48:29: error: 'Domain' has not been declared
- void generateMath(aFile* f, Domain& dom) {
-                             ^~~~~~
-Checker.cpp:71:27: error: 'Domain' has not been declared
- void writeDomain(FILE* f, Domain& d) {
-                           ^~~~~~
-Checker.cpp: In function 'bool checkMath(aFile*)':
-Checker.cpp:83:49: error: 'string' was not declared in this scope
-     int status = system((std::string("lean ") + string(f->name)).c_str());
-                                                 ^~~~~~
-Checker.cpp:83:49: note: suggested alternatives:
-In file included from /usr/include/c++/7/iosfwd:39:0,
-                 from /usr/include/c++/7/ios:38,
-                 from /usr/include/c++/7/ostream:38,
-                 from /usr/include/c++/7/iostream:39,
-                 from Checker.cpp:8:
-/usr/include/c++/7/bits/stringfwd.h:74:33: note:   'std::__cxx11::string'
-   typedef basic_string<char>    string;
-                                 ^~~~~~
-/usr/include/c++/7/bits/stringfwd.h:74:33: note:   'std::__cxx11::string'
 In file included from CoordsToDomain.h:5:0,
                  from CoordsToDomain.cpp:1:
 Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
@@ -185,11 +143,6 @@ Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
 Coords.h:240:3: warning:   when initialized here [-Wreorder]
    VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
    ^~~~~~
-In file included from CoordsToDomain.cpp:1:0:
-CoordsToDomain.h: In member function 'void coords2domain::CoordsToDomain::dumpExpressions() const':
-CoordsToDomain.h:38:8: error: 'std::std' has not been declared
-   std::std::cerr << std::endl;
-        ^~~
 In file included from Interpretation.h:6:0,
                  from main.cpp:15:
 Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
@@ -205,140 +158,119 @@ Coords.h:240:3: warning:   when initialized here [-Wreorder]
 In file included from Interpretation.h:7:0,
                  from main.cpp:15:
 ASTToCoords.h: At global scope:
-ASTToCoords.h:13:28: error: expected ';' at end of member declaration
+ASTToCoords.h:13:28: error expected ';' at end of member declaration
      const coords::VecExpr *getCoords(ast::Expr* e);
                             ^~~~~~~~~
-ASTToCoords.h:13:47: error: expected ')' before '*' token
+ASTToCoords.h:13:47: expected ')' before '*' token
      const coords::VecExpr *getCoords(ast::Expr* e);
                                                ^
-In file included from Interpretation.h:10:0,
-                 from main.cpp:15:
-CoordsToDomain.h: In member function 'void coords2domain::CoordsToDomain::dumpExpressions() const':
-CoordsToDomain.h:38:8: error: 'std::std' has not been declared
-   std::std::cerr << std::endl;
-        ^~~
+In file included from main.cpp:15:0:
+Interpretation.h:24:28: error: 'ast::VecVar' has not been declared
+     void mkVecVarExpr(ast::VecVar *ast, clang::ASTContext *c);
+                            ^~~~~~
 main.cpp: In function 'const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)':
-main.cpp:96:56: error: invalid conversion from 'const domain::VecExpr*' to 'domain::VecExpr*' [-fpermissive]
-   return interp_.mkVecVecAddExpr(ast, left_br, right_br);
-                                                        ^
+main.cpp:89:49: error: invalid conversion from 'const domain::VecExpr*' to 'domain::VecExpr*' [-fpermissive]
+   interp_.mkVecVecAddExpr(ast, left_br, right_br);
+                                                 ^
 In file included from main.cpp:15:0:
-Interpretation.h:25:10: note:   initializing argument 2 of 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)'
+Interpretation.h:26:10: note:   initializing argument 2 of 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)'
      void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
           ^~~~~~~~~~~~~~~
-main.cpp:96:56: error: invalid conversion from 'const domain::VecExpr*' to 'domain::VecExpr*' [-fpermissive]
-   return interp_.mkVecVecAddExpr(ast, left_br, right_br);
-                                                        ^
+main.cpp:89:49: error: invalid conversion from 'const domain::VecExpr*' to 'domain::VecExpr*' [-fpermissive]
+   interp_.mkVecVecAddExpr(ast, left_br, right_br);
+                                                 ^
 In file included from main.cpp:15:0:
-Interpretation.h:25:10: note:   initializing argument 3 of 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)'
+Interpretation.h:26:10: note:   initializing argument 3 of 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)'
      void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
           ^~~~~~~~~~~~~~~
-main.cpp:96:56: error: void value not ignored as it ought to be
-   return interp_.mkVecVecAddExpr(ast, left_br, right_br);
-                                                        ^
-main.cpp: In member function 'virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
-main.cpp:139:28: warning: unused variable 'memberCallExpr' [-Wunused-variable]
-     const domain::VecExpr* memberCallExpr = handleMemberCallExpr(memcall, context, sm);
-                            ^~~~~~~~~~~~~~
+main.cpp: In member function 'virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:106:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     interp_->mkVecVarExpr(declRefExpr);
+            ^~
 main.cpp: In member function 'virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
-main.cpp:165:9: error: 'consdecl' was not declared in this scope
-     if (consdecl == NULL)
-         ^~~~~~~~
-main.cpp:165:9: note: suggested alternative: 'cosl'
-     if (consdecl == NULL)
-         ^~~~~~~~
-         cosl
-main.cpp:186:74: error: no matching function for call to 'interp::Interpretation::mkVector(const clang::CXXMemberCallExpr*&, const domain::VecExpr*&, clang::ASTContext*&)'
-     return interp_.mkVector(vec_vec_add_ctor_ast, memberCallExpr, context);
-                                                                          ^
+main.cpp:163:9: error: 'vec_vec_add_ctor_ast' was not declared in this scope
+     if (vec_vec_add_ctor_ast == NULL)
+         ^~~~~~~~~~~~~~~~~~~~
+main.cpp:163:9: note: suggested alternative: 'vec_vec_add_member_call_ast'
+     if (vec_vec_add_ctor_ast == NULL)
+         ^~~~~~~~~~~~~~~~~~~~
+         vec_vec_add_member_call_ast
+main.cpp:179:81: error: no matching function for call to 'interp::Interpretation::mkVector(const clang::CXXMemberCallExpr*&, const domain::VecExpr*&, clang::ASTContext*&)'
+     return interp_.mkVector(vec_vec_add_member_call_ast, memberCallExpr, context);
+                                                                                 ^
 In file included from main.cpp:15:0:
 Interpretation.h:23:10: note: candidate: void interp::Interpretation::mkVector(ast::Vector*, clang::ASTContext*)
      void mkVector(ast::Vector* ast, clang::ASTContext *context);
           ^~~~~~~~
 Interpretation.h:23:10: note:   candidate expects 2 arguments, 3 provided
-main.cpp:186:74: error: return-statement with a value, in function returning 'void' [-fpermissive]
-     return interp_.mkVector(vec_vec_add_ctor_ast, memberCallExpr, context);
-                                                                          ^
-main.cpp:163:29: warning: unused variable 'expr_ctor_ast' [-Wunused-variable]
-     const CXXConstructExpr *expr_ctor_ast =
-                             ^~~~~~~~~~~~~
-main.cpp: At global scope:
-main.cpp:225:3: error: 'HandlerForCXXMemberCallExprRight_DeclRefExpr' does not name a type
-   HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-main.cpp: In constructor 'CXXMemberCallExprArg0Matcher::CXXMemberCallExprArg0Matcher()':
-main.cpp:208:67: error: 'dre_handler_' was not declared in this scope
-     CXXMemberCallExprArg0Matcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
-                                                                   ^~~~~~~~~~~~
-main.cpp:208:67: note: suggested alternative: 'mce_handler_'
-     CXXMemberCallExprArg0Matcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
-                                                                   ^~~~~~~~~~~~
-                                                                   mce_handler_
+main.cpp:179:81: error: return-statement with a value, in function returning 'void' [-fpermissive]
+     return interp_.mkVector(vec_vec_add_member_call_ast, memberCallExpr, context);
+                                                                                 ^
 main.cpp: In function 'const domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)':
-main.cpp:244:26: error: expected primary-expression before '*' token
-   return domain::VecExpr *expr = interp_->getExpressionInterp(arg);
-                          ^
-main.cpp:244:41: error: base operand of '->' has non-pointer type 'interp::Interpretation'
-   return domain::VecExpr *expr = interp_->getExpressionInterp(arg);
-                                         ^~
-main.cpp: At global scope:
-main.cpp:291:3: error: 'HandlerForCXXMemberCallExprRight_DeclRefExpr' does not name a type
-   HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-main.cpp: In constructor 'CXXMemberCallExprMemberExprMatcher::CXXMemberCallExprMemberExprMatcher()':
-main.cpp:265:73: error: 'dre_handler_' was not declared in this scope
-     CXXMemberCallExprMemberExprMatcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
-                                                                         ^~~~~~~~~~~~
-main.cpp:265:73: note: suggested alternative: 'mce_handler_'
-     CXXMemberCallExprMemberExprMatcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
-                                                                         ^~~~~~~~~~~~
-                                                                         mce_handler_
+main.cpp:237:17: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   return interp_->getVecExpr(arg);
+                 ^~
 main.cpp: In member function 'void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)':
-main.cpp:283:7: error: expected ';' before 'call_rhs'
+main.cpp:276:7: error: expected ';' before 'call_rhs'
        call_rhs.dump();
        ^~~~~~~~
 main.cpp: In function 'domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)':
-main.cpp:300:18: error: ambiguating new declaration of 'domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
+main.cpp:293:18: error: ambiguating new declaration of 'domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
  domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context, SourceManager &sm)
                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-main.cpp:63:24: note: old declaration 'const domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
+main.cpp:65:24: note: old declaration 'const domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
  const domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-main.cpp:325:34: error: base operand of '->' has non-pointer type 'interp::Interpretation'
-   domain::VecExpr *expr = interp_->getExpressionInterp(memexpr);
+main.cpp:318:34: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   domain::VecExpr *expr = interp_->getVecExpr(memexpr);
                                   ^~
-main.cpp: In function 'const domain::VecExpr* handleCXXDeclStmt(const clang::CXXConstructExpr*, clang::ASTContext*, clang::SourceManager&)':
-main.cpp:423:39: error: expected primary-expression before '->' token
-   const domain::VecExpr *expr = interp->getExpressionInterp(consdecl);
+main.cpp: At global scope:
+main.cpp:407:48: error: 'clang' is a namespace
+ const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *context, SourceManager &sm)
+                                                ^~~~~
+main.cpp:407:57: error: ISO C++ forbids declaration of 'consdecl' with no type [-fpermissive]
+ const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *context, SourceManager &sm)
+                                                         ^~~~~~~~
+main.cpp: In function 'const domain::VecExpr* handleCXXDeclStmt(const int*, clang::ASTContext*, clang::SourceManager&)':
+main.cpp:411:34: error: no matching function for call to 'CXXConstructExprMatcher::match(const int*&, clang::ASTContext*&)'
+   matcher.match(consdecl, context);
+                                  ^
+main.cpp:341:8: note: candidate: void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)
+   void match(const clang::CXXConstructExpr *consdecl, ASTContext *context)
+        ^~~~~
+main.cpp:341:8: note:   no known conversion for argument 1 from 'const int*' to 'const clang::CXXConstructExpr*'
+main.cpp:416:39: error: expected primary-expression before '->' token
+   const domain::VecExpr *expr = interp->getVecExpr(consdecl);
                                        ^~
 main.cpp: In member function 'virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
-main.cpp:446:5: error: 'declstmt' was not declared in this scope
+main.cpp:439:5: error: 'declstmt' was not declared in this scope
      declstmt->dump();
      ^~~~~~~~
-main.cpp:446:5: note: suggested alternative: 'decltype'
+main.cpp:439:5: note: suggested alternative: 'decltype'
      declstmt->dump();
      ^~~~~~~~
      decltype
-main.cpp:457:35: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+main.cpp:450:35: error: base operand of '->' has non-pointer type 'interp::Interpretation'
      domain::VecIdent *id = interp_->mkVecIdent(vardecl);
                                    ^~
-main.cpp:478:41: error: expected primary-expression before '->' token
-     const domain::VecExpr *expr = interp->getExpressionInterp(consdecl);
+main.cpp:471:41: error: expected primary-expression before '->' token
+     const domain::VecExpr *expr = interp->getVecExpr(consdecl);
                                          ^~
-main.cpp:482:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+main.cpp:475:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
      interp_->mkVecDef(declstmt, id, expr);
             ^~
-main.cpp:453:20: warning: unused variable 'sm' [-Wunused-variable]
+main.cpp:446:20: warning: unused variable 'sm' [-Wunused-variable]
      SourceManager &sm = context->getSourceManager();
                     ^~
 main.cpp: In member function 'virtual void MyFrontendAction::EndSourceFileAction()':
-main.cpp:536:23: error: 'domain_domain' was not declared in this scope
+main.cpp:529:23: error: 'domain_domain' was not declared in this scope
      bool consistent = domain_domain->isConsistent();
                        ^~~~~~~~~~~~~
 main.cpp: In function 'int main(int, const char**)':
-main.cpp:555:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+main.cpp:548:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
    interp_->addSpace("S1");
           ^~
-main.cpp:556:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+main.cpp:549:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
    interp_->addSpace("S2");
           ^~
 In file included from Domain.h:9:0,
@@ -365,6 +297,14 @@ Domain.cpp:26:60: error: no 'const domain::VecExpr& domain::VecVecAddExpr::getVe
 Domain.cpp:31:60: error: no 'const domain::VecExpr& domain::VecVecAddExpr::getVecVecAddExprArgR()' member function declared in class 'domain::VecVecAddExpr'
  const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgR()
                                                             ^
+Domain.cpp:76:18: error: prototype for 'domain::VecExpr* domain::Domain::addVecVarExpr(domain::Space&, const coords::VecVarExpr*)' does not match any in class 'domain::Domain'
+ domain::VecExpr *Domain::addVecVarExpr(Space &s, const coords::VecVarExpr *ast)
+                  ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:180:11: error: candidate is: domain::VecExpr& domain::Domain::addVecVarExpr(domain::Space&, const coords::VecVarExpr*)
+  VecExpr& addVecVarExpr(Space& s, const coords::VecVarExpr* ast);
+           ^~~~~~~~~~~~~
 Domain.cpp: In member function 'domain::VecExpr* domain::Domain::addVecVecAddExpr(domain::Space&, coords::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)':
 Domain.cpp:94:13: error: cannot convert 'domain::VecExpr' to 'domain::VecExpr*' in return
      return *be;

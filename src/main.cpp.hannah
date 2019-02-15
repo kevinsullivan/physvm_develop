@@ -541,7 +541,7 @@ domain::VecExpr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
   // Get code coordinates for given Clang AST node
    const coords::VecExpr *wrapper_key = interp_.ast2coords_->expr_wrappers[consdecl];
   // Return domain object for code at these coordinates
-  return interp_.coords2dom_->getExpressionInterp(wrapper_key);
+  return interp_.coords2dom_->getVecExpr(wrapper_key);
 
   //cout << "Returning domain expression object (STUBBED OUT)\n";
   //return NULL; /* STUB */
