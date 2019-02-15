@@ -3,22 +3,22 @@
 #include <iostream>
 
 //using namespace std;
-//using namespace coords2domain;
+using namespace coords2domain;
 
 /*************
  * VecIdents
  *************/
 
 void CoordsToDomain::putVecIdentInterp(const coords::VecIdent *key, domain::VecIdent *v) {
-    cerr << "CoordsToDomain::putVecIdentInterp: " << key->toString() << "\n";
+    std::cerr << "CoordsToDomain::putVecIdentInterp: " << key->toString() << "\n";
     interpIdent.insert(std::make_pair(*key, v));
-    //cerr << "Put Ident Interp.\n";
+    //std::cerr << "Put Ident Interp.\n";
 }
 
 const domain::VecIdent* CoordsToDomain::getVecIdentInterp(const coords::VecIdent* n) 
 {
     return interpIdent[*n];
-    cerr << "Get Ident Interp.\n";
+    std::cerr << "Get Ident Interp.\n";
 }
 
 /****************
@@ -42,11 +42,11 @@ domain::VecExpr* CoordsToDomain::getExpressionInterp
 void CoordsToDomain::putVecDefInterp(coords::VecDef *key, domain::VecDef& b)
 {
     interpVecDef.insert(std::make_pair(*key,&b));
-    //cerr << "CoordsToDomain::putVecDefInterp called but stubbed out.\n";
+    //std::cerr << "CoordsToDomain::putVecDefInterp called but stubbed out.\n";
 }
 
 
 const domain::VecDef* CoordsToDomain::getVecDefInterp(const coords::VecDef* key)  {
    return interpVecDef[*key];     
-   //cerr << "CoordsToDomain::getVecDefInterp called but stubbed out. Returning NULL.\n";
+   //std::cerr << "CoordsToDomain::getVecDefInterp called but stubbed out. Returning NULL.\n";
 }

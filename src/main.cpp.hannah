@@ -332,7 +332,7 @@ void HandlerForCXXMemberCallExpr::run(const MatchFinder::MatchResult &Result) {
   //  domain::Space &s = interp_.coords2dom_->getSpaceForAddExpression(left_br, right_br);
   //  domain->addVecAddExpr(s, addexpr, *left_br, *right_br);
 
-  cerr << "STUB: HandlerForCXXMemberCallExpr::run(const "
+  std::cerr << "STUB: HandlerForCXXMemberCallExpr::run(const "
           "MatchFinder::MatchResult &Result)\n";
   // insert this into interpretation table
 }
@@ -531,11 +531,11 @@ domain::VecExpr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
      consdecl now has wrapper and interpretation.
   */
     if (!consdecl) {
-        cerr << "handleCXXConstructExpr: match post failure, NULL consdecl.\n";
+        std::cerr << "handleCXXConstructExpr: match post failure, NULL consdecl.\n";
     }
 
     if (!interp_.ast2coords_->expr_wrappers[consdecl]) {
-        cerr << "handleCXXConstructExpr: match post failure, NULL wrapper.\n";
+        std::cerr << "handleCXXConstructExpr: match post failure, NULL wrapper.\n";
     }
   
   // Get code coordinates for given Clang AST node
@@ -639,7 +639,7 @@ public:
   MyFrontendAction() {}
   void EndSourceFileAction() override {
     bool consistent = interp_.domain_->isConsistent();
-    cerr << (consistent ? "STUB: Good\n" : "STUB: Bad\n");
+    std::cerr << (consistent ? "STUB: Good\n" : "STUB: Bad\n");
   }
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
                                                  StringRef file) override {

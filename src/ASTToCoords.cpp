@@ -20,11 +20,11 @@ void ASTToCoords::overrideStmt(const clang::Stmt *s, const coords::VecExpr *c) {
 }
 
 void ASTToCoords::overrideDecl(const clang::Decl *d, const coords::VecExpr *c) {
-    cerr << "ASTToCoords::overrideDecl: AST " << std::hex << d << "to coords " 
+    std::cerr << "ASTToCoords::overrideDecl: AST " << std::hex << d << "to coords " 
         << std::hex << c << " toString " << c->toString() << "\n";
     decl_coords.insert(std::make_pair(d, c));
 }
 
-const coords::VecExpr *ASTToCoords::getASTExprCoords(ast::Expr* e) {
+const coords::VecExpr *ASTToCoords::getCoords(ast::Expr* e) {
     return expr_coords[e];
 }
