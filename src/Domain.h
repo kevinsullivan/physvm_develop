@@ -21,13 +21,8 @@ public:
 	Space(std::string name) : name_(name) {};
 	std::string getName() const;
 	std::string toString() const { return getName(); } 
-    friend ostream & operator << (ostream &out, const Space &s)
-	{ 
-    out << s.getName(); 
-    return out; 
-	} 
 private:
-	string name_;
+	std::string name_;
 };
 
 
@@ -56,7 +51,7 @@ public:
     const Space& getSpace() const;
 	virtual std::string toString() const {
 		if (ast_ != NULL) {
-			//cerr << "Domain::VecExpr::toString: coords::VecVecExpr pointer is " << std::hex << ast_ << "\n";
+			//std::cerr << "Domain::VecExpr::toString: coords::VecVecExpr pointer is " << std::hex << ast_ << "\n";
 			return "(" + ast_->toString() + " : " + space_.getName() + ")";
 		}
 		else {
@@ -159,7 +154,7 @@ public:
 	const coords::Vector* getCoords() const {return coords_; } 
 	const domain::VecExpr* getVecExpr() const { return expr_; }
 
-	std::std::string toString() const {
+	std::string toString() const {
 		return expr_->toString();
 	}
 private:
@@ -182,7 +177,7 @@ public:
 	Space& addSpace(const std::string& name);
 	//VecLitExpr& addLitExpr(Space& s, const coords::coords::Lit* ast);		/* BIG TODO: Fix others */
 	VecIdent* addVecIdent(Space& s, const coords::VecIdent* ast);
-	VecExpr& addVecVarExpr(const coords::VecVarExpr* ast);
+	VecExpr& addVecVarExpr(Space& s, const coords::VecVarExpr* ast);
 	// should be addVecLit*Ctor*, with contained lit data 
 	VecExpr* addVecLitExpr(Space& s, const coords::VecLitExpr* e);
 	VecExpr* addVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
@@ -191,25 +186,25 @@ public:
 	Vector* addVector(coords::Vector* v, domain::VecExpr *vec);
 	VecDef& addVecDef(const coords::VecDef* vardecl, const VecIdent* identifier, const VecExpr* expression);
 	void dump() {
-		cerr << "Domain expressions:\n";
-		dumpExpressions(); // print contents on cerr
-		cerr << "Domain VecIdents\n";
-		dumpVecIdents(); // print contents on cerr
-		cerr << "Domain VecDefs\n";
-		dumpVecDefs(); // print contents on cerr
+		std::cerr << "Domain expressions:\n";
+		dumpExpressions(); // print contents on std::cerr
+		std::cerr << "Domain VecIdents\n";
+		dumpVecIdents(); // print contents on std::cerr
+		std::cerr << "Domain VecDefs\n";
+		dumpVecDefs(); // print contents on std::cerr
 	}
-	void dumpExpressions(); // print contents on cerr
-	void dumpVecIdents(); // print contents on cerr
-	void dumpVecDefs(); // print contents on cerr
+	void dumpExpressions(); // print contents on std::cerr
+	void dumpVecIdents(); // print contents on std::cerr
+	void dumpVecDefs(); // print contents on std::cerr
 
 	bool isConsistent();
-	vector<Space>& getAllSpaces();
+	const std::vector<Space>& getAllSpaces();
 private:
-	vector<Space> spaces;
-	vector<VecIdent> identifiers;
-	vector<VecExpr*> expressions;
-	vector<VecDef> bindings;
-	vector<Vector*> vectors;
+	std::vector<Space> spaces;
+	std::vector<VecIdent> identifiers;
+	std::vector<VecExpr*> expressions;
+	std::vector<VecDef> bindings;
+	std::vector<Vector*> vectors;
 };
 
 } // end namespace

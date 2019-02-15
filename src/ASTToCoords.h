@@ -9,8 +9,8 @@ namespace ast2coords {
 
 class ASTToCoords {
 public:
-    const coords::VecIdent *makeCoordsForVecIdent(const VecIdent *ident);
-    const coords::VecExpr *getASTExprCoords(Expr* e);
+    const coords::VecIdent *makeCoordsForVecIdent(const ast::VecIdent *ident);
+    const coords::VecExpr *getCoords(ast::Expr* e);
 
 // protected
 // TODO: Use AST.h type aliases
@@ -23,9 +23,9 @@ public:
 //
 // TODO: Note and rethink: everything in coords is coords::VecExpr.
 //
-    unordered_map<const clang::Expr *, const coords::VecExpr *> expr_coords;
-    unordered_map<const clang::Stmt *, const coords::VecExpr *> stmt_coords;
-    unordered_map<const clang::Decl *, const coords::VecExpr *> decl_coords;
+    std::unordered_map<const clang::Expr *, const coords::VecExpr *> expr_coords;
+    std::unordered_map<const clang::Stmt *, const coords::VecExpr *> stmt_coords;
+    std::unordered_map<const clang::Decl *, const coords::VecExpr *> decl_coords;
 };
 
 // TODO: Refactor to use AST.h abstractions

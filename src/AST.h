@@ -25,16 +25,16 @@ using VecVecAddExpr = const clang::CXXMemberCallExpr;
 #endif
 
 /*
-Domain                  Coords              AST
-------                  ------              ---
+Domain          Coords              AST             Interp
+------          ------              ---             -------
 Space
-VecExpr                 VecExpr (super)     tagged union type
-VecLitExpr              VecLitExpr          VecLitExpr
-VecIdent                VecIdent            VecIdent
-VecVarExpr              VecVarExpr          VecVarExpr          
-VecVecAddExpr           VecVecAddExpr       VecVecAddExpr
-Vector                  Vector              Vector 
-VecDef                 VecDef             VecDef
+VecExpr         VecExpr (super)     union           mkVecExpr
+VecLitExpr      VecLitExpr          VecLitExpr      (uses mkVector)
+VecIdent        VecIdent            VecIdent        mkVecIdent
+VecVarExpr      VecVarExpr          VecVarExpr      mkVecVarExpr   
+VecVecAddExpr   VecVecAddExpr       VecVecAddExpr   mkVecVecAddExpr
+Vector          Vector              Vector          mkVector
+VecDef          VecDef              VecDef          mkVecDef
 
 I'm afraid Vector and VecExpr are going to have the same address. There's an invariant that has to hold for search in the maps to work. What exactly is it?
 */

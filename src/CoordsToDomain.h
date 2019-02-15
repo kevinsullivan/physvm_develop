@@ -21,8 +21,8 @@ class CoordsToDomain
 	VecVarExpr* getVectorInterp(const Vector& n);
 	*/
 
-	void putVectorLitInterp(const coords::VectorLit &n, domain::VecLitExpr &v);
-	domain::VecLitExpr *getLitInterp(const coords::VectorLit &n) const;
+	void putVecLitExprInterp(const coords::VecLitExpr &n, domain::VecLitExpr &v);
+	domain::VecLitExpr *getLitInterp(const coords::VecLitExpr &n) const;
 
 	void putExpressionInterp(const coords::VecExpr *n, domain::VecExpr *e);
 	domain::VecExpr *getExpressionInterp(const coords::VecExpr* n);
@@ -32,8 +32,8 @@ class CoordsToDomain
 
 	void dumpExpressions() const {
 		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
-			//std::cerr << std::hex << &it->first << " : " << std::hex << it.second << "\n";
-			cerr << "InterpExpr!\n";
+			//std::std::cerr << std::hex << &it->first << " : " << std::hex << it.second << "\n";
+			std::cerr << "InterpExpr!\n";
 		}
 		std::cerr << std::endl;
 	}
@@ -49,9 +49,9 @@ class CoordsToDomain
 	AST node maps to a coords::VecExpr. But here we distinguish
 	between different kinds of coords. Re-evaluate.
 	*/
-	unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
-	unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
-	unordered_map<coords::VecDef, domain::VecDef *, coords::VecDefHasher> interpVecDef;
+	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
+	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
+	std::unordered_map<coords::VecDef, domain::VecDef *, coords::VecDefHasher> interpVecDef;
 };
 
 } // namespace

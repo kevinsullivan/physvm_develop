@@ -1,6 +1,7 @@
 #ifndef INTERPRETATION_H
 #define INTERPRETATION_H
 
+#include <iostream>
 #include "AST.h"
 #include "Coords.h"
 #include "ASTToCoords.h"
@@ -10,6 +11,8 @@
 
 namespace interp {
 
+
+// TODO: Either remove or complete adding clang::ASTContext
 class Interpretation {
 public:
     Interpretation();
@@ -17,15 +20,13 @@ public:
     // TODO: Have this take coord, not domain, arguments
     void mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *exp);
     // TODO: Use AST.h name in next method
-    void mkVector(CXXConstructExpr *ctor_ast, ASTContext *context); 
-    void mkVector(ast::VecLitExpr *ast, ASTContext *context); 
-    void mkVecVecAddExpr(ast::AddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
-    void mkVecExpr(ast::VecExpr *ast, ASTContext *context);
+    void mkVector(ast::Vector* ast, clang::ASTContext *context); 
+    void mkVecVarExpr(ast::VecVar *ast, clang::ASTContext *c);
+    //void mkVector(ast::VecLitExpr *ast, clang::ASTContext *context);
+    void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
+    void mkVecExpr(ast::VecExpr *ast, clang::ASTContext *context);
     // TODO: Use AST.h name in next method return
-    const coords::VecExpr *getCoords(ast::VecExpr *expr)  
-    {
-        ast2coords_->getASTExprCoords(expr);
-    }
+    const coords::VecExpr *getCoords(ast::VecExpr *expr);
     
 
     // Precondition: coords2domain_ is defined for exp
@@ -34,8 +35,8 @@ public:
         // we use these objects as key for query purposes
         const coords::VecExpr *coords = new coords::VecExpr(ast);
         domain::VecExpr* dom = coords2dom_->getExpressionInterp(coords);
-        if (!expr) {
-            cerr << "Interpretation::getExpressionInterp. Error. Undefined for key!\n";
+        if (!dom) {
+            std::cerr << "Interpretation::getExpressionInterp. Error. Undefined for key!\n";
         }
         return dom;
     }

@@ -42,7 +42,7 @@ public:
       return (decl_ == other.decl_);
     }
   }
-  virtual std::std::string toString() const {
+  virtual std::string toString() const {
     return "::toPrint: Error: should not be called.";
   }
 
@@ -149,7 +149,8 @@ struct VecVarExprHasher {
 class VecVecAddExpr : public VecExpr {
 public:
   VecVecAddExpr(ast::VecVecAddExpr *exp,
-                       const VecExpr *left, const VecExpr *right)
+                const coords::VecExpr *left, 
+                const coords::VecExpr *right)
       : VecExpr(exp), cxxMemberCallExpr_(exp), left_(left), right_(right) {}
   ast::VecVecAddExpr *getCXXMemberCallExpr() const {
     return cxxMemberCallExpr_;
@@ -165,8 +166,8 @@ public:
 
 private:
   ast::VecVecAddExpr *cxxMemberCallExpr_;
-  const VecExpr *left_;
-  const VecExpr *right_;
+  const coords::VecExpr *left_;
+  const coords::VecExpr *right_;
 };
 
 /*
