@@ -1,0 +1,445 @@
+-----------------------------------------------
+Using LLVM_SRC_PATH = /llvm
+Using LLVM_BUILD_PATH = /llvm/build
+Using LLVM_BIN_PATH = /llvm/build/bin
+-----------------------------------------------
+g++ -O0 -g -Wall `/llvm/build/bin/llvm-config --cxxflags` -I/llvm/tools/clang/include -I/llvm/build/tools/clang/include ASTToCoords.cpp AST.cpp Interpretation.cpp Oracle.cpp Checker.cpp CoordsToDomain.cpp main.cpp Domain.cpp \
+	-Wl,--start-group -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangDriver -lclangEdit -lclangFrontend -lclangFrontendTool -lclangLex -lclangParse -lclangSema -lclangEdit -lclangRewrite -lclangRewriteFrontend -lclangStaticAnalyzerFrontend -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangCrossTU -lclangIndex -lclangSerialization -lclangToolingCore -lclangTooling -lclangFormat -Wl,--end-group `/llvm/build/bin/llvm-config --ldflags --libs --system-libs` -o ../build/ASTMatcher
+In file included from ASTToCoords.h:6:0,
+                 from ASTToCoords.cpp:1:
+Coords.h: In member function 'bool coords::Vector_Lit::operator==(const coords::Vector&) const':
+Coords.h:247:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In member function 'bool coords::Vector_Expr::operator==(const coords::Vector&) const':
+Coords.h:275:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:310:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:297:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:296:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from Interpretation.h:6:0,
+                 from Interpretation.cpp:13:
+Coords.h: In member function 'bool coords::Vector_Lit::operator==(const coords::Vector&) const':
+Coords.h:247:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In member function 'bool coords::Vector_Expr::operator==(const coords::Vector&) const':
+Coords.h:275:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:310:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:297:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:296:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector_Lit(ast::VecLitExpr*, clang::ASTContext*)':
+Interpretation.cpp:61:13: error: 'Space' is not a member of 'oracle'
+     oracle::Space& space = oracle_->getSpaceForVecLitExpr(ast);
+             ^~~~~
+Interpretation.cpp:61:13: note: suggested alternative: 'Oracle'
+     oracle::Space& space = oracle_->getSpaceForVecLitExpr(ast);
+             ^~~~~
+             Oracle
+Interpretation.cpp:61:20: error: 'space' was not declared in this scope
+     oracle::Space& space = oracle_->getSpaceForVecLitExpr(ast);
+                    ^~~~~
+Interpretation.cpp:61:20: note: suggested alternative: 'isspace'
+     oracle::Space& space = oracle_->getSpaceForVecLitExpr(ast);
+                    ^~~~~
+                    isspace
+Interpretation.cpp:61:37: error: 'class oracle::Oracle' has no member named 'getSpaceForVecLitExpr'; did you mean 'getSpaceForVecVarExp'?
+     oracle::Space& space = oracle_->getSpaceForVecLitExpr(ast);
+                                     ^~~~~~~~~~~~~~~~~~~~~
+                                     getSpaceForVecVarExp
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecVarExpr(ast::VecVarExpr*, clang::ASTContext*)':
+Interpretation.cpp:69:37: error: 'class oracle::Oracle' has no member named 'getSpaceForVecVarExpr'; did you mean 'getSpaceForVecVarExp'?
+     domain::Space& space = oracle_->getSpaceForVecVarExpr(ast);
+                                     ^~~~~~~~~~~~~~~~~~~~~
+                                     getSpaceForVecVarExp
+Interpretation.cpp:70:71: error: no matching function for call to 'domain::Domain::mkVecVarExpr(domain::Space&, domain::VecVarExpr*&)'
+     domain::VecVarExpr *dom_var = domain_->mkVecVarExpr(space, dom_var);
+                                                                       ^
+In file included from Oracle.h:7:0,
+                 from Interpretation.h:8,
+                 from Interpretation.cpp:13:
+Domain.h:248:11: note: candidate: domain::VecExpr* domain::Domain::mkVecVarExpr(domain::Space&, const coords::VecVarExpr*)
+  VecExpr* mkVecVarExpr(Space& s, const coords::VecVarExpr* ast);
+           ^~~~~~~~~~~~
+Domain.h:248:11: note:   no known conversion for argument 2 from 'domain::VecVarExpr*' to 'const coords::VecVarExpr*'
+Interpretation.cpp: At global scope:
+Interpretation.cpp:120:6: error: redefinition of 'void interp::Interpretation::mkVector_Lit(ast::Vector*, clang::ASTContext*)'
+ void Interpretation::mkVector_Lit(ast::Vector *ast, clang::ASTContext *context) {
+      ^~~~~~~~~~~~~~
+Interpretation.cpp:58:6: note: 'void interp::Interpretation::mkVector_Lit(ast::VecLitExpr*, clang::ASTContext*)' previously defined here
+ void Interpretation::mkVector_Lit(ast::VecLitExpr *ast, clang::ASTContext *c) {
+      ^~~~~~~~~~~~~~
+Interpretation.cpp:134:6: error: prototype for 'void interp::Interpretation::mkVector_Expr(ast::Vector*, domain::VecExpr*, clang::ASTContext*)' does not match any in class 'interp::Interpretation'
+ void Interpretation::mkVector_Expr(ast::Vector *vec, domain::VecExpr* expr, clang::ASTContext *context) {
+      ^~~~~~~~~~~~~~
+In file included from Interpretation.cpp:13:0:
+Interpretation.h:26:10: error: candidate is: void interp::Interpretation::mkVector_Expr(ast::VecLitExpr*, clang::ASTContext*)
+     void mkVector_Expr(ast::VecLitExpr *ast, clang::ASTContext *context);
+          ^~~~~~~~~~~~~
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecDef(ast::VecDef*, domain::VecIdent*, domain::VecExpr*)':
+Interpretation.cpp:150:10: warning: the address of 'double exp(double)' will never be NULL [-Waddress]
+     if (!exp || !id) { std::cerr << "Interpretation::mkVecDef: null arg\n"; }
+          ^~~
+Interpretation.cpp:159:40: error: 'class domain::Domain' has no member named 'putVecDef'; did you mean 'mkVecDef'?
+     domain::VecDef *vec_def = domain_->putVecDef(bind_coords, id, exp);
+                                        ^~~~~~~~~
+                                        mkVecDef
+Interpretation.cpp: In member function 'const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)':
+Interpretation.cpp:175:25: error: 'class ast2coords::ASTToCoords' has no member named 'getCoords'; did you mean 'ASTToCoords'?
+     return ast2coords_->getCoords(expr);
+                         ^~~~~~~~~
+                         ASTToCoords
+In file included from Oracle.h:6:0,
+                 from Oracle.cpp:4:
+Coords.h: In member function 'bool coords::Vector_Lit::operator==(const coords::Vector&) const':
+Coords.h:247:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In member function 'bool coords::Vector_Expr::operator==(const coords::Vector&) const':
+Coords.h:275:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:310:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:297:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:296:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from Domain.h:9:0,
+                 from Checker.h:4,
+                 from Checker.cpp:9:
+Coords.h: In member function 'bool coords::Vector_Lit::operator==(const coords::Vector&) const':
+Coords.h:247:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In member function 'bool coords::Vector_Expr::operator==(const coords::Vector&) const':
+Coords.h:275:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:310:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:297:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:296:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from CoordsToDomain.h:5:0,
+                 from CoordsToDomain.cpp:1:
+Coords.h: In member function 'bool coords::Vector_Lit::operator==(const coords::Vector&) const':
+Coords.h:247:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In member function 'bool coords::Vector_Expr::operator==(const coords::Vector&) const':
+Coords.h:275:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:310:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:297:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:296:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:21:74: error: no 'void coords2domain::CoordsToDomain::PutVector(const coords::Vector*, domain::Vector*)' member function declared in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::PutVector(const coords::Vector* n, domain::Vector* e) {
+                                                                          ^
+CoordsToDomain.cpp:25:17: error: prototype for 'domain::Vector* coords2domain::CoordsToDomain::getVector(const coords::Vector*)' does not match any in class 'coords2domain::CoordsToDomain'
+ domain::Vector* CoordsToDomain::getVector
+                 ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:35:24: error: candidates are: const domain::Vector* coords2domain::CoordsToDomain::getVector(const coords::Vector_Expr*)
+  const domain::Vector *getVector(const coords::Vector_Expr* coords);
+                        ^~~~~~~~~
+CoordsToDomain.h:32:24: error:                 const domain::Vector* coords2domain::CoordsToDomain::getVector(const coords::Vector_Lit*)
+  const domain::Vector *getVector(const coords::Vector_Lit* coords);
+                        ^~~~~~~~~
+CoordsToDomain.cpp:31:6: error: prototype for 'void coords2domain::CoordsToDomain::PutVecVecAddExpr(const coords::VecVecAddExpr*, domain::VecVecAddExpr*)' does not match any in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::PutVecVecAddExpr(const coords::VecVecAddExpr* n, domain::VecVecAddExpr* e) {
+      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:28:7: error: candidate is: void coords2domain::CoordsToDomain::PutVecVecAddExpr(const coords::VecVarExpr*, domain::VecVecAddExpr*)
+  void PutVecVecAddExpr(const coords::VecVarExpr *n, domain::VecVecAddExpr *e);
+       ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp:35:24: error: prototype for 'domain::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(const coords::VecVecAddExpr*)' does not match any in class 'coords2domain::CoordsToDomain'
+ domain::VecVecAddExpr* CoordsToDomain::getVecVecAddExpr
+                        ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:29:25: error: candidate is: domain::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(const coords::VecVarExpr*)
+  domain::VecVecAddExpr *getVecVecAddExpr(const coords::VecVarExpr* n);
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp:49:6: error: prototype for 'void coords2domain::CoordsToDomain::putVecDef(coords::VecDef*, domain::VecDef&)' does not match any in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::putVecDef(coords::VecDef *key, domain::VecDef& b)
+      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:43:7: error: candidate is: void coords2domain::CoordsToDomain::putVecDef(coords::VecDef*, domain::VecDef*)
+  void putVecDef(coords::VecDef *vardecl_wrapper, domain::VecDef *b);
+       ^~~~~~~~~
+CoordsToDomain.cpp:61:74: error: no 'void coords2domain::CoordsToDomain::PutVector(const coords::Vector*, domain::Vector*)' member function declared in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::PutVector(const coords::Vector* n, domain::Vector* e) {
+                                                                          ^
+CoordsToDomain.cpp:65:63: error: no 'domain::Vector* coords2domain::CoordsToDomain::Vector(const coords::Vector*)' member function declared in class 'coords2domain::CoordsToDomain'
+ domain::Vector* CoordsToDomain::Vector(const coords::Vector* n)  {
+                                                               ^
+CoordsToDomain.cpp:70:6: error: prototype for 'void coords2domain::CoordsToDomain::dump() const' does not match any in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::dump() const {
+      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:46:7: error: candidate is: void coords2domain::CoordsToDomain::dump()
+  void dump();
+       ^~~~
+In file included from Interpretation.h:6:0,
+                 from main.cpp:15:
+Coords.h: In member function 'bool coords::Vector_Lit::operator==(const coords::Vector&) const':
+Coords.h:247:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In member function 'bool coords::Vector_Expr::operator==(const coords::Vector&) const':
+Coords.h:275:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:310:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:297:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:296:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+main.cpp: In function 'const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)':
+main.cpp:90:49: error: invalid conversion from 'const domain::VecExpr*' to 'domain::VecExpr*' [-fpermissive]
+   interp_.mkVecVecAddExpr(ast, left_br, right_br);
+                                                 ^
+In file included from main.cpp:15:0:
+Interpretation.h:23:10: note:   initializing argument 2 of 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)'
+     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem,
+          ^~~~~~~~~~~~~~~
+main.cpp:90:49: error: invalid conversion from 'const domain::VecExpr*' to 'domain::VecExpr*' [-fpermissive]
+   interp_.mkVecVecAddExpr(ast, left_br, right_br);
+                                                 ^
+In file included from main.cpp:15:0:
+Interpretation.h:23:10: note:   initializing argument 3 of 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)'
+     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem,
+          ^~~~~~~~~~~~~~~
+main.cpp: In member function 'virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:107:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     interp_->mkVecVarExpr(declRefExpr);
+            ^~
+main.cpp: In member function 'virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:166:9: error: 'vec_vec_add_ctor_ast' was not declared in this scope
+     if (vec_vec_add_ctor_ast == NULL)
+         ^~~~~~~~~~~~~~~~~~~~
+main.cpp:166:9: note: suggested alternative: 'vec_vec_add_member_call_ast'
+     if (vec_vec_add_ctor_ast == NULL)
+         ^~~~~~~~~~~~~~~~~~~~
+         vec_vec_add_member_call_ast
+main.cpp:180:86: error: no matching function for call to 'interp::Interpretation::mkVector_Expr(const clang::CXXMemberCallExpr*&, const domain::VecExpr*&, clang::ASTContext*&)'
+     return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr, context);
+                                                                                      ^
+In file included from main.cpp:15:0:
+Interpretation.h:26:10: note: candidate: void interp::Interpretation::mkVector_Expr(ast::VecLitExpr*, clang::ASTContext*)
+     void mkVector_Expr(ast::VecLitExpr *ast, clang::ASTContext *context);
+          ^~~~~~~~~~~~~
+Interpretation.h:26:10: note:   candidate expects 2 arguments, 3 provided
+main.cpp:180:86: error: return-statement with a value, in function returning 'void' [-fpermissive]
+     return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr, context);
+                                                                                      ^
+main.cpp: In function 'const domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)':
+main.cpp:238:17: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   return interp_->getVecExpr(arg);
+                 ^~
+main.cpp: In member function 'void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)':
+main.cpp:277:7: error: expected ';' before 'call_rhs'
+       call_rhs.dump();
+       ^~~~~~~~
+main.cpp: In function 'domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)':
+main.cpp:294:18: error: ambiguating new declaration of 'domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
+ domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context, SourceManager &sm)
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.cpp:67:24: note: old declaration 'const domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
+ const domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.cpp:319:34: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   domain::VecExpr *expr = interp_->getVecExpr(memexpr);
+                                  ^~
+main.cpp: At global scope:
+main.cpp:408:48: error: 'clang' is a namespace
+ const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *context, SourceManager &sm)
+                                                ^~~~~
+main.cpp:408:57: error: ISO C++ forbids declaration of 'consdecl' with no type [-fpermissive]
+ const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *context, SourceManager &sm)
+                                                         ^~~~~~~~
+main.cpp: In function 'const domain::VecExpr* handleCXXDeclStmt(const int*, clang::ASTContext*, clang::SourceManager&)':
+main.cpp:412:34: error: no matching function for call to 'CXXConstructExprMatcher::match(const int*&, clang::ASTContext*&)'
+   matcher.match(consdecl, context);
+                                  ^
+main.cpp:342:8: note: candidate: void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)
+   void match(const clang::CXXConstructExpr *consdecl, ASTContext *context)
+        ^~~~~
+main.cpp:342:8: note:   no known conversion for argument 1 from 'const int*' to 'const clang::CXXConstructExpr*'
+main.cpp:417:39: error: expected primary-expression before '->' token
+   const domain::VecExpr *expr = interp->getVecExpr(consdecl);
+                                       ^~
+main.cpp: In member function 'virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:440:5: error: 'declstmt' was not declared in this scope
+     declstmt->dump();
+     ^~~~~~~~
+main.cpp:440:5: note: suggested alternative: 'decltype'
+     declstmt->dump();
+     ^~~~~~~~
+     decltype
+main.cpp:451:35: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     domain::VecIdent *id = interp_->mkVecIdent(vardecl);
+                                   ^~
+main.cpp:472:41: error: expected primary-expression before '->' token
+     const domain::VecExpr *expr = interp->getVecExpr(consdecl);
+                                         ^~
+main.cpp:476:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     interp_->mkVecDef(declstmt, id, expr);
+            ^~
+main.cpp:447:20: warning: unused variable 'sm' [-Wunused-variable]
+     SourceManager &sm = context->getSourceManager();
+                    ^~
+main.cpp: In member function 'virtual void MyFrontendAction::EndSourceFileAction()':
+main.cpp:530:23: error: 'domain_domain' was not declared in this scope
+     bool consistent = domain_domain->isConsistent();
+                       ^~~~~~~~~~~~~
+main.cpp: In function 'int main(int, const char**)':
+main.cpp:549:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   interp_->addSpace("S1");
+          ^~
+main.cpp:550:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   interp_->addSpace("S2");
+          ^~
+In file included from Domain.h:9:0,
+                 from Checker.h:4,
+                 from Domain.cpp:3:
+Coords.h: In member function 'bool coords::Vector_Lit::operator==(const coords::Vector&) const':
+Coords.h:247:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In member function 'bool coords::Vector_Expr::operator==(const coords::Vector&) const':
+Coords.h:275:34: error: 'ast::Vector* coords::Vector::constrExpr_' is private within this context
+     return (constrExpr_ == other.constrExpr_);
+                                  ^~~~~~~~~~~
+Coords.h:224:22: note: declared private here
+   const ast::Vector *constrExpr_;
+                      ^~~~~~~~~~~
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:310:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:297:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:296:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+Domain.cpp: In member function 'std::__cxx11::string domain::VecIdent::getName() const':
+Domain.cpp:16:85: error: 'const class coords::VecIdent' has no member named 'getVarDecl'
+     std::cerr << "VecIdent::getName(): vardecl_  addr is " << std::hex << vardecl_->getVarDecl() << "\n";
+                                                                                     ^~~~~~~~~~
+Domain.cpp: At global scope:
+Domain.cpp:28:60: error: no 'const domain::VecExpr& domain::VecVecAddExpr::getVecVecAddExprArgL()' member function declared in class 'domain::VecVecAddExpr'
+ const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgL()
+                                                            ^
+Domain.cpp:33:60: error: no 'const domain::VecExpr& domain::VecVecAddExpr::getVecVecAddExprArgR()' member function declared in class 'domain::VecVecAddExpr'
+ const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgR()
+                                                            ^
+Domain.cpp: In member function 'domain::VecExpr* domain::Domain::mkVecVecAddExpr(domain::Space&, coords::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)':
+Domain.cpp:96:13: error: cannot convert 'domain::VecExpr' to 'domain::VecExpr*' in return
+     return *be;
+             ^~
+Domain.cpp: At global scope:
+Domain.cpp:125:9: error: prototype for 'domain::Vector* domain::Domain::mkVector_Lit(domain::Space&, coords::Vector*)' does not match any in class 'domain::Domain'
+ Vector* Domain::mkVector_Lit(Space& space, coords::Vector* coords) {
+         ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:254:10: error: candidate is: domain::Vector* domain::Domain::mkVector_Lit(coords::Vector*)
+  Vector* mkVector_Lit(coords::Vector* v/*, domain::VecExpr *vec*/);
+          ^~~~~~~~~~~~
+Domain.cpp:132:73: error: 'domain::Expr' has not been declared
+ Vector* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::Expr* exp) {
+                                                                         ^~~~
+Domain.cpp:132:9: error: prototype for 'domain::Vector* domain::Domain::mkVector_Expr(domain::Space&, coords::Vector*, int*)' does not match any in class 'domain::Domain'
+ Vector* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::Expr* exp) {
+         ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:255:10: error: candidate is: domain::Vector* domain::Domain::mkVector_Expr(coords::Vector*, domain::VecExpr*)
+  Vector* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
+          ^~~~~~~~~~~~~
+Domain.cpp:140:30: error: no 'void domain::Domain::dumpIdentifiers()' member function declared in class 'domain::Domain'
+ void Domain::dumpIdentifiers()
+                              ^
+Makefile:110: recipe for target '../build/ASTMatcher' failed
+make: *** [../build/ASTMatcher] Error 1

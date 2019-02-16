@@ -1,0 +1,954 @@
+-----------------------------------------------
+Using LLVM_SRC_PATH = /llvm
+Using LLVM_BUILD_PATH = /llvm/build
+Using LLVM_BIN_PATH = /llvm/build/bin
+-----------------------------------------------
+g++ -O0 -g -Wall `/llvm/build/bin/llvm-config --cxxflags` -I/llvm/tools/clang/include -I/llvm/build/tools/clang/include ASTToCoords.cpp AST.cpp Interpretation.cpp Oracle.cpp Checker.cpp CoordsToDomain.cpp main.cpp Domain.cpp \
+	-Wl,--start-group -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangDriver -lclangEdit -lclangFrontend -lclangFrontendTool -lclangLex -lclangParse -lclangSema -lclangEdit -lclangRewrite -lclangRewriteFrontend -lclangStaticAnalyzerFrontend -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangCrossTU -lclangIndex -lclangSerialization -lclangToolingCore -lclangTooling -lclangFormat -Wl,--end-group `/llvm/build/bin/llvm-config --ldflags --libs --system-libs` -o ../build/ASTMatcher
+In file included from ASTToCoords.h:6:0,
+                 from ASTToCoords.cpp:1:
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:254:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:240:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from Interpretation.h:6:0,
+                 from Interpretation.cpp:13:
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:254:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:240:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from Oracle.h:7:0,
+                 from Interpretation.h:8,
+                 from Interpretation.cpp:13:
+Domain.h: At global scope:
+Domain.h:154:42: error:: expected ';' at end of member declaration
+  bool isVar { return (tag_ == VEC_EXPR); }
+                                          ^
+Domain.h:154:15: error: expected primary-expression before 'return'
+  bool isVar { return (tag_ == VEC_EXPR); }
+               ^~~~~~
+Domain.h:154:15: error: expected '}' before 'return'
+Domain.h:154:15: error: cannot convert '<brace-enclosed initializer list>' to 'bool' in initialization
+Domain.h:154:15: error: expected ';' before 'return'
+Domain.h: In constructor 'domain::Vector_Lit::Vector_Lit(const domain::Space&, const coords::Vector*)':
+Domain.h:180:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:180:3: error: class 'domain::Vector_Lit' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:180:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:180:15: error: class 'domain::Vector_Lit' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:180:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:180:32: error: class 'domain::Vector_Lit' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:180:44: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                            ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h: In constructor 'domain::Vector_Expr::Vector_Expr(const domain::Space&, const coords::Vector*, domain::VecExpr*)':
+Domain.h:195:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:195:3: error: class 'domain::Vector_Expr' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:195:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:195:15: error: class 'domain::Vector_Expr' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:195:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:195:32: error: class 'domain::Vector_Expr' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:195:58: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                                          ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecIdent(ast::VecIdent*)':
+Interpretation.cpp:31:38: error: 'class domain::Domain' has no member named 'addVecIdent'; did you mean 'mkVecIdent'?
+     domain::VecIdent *dom = domain_->addVecIdent(space, coords);
+                                      ^~~~~~~~~~~
+                                      mkVecIdent
+Interpretation.cpp:40:12: error: return-statement with a value, in function returning 'void' [-fpermissive]
+     return dom;
+            ^~~
+Interpretation.cpp: At global scope:
+Interpretation.cpp:59:6: error: prototype for 'void interp::Interpretation::mkVecLitExpr(ast::VecLitExpr*, clang::ASTContext*)' does not match any in class 'interp::Interpretation'
+ void Interpretation::mkVecLitExpr(ast::VecLitExpr *ast, clang::ASTContext *c) {
+      ^~~~~~~~~~~~~~
+In file included from Interpretation.cpp:13:0:
+Interpretation.h:21:10: error: candidate is: void interp::Interpretation::mkVecLitExpr(ast::VecVarExpr*, clang::ASTContext*)
+     void mkVecLitExpr(ast::VecVarExpr *ast, clang::ASTContext *c);
+          ^~~~~~~~~~~~
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecVarExpr(ast::VecVarExpr*, clang::ASTContext*)':
+Interpretation.cpp:70:13: error: 'Space' is not a member of 'oracle'
+     oracle::Space& space = oracle_->getSpaceForVecVarExpr(ast);
+             ^~~~~
+Interpretation.cpp:70:13: note: suggested alternative: 'Oracle'
+     oracle::Space& space = oracle_->getSpaceForVecVarExpr(ast);
+             ^~~~~
+             Oracle
+Interpretation.cpp:70:20: error: 'space' was not declared in this scope
+     oracle::Space& space = oracle_->getSpaceForVecVarExpr(ast);
+                    ^~~~~
+Interpretation.cpp:70:20: note: suggested alternative: 'isspace'
+     oracle::Space& space = oracle_->getSpaceForVecVarExpr(ast);
+                    ^~~~~
+                    isspace
+Interpretation.cpp:70:37: error: 'class oracle::Oracle' has no member named 'getSpaceForVecVarExpr'; did you mean 'getSpaceForVecVarExp'?
+     oracle::Space& space = oracle_->getSpaceForVecVarExpr(ast);
+                                     ^~~~~~~~~~~~~~~~~~~~~
+                                     getSpaceForVecVarExp
+Interpretation.cpp:71:44: error: 'class domain::Domain' has no member named 'addVecVarExpr'; did you mean 'mkVecVarExpr'?
+     domain::VecVarExpr *dom_var = domain_->addVecVarExpr(space, dom_var);
+                                            ^~~~~~~~~~~~~
+                                            mkVecVarExpr
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)':
+Interpretation.cpp:100:44: error: 'class domain::Domain' has no member named 'addVecVecAddExpr'; did you mean 'mkVecVecAddExpr'?
+   domain::VecExpr *dom_add_expr = domain_->addVecVecAddExpr(space, expr_coords, mem, arg);
+                                            ^~~~~~~~~~~~~~~~
+                                            mkVecVecAddExpr
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector_Lit(ast::Vector*, clang::ASTContext*)':
+Interpretation.cpp:125:60: error: cannot convert 'coords::VecLitExpr*' to 'coords::Vector*' in initialization
+     coords::Vector *vec_coords = new coords::VecLitExpr(ast);
+                                                            ^
+Interpretation.cpp:127:13: error: 'Space' is not a member of 'oracle'
+     oracle::Space &s = oracle_->getSpaceForVector(ast);
+             ^~~~~
+Interpretation.cpp:127:13: note: suggested alternative: 'Oracle'
+     oracle::Space &s = oracle_->getSpaceForVector(ast);
+             ^~~~~
+             Oracle
+Interpretation.cpp:127:20: error: 's' was not declared in this scope
+     oracle::Space &s = oracle_->getSpaceForVector(ast);
+                    ^
+Interpretation.cpp:127:54: error: no matching function for call to 'oracle::Oracle::getSpaceForVector(ast::Vector*&)'
+     oracle::Space &s = oracle_->getSpaceForVector(ast);
+                                                      ^
+In file included from Interpretation.h:8:0,
+                 from Interpretation.cpp:13:
+Oracle.h:20:17: note: candidate: domain::Space& oracle::Oracle::getSpaceForVector(std::__cxx11::string)
+  domain::Space& getSpaceForVector(std::string where);
+                 ^~~~~~~~~~~~~~~~~
+Oracle.h:20:17: note:   no known conversion for argument 1 from 'ast::Vector* {aka const clang::CXXConstructExpr*}' to 'std::__cxx11::string {aka std::__cxx11::basic_string<char>}'
+Interpretation.cpp:129:40: error: 'class domain::Domain' has no member named 'addVector_Lit'; did you mean 'mkVector_Lit'?
+     domain::Vector* dom_vec = domain_->addVector_Lit(space, vec_coords);
+                                        ^~~~~~~~~~~~~
+                                        mkVector_Lit
+Interpretation.cpp:129:54: error: 'space' was not declared in this scope
+     domain::Vector* dom_vec = domain_->addVector_Lit(space, vec_coords);
+                                                      ^~~~~
+Interpretation.cpp:129:54: note: suggested alternative: 'isspace'
+     domain::Vector* dom_vec = domain_->addVector_Lit(space, vec_coords);
+                                                      ^~~~~
+                                                      isspace
+Interpretation.cpp:130:18: error: 'class coords2domain::CoordsToDomain' has no member named 'putVectorInterp'; did you mean 'putVector'?
+     coords2dom_->putVectorInterp(vec_coords, dom_vec);
+                  ^~~~~~~~~~~~~~~
+                  putVector
+Interpretation.cpp: At global scope:
+Interpretation.cpp:135:62: error: 'domain::Expr' has not been declared
+ void Interpretation::mkVector_Expr(ast::Vector *ast, domain::Expr* expr, clang::ASTContext *context) {
+                                                              ^~~~
+Interpretation.cpp:135:6: error: prototype for 'void interp::Interpretation::mkVector_Expr(ast::Vector*, int*, clang::ASTContext*)' does not match any in class 'interp::Interpretation'
+ void Interpretation::mkVector_Expr(ast::Vector *ast, domain::Expr* expr, clang::ASTContext *context) {
+      ^~~~~~~~~~~~~~
+In file included from Interpretation.cpp:13:0:
+Interpretation.h:25:10: error: candidate is: void interp::Interpretation::mkVector_Expr(ast::VecLitExpr*, clang::ASTContext*)
+     void mkVector_Expr(ast::VecLitExpr *ast, clang::ASTContext *context);
+          ^~~~~~~~~~~~~
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecDef(ast::VecDef*, domain::VecIdent*, domain::VecExpr*)':
+Interpretation.cpp:151:10: warning: the address of 'double exp(double)' will never be NULL [-Waddress]
+     if (!exp || !id) { std::cerr << "Interpretation::mkVecDef: null arg\n"; }
+          ^~~
+Interpretation.cpp:160:40: error: 'class domain::Domain' has no member named 'addVecDef'; did you mean 'mkVecDef'?
+     domain::VecDef *vec_def = domain_->addVecDef(bind_coords, id, exp);
+                                        ^~~~~~~~~
+                                        mkVecDef
+Interpretation.cpp: In member function 'const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)':
+Interpretation.cpp:176:25: error: 'class ast2coords::ASTToCoords' has no member named 'getCoords'; did you mean 'ASTToCoords'?
+     return ast2coords_->getCoords(expr);
+                         ^~~~~~~~~
+                         ASTToCoords
+In file included from Oracle.h:6:0,
+                 from Oracle.cpp:4:
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:254:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:240:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from Oracle.h:7:0,
+                 from Oracle.cpp:4:
+Domain.h: At global scope:
+Domain.h:154:42: error: expected ';' at end of member declaration
+  bool isVar { return (tag_ == VEC_EXPR); }
+                                          ^
+Domain.h:154:15: error: expected primary-expression before 'return'
+  bool isVar { return (tag_ == VEC_EXPR); }
+               ^~~~~~
+Domain.h:154:15: error: expected '}' before 'return'
+Domain.h:154:15: error: cannot convert '<brace-enclosed initializer list>' to 'bool' in initialization
+Domain.h:154:15: error: expected ';' before 'return'
+Domain.h: In constructor 'domain::Vector_Lit::Vector_Lit(const domain::Space&, const coords::Vector*)':
+Domain.h:180:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:180:3: error: class 'domain::Vector_Lit' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:180:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:180:15: error: class 'domain::Vector_Lit' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:180:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:180:32: error: class 'domain::Vector_Lit' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:180:44: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                            ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h: In constructor 'domain::Vector_Expr::Vector_Expr(const domain::Space&, const coords::Vector*, domain::VecExpr*)':
+Domain.h:195:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:195:3: error: class 'domain::Vector_Expr' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:195:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:195:15: error: class 'domain::Vector_Expr' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:195:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:195:32: error: class 'domain::Vector_Expr' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:195:58: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                                          ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+In file included from Domain.h:9:0,
+                 from Checker.h:4,
+                 from Checker.cpp:9:
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:254:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:240:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from Checker.h:4:0,
+                 from Checker.cpp:9:
+Domain.h: At global scope:
+Domain.h:154:42: error: expected ';' at end of member declaration
+  bool isVar { return (tag_ == VEC_EXPR); }
+                                          ^
+Domain.h:154:15: error: expected primary-expression before 'return'
+  bool isVar { return (tag_ == VEC_EXPR); }
+               ^~~~~~
+Domain.h:154:15: error: expected '}' before 'return'
+Domain.h:154:15: error: cannot convert '<brace-enclosed initializer list>' to 'bool' in initialization
+Domain.h:154:15: error: expected ';' before 'return'
+Domain.h: In constructor 'domain::Vector_Lit::Vector_Lit(const domain::Space&, const coords::Vector*)':
+Domain.h:180:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:180:3: error: class 'domain::Vector_Lit' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:180:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:180:15: error: class 'domain::Vector_Lit' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:180:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:180:32: error: class 'domain::Vector_Lit' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:180:44: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                            ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h: In constructor 'domain::Vector_Expr::Vector_Expr(const domain::Space&, const coords::Vector*, domain::VecExpr*)':
+Domain.h:195:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:195:3: error: class 'domain::Vector_Expr' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:195:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:195:15: error: class 'domain::Vector_Expr' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:195:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:195:32: error: class 'domain::Vector_Expr' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:195:58: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                                          ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+In file included from CoordsToDomain.h:5:0,
+                 from CoordsToDomain.cpp:1:
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:254:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:240:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from CoordsToDomain.h:6:0,
+                 from CoordsToDomain.cpp:1:
+Domain.h: At global scope:
+Domain.h:154:42: error: expected ';' at end of member declaration
+  bool isVar { return (tag_ == VEC_EXPR); }
+                                          ^
+Domain.h:154:15: error: expected primary-expression before 'return'
+  bool isVar { return (tag_ == VEC_EXPR); }
+               ^~~~~~
+Domain.h:154:15: error: expected '}' before 'return'
+Domain.h:154:15: error: cannot convert '<brace-enclosed initializer list>' to 'bool' in initialization
+Domain.h:154:15: error: expected ';' before 'return'
+Domain.h: In constructor 'domain::Vector_Lit::Vector_Lit(const domain::Space&, const coords::Vector*)':
+Domain.h:180:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:180:3: error: class 'domain::Vector_Lit' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:180:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:180:15: error: class 'domain::Vector_Lit' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:180:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:180:32: error: class 'domain::Vector_Lit' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:180:44: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                            ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h: In constructor 'domain::Vector_Expr::Vector_Expr(const domain::Space&, const coords::Vector*, domain::VecExpr*)':
+Domain.h:195:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:195:3: error: class 'domain::Vector_Expr' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:195:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:195:15: error: class 'domain::Vector_Expr' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:195:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:195:32: error: class 'domain::Vector_Expr' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:195:58: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                                          ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:20:86: error: no 'void coords2domain::CoordsToDomain::PutVecLitExpr(const coords::VecLitExpr*, domain::VecLitExpr*)' member function declared in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::PutVecLitExpr(const coords::VecLitExpr* n, domain::VecLitExpr* e) {
+                                                                                      ^
+CoordsToDomain.cpp:25:37: error: no 'domain::VecExpr* coords2domain::CoordsToDomain::getVecLitExpr(const coords::VecLitExpr*)' member function declared in class 'coords2domain::CoordsToDomain'
+         (const coords::VecLitExpr* n)  {
+                                     ^
+CoordsToDomain.cpp:35:37: error: no 'domain::VecExpr* coords2domain::CoordsToDomain::getVecVarExpr(const coords::VecVarExpr*)' member function declared in class 'coords2domain::CoordsToDomain'
+         (const coords::VecVarExpr* n)  {
+                                     ^
+CoordsToDomain.cpp:40:6: error: prototype for 'void coords2domain::CoordsToDomain::PutVecVecAddExpr(const coords::VecVecAddExpr*, domain::VecVecAddExpr*)' does not match any in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::PutVecVecAddExpr(const coords::VecVecAddExpr* n, domain::VecVecAddExpr* e) {
+      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:28:7: error: candidate is: void coords2domain::CoordsToDomain::PutVecVecAddExpr(const coords::VecVarExpr*, domain::VecVecAddExpr*)
+  void PutVecVecAddExpr(const coords::VecVarExpr *n, domain::VecVecAddExpr *e);
+       ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp:44:18: error: prototype for 'domain::VecExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(const coords::VecVecAddExpr*)' does not match any in class 'coords2domain::CoordsToDomain'
+ domain::VecExpr* CoordsToDomain::getVecVecAddExpr
+                  ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:29:25: error: candidate is: domain::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(const coords::VecVarExpr*)
+  domain::VecVecAddExpr *getVecVecAddExpr(const coords::VecVarExpr* n);
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp:58:6: error: prototype for 'void coords2domain::CoordsToDomain::putVecDef(coords::VecDef*, domain::VecDef&)' does not match any in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::putVecDef(coords::VecDef *key, domain::VecDef& b)
+      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:34:7: error: candidate is: void coords2domain::CoordsToDomain::putVecDef(coords::VecDef*, domain::VecDef*)
+  void putVecDef(coords::VecDef *vardecl_wrapper, domain::VecDef *b);
+       ^~~~~~~~~
+CoordsToDomain.cpp:70:74: error: no 'void coords2domain::CoordsToDomain::PutVector(const coords::Vector*, domain::Vector*)' member function declared in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::PutVector(const coords::Vector* n, domain::Vector* e) {
+                                                                          ^
+CoordsToDomain.cpp:74:63: error: no 'domain::Vector* coords2domain::CoordsToDomain::Vector(const coords::Vector*)' member function declared in class 'coords2domain::CoordsToDomain'
+ domain::Vector* CoordsToDomain::Vector(const coords::Vector* n)  {
+                                                               ^
+CoordsToDomain.cpp:79:6: error: prototype for 'void coords2domain::CoordsToDomain::dump() const' does not match any in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::dump() const {
+      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:37:7: error: candidate is: void coords2domain::CoordsToDomain::dump()
+  void dump();
+       ^~~~
+In file included from Interpretation.h:6:0,
+                 from main.cpp:15:
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:254:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:240:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from Oracle.h:7:0,
+                 from Interpretation.h:8,
+                 from main.cpp:15:
+Domain.h: At global scope:
+Domain.h:154:42: error: expected ';' at end of member declaration
+  bool isVar { return (tag_ == VEC_EXPR); }
+                                          ^
+Domain.h:154:15: error: expected primary-expression before 'return'
+  bool isVar { return (tag_ == VEC_EXPR); }
+               ^~~~~~
+Domain.h:154:15: error: expected '}' before 'return'
+Domain.h:154:15: error: cannot convert '<brace-enclosed initializer list>' to 'bool' in initialization
+Domain.h:154:15: error: expected ';' before 'return'
+Domain.h: In constructor 'domain::Vector_Lit::Vector_Lit(const domain::Space&, const coords::Vector*)':
+Domain.h:180:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:180:3: error: class 'domain::Vector_Lit' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:180:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:180:15: error: class 'domain::Vector_Lit' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:180:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:180:32: error: class 'domain::Vector_Lit' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:180:44: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                            ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h: In constructor 'domain::Vector_Expr::Vector_Expr(const domain::Space&, const coords::Vector*, domain::VecExpr*)':
+Domain.h:195:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:195:3: error: class 'domain::Vector_Expr' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:195:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:195:15: error: class 'domain::Vector_Expr' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:195:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:195:32: error: class 'domain::Vector_Expr' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:195:58: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                                          ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+main.cpp: In function 'const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)':
+main.cpp:90:49: error: invalid conversion from 'const domain::VecExpr*' to 'domain::VecExpr*' [-fpermissive]
+   interp_.mkVecVecAddExpr(ast, left_br, right_br);
+                                                 ^
+In file included from main.cpp:15:0:
+Interpretation.h:23:10: note:   initializing argument 2 of 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)'
+     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
+          ^~~~~~~~~~~~~~~
+main.cpp:90:49: error: invalid conversion from 'const domain::VecExpr*' to 'domain::VecExpr*' [-fpermissive]
+   interp_.mkVecVecAddExpr(ast, left_br, right_br);
+                                                 ^
+In file included from main.cpp:15:0:
+Interpretation.h:23:10: note:   initializing argument 3 of 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)'
+     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
+          ^~~~~~~~~~~~~~~
+main.cpp: In member function 'virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:107:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     interp_->mkVecVarExpr(declRefExpr);
+            ^~
+main.cpp: In member function 'virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:166:9: error: 'vec_vec_add_ctor_ast' was not declared in this scope
+     if (vec_vec_add_ctor_ast == NULL)
+         ^~~~~~~~~~~~~~~~~~~~
+main.cpp:166:9: note: suggested alternative: 'vec_vec_add_member_call_ast'
+     if (vec_vec_add_ctor_ast == NULL)
+         ^~~~~~~~~~~~~~~~~~~~
+         vec_vec_add_member_call_ast
+main.cpp:180:86: error: no matching function for call to 'interp::Interpretation::mkVector_Expr(const clang::CXXMemberCallExpr*&, const domain::VecExpr*&, clang::ASTContext*&)'
+     return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr, context);
+                                                                                      ^
+In file included from main.cpp:15:0:
+Interpretation.h:25:10: note: candidate: void interp::Interpretation::mkVector_Expr(ast::VecLitExpr*, clang::ASTContext*)
+     void mkVector_Expr(ast::VecLitExpr *ast, clang::ASTContext *context);
+          ^~~~~~~~~~~~~
+Interpretation.h:25:10: note:   candidate expects 2 arguments, 3 provided
+main.cpp:180:86: error: return-statement with a value, in function returning 'void' [-fpermissive]
+     return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr, context);
+                                                                                      ^
+main.cpp: In function 'const domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)':
+main.cpp:238:17: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   return interp_->getVecExpr(arg);
+                 ^~
+main.cpp: In member function 'void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)':
+main.cpp:277:7: error: expected ';' before 'call_rhs'
+       call_rhs.dump();
+       ^~~~~~~~
+main.cpp: In function 'domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)':
+main.cpp:294:18: error: ambiguating new declaration of 'domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
+ domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context, SourceManager &sm)
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.cpp:67:24: note: old declaration 'const domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)'
+ const domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.cpp:319:34: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   domain::VecExpr *expr = interp_->getVecExpr(memexpr);
+                                  ^~
+main.cpp: At global scope:
+main.cpp:408:48: error: 'clang' is a namespace
+ const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *context, SourceManager &sm)
+                                                ^~~~~
+main.cpp:408:57: error: ISO C++ forbids declaration of 'consdecl' with no type [-fpermissive]
+ const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *context, SourceManager &sm)
+                                                         ^~~~~~~~
+main.cpp: In function 'const domain::VecExpr* handleCXXDeclStmt(const int*, clang::ASTContext*, clang::SourceManager&)':
+main.cpp:412:34: error: no matching function for call to 'CXXConstructExprMatcher::match(const int*&, clang::ASTContext*&)'
+   matcher.match(consdecl, context);
+                                  ^
+main.cpp:342:8: note: candidate: void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)
+   void match(const clang::CXXConstructExpr *consdecl, ASTContext *context)
+        ^~~~~
+main.cpp:342:8: note:   no known conversion for argument 1 from 'const int*' to 'const clang::CXXConstructExpr*'
+main.cpp:417:39: error: expected primary-expression before '->' token
+   const domain::VecExpr *expr = interp->getVecExpr(consdecl);
+                                       ^~
+main.cpp: In member function 'virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:440:5: error: 'declstmt' was not declared in this scope
+     declstmt->dump();
+     ^~~~~~~~
+main.cpp:440:5: note: suggested alternative: 'decltype'
+     declstmt->dump();
+     ^~~~~~~~
+     decltype
+main.cpp:451:35: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     domain::VecIdent *id = interp_->mkVecIdent(vardecl);
+                                   ^~
+main.cpp:472:41: error: expected primary-expression before '->' token
+     const domain::VecExpr *expr = interp->getVecExpr(consdecl);
+                                         ^~
+main.cpp:476:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     interp_->mkVecDef(declstmt, id, expr);
+            ^~
+main.cpp:447:20: warning: unused variable 'sm' [-Wunused-variable]
+     SourceManager &sm = context->getSourceManager();
+                    ^~
+main.cpp: In member function 'virtual void MyFrontendAction::EndSourceFileAction()':
+main.cpp:530:23: error: 'domain_domain' was not declared in this scope
+     bool consistent = domain_domain->isConsistent();
+                       ^~~~~~~~~~~~~
+main.cpp: In function 'int main(int, const char**)':
+main.cpp:549:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   interp_->addSpace("S1");
+          ^~
+main.cpp:550:10: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+   interp_->addSpace("S2");
+          ^~
+In file included from Domain.h:9:0,
+                 from Checker.h:4,
+                 from Domain.cpp:3:
+Coords.h: In constructor 'coords::VecDef::VecDef(ast::VecDef*, const coords::VecIdent*, const coords::VecExpr*)':
+Coords.h:254:18: warning: 'coords::VecDef::be_' will be initialized after [-Wreorder]
+   const VecExpr *be_;
+                  ^~~
+Coords.h:241:64: warning:   base 'coords::VecExpr' [-Wreorder]
+       : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
+                                                                ^
+Coords.h:240:3: warning:   when initialized here [-Wreorder]
+   VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
+   ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h: At global scope:
+Domain.h:154:42: error: expected ';' at end of member declaration
+  bool isVar { return (tag_ == VEC_EXPR); }
+                                          ^
+Domain.h:154:15: error: expected primary-expression before 'return'
+  bool isVar { return (tag_ == VEC_EXPR); }
+               ^~~~~~
+Domain.h:154:15: error: expected '}' before 'return'
+Domain.h:154:15: error: cannot convert '<brace-enclosed initializer list>' to 'bool' in initialization
+Domain.h:154:15: error: expected ';' before 'return'
+Domain.h: In constructor 'domain::Vector_Lit::Vector_Lit(const domain::Space&, const coords::Vector*)':
+Domain.h:180:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:180:3: error: class 'domain::Vector_Lit' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+   ^~~~~~
+Domain.h:180:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:180:15: error: class 'domain::Vector_Lit' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+               ^~~~~~~
+Domain.h:180:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:180:32: error: class 'domain::Vector_Lit' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                ^~~~
+Domain.h:180:44: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_LIT) {
+                                            ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h: In constructor 'domain::Vector_Expr::Vector_Expr(const domain::Space&, const coords::Vector*, domain::VecExpr*)':
+Domain.h:195:3: error: 'const domain::Space* domain::Vector::space_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:169:15: note: declared private here
+  const Space* space_; // INFER?
+               ^~~~~~
+Domain.h:195:3: error: class 'domain::Vector_Expr' does not have any field named 'space_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+   ^~~~~~
+Domain.h:195:15: error: 'const coords::Vector* domain::Vector::coords_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:170:24: note: declared private here
+  const coords::Vector* coords_;
+                        ^~~~~~~
+Domain.h:195:15: error: class 'domain::Vector_Expr' does not have any field named 'coords_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+               ^~~~~~~
+Domain.h:195:32: error: 'domain::VecCtorType domain::Vector::tag_' is private within this context
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:172:14: note: declared private here
+  VecCtorType tag_;
+              ^~~~
+Domain.h:195:32: error: class 'domain::Vector_Expr' does not have any field named 'tag_'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                ^~~~
+Domain.h:195:58: error: no matching function for call to 'domain::Vector::Vector()'
+   space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) {
+                                                          ^
+Domain.h:149:2: note: candidate: domain::Vector::Vector(const domain::Space&, const coords::Vector*, domain::VecCtorType)
+  Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+  ^~~~~~
+Domain.h:149:2: note:   candidate expects 3 arguments, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(const domain::Vector&)
+ class Vector  {
+       ^~~~~~
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.h:147:7: note: candidate: constexpr domain::Vector::Vector(domain::Vector&&)
+Domain.h:147:7: note:   candidate expects 1 argument, 0 provided
+Domain.cpp: In member function 'std::__cxx11::string domain::VecIdent::getName() const':
+Domain.cpp:16:85: error: 'const class coords::VecIdent' has no member named 'getVarDecl'
+     std::cerr << "VecIdent::getName(): vardecl_  addr is " << std::hex << vardecl_->getVarDecl() << "\n";
+                                                                                     ^~~~~~~~~~
+Domain.cpp: At global scope:
+Domain.cpp:28:60: error: no 'const domain::VecExpr& domain::VecVecAddExpr::getVecVecAddExprArgL()' member function declared in class 'domain::VecVecAddExpr'
+ const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgL()
+                                                            ^
+Domain.cpp:33:60: error: no 'const domain::VecExpr& domain::VecVecAddExpr::getVecVecAddExprArgR()' member function declared in class 'domain::VecVecAddExpr'
+ const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgR()
+                                                            ^
+Domain.cpp: In member function 'domain::VecExpr* domain::Domain::mkVecVecAddExpr(domain::Space&, coords::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)':
+Domain.cpp:96:13: error: cannot convert 'domain::VecExpr' to 'domain::VecExpr*' in return
+     return *be;
+             ^~
+Domain.cpp: At global scope:
+Domain.cpp:125:9: error: prototype for 'domain::Vector* domain::Domain::mkVector_Lit(domain::Space&, coords::Vector*)' does not match any in class 'domain::Domain'
+ Vector* Domain::mkVector_Lit(Space& space, coords::Vector* coords) {
+         ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:254:10: error: candidate is: domain::Vector* domain::Domain::mkVector_Lit(coords::Vector*)
+  Vector* mkVector_Lit(coords::Vector* v/*, domain::VecExpr *vec*/);
+          ^~~~~~~~~~~~
+Domain.cpp:132:73: error: 'domain::Expr' has not been declared
+ Vector* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::Expr* exp) {
+                                                                         ^~~~
+Domain.cpp:132:9: error: prototype for 'domain::Vector* domain::Domain::mkVector_Expr(domain::Space&, coords::Vector*, int*)' does not match any in class 'domain::Domain'
+ Vector* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::Expr* exp) {
+         ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:255:10: error: candidate is: domain::Vector* domain::Domain::mkVector_Expr(coords::Vector*, domain::VecExpr*)
+  Vector* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
+          ^~~~~~~~~~~~~
+Domain.cpp:140:30: error: no 'void domain::Domain::dumpIdentifiers()' member function declared in class 'domain::Domain'
+ void Domain::dumpIdentifiers()
+                              ^
+Makefile:110: recipe for target '../build/ASTMatcher' failed
+make: *** [../build/ASTMatcher] Error 1

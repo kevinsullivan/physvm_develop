@@ -151,7 +151,7 @@ public:
 	}
 	bool isLit() { return (tag_ == VEC_LIT); } 
 	bool isExpr() { return (tag_ == VEC_EXPR); } 
-	bool isVar { return (tag_ == VEC_EXPR); } 
+	bool isVar() { return (tag_ == VEC_VAR); } 
 	const Space* getSpace() {return space_; }
 	const coords::Vector* getCoords() const {return coords_; } 
 
@@ -177,7 +177,7 @@ private:
 class Vector_Lit : public Vector {
 public:
 	Vector_Lit(const Space& s, const coords::Vector* coords) :
-		space_(&s), coords_(coords), tag_(VEC_LIT) { 
+		Vector(s, coords, VEC_LIT) { 
 	}
 	std::string toString() const {
 		return "domain::Vector_Lit::toString: STUB.\n";
@@ -192,7 +192,7 @@ Todo: Rename to reflect
 class Vector_Expr : public Vector  {
 public:
 	Vector_Expr(const Space& s, const coords::Vector* coords, domain::VecExpr* expr) :
-		space_(&s), coords_(coords), tag_(VEC_EXPR), expr_(expr) { 
+		Vector(s, coords, VEC_EXPR), expr_(expr) { 
 	}
 	const domain::VecExpr* getVecExpr() const { return expr_; }
 	std::string toString() const {
@@ -208,7 +208,7 @@ Future?
 class Vector_Var : public Vector {
 public:
 	Vector_Var(const Space& s, const coords::Vector* coords, domain::VecVarExpr* expr) :
-		space_(&s), coords_(coords), expr_(expr), tag_(VEC_VAR) { 
+		Vector(s, coords, VEC_VAR), expr_(expr) { 
 	}
 	bool isExpr() { return (tag_ == VEC_EXPR); } 
 	bool isLit() { return (tag_ == VEC_LIT); } 

@@ -206,10 +206,67 @@ private:
 };
 */
 
+
+enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
+
+
 // TODO weak typing of Expr argument
-class Vector : public VecExpr {
+class Vector {
 public:
-  Vector(const ast::Vector *constrExpr)
+  Vector(const ast::Vector *ast), tag_(tag)
+      : VecExpr(ast), tag_(tag) {}
+  const ast::Vector *get() const { return constrExpr_; }
+
+  // for now, an address-based equality predicate
+  bool operator==(const Vector &other) const {
+
+    return (constrExpr_ == other.constrExpr_);
+  }
+  virtual std::string toString() const { return "Vector"; }
+
+protected:
+    const VectorCtorType tag_;
+    const ast::Vector *ast_;
+    const ast::VecExpr *expr_;    // Vector_Expr
+    const ast::VecVarExpr *var_;  // Vector_Var
+};
+
+struct VectorHasher {
+  std::size_t operator()(const Vector &k) const {
+    // TODO -- fix
+    std::size_t hash = 10101010;
+    return hash;
+  }
+};
+
+// TODO weak typing of Expr argument
+class Vector_Lit : public VecExpr {
+public:
+  Vector_Lit(const ast::Vector *ast) : VecExpr(ast), tag_(VEC_CTOR_LIT) {}
+  const ast::Vector *get() const { return ast_; }
+
+  // for now, an address-based equality predicate
+  bool operator==(const Vector &other) const {
+
+    return (ast_ == other.ast_);
+  }
+  virtual std::string toString() const { return "Vector_Lit::toString() STUB."; }
+
+private:
+};
+
+struct Vector_LitHasher {
+  std::size_t operator()(const Vector &k) const {
+    // TODO -- fix
+    std::size_t hash = 10101010;
+    return hash;
+  }
+};
+
+// TODO weak typing of Expr argument
+class Vector_Expr : public VecExpr {
+public:
+  Vector_Expr(const ast::Vector *constrExpr)
       : VecExpr(constrExpr), constrExpr_(constrExpr) {}
   const ast::Vector *get() const { return constrExpr_; }
 
@@ -221,12 +278,10 @@ public:
   virtual std::string toString() const { return "Vector"; }
 
 private:
-  const ast::Vector *constrExpr_;
   const VecExpr *expr_;
-  ;
 };
 
-struct VectorHasher {
+struct Vector_ExprHasher {
   std::size_t operator()(const Vector &k) const {
     // TODO -- fix
     std::size_t hash = 10101010;

@@ -30,10 +30,6 @@ Coords.h:240:3: warning:   when initialized here [-Wreorder]
    VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::VecExpr *be)
    ^~~~~~
 Interpretation.cpp: In member function 'void interp::Interpretation::mkVecIdent(ast::VecIdent*)':
-Interpretation.cpp:31:38: error: 'class domain::Domain' has no member named 'addVecIdent'; did you mean 'mkVecIdent'?
-     domain::VecIdent *dom = domain_->addVecIdent(space, coords);
-                                      ^~~~~~~~~~~
-                                      mkVecIdent
 Interpretation.cpp:40:12: error: return-statement with a value, in function returning 'void' [-fpermissive]
      return dom;
             ^~~
@@ -64,15 +60,6 @@ Interpretation.cpp:70:37: error: 'class oracle::Oracle' has no member named 'get
      oracle::Space& space = oracle_->getSpaceForVecVarExpr(ast);
                                      ^~~~~~~~~~~~~~~~~~~~~
                                      getSpaceForVecVarExp
-Interpretation.cpp:71:44: error: 'class domain::Domain' has no member named 'addVecVarExpr'; did you mean 'mkVecVarExpr'?
-     domain::VecVarExpr *dom_var = domain_->addVecVarExpr(space, dom_var);
-                                            ^~~~~~~~~~~~~
-                                            mkVecVarExpr
-Interpretation.cpp: In member function 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)':
-Interpretation.cpp:100:44: error: 'class domain::Domain' has no member named 'addVecVecAddExpr'; did you mean 'mkVecVecAddExpr'?
-   domain::VecExpr *dom_add_expr = domain_->addVecVecAddExpr(space, expr_coords, mem, arg);
-                                            ^~~~~~~~~~~~~~~~
-                                            mkVecVecAddExpr
 Interpretation.cpp: In member function 'void interp::Interpretation::mkVector_Lit(ast::Vector*, clang::ASTContext*)':
 Interpretation.cpp:125:60: error: cannot convert 'coords::VecLitExpr*' to 'coords::Vector*' in initialization
      coords::Vector *vec_coords = new coords::VecLitExpr(ast);
@@ -96,17 +83,13 @@ Oracle.h:20:17: note: candidate: domain::Space& oracle::Oracle::getSpaceForVecto
   domain::Space& getSpaceForVector(std::string where);
                  ^~~~~~~~~~~~~~~~~
 Oracle.h:20:17: note:   no known conversion for argument 1 from 'ast::Vector* {aka const clang::CXXConstructExpr*}' to 'std::__cxx11::string {aka std::__cxx11::basic_string<char>}'
-Interpretation.cpp:129:40: error: 'class domain::Domain' has no member named 'addVector_Lit'; did you mean 'mkVector_Lit'?
-     domain::Vector* dom_vec = domain_->addVector_Lit(space, vec_coords);
-                                        ^~~~~~~~~~~~~
-                                        mkVector_Lit
-Interpretation.cpp:129:54: error: 'space' was not declared in this scope
-     domain::Vector* dom_vec = domain_->addVector_Lit(space, vec_coords);
-                                                      ^~~~~
-Interpretation.cpp:129:54: note: suggested alternative: 'isspace'
-     domain::Vector* dom_vec = domain_->addVector_Lit(space, vec_coords);
-                                                      ^~~~~
-                                                      isspace
+Interpretation.cpp:129:53: error: 'space' was not declared in this scope
+     domain::Vector* dom_vec = domain_->mkVector_Lit(space, vec_coords);
+                                                     ^~~~~
+Interpretation.cpp:129:53: note: suggested alternative: 'isspace'
+     domain::Vector* dom_vec = domain_->mkVector_Lit(space, vec_coords);
+                                                     ^~~~~
+                                                     isspace
 Interpretation.cpp:130:18: error: 'class coords2domain::CoordsToDomain' has no member named 'putVectorInterp'; did you mean 'putVector'?
      coords2dom_->putVectorInterp(vec_coords, dom_vec);
                   ^~~~~~~~~~~~~~~
@@ -126,10 +109,16 @@ Interpretation.cpp: In member function 'void interp::Interpretation::mkVecDef(as
 Interpretation.cpp:151:10: warning: the address of 'double exp(double)' will never be NULL [-Waddress]
      if (!exp || !id) { std::cerr << "Interpretation::mkVecDef: null arg\n"; }
           ^~~
-Interpretation.cpp:160:40: error: 'class domain::Domain' has no member named 'addVecDef'; did you mean 'mkVecDef'?
-     domain::VecDef *vec_def = domain_->addVecDef(bind_coords, id, exp);
-                                        ^~~~~~~~~
-                                        mkVecDef
+Interpretation.cpp:160:69: error: no matching function for call to 'domain::Domain::mkVecDef(coords::VecDef*&, domain::VecIdent*&, double (&)(double) throw ())'
+     domain::VecDef *vec_def = domain_->mkVecDef(bind_coords, id, exp);
+                                                                     ^
+In file included from Oracle.h:7:0,
+                 from Interpretation.h:8,
+                 from Interpretation.cpp:13:
+Domain.h:257:10: note: candidate: domain::VecDef& domain::Domain::mkVecDef(const coords::VecDef*, const domain::VecIdent*, const domain::VecExpr*)
+  VecDef& mkVecDef(const coords::VecDef* vardecl, const VecIdent* identifier, const VecExpr* expression);
+          ^~~~~~~~
+Domain.h:257:10: note:   no known conversion for argument 3 from 'double(double) throw ()' to 'const domain::VecExpr*'
 Interpretation.cpp: In member function 'const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)':
 Interpretation.cpp:176:25: error: 'class ast2coords::ASTToCoords' has no member named 'getCoords'; did you mean 'ASTToCoords'?
      return ast2coords_->getCoords(expr);
@@ -367,7 +356,7 @@ Domain.cpp:125:9: error: prototype for 'domain::Vector* domain::Domain::mkVector
          ^~~~~~
 In file included from Checker.h:4:0,
                  from Domain.cpp:3:
-Domain.h:186:10: error: candidate is: domain::Vector* domain::Domain::mkVector_Lit(coords::Vector*)
+Domain.h:254:10: error: candidate is: domain::Vector* domain::Domain::mkVector_Lit(coords::Vector*)
   Vector* mkVector_Lit(coords::Vector* v/*, domain::VecExpr *vec*/);
           ^~~~~~~~~~~~
 Domain.cpp:132:73: error: 'domain::Expr' has not been declared
@@ -378,7 +367,7 @@ Domain.cpp:132:9: error: prototype for 'domain::Vector* domain::Domain::mkVector
          ^~~~~~
 In file included from Checker.h:4:0,
                  from Domain.cpp:3:
-Domain.h:187:10: error: candidate is: domain::Vector* domain::Domain::mkVector_Expr(coords::Vector*, domain::VecExpr*)
+Domain.h:255:10: error: candidate is: domain::Vector* domain::Domain::mkVector_Expr(coords::Vector*, domain::VecExpr*)
   Vector* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
           ^~~~~~~~~~~~~
 Domain.cpp:140:30: error: no 'void domain::Domain::dumpIdentifiers()' member function declared in class 'domain::Domain'
