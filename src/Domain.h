@@ -10,7 +10,79 @@
 
 //using namespace std;
 
+/*
+- Space
+- Ident
+- Expr
+- Value
+- Defn
+*/
+
 namespace domain {
+
+
+// 
+class Space;
+
+// Ident
+class VecIdent;
+// Expr
+class VecExpr;
+class VecLitExpr;
+class VecVarExpr;
+class VecVecAddExpr;
+// Value
+class Vector;
+class Vector_Lit;
+class Vector_Expr;
+class Vector_Var;
+// Def
+class VecDef;
+
+// Definition for Domain class 
+
+class Domain {
+public:
+// Space
+	Space& mkSpace(const std::string& name);
+	std::vector<Space>& getAllSpaces();
+
+// Idents
+	VecIdent* mkVecIdent(Space& s, const coords::VecIdent* ast);
+	VecExpr* mkVecVarExpr(Space& s, const coords::VecVarExpr* ast);
+
+
+// Exprs
+	VecExpr* mkVecLitExpr(Space& s, const coords::VecLitExpr* e);
+	VecExpr* mkVecVarExpr(Space& s, const coords::VecLitExpr* e);		-- KEVIN
+	VecExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
+
+// Values
+
+	Vector* mkVector_Lit(coords::Vector* v/*, domain::VecExpr *vec*/);
+	//Vector* mkVector_Var(coords::Vector* v/*, domain::VecExpr *vec*/);
+	Vector* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
+
+// Defs
+	VecDef& mkVecDef(const coords::VecDef* vardecl, const VecIdent* identifier, const VecExpr* expression);
+
+
+// Client
+	bool isConsistent();
+
+// Details
+	void dump();
+	void dumpExpressions(); // print contents on std::cerr
+	void dumpVecIdents(); // print contents on std::cerr
+	void dumpVecDefs(); // print contents on std::cerr
+
+private:
+	std::vector<Space> spaces;
+	std::vector<VecIdent> idents;
+	std::vector<VecExpr*> exprs;
+	std::vector<VecDef> defs;
+	std::vector<Vector*> vectors;
+};
 	
 /*
 Named space. Later on this will become a full-fledged Euclidean space object.
@@ -115,33 +187,6 @@ private:
 };
 
 /*
-Domain representation of binding of identifier to expression.
-Takes clang::VarDecl establishing binding (in a wrapper) and 
-the *domain* VecIdent and Expression objects being bound.
-*/
-class VecDef {
-public:
-	VecDef(const coords::VecDef* ast_wrapper, const domain::VecIdent* identifier, const domain::VecExpr* expr):
-			ast_wrapper_(ast_wrapper), identifier_(identifier), expr_(expr) {}
-	const coords::VecDef* getVarDecl() const {return ast_wrapper_; } 
-	const domain::VecExpr* getVecExpr() const { return expr_; }
-	const domain::VecIdent* getVecIdent() { return identifier_; }
-	std::string toString() const {
-		return "def " + identifier_->toString() + " := " + expr_->toString();
-	}
-private:
-	const coords::VecDef* ast_wrapper_;
-	const VecIdent* identifier_;
-	const VecExpr* expr_;
-};
-
-/*
-Domain representation of binding of identifier to expression.
-*/
-enum VecCtorType {VEC_EXPR, VEC_LIT, VEC_VAR, VEC_NONE } ; 
-
-
-/*
 This is a sum type capable of representing different kinds of fully constructed vectors.
 */
 class Vector  {
@@ -230,6 +275,33 @@ private:
 };
 */
 
+/*
+Domain representation of binding of identifier to expression.
+Takes clang::VarDecl establishing binding (in a wrapper) and 
+the *domain* VecIdent and Expression objects being bound.
+*/
+class VecDef {
+public:
+	VecDef(const coords::VecDef* ast_wrapper, const domain::VecIdent* identifier, const domain::VecExpr* expr):
+			ast_wrapper_(ast_wrapper), identifier_(identifier), expr_(expr) {}
+	const coords::VecDef* getVarDecl() const {return ast_wrapper_; } 
+	const domain::VecExpr* getVecExpr() const { return expr_; }
+	const domain::VecIdent* getVecIdent() { return identifier_; }
+	std::string toString() const {
+		return "def " + identifier_->toString() + " := " + expr_->toString();
+	}
+private:
+	const coords::VecDef* ast_wrapper_;
+	const VecIdent* identifier_;
+	const VecExpr* expr_;
+};
+
+/*
+Domain representation of binding of identifier to expression.
+*/
+enum VecCtorType {VEC_EXPR, VEC_LIT, VEC_VAR, VEC_NONE } ; 
+
+
 
 
 /*
@@ -238,44 +310,7 @@ of C++ objects. It should be isomorphic to the domain, and domain models
 (e.g., in Lean) should be producible using a Domain as an input.
 */
 
-// Definition for Domain class 
 
-class Domain {
-public:
-	Space& mkSpace(const std::string& name);
-	//VecLitExpr& addLitExpr(Space& s, const coords::coords::Lit* ast);		/* BIG TODO: Fix others */
-	VecIdent* mkVecIdent(Space& s, const coords::VecIdent* ast);
-	VecExpr* mkVecVarExpr(Space& s, const coords::VecVarExpr* ast);
-	// should be mkVecLit*Ctor*, with contained lit data 
-	VecExpr* mkVecLitExpr(Space& s, const coords::VecLitExpr* e);
-	VecExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
-	// coords for container, domain object for child, lit | expr
-	// if lit, child is -- empty? -- else coords and domain VecExpr
-	Vector* mkVector_Lit(coords::Vector* v/*, domain::VecExpr *vec*/);
-	Vector* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
-	//Vector* mkVector_Var(coords::Vector* v/*, domain::VecExpr *vec*/);
-	VecDef& mkVecDef(const coords::VecDef* vardecl, const VecIdent* identifier, const VecExpr* expression);
-	void dump() {
-		std::cerr << "Domain expressions:\n";
-		dumpExpressions(); // print contents on std::cerr
-		std::cerr << "Domain VecIdents\n";
-		dumpVecIdents(); // print contents on std::cerr
-		std::cerr << "Domain VecDefs\n";
-		dumpVecDefs(); // print contents on std::cerr
-	}
-	void dumpExpressions(); // print contents on std::cerr
-	void dumpVecIdents(); // print contents on std::cerr
-	void dumpVecDefs(); // print contents on std::cerr
-
-	bool isConsistent();
-	std::vector<Space>& getAllSpaces();
-private:
-	std::vector<Space> spaces;
-	std::vector<VecIdent> identifiers;
-	std::vector<VecExpr*> expressions;
-	std::vector<VecDef> bindings;
-	std::vector<Vector*> vectors;
-};
 
 } // end namespace
 
