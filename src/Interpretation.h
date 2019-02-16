@@ -20,7 +20,8 @@ public:
     void mkVecIdent(ast::VecIdent *ast);
     void mkVecLitExpr(ast::VecVarExpr *ast, clang::ASTContext *c);
     void mkVecVarExpr(ast::VecVarExpr *ast, clang::ASTContext *c);
-    void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg);
+    void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, 
+                         domain::VecExpr *arg);
     void mkVector_Lit(ast::VecLitExpr *ast, clang::ASTContext *context);
     void mkVector_Expr(ast::VecLitExpr *ast, clang::ASTContext *context);
 //    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);

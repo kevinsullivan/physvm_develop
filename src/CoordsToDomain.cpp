@@ -17,22 +17,13 @@ domain::VecExpr* CoordsToDomain::getVecExpr
 }
 
 
-void CoordsToDomain::PutVecLitExpr(const coords::VecLitExpr* n, domain::VecLitExpr* e) {
+
+void CoordsToDomain::PutVector(const coords::Vector* n, domain::Vector* e) {
     interpExpression.insert(std::make_pair(*n, e));
 }
 
-domain::VecExpr* CoordsToDomain::getVecLitExpr
-        (const coords::VecLitExpr* n)  {
-   return interpExpression[*n]; 
-}
-
-
-void CoordsToDomain::PutVecVarExpr(const coords::VecVarExpr* n, domain::VecVarExpr* e) {
-    interpExpression.insert(std::make_pair(*n, e));
-}
-
-domain::VecExpr* CoordsToDomain::getVecVarExpr
-        (const coords::VecVarExpr* n)  {
+domain::Vector* CoordsToDomain::getVector
+        (const coords::Vector* n)  {
    return interpExpression[*n]; 
 }
 
@@ -41,7 +32,7 @@ void CoordsToDomain::PutVecVecAddExpr(const coords::VecVecAddExpr* n, domain::Ve
     interpExpression.insert(std::make_pair(*n, e));
 }
 
-domain::VecExpr* CoordsToDomain::getVecVecAddExpr
+domain::VecVecAddExpr* CoordsToDomain::getVecVecAddExpr
         (const coords::VecVecAddExpr* n)  {
    return interpExpression[*n]; 
 }
@@ -68,11 +59,11 @@ const domain::VecDef* CoordsToDomain::getVecDef(const coords::VecDef* key)  {
 Constructed vector (from expr, lit, var) -- add vectors table?
 */
 void CoordsToDomain::PutVector(const coords::Vector* n, domain::Vector* e) {
-    interpExpression.insert(std::make_pair(*n, e));
+    interpVector.insert(std::make_pair(*n, e));
 }
 
 domain::Vector* CoordsToDomain::Vector(const coords::Vector* n)  {
-   return interpExpression[*n]; 
+   return interpVector[*n]; 
 }
 
 

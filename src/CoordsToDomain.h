@@ -28,8 +28,17 @@ class CoordsToDomain
 	void PutVecVecAddExpr(const coords::VecVarExpr *n, domain::VecVecAddExpr *e);
 	domain::VecVecAddExpr *getVecVecAddExpr(const coords::VecVarExpr* n);
 
-	void putVector(coords::Vector *vardecl_wrapper, domain::Vector *b);
+	void putVector_Lit(coords::Vector *ast, domain::Vector_Lit *v);
+	const domain::Vector *getVector(const coords::Vector_Lit* coords);
+
+	void putVector_Expr(coords::Vector *ast, domain::Vector_Expr *v);
+	const domain::Vector *getVector(const coords::Vector_Expr* coords);
+
+/*
+	void putVector_Var(coords::Vector *vardecl_wrapper, domain::Vector *b);
 	const domain::Vector *getVector(const coords::VecDef* vardecl_wrapper);
+*/
+
 
 	void putVecDef(coords::VecDef *vardecl_wrapper, domain::VecDef *b);
 	const domain::VecDef *getVecDef(const coords::VecDef* vardecl_wrapper);
@@ -49,6 +58,7 @@ class CoordsToDomain
 	*/
 	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
 	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
+	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpVector;
 	std::unordered_map<coords::VecDef, domain::VecDef *, coords::VecDefHasher> interpVecDef;
 };
 
