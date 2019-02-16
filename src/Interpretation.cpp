@@ -22,61 +22,47 @@ Interpretation::Interpretation() {
     coords2dom_ = new coords2domain::CoordsToDomain();
 }
 
+
+/******
+* Ident
+******/
+
 void Interpretation::mkVecIdent(ast::VecIdent *ast)
 {
-    std::cerr << "BEG interp::VecIdent *mkVecIdent\n";
+    std::cerr << "Interpretation::mkVecIdent. BEG\n";
 
     domain::Space &space = oracle_->getSpaceForVecIdent(ast);
-    const coords::VecIdent *coords = new coords::VecIdent(ast);
-    ast2coords_->overrideStmt(ast, coords);
+    const coords::VecIdent *coords = ast2coords_->mkVecIdent(ast);
+
+    // TODO: Refactor so coords2ast relation does all the work, here and below
     domain::VecIdent *dom = domain_->mkVecIdent(space, coords);
     coords2dom_->putVecIdent(coords, dom);
 
-    std::cerr << "domain::VecIdent *mkVecIdent: AST at " << std::hex 
+    std::cerr << "Interpretation::mkVecIdent *mkVecIdent: AST at " << std::hex 
         << ast << "; Coords at " << std::hex << coords 
         << ";  coords.toString is " << coords->toString() 
         << "; dom at " << std::hex << dom << "\n";
-    std::cerr << "END interp::VecIdent *mkVecIdent\n";
+    std::cerr << "END Interpretation::mkVecIdent *mkVecIdent\n";
 }
 
 
-/*
-When generating interpretation, we know subtypes of vector expressions
-(literal, variable, function application), and so do not need and should
-not use a generic putter. The benefit of not doing so is type checking 
-and conceptual integrity. On the other hand, the putters for different
-kinds of expressions do put them all in the same "expressions" table, 
-as we do want to construct expressions inductively based on sum types. 
-*/
+/*****
+* Expr
+*****/
 
-/*
-TODO: A procedure to "make coordinate for given AST node". Observation: we use
-the same kinds of coordinates for *all* kinds of AST nodes. This is actually 
-important. We want a homogenous system of code coordinates.
-*/
-
-// TODO: Change ast::VecLitExpr to ast::Vector_Lit
-void Interpretation::mkVector_Lit(ast::VecLitExpr *ast, clang::ASTContext *c) {
-    coords::VecLitExpr *var_coords = new coords::VecLitExpr(ast);
-    ast2coords_->overrideStmt(ast, var_coords);
-    oracle::Space& space = oracle_->getSpaceForVecLitExpr(ast);
-    domain::VecLitExpr *dom_var = domain_->mkVecLitExpr(space, dom_var);
-    coords2dom_->PutVecExpr(var_coords, dom_var);
-}
 
 void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast, clang::ASTContext *c) {
-    coords::VecVarExpr *var_coords = new coords::VecVarExpr(ast);
-    ast2coords_->overrideStmt(ast, var_coords);
+    coords::VecVarExpr *var_coords = ast2coords_->mkVecVarExpr(ast);
     domain::Space& space = oracle_->getSpaceForVecVarExpr(ast);
     domain::VecVarExpr *dom_var = domain_->mkVecVarExpr(space, dom_var);
     coords2dom_->PutVecExpr(var_coords, dom_var);
 }
 
-// TODO: FIX?
 void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
 
   std::cerr << "Interpretation::mkVecVecAddExpr: START: adding\n";
-  std::cerr << "Interpretation::mkVecVecAddExpr: Member is " << mem->toString() << " \n";
+  std::cerr << "Interpretation::mkVecVecAddExpr: Member is " 
+    << mem->toString() << " \n";
   std::cerr << "Argument is " << arg->toString() << "\n";
   std::cerr << "AST is (dump)";
   ast->dump();
@@ -108,33 +94,39 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *m
 }
 
 
+/*******
+* Vector
+*******/
+
 /*
 Vectors are fully "constructed" objects. We're seeing a bit of Clang AST
 design showing through here, as clang separated things like function appl
 expressions and objects constructed from them.
-
-TODO: Rethink. Do we need separate mkVector for different AST-level vector 
-constructor forms (lit, expr, and presumably var, in the future)? Or on the
-other hand, should we suppress this distinction at this point? Presumably
-"Clang is wise", but we'll have to think about that. A "design question."
 */
-void Interpretation::mkVector_Lit(ast::Vector *ast, clang::ASTContext *context) {
-    std::cerr << "Interpretation::mkVector. START";
 
-// TODO: Fix - no Lit expr, it's ctor
-    coords::VecExpr *vec_coords = new coords::VecLitExpr(ast);  
-    ast2coords_->overrideStmt(ast, vec_coords);       
-    domain::Space &s = oracle_->getSpaceForVector(ast);
-    ast2coords_->overrideStmt(ast, vec_coords);
-    domain::Vector* dom_vec = domain_->mkVector_Lit(space, vec_coords);
-    coords2dom_->putVector_Lit(vec_coords, dom_vec);
-    std::cerr << "DONE Interpretation::mkVector\n";
+void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, clang::ASTContext *c) {
+    std::cerr << "Interpretation::mkVector_Lit. START";
+    coords::Vector_Lit *var_coords = ast2coords_->mkVector_Lit(ast);
+    oracle::Space& space = oracle_->getSpaceForVector_Lit(ast); // infer?
+    domain::VecLitExpr *dom_var = domain_->mkVector_Lit(space, dom_var);
+    coords2dom_->PutVecExpr(var_coords, dom_var);
+    std::cerr << "Interpretation::mkVector_Lit. DONE\n";
 }
 
 
-void Interpretation::mkVector_Expr(ast::Vector *vec, domain::VecExpr* expr, clang::ASTContext *context) {
-    std::cerr << "Interpretation::mkVector. START";
+void Interpretation::mkVector_Expr(ast::Vector_Expr *ast, , domain::VecExpr* expr, clang::ASTContext *c) {
+    std::cerr << "Interpretation::mkVector_Expr. START";
+    coords::Vector_Expr *var_coords = ast2coords_->mkVector_Expr(ast);
+    oracle::Space& space = oracle_->getSpaceForVector_Lit(ast); // infer?
+    domain::Vector_Expr* dom_vec = domain_->mkVector_Expr(space, vec_coords, expr);
+    coords2dom_->PutVecExpr(var_coords, dom_var);
+    std::cerr << "Interpretation::mkVector_Expr. DONE\n";
+}
 
+
+/*
+void Interpretation::mkVector_Expr(ast::Vector_Expr *vec, domain::VecExpr* expr, clang::ASTContext *context) {
+    std::cerr << "Interpretation::mkVector. START";
     coords::Vector *vec_coords = new coords::VecVecAddExpr(vec);    // Fix - not an expr
     ast2coords_->overrideStmt(vec, vec_coords); 
     oracle::Space &s = oracle_->getSpaceForVector(vec);
@@ -143,6 +135,7 @@ void Interpretation::mkVector_Expr(ast::Vector *vec, domain::VecExpr* expr, clan
     coords2dom_->putVectorInterp(vec_coords, dom_vec);
     std::cerr << "DONE Interpretation::mkVector\n";
 }
+*/
 
 
 void Interpretation::mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *vec)
