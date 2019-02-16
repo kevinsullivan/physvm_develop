@@ -2,31 +2,57 @@
 
 using namespace ast2coords;
 
-// Create right coordinates object and "add to system" (update ast_to_coords map)
-const coords::VecIdent *ASTToCoords::makeCoordsForVecIdent(const ast::VecIdent *ident) {
-    coords::VecIdent *vecCoords = new coords::VecIdent(ident);
-    overrideDecl(ident,vecCoords);                          // TO DO Canonicalize
-    return vecCoords;
+coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast) {
+    coords::VecIdent *coord = new coords::VecIdent(ast);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    return coord;
 }
 
-// TODO: Transition from clang to ast abstraction for rest of this file
-
-void ASTToCoords::overrideExpr(const clang::Expr *e, const coords::Coords *c) {
-    expr_coords.insert(std::make_pair(e, c));
+coords::VecExpr *ASTToCoords::mkVecExpr(const ast::VecExpr *ast) {
+    coords::VecExpr *c = new coords::VecExpr(ast);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    return coord;
 }
 
-void ASTToCoords::overrideStmt(const clang::Stmt *s, const coords::Coords *c) {
-    stmt_coords.insert(std::make_pair(s, c));
+coords::VecLitExpr *ASTToCoords::mkVecLitExpr(const ast::VecLitExpr *ast) {
+    coords::VecLitExpr *c = new coords::VecLitExpr(ast);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    return coord;
 }
 
-void ASTToCoords::overrideDecl(const clang::Decl *d, const coords::Coords *c) {
-    std::cerr << "ASTToCoords::overrideDecl: AST " << std::hex << d << "to coords " 
-        << std::hex << c << " toString " << c->toString() << "\n";
-    decl_coords.insert(std::make_pair(d, c));
+
+coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast) {
+    coords::VecVarExpr *c = new coords::VecVarExpr(ast);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    return coord;
 }
 
-/*
-const coords::Coords *ASTToCoords::getCoords(ast::Expr* e) {
-    return expr_coords[e];
+coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(const ast::VecVecAddExpr *ast) {
+    coords::VecVecAddExpr *c = new coords::VecVecAddExpr(ast);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    return coord;
 }
-*/
+
+coords::Vector *ASTToCoords::Vector(const ast::Vector *ast) {
+    coords::Vector *c = new coords::Vector(ast);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    return coord;
+}
+
+coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast) {
+    coords::Vector_Lit *c = new coords::Vector_Lit(ast);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    return coord;
+}
+
+coords::Vector_Var *ASTToCoords::mkVector_Var(const ast::Vector_Var *ast) {
+    coords::Vector_Var *c = new coords::Vector_Var(ast);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    return coord;
+}
+
+coords::Vector_Expr *ASTToCoords::mkVector_Expr(const ast::Vector_Expr *ast) {
+    coords::Vector_Expr *c = new coords::Vector_Expr(ast);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    return coord;    
+}

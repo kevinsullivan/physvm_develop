@@ -165,7 +165,7 @@ Interpretation.cpp:71:44: error: 'class domain::Domain' has no member named 'add
                                             mkVecVarExpr
 Interpretation.cpp: In member function 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)':
 Interpretation.cpp:100:44: error: 'class domain::Domain' has no member named 'addVecVecAddExpr'; did you mean 'mkVecVecAddExpr'?
-   domain::VecExpr *dom_add_expr = domain_->addVecVecAddExpr(space, expr_coords, mem, arg);
+   domain::VecExpr *dom_add_expr = domain_->addVecVecAddExpr(space, stmt_coords, mem, arg);
                                             ^~~~~~~~~~~~~~~~
                                             mkVecVecAddExpr
 Interpretation.cpp: In member function 'void interp::Interpretation::mkVector_Lit(ast::Vector*, clang::ASTContext*)':

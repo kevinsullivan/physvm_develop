@@ -27,7 +27,8 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
     std::cerr << "BEG interp::VecIdent *mkVecIdent\n";
 
     domain::Space &space = oracle_->getSpaceForVecIdent(ast);
-    const coords::VecIdent *coords = ast2coords_->makeCoordsForVecIdent(ast);
+    const coords::VecIdent *coords = new coords::VecIdent(ast);
+    ast2coords_->overrideStmt(ast, coords);
     domain::VecIdent *dom = domain_->mkVecIdent(space, coords);
     coords2dom_->putVecIdent(coords, dom);
 
@@ -57,7 +58,7 @@ important. We want a homogenous system of code coordinates.
 // TODO: Change ast::VecLitExpr to ast::Vector_Lit
 void Interpretation::mkVector_Lit(ast::VecLitExpr *ast, clang::ASTContext *c) {
     coords::VecLitExpr *var_coords = new coords::VecLitExpr(ast);
-    ast2coords_->overrideExpr(ast, var_coords);
+    ast2coords_->overrideStmt(ast, var_coords);
     oracle::Space& space = oracle_->getSpaceForVecLitExpr(ast);
     domain::VecLitExpr *dom_var = domain_->mkVecLitExpr(space, dom_var);
     coords2dom_->PutVecExpr(var_coords, dom_var);
@@ -65,7 +66,7 @@ void Interpretation::mkVector_Lit(ast::VecLitExpr *ast, clang::ASTContext *c) {
 
 void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast, clang::ASTContext *c) {
     coords::VecVarExpr *var_coords = new coords::VecVarExpr(ast);
-    ast2coords_->overrideExpr(ast, var_coords);
+    ast2coords_->overrideStmt(ast, var_coords);
     domain::Space& space = oracle_->getSpaceForVecVarExpr(ast);
     domain::VecVarExpr *dom_var = domain_->mkVecVarExpr(space, dom_var);
     coords2dom_->PutVecExpr(var_coords, dom_var);
@@ -92,15 +93,15 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *m
         << std::hex << arg_coords << "\n";
   }
 
-  coords::VecVecAddExpr *expr_coords = 
+  coords::VecVecAddExpr *stmt_coords = 
     new coords::VecVecAddExpr(ast, mem_coords, arg_coords);
-  ast2coords_->overrideExpr(ast, expr_coords);
+  ast2coords_->overrideStmt(ast, stmt_coords);
   domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
-  domain::VecExpr *dom_add_expr = domain_->mkVecVecAddExpr(space, expr_coords, mem, arg);
-  coords2dom_->PutVecExpr(expr_coords, dom_add_expr);
+  domain::VecExpr *dom_add_expr = domain_->mkVecVecAddExpr(space, stmt_coords, mem, arg);
+  coords2dom_->PutVecExpr(stmt_coords, dom_add_expr);
 
   std::cerr << "Interpretation::mkVecVecAddExpr: Coords at " 
-    << std::hex << expr_coords << "\n";
+    << std::hex << stmt_coords << "\n";
   std::cerr << "Interpretation::mkVecVecAddExpr: Adding add expr to domain: " 
     << dom_add_expr->toString() << "\n";
   std::cerr << "FINISHED: adding member call expression to system\n";
@@ -122,9 +123,9 @@ void Interpretation::mkVector_Lit(ast::Vector *ast, clang::ASTContext *context) 
 
 // TODO: Fix - no Lit expr, it's ctor
     coords::VecExpr *vec_coords = new coords::VecLitExpr(ast);  
-    ast2coords_->overrideExpr(ast, vec_coords);       
+    ast2coords_->overrideStmt(ast, vec_coords);       
     domain::Space &s = oracle_->getSpaceForVector(ast);
-    ast2coords_->overrideExpr(ast, vec_coords);
+    ast2coords_->overrideStmt(ast, vec_coords);
     domain::Vector* dom_vec = domain_->mkVector_Lit(space, vec_coords);
     coords2dom_->putVector_Lit(vec_coords, dom_vec);
     std::cerr << "DONE Interpretation::mkVector\n";
@@ -135,9 +136,9 @@ void Interpretation::mkVector_Expr(ast::Vector *vec, domain::VecExpr* expr, clan
     std::cerr << "Interpretation::mkVector. START";
 
     coords::Vector *vec_coords = new coords::VecVecAddExpr(vec);    // Fix - not an expr
-    ast2coords_->overrideExpr(vec, vec_coords); 
+    ast2coords_->overrideStmt(vec, vec_coords); 
     oracle::Space &s = oracle_->getSpaceForVector(vec);
-    ast2coords_->overrideExpr(vec, vec_coords);
+    ast2coords_->overrideStmt(vec, vec_coords);
     domain::Vector* dom_vec = domain_->mkVector_Expr(space, vec_coords, expr);
     coords2dom_->putVectorInterp(vec_coords, dom_vec);
     std::cerr << "DONE Interpretation::mkVector\n";
