@@ -5,8 +5,119 @@
 //using namespace std;
 using namespace coords2domain;
 
+// Ident
+
+void CoordsToDomain::putVecIdent(coords::VecIdent *c, domain::VecIdent *d) {
+    interpExpression.insert(std::make_pair(*c, d));
+}
+
+domain::VecIdent *CoordsToDomain::getVecIdent(coords::VecIdent *c) const {
+   return interpExpression[*c];
+}
+
+coords::VecIdent *CoordsToDomain::getVecIdent(domain::VecIdent *d) const {
+    return d->getCoords();
+}
+
+// Expr
+
+domain::VecExpr *CoordsToDomain::getVecExpr(coords::VecExpr* c) {
+   return interpExpression[*c];
+}
+
+coords::VecExpr *CoordsToDomain::getVecExpr(domain::VecExpr* d) const {
+    return d->getCoords();
+}
+
+void CoordsToDomain::putVecLitExpr(coords::VecLitExpr d, domain::VecLitExpr d) {
+    interpExpression.insert(std::make_pair(*c, d));
+}
+
+domain::VecLitExpr *CoordsToDomain::getLitInterp(coords::VecLitExpr c) const {
+   return interpExpression[*c];
+}
+
+coords::VecLitExpr *CoordsToDomain::getLitInterp(domain::VecLitExpr d) const {
+    return d->getCoords();
+}
+
+void CoordsToDomain::PutVecVarExpr(coords::VecVarExpr *c, domain::VecVarExpr *d) {
+    interpExpression.insert(std::make_pair(*c, d));
+}
+
+domain::VecVarExpr *CoordsToDomain::getVecVarExpr(coords::VecVarExpr* c) const {
+   return interpExpression[*c];
+}
+
+coords::VecVarExpr *CoordsToDomain::getVecVarExpr(domain::VecVarExpr* d) const {
+    return d->getCoords();
+}
+
+void CoordsToDomain::PutVecVecAddExpr(coords::VecVarExpr *d, domain::VecVecAddExpr *d) {
+    interpExpression.insert(std::make_pair(*c, d));
+}
+
+domain::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(coords::VecVarExpr* c) const {
+   return interpExpression[*c];
+}
+
+coords::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(domain::VecVarExpr* d) const {
+    return d->getCoords();
+}
+
+// Vector
+
+void CoordsToDomain::putVector_Lit(coords::Vector *ast, domain::Vector_Lit *v) {
+    interpExpression.insert(std::make_pair(*c, d));
+}
+
+domain::Vector_Lit *CoordsToDomain::getVector(coords::Vector_Lit* c) const {
+   return interpExpression[*c];
+}
+
+coords::Vector_Lit *CoordsToDomain::getVector(domain::Vector_Lit* d) const {
+    return d->getCoords();
+}
+
+void CoordsToDomain::putVector_Expr(coords::Vector *c, domain::Vector_Expr *d) {
+    interpExpression.insert(std::make_pair(*c, d));
+}
+
+domain::Vector *CoordsToDomain::getVector(coords::Vector_Expr* c) const {
+     return interpExpression[*c];  
+}
+
+coords::Vector_Expr *CoordsToDomain::getVector(domain::Vector_Expr* d const) {
+    return d->getCoords();
+}
+
+// Def
+
+void CoordsToDomain::putVector_Def(coords::VecDef *c, domain::VecDef *d) {
+    interpExpression.insert(std::make_pair(*c, d));
+}
+
+domain::VecDef *getVecDef(coords::VecDef* c) const {
+   return interpExpression[*c];
+}
+
+coords::VecDef *getVecDef(domain::VecDef* d) const {
+    return d->getCoords();
+}
 
 
+void CoordsToDomain::dump() const {
+    for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
+        //std::std::cerr << std::hex << &it->first << " : " << std::hex << it.second << "\n";
+        std::cerr << "CoordsToDomain::dump(). STUB.\n";
+    }
+    std::cerr << std::endl;
+}
+
+
+//-------------------------
+
+/*
 void CoordsToDomain::PutVecExpr(const coords::VecExpr* n, domain::VecExpr* e) {
     interpExpression.insert(std::make_pair(*n, e));
 }
@@ -55,9 +166,6 @@ const domain::VecDef* CoordsToDomain::getVecDef(const coords::VecDef* key)  {
    return interpVecDef[*key];     
 }
 
-/*
-Constructed vector (from expr, lit, var) -- add vectors table?
-*/
 void CoordsToDomain::PutVector(const coords::Vector* n, domain::Vector* e) {
     interpVector.insert(std::make_pair(*n, e));
 }
@@ -66,11 +174,5 @@ domain::Vector* CoordsToDomain::Vector(const coords::Vector* n)  {
    return interpVector[*n]; 
 }
 
+*/
 
-void CoordsToDomain::dump() const {
-    for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
-        //std::std::cerr << std::hex << &it->first << " : " << std::hex << it.second << "\n";
-        std::cerr << "CoordsToDomain::dump(). STUB.\n";
-    }
-    std::cerr << std::endl;
-}

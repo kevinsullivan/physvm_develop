@@ -7,6 +7,21 @@
 
 #include <unordered_map>
 
+/*
+	When putting, we know precise subclass, so we don't include
+	putters for Expr and Vector super-classes. When getting, we 
+	generally don't know, so we can return superclass pointers.
+*/
+
+/*
+We currently require client to create domain nodes, which we 
+then map to and from the given coordinates. From coordinates 
+is currently implement as unordered map. From domain object is
+currently implemented as domain object method. This enables us
+to return precisely typed objects without having to maintain a
+lot of separate mapping tables.
+*/
+
 namespace coords2domain {
 
 class CoordsToDomain
@@ -15,41 +30,42 @@ class CoordsToDomain
 
 // Ident
 
-	void putVecIdent(const coords::VecIdent *key, domain::VecIdent *bi);
-	const domain::VecIdent *getVecIdent(const coords::VecIdent *key);
+	void putVecIdent(coords::VecIdent *key, domain::VecIdent *i);
+	domain::VecIdent *getVecIdent(coords::VecIdent *c) const;
+	coords::VecIdent *getVecIdent(domain::VecIdent *d) const;
 
 // Expr
 
-	void PutVecExpr(const coords::VecExpr *n, domain::VecExpr *e);
-	domain::VecExpr *getVecExpr(const coords::VecExpr* n);
+	domain::VecExpr *getVecExpr(coords::VecExpr* c);
+	coords::VecExpr *getVecExpr(domain::VecExpr* d) const;
 
+	void putVecLitExpr(coords::VecLitExpr n, domain::VecLitExpr &v);
+	domain::VecLitExpr *getLitInterp(coords::VecLitExpr c) const;
+	coords::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;
 
-	void putVecLitExpr(const coords::VecLitExpr &n, domain::VecLitExpr &v);
-	domain::VecLitExpr *getLitInterp(const coords::VecLitExpr &n) const;
+	void PutVecVarExpr(coords::VecVarExpr *n, domain::VecVarExpr *e);
+	domain::VecVarExpr *getVecVarExpr(coords::VecVarExpr* c) const;
+	coords::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;
 
-	void PutVecVarExpr(const coords::VecVarExpr *n, domain::VecVarExpr *e);
-	domain::VecVarExpr *getVecVarExpr(const coords::VecVarExpr* n);
+	void PutVecVecAddExpr(coords::VecVarExpr *n, domain::VecVecAddExpr *e);
+	domain::VecVecAddExpr *getVecVecAddExpr(coords::VecVarExpr* c) const;
+	coords::VecVecAddExpr *getVecVecAddExpr(domain::VecVarExpr* d) const;
 
-	void PutVecVecAddExpr(const coords::VecVarExpr *n, domain::VecVecAddExpr *e);
-	domain::VecVecAddExpr *getVecVecAddExpr(const coords::VecVarExpr* n);
+// Vector
 
 	void putVector_Lit(coords::Vector *ast, domain::Vector_Lit *v);
-	const domain::Vector *getVector(const coords::Vector_Lit* coords);
+	domain::Vector *getVector(coords::Vector_Lit* c) const;
+	coords::Vector *getVector(domain::Vector_Lit* d) const;
 
 	void putVector_Expr(coords::Vector *ast, domain::Vector_Expr *v);
-	const domain::Vector *getVector(const coords::Vector_Expr* coords);
-
-/*
-	void putVector_Var(coords::Vector *vardecl_wrapper, domain::Vector *b);
-
-	const domain::Vector *getVector(const coords::VecDef* vardecl_wrapper);
-*/
-
+	domain::Vector *getVector(coords::Vector_Expr* c) const;
+	coords::Vector *getVector(domain::Vector_Expr* d const);
 
 // Def
 
-	void putVecDef(coords::VecDef *vardecl_wrapper, domain::VecDef *b);
-	const domain::VecDef *getVecDef(const coords::VecDef* vardecl_wrapper);
+	void putVector_Def(coords::VecDef *vardecl_wrapper, domain::VecDef *b);
+	domain::Vector_Def *getVecDef(coords::VecDef* c) const;
+	coords::Vector_Def *getVecDef(domain::VecDef* d) const;
 
 	void dump();
 
@@ -64,9 +80,11 @@ class CoordsToDomain
 	AST node maps to a coords::Coords. But here we distinguish
 	between different kinds of coords. Re-evaluate.
 	*/
+
+	// TODO: delete "interp" prefixes here -- minor
 	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::CoordsHasher> interpIdent;
 	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::CoordsHasher> interpExpression;
-	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::CoordsHasher> interpVector;
+	std::unordered_map<coords::VecIdent, domain::Vector *, coords::CoordsHasher> interpVector;
 	std::unordered_map<coords::VecDef, domain::VecDef *, coords::CoordsHasher> interpVecDef;
 /*
 	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;

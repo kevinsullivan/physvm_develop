@@ -27,20 +27,27 @@ the appropriate types. These methods create Coord objects of the
 corresponding types, wrape the AST nodes in the Coords objects,
 update the relational map, and return the constructed Coords. 
 Client code is responsible for deleting (TBD).
+
+Also note that Vector_Lit doesn't have a sub-expression.
 */
 
 namespace ast2coords {
+
+/*
+When generating interpretation, we know subtypes of vector expressions
+(literal, variable, function application), and so do not need and should
+not use a generic putter. So here there are no superclass mkVecExpr or
+Vector mk oprations. 
+*/
 
 class ASTToCoords {
 public:
 
     ASTToCoords();
     coords::VecIdent *mkVecIdent(const ast::VecIdent *ast);
-    coords::VecExpr *mkVecExpr(const ast::VecExpr *ast);
-    coords::VecLitExpr *mkVecLitExpr(const ast::VecLitExpr *ast);
+    //coords::VecLitExpr *mkVecLitExpr(const ast::VecLitExpr *ast);
     coords::VecVarExpr *mkVecVarExpr(const ast::VecVarExpr *ast);
     coords::VecVecAddExpr *mkVecVecAddExpr(const ast::VecVecAddExpr *ast);
-    coords::Vector *Vector(const ast::Vector *ast);
     coords::Vector_Lit *mkVector_Lit(const ast::Vector_Lit *ast);
     coords::Vector_Var *mkVector_Var(const ast::Vector_Var *ast);
     coords::Vector_Expr *mkVector_Expr(const ast::Vector_Expr *ast);
