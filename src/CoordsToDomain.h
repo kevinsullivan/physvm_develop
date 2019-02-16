@@ -28,7 +28,7 @@ class CoordsToDomain
 	domain::VecLitExpr *getLitInterp(const coords::VecLitExpr &n) const;
 
 	void PutVecVarExpr(const coords::VecVarExpr *n, domain::VecVarExpr *e);
-	domain::VecVarExpr *getVecExpr(const coords::VecVarExpr* n);
+	domain::VecVarExpr *getVecVarExpr(const coords::VecVarExpr* n);
 
 	void PutVecVecAddExpr(const coords::VecVarExpr *n, domain::VecVecAddExpr *e);
 	domain::VecVecAddExpr *getVecVecAddExpr(const coords::VecVarExpr* n);
@@ -61,13 +61,19 @@ class CoordsToDomain
 	just adding operator==() and hash functions.
 
 	TODO: Compare with ast2coords. There it's clear that every
-	AST node maps to a coords::VecExpr. But here we distinguish
+	AST node maps to a coords::Coords. But here we distinguish
 	between different kinds of coords. Re-evaluate.
 	*/
+	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::CoordsHasher> interpIdent;
+	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::CoordsHasher> interpExpression;
+	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::CoordsHasher> interpVector;
+	std::unordered_map<coords::VecDef, domain::VecDef *, coords::CoordsHasher> interpVecDef;
+/*
 	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
 	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
 	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpVector;
 	std::unordered_map<coords::VecDef, domain::VecDef *, coords::VecDefHasher> interpVecDef;
+*/
 };
 
 } // namespace
