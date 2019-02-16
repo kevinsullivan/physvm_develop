@@ -10,53 +10,43 @@
 #include "AST.h"
 
 
-//using namespace clang;
-//using namespace clang::ast_matchers;
-//using namespace std;
-
 namespace coords {
 
 /*
-ABSTRACT-ISH BASE CLASS FOR ALL COORDS OBJECTS
-Instances serve as keys linking throughout system
+Code coordinates provide for ontology translation, between the 
+concrete types used to represent pertinent code elements in a 
+given programming language and system (code language), and the 
+abstract terms of a domain language. Here the code language is
+Clang as used to map applications built on our simple vector
+class (Vec). The domain language is one of simple vector space
+expressions and objects. 
 */
 
-Coords::Coords(const clang::Stmt *stmt)  : 
-    clang_ast_stmt_(stmt), clang_ast_decl_(NULL), ast_type_(CLANG_AST_STMT) {    
-}  
+// Ontology of code object types that can be coordinatized
+// clang::Decl unused by Peirce, here for generalizability
+//
 
-Coords::Coords(const clang::Decl *decl)  : 
-    clang_ast_stmt_(NULL), clang_ast_decl_(decl), ast_type_(CLANG_AST_DECL) {
-}
+Coords::Coords(const clang::Stmt *stmt) : ast_type(CLANG_AST_STMT) {}
+Coords::Coords(const clang::Decl *decl) : ast_type(CLANG_AST_EXPR) {}
 
-const clang::Stmt *Coords::getClangStmt() const { 
-    if (ast_type_ != CLANG_AST_STMT) {
-        cerr << "clang::Stmt *Coords::getClangStmt: Error. Wrong type tag.\n";
-        return NULL;
-    }
-    return clang_ast_stmt_; 
-}
+const clang::Stmt *Coords::getClangStmt() const { return clang_ast_stmt_; }
+const clang::Decl *Coords::getClangDecl() const { return clang_ast_decl_; }
 
-const clang::Decl *Coords::getClangDecl() const { 
-    if (ast_type_ != CLANG_AST_DECL) {
-        cerr << "clang::Stmt *Coords::getClangDecl: Error. Wrong type tag.\n";
-        return NULL;
-    }
-    return clang_ast_decl_(); 
-}
-
-bool Coords::operator==(const Coords &other) const {
+virtual bool Coords::operator==(const Coords &other) const {
     if (ast_type_ == CLANG_AST_STMT) {
-        return (clang_ast_stmt_ == other.clang_ast_stmt_);
-    } else if (ast_type_ == CLANG_AST_DECL) {
-        return (clang_ast_decl_ == other.clang_ast_decl_);
-    } 
+        return (stmt_ == other.stmt_);
+    }
+    else {  // ast_type == CLANG_AST_DECL
+        return (decl_ == other.decl_);
+    }
 }
 
 virtual std::string Coords::toString() const {
-    return "Coords::toPrint: Error: should not be called.";
+    return "Coords::toString. Error. Should not be called. Abstract.\n"
 }
 
+// TODO: Implement proper hashing of AST nodes here
+//
 struct CoordsHasher {
   std::size_t operator()(const Coords &k) const {
     std::size_t hash = 10101010;
@@ -65,242 +55,137 @@ struct CoordsHasher {
   }
 };
 
-/******************************************************
-* For type checking Coords for different kinds of nodes.
-* Uses domain language ontology.
-******************************************************/ 
+/*************************************************************
+* Coordinate subclasses, for type checking, override behaviors
+*************************************************************/
 
-class VecLitExpr : public Coords {
-public:
-  VecLitExpr(const ast::VecLitExpr *v) : Coords(v) {}
-  virtual std::string toString() const { return "(mk_vector 0)"; }
-};
+/******
+* Ident
+******/
 
-// VecIdent implemented as VarDecl
-class VecIdent : public Coords {
-public:
-  VecIdent(const ast::VecIdent *ident)
-      : Coords(ident), ident_(ident) {}
+VecIdent::VecIdent(const clang::VarDecl v) : VecExpr(v) {}
 
-  const ast::VecIdent *getAST() const { return ident_; }
+clang::VarDecl *VecIdent::getVarDecl() {
+    return static_cast<clang::VarDecl*> clang_stmt_;  
+}
 
-  // AST node address determines identity
-  bool operator==(const VecIdent &other) const {
-    return (ident_ == other.ident_);
-  }
-  virtual std::string toString() const { 
-    return ident_->getNameAsString(); 
-  }
+virtual std::string VecIdent::toString() const { 
+    return getVarDecl()->getNameAsString(); 
+}
 
-private:
-  const ast::VecIdent *ident_;
-};
+/*****
+* Expr
+*****/
 
-struct VecIdentHasher {
-  std::size_t operator()(const VecIdent &k) const {
-    std::size_t hash = 101010;
-    // TODO Fix hash function
-    return hash;
-  }
-};
 
-// ToDo -- change name to VariableExpr (implemented as VecVarExpr)
+// TODO: Add a dynamic type tag here
+VecExpr::VecExpr(const clang::Expr v) : Coords(v) {}
 
-class VecVarExpr : public Coords {
-public:
-  VecVarExpr(const ast::VecVarExpr *varDeclRef)
-      : Coords(varDeclRef), varDeclRef_(varDeclRef) {}
-  const ast::VecVarExpr *getVecVarExpr() const { return varDeclRef_; }
+clang::Expr *VecExpr::getExpr() {
+    return static_cast<clang::Expr*> clang_stmt_;  
+}
 
-  // for now, an address-based equality predicate
-  bool operator==(const VecVarExpr &other) const {
-    return (varDeclRef_ == other.varDeclRef_);
-  }
-  virtual std::string toString() const {
-    return varDeclRef_->getDecl()->getNameAsString();
-  }
-
-private:
-  const ast::VecVarExpr *varDeclRef_;
-};
-
-struct VecVarExprHasher {
-  std::size_t operator()(const VecVarExpr &k) const {
-    std::size_t hash = 101010;
-    // TODO Fix hash function
-    return hash;
-  }
-};
-
-// TODO -- Change to AddMemberCallExpr, implemented as CXXMemberCallExpr
-
-class VecVecAddExpr : public Coords {
-public:
-  VecVecAddExpr(ast::VecVecAddExpr *exp,
-                const coords::VecExpr *left, 
-                const coords::VecExpr *right)
-      : Coords(exp), cxxMemberCallExpr_(exp), left_(left), right_(right) {}
-  ast::VecVecAddExpr *getCXXMemberCallExpr() const {
-    return cxxMemberCallExpr_;
-  }
-
-  // for now, an address-based equality predicate
-  bool operator==(const VecVecAddExpr &other) const {
-    return (cxxMemberCallExpr_ == other.cxxMemberCallExpr_);
-  }
-  virtual std::string toString() const {
-    return "add (" + left_->toString() + ") (" + right_->toString() + ")";
-  }
-
-private:
-  ast::VecVecAddExpr *cxxMemberCallExpr_;
-  const coords::VecExpr *left_;
-  const coords::VecExpr *right_;
-};
+virtual std::string VecExpr::toString() const { 
+    return "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
+}
 
 /*
-Provide has function for ExprHasher class, as required
-for the use of objects of this class as keys in a map.
+No such intermediate node in Clang AST.
+Straight to CXXConstructExpr (Vector_Lit).
+Included here as stub for possible future use.
 */
-struct VecVecAddExprHasher {
-  std::size_t operator()(const VecVecAddExpr &k) const {
-    std::size_t hash = 101010;
-    // TODO Fix hash function
-    return hash;
+class VecLitExpr : public VecExpr {}
+
+
+VecVarExprVecVarExpr::(const clang::DeclRefExpr *d) : VecExpr(d) {}
+
+clang::DeclRefExpr *VecVarExpr::getDeclRefExpr() {
+    return static_cast<clang::DeclRefExpr*> clang_stmt_;  
+}
+
+virtual std::string VecVarExpr::toString() const { 
+    return getDeclRefExpr()->getDecl()->getNameAsString(); 
   }
-};
 
 
-/*
-// TODO weak typing of Expr argument
-class AddConstruct : public Coords {
-public:
-  AddConstruct(ast::VecCtor*constrExpr,
-                      const Coords *addExpr)
-      : Coords(constrExpr), constrExpr_(constrExpr), addExpr_(addExpr) {}
-  ast::VecCtor*get() const { return constrExpr_; }
+VecVecAddExpr::VecVecAddExpr(
+    const clang::CXXMemberCallExpr *mce, 
+    coords::Coords *mem, 
+    coords:::Coords *arg) : VecExpr(mce) {}
 
-  // for now, an address-based equality predicate
-  bool operator==(const AddConstruct &other) const {
+clang::CXXMemberCallExpr *VecVecAddExpr::CXXMemberCallExpr() {
+    return static_cast<clang::CXXMemberCallExpr*> clang_stmt_;  
+}
 
-    return (constrExpr_ == other.constrExpr_);
-  }
-  virtual std::string toString() const { return "AddConstructNode"; }
+virtual std::string VecVecAddExpr::toString() const {
+    return "add (" + mem_->toString() + ") (" + arg_->toString() + ")";
+}
 
-private:
-  ast::VecCtor*constrExpr_;
-  const VecExpr *addExpr_;
-  ;
-};
-*/
+/*******
+* Values
+*******/
+
+Vector::Vector(const clang::CXXConstructExpr *vec, coords::VectorCtorType tag)
+      : Coords(vec), tag_(tag) {}
+  
+const clang::CXXConstructExpr *Vector::getCXXConstructExpr() const { 
+    return static_cast<clang::CXXConstructExpr>clang_stmt_; 
+}
+
+VectorCtorType Vector::getVectorType() { return tag_; }
+
+virtual std::string Vector::toString() const { return "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";}
 
 
-enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
+Vector_Lit::Vector_Lit(clang::CXXConstructExpr* ast, float x, float y, float z) 
+    : Coords(ast), lit_(ast), tag_(VEC_CTOR_LIT), x_(x), y_(y), z_(z) {}
+  
+virtual std::string Vector_Lit::toString() const  { 
+    return "(" + x + ", " + y + ", " + z + ")";  
+}
 
+Vector_Var::Vector_Var(lang::CXXConstructExpr* ast, const coords::VecVarExpr* expr) 
+    : Coords(ast), expr_(expr), tag_(VEC_CTOR_VAR) {
+}
 
-// TODO weak typing of Expr argument
-class Vector {
-public:
-  Vector(const ast::Vector *ast), tag_(tag)
-      : Coords(ast), tag_(tag) {}
-  const ast::Vector *get() const { return constrExpr_; }
+virtual std::string Vector_Var::toString() const { 
+    return "Vector_Var::toString() STUB."; 
+}
 
-  // for now, an address-based equality predicate
-  bool operator==(const Vector &other) const {
+Vector_Expr::Vector_Lit(const clang::CXXConstructExpr ast, coords::VecVecAddExpr* expr) 
+    : Coords(ast), expr_(expr), tag_(VEC_CTOR_VAR) {
+}
 
-    return (constrExpr_ == other.constrExpr_);
-  }
-  virtual std::string toString() const { return "Vector"; }
+virtual std::string toString() const { 
+    return "Vector_Expr::toString() STUB."; 
+}
 
-protected:
-    const VectorCtorType tag_;
-    const ast::Vector *ast_;
-    const ast::VecExpr *expr_;    // Vector_Expr
-    const ast::VecVarExpr *var_;  // Vector_Var
-};
+VecVecAddExpr* Vector_Expr::getVecVecAddExpr() { 
+    return expr_; 
+}
 
-struct VectorHasher {
-  std::size_t operator()(const Vector &k) const {
-    // TODO -- fix
-    std::size_t hash = 10101010;
-    return hash;
-  }
-};
+/****
+* Def
+****/
 
-// TODO weak typing of Expr argument
-class Vector_Lit : public Coords {
-public:
-  Vector_Lit(const ast::Vector *ast) : Coords(ast), tag_(VEC_CTOR_LIT) {}
-  const ast::Vector *get() const { return ast_; }
+VectorDef::VecDef(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be)
+      : VecExpr(declStmt), bv_(bv), be_(be) {
+}
 
-  // for now, an address-based equality predicate
-  bool operator==(const Vector &other) const {
+const clang::DeclStmt *VectorDef::getDeclStmt() const { 
+    return static_cast<clang::DeclStmt>stmt_; 
+}
 
-    return (ast_ == other.ast_);
-  }
-  virtual std::string toString() const { return "Vector_Lit::toString() STUB."; }
+coords::VecIdent *VectorDef::getIdent() const {
+    get ident_;
+}
 
-private:
-};
+coords::VecExpr *VectorDef::getExpr() const {
+    get expr_;
+}
 
-struct Vector_LitHasher {
-  std::size_t operator()(const Vector &k) const {
-    // TODO -- fix
-    std::size_t hash = 10101010;
-    return hash;
-  }
-};
+virtual std::string VectorDef::toString() const { 
+    return "Coords::VecDef::toString. STUB."; 
+}
 
-// TODO weak typing of Expr argument
-class Vector_Expr : public Coords {
-public:
-  Vector_Expr(const ast::Vector *constrExpr)
-      : Coords(constrExpr), constrExpr_(constrExpr) {}
-  const ast::Vector *get() const { return constrExpr_; }
-
-  // for now, an address-based equality predicate
-  bool operator==(const Vector &other) const {
-
-    return (constrExpr_ == other.constrExpr_);
-  }
-  virtual std::string toString() const { return "Vector"; }
-
-private:
-  const VecExpr *expr_;
-};
-
-struct Vector_ExprHasher {
-  std::size_t operator()(const Vector &k) const {
-    // TODO -- fix
-    std::size_t hash = 10101010;
-    return hash;
-  }
-};
-
-// TODO -- VecDef hides VarDecl
-class VecDef : public Coords {
-public:
-  VecDef(const ast::VecDef *declStmt, const coords::VecIdent *bv, const coords::Coords *be)
-      : declStmt_(declStmt), bv_(bv), be_(be), VecExpr(declStmt) {}
-
-  const ast::VecDef *getAST() const { return declStmt_; }
-
-  // AST node address-based equality predicate
-  bool operator==(const VecDef &other) const {
-    return (declStmt_ == other.declStmt_);
-  }
-  virtual std::string toString() const { return "VecDef (STUB: refine)"; }
-
-private:
-  const ast::VecDef *declStmt_;
-  const VecIdent *bv_;
-  const VecExpr *be_;
-};
-
-struct VecDefHasher {
-  std::size_t operator()(const VecDef &k) const {
-    std::size_t hash = 101010;
-    // TODO Fix hash function
-    return hash;
-  }
-};
+} // namespace codecoords
