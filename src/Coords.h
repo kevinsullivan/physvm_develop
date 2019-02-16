@@ -32,8 +32,8 @@ enum ast_type { CLANG_AST_STMT, CLANG_AST_DECL };
 class Coords {
 public:
 
-  Coords(const clang::Stmt *stmt);
-  Coords(const clang::Decl *decl); 
+  Coords(const clang::Stmt *stmt) : ast_type(CLANG_AST_STMT) {}
+  Coords(const clang::Decl *decl) : ast_type(CLANG_AST_EXPR) {}
 
   // Note: Clang architecture showing through here. Clang AST base types. 
   const clang::Stmt *getClangStmt() const { return clang_ast_stmt_; }
@@ -43,6 +43,7 @@ public:
   virtual std::string toString() const;
 
   private:
+    // TODO: Make it an actual tagged union to save some space
     clang_ast_type tag_;
     clang::Stmt *clang_ast_stmt_;
     clang::Decl *clang_ast_decl_;
@@ -133,8 +134,8 @@ public:
   virtual std::string toString() const {
     return "add (" + mem_->toString() + ") (" + arg_->toString() + ")";
 private:
-  const coords::Coords *mem_;
-  const coords::Coords *arg_;
+  coords::Coords *mem_;
+  coords::Coords *arg_;
 
 };
 
