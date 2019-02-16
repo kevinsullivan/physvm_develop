@@ -13,11 +13,16 @@ class CoordsToDomain
 {
   public:
 
+// Ident
+
 	void putVecIdent(const coords::VecIdent *key, domain::VecIdent *bi);
 	const domain::VecIdent *getVecIdent(const coords::VecIdent *key);
 
+// Expr
+
 	void PutVecExpr(const coords::VecExpr *n, domain::VecExpr *e);
 	domain::VecExpr *getVecExpr(const coords::VecExpr* n);
+
 
 	void putVecLitExpr(const coords::VecLitExpr &n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(const coords::VecLitExpr &n) const;
@@ -36,9 +41,12 @@ class CoordsToDomain
 
 /*
 	void putVector_Var(coords::Vector *vardecl_wrapper, domain::Vector *b);
+
 	const domain::Vector *getVector(const coords::VecDef* vardecl_wrapper);
 */
 
+
+// Def
 
 	void putVecDef(coords::VecDef *vardecl_wrapper, domain::VecDef *b);
 	const domain::VecDef *getVecDef(const coords::VecDef* vardecl_wrapper);
