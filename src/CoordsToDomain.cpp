@@ -21,6 +21,8 @@ coords::VecIdent *CoordsToDomain::getVecIdent(domain::VecIdent *d) const {
 
 // Expr
 
+// base
+
 domain::VecExpr *CoordsToDomain::getVecExpr(coords::VecExpr* c) {
    return interpExpression[*c];
 }
@@ -33,6 +35,8 @@ void CoordsToDomain::putVecLitExpr(coords::VecLitExpr d, domain::VecLitExpr d) {
     interpExpression.insert(std::make_pair(*c, d));
 }
 
+// lit
+
 domain::VecLitExpr *CoordsToDomain::getLitInterp(coords::VecLitExpr c) const {
    return interpExpression[*c];
 }
@@ -40,6 +44,8 @@ domain::VecLitExpr *CoordsToDomain::getLitInterp(coords::VecLitExpr c) const {
 coords::VecLitExpr *CoordsToDomain::getLitInterp(domain::VecLitExpr d) const {
     return d->getCoords();
 }
+
+// var
 
 void CoordsToDomain::PutVecVarExpr(coords::VecVarExpr *c, domain::VecVarExpr *d) {
     interpExpression.insert(std::make_pair(*c, d));
@@ -53,7 +59,9 @@ coords::VecVarExpr *CoordsToDomain::getVecVarExpr(domain::VecVarExpr* d) const {
     return d->getCoords();
 }
 
-void CoordsToDomain::PutVecVecAddExpr(coords::VecVarExpr *d, domain::VecVecAddExpr *d) {
+// vecvecadd
+
+void CoordsToDomain::PutVecVecAddExpr(coords::VecVecAddExpr *c, domain::VecVecAddExpr *d) {
     interpExpression.insert(std::make_pair(*c, d));
 }
 
