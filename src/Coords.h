@@ -162,7 +162,7 @@ private:
 
 class VectorDef : public Coords {
 public:
-  VecDef(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be);
+  Vector_Def(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be);
   const clang::DeclStmt *getDeclStmt() const;
   coords::VecIdent *getIdent() const;
   coords::VecExpr *getExpr() const;

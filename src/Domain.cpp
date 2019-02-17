@@ -144,12 +144,12 @@ Vector* Domain::mkVector_Var(Space& s, coords::Vector* coords, domain::Expr* exp
 
 // TODO: Should be binding to Vector, not Expr
 // 
-VecDef &Domain::mkVecDef(const coords::VecDef *v, const VecIdent* i, const domain::VecExpr* e)
+Vector_Def &Domain::mkVector_Def(const coords::Vector_Def *v, const VecIdent* i, const domain::VecExpr* e)
 {
-    std::cerr << "Domain::mkVecDef ";
+    std::cerr << "Domain::mkVector_Def ";
     std::cerr << "identifier is " << i->toString();
     std::cerr << " expression is " << e->toString() << "\n";
-    VecDef *bd = new VecDef(v, i, e);
+    Vector_Def *bd = new Vector_Def(v, i, e);
     defs.push_back(*bd);
     return *bd;
 }
@@ -174,7 +174,7 @@ void Domain::dumpExpressions()
     }
 }
 
-void Domain::dumpVecDefs()
+void Domain::dumpVector_Defs()
 {
     for (auto b: defs ){
         std::cerr << b.toString() << "\n";
@@ -186,8 +186,8 @@ void Domain::dump() {
     dumpExpressions(); // print contents on std::cerr
     std::cerr << "Domain VecIdents\n";
     dumpVecIdents(); // print contents on std::cerr
-    std::cerr << "Domain VecDefs\n";
-    dumpVecDefs(); // print contents on std::cerr
+    std::cerr << "Domain Vector_Defs\n";
+    dumpVector_Defs(); // print contents on std::cerr
 }
 
 
