@@ -44,10 +44,9 @@ public:
 
   private:
     // TODO: Make it a tagged union to save some space
-    clang_ast_type tag_;
+    ast_type tag_;
     clang::Stmt *clang_ast_stmt_;
     clang::Decl *clang_ast_decl_;
-  }
 
 private:
   ast_type ast_type_;
@@ -65,9 +64,9 @@ struct CoordsHasher;
 * Ident
 ******/
 
-class VecIdent : public VecExpr {
+class VecIdent : public Coords {
 public:
-  VecIdent(const clang::VarDecl v);
+  VecIdent(const clang::VarDecl *v);
   clang::VarDecl *getVarDecl();
   virtual std::string toString() const;
 };
@@ -90,8 +89,7 @@ No such intermediate node in Clang AST.
 Goes straight to CXXConstructExpr. Use
 Vector_Lit.
 */
-
-class VecLitExpr : public VecExpr {}
+class VecLitExpr : public Coords {};
 
 
 class VecVarExpr : public VecExpr {
@@ -99,12 +97,14 @@ public:
   VecVarExpr(const clang::DeclRefExpr *d);
   clang::DeclRefExpr *getDeclRefExpr();
   virtual std::string toString() const;
+private:
+  coords::Coords *var_; // TODO: Fix
 };
 
   // TODO: add accessors for left and right?
 class VecVecAddExpr : public VecExpr {
 public:
-  VecVecAddExpr(const clang::CXXMemberCallExpr *mce, coords::Coords *mem, coords:::Coords *arg);
+  VecVecAddExpr(const clang::CXXMemberCallExpr *mce, coords::Coords *mem, coords::Coords *arg);
   clang::CXXMemberCallExpr *CXXMemberCallExpr();
   virtual std::string toString() const;
 private:
@@ -138,7 +138,7 @@ private:
 
 class Vector_Var : public Vector {
 public:
-  Vector_Lit(lang::CXXConstructExpr* ast, const coords::VecVarExpr* expr);
+  Vector_Var(clang::CXXConstructExpr* ast, const coords::VecVarExpr* expr);
   virtual std::string toString() const;
   VecVarExpr*  getVecVarExpr();
 private:
@@ -148,11 +148,11 @@ private:
 // change name to VecVecAddExpr? Or generalize from that a bit.
 class Vector_Expr : public Vector {
 public:
-  Vector_Lit(const clang::CXXConstructExpr ast, coords::VecVecAddExpr* expr);
+  Vector_Expr(const clang::CXXConstructExpr ast, coords::Vector_Expr* expr);
   virtual std::string toString() const;
-  VecVecAddExpr* getVecVecAddExpr();
+  Vector_Expr* getVector_Expr();
 private:
-  VecVecAddExpr* expr_;
+  Vector_Expr* expr_;
 };
 
 
@@ -160,9 +160,9 @@ private:
 * Def
 ****/
 
-class VectorDef : public Coords {
+class Vector_Def : public Coords {
 public:
-  VecDef(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be);
+  Vector_Def(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be);
   const clang::DeclStmt *getDeclStmt() const;
   coords::VecIdent *getIdent() const;
   coords::VecExpr *getExpr() const;
