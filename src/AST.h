@@ -24,7 +24,7 @@ using Vector_Var = const clang::CXXConstructExpr;
 using Vector_Expr = const clang::CXXConstructExpr;
 
 // Def
-using VecDef  = const clang::DeclStmt;
+using Vector_Def  = const clang::DeclStmt;
 } // namespace
 
 #endif
@@ -39,7 +39,7 @@ VecIdent        VecIdent            VecIdent        mkVecIdent          CXXConst
 VecVarExpr      VecVarExpr          VecVarExpr      mkVecVarExpr        DeclRefExpr         HandlerForCXXMemberCallExprRight_DeclRefExpr
 VecVecAddExpr   VecVecAddExpr       VecVecAddExpr   mkVecVecAddExpr     CXXMemberCallExpr   HandlerForCXXAddMemberCall, handleMemberCallExpr
 Vector          Vector              Vector          mkVector            CXXConstructExpr    HandlerForCXXConstructAddExpr (recurse member)
-VecDef          VecDef              VecDef          mkVecDef            CXXConstructExpr    VectorDeclStmtHandler, handleCXXDeclStmt (rec)     
+Vector_Def          Vector_Def              Vector_Def          mkVector_Def            CXXConstructExpr    VectorDeclStmtHandler, handleCXXDeclStmt (rec)     
 
                                                                                             CXXMemberCallExprArg0Matcher
                                                                                             handle_arg0_of_add_call (recurse)
@@ -69,7 +69,7 @@ Expr                VecExpr
 VecLitExpr          VecLitExpr
 VecVarExpr          VecVarExpr
 VecVecAddExpr       VecVecVecAddExpr
-VecDef              VecDef
+Vector_Def              Vector_Def
 Vector              Vector
 */
 
@@ -77,7 +77,7 @@ Vector              Vector
 Interpretation
 --------------
 mkVecIdent          ast::VecIdent
-mkVecDef        ast::VecDef, dom::it, dom::expr
+mkVector_Def        ast::Vector_Def, dom::it, dom::expr
 mkVecAddExpr        ast::AddExpr, ast::AddExpr, dom::Expr
 mkVecExpr           ast::VecExpr
 mkVector            ast::VecLitExpr

@@ -101,15 +101,15 @@ coords::Vector_Expr *CoordsToDomain::getVector(domain::Vector_Expr* d const) {
 
 // Def
 
-void CoordsToDomain::putVector_Def(coords::VecDef *c, domain::VecDef *d) {
+void CoordsToDomain::putVector_Def(coords::Vector_Def *c, domain::Vector_Def *d) {
     interpExpression.insert(std::make_pair(*c, d));
 }
 
-domain::VecDef *getVecDef(coords::VecDef* c) const {
+domain::Vector_Def *getVector_Def(coords::Vector_Def* c) const {
    return interpExpression[*c];
 }
 
-coords::VecDef *getVecDef(domain::VecDef* d) const {
+coords::Vector_Def *getVector_Def(domain::Vector_Def* d) const {
     return d->getCoords();
 }
 
@@ -165,13 +165,13 @@ const domain::VecIdent* CoordsToDomain::getVecIdent(const coords::VecIdent* n)
     return interpIdent[*n];
 }
 
-void CoordsToDomain::putVecDef(coords::VecDef *key, domain::VecDef& b)
+void CoordsToDomain::putVector_Def(coords::Vector_Def *key, domain::Vector_Def& b)
 {
-    interpVecDef.insert(std::make_pair(*key,&b));
+    interpVector_Def.insert(std::make_pair(*key,&b));
 }
 
-const domain::VecDef* CoordsToDomain::getVecDef(const coords::VecDef* key)  {
-   return interpVecDef[*key];     
+const domain::Vector_Def* CoordsToDomain::getVector_Def(const coords::Vector_Def* key)  {
+   return interpVector_Def[*key];     
 }
 
 void CoordsToDomain::PutVector(const coords::Vector* n, domain::Vector* e) {

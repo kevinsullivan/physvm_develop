@@ -25,7 +25,7 @@ public:
     void mkVector_Lit(ast::VecLitExpr *ast, clang::ASTContext *context);
     void mkVector_Expr(ast::VecLitExpr *ast, clang::ASTContext *context);
 //    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);
-    void mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *exp);
+    void mkVector_Def(ast::Vector_Def *ast, domain::VecIdent *id, domain::VecExpr *exp);
 
     const coords::VecExpr *getCoords(ast::VecExpr *expr);
     

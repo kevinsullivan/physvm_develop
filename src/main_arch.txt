@@ -28,7 +28,7 @@ VectorDeclStmtHandler (d : DeclStmt)  {
     consdecl = d.CXXConstructExpr
     match ctor using CXXConstructExprMatcher.match(consdecl);
     retrieve expr : domain::VecExpr;
-    interp->mkVecDef(d, id, expr)
+    interp->mkVector_Def(d, id, expr)
 }
 
 CXXConstructExprMatcher.match(consdecl)
