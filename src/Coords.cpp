@@ -168,7 +168,7 @@ VecVecAddExpr* Vector_Expr::getVecVecAddExpr() {
 * Def
 ****/
 
-VectorDef::VecDef(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be)
+VectorDef::Vector_Def(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be)
       : VecExpr(declStmt), bv_(bv), be_(be) {
 }
 
@@ -185,7 +185,7 @@ coords::VecExpr *VectorDef::getExpr() const {
 }
 
 virtual std::string VectorDef::toString() const { 
-    return "Coords::VecDef::toString. STUB."; 
+    return "Coords::Vector_Def::toString. STUB."; 
 }
 
 } // namespace codecoords

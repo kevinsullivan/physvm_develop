@@ -122,28 +122,28 @@ void Interpretation::mkVector_Expr(ast::Vector_Expr *ast, , domain::VecExpr* exp
     std::cerr << "Interpretation::mkVector_Expr. DONE\n";
 }
 
-void Interpretation::mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *vec)
+void Interpretation::mkVector_Def(ast::Vector_Def *ast, domain::VecIdent *id, domain::VecExpr *vec)
 {
-    std::cerr << "START: Interpretation::mkVecDef.\n.";
-    if (!exp || !id) { std::cerr << "Interpretation::mkVecDef: null arg\n"; }
+    std::cerr << "START: Interpretation::mkVector_Def.\n.";
+    if (!exp || !id) { std::cerr << "Interpretation::mkVector_Def: null arg\n"; }
 
     // No need for Space at this point, ident and vec already annotated
-    // TODO: Move into ast2coords_->makeCoordsForVecDef
+    // TODO: Move into ast2coords_->makeCoordsForVector_Def
     const coords::VecIdent *id_coords = id->getCoords();
     const coords::VecExpr *vec_coords = vec->getCoords();
-    coords::VecDef *def_coords = new coords::VecDef(ast, id_coords, vec_coords);
+    coords::Vector_Def *def_coords = new coords::Vector_Def(ast, id_coords, vec_coords);
     ast2coords_->overrideStmt(ast, def_coords);
 
-    domain::VecDef *vec_def = domain_->putVector_Def(bind_coords, id, exp);
+    domain::Vector_Def *vec_def = domain_->putVector_Def(bind_coords, id, exp);
     coords2dom_->putVector_Def(bind_coords, vec_def);
 
     std::cerr << 
-        "Interpretation::mkVecDef: identifier at " << std::hex << id 
+        "Interpretation::mkVector_Def: identifier at " << std::hex << id 
             << " wrapped addr is " << std::hex << id_coords->get() << "\n";
-    std::cerr << "Interpretation::mkVecDef: wrapped dump is \n";
+    std::cerr << "Interpretation::mkVector_Def: wrapped dump is \n";
     id_coords->get()->dump();
-    std::cerr << "Interpretation::mkVecDef: name is " << id_coords->toString() << "\n";
-    std::cerr << "DONE: Interpretation::mkVecDef..\n";
+    std::cerr << "Interpretation::mkVector_Def: name is " << id_coords->toString() << "\n";
+    std::cerr << "DONE: Interpretation::mkVector_Def..\n";
 }
 
 
