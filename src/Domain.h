@@ -31,7 +31,7 @@ class Vector;
 class Vector_Lit;
 class Vector_Expr;
 class Vector_Var;
-class VecDef;
+class Vector_Def;
 
 // Definition for Domain class 
 
@@ -48,7 +48,7 @@ public:
 
 // Exprs
 	VecExpr* mkVecLitExpr(Space& s, const coords::VecLitExpr* e);
-	VecExpr* mkVecVarExpr(Space& s, const coords::VecLitExpr* e);		-- KEVIN
+	VecExpr* mkVecVarExpr(Space& s, const coords::VecLitExpr* e);		// KEVIN
 	VecExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
 
 // Values
@@ -58,7 +58,7 @@ public:
 	Vector* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
 
 // Defs
-	VecDef& mkVecDef(const coords::VecDef* vardecl, const VecIdent* identifier, const VecExpr* expression);
+	Vector_Def& mkVector_Def(const coords::Vector_Def* vardecl, const VecIdent* identifier, const VecExpr* expression);
 
 
 // Client
@@ -68,13 +68,13 @@ public:
 	void dump();
 	void dumpExpressions(); // print contents on std::cerr
 	void dumpVecIdents(); // print contents on std::cerr
-	void dumpVecDefs(); // print contents on std::cerr
+	void dumpVector_Defs(); // print contents on std::cerr
 
 private:
 	std::vector<Space> spaces;
 	std::vector<VecIdent> idents;
 	std::vector<VecExpr*> exprs;
-	std::vector<VecDef> defs;
+	std::vector<Vector_Def> defs;
 	std::vector<Vector*> vectors;
 };
 	
@@ -254,9 +254,9 @@ the *domain* VecIdent and Expression objects being bound.
 */
 class Vector_Def : public ToCode  {
 public:
-	Vector_Def(const coords::VecDef* c, const domain::VecIdent* identifier, const domain::VecExpr* expr):
+	Vector_Def(const coords::Vector_Def* c, const domain::VecIdent* identifier, const domain::VecExpr* expr):
 			ToCoords(c), identifier_(identifier), expr_(expr) {}
-	const coords::VecDef* getVarDecl() const {return ast_wrapper_; } 
+	const coords::Vector_Def* getVarDecl() const {return ast_wrapper_; } 
 	const domain::VecExpr* getVecExpr() const { return expr_; }
 	const domain::VecIdent* getVecIdent() { return identifier_; }
 	const coords::Vector_Def* getCoords() const {
@@ -266,7 +266,7 @@ public:
 		return "def " + identifier_->toString() + " := " + expr_->toString();
 	}
 private:
-	const coords::VecDef* ast_wrapper_;
+	const coords::Vector_Def* ast_wrapper_;
 	// TODO: Inconsistency: Ref by coords here, to domain objs above
 	const VecIdent* identifier_;
 	const VecExpr* expr_;
