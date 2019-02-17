@@ -278,16 +278,6 @@ Domain representation of binding of identifier to expression.
 enum VecCtorType {VEC_EXPR, VEC_LIT, VEC_VAR, VEC_NONE } ; 
 
 
-
-
-/*
-A Domain is a lifted version of selected code represented as a collection 
-of C++ objects. It should be isomorphic to the domain, and domain models 
-(e.g., in Lean) should be producible using a Domain as an input.
-*/
-
-
-
 } // end namespace
 
 #endif

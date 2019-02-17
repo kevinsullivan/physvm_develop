@@ -33,8 +33,6 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
 
     domain::Space &space = oracle_->getSpaceForVecIdent(ast);
     const coords::VecIdent *coords = ast2coords_->mkVecIdent(ast);
-
-    // TODO: Refactor so coords2ast relation does all the work, here and below
     domain::VecIdent *dom = domain_->mkVecIdent(space, coords);
     coords2dom_->putVecIdent(coords, dom);
 
@@ -81,6 +79,7 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *m
 
   coords::VecVecAddExpr *stmt_coords = 
     new coords::VecVecAddExpr(ast, mem_coords, arg_coords);
+  // private now?
   ast2coords_->overrideStmt(ast, stmt_coords);
   domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
   domain::VecExpr *dom_add_expr = domain_->mkVecVecAddExpr(space, stmt_coords, mem, arg);
@@ -117,26 +116,11 @@ void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, clang::ASTContext *c) {
 void Interpretation::mkVector_Expr(ast::Vector_Expr *ast, , domain::VecExpr* expr, clang::ASTContext *c) {
     std::cerr << "Interpretation::mkVector_Expr. START";
     coords::Vector_Expr *var_coords = ast2coords_->mkVector_Expr(ast);
-    oracle::Space& space = oracle_->getSpaceForVector_Lit(ast); // infer?
+    oracle::Space& space = oracle_->getSpaceForVector_Expr(ast); // infer?
     domain::Vector_Expr* dom_vec = domain_->mkVector_Expr(space, vec_coords, expr);
     coords2dom_->PutVecExpr(var_coords, dom_var);
     std::cerr << "Interpretation::mkVector_Expr. DONE\n";
 }
-
-
-/*
-void Interpretation::mkVector_Expr(ast::Vector_Expr *vec, domain::VecExpr* expr, clang::ASTContext *context) {
-    std::cerr << "Interpretation::mkVector. START";
-    coords::Vector *vec_coords = new coords::VecVecAddExpr(vec);    // Fix - not an expr
-    ast2coords_->overrideStmt(vec, vec_coords); 
-    oracle::Space &s = oracle_->getSpaceForVector(vec);
-    ast2coords_->overrideStmt(vec, vec_coords);
-    domain::Vector* dom_vec = domain_->mkVector_Expr(space, vec_coords, expr);
-    coords2dom_->putVectorInterp(vec_coords, dom_vec);
-    std::cerr << "DONE Interpretation::mkVector\n";
-}
-*/
-
 
 void Interpretation::mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::VecExpr *vec)
 {
@@ -145,13 +129,13 @@ void Interpretation::mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::Ve
 
     // No need for Space at this point, ident and vec already annotated
     // TODO: Move into ast2coords_->makeCoordsForVecDef
-    const coords::VecIdent *id_coords = id->getVarDeclWrapper();
-    const coords::VecExpr *vec_coords = vec->getVecExpr();
-    coords::VecDef *bind_coords = new coords::VecDef(ast, id_coords, vec_coords);
-    ast2coords_->overrideStmt(ast, bind_coords);
+    const coords::VecIdent *id_coords = id->getCoords();
+    const coords::VecExpr *vec_coords = vec->getCoords();
+    coords::VecDef *def_coords = new coords::VecDef(ast, id_coords, vec_coords);
+    ast2coords_->overrideStmt(ast, def_coords);
 
-    domain::VecDef *vec_def = domain_->putVecDef(bind_coords, id, exp);
-    coords2dom_->putVecDef(bind_coords, vec_def);
+    domain::VecDef *vec_def = domain_->putVector_Def(bind_coords, id, exp);
+    coords2dom_->putVector_Def(bind_coords, vec_def);
 
     std::cerr << 
         "Interpretation::mkVecDef: identifier at " << std::hex << id 
@@ -163,7 +147,7 @@ void Interpretation::mkVecDef(ast::VecDef *ast, domain::VecIdent *id, domain::Ve
 }
 
 
-
+// TODO: Refactor following code, it's out of place
 const coords::VecExpr *Interpretation::getCoords(ast::VecExpr *expr)  // fix ret type name
 {
     return ast2coords_->getCoords(expr);
