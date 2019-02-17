@@ -4,7 +4,7 @@ using namespace ast2coords;
 
 coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast) {
     coords::VecIdent *coord = new coords::VecIdent(ast);
-    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    overrideDecl(ast,coord);                          // TO DO Canonicalize
     return coord;
 }
 
