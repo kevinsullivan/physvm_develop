@@ -55,6 +55,7 @@ public:
 private:
     void overrideStmt(const clang::Stmt *s, coords::Coords *c);
     void overrideDecl(const clang::Decl *d, coords::Coords *c);
+    
     std::unordered_map<const clang::Stmt *, coords::Coords *> stmt_coords;
     std::unordered_map<const clang::Decl *, coords::Coords *> decl_coords;
 };
