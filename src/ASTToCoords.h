@@ -45,14 +45,20 @@ public:
 
     ASTToCoords();
     coords::VecIdent        *mkVecIdent     (const ast::VecIdent *ast);
+    // no VecExpr because we always know exactly what subtype we're creating
     coords::VecVarExpr      *mkVecVarExpr   (const ast::VecVarExpr *ast);
     coords::VecVecAddExpr   *mkVecVecAddExpr(const ast::VecVecAddExpr *ast, 
                                              const coords::VecExpr *mem, 
                                              const coords::VecExpr *arg);
-    coords::Vector_Lit      *mkVector_Lit   (const ast::Vector_Lit *ast, Scalar s);
-    coords::Vector_Var      *mkVector_Var   (const ast::Vector_Var *ast);
-    coords::Vector_Expr     *mkVector_Expr  (const ast::Vector_Expr *ast);
-    coords::Vector_Def      *mkVector_Def   (const ast::Vector_Def *ast);
+    coords::Vector_Lit      *mkVector_Lit   (const ast::Vector_Lit *ast, 
+                                             Scalar s);
+    coords::Vector_Var      *mkVector_Var   (const ast::Vector_Var *ast,
+                                             coords::VectorVarExpr *var);
+    coords::Vector_Expr     *mkVector_Expr  (const ast::Vector_Expr *ast,
+                                             coords::VectorVarExpr *expr);
+    coords::Vector_Def      *mkVector_Def   (const ast::Vector_Def *ast,
+                                             coords::VecIdent *id, 
+                                             coords::VecExpr *vec);
 
 private:
     void overrideStmt(const clang::Stmt *s, coords::Coords *c);
