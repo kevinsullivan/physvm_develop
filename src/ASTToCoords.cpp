@@ -30,8 +30,8 @@ coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast) {
 
 
 coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast) {
-    coords::VecVecVarExpr *c = new coords::VecVecVarExpr(ast);
-    overrideDecl(ast,c);    // VarDecl, which is Decl, not Stmt/Expr ast
+    coords::VecVarExpr *coord = new coords::VecVarExpr(ast);
+    overrideStmt(ast, coord);   // DeclRefExpr is ako Stmt
     return coord;
 }
 
@@ -44,9 +44,11 @@ coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast) {
 */
 
 coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
-        const ast::VecVecAddExpr *ast, const coords::VecExpr *mem, const coords::VecExpr *arg) {
-    coords::VecVecAddExpr *c = new coords::VecVecAddExpr(ast,mem,arg);
-    overrideStmt(ast,c);                          // TO DO Canonicalize
+        const ast::VecVecAddExpr *ast, 
+        coords::VecExpr *mem, 
+        coords::VecExpr *arg) {
+    coords::VecVecAddExpr *coord = new coords::VecVecAddExpr(ast,mem,arg);
+    overrideStmt(ast,coord);                          // TO DO Canonicalize
     return coord;
 }
 
@@ -58,23 +60,24 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
 }*/
 
 // Assume 1-d space
-coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast, Scalar scalar) {
+coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast, ast::Scalar scalar) {
     // TODO: Abstracted coords from actual code
-    coords::Vector_Lit *c = new coords::Vector_Lit(ast, scalar);
+    coords::Vector_Lit *coord = new coords::Vector_Lit(ast, scalar);
     overrideStmt(ast,coord); 
     return coord;
 }
 
 coords::Vector_Var *ASTToCoords::mkVector_Var(
-        const ast::Vector_Var *ast, coords::VectorVarExpr *var_coords) {
-    coords::Vector_Var *c = new coords::Vector_Var(ast);
+        const ast::Vector_Var *ast, coords::VecVarExpr *var_coords) {
+    coords::Vector_Var *coord = new coords::Vector_Var(ast);
     overrideStmt(ast,coord);
     return coord;
 }
 
 
 coords::Vector_Expr *ASTToCoords::mkVector_Expr(
-    const ast::Vector_Expr *ast, coords::VecExpr *expr_coords) {
+    const ast::Vector_Expr *ast, 
+    coords::VecExpr *expr_coords) {
     coords::Vector_Expr *coord = new coords::Vector_Expr(ast, expr_coords);
     overrideStmt(ast,coord);
     return c;    
