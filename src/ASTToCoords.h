@@ -44,24 +44,20 @@ class ASTToCoords {
 public:
 
     ASTToCoords();
-    coords::VecIdent *mkVecIdent(const ast::VecIdent *ast);
-    
-    //coords::VecLitExpr *mkVecLitExpr(const ast::VecLitExpr *ast);
-    
-    coords::VecVarExpr *mkVecVarExpr(const ast::VecVarExpr *ast);
-    
-    coords::VecVecAddExpr *mkVecVecAddExpr(const ast::VecVecAddExpr *ast);
-
-    coords::Vector_Lit *mkVector_Lit(const ast::Vector_Lit *ast);
-    
-    coords::Vector_Var *mkVector_Var(const ast::Vector_Var *ast);
-    
-    coords::Vector_Expr *mkVector_Expr(const ast::Vector_Expr *ast);
+    coords::VecIdent        *mkVecIdent     (const ast::VecIdent *ast);
+    coords::VecVarExpr      *mkVecVarExpr   (const ast::VecVarExpr *ast);
+    coords::VecVecAddExpr   *mkVecVecAddExpr(const ast::VecVecAddExpr *ast, 
+                                             const coords::VecExpr *mem, 
+                                             const coords::VecExpr *arg);
+    coords::Vector_Lit      *mkVector_Lit   (const ast::Vector_Lit *ast, Scalar s);
+    coords::Vector_Var      *mkVector_Var   (const ast::Vector_Var *ast);
+    coords::Vector_Expr     *mkVector_Expr  (const ast::Vector_Expr *ast);
+    coords::Vector_Def      *mkVector_Def   (const ast::Vector_Def *ast);
 
 private:
     void overrideStmt(const clang::Stmt *s, coords::Coords *c);
     void overrideDecl(const clang::Decl *d, coords::Coords *c);
-    
+
     std::unordered_map<const clang::Stmt *, coords::Coords *> stmt_coords;
     std::unordered_map<const clang::Decl *, coords::Coords *> decl_coords;
 };

@@ -1,10 +1,18 @@
 #include "ASTToCoords.h"
 
+
+/*
+Create Coords object for given AST node and update AST-to_Coords
+mappings. Currently this means just the ast2coords unorderedmaps,
+one for Clang AST objects inheriting from Stmt, and one for Clang
+AST objects inheriting from Decl. See AST.h for the translations.
+TODO: Consider making Clang AST types visible in type signatures. 
+*/
 using namespace ast2coords;
 
 coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast) {
     coords::VecIdent *coord = new coords::VecIdent(ast);
-    overrideDecl(ast,coord);                          // TO DO Canonicalize
+    overrideDecl(ast,coord);     // Use Clang canonical addresses? 
     return coord;
 }
 
@@ -20,59 +28,64 @@ coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast) {
     return coord;
 }*/
 
+
+coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast) {
+    coords::VecVecVarExpr *c = new coords::VecVecVarExpr(ast);
+    overrideDecl(ast,c);    // VarDecl, which is Decl, not Stmt/Expr ast
+    return coord;
+}
+
+/*
 coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast) {
     coords::VecVarExpr *c = new coords::VecVarExpr(ast);
     overrideStmt(ast,c);                          // TO DO Canonicalize
     return c;
 }
+*/
 
-coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(const ast::VecVecAddExpr *ast, const coords::VecExpr *mem, const coords::VecExpr *arg) {
+coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
+        const ast::VecVecAddExpr *ast, const coords::VecExpr *mem, const coords::VecExpr *arg) {
     coords::VecVecAddExpr *c = new coords::VecVecAddExpr(ast,mem,arg);
     overrideStmt(ast,c);                          // TO DO Canonicalize
     return coord;
 }
 
-coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast) {
-
-    // STUB!
-
-}
     
-
-
 /*coords::Vector *ASTToCoords::Vector(const ast::Vector *ast) {
     coords::Vector *c = new coords::Vector(ast);
     overrideStmt(ast,coord);                          // TO DO Canonicalize
     return coord;
 }*/
 
-coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast) {
-
-    // TO DO : REPLACE
-    coords::Vector_Lit *c = new coords::Vector_Lit(ast);
-    overrideStmt(ast,coord);                          // TO DO Canonicalize
+// Assume 1-d space
+coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast, Scalar scalar) {
+    // TODO: Abstracted coords from actual code
+    coords::Vector_Lit *c = new coords::Vector_Lit(ast, scalar);
+    overrideStmt(ast,coord); 
     return coord;
 }
 
-coords::Vector_Var *ASTToCoords::mkVector_Var(const ast::Vector_Var *ast) {
+coords::Vector_Var *ASTToCoords::mkVector_Var(
+        const ast::Vector_Var *ast, coords::VectorVarExpr *var_coords) {
     coords::Vector_Var *c = new coords::Vector_Var(ast);
-    overrideStmt(ast,coord);                          // TO DO Canonicalize
+    overrideStmt(ast,coord);
     return coord;
 }
 
-coords::Vector_Expr *ASTToCoords::mkVector_Expr(const ast::Vector_Expr *ast) {
- 
-    // TO DO : REPLACE
-    coords::Vector_Expr *c = new coords::Vector_Expr(ast);
-    overrideStmt(ast,coord);                          // TO DO Canonicalize
-    return coord;    
+
+coords::Vector_Expr *ASTToCoords::mkVector_Expr(
+    const ast::Vector_Expr *ast, coords::VecExpr *expr_coords) {
+    coords::Vector_Expr *coord = new coords::Vector_Expr(ast, expr_coords);
+    overrideStmt(ast,coord);
+    return c;    
 }
 
 
 // TO DO : VECTOR_DEF
 
-coords::Vector_Expr *ASTToCoords::mkVector_Expr(const ast::Vector_Expr *ast) {
-
-    // STUB!
+coords::Vector_Def *ASTToCoords::mkVector_Def(
+        const ast::Vector_Def *ast, coords::VecIdent *id_coords, coords::VecExpr *vec_coords) {
+    coords::Vector_Def *coord = new coords::Vector_Def(ast, id_coords, vec_coords);
+    overrideStmt(ast,coord);
 
 }

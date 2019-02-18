@@ -141,13 +141,11 @@ protected:
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
 public:
-  Vector_Lit(clang::CXXConstructExpr *ast, float x, float y, float z);
+  Vector_Lit(clang::CXXConstructExpr *ast, Scalar a);
   virtual std::string toString() const;
 
 private:
-  float x_;
-  float y_;
-  float z_;
+  float a_;
 };
 
 class Vector_Var : public Vector {
