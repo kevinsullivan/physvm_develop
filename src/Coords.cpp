@@ -137,11 +137,11 @@ VectorCtorType Vector::getVectorType() { return tag_; }
 virtual std::string Vector::toString() const { return "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";}
 
 
-Vector_Lit::Vector_Lit(clang::CXXConstructExpr* ast, float x, float y, float z) 
-    : Coords(ast), lit_(ast), tag_(VEC_CTOR_LIT), x_(x), y_(y), z_(z) {}
+Vector_Lit::Vector_Lit(clang::CXXConstructExpr* ast, float a) 
+    : Coords(ast), lit_(ast), tag_(VEC_CTOR_LIT), a_(a) {}
   
 virtual std::string Vector_Lit::toString() const  { 
-    return "(" + x + ", " + y + ", " + z + ")";  
+    return "(" + a_ + ")";  
 }
 
 Vector_Var::Vector_Var(lang::CXXConstructExpr* ast, const coords::VecVarExpr* expr) 

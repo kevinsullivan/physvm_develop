@@ -107,22 +107,39 @@ expressions and objects constructed from them.
 
 void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, clang::ASTContext *c) {
     std::cerr << "Interpretation::mkVector_Lit. START";
-    coords::Vector_Lit *var_coords = ast2coords_->mkVector_Lit(ast);
+    std::cerr << "Interpretation::mkVector_Lit. WARN: Scalar stubbed.\n";
+    coords::Vector_Lit *var_coords = ast2coords_->mkVector_Lit(ast, 0.0);
     oracle::Space& space = oracle_->getSpaceForVector_Lit(ast); // infer?
     domain::VecLitExpr *dom_var = domain_->mkVector_Lit(space, dom_var);
     coords2dom_->PutVecExpr(var_coords, dom_var);
     std::cerr << "Interpretation::mkVector_Lit. DONE\n";
 }
 
+void Interpretation::mkVector_Var(
+      ast::Vector_Var *ast, , domain::VecVarExpr* expr, clang::ASTContext *c) {
+    std::cerr << "Interpretation::mkVector_Var. START";
+    coords::VecVarExpr *expr_coords = expr->getCoords();
+    coords::Vector_Var *var_coords = ast2coords_->mkVector_Var(ast, expr_coords);
+    oracle::Space& space = oracle_->getSpaceForVector_Var(ast, expr); // infer?
+    domain::Vector_Var* dom_vec = domain_->mkVector_Var(space, vec_coords, expr);
+    coords2dom_->PutVecVar(var_coords, dom_var);
+    std::cerr << "Interpretation::mkVector_Var. DONE\n";
+}
 
-void Interpretation::mkVector_Expr(ast::Vector_Expr *ast, , domain::VecExpr* expr, clang::ASTContext *c) {
+void Interpretation::mkVector_Expr(
+      ast::Vector_Expr *ast, , domain::VecExpr* expr, clang::ASTContext *c) {
     std::cerr << "Interpretation::mkVector_Expr. START";
-    coords::Vector_Expr *var_coords = ast2coords_->mkVector_Expr(ast);
-    oracle::Space& space = oracle_->getSpaceForVector_Expr(ast); // infer?
+    coords::VecExpr *expr_coords = expr->getCoords();
+    coords::Vector_Expr *var_coords = ast2coords_->mkVector_Expr(ast, expr_coords);
+    oracle::Space& space = oracle_->getSpaceForVector_Expr(ast, expr); // infer?
     domain::Vector_Expr* dom_vec = domain_->mkVector_Expr(space, vec_coords, expr);
     coords2dom_->PutVecExpr(var_coords, dom_var);
     std::cerr << "Interpretation::mkVector_Expr. DONE\n";
 }
+
+/****
+* Def
+*****/
 
 void Interpretation::mkVector_Def(ast::Vector_Def *ast, domain::VecIdent *id, domain::VecExpr *vec)
 {
@@ -135,8 +152,15 @@ void Interpretation::mkVector_Def(ast::Vector_Def *ast, domain::VecIdent *id, do
     const coords::VecExpr *vec_coords = vec->getCoords();
 
     // TODO: Replace
-    coords::Vector_Def *def_coords = new coords::Vector_Def(ast, id_coords, vec_coords);
+    coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(ast, id_coords, vec_coords);
+
+    domain::Vector_Def* dom_vec_def = domain_->mkVector_Def(ast, vec_coords, expr);
+    coords2dom_->PutVecExpr(var_coords, dom_var);
+
+    /*
+    new coords::Vector_Def(ast, id_coords, vec_coords);
     ast2coords_->overrideStmt(ast, def_coords);
+    */
 
     domain::Vector_Def *vec_def = domain_->putVector_Def(bind_coords, id, exp);
     coords2dom_->putVector_Def(bind_coords, vec_def);

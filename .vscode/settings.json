@@ -57,6 +57,8 @@
         "string_view": "cpp",
         "tuple": "cpp",
         "type_traits": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "xlocale": "cpp",
+        "xlocnum": "cpp"
     }
 }
