@@ -35,12 +35,20 @@ public:
 		return getSpace();
 	}
 
-	domain::Space& getSpaceForLitVector(const clang::CXXConstructExpr* v) {
+	domain::Space& getSpaceForVector_Lit(const clang::CXXConstructExpr* v) {
 		//std::cerr << "Space for literal?\n";
 		std::cerr << "Space for literal?\n";
 		v->dump();
 		return getSpace();
 	}
+
+	domain::Space& getSpaceForVecVarExpr(ast::VecVarExpr *ast)  {
+		//std::cerr << "Space for literal?\n";
+		std::cerr << "Space for variable expression?\n";
+		ast->dump();
+		return getSpace();
+	}
+
 
 	domain::Space& getSpaceForVecVarExp(ast::VecVarExpr *ast)  {
 		//std::cerr << "Space for literal?\n";

@@ -69,8 +69,8 @@ std::string VecIdent::getName() const
  Expr
 ****/
 
-
-domain::VecExpr *Domain::mkVecLitExpr(Space &s, const coords::VecLitExpr *e)
+/*
+domain::VecLitExpr *Domain::mkVecLitExpr(Space &s, const coords::VecLitExpr *e)
 {
     domain::VecExpr *be = new domain::VecExpr(s, e);
     //std::cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
@@ -80,8 +80,9 @@ domain::VecExpr *Domain::mkVecLitExpr(Space &s, const coords::VecLitExpr *e)
     //dump();
     return be;
 }
+*/
 
-domain::VecExpr *Domain::mkVecVarExpr(Space &s, const coords::VecVarExpr *ast)
+domain::VecVarExpr *Domain::mkVecVarExpr(Space &s, const coords::VecVarExpr *ast)
 {
     domain::VecExpr *var = new domain::VecExpr(s, ast);
     std::cerr << "Adding Vec Var Expr to domain, address " << std::hex << var << ": " << var->toString() << "\n";
@@ -92,7 +93,7 @@ domain::VecExpr *Domain::mkVecVarExpr(Space &s, const coords::VecVarExpr *ast)
     return var;
 }
 
-domain::VecExpr *Domain::mkVecVecAddExpr(Space &s, coords::VecVecAddExpr *e, domain::VecExpr *mem, domain::VecExpr *arg)
+domain::VecVecAddExpr *Domain::mkVecVecAddExpr(Space &s, coords::VecVecAddExpr *e, domain::VecExpr *mem, domain::VecExpr *arg)
 {
     domain::VecExpr *be = new domain::VecVecAddExpr(s, e, mem, arg);
     exprs.push_back(be);
@@ -116,13 +117,13 @@ const domain::VecExpr &VecVecAddExpr::getVecVecAddExprArgR()
 * Value
 *******/
 
-Vector* Domain::mkVector_Lit(Space& space, coords::Vector* coords) {
+Vector_Lit* Domain::mkVector_Lit(Space& space, coords::Vector* coords) {
     Vector* vec = new domain::Vector_Lit(space, coords);
     vectors.push_back(*vec);
     return vec;
 }
 
-Vector* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::Expr* exp) {
+Vector_Expr* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::Expr* exp) {
     Vector* vec = new domain::Vector_Expr(space, coords, expr);
     vectors.push_back(*vec);
     return vec;

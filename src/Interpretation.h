@@ -22,10 +22,10 @@ public:
     void mkVecVarExpr(ast::VecVarExpr *ast, clang::ASTContext *c);
     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, 
                          domain::VecExpr *arg);
-    void mkVector_Lit(ast::VecLitExpr *ast, clang::ASTContext *context);
-    void mkVector_Expr(ast::VecLitExpr *ast, clang::ASTContext *context);
+    void mkVector_Lit(ast::Vector_Lit *ast, clang::ASTContext *context);
+    void mkVector_Expr(ast::Vector_Expr *ast, domain::VecExpr* expr, clang::ASTContext *context);
 //    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);
-    void mkVector_Def(ast::Vector_Def *ast, domain::VecIdent *id, domain::VecExpr *exp);
+    void mkVector_Def(ast::Vector_Def *ast, coords::VecIdent *id, coords::VecExpr *exp);
 
     const coords::VecExpr *getCoords(ast::VecExpr *expr);
     
@@ -34,7 +34,7 @@ public:
     //
     domain::VecExpr* getVecExpr(ast::VecExpr* ast) {
         // we use these objects as key for query purposes
-        const coords::VecExpr *coords = new coords::VecExpr(ast);
+        coords::VecExpr *coords = new coords::VecExpr(ast);
         domain::VecExpr* dom = coords2dom_->getVecExpr(coords);
         if (!dom) {
             std::cerr << "Interpretation::getVecExpr. Error. Undefined for key!\n";

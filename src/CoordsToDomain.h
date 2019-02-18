@@ -39,17 +39,17 @@ class CoordsToDomain
 	domain::VecExpr *getVecExpr(coords::VecExpr* c);
 	coords::VecExpr *getVecExpr(domain::VecExpr* d) const;
 
-	void putVecLitExpr(coords::VecLitExpr n, domain::VecLitExpr &v);
+/*	void putVecLitExpr(coords::VecLitExpr n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(coords::VecLitExpr c) const;
-	coords::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;
+	coords::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;*/
 
 	void PutVecVarExpr(coords::VecVarExpr *n, domain::VecVarExpr *e);
 	domain::VecVarExpr *getVecVarExpr(coords::VecVarExpr* c) const;
 	coords::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;
 
-	void PutVecVecAddExpr(coords::VecVarExpr *n, domain::VecVecAddExpr *e);
-	domain::VecVecAddExpr *getVecVecAddExpr(coords::VecVarExpr* c) const;
-	coords::VecVecAddExpr *getVecVecAddExpr(domain::VecVarExpr* d) const;
+	void PutVecVecAddExpr(coords::VecVecAddExpr *n, domain::VecVecAddExpr *e);
+	domain::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
+	coords::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
 
 // Vector
 
@@ -59,7 +59,7 @@ class CoordsToDomain
 
 	void putVector_Expr(coords::Vector *ast, domain::Vector_Expr *v);
 	domain::Vector *getVector(coords::Vector_Expr* c) const;
-	coords::Vector *getVector(domain::Vector_Expr* d const);
+	coords::Vector *getVector(domain::Vector_Expr* d) const;
 
 // Def
 
@@ -82,10 +82,10 @@ class CoordsToDomain
 	*/
 
 	// TODO: delete "interp" prefixes here -- minor
-	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::CoordsHasher> interpIdent;
-	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::CoordsHasher> interpExpression;
-	std::unordered_map<coords::VecIdent, domain::Vector *, coords::CoordsHasher> interpVector;
-	std::unordered_map<coords::Vector_Def, domain::Vector_Def *, coords::CoordsHasher> interpVector_Def;
+	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
+	std::unordered_map<coords::Vector, domain::Vector *, coords::VectorHasher> interpVector;
+	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
+	std::unordered_map<coords::Vector_Def, domain::Vector_Def *, coords::Vector_DefHasher> interpVector_Def;
 /*
 	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
 	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
