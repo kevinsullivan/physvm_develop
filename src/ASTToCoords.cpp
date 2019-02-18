@@ -32,6 +32,14 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(const ast::VecVecAddExpr *as
     return coord;
 }
 
+coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast) {
+
+    // STUB!
+
+}
+    
+
+
 /*coords::Vector *ASTToCoords::Vector(const ast::Vector *ast) {
     coords::Vector *c = new coords::Vector(ast);
     overrideStmt(ast,coord);                          // TO DO Canonicalize
@@ -39,6 +47,8 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(const ast::VecVecAddExpr *as
 }*/
 
 coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast) {
+
+    // TO DO : REPLACE
     coords::Vector_Lit *c = new coords::Vector_Lit(ast);
     overrideStmt(ast,coord);                          // TO DO Canonicalize
     return coord;
@@ -51,7 +61,18 @@ coords::Vector_Var *ASTToCoords::mkVector_Var(const ast::Vector_Var *ast) {
 }
 
 coords::Vector_Expr *ASTToCoords::mkVector_Expr(const ast::Vector_Expr *ast) {
+ 
+    // TO DO : REPLACE
     coords::Vector_Expr *c = new coords::Vector_Expr(ast);
     overrideStmt(ast,coord);                          // TO DO Canonicalize
     return coord;    
+}
+
+
+// TO DO : VECTOR_DEF
+
+coords::Vector_Expr *ASTToCoords::mkVector_Expr(const ast::Vector_Expr *ast) {
+
+    // STUB!
+
 }

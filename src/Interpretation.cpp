@@ -133,6 +133,8 @@ void Interpretation::mkVector_Def(ast::Vector_Def *ast, domain::VecIdent *id, do
     // TODO: Move into ast2coords_->makeCoordsForVector_Def
     const coords::VecIdent *id_coords = id->getCoords();
     const coords::VecExpr *vec_coords = vec->getCoords();
+
+    // TODO: Replace
     coords::Vector_Def *def_coords = new coords::Vector_Def(ast, id_coords, vec_coords);
     ast2coords_->overrideStmt(ast, def_coords);
 
