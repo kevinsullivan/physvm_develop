@@ -76,13 +76,15 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *m
         << std::hex << mem_coords << " arg coords " 
         << std::hex << arg_coords << "\n";
   }
-
-  coords::VecVecAddExpr *stmt_coords = 
+  coords::VecVecAddExpr *expr_coords = ast2coords_->mkVecVecAddExpr(ast, mem_coords, arg_coords);
+/*  coords::VecVecAddExpr *stmt_coords = 
     new coords::VecVecAddExpr(ast, mem_coords, arg_coords);
   // private now?
-  ast2coords_->overrideStmt(ast, stmt_coords);
-  domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
-  domain::VecExpr *dom_add_expr = domain_->mkVecVecAddExpr(space, stmt_coords, mem, arg);
+  ast2coords_->overrideStmt(ast, stmt_coords);*/
+ domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
+  domain::VecExpr *dom_add_expr = 
+  // TODO: Encapsulate these steps in coords2dom
+  domain_->mkVecVecAddExpr(space, expr_coords, mem, arg);
   coords2dom_->PutVecVecAddExpr(stmt_coords, dom_add_expr);
 
   std::cerr << "Interpretation::mkVecVecAddExpr: Coords at " 

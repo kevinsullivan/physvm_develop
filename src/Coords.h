@@ -56,10 +56,10 @@ public:
   virtual bool operator==(const Coords &other) const;
   virtual std::string toString() const;
 
-  bool astIsClangDecl() { return (ast_type_ == CLANG_AST_DECL); }
+  bool astIsClangDecl() { return (ast_type_tag_ == CLANG_AST_DECL); }
 
   // Remember: Clang Expr inherits from Stmt
-  bool astIsClangStmt() { return (tag_ == CLANG_AST_STMT); }
+  bool astIsClangStmt() { return (ast_type_tag_ == CLANG_AST_STMT); }
 
 private:
   ast_type ast_type_tag_;
@@ -116,8 +116,7 @@ private:
 // TODO: add accessors for left and right?
 class VecVecAddExpr : public VecExpr {
 public:
-  VecVecAddExpr(const clang::CXXMemberCallExpr *mce, coords::Coords *mem,
-                coords::Coords *arg);
+  VecVecAddExpr(const clang::CXXMemberCallExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg);
   clang::CXXMemberCallExpr *CXXMemberCallExpr();
   virtual std::string toString() const;
 
