@@ -45,11 +45,17 @@ public:
 
     ASTToCoords();
     coords::VecIdent *mkVecIdent(const ast::VecIdent *ast);
+    
     //coords::VecLitExpr *mkVecLitExpr(const ast::VecLitExpr *ast);
+    
     coords::VecVarExpr *mkVecVarExpr(const ast::VecVarExpr *ast);
+    
     coords::VecVecAddExpr *mkVecVecAddExpr(const ast::VecVecAddExpr *ast);
+
     coords::Vector_Lit *mkVector_Lit(const ast::Vector_Lit *ast);
+    
     coords::Vector_Var *mkVector_Var(const ast::Vector_Var *ast);
+    
     coords::Vector_Expr *mkVector_Expr(const ast::Vector_Expr *ast);
 
 private:

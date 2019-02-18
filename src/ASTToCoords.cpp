@@ -8,28 +8,27 @@ coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast) {
     return coord;
 }
 
-coords::VecExpr *ASTToCoords::mkVecExpr(const ast::VecExpr *ast) {
+/* coords::VecExpr *ASTToCoords::mkVecExpr(const ast::VecExpr *ast) {
     coords::VecExpr *c = new coords::VecExpr(ast);
     overrideStmt(ast,coord);                          // TO DO Canonicalize
     return coord;
-}
+}*/
 
-coords::VecLitExpr *ASTToCoords::mkVecLitExpr(const ast::VecLitExpr *ast) {
+/*coords::VecLitExpr *ASTToCoords::mkVecLitExpr(const ast::VecLitExpr *ast) {
     coords::VecLitExpr *c = new coords::VecLitExpr(ast);
     overrideStmt(ast,coord);                          // TO DO Canonicalize
     return coord;
-}
-
+}*/
 
 coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast) {
     coords::VecVarExpr *c = new coords::VecVarExpr(ast);
-    overrideStmt(ast,coord);                          // TO DO Canonicalize
-    return coord;
+    overrideStmt(ast,c);                          // TO DO Canonicalize
+    return c;
 }
 
-coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(const ast::VecVecAddExpr *ast) {
-    coords::VecVecAddExpr *c = new coords::VecVecAddExpr(ast);
-    overrideStmt(ast,coord);                          // TO DO Canonicalize
+coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(const ast::VecVecAddExpr *ast, const coords::VecExpr *mem, const coords::VecExpr *arg) {
+    coords::VecVecAddExpr *c = new coords::VecVecAddExpr(ast,mem,arg);
+    overrideStmt(ast,c);                          // TO DO Canonicalize
     return coord;
 }
 
