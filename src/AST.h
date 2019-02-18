@@ -7,6 +7,9 @@
 #include "clang/AST/Stmt.h"
 
 namespace ast {
+// Scalar
+using Scalar = float;
+
 // Ident
 using VecIdent = const clang::VarDecl;
 

@@ -137,7 +137,7 @@ enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
 /*
 Superclass. Abstract
 */
-class Vector : Expr {
+class Vector : public VecExpr {
 public:
   Vector(const clang::CXXConstructExpr *vec, coords::VectorCtorType tag);
   const clang::CXXConstructExpr *getCXXConstructExpr() const;
@@ -151,7 +151,7 @@ protected:
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
 public:
-  Vector_Lit(clang::CXXConstructExpr *ast, Scalar a);
+  Vector_Lit(const clang::CXXConstructExpr *ast, ast::Scalar a);
   virtual std::string toString() const;
 
 private:
