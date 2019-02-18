@@ -77,9 +77,14 @@ struct CoordsHasher;
  * Ident
  ******/
 
+
+/***
+**** TODO: Change types in all methods to ast:: abstractions.
+***/
+
 class VecIdent : public Coords {
 public:
-  VecIdent(const clang::VarDecl *v);
+  VecIdent(ast::VecIdent *ast);
   clang::VarDecl *getVarDecl();
   virtual std::string toString() const;
 };
@@ -89,6 +94,7 @@ public:
  *****/
 
 // TODO: Add a dynamic type tag here
+// Abstract
 class VecExpr : public Coords {
 public:
   VecExpr(const clang::Expr v);
@@ -100,8 +106,9 @@ public:
 No such intermediate node in Clang AST.
 Goes straight to CXXConstructExpr. Use
 Vector_Lit.
-*/
+
 class VecLitExpr : public Coords {};
+*/
 
 class VecVarExpr : public VecExpr {
 public:
@@ -117,7 +124,7 @@ private:
 class VecVecAddExpr : public VecExpr {
 public:
   VecVecAddExpr(const clang::CXXMemberCallExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg);
-  clang::CXXMemberCallExpr *CXXMemberCallExpr();
+  clang::CXXMemberCallExpr *getCXXMemberCallExpr();
   virtual std::string toString() const;
 
 private:
@@ -127,7 +134,10 @@ private:
 
 enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
 
-class Vector : Coords {
+/*
+Superclass. Abstract
+*/
+class Vector : Expr {
 public:
   Vector(const clang::CXXConstructExpr *vec, coords::VectorCtorType tag);
   const clang::CXXConstructExpr *getCXXConstructExpr() const;
