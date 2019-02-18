@@ -8,34 +8,35 @@
 #include <iostream> // for cheap logging only
 
 /*
-Code coordinates provide for ontology translation, between the AST types used to represent pertinent 
-code elements, and the AST types used to represent
-pertinent domain elements. 
+Code coordinate objects wrap AST 
+objects to provide inherited behavior
+necessary and appropriate for each
+referenced code object. They give
+these objects types in our domain
+typed ontology. An invariant of the 
+design is that AST nodes are properly
+characrterized by coordinate objects.
 
-Here the AST language a domain-driven projection of
-Clang. The domain language is one of vector space
-expressions, values, identifiers, and definitions.
+Code coordinates thus also provide for ontology translation, between the AST types used to represent pertinent 
+code elements, and the AST types used to represent domain elements (id, var, expr, value, def).
 
-Code coordinates are mapped to domain elements via
-a relation represented externally to Coords objects,
-namely in the coords2domain relation(s). AST values
-are mapped to Coords by ast2coordinates externalized
-relations. The mapping back from coordinates to the
-underlying AST objects is implemented by references
-contained within these coords objects. Each object
-represents with dynamic state the kind of AST-level
-object it maps to, and provides a pointer back to 
-that object.
+Here the AST language a domain-driven 
+projection of Clang. The domain 
+language, as is clear, is rather one 
+of vector space expressions, values, 
+identifiers, and definitions.
 
-The challenge is to get precisely typed references
-to AST elements back from Coords objects. But in the
-current application, we don't really need to do so.
-In future, dynamic casts seem likely to be useful.
+Code coordinates are mapped to domain 
+elements via a relation represented 
+externally to Coords objects, namely 
+the coords2domain relation(s). ASTs 
+are mapped to Coords by the external ast2coordinates relations. The mapping from coordinates back to to AST objects 
+is implemented by references contained 
+within coords objects. Each such object
+represents with dynamic state the kind of AST-level object it maps to, and it provides a pointer back to that object.
+
+The challenge is to get precisely typed references to AST elements back from Coords objects. But in the current application, we don't really need to do so. In future, dynamic casts seem likely to be useful.
 */
-
-// using namespace clang;
-// using namespace clang::ast_matchers;
-// using namespace std;
 
 namespace coords {
 
