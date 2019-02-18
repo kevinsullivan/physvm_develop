@@ -68,6 +68,10 @@ private:
 };
 
 struct CoordsHasher;
+struct VecExprHasher;
+struct VecIdentHasher;
+struct VectorHasher;
+struct Vector_DefHasher;
 
 /*************************************************************
  * Coordinate subclasses, for type checking, override behaviors
@@ -97,7 +101,7 @@ public:
 // Abstract
 class VecExpr : public Coords {
 public:
-  VecExpr(const clang::Expr v);
+  VecExpr(const clang::Expr *e);
   clang::Expr *getExpr();
   virtual std::string toString() const;
 };
@@ -171,7 +175,7 @@ private:
 // change name to VecVecAddExpr? Or generalize from that a bit.
 class Vector_Expr : public Vector {
 public:
-  Vector_Expr(const clang::CXXConstructExpr ast, coords::Vector_Expr *expr);
+  Vector_Expr(const clang::CXXConstructExpr *ast, coords::Vector_Expr *expr);
   virtual std::string toString() const;
   Vector_Expr *getVector_Expr();
 
@@ -185,7 +189,7 @@ private:
 
 class Vector_Def : public Coords {
 public:
-  Vector_Def(const clang::DeclStmt def, coords::VecIdent *bv,
+  Vector_Def(const clang::DeclStmt *def, coords::VecIdent *bv,
              coords::VecExpr *be);
   const clang::DeclStmt *getDeclStmt() const;
   coords::VecIdent *getIdent() const;

@@ -24,7 +24,7 @@ namespace domain {
 class Space;
 class VecIdent;
 class VecExpr;
-class VecLitExpr;
+//class VecLitExpr;
 class VecVarExpr;
 class VecVecAddExpr;
 class Vector;
@@ -42,23 +42,21 @@ public:
 	std::vector<Space>& getAllSpaces();
 
 // Idents
-	VecIdent* mkVecIdent(Space& s, const coords::VecIdent* ast);
-	VecExpr* mkVecVarExpr(Space& s, const coords::VecVarExpr* ast);
-
+	VecIdent* mkVecIdent(Space& s, coords::VecIdent* ast);
 
 // Exprs
-	VecExpr* mkVecLitExpr(Space& s, const coords::VecLitExpr* e);
-	VecExpr* mkVecVarExpr(Space& s, const coords::VecLitExpr* e);		// KEVIN
-	VecExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
+//	VecExpr* mkVecLitExpr(Space& s, const coords::VecLitExpr* e);
+	VecVarExpr* mkVecVarExpr(Space& s, coords::VecVarExpr* ast);
+	VecVecAddExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
 
 // Values
 
-	Vector* mkVector_Lit(coords::Vector* v/*, domain::VecExpr *vec*/);
+	Vector_Lit* mkVector_Lit(coords::Vector* v/*, domain::VecExpr *vec*/);
 	//Vector* mkVector_Var(coords::Vector* v/*, domain::VecExpr *vec*/);
-	Vector* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
+	Vector_Expr* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
 
 // Defs
-	Vector_Def& mkVector_Def(const coords::Vector_Def* vardecl, const VecIdent* identifier, const VecExpr* expression);
+	Vector_Def& mkVector_Def(coords::Vector_Def* vardecl, const VecIdent* identifier, const VecExpr* expression);
 
 
 // Client
@@ -98,22 +96,22 @@ objects to their coordinates. It should be an injection.
 */
 class ToCoords {
 public:
-	ToCoordscoords::Coords *c) : coords_(c) {}
-	coords::Coords* getBaseCoords() { return coords_; }
+	ToCoords(coords::Coords *c) : coords_(c) {}
+	coords::Coords* getBaseCoords() const { return coords_; }
 private:
 	coords::Coords* coords_;
-}
+};
 /*
 The next set of definitions provides a basis for representing code 
 expressions lifted to domain expressions.
 */
 
-class VecIdent : public ToCode {
+class VecIdent : public ToCoords {
 public:
-	VecIdent(Space& space, const coords::VecIdent* c) : ToCoords(c), space_(&space) {}
+	VecIdent(Space& space, coords::VecIdent* c) : ToCoords(c), space_(&space) {}
 	Space* getSpace() const { return space_; }
-	const coords::VecIdent* getCoords() const { 
-		return static_cast<:VecIdent*>getBaseCoords(); 
+	coords::VecIdent* getCoords() const { 
+		return static_cast<coords::VecIdent*>(getBaseCoords()); // TODO: accessor
 	}
 	std::string toString() const { return getName(); }
 	std::string getName() const;
@@ -122,17 +120,17 @@ private:
 };
 
 // TODO - Change name of this class? DomainExpr?
-class VecExpr  : public ToCode {
+class VecExpr  : public ToCoords {
 public:
-    VecExpr(const Space& s, const coords::VecExpr* c) : ToCoords(c), space_(s) {}
-	const coords::VecExpr* Coords() const { 
-		return static_cast<:VecExpr*>getBaseCoords();
+    VecExpr(const Space& s, coords::VecExpr* c) : ToCoords(c), space_(s) {}
+	coords::VecExpr* getCoords() const { 
+		return static_cast<coords::VecExpr*>(getBaseCoords());
 	}
     const Space& getSpace() const;
 	virtual std::string toString() const {
-		if (ast_ != NULL) {
+		if (getCoords()  != NULL) {
 			//std::cerr << "Domain::VecExpr::toString: coords::VecVecExpr pointer is " << std::hex << ast_ << "\n";
-			return "(" + ast_->toString() + " : " + space_.getName() + ")";
+			return "(" + getCoords()->toString() + " : " + space_.getName() + ")";
 		}
 		else {
 			return "domain.VecExpr:toString() NULL ast_\n";	
@@ -144,32 +142,34 @@ protected:
 
 
 // No need for this in current implementation
-class VecLitExpr : public VecExpr {}
+// class VecLitExpr : public VecExpr {};
 
 
 class VecVarExpr : public VecExpr {
 public:
-    VecVarExpr(Space& s, const coords::VecVarExpr* c) : domain::VecExpr(s, c) {}
+    VecVarExpr(Space& s, coords::VecVarExpr* c) : domain::VecExpr(s, c) {}
 	virtual std::string toString() const {
-		return "(" + ast_->toString() + " )";
+		return "(" + getCoords()->toString() + " )";
 	}
-	const coords::VecVarExpr* getCoords() {
-		return static_cast<VecVarExpr*>coords_;	// from VecExpr superclass
+	coords::VecVarExpr* getCoords() const {
+		return static_cast<coords::VecVarExpr*>(getBaseCoords());	// from VecExpr superclass
 	}
 private:
 };
 
-
+// TODO replace direct access to coords_ with use of accessor throughout
+//
 class VecVecAddExpr : public VecExpr {
 public:
    VecVecAddExpr(
-        Space& s, const coords::VecAddAddExpr* c, domain::VecExpr *mem, domain::VecExpr *arg) : 
+        Space& s, coords::VecVecAddExpr* c, domain::VecExpr *mem, domain::VecExpr *arg) : 
 			domain::VecExpr(s, c), arg_(arg), mem_(mem) {	
 	}
 	domain::VecExpr *getMemberVecExpr();
 	domain::VecExpr *getArgVecExpr();
-	const coords::VecVarExpr* getCoords() {
-		return static_cast<VecVecAddExpr*>coords_;	// from VecExpr superclass
+
+	coords::VecVecAddExpr* getCoords() {
+		return static_cast<coords::VecVecAddExpr*>(getBaseCoords());	// from VecExpr superclass
 	}
 	virtual std::string toString() const {
 		return "(add " + mem_->toString() + " " + arg_->toString() + ")";
@@ -185,9 +185,13 @@ private:
 /*
 This is a sum type capable of representing different kinds of fully constructed vectors.
 */
-class Vector : public ToCode   {
+
+enum VecCtorType {VEC_EXPR, VEC_LIT, VEC_VAR, VEC_NONE } ; 
+
+
+class Vector : public ToCoords   {
 public:
-	Vector(const Space& s, const coords::Vector* coords, VecCtorType tag) :
+	Vector(const Space& s, coords::Vector* c, VecCtorType tag) :
 		ToCoords(c), space_(&s), tag_(tag) { 
 	}
 	bool isLit() { return (tag_ == VEC_LIT); } 
@@ -196,8 +200,8 @@ public:
 	const Space* getSpace() {return space_; }
 
 	// TODO: Consider subclass discriminator?
-	const coords::Vector* getCoords() const {
-		return static_cast<Vector*>coords_; 
+	coords::Vector* getCoords() const {
+		return static_cast<coords::Vector*>(getBaseCoords()); 
 	} 
 	virtual std::string toString() const {
 		return "domain::Vector::toString: Error. Should not be called. Abstract.\n";
@@ -211,11 +215,11 @@ private:
 
 class Vector_Lit : public Vector {
 public:
-	Vector_Lit(const Space& s, const coords::Vector* c) :
+	Vector_Lit(const Space& s, coords::Vector* c) :
 		Vector(s, c, VEC_LIT) { 
 	}
-	const coords::Vector* getCoords() const {
-		return static_cast<Vector_Lit*>coords_; 
+	coords::Vector* getCoords() const {
+		return static_cast<coords::Vector_Lit*>(getBaseCoords()); 
 	} 
 
 	std::string toString() const {
@@ -230,12 +234,12 @@ Todo: Domain vector constructed from domain vector expression
 */
 class Vector_Expr : public Vector  {
 public:
-	Vector_Expr(const Space& s, const coords::Vector* c, domain::VecExpr* expr) :
-		ToCoords(c), Vector(s, coords, VEC_EXPR), expr_(expr) { 
+	Vector_Expr(const Space& s, coords::Vector* c, domain::VecExpr* e) :
+		Vector(s, c, VEC_EXPR), expr_(e) { 
 	}
 	const domain::VecExpr* getVecExpr() const { return expr_; }
-	const coords::Vector* getCoords() const {
-		return static_cast<Vector_Expr*>coords_; 
+	coords::Vector* getCoords() const {
+		return static_cast<coords::Vector_Expr*>(getBaseCoords()); 
 	} 
 	std::string toString() const {
 		return expr_->toString();
@@ -245,37 +249,36 @@ private:
 };
 
 // Future
-class Vector_Var : public Vector {}
+class Vector_Var : public Vector {
+	Vector_Var() : Vector(*new Space(""), NULL, VEC_NONE ) { 
+		std::cerr << "Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
+	}
+};
 
 /*
 Domain representation of binding of identifier to expression.
 Takes clang::VarDecl establishing binding (in a wrapper) and 
 the *domain* VecIdent and Expression objects being bound.
 */
-class Vector_Def : public ToCode  {
+class Vector_Def : public ToCoords  {
 public:
-	Vector_Def(const coords::Vector_Def* c, const domain::VecIdent* identifier, const domain::VecExpr* expr):
+	Vector_Def(coords::Vector_Def* c, domain::VecIdent* identifier, domain::VecExpr* expr):
 			ToCoords(c), identifier_(identifier), expr_(expr) {}
-	const coords::Vector_Def* getVarDecl() const {return ast_wrapper_; } 
+	//const coords::Vector_Def* getVarDecl() const {return ast_wrapper_; } 
 	const domain::VecExpr* getVecExpr() const { return expr_; }
 	const domain::VecIdent* getVecIdent() { return identifier_; }
-	const coords::Vector_Def* getCoords() const {
-		return static_cast<Vector_Def*>coords_; 
+	coords::Vector_Def* getCoords() const {
+		return static_cast<coords::Vector_Def*>(getBaseCoords()); 
 	} 
 	std::string toString() const {
 		return "def " + identifier_->toString() + " := " + expr_->toString();
 	}
 private:
-	const coords::Vector_Def* ast_wrapper_;
 	// TODO: Inconsistency: Ref by coords here, to domain objs above
+	//const coords::Vector_Def* ast_wrapper_;
 	const VecIdent* identifier_;
 	const VecExpr* expr_;
 };
-
-/*
-Domain representation of binding of identifier to expression.
-*/
-enum VecCtorType {VEC_EXPR, VEC_LIT, VEC_VAR, VEC_NONE } ; 
 
 
 } // end namespace
