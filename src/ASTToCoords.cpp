@@ -32,11 +32,11 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(const ast::VecVecAddExpr *as
     return coord;
 }
 
-coords::Vector *ASTToCoords::Vector(const ast::Vector *ast) {
+/*coords::Vector *ASTToCoords::Vector(const ast::Vector *ast) {
     coords::Vector *c = new coords::Vector(ast);
     overrideStmt(ast,coord);                          // TO DO Canonicalize
     return coord;
-}
+}*/
 
 coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast) {
     coords::Vector_Lit *c = new coords::Vector_Lit(ast);
