@@ -17,21 +17,21 @@ expressions and objects.
 //
 
 Coords::Coords(const clang::Stmt *stmt) : 
-    clang_stmt_(stmt), ast_type_tag_(CLANG_AST_STMT) {
+    clang_stmt_(stmt), ast_type_tag_(coords::CLANG_AST_STMT) {
 }
 
 Coords::Coords(const clang::Decl *decl) : 
-    clang_decl_(decl), ast_type_tag_(CLANG_AST_EXPR) {
+    clang_decl_(decl), ast_type_tag_(coords::CLANG_AST_EXPR) {
 }
 
 const clang::Stmt *Coords::getClangStmt() const { return clang_stmt_; }
 const clang::Decl *Coords::getClangDecl() const { return clang_decl_; }
 
 bool Coords::operator==(const Coords &other) const {
-    if (ast_type_tag_ == CLANG_AST_STMT) {
+    if (ast_type_tag_ == coords::CLANG_AST_STMT) {
         return (clang_stmt_ == other.clang_stmt_);
     }
-    else {  // ast_type_tag_ == CLANG_AST_DECL
+    else {  // ast_type_tag_ == coords::CLANG_AST_DECL
         return (clang_decl_ == other.clang_decl_);
     }
 }
@@ -63,7 +63,7 @@ struct CoordsHasher {
 
 VecIdent::VecIdent(const clang::VarDecl *v) : Coords(v) {}
 
-clang::VarDecl *VecIdent::getVarDecl() {
+const clang::VarDecl *VecIdent::getVarDecl() {
     return static_cast<const clang::VarDecl*>(clang_decl_);  
 }
 
@@ -98,7 +98,7 @@ class VecLitExpr : public VecExpr {}
 VecVarExpr::VecVarExpr(const clang::DeclRefExpr *d) : VecExpr(d) {}
 
 const clang::DeclRefExpr *VecVarExpr::getDeclRefExpr() {
-    return static_cast<clang::DeclRefExpr*> (clang_stmt_);  
+    return static_cast<const clang::DeclRefExpr*> (clang_stmt_);  
 }
 
 std::string VecVarExpr::toString() const { 
@@ -113,8 +113,8 @@ VecVecAddExpr::VecVecAddExpr(
 std::cerr << "VecVecAddExpr::VecVecAddExpr. Warn. Empty implementation.\n";
 }
 
-clang::CXXMemberCallExpr *VecVecAddExpr::getCXXMemberCallExpr() {
-    return static_cast<clang::CXXMemberCallExpr*> (clang_stmt_);  
+const clang::CXXMemberCallExpr *VecVecAddExpr::getCXXMemberCallExpr() {
+    return static_cast<const clang::CXXMemberCallExpr*> (clang_stmt_);  
 }
 
 
@@ -140,7 +140,7 @@ virtual std::string Vector::toString() const { return "Coords::Vector::toPrint: 
 
 
 Vector_Lit::Vector_Lit(const clang::CXXConstructExpr* ast, ast::Scalar a) 
-    : Vector(ast, VEC_CTOR_LIT), lit_(ast), a_(a) {}
+    : Vector(ast, VEC_CTOR_LIT), a_(a) {}
   
 std::string Vector_Lit::toString() const  { 
     return "( 0 : Stub)";  
@@ -178,7 +178,7 @@ Vector_Def::Vector_Def(const clang::DeclStmt def, coords::VecIdent *bv, coords::
 }
 
 /*const clang::DeclStmt *Vector_Def::getDeclStmt() const { 
-    return static_cast<clang::DeclStmt>stmt_; 
+    return static_cast<const clang::DeclStmt>stmt_; 
 }*/
 
 coords::VecIdent *Vector_Def::getIdent() const {

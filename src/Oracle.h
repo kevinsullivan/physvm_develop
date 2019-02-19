@@ -11,7 +11,7 @@ namespace oracle {
 class Oracle
 {
 public:
-	Oracle(domain::Domain* d) : dom_(d) {};
+	Oracle(domain::Domain* d) : dom_(d), space_(*new Space("Oracle:: Error. Stub Space.\n")) {};
 
 	// Precondition: true
 	// Effects: get space annotation from environment
@@ -19,7 +19,7 @@ public:
 	//
 	domain::Space& getSpaceForVector(std::string where);
 
-	domain::Space& getSpaceForAddExpression(Coords::VecExpr * left_br, coords::VecExpr * right_br)
+	domain::Space& getSpaceForAddExpression(coords::VecExpr * left_br, coords::VecExpr * right_br)
 	{
 		//std::cerr << "Returning stub space for expression.\n";
 		std::cerr << "Space for add expression?\n";
@@ -57,7 +57,7 @@ public:
 		return getSpace();
 	}
 private:
-	domain::Space& getSpace();
+	domain::Space& space_;
 	domain::Domain* dom_;
 };
 

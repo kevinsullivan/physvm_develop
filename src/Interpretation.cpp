@@ -81,7 +81,7 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, coords::VecExpr *m
     new coords::VecVecAddExpr(ast, mem_coords, arg_coords);
   // private now?
   ast2coords_->overrideStmt(ast, stmt_coords);*/
- domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
+ domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
   domain::VecVecAddExpr *dom_add_expr = 
     domain_->mkVecVecAddExpr(space, expr_coords, mem_coords, arg_coords);
   coords2dom_->PutVecVecAddExpr(expr_coords, dom_add_expr);
