@@ -54,7 +54,8 @@ void CoordsToDomain::PutVecVarExpr(coords::VecVarExpr *c, domain::VecVarExpr *d)
 }
 
 domain::VecVarExpr *CoordsToDomain::getVecVarExpr(coords::VecVarExpr* c) const {
-   return interpExpression[*c];
+    std::cerr << "CoordsToDomain::getVecVarExpr: Warn. Check these static casts.\n";
+   return static_cast<domain::VecVarExpr *>(interpExpression[*c]);
 }
 
 coords::VecVarExpr *CoordsToDomain::getVecVarExpr(domain::VecVarExpr* d) const {
@@ -68,7 +69,7 @@ void CoordsToDomain::PutVecVecAddExpr(coords::VecVecAddExpr *c, domain::VecVecAd
 }
 
 domain::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(coords::VecVarExpr* c) const {
-   return interpExpression[*c];
+   return static_cast<domain::VecVecAddExpr *>(interpExpression[*c]);
 }
 
 coords::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(domain::VecVarExpr* d) const {
@@ -94,7 +95,7 @@ void CoordsToDomain::putVector_Expr(coords::Vector *c, domain::Vector_Expr *d) {
 }
 
 domain::Vector *CoordsToDomain::getVector(coords::Vector_Expr* c) const {
-     return interpExpression[*c];  
+     return static_cast<domain::Vector *>(interpExpression[*c]);  
 }
 
 coords::Vector_Expr *CoordsToDomain::getVector(domain::Vector_Expr* d const) {
@@ -108,7 +109,7 @@ void CoordsToDomain::putVector_Def(coords::Vector_Def *c, domain::Vector_Def *d)
 }
 
 domain::Vector_Def *getVector_Def(coords::Vector_Def* c) const {
-   return interpExpression[*c];
+   return static_cast<domain::Vector_Def *>(interpExpression[*c]);
 }
 
 coords::Vector_Def *getVector_Def(domain::Vector_Def* d) const {

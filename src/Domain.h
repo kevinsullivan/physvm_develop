@@ -47,7 +47,7 @@ public:
 // Exprs
 //	VecExpr* mkVecLitExpr(Space& s, const coords::VecLitExpr* e);
 	VecVarExpr* mkVecVarExpr(Space& s, coords::VecVarExpr* ast);
-	VecVecAddExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
+	VecVecAddExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, coords::VecExpr* left_, coords::VecExpr* right_);
 
 // Values
 

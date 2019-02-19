@@ -154,7 +154,7 @@ class VecLitExpr : public Coords {};
 class VecVarExpr : public VecExpr {
 public:
   VecVarExpr(const clang::DeclRefExpr *d);
-  clang::DeclRefExpr *getDeclRefExpr() const;
+  const clang::DeclRefExpr *getDeclRefExpr() const;
   virtual std::string toString() const;
 
 private:
@@ -215,7 +215,7 @@ private:
 
 class Vector_Var : public Vector {
 public:
-  Vector_Var(const clang::CXXConstructExpr *ast, const coords::VecVarExpr *expr);
+  Vector_Var(const clang::CXXConstructExpr *ast,  coords::VecVarExpr *expr);
   virtual std::string toString() const;
   VecVarExpr *getVecVarExpr();
 
