@@ -17,21 +17,21 @@ expressions and objects.
 //
 
 Coords::Coords(const clang::Stmt *stmt) : 
-    clang_stmt_(stmt), ast_type(CLANG_AST_STMT) {
+    clang_stmt_(stmt), ast_type_tag_(CLANG_AST_STMT) {
 }
 
 Coords::Coords(const clang::Decl *decl) : 
-    clang_decl_(decl), ast_type_(CLANG_AST_EXPR) {
+    clang_decl_(decl), ast_type_tag_(CLANG_AST_EXPR) {
 }
 
 const clang::Stmt *Coords::getClangStmt() const { return clang_stmt_; }
 const clang::Decl *Coords::getClangDecl() const { return clang_decl_; }
 
 bool Coords::operator==(const Coords &other) const {
-    if (ast_type_ == CLANG_AST_STMT) {
+    if (ast_type_tag_ == CLANG_AST_STMT) {
         return (clang_stmt_ == other.clang_stmt_);
     }
-    else {  // ast_type == CLANG_AST_DECL
+    else {  // ast_type_tag_ == CLANG_AST_DECL
         return (clang_decl_ == other.clang_decl_);
     }
 }
@@ -61,10 +61,10 @@ struct CoordsHasher {
 * Ident
 ******/
 
-VecIdent::VecIdent(const clang::VarDecl v) : Coords(v) {}
+VecIdent::VecIdent(const clang::VarDecl *v) : Coords(v) {}
 
 clang::VarDecl *VecIdent::getVarDecl() {
-    return static_cast<clang::VarDecl*>(clang_decl_);  
+    return static_cast<const clang::VarDecl*>(clang_decl_);  
 }
 
 std::string VecIdent::toString() const { 
@@ -81,7 +81,7 @@ std::string VecIdent::toString() const {
 VecExpr::VecExpr(const clang::Expr *v) : Coords(v) {}
 
 const clang::Expr *VecExpr::getExpr() {
-    return static_cast<clang::Expr*>(clang_stmt_);  
+    return static_cast<const clang::Expr*>(clang_stmt_);  
 }
 
 std::string VecExpr::toString() const { 
@@ -109,7 +109,7 @@ std::string VecVarExpr::toString() const {
 VecVecAddExpr::VecVecAddExpr(
     const clang::CXXMemberCallExpr *mce, 
     coords::Coords *mem, 
-    coords:::Coords *arg) : VecExpr(mce) {
+    coords::Coords *arg) : VecExpr(mce) {
 std::cerr << "VecVecAddExpr::VecVecAddExpr. Warn. Empty implementation.\n";
 }
 
@@ -131,7 +131,7 @@ Vector::Vector(const clang::CXXConstructExpr *vec, coords::VectorCtorType tag)
 }
   
 const clang::CXXConstructExpr *Vector::getCXXConstructExpr() const { 
-    return static_cast<clang::CXXConstructExpr>(clang_stmt_); 
+    return static_cast<const clang::CXXConstructExpr>(clang_stmt_); 
 }
 
 VectorCtorType Vector::getVectorType() { return tag_; }
@@ -139,7 +139,7 @@ VectorCtorType Vector::getVectorType() { return tag_; }
 virtual std::string Vector::toString() const { return "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";}
 
 
-Vector_Lit::Vector_Lit(clang::CXXConstructExpr* ast, ast::Scalar a) 
+Vector_Lit::Vector_Lit(const clang::CXXConstructExpr* ast, ast::Scalar a) 
     : Vector(ast, VEC_CTOR_LIT), lit_(ast), a_(a) {}
   
 std::string Vector_Lit::toString() const  { 

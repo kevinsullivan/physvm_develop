@@ -19,7 +19,7 @@ public:
 	//
 	domain::Space& getSpaceForVector(std::string where);
 
-	domain::Space& getSpaceForAddExpression(const domain::VecExpr * left_br, const domain::VecExpr * right_br)
+	domain::Space& getSpaceForAddExpression(Coords::VecExpr * left_br, coords::VecExpr * right_br)
 	{
 		//std::cerr << "Returning stub space for expression.\n";
 		std::cerr << "Space for add expression?\n";

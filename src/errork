@@ -1,0 +1,721 @@
+-----------------------------------------------
+Using LLVM_SRC_PATH = /llvm
+Using LLVM_BUILD_PATH = /llvm/build
+Using LLVM_BIN_PATH = /llvm/build/bin
+-----------------------------------------------
+g++ -O0 -g -Wall `/llvm/build/bin/llvm-config --cxxflags` -I/llvm/tools/clang/include -I/llvm/build/tools/clang/include ASTToCoords.cpp AST.cpp Interpretation.cpp Oracle.cpp Checker.cpp Coords.cpp CoordsToDomain.cpp main.cpp Domain.cpp \
+	-Wl,--start-group -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangDriver -lclangEdit -lclangFrontend -lclangFrontendTool -lclangLex -lclangParse -lclangSema -lclangEdit -lclangRewrite -lclangRewriteFrontend -lclangStaticAnalyzerFrontend -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangCrossTU -lclangIndex -lclangSerialization -lclangToolingCore -lclangTooling -lclangFormat -Wl,--end-group `/llvm/build/bin/llvm-config --ldflags --libs --system-libs` -o ../build/ASTMatcher
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, coords::VecExpr*, coords::VecExpr*)':
+Interpretation.cpp:84:59: error: 'mem' was not declared in this scope
+  domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
+                                                           ^~~
+Interpretation.cpp:84:59: note: suggested alternative: 'drem'
+  domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
+                                                           ^~~
+                                                           drem
+Interpretation.cpp:84:64: error: 'arg' was not declared in this scope
+  domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
+                                                                ^~~
+Interpretation.cpp:86:72: error: no matching function for call to 'domain::Domain::mkVecVecAddExpr(domain::Space&, coords::VecVecAddExpr*&, coords::VecExpr*&, coords::VecExpr*&)'
+     domain_->mkVecVecAddExpr(space, expr_coords, mem_coords, arg_coords);
+                                                                        ^
+In file included from Oracle.h:7:0,
+                 from Interpretation.h:8,
+                 from Interpretation.cpp:13:
+Domain.h:50:17: note: candidate: domain::VecVecAddExpr* domain::Domain::mkVecVecAddExpr(domain::Space&, coords::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)
+  VecVecAddExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, domain::VecExpr* left_, domain::VecExpr* right_);
+                 ^~~~~~~~~~~~~~~
+Domain.h:50:17: note:   no known conversion for argument 3 from 'coords::VecExpr*' to 'domain::VecExpr*'
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector_Expr(ast::Vector_Expr*, coords::VecExpr*)':
+Interpretation.cpp:145:80: error: no matching function for call to 'domain::Vector_Expr::Vector_Expr(coords::Vector_Expr*&, domain::VecExpr*&)'
+     domain::Vector_Expr *dom_vec = new domain::Vector_Expr(vec_coords, dom_expr);
+                                                                                ^
+In file included from Oracle.h:7:0,
+                 from Interpretation.h:8,
+                 from Interpretation.cpp:13:
+Domain.h:237:2: note: candidate: domain::Vector_Expr::Vector_Expr(const domain::Space&, coords::Vector*, domain::VecExpr*)
+  Vector_Expr(const Space& s, coords::Vector* c, domain::VecExpr* e) :
+  ^~~~~~~~~~~
+Domain.h:237:2: note:   candidate expects 3 arguments, 2 provided
+Domain.h:235:7: note: candidate: constexpr domain::Vector_Expr::Vector_Expr(const domain::Vector_Expr&)
+ class Vector_Expr : public Vector  {
+       ^~~~~~~~~~~
+Domain.h:235:7: note:   candidate expects 1 argument, 2 provided
+Domain.h:235:7: note: candidate: constexpr domain::Vector_Expr::Vector_Expr(domain::Vector_Expr&&)
+Domain.h:235:7: note:   candidate expects 1 argument, 2 provided
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector_Def(ast::Vector_Def*, coords::VecIdent*, coords::VecExpr*)':
+Interpretation.cpp:173:56: error: no matching function for call to 'domain::Domain::mkVector_Def(ast::Vector_Def*&, coords::VecIdent*&, coords::VecExpr*&)'
+       domain_->mkVector_Def(ast, id_coords, expr_coords);
+                                                        ^
+In file included from Oracle.h:7:0,
+                 from Interpretation.h:8,
+                 from Interpretation.cpp:13:
+Domain.h:59:14: note: candidate: domain::Vector_Def* domain::Domain::mkVector_Def(coords::Vector_Def*, coords::VecIdent*, coords::VecExpr*)
+  Vector_Def* mkVector_Def(coords::Vector_Def* vardecl, coords::VecIdent* identifier, coords::VecExpr* expression);
+              ^~~~~~~~~~~~
+Domain.h:59:14: note:   no known conversion for argument 1 from 'ast::Vector_Def* {aka const clang::DeclStmt*}' to 'coords::Vector_Def*'
+Coords.cpp: In constructor 'coords::Coords::Coords(const clang::Stmt*)':
+Coords.cpp:20:24: error: class 'coords::Coords' does not have any field named 'ast_type'
+     clang_stmt_(stmt), ast_type(CLANG_AST_STMT) {
+                        ^~~~~~~~
+Coords.cpp: In constructor 'coords::Coords::Coords(const clang::Decl*)':
+Coords.cpp:24:24: error: class 'coords::Coords' does not have any field named 'ast_type_'
+     clang_decl_(decl), ast_type_(CLANG_AST_EXPR) {
+                        ^~~~~~~~~
+Coords.cpp:24:34: error: 'CLANG_AST_EXPR' was not declared in this scope
+     clang_decl_(decl), ast_type_(CLANG_AST_EXPR) {
+                                  ^~~~~~~~~~~~~~
+Coords.cpp:24:34: note: suggested alternative: 'CLANG_AST_DECL'
+     clang_decl_(decl), ast_type_(CLANG_AST_EXPR) {
+                                  ^~~~~~~~~~~~~~
+                                  CLANG_AST_DECL
+Coords.cpp: In member function 'virtual bool coords::Coords::operator==(const coords::Coords&) const':
+Coords.cpp:31:9: error: 'ast_type_' was not declared in this scope
+     if (ast_type_ == CLANG_AST_STMT) {
+         ^~~~~~~~~
+Coords.cpp:31:9: note: suggested alternative: 'ast_type'
+     if (ast_type_ == CLANG_AST_STMT) {
+         ^~~~~~~~~
+         ast_type
+Coords.cpp: At global scope:
+Coords.cpp:64:1: error: prototype for 'coords::VecIdent::VecIdent(clang::VarDecl)' does not match any in class 'coords::VecIdent'
+ VecIdent::VecIdent(const clang::VarDecl v) : Coords(v) {}
+ ^~~~~~~~
+In file included from Coords.cpp:1:0:
+Coords.h:91:7: error: candidates are: constexpr coords::VecIdent::VecIdent(coords::VecIdent&&)
+ class VecIdent : public Coords {
+       ^~~~~~~~
+Coords.h:91:7: error:                 constexpr coords::VecIdent::VecIdent(const coords::VecIdent&)
+Coords.h:93:3: error:                 coords::VecIdent::VecIdent(ast::VecIdent*)
+   VecIdent(const ast::VecIdent *ast);
+   ^~~~~~~~
+Coords.cpp: In member function 'clang::VarDecl* coords::VecIdent::getVarDecl()':
+Coords.cpp:67:52: error: static_cast from type 'const clang::Decl*' to type 'clang::VarDecl*' casts away qualifiers
+     return static_cast<clang::VarDecl*>(clang_decl_);
+                                                    ^
+Coords.cpp: In member function 'virtual std::__cxx11::string coords::VecIdent::toString() const':
+Coords.cpp:71:23: error: passing 'const coords::VecIdent' as 'this' argument discards qualifiers [-fpermissive]
+     return getVarDecl()->getNameAsString();
+                       ^
+Coords.cpp:66:17: note:   in call to 'clang::VarDecl* coords::VecIdent::getVarDecl()'
+ clang::VarDecl *VecIdent::getVarDecl() {
+                 ^~~~~~~~
+Coords.cpp: In member function 'const clang::Expr* coords::VecExpr::getExpr()':
+Coords.cpp:84:49: error: static_cast from type 'const clang::Stmt*' to type 'clang::Expr*' casts away qualifiers
+     return static_cast<clang::Expr*>(clang_stmt_);
+                                                 ^
+Coords.cpp: At global scope:
+Coords.cpp:100:27: error: prototype for 'const clang::DeclRefExpr* coords::VecVarExpr::getDeclRefExpr()' does not match any in class 'coords::VecVarExpr'
+ const clang::DeclRefExpr *VecVarExpr::getDeclRefExpr() {
+                           ^~~~~~~~~~
+In file included from Coords.cpp:1:0:
+Coords.h:157:23: error: candidate is: clang::DeclRefExpr* coords::VecVarExpr::getDeclRefExpr() const
+   clang::DeclRefExpr *getDeclRefExpr() const;
+                       ^~~~~~~~~~~~~~
+Coords.cpp:112:13: error: expected identifier before ':' token
+     coords:::Coords *arg) : VecExpr(mce) {
+             ^
+Coords.cpp:112:13: error: expected ',' or '...' before ':' token
+Coords.cpp:109:1: error: prototype for 'coords::VecVecAddExpr::VecVecAddExpr(const clang::CXXMemberCallExpr*, coords::Coords*, int)' does not match any in class 'coords::VecVecAddExpr'
+ VecVecAddExpr::VecVecAddExpr(
+ ^~~~~~~~~~~~~
+In file included from Coords.cpp:1:0:
+Coords.h:165:7: error: candidates are: constexpr coords::VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr&&)
+ class VecVecAddExpr : public VecExpr {
+       ^~~~~~~~~~~~~
+Coords.h:165:7: error:                 constexpr coords::VecVecAddExpr::VecVecAddExpr(const coords::VecVecAddExpr&)
+Coords.h:167:3: error:                 coords::VecVecAddExpr::VecVecAddExpr(const clang::CXXMemberCallExpr*, coords::VecExpr*, coords::VecExpr*)
+   VecVecAddExpr(const clang::CXXMemberCallExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg);
+   ^~~~~~~~~~~~~
+Coords.cpp: In member function 'clang::CXXMemberCallExpr* coords::VecVecAddExpr::getCXXMemberCallExpr()':
+Coords.cpp:117:63: error: static_cast from type 'const clang::Stmt*' to type 'clang::CXXMemberCallExpr*' casts away qualifiers
+     return static_cast<clang::CXXMemberCallExpr*> (clang_stmt_);
+                                                               ^
+Coords.cpp: In member function 'const clang::CXXConstructExpr* coords::Vector::getCXXConstructExpr() const':
+Coords.cpp:134:60: error: no matching function for call to 'clang::CXXConstructExpr::CXXConstructExpr(const clang::Stmt* const&)'
+     return static_cast<clang::CXXConstructExpr>(clang_stmt_);
+                                                            ^
+In file included from /llvm/tools/clang/include/clang/AST/StmtVisitor.h:16:0,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:24,
+                 from Coords.h:4,
+                 from Coords.cpp:1:
+/llvm/tools/clang/include/clang/AST/ExprCXX.h:1312:3: note: candidate: clang::CXXConstructExpr::CXXConstructExpr(clang::Stmt::StmtClass, clang::Stmt::EmptyShell, unsigned int)
+   CXXConstructExpr(StmtClass SC, EmptyShell Empty, unsigned NumArgs);
+   ^~~~~~~~~~~~~~~~
+/llvm/tools/clang/include/clang/AST/ExprCXX.h:1312:3: note:   candidate expects 3 arguments, 1 provided
+/llvm/tools/clang/include/clang/AST/ExprCXX.h:1304:3: note: candidate: clang::CXXConstructExpr::CXXConstructExpr(clang::Stmt::StmtClass, clang::QualType, clang::SourceLocation, clang::CXXConstructorDecl*, bool, llvm::ArrayRef<clang::Expr*>, bool, bool, bool, bool, clang::CXXConstructExpr::ConstructionKind, clang::SourceRange)
+   CXXConstructExpr(StmtClass SC, QualType Ty, SourceLocation Loc,
+   ^~~~~~~~~~~~~~~~
+/llvm/tools/clang/include/clang/AST/ExprCXX.h:1304:3: note:   candidate expects 12 arguments, 1 provided
+/llvm/tools/clang/include/clang/AST/ExprCXX.h:1261:7: note: candidate: constexpr clang::CXXConstructExpr::CXXConstructExpr(const clang::CXXConstructExpr&)
+ class CXXConstructExpr : public Expr {
+       ^~~~~~~~~~~~~~~~
+/llvm/tools/clang/include/clang/AST/ExprCXX.h:1261:7: note:   no known conversion for argument 1 from 'const clang::Stmt* const' to 'const clang::CXXConstructExpr&'
+/llvm/tools/clang/include/clang/AST/ExprCXX.h:1261:7: note: candidate: constexpr clang::CXXConstructExpr::CXXConstructExpr(clang::CXXConstructExpr&&)
+/llvm/tools/clang/include/clang/AST/ExprCXX.h:1261:7: note:   no known conversion for argument 1 from 'const clang::Stmt* const' to 'clang::CXXConstructExpr&&'
+Coords.cpp: At global scope:
+Coords.cpp:139:1: error: 'virtual' outside class declaration
+ virtual std::string Vector::toString() const { return "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";}
+ ^~~~~~~
+Coords.cpp:142:1: error: prototype for 'coords::Vector_Lit::Vector_Lit(clang::CXXConstructExpr*, ast::Scalar)' does not match any in class 'coords::Vector_Lit'
+ Vector_Lit::Vector_Lit(clang::CXXConstructExpr* ast, ast::Scalar a)
+ ^~~~~~~~~~
+In file included from Coords.cpp:1:0:
+Coords.h:207:7: error: candidates are: constexpr coords::Vector_Lit::Vector_Lit(coords::Vector_Lit&&)
+ class Vector_Lit : public Vector {
+       ^~~~~~~~~~
+Coords.h:207:7: error:                 constexpr coords::Vector_Lit::Vector_Lit(const coords::Vector_Lit&)
+Coords.h:209:3: error:                 coords::Vector_Lit::Vector_Lit(const clang::CXXConstructExpr*, ast::Scalar)
+   Vector_Lit(const clang::CXXConstructExpr *ast, ast::Scalar a);
+   ^~~~~~~~~~
+Coords.cpp:149:1: error: prototype for 'coords::Vector_Var::Vector_Var(const clang::CXXConstructExpr*, coords::VecVarExpr*)' does not match any in class 'coords::Vector_Var'
+ Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, coords::VecVarExpr* expr)
+ ^~~~~~~~~~
+In file included from Coords.cpp:1:0:
+Coords.h:216:7: error: candidates are: constexpr coords::Vector_Var::Vector_Var(coords::Vector_Var&&)
+ class Vector_Var : public Vector {
+       ^~~~~~~~~~
+Coords.h:216:7: error:                 constexpr coords::Vector_Var::Vector_Var(const coords::Vector_Var&)
+Coords.h:218:3: error:                 coords::Vector_Var::Vector_Var(const clang::CXXConstructExpr*, const coords::VecVarExpr*)
+   Vector_Var(const clang::CXXConstructExpr *ast, const coords::VecVarExpr *expr);
+   ^~~~~~~~~~
+Coords.cpp:153:13: error: prototype for 'std::__cxx11::string coords::Vector_Var::toString()' does not match any in class 'coords::Vector_Var'
+ std::string Vector_Var::toString()  {
+             ^~~~~~~~~~
+In file included from Coords.cpp:1:0:
+Coords.h:219:23: error: candidate is: virtual std::__cxx11::string coords::Vector_Var::toString() const
+   virtual std::string toString() const;
+                       ^~~~~~~~
+Coords.cpp:157:13: error: prototype for 'std::__cxx11::string coords::Vector_Expr::toString()' does not match any in class 'coords::Vector_Expr'
+ std::string Vector_Expr::toString()  {
+             ^~~~~~~~~~~
+In file included from Coords.cpp:1:0:
+Coords.h:230:23: error: candidate is: virtual std::__cxx11::string coords::Vector_Expr::toString() const
+   virtual std::string toString() const;
+                       ^~~~~~~~
+Coords.cpp:161:1: error: prototype for 'coords::Vector_Expr::Vector_Expr(clang::CXXConstructExpr, coords::VecExpr*)' does not match any in class 'coords::Vector_Expr'
+ Vector_Expr::Vector_Expr(const clang::CXXConstructExpr ast,
+ ^~~~~~~~~~~
+In file included from Coords.cpp:1:0:
+Coords.h:227:7: error: candidates are: constexpr coords::Vector_Expr::Vector_Expr(coords::Vector_Expr&&)
+ class Vector_Expr : public Vector {
+       ^~~~~~~~~~~
+Coords.h:227:7: error:                 constexpr coords::Vector_Expr::Vector_Expr(const coords::Vector_Expr&)
+Coords.h:229:3: error:                 coords::Vector_Expr::Vector_Expr(const clang::CXXConstructExpr*, coords::VecExpr*)
+   Vector_Expr(const clang::CXXConstructExpr *ast, coords::VecExpr *expr);
+   ^~~~~~~~~~~
+Coords.cpp:176:1: error: prototype for 'coords::Vector_Def::Vector_Def(clang::DeclStmt, coords::VecIdent*, coords::VecExpr*)' does not match any in class 'coords::Vector_Def'
+ Vector_Def::Vector_Def(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be)
+ ^~~~~~~~~~
+In file included from Coords.cpp:1:0:
+Coords.h:241:7: error: candidates are: constexpr coords::Vector_Def::Vector_Def(coords::Vector_Def&&)
+ class Vector_Def : public Coords {
+       ^~~~~~~~~~
+Coords.h:241:7: error:                 constexpr coords::Vector_Def::Vector_Def(const coords::Vector_Def&)
+Coords.h:243:3: error:                 coords::Vector_Def::Vector_Def(const clang::DeclStmt*, coords::VecIdent*, coords::VecExpr*)
+   Vector_Def(const clang::DeclStmt *def, coords::VecIdent *bv,
+   ^~~~~~~~~~
+Coords.cpp: In member function 'coords::VecIdent* coords::Vector_Def::getIdent() const':
+Coords.cpp:185:12: error: 'ident_' was not declared in this scope
+     return ident_;
+            ^~~~~~
+Coords.cpp:185:12: note: suggested alternative: 'id_t'
+     return ident_;
+            ^~~~~~
+            id_t
+Coords.cpp: In member function 'coords::VecExpr* coords::Vector_Def::getExpr() const':
+Coords.cpp:189:12: error: 'expr_' was not declared in this scope
+     return expr_;
+            ^~~~~
+Coords.cpp:189:12: note: suggested alternative: 'exp10'
+     return expr_;
+            ^~~~~
+            exp10
+Coords.cpp: In member function 'virtual bool coords::Coords::operator==(const coords::Coords&) const':
+Coords.cpp:37:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVecIdent(coords::VecIdent*, domain::VecIdent*)':
+CoordsToDomain.cpp:11:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::VecIdent, domain::VecIdent*>)'
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:578:7: note: candidate: std::pair<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator, bool> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(const value_type&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: note:   no known conversion for argument 1 from 'std::pair<coords::VecIdent, domain::VecIdent*>' to 'const value_type& {aka const std::pair<const coords::VecExpr, domain::VecExpr*>&}'
+/usr/include/c++/7/bits/unordered_map.h:584:7: note: candidate: std::pair<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator, bool> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type&&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: note:   no known conversion for argument 1 from 'std::pair<coords::VecIdent, domain::VecIdent*>' to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::value_type&& {aka std::pair<const coords::VecExpr, domain::VecExpr*>&&}'
+/usr/include/c++/7/bits/unordered_map.h:591:2: note: candidate: template<class _Pair, class> std::pair<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator, bool> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_Pair&&) [with _Pair = _Pair; <template-parameter-2-2> = <template-parameter-1-2>; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: note:   template argument deduction/substitution failed:
+/usr/include/c++/7/bits/unordered_map.h:587:32: error: no type named 'type' in 'struct std::enable_if<false, void>'
+       template<typename _Pair, typename = typename
+                                ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:618:7: note: candidate: std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator, const value_type&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator = std::__detail::_Node_const_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(const_iterator __hint, const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:618:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/bits/unordered_map.h:624:7: note: candidate: std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator, std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type&&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator = std::__detail::_Node_const_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(const_iterator __hint, value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:624:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/bits/unordered_map.h:631:2: note: candidate: template<class _Pair, class> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator, _Pair&&) [with _Pair = _Pair; <template-parameter-2-2> = <template-parameter-1-2>; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(const_iterator __hint, _Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:631:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:11:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:646:2: note: candidate: template<class _InputIterator> void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_InputIterator, _InputIterator) [with _InputIterator = _InputIterator; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_InputIterator __first, _InputIterator __last)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:11:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:657:7: note: candidate: void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::initializer_list<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::value_type>) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: note:   no known conversion for argument 1 from 'std::pair<coords::VecIdent, domain::VecIdent*>' to 'std::initializer_list<std::pair<const coords::VecExpr, domain::VecExpr*> >'
+CoordsToDomain.cpp: In member function 'domain::VecIdent* coords2domain::CoordsToDomain::getVecIdent(coords::VecIdent*) const':
+CoordsToDomain.cpp:15:27: error: no match for 'operator[]' (operand types are 'const std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' and 'coords::VecIdent')
+    return interpExpression[*c];
+                           ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:975:7: note: candidate: std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::mapped_type& std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::operator[](const key_type&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::mapped_type = domain::VecExpr*; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::key_type = coords::VecExpr]
+       operator[](const key_type& __k)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:975:7: note:   no known conversion for argument 1 from 'coords::VecIdent' to 'const key_type& {aka const coords::VecExpr&}'
+/usr/include/c++/7/bits/unordered_map.h:979:7: note: candidate: std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::mapped_type& std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::operator[](std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::key_type&&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::mapped_type = domain::VecExpr*; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::key_type = coords::VecExpr]
+       operator[](key_type&& __k)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:979:7: note:   no known conversion for argument 1 from 'coords::VecIdent' to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::key_type&& {aka coords::VecExpr&&}'
+CoordsToDomain.cpp: In member function 'domain::VecVarExpr* coords2domain::CoordsToDomain::getVecVarExpr(coords::VecVarExpr*) const':
+CoordsToDomain.cpp:57:30: error: passing 'const std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' as 'this' argument discards qualifiers [-fpermissive]
+    return interpExpression[*c];
+                              ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:975:7: note:   in call to 'std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::mapped_type& std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::operator[](const key_type&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::mapped_type = domain::VecExpr*; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::key_type = coords::VecExpr]'
+       operator[](const key_type& __k)
+       ^~~~~~~~
+CoordsToDomain.cpp:57:30: error: invalid conversion from 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::mapped_type {aka domain::VecExpr*}' to 'domain::VecVarExpr*' [-fpermissive]
+    return interpExpression[*c];
+                              ^
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:70:24: error: prototype for 'domain::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(coords::VecVarExpr*) const' does not match any in class 'coords2domain::CoordsToDomain'
+ domain::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(coords::VecVarExpr* c) const {
+                        ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:52:25: error: candidates are: coords::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(domain::VecVecAddExpr*) const
+  coords::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.h:51:25: error:                 domain::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(coords::VecVecAddExpr*) const
+  domain::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp:74:24: error: prototype for 'coords::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(domain::VecVarExpr*) const' does not match any in class 'coords2domain::CoordsToDomain'
+ coords::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(domain::VecVarExpr* d) const {
+                        ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:52:25: error: candidates are: coords::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(domain::VecVecAddExpr*) const
+  coords::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.h:51:25: error:                 domain::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(coords::VecVecAddExpr*) const
+  domain::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVector_Lit(coords::Vector*, domain::Vector_Lit*)':
+CoordsToDomain.cpp:81:45: error: 'c' was not declared in this scope
+     interpExpression.insert(std::make_pair(*c, d));
+                                             ^
+CoordsToDomain.cpp:81:48: error: 'd' was not declared in this scope
+     interpExpression.insert(std::make_pair(*c, d));
+                                                ^
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:84:21: error: prototype for 'domain::Vector_Lit* coords2domain::CoordsToDomain::getVector(coords::Vector_Lit*) const' does not match any in class 'coords2domain::CoordsToDomain'
+ domain::Vector_Lit *CoordsToDomain::getVector(coords::Vector_Lit* c) const {
+                     ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:62:18: error: candidates are: coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Expr*) const
+  coords::Vector *getVector(domain::Vector_Expr* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:61:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Expr*) const
+  domain::Vector *getVector(coords::Vector_Expr* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:58:18: error:                 coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Lit*) const
+  coords::Vector *getVector(domain::Vector_Lit* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:57:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Lit*) const
+  domain::Vector *getVector(coords::Vector_Lit* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.cpp:88:21: error: prototype for 'coords::Vector_Lit* coords2domain::CoordsToDomain::getVector(domain::Vector_Lit*) const' does not match any in class 'coords2domain::CoordsToDomain'
+ coords::Vector_Lit *CoordsToDomain::getVector(domain::Vector_Lit* d) const {
+                     ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:62:18: error: candidates are: coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Expr*) const
+  coords::Vector *getVector(domain::Vector_Expr* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:61:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Expr*) const
+  domain::Vector *getVector(coords::Vector_Expr* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:58:18: error:                 coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Lit*) const
+  coords::Vector *getVector(domain::Vector_Lit* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:57:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Lit*) const
+  domain::Vector *getVector(coords::Vector_Lit* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVector_Expr(coords::Vector*, domain::Vector_Expr*)':
+CoordsToDomain.cpp:93:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::Vector, domain::Vector_Expr*>)'
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:578:7: note: candidate: std::pair<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator, bool> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(const value_type&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: note:   no known conversion for argument 1 from 'std::pair<coords::Vector, domain::Vector_Expr*>' to 'const value_type& {aka const std::pair<const coords::VecExpr, domain::VecExpr*>&}'
+/usr/include/c++/7/bits/unordered_map.h:584:7: note: candidate: std::pair<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator, bool> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type&&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: note:   no known conversion for argument 1 from 'std::pair<coords::Vector, domain::Vector_Expr*>' to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::value_type&& {aka std::pair<const coords::VecExpr, domain::VecExpr*>&&}'
+/usr/include/c++/7/bits/unordered_map.h:591:2: note: candidate: template<class _Pair, class> std::pair<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator, bool> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_Pair&&) [with _Pair = _Pair; <template-parameter-2-2> = <template-parameter-1-2>; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: note:   template argument deduction/substitution failed:
+/usr/include/c++/7/bits/unordered_map.h:587:32: error: no type named 'type' in 'struct std::enable_if<false, void>'
+       template<typename _Pair, typename = typename
+                                ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:618:7: note: candidate: std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator, const value_type&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator = std::__detail::_Node_const_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(const_iterator __hint, const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:618:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/bits/unordered_map.h:624:7: note: candidate: std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator, std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type&&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator = std::__detail::_Node_const_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(const_iterator __hint, value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:624:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/bits/unordered_map.h:631:2: note: candidate: template<class _Pair, class> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator, _Pair&&) [with _Pair = _Pair; <template-parameter-2-2> = <template-parameter-1-2>; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(const_iterator __hint, _Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:631:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:93:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:646:2: note: candidate: template<class _InputIterator> void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_InputIterator, _InputIterator) [with _InputIterator = _InputIterator; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_InputIterator __first, _InputIterator __last)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:93:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:657:7: note: candidate: void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::initializer_list<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::value_type>) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: note:   no known conversion for argument 1 from 'std::pair<coords::Vector, domain::Vector_Expr*>' to 'std::initializer_list<std::pair<const coords::VecExpr, domain::VecExpr*> >'
+CoordsToDomain.cpp: In member function 'domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Expr*) const':
+CoordsToDomain.cpp:97:32: error: passing 'const std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' as 'this' argument discards qualifiers [-fpermissive]
+      return interpExpression[*c];
+                                ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:975:7: note:   in call to 'std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::mapped_type& std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::operator[](const key_type&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::mapped_type = domain::VecExpr*; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::key_type = coords::VecExpr]'
+       operator[](const key_type& __k)
+       ^~~~~~~~
+CoordsToDomain.cpp:97:32: error: cannot convert 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::mapped_type {aka domain::VecExpr*}' to 'domain::Vector*' in return
+      return interpExpression[*c];
+                                ^
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:100:71: error: expected ',' or '...' before 'const'
+ coords::Vector_Expr *CoordsToDomain::getVector(domain::Vector_Expr* d const) {
+                                                                       ^~~~~
+CoordsToDomain.cpp:100:22: error: prototype for 'coords::Vector_Expr* coords2domain::CoordsToDomain::getVector(domain::Vector_Expr*)' does not match any in class 'coords2domain::CoordsToDomain'
+ coords::Vector_Expr *CoordsToDomain::getVector(domain::Vector_Expr* d const) {
+                      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:62:18: error: candidates are: coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Expr*) const
+  coords::Vector *getVector(domain::Vector_Expr* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.cpp:96:17: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Expr*) const
+ domain::Vector *CoordsToDomain::getVector(coords::Vector_Expr* c) const {
+                 ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:58:18: error:                 coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Lit*) const
+  coords::Vector *getVector(domain::Vector_Lit* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:57:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Lit*) const
+  domain::Vector *getVector(coords::Vector_Lit* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVector_Def(coords::Vector_Def*, domain::Vector_Def*)':
+CoordsToDomain.cpp:107:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::Vector_Def, domain::Vector_Def*>)'
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:578:7: note: candidate: std::pair<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator, bool> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(const value_type&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: note:   no known conversion for argument 1 from 'std::pair<coords::Vector_Def, domain::Vector_Def*>' to 'const value_type& {aka const std::pair<const coords::VecExpr, domain::VecExpr*>&}'
+/usr/include/c++/7/bits/unordered_map.h:584:7: note: candidate: std::pair<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator, bool> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type&&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: note:   no known conversion for argument 1 from 'std::pair<coords::Vector_Def, domain::Vector_Def*>' to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::value_type&& {aka std::pair<const coords::VecExpr, domain::VecExpr*>&&}'
+/usr/include/c++/7/bits/unordered_map.h:591:2: note: candidate: template<class _Pair, class> std::pair<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::iterator, bool> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_Pair&&) [with _Pair = _Pair; <template-parameter-2-2> = <template-parameter-1-2>; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: note:   template argument deduction/substitution failed:
+/usr/include/c++/7/bits/unordered_map.h:587:32: error: no type named 'type' in 'struct std::enable_if<false, void>'
+       template<typename _Pair, typename = typename
+                                ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:618:7: note: candidate: std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator, const value_type&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator = std::__detail::_Node_const_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(const_iterator __hint, const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:618:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/bits/unordered_map.h:624:7: note: candidate: std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator, std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type&&) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator = std::__detail::_Node_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator = std::__detail::_Node_const_iterator<std::pair<const coords::VecExpr, domain::VecExpr*>, false, true>; std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(const_iterator __hint, value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:624:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/bits/unordered_map.h:631:2: note: candidate: template<class _Pair, class> std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::iterator std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::const_iterator, _Pair&&) [with _Pair = _Pair; <template-parameter-2-2> = <template-parameter-1-2>; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(const_iterator __hint, _Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:631:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:107:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:646:2: note: candidate: template<class _InputIterator> void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_InputIterator, _InputIterator) [with _InputIterator = _InputIterator; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_InputIterator __first, _InputIterator __last)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:107:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:657:7: note: candidate: void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(std::initializer_list<typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::value_type>) [with _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >; typename std::_Hashtable<_Key, std::pair<const _Key, _Tp>, _Alloc, std::__detail::_Select1st, _Pred, _Hash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<std::__not_<std::__and_<std::__is_fast_hash<_Hash>, std::__detail::__is_noexcept_hash<_Key, _Hash> > >::value, false, true> >::value_type = std::pair<const coords::VecExpr, domain::VecExpr*>]
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: note:   no known conversion for argument 1 from 'std::pair<coords::Vector_Def, domain::Vector_Def*>' to 'std::initializer_list<std::pair<const coords::VecExpr, domain::VecExpr*> >'
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:110:58: error: non-member function 'domain::Vector_Def* getVector_Def(coords::Vector_Def*)' cannot have cv-qualifier
+ domain::Vector_Def *getVector_Def(coords::Vector_Def* c) const {
+                                                          ^~~~~
+CoordsToDomain.cpp: In function 'domain::Vector_Def* getVector_Def(coords::Vector_Def*)':
+CoordsToDomain.cpp:111:11: error: 'interpExpression' was not declared in this scope
+    return interpExpression[*c];
+           ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:114:58: error: non-member function 'coords::Vector_Def* getVector_Def(domain::Vector_Def*)' cannot have cv-qualifier
+ coords::Vector_Def *getVector_Def(domain::Vector_Def* d) const {
+                                                          ^~~~~
+CoordsToDomain.cpp:119:6: error: prototype for 'void coords2domain::CoordsToDomain::dump() const' does not match any in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::dump() const {
+      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:70:7: error: candidate is: void coords2domain::CoordsToDomain::dump()
+  void dump();
+       ^~~~
+main.cpp: In member function 'virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:51:17: warning: unused variable 'context' [-Wunused-variable]
+     ASTContext *context = Result.Context;
+                 ^~~~~~~
+main.cpp: In member function 'virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:180:90: error: no matching function for call to 'interp::Interpretation::mkVector_Expr(const clang::CXXMemberCallExpr*&, const domain::VecExpr*&)'
+     return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr/*, context*/);
+                                                                                          ^
+In file included from main.cpp:15:0:
+Interpretation.h:27:10: note: candidate: void interp::Interpretation::mkVector_Expr(ast::Vector_Expr*, coords::VecExpr*)
+     void mkVector_Expr(ast::Vector_Expr *ast, coords::VecExpr* expr/*, clang::ASTContext *context*/);
+          ^~~~~~~~~~~~~
+Interpretation.h:27:10: note:   no known conversion for argument 1 from 'const clang::CXXMemberCallExpr*' to 'ast::Vector_Expr* {aka const clang::CXXConstructExpr*}'
+main.cpp:180:90: error: return-statement with a value, in function returning 'void' [-fpermissive]
+     return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr/*, context*/);
+                                                                                          ^
+main.cpp: In member function 'virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:451:54: error: void value not ignored as it ought to be
+     domain::VecIdent *id = interp_.mkVecIdent(vardecl);
+                                                      ^
+main.cpp:452:43: error: 'class interp::Interpretation' has no member named 'getCoords'; did you mean 'ast2coords_'?
+     coords::VecIdent *id_coords = interp_.getCoords(vardecl);
+                                           ^~~~~~~~~
+                                           ast2coords_
+main.cpp:474:50: error: 'class interp::Interpretation' has no member named 'getCoords'; did you mean 'ast2coords_'?
+     const coords::VecExpr *expr_coords = interp_.getCoords(expr);
+                                                  ^~~~~~~~~
+                                                  ast2coords_
+main.cpp:478:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     interp_->mkVector_Def(declstmt, id_coords, expr_coords);
+            ^~
+main.cpp:447:20: warning: unused variable 'sm' [-Wunused-variable]
+     SourceManager &sm = context->getSourceManager();
+                    ^~
+main.cpp:451:23: warning: unused variable 'id' [-Wunused-variable]
+     domain::VecIdent *id = interp_.mkVecIdent(vardecl);
+                       ^~
+main.cpp: In member function 'virtual void MyFrontendAction::EndSourceFileAction()':
+main.cpp:532:31: error: 'class interp::Interpretation' has no member named 'isConsistent'
+     bool consistent = interp_.isConsistent();
+                               ^~~~~~~~~~~~
+main.cpp: In function 'int main(int, const char**)':
+main.cpp:551:11: error: 'class interp::Interpretation' has no member named 'addSpace'
+   interp_.addSpace("S1");
+           ^~~~~~~~
+main.cpp:552:11: error: 'class interp::Interpretation' has no member named 'addSpace'
+   interp_.addSpace("S2");
+           ^~~~~~~~
+Domain.cpp: In member function 'std::vector<domain::Space>& domain::Domain::getAllSpaces()':
+Domain.cpp:38:12: error: invalid initialization of reference of type 'std::vector<domain::Space>&' from expression of type 'std::vector<domain::Space*>'
+     return spaces;
+            ^~~~~~
+Domain.cpp: In member function 'domain::VecVarExpr* domain::Domain::mkVecVarExpr(domain::Space&, coords::VecVarExpr*)':
+Domain.cpp:93:12: error: invalid conversion from 'domain::VecExpr*' to 'domain::VecVarExpr*' [-fpermissive]
+     return var;
+            ^~~
+Domain.cpp: At global scope:
+Domain.cpp:111:24: error: prototype for 'const domain::VecExpr& domain::VecVecAddExpr::getArgVecExpr()' does not match any in class 'domain::VecVecAddExpr'
+ const domain::VecExpr &VecVecAddExpr::getArgVecExpr()
+                        ^~~~~~~~~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:169:19: error: candidate is: domain::VecExpr* domain::VecVecAddExpr::getArgVecExpr()
+  domain::VecExpr *getArgVecExpr();
+                   ^~~~~~~~~~~~~
+Domain.cpp: In member function 'domain::Vector_Lit* domain::Domain::mkVector_Lit(domain::Space&, coords::Vector*)':
+Domain.cpp:123:12: error: invalid conversion from 'domain::Vector*' to 'domain::Vector_Lit*' [-fpermissive]
+     return vec;
+            ^~~
+Domain.cpp: At global scope:
+Domain.cpp:126:14: error: prototype for 'domain::Vector_Expr* domain::Domain::mkVector_Expr(domain::Space&, coords::Vector*, domain::VecExpr*)' does not match any in class 'domain::Domain'
+ Vector_Expr* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::VecExpr* exp) {
+              ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:56:15: error: candidate is: domain::Vector_Expr* domain::Domain::mkVector_Expr(domain::Space&, coords::Vector*, coords::VecExpr*)
+  Vector_Expr* mkVector_Expr(Space& space, coords::Vector* v, coords::VecExpr *vec);
+               ^~~~~~~~~~~~~
+Domain.cpp:148:13: error: prototype for 'domain::Vector_Def* domain::Domain::mkVector_Def(const coords::Vector_Def*, domain::VecIdent*, domain::VecExpr*)' does not match any in class 'domain::Domain'
+ Vector_Def *Domain::mkVector_Def(const coords::Vector_Def *v, VecIdent* i,  domain::VecExpr* e)
+             ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:59:14: error: candidate is: domain::Vector_Def* domain::Domain::mkVector_Def(coords::Vector_Def*, coords::VecIdent*, coords::VecExpr*)
+  Vector_Def* mkVector_Def(coords::Vector_Def* vardecl, coords::VecIdent* identifier, coords::VecExpr* expression);
+              ^~~~~~~~~~~~
+Domain.cpp: In member function 'void domain::Domain::dumpVecIdents()':
+Domain.cpp:167:24: error: request for member 'toString' in 'i', which is of pointer type 'domain::VecIdent*' (maybe you meant to use '->' ?)
+         std::cerr << i.toString() << "\n";
+                        ^~~~~~~~
+Domain.cpp: In member function 'void domain::Domain::dumpVector_Defs()':
+Domain.cpp:181:24: error: request for member 'toString' in 'b', which is of pointer type 'domain::Vector_Def*' (maybe you meant to use '->' ?)
+         std::cerr << b.toString() << "\n";
+                        ^~~~~~~~
+Makefile:110: recipe for target '../build/ASTMatcher' failed
+make: *** [../build/ASTMatcher] Error 1
