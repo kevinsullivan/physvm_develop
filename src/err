@@ -1,0 +1,1894 @@
+-----------------------------------------------
+Using LLVM_SRC_PATH = /llvm
+Using LLVM_BUILD_PATH = /llvm/build
+Using LLVM_BIN_PATH = /llvm/build/bin
+-----------------------------------------------
+g++ -O0 -g -Wall `/llvm/build/bin/llvm-config --cxxflags` -I/llvm/tools/clang/include -I/llvm/build/tools/clang/include ASTToCoords.cpp AST.cpp Interpretation.cpp Oracle.cpp Checker.cpp Coords.cpp CoordsToDomain.cpp main.cpp Domain.cpp \
+	-Wl,--start-group -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangDriver -lclangEdit -lclangFrontend -lclangFrontendTool -lclangLex -lclangParse -lclangSema -lclangEdit -lclangRewrite -lclangRewriteFrontend -lclangStaticAnalyzerFrontend -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangCrossTU -lclangIndex -lclangSerialization -lclangToolingCore -lclangTooling -lclangFormat -Wl,--end-group `/llvm/build/bin/llvm-config --ldflags --libs --system-libs` -o ../build/ASTMatcher
+ASTToCoords.cpp: In member function 'coords::Vector_Var* ast2coords::ASTToCoords::mkVector_Var(ast::Vector_Var*, coords::VecVarExpr*)':
+ASTToCoords.cpp:72:59: error: no matching function for call to 'coords::Vector_Var::Vector_Var(ast::Vector_Var*&)'
+     coords::Vector_Var *coord = new coords::Vector_Var(ast);
+                                                           ^
+In file included from ASTToCoords.h:6:0,
+                 from ASTToCoords.cpp:1:
+Coords.h:167:3: note: candidate: coords::Vector_Var::Vector_Var(clang::CXXConstructExpr*, const coords::VecVarExpr*)
+   Vector_Var(clang::CXXConstructExpr *ast, const coords::VecVarExpr *expr);
+   ^~~~~~~~~~
+Coords.h:167:3: note:   candidate expects 2 arguments, 1 provided
+Coords.h:165:7: note: candidate: constexpr coords::Vector_Var::Vector_Var(const coords::Vector_Var&)
+ class Vector_Var : public Vector {
+       ^~~~~~~~~~
+Coords.h:165:7: note:   no known conversion for argument 1 from 'ast::Vector_Var* {aka const clang::CXXConstructExpr*}' to 'const coords::Vector_Var&'
+Coords.h:165:7: note: candidate: constexpr coords::Vector_Var::Vector_Var(coords::Vector_Var&&)
+Coords.h:165:7: note:   no known conversion for argument 1 from 'ast::Vector_Var* {aka const clang::CXXConstructExpr*}' to 'coords::Vector_Var&&'
+ASTToCoords.cpp: In member function 'coords::Vector_Def* ast2coords::ASTToCoords::mkVector_Def(ast::Vector_Def*, coords::VecIdent*, coords::VecExpr*)':
+ASTToCoords.cpp:94:1: warning: no return statement in function returning non-void [-Wreturn-type]
+ }
+ ^
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Interpretation.h:5,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>'
+CoordsToDomain.h:85:80:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::VecExprHasher) (const coords::VecExpr&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Interpretation.h:4,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>'
+CoordsToDomain.h:85:80:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Interpretation.h:5,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>':
+CoordsToDomain.h:85:80:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Interpretation.h:5,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector, domain::Vector*, coords::VectorHasher>'
+CoordsToDomain.h:86:77:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::VectorHasher) (const coords::Vector&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Interpretation.h:4,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector, domain::Vector*, coords::VectorHasher>'
+CoordsToDomain.h:86:77:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Interpretation.h:5,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::Vector, domain::Vector*, coords::VectorHasher>':
+CoordsToDomain.h:86:77:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Interpretation.h:5,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecIdent, domain::VecIdent*, coords::VecIdentHasher>'
+CoordsToDomain.h:87:83:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::VecIdentHasher) (const coords::VecIdent&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Interpretation.h:4,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecIdent, domain::VecIdent*, coords::VecIdentHasher>'
+CoordsToDomain.h:87:83:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Interpretation.h:5,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::VecIdent, domain::VecIdent*, coords::VecIdentHasher>':
+CoordsToDomain.h:87:83:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Interpretation.h:5,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector_Def, domain::Vector_Def*, coords::Vector_DefHasher>'
+CoordsToDomain.h:88:89:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::Vector_DefHasher) (const coords::Vector_Def&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Interpretation.h:4,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector_Def, domain::Vector_Def*, coords::Vector_DefHasher>'
+CoordsToDomain.h:88:89:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Interpretation.h:5,
+                 from Interpretation.cpp:13:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::Vector_Def, domain::Vector_Def*, coords::Vector_DefHasher>':
+CoordsToDomain.h:88:89:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+Interpretation.cpp:59:6: error: prototype for 'void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, coords::VecExpr*, coords::VecExpr*)' does not match any in class 'interp::Interpretation'
+ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, coords::VecExpr *mem_coords, coords::VecExpr *arg_coords) {
+      ^~~~~~~~~~~~~~
+In file included from Interpretation.cpp:13:0:
+Interpretation.h:24:10: error: candidate is: void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)
+     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem,
+          ^~~~~~~~~~~~~~~
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector_Lit(ast::Vector_Lit*)':
+Interpretation.cpp:114:67: error: no matching function for call to 'domain::Domain::mkVector_Lit(coords::Vector_Lit*&)'
+     domain::Vector_Lit *dom_var = domain_->mkVector_Lit(vec_coords);
+                                                                   ^
+In file included from Oracle.h:7:0,
+                 from Interpretation.h:8,
+                 from Interpretation.cpp:13:
+Domain.h:54:14: note: candidate: domain::Vector_Lit* domain::Domain::mkVector_Lit(domain::Space&, coords::Vector*)
+  Vector_Lit* mkVector_Lit(Space& space, coords::Vector* v/*, domain::VecExpr *vec*/);
+              ^~~~~~~~~~~~
+Domain.h:54:14: note:   candidate expects 2 arguments, 1 provided
+Interpretation.cpp: At global scope:
+Interpretation.cpp:132:6: error: prototype for 'void interp::Interpretation::mkVector_Expr(ast::Vector_Expr*, coords::VecExpr*)' does not match any in class 'interp::Interpretation'
+ void Interpretation::mkVector_Expr(
+      ^~~~~~~~~~~~~~
+In file included from Interpretation.cpp:13:0:
+Interpretation.h:27:10: error: candidate is: void interp::Interpretation::mkVector_Expr(ast::Vector_Expr*, domain::VecExpr*)
+     void mkVector_Expr(ast::Vector_Expr *ast, domain::VecExpr* expr/*, clang::ASTContext *context*/);
+          ^~~~~~~~~~~~~
+Interpretation.cpp: In member function 'void interp::Interpretation::mkVector_Def(ast::Vector_Def*, coords::VecIdent*, coords::VecExpr*)':
+Interpretation.cpp:171:56: error: no matching function for call to 'domain::Domain::mkVector_Def(ast::Vector_Def*&, coords::VecIdent*&, coords::VecExpr*&)'
+       domain_->mkVector_Def(ast, id_coords, expr_coords);
+                                                        ^
+In file included from Oracle.h:7:0,
+                 from Interpretation.h:8,
+                 from Interpretation.cpp:13:
+Domain.h:59:14: note: candidate: domain::Vector_Def* domain::Domain::mkVector_Def(coords::Vector_Def*, domain::VecIdent*, domain::VecExpr*)
+  Vector_Def* mkVector_Def(coords::Vector_Def* vardecl, VecIdent* identifier, VecExpr* expression);
+              ^~~~~~~~~~~~
+Domain.h:59:14: note:   no known conversion for argument 1 from 'ast::Vector_Def* {aka const clang::DeclStmt*}' to 'coords::Vector_Def*'
+Coords.cpp:3:0: error: unterminated #ifndef
+ #ifndef COORDS_H
+ 
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>'
+CoordsToDomain.h:85:80:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::VecExprHasher) (const coords::VecExpr&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from CoordsToDomain.h:4,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>'
+CoordsToDomain.h:85:80:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>':
+CoordsToDomain.h:85:80:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector, domain::Vector*, coords::VectorHasher>'
+CoordsToDomain.h:86:77:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::VectorHasher) (const coords::Vector&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from CoordsToDomain.h:4,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector, domain::Vector*, coords::VectorHasher>'
+CoordsToDomain.h:86:77:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::Vector, domain::Vector*, coords::VectorHasher>':
+CoordsToDomain.h:86:77:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecIdent, domain::VecIdent*, coords::VecIdentHasher>'
+CoordsToDomain.h:87:83:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::VecIdentHasher) (const coords::VecIdent&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from CoordsToDomain.h:4,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecIdent, domain::VecIdent*, coords::VecIdentHasher>'
+CoordsToDomain.h:87:83:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::VecIdent, domain::VecIdent*, coords::VecIdentHasher>':
+CoordsToDomain.h:87:83:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector_Def, domain::Vector_Def*, coords::Vector_DefHasher>'
+CoordsToDomain.h:88:89:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::Vector_DefHasher) (const coords::Vector_Def&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from CoordsToDomain.h:4,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector_Def, domain::Vector_Def*, coords::Vector_DefHasher>'
+CoordsToDomain.h:88:89:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::Vector_Def, domain::Vector_Def*, coords::Vector_DefHasher>':
+CoordsToDomain.h:88:89:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVecIdent(coords::VecIdent*, domain::VecIdent*)':
+CoordsToDomain.cpp:11:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::VecIdent, domain::VecIdent*>)'
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:646:2: note: candidate: template<class _InputIterator> void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_InputIterator, _InputIterator) [with _InputIterator = _InputIterator; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_InputIterator __first, _InputIterator __last)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:11:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+CoordsToDomain.cpp: In member function 'domain::VecIdent* coords2domain::CoordsToDomain::getVecIdent(coords::VecIdent*) const':
+CoordsToDomain.cpp:15:27: error: no match for 'operator[]' (operand types are 'const std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' and 'coords::VecIdent')
+    return interpExpression[*c];
+                           ^
+CoordsToDomain.cpp: In member function 'domain::VecExpr* coords2domain::CoordsToDomain::getVecExpr(coords::VecExpr*)':
+CoordsToDomain.cpp:27:27: error: no match for 'operator[]' (operand types are 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' and 'coords::VecExpr')
+    return interpExpression[*c];
+                           ^
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:34:44: error: variable or field 'putVecLitExpr' declared void
+ void CoordsToDomain::putVecLitExpr(coords::VecLitExpr d, domain::VecLitExpr d) {
+                                            ^~~~~~~~~~
+CoordsToDomain.cpp:34:44: error: 'VecLitExpr' is not a member of 'coords'
+CoordsToDomain.cpp:34:44: note: suggested alternative: 'VecVarExpr'
+ void CoordsToDomain::putVecLitExpr(coords::VecLitExpr d, domain::VecLitExpr d) {
+                                            ^~~~~~~~~~
+                                            VecVarExpr
+CoordsToDomain.cpp:34:66: error: 'VecLitExpr' is not a member of 'domain'
+ void CoordsToDomain::putVecLitExpr(coords::VecLitExpr d, domain::VecLitExpr d) {
+                                                                  ^~~~~~~~~~
+CoordsToDomain.cpp:34:66: note: suggested alternative: 'VecVarExpr'
+ void CoordsToDomain::putVecLitExpr(coords::VecLitExpr d, domain::VecLitExpr d) {
+                                                                  ^~~~~~~~~~
+                                                                  VecVarExpr
+CoordsToDomain.cpp:40:9: error: 'VecLitExpr' in namespace 'domain' does not name a type
+ domain::VecLitExpr *CoordsToDomain::getLitInterp(coords::VecLitExpr c) const {
+         ^~~~~~~~~~
+CoordsToDomain.cpp:44:9: error: 'VecLitExpr' in namespace 'coords' does not name a type
+ coords::VecLitExpr *CoordsToDomain::getLitInterp(domain::VecLitExpr d) const {
+         ^~~~~~~~~~
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::PutVecVarExpr(coords::VecVarExpr*, domain::VecVarExpr*)':
+CoordsToDomain.cpp:51:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::VecVarExpr, domain::VecVarExpr*>)'
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:646:2: note: candidate: template<class _InputIterator> void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_InputIterator, _InputIterator) [with _InputIterator = _InputIterator; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_InputIterator __first, _InputIterator __last)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:51:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+CoordsToDomain.cpp: In member function 'domain::VecVarExpr* coords2domain::CoordsToDomain::getVecVarExpr(coords::VecVarExpr*) const':
+CoordsToDomain.cpp:55:27: error: no match for 'operator[]' (operand types are 'const std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' and 'coords::VecVarExpr')
+    return interpExpression[*c];
+                           ^
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::PutVecVecAddExpr(coords::VecVecAddExpr*, domain::VecVecAddExpr*)':
+CoordsToDomain.cpp:65:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::VecVecAddExpr, domain::VecVecAddExpr*>)'
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:646:2: note: candidate: template<class _InputIterator> void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_InputIterator, _InputIterator) [with _InputIterator = _InputIterator; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_InputIterator __first, _InputIterator __last)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:65:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:68:24: error: prototype for 'domain::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(coords::VecVarExpr*) const' does not match any in class 'coords2domain::CoordsToDomain'
+ domain::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(coords::VecVarExpr* c) const {
+                        ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:52:25: error: candidates are: coords::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(domain::VecVecAddExpr*) const
+  coords::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.h:51:25: error:                 domain::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(coords::VecVecAddExpr*) const
+  domain::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp:72:24: error: prototype for 'coords::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(domain::VecVarExpr*) const' does not match any in class 'coords2domain::CoordsToDomain'
+ coords::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(domain::VecVarExpr* d) const {
+                        ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:52:25: error: candidates are: coords::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(domain::VecVecAddExpr*) const
+  coords::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.h:51:25: error:                 domain::VecVecAddExpr* coords2domain::CoordsToDomain::getVecVecAddExpr(coords::VecVecAddExpr*) const
+  domain::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
+                         ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVector_Lit(coords::Vector*, domain::Vector_Lit*)':
+CoordsToDomain.cpp:79:45: error: 'c' was not declared in this scope
+     interpExpression.insert(std::make_pair(*c, d));
+                                             ^
+CoordsToDomain.cpp:79:48: error: 'd' was not declared in this scope
+     interpExpression.insert(std::make_pair(*c, d));
+                                                ^
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:82:21: error: prototype for 'domain::Vector_Lit* coords2domain::CoordsToDomain::getVector(coords::Vector_Lit*) const' does not match any in class 'coords2domain::CoordsToDomain'
+ domain::Vector_Lit *CoordsToDomain::getVector(coords::Vector_Lit* c) const {
+                     ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:62:18: error: candidates are: coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Expr*) const
+  coords::Vector *getVector(domain::Vector_Expr* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:61:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Expr*) const
+  domain::Vector *getVector(coords::Vector_Expr* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:58:18: error:                 coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Lit*) const
+  coords::Vector *getVector(domain::Vector_Lit* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:57:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Lit*) const
+  domain::Vector *getVector(coords::Vector_Lit* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.cpp:86:21: error: prototype for 'coords::Vector_Lit* coords2domain::CoordsToDomain::getVector(domain::Vector_Lit*) const' does not match any in class 'coords2domain::CoordsToDomain'
+ coords::Vector_Lit *CoordsToDomain::getVector(domain::Vector_Lit* d) const {
+                     ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:62:18: error: candidates are: coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Expr*) const
+  coords::Vector *getVector(domain::Vector_Expr* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:61:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Expr*) const
+  domain::Vector *getVector(coords::Vector_Expr* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:58:18: error:                 coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Lit*) const
+  coords::Vector *getVector(domain::Vector_Lit* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:57:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Lit*) const
+  domain::Vector *getVector(coords::Vector_Lit* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVector_Expr(coords::Vector*, domain::Vector_Expr*)':
+CoordsToDomain.cpp:91:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::Vector, domain::Vector_Expr*>)'
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:646:2: note: candidate: template<class _InputIterator> void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_InputIterator, _InputIterator) [with _InputIterator = _InputIterator; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_InputIterator __first, _InputIterator __last)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:91:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+CoordsToDomain.cpp: In member function 'domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Expr*) const':
+CoordsToDomain.cpp:95:29: error: no match for 'operator[]' (operand types are 'const std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' and 'coords::Vector_Expr')
+      return interpExpression[*c];
+                             ^
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:98:71: error: expected ',' or '...' before 'const'
+ coords::Vector_Expr *CoordsToDomain::getVector(domain::Vector_Expr* d const) {
+                                                                       ^~~~~
+CoordsToDomain.cpp:98:22: error: prototype for 'coords::Vector_Expr* coords2domain::CoordsToDomain::getVector(domain::Vector_Expr*)' does not match any in class 'coords2domain::CoordsToDomain'
+ coords::Vector_Expr *CoordsToDomain::getVector(domain::Vector_Expr* d const) {
+                      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:62:18: error: candidates are: coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Expr*) const
+  coords::Vector *getVector(domain::Vector_Expr* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.cpp:94:17: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Expr*) const
+ domain::Vector *CoordsToDomain::getVector(coords::Vector_Expr* c) const {
+                 ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:58:18: error:                 coords::Vector* coords2domain::CoordsToDomain::getVector(domain::Vector_Lit*) const
+  coords::Vector *getVector(domain::Vector_Lit* d) const;
+                  ^~~~~~~~~
+CoordsToDomain.h:57:18: error:                 domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Lit*) const
+  domain::Vector *getVector(coords::Vector_Lit* c) const;
+                  ^~~~~~~~~
+CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVector_Def(coords::Vector_Def*, domain::Vector_Def*)':
+CoordsToDomain.cpp:105:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::Vector_Def, domain::Vector_Def*>)'
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/AST/AST.h:17,
+                 from AST.h:4,
+                 from Coords.h:4,
+                 from CoordsToDomain.h:5,
+                 from CoordsToDomain.cpp:1:
+/usr/include/c++/7/bits/unordered_map.h:646:2: note: candidate: template<class _InputIterator> void std::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>::insert(_InputIterator, _InputIterator) [with _InputIterator = _InputIterator; _Key = coords::VecExpr; _Tp = domain::VecExpr*; _Hash = coords::VecExprHasher; _Pred = std::equal_to<coords::VecExpr>; _Alloc = std::allocator<std::pair<const coords::VecExpr, domain::VecExpr*> >]
+  insert(_InputIterator __first, _InputIterator __last)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
+CoordsToDomain.cpp:105:50: note:   candidate expects 2 arguments, 1 provided
+     interpExpression.insert(std::make_pair(*c, d));
+                                                  ^
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:108:58: error: non-member function 'domain::Vector_Def* getVector_Def(coords::Vector_Def*)' cannot have cv-qualifier
+ domain::Vector_Def *getVector_Def(coords::Vector_Def* c) const {
+                                                          ^~~~~
+CoordsToDomain.cpp: In function 'domain::Vector_Def* getVector_Def(coords::Vector_Def*)':
+CoordsToDomain.cpp:109:11: error: 'interpExpression' was not declared in this scope
+    return interpExpression[*c];
+           ^~~~~~~~~~~~~~~~
+CoordsToDomain.cpp: At global scope:
+CoordsToDomain.cpp:112:58: error: non-member function 'coords::Vector_Def* getVector_Def(domain::Vector_Def*)' cannot have cv-qualifier
+ coords::Vector_Def *getVector_Def(domain::Vector_Def* d) const {
+                                                          ^~~~~
+CoordsToDomain.cpp:117:6: error: prototype for 'void coords2domain::CoordsToDomain::dump() const' does not match any in class 'coords2domain::CoordsToDomain'
+ void CoordsToDomain::dump() const {
+      ^~~~~~~~~~~~~~
+In file included from CoordsToDomain.cpp:1:0:
+CoordsToDomain.h:70:7: error: candidate is: void coords2domain::CoordsToDomain::dump()
+  void dump();
+       ^~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
+                 from main.cpp:4:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>'
+CoordsToDomain.h:85:80:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::VecExprHasher) (const coords::VecExpr&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from main.cpp:1:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>'
+CoordsToDomain.h:85:80:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
+                 from main.cpp:4:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>':
+CoordsToDomain.h:85:80:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecExprHasher>, std::__detail::__is_noexcept_hash<coords::VecExpr, coords::VecExprHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
+                 from main.cpp:4:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector, domain::Vector*, coords::VectorHasher>'
+CoordsToDomain.h:86:77:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::VectorHasher) (const coords::Vector&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from main.cpp:1:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector, domain::Vector*, coords::VectorHasher>'
+CoordsToDomain.h:86:77:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
+                 from main.cpp:4:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::Vector, domain::Vector*, coords::VectorHasher>':
+CoordsToDomain.h:86:77:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VectorHasher>, std::__detail::__is_noexcept_hash<coords::Vector, coords::VectorHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
+                 from main.cpp:4:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecIdent, domain::VecIdent*, coords::VecIdentHasher>'
+CoordsToDomain.h:87:83:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::VecIdentHasher) (const coords::VecIdent&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from main.cpp:1:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::VecIdent, domain::VecIdent*, coords::VecIdentHasher>'
+CoordsToDomain.h:87:83:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
+                 from main.cpp:4:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::VecIdent, domain::VecIdent*, coords::VecIdentHasher>':
+CoordsToDomain.h:87:83:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::VecIdentHasher>, std::__detail::__is_noexcept_hash<coords::VecIdent, coords::VecIdentHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/hashtable.h:35:0,
+                 from /usr/include/c++/7/unordered_map:47,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
+                 from main.cpp:4:
+/usr/include/c++/7/bits/hashtable_policy.h: In instantiation of 'struct std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher>':
+/usr/include/c++/7/type_traits:143:12:   required from 'struct std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> >'
+/usr/include/c++/7/type_traits:154:31:   required from 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector_Def, domain::Vector_Def*, coords::Vector_DefHasher>'
+CoordsToDomain.h:88:89:   required from here
+/usr/include/c++/7/bits/hashtable_policy.h:87:34: error: no match for call to '(const coords::Vector_DefHasher) (const coords::Vector_Def&)'
+  noexcept(declval<const _Hash&>()(declval<const _Key&>()))>
+           ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/bits/move.h:54:0,
+                 from /usr/include/c++/7/bits/nested_exception.h:40,
+                 from /usr/include/c++/7/exception:143,
+                 from /usr/include/c++/7/ios:39,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from main.cpp:1:
+/usr/include/c++/7/type_traits: In instantiation of 'struct std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >':
+/usr/include/c++/7/bits/unordered_map.h:103:66:   required from 'class std::unordered_map<coords::Vector_Def, domain::Vector_Def*, coords::Vector_DefHasher>'
+CoordsToDomain.h:88:89:   required from here
+/usr/include/c++/7/type_traits:154:31: error: 'value' is not a member of 'std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> >'
+     : public __bool_constant<!bool(_Pp::value)>
+                               ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/7/unordered_map:48:0,
+                 from /llvm/include/llvm/Support/TrigramIndex.h:33,
+                 from /llvm/include/llvm/Support/SpecialCaseList.h:57,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerSpecialCaseList.h:19,
+                 from /llvm/tools/clang/include/clang/Basic/SanitizerBlacklist.h:17,
+                 from /llvm/tools/clang/include/clang/AST/ASTContext.h:41,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:47,
+                 from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43,
+                 from main.cpp:4:
+/usr/include/c++/7/bits/unordered_map.h: In instantiation of 'class std::unordered_map<coords::Vector_Def, domain::Vector_Def*, coords::Vector_DefHasher>':
+CoordsToDomain.h:88:89:   required from here
+/usr/include/c++/7/bits/unordered_map.h:103:66: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
+                                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:110:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::key_type key_type;
+                                             ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:111:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::value_type value_type;
+                                               ^~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:112:48: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::mapped_type mapped_type;
+                                                ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:113:43: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::hasher hasher;
+                                           ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:114:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::key_equal key_equal;
+                                              ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:115:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::allocator_type allocator_type;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:120:45: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::pointer  pointer;
+                                             ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:121:50: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_pointer const_pointer;
+                                                  ^~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:122:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::reference  reference;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:123:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_reference const_reference;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:124:46: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::iterator  iterator;
+                                              ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:125:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_iterator const_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:126:51: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::local_iterator local_iterator;
+                                                   ^~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:127:57: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::const_local_iterator const_local_iterator;
+                                                         ^~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:128:47: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::size_type  size_type;
+                                               ^~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:129:52: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       typedef typename _Hashtable::difference_type difference_type;
+                                                    ^~~~~~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:288:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       operator=(initializer_list<value_type> __l)
+       ^~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:386:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+  emplace(_Args&&... __args)
+  ^~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:578:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       insert(const value_type& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:584:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       insert(value_type&& __x)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:591:2: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+  insert(_Pair&& __x)
+  ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:657:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       insert(initializer_list<value_type> __l)
+       ^~~~~~
+/usr/include/c++/7/bits/unordered_map.h:953:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       equal_range(const key_type& __x)
+       ^~~~~~~~~~~
+/usr/include/c++/7/bits/unordered_map.h:957:7: error: 'value' is not a member of 'std::__not_<std::__and_<std::__is_fast_hash<coords::Vector_DefHasher>, std::__detail::__is_noexcept_hash<coords::Vector_Def, coords::Vector_DefHasher> > >'
+       equal_range(const key_type& __x) const
+       ^~~~~~~~~~~
+main.cpp: In member function 'virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:51:17: warning: unused variable 'context' [-Wunused-variable]
+     ASTContext *context = Result.Context;
+                 ^~~~~~~
+main.cpp: In function 'const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)':
+main.cpp:90:75: error: no matching function for call to 'interp::Interpretation::mkVecVecAddExpr(const clang::CXXMemberCallExpr*&, coords::VecExpr*, coords::VecExpr*)'
+   interp_.mkVecVecAddExpr(ast, left_br->getCoords(), right_br->getCoords());
+                                                                           ^
+In file included from main.cpp:15:0:
+Interpretation.h:24:10: note: candidate: void interp::Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr*, domain::VecExpr*, domain::VecExpr*)
+     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem,
+          ^~~~~~~~~~~~~~~
+Interpretation.h:24:10: note:   no known conversion for argument 2 from 'coords::VecExpr*' to 'domain::VecExpr*'
+main.cpp: In member function 'virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:180:90: error: no matching function for call to 'interp::Interpretation::mkVector_Expr(const clang::CXXMemberCallExpr*&, const domain::VecExpr*&)'
+     return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr/*, context*/);
+                                                                                          ^
+In file included from main.cpp:15:0:
+Interpretation.h:27:10: note: candidate: void interp::Interpretation::mkVector_Expr(ast::Vector_Expr*, domain::VecExpr*)
+     void mkVector_Expr(ast::Vector_Expr *ast, domain::VecExpr* expr/*, clang::ASTContext *context*/);
+          ^~~~~~~~~~~~~
+Interpretation.h:27:10: note:   no known conversion for argument 1 from 'const clang::CXXMemberCallExpr*' to 'ast::Vector_Expr* {aka const clang::CXXConstructExpr*}'
+main.cpp:180:90: error: return-statement with a value, in function returning 'void' [-fpermissive]
+     return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr/*, context*/);
+                                                                                          ^
+main.cpp: In member function 'virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
+main.cpp:451:54: error: void value not ignored as it ought to be
+     domain::VecIdent *id = interp_.mkVecIdent(vardecl);
+                                                      ^
+main.cpp:452:60: error: no matching function for call to 'interp::Interpretation::getCoords(const clang::VarDecl*&)'
+     coords::VecIdent *id_coords = interp_.getCoords(vardecl);
+                                                            ^
+In file included from main.cpp:15:0:
+Interpretation.h:30:28: note: candidate: const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)
+     const coords::VecExpr *getCoords(ast::VecExpr *expr);
+                            ^~~~~~~~~
+Interpretation.h:30:28: note:   no known conversion for argument 1 from 'const clang::VarDecl*' to 'ast::VecExpr* {aka const clang::Expr*}'
+main.cpp:474:64: error: no matching function for call to 'interp::Interpretation::getCoords(const domain::VecExpr*&)'
+     const coords::VecExpr *expr_coords = interp_.getCoords(expr);
+                                                                ^
+In file included from main.cpp:15:0:
+Interpretation.h:30:28: note: candidate: const coords::VecExpr* interp::Interpretation::getCoords(ast::VecExpr*)
+     const coords::VecExpr *getCoords(ast::VecExpr *expr);
+                            ^~~~~~~~~
+Interpretation.h:30:28: note:   no known conversion for argument 1 from 'const domain::VecExpr*' to 'ast::VecExpr* {aka const clang::Expr*}'
+main.cpp:478:12: error: base operand of '->' has non-pointer type 'interp::Interpretation'
+     interp_->mkVector_Def(declstmt, id_coords, expr_coords);
+            ^~
+main.cpp:447:20: warning: unused variable 'sm' [-Wunused-variable]
+     SourceManager &sm = context->getSourceManager();
+                    ^~
+main.cpp:451:23: warning: unused variable 'id' [-Wunused-variable]
+     domain::VecIdent *id = interp_.mkVecIdent(vardecl);
+                       ^~
+main.cpp: In member function 'virtual void MyFrontendAction::EndSourceFileAction()':
+main.cpp:532:31: error: 'class interp::Interpretation' has no member named 'isConsistent'
+     bool consistent = interp_.isConsistent();
+                               ^~~~~~~~~~~~
+main.cpp: In function 'int main(int, const char**)':
+main.cpp:551:11: error: 'class interp::Interpretation' has no member named 'addSpace'
+   interp_.addSpace("S1");
+           ^~~~~~~~
+main.cpp:552:11: error: 'class interp::Interpretation' has no member named 'addSpace'
+   interp_.addSpace("S2");
+           ^~~~~~~~
+Domain.cpp: In member function 'domain::VecVarExpr* domain::Domain::mkVecVarExpr(domain::Space&, coords::VecVarExpr*)':
+Domain.cpp:93:12: error: invalid conversion from 'domain::VecExpr*' to 'domain::VecVarExpr*' [-fpermissive]
+     return var;
+            ^~~
+Domain.cpp: At global scope:
+Domain.cpp:111:24: error: prototype for 'const domain::VecExpr& domain::VecVecAddExpr::getArgVecExpr()' does not match any in class 'domain::VecVecAddExpr'
+ const domain::VecExpr &VecVecAddExpr::getArgVecExpr()
+                        ^~~~~~~~~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:169:19: error: candidate is: domain::VecExpr* domain::VecVecAddExpr::getArgVecExpr()
+  domain::VecExpr *getArgVecExpr();
+                   ^~~~~~~~~~~~~
+Domain.cpp: In member function 'domain::Vector_Lit* domain::Domain::mkVector_Lit(domain::Space&, coords::Vector*)':
+Domain.cpp:122:27: error: no matching function for call to 'std::vector<domain::Vector*>::push_back(domain::Vector&)'
+     vectors.push_back(*vec);
+                           ^
+In file included from /usr/include/c++/7/vector:64:0,
+                 from Domain.cpp:1:
+/usr/include/c++/7/bits/stl_vector.h:939:7: note: candidate: void std::vector<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = domain::Vector*; _Alloc = std::allocator<domain::Vector*>; std::vector<_Tp, _Alloc>::value_type = domain::Vector*]
+       push_back(const value_type& __x)
+       ^~~~~~~~~
+/usr/include/c++/7/bits/stl_vector.h:939:7: note:   no known conversion for argument 1 from 'domain::Vector' to 'domain::Vector* const&'
+/usr/include/c++/7/bits/stl_vector.h:953:7: note: candidate: void std::vector<_Tp, _Alloc>::push_back(std::vector<_Tp, _Alloc>::value_type&&) [with _Tp = domain::Vector*; _Alloc = std::allocator<domain::Vector*>; std::vector<_Tp, _Alloc>::value_type = domain::Vector*]
+       push_back(value_type&& __x)
+       ^~~~~~~~~
+/usr/include/c++/7/bits/stl_vector.h:953:7: note:   no known conversion for argument 1 from 'domain::Vector' to 'domain::Vector*&&'
+Domain.cpp:123:12: error: invalid conversion from 'domain::Vector*' to 'domain::Vector_Lit*' [-fpermissive]
+     return vec;
+            ^~~
+Domain.cpp: In member function 'domain::Vector_Expr* domain::Domain::mkVector_Expr(domain::Space&, coords::Vector*, domain::VecExpr*)':
+Domain.cpp:127:43: error: 'space' was not declared in this scope
+     Vector* vec = new domain::Vector_Expr(space, coords, expr);
+                                           ^~~~~
+Domain.cpp:127:43: note: suggested alternative: 'spaces'
+     Vector* vec = new domain::Vector_Expr(space, coords, expr);
+                                           ^~~~~
+                                           spaces
+Domain.cpp:127:58: error: 'expr' was not declared in this scope
+     Vector* vec = new domain::Vector_Expr(space, coords, expr);
+                                                          ^~~~
+Domain.cpp:127:58: note: suggested alternative:
+In file included from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43:0,
+                 from Coords.h:6,
+                 from Domain.h:9,
+                 from Checker.h:4,
+                 from Domain.cpp:3:
+/llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:1785:64: note:   'clang::ast_matchers::expr'
+ extern const internal::VariadicDynCastAllOfMatcher<Stmt, Expr> expr;
+                                                                ^~~~
+Domain.cpp:128:27: error: no matching function for call to 'std::vector<domain::Vector*>::push_back(domain::Vector&)'
+     vectors.push_back(*vec);
+                           ^
+In file included from /usr/include/c++/7/vector:64:0,
+                 from Domain.cpp:1:
+/usr/include/c++/7/bits/stl_vector.h:939:7: note: candidate: void std::vector<_Tp, _Alloc>::push_back(const value_type&) [with _Tp = domain::Vector*; _Alloc = std::allocator<domain::Vector*>; std::vector<_Tp, _Alloc>::value_type = domain::Vector*]
+       push_back(const value_type& __x)
+       ^~~~~~~~~
+/usr/include/c++/7/bits/stl_vector.h:939:7: note:   no known conversion for argument 1 from 'domain::Vector' to 'domain::Vector* const&'
+/usr/include/c++/7/bits/stl_vector.h:953:7: note: candidate: void std::vector<_Tp, _Alloc>::push_back(std::vector<_Tp, _Alloc>::value_type&&) [with _Tp = domain::Vector*; _Alloc = std::allocator<domain::Vector*>; std::vector<_Tp, _Alloc>::value_type = domain::Vector*]
+       push_back(value_type&& __x)
+       ^~~~~~~~~
+/usr/include/c++/7/bits/stl_vector.h:953:7: note:   no known conversion for argument 1 from 'domain::Vector' to 'domain::Vector*&&'
+Domain.cpp:129:12: error: invalid conversion from 'domain::Vector*' to 'domain::Vector_Expr*' [-fpermissive]
+     return vec;
+            ^~~
+Domain.cpp: At global scope:
+Domain.cpp:148:13: error: prototype for 'domain::Vector_Def* domain::Domain::mkVector_Def(const coords::Vector_Def*, domain::VecIdent*, domain::VecExpr*)' does not match any in class 'domain::Domain'
+ Vector_Def *Domain::mkVector_Def(const coords::Vector_Def *v, VecIdent* i,  domain::VecExpr* e)
+             ^~~~~~
+In file included from Checker.h:4:0,
+                 from Domain.cpp:3:
+Domain.h:59:14: error: candidate is: domain::Vector_Def* domain::Domain::mkVector_Def(coords::Vector_Def*, domain::VecIdent*, domain::VecExpr*)
+  Vector_Def* mkVector_Def(coords::Vector_Def* vardecl, VecIdent* identifier, VecExpr* expression);
+              ^~~~~~~~~~~~
+Makefile:110: recipe for target '../build/ASTMatcher' failed
+make: *** [../build/ASTMatcher] Error 1
