@@ -8,58 +8,15 @@ g++ -O0 -g -Wall `/llvm/build/bin/llvm-config --cxxflags` -I/llvm/tools/clang/in
 In file included from Interpretation.h:8:0,
                  from Interpretation.cpp:13:
 Oracle.h: In constructor 'oracle::Oracle::Oracle(domain::Domain*)':
-Oracle.h:14:51: error: expected type-specifier before 'Space'
-  Oracle(domain::Domain* d) : dom_(d), space_(*new Space("Oracle:: Error. Stub Space.\n")) {};
-                                                   ^~~~~
-Oracle.h:61:18: warning: 'oracle::Oracle::dom_' will be initialized after [-Wreorder]
+Oracle.h:58:18: warning: 'oracle::Oracle::dom_' will be initialized after [-Wreorder]
   domain::Domain* dom_;
                   ^~~~
-Oracle.h:60:17: warning:   'domain::Space& oracle::Oracle::space_' [-Wreorder]
+Oracle.h:57:17: warning:   'domain::Space& oracle::Oracle::space_' [-Wreorder]
   domain::Space& space_;
                  ^~~~~~
 Oracle.h:14:2: warning:   when initialized here [-Wreorder]
-  Oracle(domain::Domain* d) : dom_(d), space_(*new Space("Oracle:: Error. Stub Space.\n")) {};
+  Oracle(domain::Domain* d) : dom_(d), space_(*new domain::Space("Oracle:: Error. Stub Space.\n")) {};
   ^~~~~~
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForAddExpression(coords::VecExpr*, coords::VecExpr*)':
-Oracle.h:28:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:28:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVecIdent(const clang::VarDecl*)':
-Oracle.h:35:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:35:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVector_Lit(const clang::CXXConstructExpr*)':
-Oracle.h:42:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:42:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVecVarExpr(ast::VecVarExpr*)':
-Oracle.h:49:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:49:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVecVarExp(ast::VecVarExpr*)':
-Oracle.h:57:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:57:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
 Interpretation.cpp: In member function 'void interp::Interpretation::mkVector_Expr(ast::Vector_Expr*, coords::VecExpr*)':
 Interpretation.cpp:145:80: error: no matching function for call to 'domain::Vector_Expr::Vector_Expr(coords::Vector_Expr*&, domain::VecExpr*&)'
      domain::Vector_Expr *dom_vec = new domain::Vector_Expr(vec_coords, dom_expr);
@@ -79,66 +36,23 @@ Domain.h:235:7: note: candidate: constexpr domain::Vector_Expr::Vector_Expr(doma
 Domain.h:235:7: note:   candidate expects 1 argument, 2 provided
 In file included from Oracle.cpp:4:0:
 Oracle.h: In constructor 'oracle::Oracle::Oracle(domain::Domain*)':
-Oracle.h:14:51: error: expected type-specifier before 'Space'
-  Oracle(domain::Domain* d) : dom_(d), space_(*new Space("Oracle:: Error. Stub Space.\n")) {};
-                                                   ^~~~~
-Oracle.h:61:18: warning: 'oracle::Oracle::dom_' will be initialized after [-Wreorder]
+Oracle.h:58:18: warning: 'oracle::Oracle::dom_' will be initialized after [-Wreorder]
   domain::Domain* dom_;
                   ^~~~
-Oracle.h:60:17: warning:   'domain::Space& oracle::Oracle::space_' [-Wreorder]
+Oracle.h:57:17: warning:   'domain::Space& oracle::Oracle::space_' [-Wreorder]
   domain::Space& space_;
                  ^~~~~~
 Oracle.h:14:2: warning:   when initialized here [-Wreorder]
-  Oracle(domain::Domain* d) : dom_(d), space_(*new Space("Oracle:: Error. Stub Space.\n")) {};
+  Oracle(domain::Domain* d) : dom_(d), space_(*new domain::Space("Oracle:: Error. Stub Space.\n")) {};
   ^~~~~~
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForAddExpression(coords::VecExpr*, coords::VecExpr*)':
-Oracle.h:28:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:28:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVecIdent(const clang::VarDecl*)':
-Oracle.h:35:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:35:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVector_Lit(const clang::CXXConstructExpr*)':
-Oracle.h:42:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:42:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVecVarExpr(ast::VecVarExpr*)':
-Oracle.h:49:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:49:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVecVarExp(ast::VecVarExpr*)':
-Oracle.h:57:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:57:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.cpp: In member function 'domain::Space& oracle::Oracle::getSpaceForVector(std::__cxx11::string)':
-Oracle.cpp:20:15: error: 'class oracle::Oracle' has no member named 'getSpace'
-  return this->getSpace();
-               ^~~~~~~~
 Oracle.cpp: At global scope:
-Oracle.cpp:23:33: error: no 'domain::Space& oracle::Oracle::getSpace()' member function declared in class 'oracle::Oracle'
+Oracle.cpp:23:16: error: redefinition of 'domain::Space& oracle::Oracle::getSpace()'
  domain::Space& Oracle::getSpace() {
-                                 ^
+                ^~~~~~
+In file included from Oracle.cpp:4:0:
+Oracle.h:16:17: note: 'domain::Space& oracle::Oracle::getSpace()' previously defined here
+  domain::Space& getSpace() { return space_; }
+                 ^~~~~~~~
 In file included from Coords.cpp:1:0:
 Coords.h: In constructor 'coords::Coords::Coords(const clang::Stmt*)':
 Coords.h:68:22: warning: 'coords::Coords::clang_stmt_' will be initialized after [-Wreorder]
@@ -150,15 +64,8 @@ Coords.h:67:12: warning:   'coords::ast_type coords::Coords::ast_type_tag_' [-Wr
 Coords.cpp:19:1: warning:   when initialized here [-Wreorder]
  Coords::Coords(const clang::Stmt *stmt) :
  ^~~~~~
-Coords.cpp: In constructor 'coords::Coords::Coords(const clang::Decl*)':
-Coords.cpp:24:46: error: 'CLANG_AST_EXPR' is not a member of 'coords'
-     clang_decl_(decl), ast_type_tag_(coords::CLANG_AST_EXPR) {
-                                              ^~~~~~~~~~~~~~
-Coords.cpp:24:46: note: suggested alternative: 'CLANG_AST_DECL'
-     clang_decl_(decl), ast_type_tag_(coords::CLANG_AST_EXPR) {
-                                              ^~~~~~~~~~~~~~
-                                              CLANG_AST_DECL
 In file included from Coords.cpp:1:0:
+Coords.h: In constructor 'coords::Coords::Coords(const clang::Decl*)':
 Coords.h:69:22: warning: 'coords::Coords::clang_decl_' will be initialized after [-Wreorder]
    const clang::Decl *clang_decl_;
                       ^~~~~~~~~~~
@@ -168,30 +75,14 @@ Coords.h:67:12: warning:   'coords::ast_type coords::Coords::ast_type_tag_' [-Wr
 Coords.cpp:23:1: warning:   when initialized here [-Wreorder]
  Coords::Coords(const clang::Decl *decl) :
  ^~~~~~
-Coords.cpp: At global scope:
-Coords.cpp:66:23: error: prototype for 'const clang::VarDecl* coords::VecIdent::getVarDecl()' does not match any in class 'coords::VecIdent'
- const clang::VarDecl *VecIdent::getVarDecl() {
-                       ^~~~~~~~
-In file included from Coords.cpp:1:0:
-Coords.h:94:19: error: candidate is: clang::VarDecl* coords::VecIdent::getVarDecl()
-   clang::VarDecl *getVarDecl();
-                   ^~~~~~~~~~
 Coords.cpp: In member function 'virtual std::__cxx11::string coords::VecIdent::toString() const':
 Coords.cpp:71:23: error: passing 'const coords::VecIdent' as 'this' argument discards qualifiers [-fpermissive]
      return getVarDecl()->getNameAsString();
                        ^
-In file included from Coords.cpp:1:0:
-Coords.h:94:19: note:   in call to 'clang::VarDecl* coords::VecIdent::getVarDecl()'
-   clang::VarDecl *getVarDecl();
-                   ^~~~~~~~~~
+Coords.cpp:66:23: note:   in call to 'const clang::VarDecl* coords::VecIdent::getVarDecl()'
+ const clang::VarDecl *VecIdent::getVarDecl() {
+                       ^~~~~~~~
 Coords.cpp: At global scope:
-Coords.cpp:100:27: error: prototype for 'const clang::DeclRefExpr* coords::VecVarExpr::getDeclRefExpr()' does not match any in class 'coords::VecVarExpr'
- const clang::DeclRefExpr *VecVarExpr::getDeclRefExpr() {
-                           ^~~~~~~~~~
-In file included from Coords.cpp:1:0:
-Coords.h:157:29: error: candidate is: const clang::DeclRefExpr* coords::VecVarExpr::getDeclRefExpr() const
-   const clang::DeclRefExpr *getDeclRefExpr() const;
-                             ^~~~~~~~~~~~~~
 Coords.cpp:109:1: error: prototype for 'coords::VecVecAddExpr::VecVecAddExpr(const clang::CXXMemberCallExpr*, coords::Coords*, coords::Coords*)' does not match any in class 'coords::VecVecAddExpr'
  VecVecAddExpr::VecVecAddExpr(
  ^~~~~~~~~~~~~
@@ -203,13 +94,6 @@ Coords.h:165:7: error:                 constexpr coords::VecVecAddExpr::VecVecAd
 Coords.h:167:3: error:                 coords::VecVecAddExpr::VecVecAddExpr(const clang::CXXMemberCallExpr*, coords::VecExpr*, coords::VecExpr*)
    VecVecAddExpr(const clang::CXXMemberCallExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg);
    ^~~~~~~~~~~~~
-Coords.cpp:116:33: error: prototype for 'const clang::CXXMemberCallExpr* coords::VecVecAddExpr::getCXXMemberCallExpr()' does not match any in class 'coords::VecVecAddExpr'
- const clang::CXXMemberCallExpr *VecVecAddExpr::getCXXMemberCallExpr() {
-                                 ^~~~~~~~~~~~~
-In file included from Coords.cpp:1:0:
-Coords.h:168:29: error: candidate is: clang::CXXMemberCallExpr* coords::VecVecAddExpr::getCXXMemberCallExpr()
-   clang::CXXMemberCallExpr *getCXXMemberCallExpr();
-                             ^~~~~~~~~~~~~~~~~~~~
 Coords.cpp: In member function 'const clang::CXXConstructExpr* coords::Vector::getCXXConstructExpr() const':
 Coords.cpp:134:66: error: no matching function for call to 'clang::CXXConstructExpr::CXXConstructExpr(const clang::Stmt* const&)'
      return static_cast<const clang::CXXConstructExpr>(clang_stmt_);
@@ -233,9 +117,6 @@ In file included from /llvm/tools/clang/include/clang/AST/StmtVisitor.h:16:0,
 /llvm/tools/clang/include/clang/AST/ExprCXX.h:1261:7: note: candidate: constexpr clang::CXXConstructExpr::CXXConstructExpr(clang::CXXConstructExpr&&)
 /llvm/tools/clang/include/clang/AST/ExprCXX.h:1261:7: note:   no known conversion for argument 1 from 'const clang::Stmt* const' to 'clang::CXXConstructExpr&&'
 Coords.cpp: At global scope:
-Coords.cpp:139:1: error: 'virtual' outside class declaration
- virtual std::string Vector::toString() const { return "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";}
- ^~~~~~~
 Coords.cpp:153:13: error: prototype for 'std::__cxx11::string coords::Vector_Var::toString()' does not match any in class 'coords::Vector_Var'
  std::string Vector_Var::toString()  {
              ^~~~~~~~~~
@@ -250,44 +131,42 @@ In file included from Coords.cpp:1:0:
 Coords.h:230:23: error: candidate is: virtual std::__cxx11::string coords::Vector_Expr::toString() const
    virtual std::string toString() const;
                        ^~~~~~~~
-Coords.cpp:161:1: error: prototype for 'coords::Vector_Expr::Vector_Expr(clang::CXXConstructExpr, coords::VecExpr*)' does not match any in class 'coords::Vector_Expr'
- Vector_Expr::Vector_Expr(const clang::CXXConstructExpr ast,
- ^~~~~~~~~~~
+Coords.cpp: In constructor 'coords::Vector_Expr::Vector_Expr(const clang::CXXConstructExpr*, coords::VecExpr*)':
+Coords.cpp:163:45: error: invalid conversion from 'coords::VecExpr*' to 'coords::Vector_Expr*' [-fpermissive]
+     : Vector(ast, VEC_CTOR_EXPR), expr_(expr) {
+                                             ^
+Coords.cpp: In constructor 'coords::Vector_Def::Vector_Def(const clang::DeclStmt*, coords::VecIdent*, coords::VecExpr*)':
+Coords.cpp:177:9: error: type 'coords::VecExpr' is not a direct base of 'coords::Vector_Def'
+       : VecExpr(declStmt), bv_(bv), be_(be) {
+         ^~~~~~~
+Coords.cpp:177:17: error: 'declStmt' was not declared in this scope
+       : VecExpr(declStmt), bv_(bv), be_(be) {
+                 ^~~~~~~~
+Coords.cpp:177:17: note: suggested alternative:
+In file included from /llvm/tools/clang/include/clang/ASTMatchers/ASTMatchFinder.h:43:0,
+                 from Coords.h:5,
+                 from Coords.cpp:1:
+/llvm/tools/clang/include/clang/ASTMatchers/ASTMatchers.h:1217:68: note:   'clang::ast_matchers::declStmt'
+ extern const internal::VariadicDynCastAllOfMatcher<Stmt, DeclStmt> declStmt;
+                                                                    ^~~~~~~~
+Coords.cpp:177:43: error: no matching function for call to 'coords::Coords::Coords()'
+       : VecExpr(declStmt), bv_(bv), be_(be) {
+                                           ^
+Coords.cpp:23:1: note: candidate: coords::Coords::Coords(const clang::Decl*)
+ Coords::Coords(const clang::Decl *decl) :
+ ^~~~~~
+Coords.cpp:23:1: note:   candidate expects 1 argument, 0 provided
+Coords.cpp:19:1: note: candidate: coords::Coords::Coords(const clang::Stmt*)
+ Coords::Coords(const clang::Stmt *stmt) :
+ ^~~~~~
+Coords.cpp:19:1: note:   candidate expects 1 argument, 0 provided
 In file included from Coords.cpp:1:0:
-Coords.h:227:7: error: candidates are: constexpr coords::Vector_Expr::Vector_Expr(coords::Vector_Expr&&)
- class Vector_Expr : public Vector {
-       ^~~~~~~~~~~
-Coords.h:227:7: error:                 constexpr coords::Vector_Expr::Vector_Expr(const coords::Vector_Expr&)
-Coords.h:229:3: error:                 coords::Vector_Expr::Vector_Expr(const clang::CXXConstructExpr*, coords::VecExpr*)
-   Vector_Expr(const clang::CXXConstructExpr *ast, coords::VecExpr *expr);
-   ^~~~~~~~~~~
-Coords.cpp:176:1: error: prototype for 'coords::Vector_Def::Vector_Def(clang::DeclStmt, coords::VecIdent*, coords::VecExpr*)' does not match any in class 'coords::Vector_Def'
- Vector_Def::Vector_Def(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be)
- ^~~~~~~~~~
-In file included from Coords.cpp:1:0:
-Coords.h:241:7: error: candidates are: constexpr coords::Vector_Def::Vector_Def(coords::Vector_Def&&)
- class Vector_Def : public Coords {
-       ^~~~~~~~~~
-Coords.h:241:7: error:                 constexpr coords::Vector_Def::Vector_Def(const coords::Vector_Def&)
-Coords.h:243:3: error:                 coords::Vector_Def::Vector_Def(const clang::DeclStmt*, coords::VecIdent*, coords::VecExpr*)
-   Vector_Def(const clang::DeclStmt *def, coords::VecIdent *bv,
-   ^~~~~~~~~~
-Coords.cpp: In member function 'coords::VecIdent* coords::Vector_Def::getIdent() const':
-Coords.cpp:185:12: error: 'ident_' was not declared in this scope
-     return ident_;
-            ^~~~~~
-Coords.cpp:185:12: note: suggested alternative: 'id_t'
-     return ident_;
-            ^~~~~~
-            id_t
-Coords.cpp: In member function 'coords::VecExpr* coords::Vector_Def::getExpr() const':
-Coords.cpp:189:12: error: 'expr_' was not declared in this scope
-     return expr_;
-            ^~~~~
-Coords.cpp:189:12: note: suggested alternative: 'exp10'
-     return expr_;
-            ^~~~~
-            exp10
+Coords.h:50:7: note: candidate: constexpr coords::Coords::Coords(const coords::Coords&)
+ class Coords {
+       ^~~~~~
+Coords.h:50:7: note:   candidate expects 1 argument, 0 provided
+Coords.h:50:7: note: candidate: constexpr coords::Coords::Coords(coords::Coords&&)
+Coords.h:50:7: note:   candidate expects 1 argument, 0 provided
 CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVecIdent(coords::VecIdent*, domain::VecIdent*)':
 CoordsToDomain.cpp:11:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::VecIdent, domain::VecIdent*>)'
      interpExpression.insert(std::make_pair(*c, d));
@@ -676,58 +555,15 @@ CoordsToDomain.h:70:7: error: candidate is: void coords2domain::CoordsToDomain::
 In file included from Interpretation.h:8:0,
                  from main.cpp:15:
 Oracle.h: In constructor 'oracle::Oracle::Oracle(domain::Domain*)':
-Oracle.h:14:51: error: expected type-specifier before 'Space'
-  Oracle(domain::Domain* d) : dom_(d), space_(*new Space("Oracle:: Error. Stub Space.\n")) {};
-                                                   ^~~~~
-Oracle.h:61:18: warning: 'oracle::Oracle::dom_' will be initialized after [-Wreorder]
+Oracle.h:58:18: warning: 'oracle::Oracle::dom_' will be initialized after [-Wreorder]
   domain::Domain* dom_;
                   ^~~~
-Oracle.h:60:17: warning:   'domain::Space& oracle::Oracle::space_' [-Wreorder]
+Oracle.h:57:17: warning:   'domain::Space& oracle::Oracle::space_' [-Wreorder]
   domain::Space& space_;
                  ^~~~~~
 Oracle.h:14:2: warning:   when initialized here [-Wreorder]
-  Oracle(domain::Domain* d) : dom_(d), space_(*new Space("Oracle:: Error. Stub Space.\n")) {};
+  Oracle(domain::Domain* d) : dom_(d), space_(*new domain::Space("Oracle:: Error. Stub Space.\n")) {};
   ^~~~~~
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForAddExpression(coords::VecExpr*, coords::VecExpr*)':
-Oracle.h:28:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:28:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVecIdent(const clang::VarDecl*)':
-Oracle.h:35:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:35:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVector_Lit(const clang::CXXConstructExpr*)':
-Oracle.h:42:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:42:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVecVarExpr(ast::VecVarExpr*)':
-Oracle.h:49:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:49:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
-Oracle.h: In member function 'domain::Space& oracle::Oracle::getSpaceForVecVarExp(ast::VecVarExpr*)':
-Oracle.h:57:10: error: 'getSpace' was not declared in this scope
-   return getSpace();
-          ^~~~~~~~
-Oracle.h:57:10: note: suggested alternative: 'getdate'
-   return getSpace();
-          ^~~~~~~~
-          getdate
 main.cpp: In member function 'virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)':
 main.cpp:51:17: warning: unused variable 'context' [-Wunused-variable]
      ASTContext *context = Result.Context;

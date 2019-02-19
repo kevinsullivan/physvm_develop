@@ -63,7 +63,7 @@ struct CoordsHasher {
 
 VecIdent::VecIdent(const clang::VarDecl *v) : Coords(v) {}
 
-const clang::VarDecl *VecIdent::getVarDecl() {
+const clang::VarDecl *VecIdent::getVarDecl() const {
     return static_cast<const clang::VarDecl*>(clang_decl_);  
 }
 
@@ -108,8 +108,8 @@ std::string VecVarExpr::toString() const {
 
 VecVecAddExpr::VecVecAddExpr(
     const clang::CXXMemberCallExpr *mce, 
-    coords::Coords *mem, 
-    coords::Coords *arg) : VecExpr(mce) {
+    coords::VecExpr *mem, 
+    coords::VecExpr *arg) : VecExpr(mce) {
 std::cerr << "VecVecAddExpr::VecVecAddExpr. Warn. Empty implementation.\n";
 }
 
@@ -131,7 +131,7 @@ Vector::Vector(const clang::CXXConstructExpr *vec, coords::VectorCtorType tag)
 }
   
 const clang::CXXConstructExpr *Vector::getCXXConstructExpr() const { 
-    return static_cast<const clang::CXXConstructExpr>(clang_stmt_); 
+    return static_cast<const clang::CXXConstructExpr*>(clang_stmt_); 
 }
 
 VectorCtorType Vector::getVectorType() { return tag_; }
@@ -150,11 +150,11 @@ Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, coords::VecVarExpr* e
     : Vector(ast, VEC_CTOR_VAR), expr_(expr) {
 }
 
-std::string Vector_Var::toString()  { 
+std::string Vector_Var::toString() const { 
     return std::string("Vector_Var::toString() STUB.\n"); 
 }
 
-std::string Vector_Expr::toString()  { 
+std::string Vector_Expr::toString() const { 
     return std::string("Vector_Expr::toString() STUB.\n"); 
 }
 
@@ -173,8 +173,8 @@ VecVecAddExpr* Vector_Expr::getVecVecAddExpr() {
 * Def
 ****/
 
-Vector_Def::Vector_Def(const clang::DeclStmt *def, coords::VecIdent *bv, coords::VecExpr *be)
-      : VecExpr(declStmt), bv_(bv), be_(be) {
+Vector_Def::Vector_Def(const clang::DeclStmt *ast, coords::VecIdent *bv, coords::VecExpr *be)
+      : Coords(ast), bv_(bv), be_(be) {
 }
 
 /*const clang::DeclStmt *Vector_Def::getDeclStmt() const { 
