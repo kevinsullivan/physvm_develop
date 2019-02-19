@@ -1,11 +1,13 @@
 #ifndef COORDS_H
 #define COORDS_H
 
-#include "AST.h"
 #include "clang/AST/AST.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include <cstddef>
 #include <iostream> // for cheap logging only
+
+#include "AST.h"
+
 
 /*
 Code coordinate objects wrap AST 

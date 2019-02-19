@@ -69,7 +69,7 @@ coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast, ast::S
 
 coords::Vector_Var *ASTToCoords::mkVector_Var(
         const ast::Vector_Var *ast, coords::VecVarExpr *var_coords) {
-    coords::Vector_Var *coord = new coords::Vector_Var(ast);
+    coords::Vector_Var *coord = new coords::Vector_Var(ast, var_coords);
     overrideStmt(ast,coord);
     return coord;
 }
