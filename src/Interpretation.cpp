@@ -83,7 +83,7 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, coords::VecExpr *m
   ast2coords_->overrideStmt(ast, stmt_coords);*/
  domain::Space &space = oracle_->getSpaceForAddExpression(mem, arg);
   domain::VecVecAddExpr *dom_add_expr = 
-    domain_->mkVecVecAddExpr(space, expr_coords, mem, arg);
+    domain_->mkVecVecAddExpr(space, expr_coords, mem_coords, arg_coords);
   coords2dom_->PutVecVecAddExpr(expr_coords, dom_add_expr);
 
   std::cerr << "Interpretation::mkVecVecAddExpr: Coords at " 
@@ -111,8 +111,8 @@ void Interpretation::mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *c*/
     coords::Vector_Lit *vec_coords = ast2coords_->mkVector_Lit(ast, 0.0);
     // TODO: Should we get space from oracle here, or infer from expr? One or other.
     //domain::Space& space = oracle_->getSpaceForVector_Lit(ast); // infer?
-    Space& s = *new domain::Space("STUB");
-    cerr << "Interpretation::mkVector_Lit: Warn. Using STUB space.\n";
+    domain::Space& s = *new domain::Space("STUB");
+    std::cerr << "Interpretation::mkVector_Lit: Warn. Using STUB space.\n";
     domain::Vector_Lit *dom_var = domain_->mkVector_Lit(s, vec_coords);
     coords2dom_->putVector_Lit(vec_coords, dom_var);
     std::cerr << "Interpretation::mkVector_Lit. DONE\n";
@@ -143,7 +143,7 @@ void Interpretation::mkVector_Expr(
 //    domain::Vector_Expr* dom_vec = domain_->mkVector_Expr(vec_coords, dom_expr);
 
     domain::Vector_Expr *dom_vec = new domain::Vector_Expr(vec_coords, dom_expr);
-    coords2dom_->PutVector_Expr(vec_coords, dom_vec);
+    coords2dom_->putVector_Expr(vec_coords, dom_vec);
     std::cerr << "Interpretation::mkVector_Expr. DONE\n";
 }
 
@@ -187,8 +187,10 @@ void Interpretation::mkVector_Def(ast::Vector_Def *ast, coords::VecIdent *id_coo
     std::cerr << "DONE: Interpretation::mkVector_Def..\n";*/
 }
 
+/*
 coords::VecExpr *Interpretation::getCoords(ast::VecExpr *expr)  // fix ret type name
 {
     return ast2coords_->getCoords(expr);
 }
+*/
 

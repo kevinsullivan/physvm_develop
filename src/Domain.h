@@ -53,7 +53,7 @@ public:
 
 	Vector_Lit* mkVector_Lit(Space& space, coords::Vector* v/*, domain::VecExpr *vec*/);
 	//Vector* mkVector_Var(coords::Vector* v/*, domain::VecExpr *vec*/);
-	Vector_Expr* mkVector_Expr(Space& space, coords::Vector* v, domain::VecExpr *vec);
+	Vector_Expr* mkVector_Expr(Space& space, coords::Vector* v, coords::VecExpr *vec);
 
 // Defs
 	Vector_Def* mkVector_Def(coords::Vector_Def* vardecl, coords::VecIdent* identifier, coords::VecExpr* expression);

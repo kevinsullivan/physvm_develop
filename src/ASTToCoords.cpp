@@ -90,5 +90,5 @@ coords::Vector_Def *ASTToCoords::mkVector_Def(
         const ast::Vector_Def *ast, coords::VecIdent *id_coords, coords::VecExpr *vec_coords) {
     coords::Vector_Def *coord = new coords::Vector_Def(ast, id_coords, vec_coords);
     overrideStmt(ast,coord);
-
+    return coord;
 }

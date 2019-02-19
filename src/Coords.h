@@ -90,7 +90,7 @@ struct Vector_DefHasher;
 
 class VecIdent : public Coords {
 public:
-  VecIdent(ast::VecIdent *ast);
+  VecIdent(const ast::VecIdent *ast);
   clang::VarDecl *getVarDecl();
   virtual std::string toString() const;
   bool operator==(const VecIdent &other) const {
@@ -107,7 +107,7 @@ public:
 class VecExpr : public Coords {
 public:
   VecExpr(const clang::Expr *e);
-  clang::Expr *getExpr();
+  const clang::Expr *getExpr();
   virtual std::string toString() const;
   bool operator==(const VecExpr &other) const {
     return (clang_stmt_ == other.clang_stmt_);
@@ -126,7 +126,7 @@ class VecLitExpr : public Coords {};
 class VecVarExpr : public VecExpr {
 public:
   VecVarExpr(const clang::DeclRefExpr *d);
-  clang::DeclRefExpr *getDeclRefExpr();
+  clang::DeclRefExpr *getDeclRefExpr() const;
   virtual std::string toString() const;
 
 private:
@@ -175,7 +175,7 @@ private:
 
 class Vector_Var : public Vector {
 public:
-  Vector_Var(clang::CXXConstructExpr *ast, const coords::VecVarExpr *expr);
+  Vector_Var(const clang::CXXConstructExpr *ast, const coords::VecVarExpr *expr);
   virtual std::string toString() const;
   VecVarExpr *getVecVarExpr();
 
@@ -202,7 +202,7 @@ class Vector_Def : public Coords {
 public:
   Vector_Def(const clang::DeclStmt *def, coords::VecIdent *bv,
              coords::VecExpr *be);
-  const clang::DeclStmt *getDeclStmt() const;
+  //const clang::DeclStmt *getDeclStmt() const;
   coords::VecIdent *getIdent() const;
   coords::VecExpr *getExpr() const;
   virtual std::string toString() const;
