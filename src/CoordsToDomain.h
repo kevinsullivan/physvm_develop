@@ -86,12 +86,6 @@ class CoordsToDomain
 	std::unordered_map<coords::Vector, domain::Vector *, coords::VectorHasher> interpVector;
 	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
 	std::unordered_map<coords::Vector_Def, domain::Vector_Def *, coords::Vector_DefHasher> interpVector_Def;
-/*
-	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;
-	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
-	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpVector;
-	std::unordered_map<coords::Vector_Def, domain::Vector_Def *, coords::Vector_DefHasher> interpVector_Def;
-*/
 };
 
 } // namespace

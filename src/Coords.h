@@ -61,7 +61,7 @@ public:
   // Remember: Clang Expr inherits from Stmt
   bool astIsClangStmt() { return (ast_type_tag_ == CLANG_AST_STMT); }
 
-private:
+protected:
   ast_type ast_type_tag_;
   const clang::Stmt *clang_stmt_;
   const clang::Decl *clang_decl_;
@@ -91,6 +91,9 @@ public:
   VecIdent(ast::VecIdent *ast);
   clang::VarDecl *getVarDecl();
   virtual std::string toString() const;
+  bool operator==(const VecIdent &other) const {
+    return (clang_decl_ == other.clang_decl_);
+  }
 };
 
 /*****
@@ -104,6 +107,10 @@ public:
   VecExpr(const clang::Expr *e);
   clang::Expr *getExpr();
   virtual std::string toString() const;
+  bool operator==(const VecExpr &other) const {
+    return (clang_stmt_ == other.clang_stmt_);
+  }
+
 };
 
 /*
@@ -147,7 +154,9 @@ public:
   const clang::CXXConstructExpr *getCXXConstructExpr() const;
   VectorCtorType getVectorType();
   virtual std::string toString() const;
-
+  bool operator==(const Vector &other) const {
+    return (clang_stmt_ == other.clang_stmt_);
+  }
 protected:
   const VectorCtorType tag_;
 };
@@ -195,7 +204,12 @@ public:
   coords::VecIdent *getIdent() const;
   coords::VecExpr *getExpr() const;
   virtual std::string toString() const;
-
+  // Assumption here and above is that pointer
+  // identity is unique and we don't need to
+  // compare on these additional fields
+  bool operator==(const Vector_Def &other) const {
+    return (clang_decl_ == other.clang_decl_);
+  }
 private:
   VecIdent *bv_;
   VecExpr *be_;
