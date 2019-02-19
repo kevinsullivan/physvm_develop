@@ -14,7 +14,7 @@ using namespace domain;
 Space &Domain::mkSpace(const string &name)
 {
     Space *s = new Space(name);
-    spaces.push_back(*s);
+    spaces.push_back(s);
     //std::cerr << "Added space to domain at address " << std::hex << s << "\n";
     return *s;
 }
@@ -54,7 +54,7 @@ Ident
 VecIdent *Domain::mkVecIdent(Space &s, coords::VecIdent *ast)
 {
     VecIdent *id = new VecIdent(s, ast);
-    idents.push_back(*id);
+    idents.push_back(id);
     return id;
 }
 
@@ -119,7 +119,7 @@ const domain::VecExpr &VecVecAddExpr::getArgVecExpr()
 
 Vector_Lit* Domain::mkVector_Lit(Space& space, coords::Vector* coords) {
     Vector* vec = new domain::Vector_Lit(space, coords);
-    vectors.push_back(*vec);
+    vectors.push_back(vec);
     return vec;
 }
 
@@ -132,7 +132,7 @@ Vector_Expr* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::Vec
 /*
 Vector* Domain::mkVector_Var(Space& s, coords::Vector* coords, domain::Expr* exp) {
     Vector* vec = new domain::Vector_Var(space, coords, expr);
-    vectors.push_back(*vec);
+    vectors.push_back(vec);
     return vec;
 }
 */
@@ -151,7 +151,7 @@ Vector_Def *Domain::mkVector_Def(const coords::Vector_Def *v, VecIdent* i,  doma
     std::cerr << "identifier is " << i->toString();
     std::cerr << " expression is " << e->toString() << "\n";
     Vector_Def *bd = new Vector_Def(v, i, e);
-    defs.push_back(*bd);
+    defs.push_back(bd);
     return bd;
 }
 

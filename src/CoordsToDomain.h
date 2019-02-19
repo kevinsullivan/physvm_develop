@@ -82,6 +82,7 @@ class CoordsToDomain
 	*/
 
 	// TODO: delete "interp" prefixes here -- minor
+	
 	std::unordered_map<coords::VecExpr, domain::VecExpr *, coords::VecExprHasher> interpExpression;
 	std::unordered_map<coords::Vector, domain::Vector *, coords::VectorHasher> interpVector;
 	std::unordered_map<coords::VecIdent, domain::VecIdent *, coords::VecIdentHasher> interpIdent;

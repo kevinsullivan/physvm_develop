@@ -98,6 +98,21 @@ public:
   }
 };
 
+// To use VecIdent as key in unordered map
+struct VecIdentHasher
+{
+  std::size_t operator()(const VecIdent& k) const
+  {
+    using std::size_t;
+    using std::hash;
+    using std::string;
+    std::size_t h = 1010101010;
+    return h;
+    }
+};
+
+
+
 /*****
  * Expr
  *****/
@@ -112,8 +127,21 @@ public:
   bool operator==(const VecExpr &other) const {
     return (clang_stmt_ == other.clang_stmt_);
   }
-
 };
+
+struct VecExprHasher
+{
+  std::size_t operator()(const VecExpr& k) const
+  {
+    using std::size_t;
+    using std::hash;
+    using std::string;
+    std::size_t h = 1010101010;
+    return h;
+    }
+};
+
+
 
 /*
 No such intermediate node in Clang AST.
@@ -161,6 +189,18 @@ public:
   }
 protected:
   const VectorCtorType tag_;
+};
+
+struct VectorHasher
+{
+  std::size_t operator()(const Vector& k) const
+  {
+    using std::size_t;
+    using std::hash;
+    using std::string;
+    std::size_t h = 1010101010;
+    return h;
+  }
 };
 
 // TODO: methods to get x, y, z
@@ -215,6 +255,18 @@ public:
 private:
   VecIdent *bv_;
   VecExpr *be_;
+};
+
+struct Vector_DefHasher
+{
+  std::size_t operator()(const Vector_Def& k) const
+  {
+    using std::size_t;
+    using std::hash;
+    using std::string;
+    std::size_t h = 1010101010;
+    return h;
+  }
 };
 
 } // namespace coords

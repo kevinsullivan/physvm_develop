@@ -52,38 +52,6 @@ struct CoordsHasher {
 };
 */
 
-struct VecIdentHasher {
-  std::size_t operator()(const VecIdent &k) const {
-    std::size_t hash = 10101010;
-    // TODO Fix hash function
-    return hash;
-  }
-};
-
-struct VecExprHasher {
-  std::size_t operator()(const VecExpr &k) const {
-    std::size_t hash = 10101010;
-    // TODO Fix hash function
-    return hash;
-  }
-};
-
-struct VectorHasher {
-  std::size_t operator()(const Vector &k) const {
-    std::size_t hash = 10101010;
-    // TODO Fix hash function
-    return hash;
-  }
-};
-
-struct Vector_DefHasher {
-  std::size_t operator()(const Vector_Def &k) const {
-    std::size_t hash = 10101010;
-    // TODO Fix hash function
-    return hash;
-  }
-};
-
 
 /*************************************************************
 * Coordinate subclasses, for type checking, override behaviors
