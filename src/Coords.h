@@ -175,7 +175,7 @@ private:
 // change name to VecVecAddExpr? Or generalize from that a bit.
 class Vector_Expr : public Vector {
 public:
-  Vector_Expr(const clang::CXXConstructExpr *ast, coords::Vector_Expr *expr);
+  Vector_Expr(const clang::CXXConstructExpr *ast, coords::VecExpr *expr);
   virtual std::string toString() const;
   Vector_Expr *getVector_Expr();
 

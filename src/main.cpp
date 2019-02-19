@@ -55,7 +55,7 @@ public:
     // NOTE: No literal expression in clang, just constructed object
     // NOTE: def will always be of identifier to constructed object
     //
-    interp_.mkVector_Lit(lit_ast, context);
+    interp_.mkVector_Lit(lit_ast/*, context*/);
   }
 };
 
@@ -64,8 +64,8 @@ public:
  *******************************/
 
 //Forward-reference handlers for member (left) and argument (expressions) of add application
-const domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
-const domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm);
+domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
+domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm);
 
 /*
 */
@@ -87,7 +87,7 @@ const domain::VecExpr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTCon
   }
   std::cerr << "main::handleMemberCallExpr: End\n";
 
-  interp_.mkVecVecAddExpr(ast, left_br, right_br);
+  interp_.mkVecVecAddExpr(ast, left_br->getCoords(), right_br->getCoords());
   return interp_.getVecExpr(ast);
 }
 
@@ -104,7 +104,7 @@ public:
 
     // TODO: Should we be passing context objects with these AST nodes? Do they persist?
     //
-    interp_->mkVecVarExpr(declRefExpr);
+    interp_.mkVecVarExpr(declRefExpr);
   }
 };
 
@@ -163,7 +163,7 @@ public:
 
     const CXXMemberCallExpr *vec_vec_add_member_call_ast = 
       Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
-    if (vec_vec_add_ctor_ast == NULL)
+    if (vec_vec_add_member_call_ast == NULL)
     {
       std::cerr << "Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
       std::cerr << "Surrounding CXXConstructExpr is "; vec_vec_add_member_call_ast->dump();
@@ -177,7 +177,7 @@ public:
     // incorporate it as a chile of the overall node we're making
 
 
-    return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr, context);
+    return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr/*, context*/);
   }
 };
 
@@ -223,7 +223,7 @@ private:
 /*
 Handle the single argument to an add application 
 */
-const domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *arg, ASTContext &context, SourceManager &sm)
+domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *arg, ASTContext &context, SourceManager &sm)
 {
   std::cerr << "domain::VecExpr *handle_arg0_of_add_call. START matcher.\n";
   arg->dump(); // KJS
@@ -235,7 +235,7 @@ const domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *arg, ASTContex
   //
   // TODO: Clear this up, move next line into getVecExpr
   //
-  return interp_->getVecExpr(arg);
+  return interp_.getVecExpr(arg);
 }
 
 /*
@@ -273,7 +273,7 @@ public:
   {
     // NO MATCH HAPPENING HERE!
     std::cerr << "main::CXXMemberCallExprMemberExprMatcher. START matching.\n";
-    std::cerr << "Matching on ast (dum).\n"
+    std::cerr << "Matching on ast (dum).\n";
       call_rhs.dump();
     CXXMemberCallExprMemberExprMatcher_.match(call_rhs, context);
     std::cerr << "main::CXXMemberCallExprMemberExprMatcher. DONE matching.\n";
@@ -316,7 +316,7 @@ domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTC
   // keyed by memexpr (by an AST wrapper around memexpr).
   // Test postcondition.
 
-  domain::VecExpr *expr = interp_->getVecExpr(memexpr); 
+  domain::VecExpr *expr = interp_.getVecExpr(memexpr); 
   std::cerr << "domain::VecExpr *handle_member_expr_of_add_call. Done. domain::VecExpr at " 
     << std::hex << expr << "\n";  
   return expr;
@@ -405,7 +405,7 @@ domain::VecExpr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
 }
 */
 
-const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *context, SourceManager &sm)
+const domain::VecExpr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
 {
   std::cerr << "domain::handleCXXDeclStmt: START. Matching.\n";
   CXXConstructExprMatcher matcher;
@@ -414,7 +414,7 @@ const domain::VecExpr *handleCXXDeclStmt(const clang:: *consdecl, ASTContext *co
   // postcondition: consdecl now "in the system" (has interpretation)
   // Fetch and return result
   //
-  const domain::VecExpr *expr = interp->getVecExpr(consdecl);
+  const domain::VecExpr *expr = interp_.getVecExpr(consdecl);
   std::cerr << "domain::handleCXXDeclStmt: DONE. domain::VecExpr at " 
     << std::hex << expr << "\n";
   return expr;
@@ -437,7 +437,7 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
     std::cerr << "VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
-    declstmt->dump();
+    //declstmt->dump();
 
     const clang::DeclStmt *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
     const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
@@ -448,8 +448,8 @@ public:
 
     // IDENTIFIER -- should call handle identifier (TODO:)
     //
-    domain::VecIdent *id = interp_->mkVecIdent(vardecl);
-    coords::VecIdent *id_coords = interp_->getCoords(vardecl);
+    domain::VecIdent *id = interp_.mkVecIdent(vardecl);
+    coords::VecIdent *id_coords = interp_.getCoords(vardecl);
 
 /*
     domain::Space &space = oracle->getSpaceForVecIdent(vardecl);
@@ -470,8 +470,8 @@ public:
     // Postcondition: domain vector expression now in system
     // fetch result. Checking occurs in getVecExpr.
     //
-    const domain::VecExpr *expr = interp_->getVecExpr(consdecl);
-    const coords::VecExpr *expr_coords = interp_->getCoords(expr);
+    const domain::VecExpr *expr = interp_.getVecExpr(consdecl);
+    const coords::VecExpr *expr_coords = interp_.getCoords(expr);
   
     // add domain::Vector_Def for variable declaration statement in code
     //
@@ -529,7 +529,7 @@ public:
   MyFrontendAction() {}
   void EndSourceFileAction() override
   {
-    bool consistent = domain_domain->isConsistent();
+    bool consistent = interp_.isConsistent();
     std::cerr << (consistent ? "STUB Analysis result: Good\n" : "STUB: Bad\n");
   }
   std::unique_ptr<ASTConsumer>
@@ -548,8 +548,8 @@ int main(int argc, const char **argv)
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  interp_->addSpace("S1");
-  interp_->addSpace("S2");
+  interp_.addSpace("S1");
+  interp_.addSpace("S2");
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
