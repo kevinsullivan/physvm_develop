@@ -169,7 +169,7 @@ void Interpretation::mkVector_Def(ast::Vector_Def *ast, coords::VecIdent *id_coo
 
     domain::Vector_Def* dom_vec_def = 
       domain_->mkVector_Def(ast, id_coords, expr_coords);
-    coords2dom_->PutVector_Def(def_coords, dom_vec_def);
+    coords2dom_->putVector_Def(def_coords, dom_vec_def);
 
     /*
     domain::Vector_Def *vec_def = domain_->putVector_Def(bind_coords, id, exp);

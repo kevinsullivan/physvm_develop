@@ -24,7 +24,7 @@ using VecVecAddExpr = const clang::CXXMemberCallExpr;
 using Vector = const clang::CXXConstructExpr;
 using Vector_Lit = const clang::CXXConstructExpr;
 using Vector_Var = const clang::CXXConstructExpr;
-using Vector_Expr = const clang::CXXConstructExpr;
+using Vector_Expr = const clang::CXXConstructExpr; // A Clang Stmt!
 
 // Def
 using Vector_Def  = const clang::DeclStmt;
