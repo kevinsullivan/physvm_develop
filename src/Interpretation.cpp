@@ -49,7 +49,7 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
 *****/
 
 
-void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast, clang::ASTContext *c) {
+void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/) {
     coords::VecVarExpr *var_coords = ast2coords_->mkVecVarExpr(ast);
     domain::Space& space = oracle_->getSpaceForVecVarExpr(ast);
     domain::VecVarExpr *dom_var = domain_->mkVecVarExpr(space, var_coords);
@@ -104,7 +104,7 @@ design showing through here, as clang separated things like function appl
 expressions and objects constructed from them.
 */
 
-void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, clang::ASTContext *c) {
+void Interpretation::mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *c*/) {
     std::cerr << "Interpretation::mkVector_Lit. START";
     std::cerr << "Interpretation::mkVector_Lit. WARN: Scalar stubbed.\n";
   
@@ -130,7 +130,7 @@ void Interpretation::mkVector_Var(
 */
 
 void Interpretation::mkVector_Expr(
-      ast::Vector_Expr *ast, coords::VecExpr* expr_coords, clang::ASTContext *c) {
+      ast::Vector_Expr *ast, coords::VecExpr* expr_coords/*, clang::ASTContext *c*/) {
     std::cerr << "Interpretation::mkVector_Expr. START";
     //coords::VecExpr *expr_coords = expr->getCoords();
     coords::Vector_Expr *vec_coords = ast2coords_->mkVector_Expr(ast, expr_coords);
