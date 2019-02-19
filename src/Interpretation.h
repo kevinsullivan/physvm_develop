@@ -27,7 +27,8 @@ public:
     void mkVector_Expr(ast::Vector_Expr *ast, coords::VecExpr* expr/*, clang::ASTContext *context*/);
 //    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);
     void mkVector_Def(ast::Vector_Def *ast, coords::VecIdent *id, coords::VecExpr *exp);
-    coords::VecExpr *getCoords(ast::VecExpr *expr);
+    
+    //coords::VecExpr *getCoords(ast::VecExpr *expr);
     
 
     // Precondition: coords2domain_ is defined for exp

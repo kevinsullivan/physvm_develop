@@ -31,11 +31,12 @@ coords::VecExpr *CoordsToDomain::getVecExpr(domain::VecExpr* d) const {
     return d->getCoords();
 }
 
+// lit
+/*
 void CoordsToDomain::putVecLitExpr(coords::VecLitExpr d, domain::VecLitExpr d) {
     interpExpression.insert(std::make_pair(*c, d));
 }
 
-// lit
 
 domain::VecLitExpr *CoordsToDomain::getLitInterp(coords::VecLitExpr c) const {
    return interpExpression[*c];
@@ -44,6 +45,7 @@ domain::VecLitExpr *CoordsToDomain::getLitInterp(coords::VecLitExpr c) const {
 coords::VecLitExpr *CoordsToDomain::getLitInterp(domain::VecLitExpr d) const {
     return d->getCoords();
 }
+*/
 
 // var
 
