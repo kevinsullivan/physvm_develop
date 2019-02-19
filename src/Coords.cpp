@@ -1,15 +1,5 @@
 #include "Coords.h"
 
-#ifndef COORDS_H
-#define COORDS_H
-
-#include "clang/AST/AST.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
-#include <cstddef>
-#include <iostream> // for cheap logging only
-#include "AST.h"
-
-
 namespace coords {
 
 /*
@@ -52,6 +42,7 @@ virtual std::string Coords::toString() const {
 
 // TODO: Implement proper hashing of AST nodes here
 //
+/*
 struct CoordsHasher {
   std::size_t operator()(const Coords &k) const {
     std::size_t hash = 10101010;
@@ -59,6 +50,7 @@ struct CoordsHasher {
     return hash;
   }
 };
+*/
 
 struct VecIdentHasher {
   std::size_t operator()(const VecIdent &k) const {
@@ -70,6 +62,14 @@ struct VecIdentHasher {
 
 struct VecExprHasher {
   std::size_t operator()(const VecExpr &k) const {
+    std::size_t hash = 10101010;
+    // TODO Fix hash function
+    return hash;
+  }
+};
+
+struct VectorHasher {
+  std::size_t operator()(const Vector &k) const {
     std::size_t hash = 10101010;
     // TODO Fix hash function
     return hash;

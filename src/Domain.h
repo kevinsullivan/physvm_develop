@@ -56,7 +56,7 @@ public:
 	Vector_Expr* mkVector_Expr(Space& space, coords::Vector* v, domain::VecExpr *vec);
 
 // Defs
-	Vector_Def* mkVector_Def(coords::Vector_Def* vardecl, VecIdent* identifier, VecExpr* expression);
+	Vector_Def* mkVector_Def(coords::Vector_Def* vardecl, coords::VecIdent* identifier, coords::VecExpr* expression);
 
 
 // Client
