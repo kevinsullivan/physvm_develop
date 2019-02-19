@@ -11,12 +11,9 @@ namespace oracle {
 class Oracle
 {
 public:
-	Oracle(domain::Domain* d) : dom_(d), space_(*new Space("Oracle:: Error. Stub Space.\n")) {};
+	Oracle(domain::Domain* d) : dom_(d), space_(*new domain::Space("Oracle:: Error. Stub Space.\n")) {};
 
-	// Precondition: true
-	// Effects: get space annotation from environment
-	// Postcondition: return value is space to associate with vector
-	//
+	domain::Space& getSpace() { return space_; }
 	domain::Space& getSpaceForVector(std::string where);
 
 	domain::Space& getSpaceForAddExpression(coords::VecExpr * left_br, coords::VecExpr * right_br)

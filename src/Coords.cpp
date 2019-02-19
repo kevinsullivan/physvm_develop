@@ -21,7 +21,7 @@ Coords::Coords(const clang::Stmt *stmt) :
 }
 
 Coords::Coords(const clang::Decl *decl) : 
-    clang_decl_(decl), ast_type_tag_(coords::CLANG_AST_EXPR) {
+    clang_decl_(decl), ast_type_tag_(coords::CLANG_AST_DECL) {
 }
 
 const clang::Stmt *Coords::getClangStmt() const { return clang_stmt_; }
@@ -97,7 +97,7 @@ class VecLitExpr : public VecExpr {}
 
 VecVarExpr::VecVarExpr(const clang::DeclRefExpr *d) : VecExpr(d) {}
 
-const clang::DeclRefExpr *VecVarExpr::getDeclRefExpr() {
+const clang::DeclRefExpr *VecVarExpr::getDeclRefExpr() const {
     return static_cast<const clang::DeclRefExpr*> (clang_stmt_);  
 }
 
@@ -136,7 +136,7 @@ const clang::CXXConstructExpr *Vector::getCXXConstructExpr() const {
 
 VectorCtorType Vector::getVectorType() { return tag_; }
 
-virtual std::string Vector::toString() const { return "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";}
+std::string Vector::toString() const { return "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";}
 
 
 Vector_Lit::Vector_Lit(const clang::CXXConstructExpr* ast, ast::Scalar a) 
@@ -151,14 +151,14 @@ Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, coords::VecVarExpr* e
 }
 
 std::string Vector_Var::toString()  { 
-    return "Vector_Var::toString() STUB."; 
+    return std::string("Vector_Var::toString() STUB.\n"); 
 }
 
 std::string Vector_Expr::toString()  { 
-    return "Vector_Expr::toString() STUB."; 
+    return std::string("Vector_Expr::toString() STUB.\n"); 
 }
 
-Vector_Expr::Vector_Expr(const clang::CXXConstructExpr ast, 
+Vector_Expr::Vector_Expr(const clang::CXXConstructExpr *ast, 
                      coords::VecExpr* expr) 
     : Vector(ast, VEC_CTOR_EXPR), expr_(expr) {
 }
@@ -173,7 +173,7 @@ VecVecAddExpr* Vector_Expr::getVecVecAddExpr() {
 * Def
 ****/
 
-Vector_Def::Vector_Def(const clang::DeclStmt def, coords::VecIdent *bv, coords::VecExpr *be)
+Vector_Def::Vector_Def(const clang::DeclStmt *def, coords::VecIdent *bv, coords::VecExpr *be)
       : VecExpr(declStmt), bv_(bv), be_(be) {
 }
 
@@ -181,12 +181,14 @@ Vector_Def::Vector_Def(const clang::DeclStmt def, coords::VecIdent *bv, coords::
     return static_cast<const clang::DeclStmt>stmt_; 
 }*/
 
+// TODO: Fix names of members. Change to ident_ and expr_.
+//
 coords::VecIdent *Vector_Def::getIdent() const {
-    return ident_;
+    return bv_;
 }
 
 coords::VecExpr *Vector_Def::getExpr() const {
-    return expr_;
+    return be_;
 }
 
 std::string Vector_Def::toString() const { 
