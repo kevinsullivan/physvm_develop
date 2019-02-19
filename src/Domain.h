@@ -69,10 +69,10 @@ public:
 	void dumpVector_Defs(); // print contents on std::cerr
 
 private:
-	std::vector<Space> spaces;
-	std::vector<VecIdent> idents;
+	std::vector<Space*> spaces;
+	std::vector<VecIdent*> idents;
 	std::vector<VecExpr*> exprs;
-	std::vector<Vector_Def> defs;
+	std::vector<Vector_Def*> defs;
 	std::vector<Vector*> vectors;
 };
 	
