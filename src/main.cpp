@@ -449,6 +449,7 @@ public:
     // IDENTIFIER -- should call handle identifier (TODO:)
     //
     domain::VecIdent *id = interp_->mkVecIdent(vardecl);
+    coords::VecIdent *id_coords = interp_->getCoords(vardecl);
 
 /*
     domain::Space &space = oracle->getSpaceForVecIdent(vardecl);
@@ -469,11 +470,12 @@ public:
     // Postcondition: domain vector expression now in system
     // fetch result. Checking occurs in getVecExpr.
     //
-    const domain::VecExpr *expr = interp->getVecExpr(consdecl);
+    const domain::VecExpr *expr = interp_->getVecExpr(consdecl);
+    const coords::VecExpr *expr_coords = interp_->getCoords(expr);
   
     // add domain::Vector_Def for variable declaration statement in code
     //
-    interp_->mkVector_Def(declstmt, id, expr);
+    interp_->mkVector_Def(declstmt, id_coords, expr_coords);
 
 /*    Vector_Def *declstmt_wrapper = new Vector_Def(declstmt);
     stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));

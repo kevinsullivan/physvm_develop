@@ -18,12 +18,12 @@ public:
     Interpretation();
  
     void mkVecIdent(ast::VecIdent *ast);
-    void mkVecLitExpr(ast::VecVarExpr *ast, clang::ASTContext *c);
-    void mkVecVarExpr(ast::VecVarExpr *ast, clang::ASTContext *c);
+    //void mkVecLitExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/);
+    void mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/);
     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, 
                          domain::VecExpr *arg);
-    void mkVector_Lit(ast::Vector_Lit *ast, clang::ASTContext *context);
-    void mkVector_Expr(ast::Vector_Expr *ast, domain::VecExpr* expr, clang::ASTContext *context);
+    void mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *context*/);
+    void mkVector_Expr(ast::Vector_Expr *ast, domain::VecExpr* expr/*, clang::ASTContext *context*/);
 //    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);
     void mkVector_Def(ast::Vector_Def *ast, coords::VecIdent *id, coords::VecExpr *exp);
 
