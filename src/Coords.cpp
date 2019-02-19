@@ -84,13 +84,6 @@ struct Vector_DefHasher {
   }
 };
 
-struct VecExprHasher {
-  std::size_t operator()(const VecExpr &k) const {
-    std::size_t hash = 10101010;
-    // TODO Fix hash function
-    return hash;
-  }
-};
 
 /*************************************************************
 * Coordinate subclasses, for type checking, override behaviors
