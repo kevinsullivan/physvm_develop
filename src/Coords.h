@@ -91,7 +91,7 @@ struct Vector_DefHasher;
 class VecIdent : public Coords {
 public:
   VecIdent(const ast::VecIdent *ast);
-  const clang::VarDecl *getVarDecl();
+  const clang::VarDecl *getVarDecl() const;
   virtual std::string toString() const;
   bool operator==(const VecIdent &other) const {
     return (clang_decl_ == other.clang_decl_);

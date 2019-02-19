@@ -13,7 +13,7 @@ class Oracle
 public:
 	Oracle(domain::Domain* d) : dom_(d), space_(*new domain::Space("Oracle:: Error. Stub Space.\n")) {};
 
-	domain::Space& getSpace() { return space_; }
+	//domain::Space& getSpace() { return space_; }
 	domain::Space& getSpaceForVector(std::string where);
 
 	domain::Space& getSpaceForAddExpression(coords::VecExpr * left_br, coords::VecExpr * right_br)
