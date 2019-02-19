@@ -80,7 +80,7 @@ coords::Vector_Expr *ASTToCoords::mkVector_Expr(
     coords::VecExpr *expr_coords) {
     coords::Vector_Expr *coord = new coords::Vector_Expr(ast, expr_coords);
     overrideStmt(ast,coord);
-    return c;    
+    return coord;    
 }
 
 

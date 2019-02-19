@@ -56,12 +56,12 @@ void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast, clang::ASTContext *c) {
     coords2dom_->PutVecVarExpr(var_coords, dom_var);
 }
 
-void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *mem, domain::VecExpr *arg) {
+void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, coords::VecExpr *mem_coords, coords::VecExpr *arg_coords) {
 
   std::cerr << "Interpretation::mkVecVecAddExpr: START: adding\n";
   std::cerr << "Interpretation::mkVecVecAddExpr: Member is " 
-    << mem->toString() << " \n";
-  std::cerr << "Argument is " << arg->toString() << "\n";
+    << mem_coords->toString() << " \n";
+  std::cerr << "Argument is " << arg_coords->toString() << "\n";
   std::cerr << "AST is (dump)";
   ast->dump();
 
@@ -69,8 +69,8 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, domain::VecExpr *m
   // - make coords for ast, including child coords
   // - update ast2coords map with new coords
   //
-  coords::VecExpr *mem_coords = mem->getCoords();
-  coords::VecExpr *arg_coords = arg->getCoords();
+  //coords::VecExpr *mem_coords = mem->getCoords();
+  //coords::VecExpr *arg_coords = arg->getCoords();
   if (mem_coords == NULL || arg_coords == NULL) {
     std::cerr << "Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords " 
         << std::hex << mem_coords << " arg coords " 
@@ -130,13 +130,18 @@ void Interpretation::mkVector_Var(
 */
 
 void Interpretation::mkVector_Expr(
-      ast::Vector_Expr *ast, domain::VecExpr* expr, clang::ASTContext *c) {
+      ast::Vector_Expr *ast, coords::VecExpr* expr_coords, clang::ASTContext *c) {
     std::cerr << "Interpretation::mkVector_Expr. START";
-    coords::VecExpr *expr_coords = expr->getCoords();
-    coords::Vector_Expr *var_coords = ast2coords_->mkVector_Expr(ast, expr_coords);
-    oracle::Space& space = oracle_->getSpaceForVector_Expr(ast, expr); // infer?
-    domain::Vector_Expr* dom_vec = domain_->mkVector_Expr(vec_coords, expr);
-    coords2dom_->PutVecExpr(var_coords, dom_var);
+    //coords::VecExpr *expr_coords = expr->getCoords();
+    coords::Vector_Expr *vec_coords = ast2coords_->mkVector_Expr(ast, expr_coords);
+    //domain::Space& space = oracle_->getSpaceForVector_Expr(ast, expr); // infer?
+
+    // VecExpr should already be in dom, so look it up rather than creating it anew.
+    domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
+//    domain::Vector_Expr* dom_vec = domain_->mkVector_Expr(vec_coords, dom_expr);
+
+    domain::Vector_Expr *dom_vec = new domain::Vector_Expr(vec_coords, dom_expr);
+    coords2dom_->PutVector_Expr(vec_coords, dom_vec);
     std::cerr << "Interpretation::mkVector_Expr. DONE\n";
 }
 
@@ -144,15 +149,20 @@ void Interpretation::mkVector_Expr(
 * Def
 *****/
 
-void Interpretation::mkVector_Def(ast::Vector_Def *ast, domain::VecIdent *id, domain::VecExpr *expr)
+/****
+ * Note: Have made decision that main communicates with Interpretation in terms
+ * of coords, not in terms of domain objects.
+ * */
+
+void Interpretation::mkVector_Def(ast::Vector_Def *ast, coords::VecIdent *id_coords, coords::VecExpr *expr_coords)
 {
     std::cerr << "START: Interpretation::mkVector_Def.\n.";
-    if (!exp || !id) { std::cerr << "Interpretation::mkVector_Def: null arg\n"; }
+    if (!expr_coords || !id_coords) { std::cerr << "Interpretation::mkVector_Def: null arg\n"; }
 
     // No need for Space at this point, ident and vec already annotated
     // TODO: Move into ast2coords_->makeCoordsForVector_Def
-    coords::VecIdent *id_coords = id->getCoords();
-    coords::VecExpr *expr_coords = expr->getCoords();
+    //coords::VecIdent *id_coords = id->getCoords();
+    //coords::VecExpr *expr_coords = expr->getCoords();
 
     // TODO: Replace
     coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(ast, id_coords, expr_coords);
