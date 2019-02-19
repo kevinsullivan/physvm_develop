@@ -51,12 +51,12 @@ public:
 
 // Values
 
-	Vector_Lit* mkVector_Lit(coords::Vector* v/*, domain::VecExpr *vec*/);
+	Vector_Lit* mkVector_Lit(Space& space, coords::Vector* v/*, domain::VecExpr *vec*/);
 	//Vector* mkVector_Var(coords::Vector* v/*, domain::VecExpr *vec*/);
-	Vector_Expr* mkVector_Expr(coords::Vector* v, domain::VecExpr *vec);
+	Vector_Expr* mkVector_Expr(Space& space, coords::Vector* v, domain::VecExpr *vec);
 
 // Defs
-	Vector_Def& mkVector_Def(coords::Vector_Def* vardecl, const VecIdent* identifier, const VecExpr* expression);
+	Vector_Def* mkVector_Def(coords::Vector_Def* vardecl, VecIdent* identifier, VecExpr* expression);
 
 
 // Client
