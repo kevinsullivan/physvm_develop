@@ -91,7 +91,7 @@ struct Vector_DefHasher;
 class VecIdent : public Coords {
 public:
   VecIdent(const ast::VecIdent *ast);
-  clang::VarDecl *getVarDecl();
+  const clang::VarDecl *getVarDecl();
   virtual std::string toString() const;
   bool operator==(const VecIdent &other) const {
     return (clang_decl_ == other.clang_decl_);
@@ -165,7 +165,7 @@ private:
 class VecVecAddExpr : public VecExpr {
 public:
   VecVecAddExpr(const clang::CXXMemberCallExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg);
-  clang::CXXMemberCallExpr *getCXXMemberCallExpr();
+  const clang::CXXMemberCallExpr *getCXXMemberCallExpr();
   virtual std::string toString() const;
 
 private:
