@@ -158,9 +158,9 @@ std::string Vector_Expr::toString() const {
     return std::string("Vector_Expr::toString() STUB.\n"); 
 }
 
-Vector_Expr::Vector_Expr(const clang::CXXConstructExpr *ast, 
-                     coords::VecExpr* expr) 
-    : Vector(ast, VEC_CTOR_EXPR), expr_(expr) {
+Vector_Expr::Vector_Expr(const clang::CXXConstructExpr *ctor_ast, 
+                     coords::VecExpr* expr_coords) 
+    : Vector(ctor_ast, VEC_CTOR_EXPR), expr_(expr_coords) {
 }
 
 /*

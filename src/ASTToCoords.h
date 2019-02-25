@@ -55,18 +55,30 @@ public:
                                              ast::Scalar s);
     coords::Vector_Var      *mkVector_Var   (const ast::Vector_Var *ast,
                                              coords::VecVarExpr *var);
-    coords::Vector_Expr     *mkVector_Expr  (const ast::Vector_Expr *ast,
-                                             coords::VecExpr *expr);
+    coords::Vector_Expr     *mkVector_Expr  (const ast::Vector_Expr *ctor_ast,
+                                             ast::VecExpr *expr_ast);
     coords::Vector_Def      *mkVector_Def   (const ast::Vector_Def *ast,
                                              coords::VecIdent *id, 
                                              coords::VecExpr *vec);
 
-private:
-    void overrideStmt(const clang::Stmt *s, coords::Coords *c);
-    void overrideDecl(const clang::Decl *d, coords::Coords *c);
+    coords::Coords *getStmtCoords(const clang::Stmt *s) {
+        return stmt_coords[s];
+    }
+
+    coords::Coords *getDeclCoords(const clang::Decl *d) {
+        return decl_coords[d];
+    }
+
+  private:
+    void overrideStmt2Coords(const clang::Stmt *s, coords::Coords *c);
+    void overrideDecl2Coords(const clang::Decl *d, coords::Coords *c);
+    void overrideCoords2Stmt(coords::Coords *c, const clang::Stmt *s);
+    void overrideCoords2Decl(coords::Coords *c, const clang::Decl *d);
 
     std::unordered_map<const clang::Stmt *, coords::Coords *> stmt_coords;
     std::unordered_map<const clang::Decl *, coords::Coords *> decl_coords;
+    std::unordered_map<coords::Coords *, const clang::Stmt *> coords_stmt;
+    std::unordered_map<coords::Coords *, const clang::Decl *> coords_decl;
 };
 
 } // namespace

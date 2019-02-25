@@ -24,7 +24,7 @@ public:
     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, coords::VecExpr *mem, 
                          coords::VecExpr *arg);
     void mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *context*/);
-    void mkVector_Expr(ast::Vector_Expr *ast, coords::VecExpr* expr/*, clang::ASTContext *context*/);
+    void mkVector_Expr(ast::Vector_Expr *ast, ast::VecExpr* expr/*, clang::ASTContext *context*/);
 //    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);
     void mkVector_Def(ast::Vector_Def *ast, coords::VecIdent *id, coords::VecExpr *exp);
     

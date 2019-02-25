@@ -123,8 +123,8 @@ Vector_Lit* Domain::mkVector_Lit(Space& space, coords::Vector* coords) {
     return vec;
 }
 
-Vector_Expr* Domain::mkVector_Expr(Space& s, coords::Vector* coords, domain::VecExpr* exp) {
-    Vector* vec = new domain::Vector_Expr(space, coords, expr);
+Vector_Expr* Domain::mkVector_Expr(Space& s, coords::Vector* coords, coords::VecExpr* exp) {
+    Vector* vec = new domain::Vector_Expr(s, coords, coords2domain_->getVecExpr(expr);
     vectors.push_back(*vec);
     return vec;
 }

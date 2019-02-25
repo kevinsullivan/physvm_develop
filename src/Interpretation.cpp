@@ -132,18 +132,19 @@ void Interpretation::mkVector_Var(
 */
 
 void Interpretation::mkVector_Expr(
-      ast::Vector_Expr *ast, coords::VecExpr* expr_coords/*, clang::ASTContext *c*/) {
+      ast::Vector_Expr *ctor_ast, ast::VecExpr* expr_ast/*, clang::ASTContext *c*/) {
     std::cerr << "Interpretation::mkVector_Expr. START";
-    coords::Vector_Expr *vec_coords = ast2coords_->mkVector_Expr(ast, expr_coords);
 
+    
+    coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, expr_ast);
+    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr_ast));
 
-    // TODO: Factor cooords:: out of Domain. Have it talk domain objects only.
-    //
-    //domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
+    domain::Space& s = *new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
 
-    //domain::Space& space = oracle_->getSpaceForVector_Expr(ast, expr); // infer?
-    Space& s = *new Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
-    domain::Vector_Expr *dom_vec = new domain::mkVector_Expr(s, vec_coords, expr_coords);
+    domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
+  
+
+    domain::Vector_Expr *dom_vec = domain::mkVector_Expr(s, ctor_coords, expr_dom);
     coords2dom_->putVector_Expr(vec_coords, dom_vec);
     std::cerr << "Interpretation::mkVector_Expr. DONE\n";
 }
