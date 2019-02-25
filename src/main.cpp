@@ -21,8 +21,13 @@ using namespace clang::ast_matchers;
 using namespace clang::driver;
 using namespace clang::tooling;
 
+
+/*
+Architectural decision: This tool should deal in AST nodes only.
+*/
+
 /**************************************************
-Fundamental data structure constructed by this tool
+Fundamental data structure populated by this tool
 ***************************************************/
 
 interp::Interpretation interp_;
@@ -99,12 +104,12 @@ class HandlerForCXXMemberCallExprRight_DeclRefExpr : public MatchFinder::MatchCa
 public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    const auto *declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+    const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
     std::cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
 
     // TODO: Should we be passing context objects with these AST nodes? Do they persist?
     //
-    interp_.mkVecVarExpr(declRefExpr);
+    interp_.mkVecVarExpr(declRefExpr_ast);
   }
 };
 
@@ -153,9 +158,9 @@ public:
 
     // Need separate nodes for these constructors?
     //
-    const CXXConstructExpr *expr_ctor_ast = 
+    const CXXConstructExpr *ctor_ast = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorConstructAddExpr");
-    if (expr_ctor_ast == NULL)
+    if (ctor_ast == NULL)
     {
       std::cerr << "Error in HandlerForCXXConstructAddExpr::run. No constructor declaration pointer\n";
       return;
@@ -171,13 +176,17 @@ public:
     }
 
     // Recursively handle member call expression
+    //
+    // TODO: Should not hMCE should not return value. Just trade in AST nodes.
+    // const domain::VecExpr *memberCallExpr = handleMemberCallExpr(vec_vec_add_member_call_ast, context, sm);
     const domain::VecExpr *memberCallExpr = handleMemberCallExpr(vec_vec_add_member_call_ast, context, sm);
 
     // Probably want to fetch VecExpr just constructed and 
     // incorporate it as a chile of the overall node we're making
 
 
-    return interp_.mkVector_Expr(vec_vec_add_member_call_ast, memberCallExpr/*, context*/);
+    //return interp_.mkVector_Expr(expr_ctor_ast, memberCallExpr->getCoords() /*, context*/);
+    return interp_.mkVector_Expr(ctor_ast, vec_vec_add_member_call_ast /*, context*/);
   }
 };
 
@@ -475,7 +484,7 @@ public:
   
     // add domain::Vector_Def for variable declaration statement in code
     //
-    interp_->mkVector_Def(declstmt, id_coords, expr_coords);
+    interp_.mkVector_Def(declstmt, id_coords, expr_coords);
 
 /*    Vector_Def *declstmt_wrapper = new Vector_Def(declstmt);
     stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
@@ -490,7 +499,7 @@ public:
     domain_domain->dumpVecIdents(); // print contents on std::cerr
     std::cerr << "Domain Vector_Defs\n";
     domain_domain->dumpVector_Defs(); // print contents on std::cerr
-    std::cerr << "InterpExpressions\n";
+    std::cerr << "coord2dom_VecExprs\n";
     interp->dumpExpressions();
 */
     }

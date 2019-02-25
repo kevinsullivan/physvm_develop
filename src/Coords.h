@@ -231,7 +231,7 @@ public:
   Vector_Expr *getVector_Expr();
 
 private:
-  Vector_Expr *expr_;
+  VecExpr *expr_;
 };
 
 /****

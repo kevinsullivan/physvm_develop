@@ -12,7 +12,7 @@ LLVM_SRC_PATH := /llvm
 
 LLVM_SRC_PATH   := /home/sullivan/Projects/llvm-project
 LLVM_BUILD_PATH := $(LLVM_SRC_PATH)/build
-LLVM_BIN_PATH 	:= /usr/local
+LLVM_BIN_PATH 	:= /usr/local/bin
 
 $(info -----------------------------------------------)
 $(info Using LLVM_SRC_PATH = $(LLVM_SRC_PATH))

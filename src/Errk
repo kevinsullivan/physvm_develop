@@ -169,7 +169,7 @@ Coords.h:50:7: note: candidate: constexpr coords::Coords::Coords(coords::Coords&
 Coords.h:50:7: note:   candidate expects 1 argument, 0 provided
 CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVecIdent(coords::VecIdent*, domain::VecIdent*)':
 CoordsToDomain.cpp:11:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::VecIdent, domain::VecIdent*>)'
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                   ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -209,7 +209,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
   ^~~~~~
 /usr/include/c++/7/bits/unordered_map.h:631:2: note:   template argument deduction/substitution failed:
 CoordsToDomain.cpp:11:50: note:   candidate expects 2 arguments, 1 provided
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                   ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -226,7 +226,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
   ^~~~~~
 /usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
 CoordsToDomain.cpp:11:50: note:   candidate expects 2 arguments, 1 provided
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                   ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -244,7 +244,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
 /usr/include/c++/7/bits/unordered_map.h:657:7: note:   no known conversion for argument 1 from 'std::pair<coords::VecIdent, domain::VecIdent*>' to 'std::initializer_list<std::pair<const coords::VecExpr, domain::VecExpr*> >'
 CoordsToDomain.cpp: In member function 'domain::VecIdent* coords2domain::CoordsToDomain::getVecIdent(coords::VecIdent*) const':
 CoordsToDomain.cpp:15:27: error: no match for 'operator[]' (operand types are 'const std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' and 'coords::VecIdent')
-    return interpExpression[*c];
+    return coord2dom_VecExpr[*c];
                            ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -266,7 +266,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
 /usr/include/c++/7/bits/unordered_map.h:979:7: note:   no known conversion for argument 1 from 'coords::VecIdent' to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::key_type&& {aka coords::VecExpr&&}'
 CoordsToDomain.cpp: In member function 'domain::VecVarExpr* coords2domain::CoordsToDomain::getVecVarExpr(coords::VecVarExpr*) const':
 CoordsToDomain.cpp:58:64: error: passing 'const std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' as 'this' argument discards qualifiers [-fpermissive]
-    return static_cast<domain::VecVarExpr *>(interpExpression[*c]);
+    return static_cast<domain::VecVarExpr *>(coord2dom_VecExpr[*c]);
                                                                 ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -304,10 +304,10 @@ CoordsToDomain.h:51:25: error:                 domain::VecVecAddExpr* coords2dom
                          ^~~~~~~~~~~~~~~~
 CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVector_Lit(coords::Vector*, domain::Vector_Lit*)':
 CoordsToDomain.cpp:82:45: error: 'c' was not declared in this scope
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                              ^
 CoordsToDomain.cpp:82:48: error: 'd' was not declared in this scope
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                 ^
 CoordsToDomain.cpp: At global scope:
 CoordsToDomain.cpp:85:21: error: prototype for 'domain::Vector_Lit* coords2domain::CoordsToDomain::getVector(coords::Vector_Lit*) const' does not match any in class 'coords2domain::CoordsToDomain'
@@ -344,7 +344,7 @@ CoordsToDomain.h:57:18: error:                 domain::Vector* coords2domain::Co
                   ^~~~~~~~~
 CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVector_Expr(coords::Vector*, domain::Vector_Expr*)':
 CoordsToDomain.cpp:94:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::Vector, domain::Vector_Expr*>)'
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                   ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -384,7 +384,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
   ^~~~~~
 /usr/include/c++/7/bits/unordered_map.h:631:2: note:   template argument deduction/substitution failed:
 CoordsToDomain.cpp:94:50: note:   candidate expects 2 arguments, 1 provided
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                   ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -401,7 +401,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
   ^~~~~~
 /usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
 CoordsToDomain.cpp:94:50: note:   candidate expects 2 arguments, 1 provided
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                   ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -419,7 +419,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
 /usr/include/c++/7/bits/unordered_map.h:657:7: note:   no known conversion for argument 1 from 'std::pair<coords::Vector, domain::Vector_Expr*>' to 'std::initializer_list<std::pair<const coords::VecExpr, domain::VecExpr*> >'
 CoordsToDomain.cpp: In member function 'domain::Vector* coords2domain::CoordsToDomain::getVector(coords::Vector_Expr*) const':
 CoordsToDomain.cpp:98:62: error: passing 'const std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>' as 'this' argument discards qualifiers [-fpermissive]
-      return static_cast<domain::Vector *>(interpExpression[*c]);
+      return static_cast<domain::Vector *>(coord2dom_VecExpr[*c]);
                                                               ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -435,7 +435,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
        operator[](const key_type& __k)
        ^~~~~~~~
 CoordsToDomain.cpp:98:63: error: invalid static_cast from type 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::mapped_type {aka domain::VecExpr*}' to type 'domain::Vector*'
-      return static_cast<domain::Vector *>(interpExpression[*c]);
+      return static_cast<domain::Vector *>(coord2dom_VecExpr[*c]);
                                                                ^
 CoordsToDomain.cpp: At global scope:
 CoordsToDomain.cpp:101:71: error: expected ',' or '...' before 'const'
@@ -460,7 +460,7 @@ CoordsToDomain.h:57:18: error:                 domain::Vector* coords2domain::Co
                   ^~~~~~~~~
 CoordsToDomain.cpp: In member function 'void coords2domain::CoordsToDomain::putVector_Def(coords::Vector_Def*, domain::Vector_Def*)':
 CoordsToDomain.cpp:108:50: error: no matching function for call to 'std::unordered_map<coords::VecExpr, domain::VecExpr*, coords::VecExprHasher>::insert(std::pair<coords::Vector_Def, domain::Vector_Def*>)'
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                   ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -500,7 +500,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
   ^~~~~~
 /usr/include/c++/7/bits/unordered_map.h:631:2: note:   template argument deduction/substitution failed:
 CoordsToDomain.cpp:108:50: note:   candidate expects 2 arguments, 1 provided
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                   ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -517,7 +517,7 @@ In file included from /usr/include/c++/7/unordered_map:48:0,
   ^~~~~~
 /usr/include/c++/7/bits/unordered_map.h:646:2: note:   template argument deduction/substitution failed:
 CoordsToDomain.cpp:108:50: note:   candidate expects 2 arguments, 1 provided
-     interpExpression.insert(std::make_pair(*c, d));
+     coord2dom_VecExpr.insert(std::make_pair(*c, d));
                                                   ^
 In file included from /usr/include/c++/7/unordered_map:48:0,
                  from /llvm/include/llvm/Support/TrigramIndex.h:33,
@@ -538,8 +538,8 @@ CoordsToDomain.cpp:111:58: error: non-member function 'domain::Vector_Def* getVe
  domain::Vector_Def *getVector_Def(coords::Vector_Def* c) const {
                                                           ^~~~~
 CoordsToDomain.cpp: In function 'domain::Vector_Def* getVector_Def(coords::Vector_Def*)':
-CoordsToDomain.cpp:112:45: error: 'interpExpression' was not declared in this scope
-    return static_cast<domain::Vector_Def *>(interpExpression[*c]);
+CoordsToDomain.cpp:112:45: error: 'coord2dom_VecExpr' was not declared in this scope
+    return static_cast<domain::Vector_Def *>(coord2dom_VecExpr[*c]);
                                              ^~~~~~~~~~~~~~~~
 CoordsToDomain.cpp: At global scope:
 CoordsToDomain.cpp:115:58: error: non-member function 'coords::Vector_Def* getVector_Def(domain::Vector_Def*)' cannot have cv-qualifier
