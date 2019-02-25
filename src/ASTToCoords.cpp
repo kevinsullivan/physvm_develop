@@ -99,3 +99,19 @@ coords::Vector_Def *ASTToCoords::mkVector_Def(
     overrideCoords2Stmt(coord, ast);
     return coord;
 }
+
+void ASTToCoords::overrideStmt2Coords(const clang::Stmt *s, coords::Coords *c) {
+    stmt_coords.insert(std::make_pair(s, c));
+}
+
+void ASTToCoords::overrideDecl2Coords(const clang::Decl *d, coords::Coords *c) {
+    decl_coords.insert(std::make_pair(d, c));
+}
+
+void ASTToCoords::overrideCoords2Stmt(coords::Coords *c, const clang::Stmt *s) {
+    coords_stmt.insert(std::make_pair(c, s));
+}
+
+void ASTToCoords::overrideCoords2Decl(coords::Coords *c, const clang::Decl *d) {
+    coords_decl.insert(std::make_pair(c, d));
+}
