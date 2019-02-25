@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/ASTMatcher",
             "args": [],
-            "stopAtEntry": false,
+            "stopAtEntry": false, 
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": true,
