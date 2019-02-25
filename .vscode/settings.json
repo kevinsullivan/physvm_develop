@@ -9,7 +9,7 @@
         "iostream": "cpp",
         "string": "cpp",
         "iosfwd": "cpp",
-        "functional": "cpp", 
+        "functional": "cpp",
         "ios": "cpp",
         "vector": "cpp",
         "utility": "cpp",
@@ -59,6 +59,17 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "xlocale": "cpp",
-        "xlocnum": "cpp"
+        "xlocnum": "cpp",
+        "array": "cpp",
+        "*.tcc": "cpp",
+        "clocale": "cpp",
+        "condition_variable": "cpp",
+        "deque": "cpp",
+        "fstream": "cpp",
+        "numeric": "cpp",
+        "optional": "cpp",
+        "sstream": "cpp",
+        "thread": "cpp",
+        "cinttypes": "cpp"
     }
 }
