@@ -31,8 +31,8 @@ class CoordsToDomain
 // Ident
 
 	void putVecIdent(coords::VecIdent *key, domain::VecIdent *i);
-	domain::VecIdent *getVecIdent(coords::VecIdent *c) const;
-	coords::VecIdent *getVecIdent(domain::VecIdent *d) const;
+	domain::VecIdent *getVecIdentDom(coords::VecIdent *c) const;
+	coords::VecIdent *getVecIdentCoords(domain::VecIdent *d) const;
 
 // Expr
 
@@ -83,15 +83,15 @@ class CoordsToDomain
  
 	// TODO: delete "interp" prefixes here -- minor
 	
+	std::unordered_map <coords::VecIdent*,	domain::VecIdent*	> 	coords2dom_VecIdent;
 	std::unordered_map <coords::VecExpr*, 	domain::VecExpr*	> 	coods2dom_VecExpr;
 	std::unordered_map <coords::Vector*, 	domain::Vector*		> 	coords2dom_Vector;
-	std::unordered_map <coords::VecIdent*,	domain::VecIdent*	> 	coords2dom_VecIdent;
 	std::unordered_map <coords::Vector_Def*,domain::Vector_Def*	> 	coords2dom_Vector_Def;
 
-	std::unordered_map<domain::VecExpr *, coords::VecExpr*> dom2coords_VecExpr;
-	std::unordered_map<domain::Vector *, coords::Vector*> dom2coords_Vector;
-	std::unordered_map<domain::VecIdent *, coords::VecIdent*> dom2coords_VecIdent;
-	std::unordered_map<domain::Vector_Def *, coords::Vector_Def*> dom2coords_Vector_Def;
+	std::unordered_map<domain::VecIdent*, 	coords::VecIdent*	> 	dom2coords_VecIdent;
+	std::unordered_map<domain::VecExpr*, 	coords::VecExpr*	> 	dom2coords_VecExpr;
+	std::unordered_map<domain::Vector*, 	coords::Vector*		> 	dom2coords_Vector;
+	std::unordered_map<domain::Vector_Def*, coords::Vector_Def*	> 	dom2coords_Vector_Def;
 };
 
 } // namespace
