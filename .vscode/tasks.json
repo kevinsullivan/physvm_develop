@@ -13,7 +13,7 @@
             }
         }
     ],
-    "group": {
+    "group": { 
         "kind": "build",
         "isDefault": true
     }
