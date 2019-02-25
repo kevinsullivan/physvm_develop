@@ -25,7 +25,7 @@ domain::VecIdent *CoordsToDomain::getVecIdentDom(coords::VecIdent *c) const
     try {
         domain::VecIdent* dom = coords2dom_VecIdent.at(c);
     }
-    catch (const std::out_of_range &e) {
+    catch (std::out_of_range &e) {
         dom = NULL;
     }
     return dom;
