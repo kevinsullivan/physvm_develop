@@ -46,17 +46,17 @@ public:
 
 // Exprs
 //	VecExpr* mkVecLitExpr(Space& s, const coords::VecLitExpr* e);
-	VecVarExpr* mkVecVarExpr(Space& s, coords::VecVarExpr* ast);
-	VecVecAddExpr* mkVecVecAddExpr(Space& s, coords::VecVecAddExpr* e, coords::VecExpr* left_, coords::VecExpr* right_);
+	VecVarExpr* mkVecVarExpr(Space& s/*, coords::VecVarExpr* ast*/);
+	VecVecAddExpr* mkVecVecAddExpr(Space& s, /*coords::VecVecAddExpr* e,*/ domain::VecExpr* left_, domain::VecExpr* right_);
 
 // Values
 
-	Vector_Lit* mkVector_Lit(Space& space, coords::Vector* v/*, domain::VecExpr *vec*/);
-	//Vector* mkVector_Var(coords::Vector* v/*, domain::VecExpr *vec*/);
-	Vector_Expr* mkVector_Expr(Space& space, coords::Vector* v, coords::VecExpr *vec);
+	Vector_Lit* mkVector_Lit(Space& space /*, coords::Vector* v, domain::VecExpr *vec*/);
+	Vector* mkVector_Var(Space& s /*coords::Vector* v, domain::VecExpr *vec*/);
+	Vector_Expr* mkVector_Expr(Space& space/*, coords::Vector* v*/, domain::VecExpr *vec);
 
 // Defs
-	Vector_Def* mkVector_Def(ast::Vector_Def* vardecl, coords::VecIdent* identifier, coords::VecExpr* expression);
+	Vector_Def* mkVector_Def(/*ast::Vector_Def* vardecl,*/ domain::VecIdent* identifier, domain::VecExpr* expression);
 
 
 // Client
