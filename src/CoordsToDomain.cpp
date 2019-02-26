@@ -23,7 +23,7 @@ domain::VecIdent *CoordsToDomain::getVecIdentDom(coords::VecIdent *c) const
     std::unordered_map<coords::VecIdent*, domain::VecIdent*>::iterator it;
     domain::VecIdent *dom = NULL;
     try {
-        domain::VecIdent* dom = coords2dom_VecIdent.at(c);
+        dom = coords2dom_VecIdent.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
@@ -33,9 +33,15 @@ domain::VecIdent *CoordsToDomain::getVecIdentDom(coords::VecIdent *c) const
 
 coords::VecIdent *CoordsToDomain::getVecIdentCoords(domain::VecIdent *d) const
 {
-    return dom2coords_VecIdent[d];
-    ;
-    //    return d->getCoords();
+    std::unordered_map<domain::VecIdent*, coords::VecIdent*>::iterator it;
+    coords::VecIdent *coords = NULL;
+    try {
+        coords = dom2coords_VecIdent.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return coords;
 }
 
 // Expr
@@ -44,12 +50,28 @@ coords::VecIdent *CoordsToDomain::getVecIdentCoords(domain::VecIdent *d) const
 
 domain::VecExpr *CoordsToDomain::getVecExpr(coords::VecExpr *c)
 {
-    return coords2dom_VecExpr[*c];
+    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
 }
 
 coords::VecExpr *CoordsToDomain::getVecExpr(domain::VecExpr *d) const
 {
-    return d->getCoords();
+    std::unordered_map<domain::VecExpr*, coords::VecExpr*>::iterator it;
+    coords::VecExpr *coords = NULL;
+    try {
+        coords = dom2coords_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return coords;
 }
 
 // lit
@@ -72,13 +94,22 @@ coords::VecLitExpr *CoordsToDomain::getLitInterp(domain::VecLitExpr d) const {
 
 void CoordsToDomain::PutVecVarExpr(coords::VecVarExpr *c, domain::VecVarExpr *d)
 {
-    coord2dom_VecExpr.insert(std::make_pair(*c, d));
+    coords2dom_VecExpr[c] = d;
+    dom2coords_VecExpr[d] = c;
+//    coord2dom_VecExpr.insert(std::make_pair(*c, d));
 }
 
 domain::VecVarExpr *CoordsToDomain::getVecVarExpr(coords::VecVarExpr *c) const
 {
-    std::cerr << "CoordsToDomain::getVecVarExpr: Warn. Check these static casts.\n";
-    return static_cast<domain::VecVarExpr *>(coord2dom_VecExpr[*c]);
+    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::VecVarExpr*>(dom);
 }
 
 coords::VecVarExpr *CoordsToDomain::getVecVarExpr(domain::VecVarExpr *d) const
@@ -90,12 +121,21 @@ coords::VecVarExpr *CoordsToDomain::getVecVarExpr(domain::VecVarExpr *d) const
 
 void CoordsToDomain::PutVecVecAddExpr(coords::VecVecAddExpr *c, domain::VecVecAddExpr *d)
 {
-    coord2dom_VecExpr.insert(std::make_pair(*c, d));
+    coords2dom_VecExpr[c] = d;
+    dom2coords_VecExpr[d] = c;
 }
 
-domain::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(coords::VecVarExpr *c) const
+domain::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(coords::VecVecAddExpr *c) const
 {
-    return static_cast<domain::VecVecAddExpr *>(coord2dom_VecExpr[*c]);
+    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::VecVecAddExpr*>(dom);
 }
 
 coords::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(domain::VecVarExpr *d) const
@@ -105,29 +145,47 @@ coords::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(domain::VecVarExpr *d) c
 
 // Vector
 
-void CoordsToDomain::putVector_Lit(coords::Vector *ast, domain::Vector_Lit *v)
+void CoordsToDomain::putVector_Lit(coords::Vector *c, domain::Vector_Lit *d)
 {
-    coord2dom_VecExpr.insert(std::make_pair(*c, d));
+    coords2dom_Vector[c] = d;
+    dom2coords_Vector[d] = c;
 }
 
-domain::Vector_Lit *CoordsToDomain::getVector(coords::Vector_Lit *c) const
+domain::Vector_Lit *CoordsToDomain::getVector_Lit(coords::Vector_Lit *c) const
 {
-    return coord2dom_VecExpr[*c];
+    std::unordered_map<coords::Vector_Lit*, domain::Vector_Lit*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Vector_Lit*>(dom);
 }
 
-coords::Vector_Lit *CoordsToDomain::getVector(domain::Vector_Lit *d) const
+coords::Vector_Lit *CoordsToDomain::getVector_Lit(domain::Vector_Lit *d) const
 {
     return d->getCoords();
 }
 
 void CoordsToDomain::putVector_Expr(coords::Vector *c, domain::Vector_Expr *d)
 {
-    coord2dom_VecExpr.insert(std::make_pair(*c, d));
+    coords2dom_Vector[c] = d;
+    dom2coords_Vector[d] = c;
 }
 
-domain::Vector *CoordsToDomain::getVector(coords::Vector_Expr *c) const
+domain::Vector *CoordsToDomain::getVector_Expr(coords::Vector_Expr *c) const
 {
-    return static_cast<domain::Vector *>(coord2dom_VecExpr[*c]);
+    std::unordered_map<coords::Vector_Expr*, domain::Vector_Expr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Vector_Expr*>(dom);
 }
 
 coords::Vector_Expr *CoordsToDomain::getVector(domain::Vector_Expr *d) const
@@ -139,7 +197,8 @@ coords::Vector_Expr *CoordsToDomain::getVector(domain::Vector_Expr *d) const
 
 void CoordsToDomain::putVector_Def(coords::Vector_Def *c, domain::Vector_Def *d)
 {
-    coord2dom_VecExpr.insert(std::make_pair(*c, d));
+    coords2dom_Vector_Def[c] = d;
+    dom2coords_Vector_Def[d] = c;
 }
 
 domain::Vector_Def *getVector_Def(coords::Vector_Def *c) const

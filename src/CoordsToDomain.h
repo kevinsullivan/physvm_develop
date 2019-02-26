@@ -54,12 +54,12 @@ class CoordsToDomain
 // Vector
 
 	void putVector_Lit(coords::Vector *ast, domain::Vector_Lit *v);
-	domain::Vector *getVector(coords::Vector_Lit* c) const;
-	coords::Vector *getVector(domain::Vector_Lit* d) const;
+	domain::Vector *getVector_Lit(coords::Vector_Lit* c) const;
+	coords::Vector *getVector_Lit(domain::Vector_Lit* d) const;
 
 	void putVector_Expr(coords::Vector *ast, domain::Vector_Expr *v);
-	domain::Vector *getVector(coords::Vector_Expr* c) const;
-	coords::Vector *getVector(domain::Vector_Expr* d) const;
+	domain::Vector *getVector_Expr(coords::Vector_Expr* c) const;
+	coords::Vector *getVector_Expr(domain::Vector_Expr* d) const;
 
 // Def
 
@@ -84,7 +84,7 @@ class CoordsToDomain
 	// TODO: delete "interp" prefixes here -- minor
 	
 	std::unordered_map <coords::VecIdent*,	domain::VecIdent*	> 	coords2dom_VecIdent;
-	std::unordered_map <coords::VecExpr*, 	domain::VecExpr*	> 	coods2dom_VecExpr;
+	std::unordered_map <coords::VecExpr*, 	domain::VecExpr*	> 	coords2dom_VecExpr;
 	std::unordered_map <coords::Vector*, 	domain::Vector*		> 	coords2dom_Vector;
 	std::unordered_map <coords::Vector_Def*,domain::Vector_Def*	> 	coords2dom_Vector_Def;
 
