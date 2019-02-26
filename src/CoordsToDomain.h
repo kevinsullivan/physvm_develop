@@ -54,12 +54,12 @@ class CoordsToDomain
 // Vector
 
 	void putVector_Lit(coords::Vector *ast, domain::Vector_Lit *v);
-	domain::Vector *getVector_Lit(coords::Vector_Lit* c) const;
-	coords::Vector *getVector_Lit(domain::Vector_Lit* d) const;
+	domain::Vector_Lit *getVector_Lit(coords::Vector_Lit* c) const;
+	coords::Vector_Lit *getVector_Lit(domain::Vector_Lit* d) const;
 
 	void putVector_Expr(coords::Vector *ast, domain::Vector_Expr *v);
-	domain::Vector *getVector_Expr(coords::Vector_Expr* c) const;
-	coords::Vector *getVector_Expr(domain::Vector_Expr* d) const;
+	domain::Vector_Expr *getVector_Expr(coords::Vector_Expr* c) const;
+	coords::Vector_Expr *getVector_Expr(domain::Vector_Expr* d) const;
 
 // Def
 
@@ -67,7 +67,7 @@ class CoordsToDomain
 	domain::Vector_Def *getVector_Def(coords::Vector_Def* c) const;
 	coords::Vector_Def *getVector_Def(domain::Vector_Def* d) const;
 
-	void dump();
+	void dump() const;
 
   private:
 	/* 
