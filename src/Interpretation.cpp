@@ -52,7 +52,7 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
 void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/) {
     coords::VecVarExpr *var_coords = ast2coords_->mkVecVarExpr(ast);
     domain::Space& space = oracle_->getSpaceForVecVarExpr(ast);
-    domain::VecVarExpr *dom_var = domain_->mkVecVarExpr(space, var_coords);
+    domain::VecVarExpr *dom_var = domain_->mkVecVarExpr(space);
     coords2dom_->PutVecVarExpr(var_coords, dom_var);
 }
 
@@ -82,8 +82,13 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, coords::VecExpr *m
   // private now?
   ast2coords_->overrideStmt(ast, stmt_coords);*/
  domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
+
+
+
+  domain::VecExpr *getVecExpr = coords2domain_
+
   domain::VecVecAddExpr *dom_add_expr = 
-    domain_->mkVecVecAddExpr(space, expr_coords, mem_coords, arg_coords);
+    domain_->mkVecVecAddExpr(space, mem_expr, arg_expr);
   coords2dom_->PutVecVecAddExpr(expr_coords, dom_add_expr);
 
   std::cerr << "Interpretation::mkVecVecAddExpr: Coords at " 
