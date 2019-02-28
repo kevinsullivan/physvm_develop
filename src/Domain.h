@@ -147,7 +147,7 @@ private:
 // TODO - Change name of this class? DomainExpr?
 class VecExpr  {
 public:
-    VecExpr(const Space& s) : space_(s) {}
+    VecExpr(Space& s) : space_(s) {}
     const Space& getSpace() const;
 /*	virtual std::string toString() const {
 		if (getCoords()  != NULL) {
