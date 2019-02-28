@@ -52,7 +52,7 @@ Ident
 ****/
 
 
-VecIdent *Domain::mkVecIdent(Space &s, coords::VecIdent *ast)
+VecIdent *Domain::mkVecIdent(Space &s)
 {
     VecIdent *id = new VecIdent(s);
     idents.push_back(id);

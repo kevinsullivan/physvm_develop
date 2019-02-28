@@ -18,7 +18,7 @@ void CoordsToDomain::putVecIdent(coords::VecIdent *c, domain::VecIdent *d)
 // TODO: Decide whether or not these maps can be partial on queried keys
 // As defined here, yes, and asking for a missing key returns NULL
 //
-domain::VecIdent *CoordsToDomain::getVecIdentDom(coords::VecIdent *c) const
+domain::VecIdent *CoordsToDomain::getVecIdent(coords::VecIdent *c) const
 {
     std::unordered_map<coords::VecIdent*, domain::VecIdent*>::iterator it;
     domain::VecIdent *dom = NULL;
@@ -31,7 +31,7 @@ domain::VecIdent *CoordsToDomain::getVecIdentDom(coords::VecIdent *c) const
     return dom;
 }
 
-coords::VecIdent *CoordsToDomain::getVecIdentCoords(domain::VecIdent *d) const
+coords::VecIdent *CoordsToDomain::getVecIdent(domain::VecIdent *d) const
 {
     std::unordered_map<domain::VecIdent*, coords::VecIdent*>::iterator it;
     coords::VecIdent *coords = NULL;

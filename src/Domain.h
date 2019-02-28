@@ -43,7 +43,7 @@ public:
 
 // Idents
 
-	VecIdent* mkVecIdent(Space& s, coords::VecIdent* ast);
+	VecIdent* mkVecIdent(Space& s);
 
 // Exprs
 
