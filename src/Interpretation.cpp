@@ -149,7 +149,8 @@ void Interpretation::mkVector_Expr(
     domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
   
 
-    domain::Vector_Expr *dom_vec = domain::mkVector_Expr(s, ctor_coords, expr_dom);
+    domain::Vector_Expr *dom_vec = domain::mkVector_Expr(s, ctor_coords, expr_dom
+    );
     coords2dom_->putVector_Expr(vec_coords, dom_vec);
     std::cerr << "Interpretation::mkVector_Expr. DONE\n";
 }
