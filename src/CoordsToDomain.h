@@ -31,8 +31,8 @@ class CoordsToDomain
 // Ident
 
 	void putVecIdent(coords::VecIdent *key, domain::VecIdent *i);
-	domain::VecIdent *getVecIdentDom(coords::VecIdent *c) const;
-	coords::VecIdent *getVecIdentCoords(domain::VecIdent *d) const;
+	domain::VecIdent *getVecIdent(coords::VecIdent *c) const;
+	coords::VecIdent *getVecIdent(domain::VecIdent *d) const;
 
 // Expr
 
