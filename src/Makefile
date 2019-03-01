@@ -1,6 +1,4 @@
-
-
-LLVM_SRC_PATH := /llvm
+LLVM_SRC_PATH := /home/sullivan/llvm-project/llvm
 
 # LLVM_BUILD_PATH is the directory in which you built LLVM - where you ran
 # configure or cmake.
@@ -10,8 +8,8 @@ LLVM_SRC_PATH := /llvm
 # reflects a release build with CMake and Ninja. binary build of LLVM, point it
 # to the bin/ directory.
 
-LLVM_BUILD_PATH := /llvm/build
-LLVM_BIN_PATH 	:= $(LLVM_BUILD_PATH)/bin
+LLVM_BUILD_PATH := /home/sullivan/llvm-project/llvm/build
+LLVM_BIN_PATH 	:= /usr/local/bin
 
 $(info -----------------------------------------------)
 $(info Using LLVM_SRC_PATH = $(LLVM_SRC_PATH))
