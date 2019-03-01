@@ -21,8 +21,11 @@ public:
 
     //void mkVecLitExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/);
     void mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/);
-    void mkVecVecAddExpr(ast::VecVecAddExpr *ast, coords::VecExpr *mem, 
-                         coords::VecExpr *arg);
+
+    // Precondition! Both mem and arg already have interpretations.
+    //
+    void mkVecVecAddExpr(ast::VecVecAddExpr *ast, const ast::VecExpr *mem, 
+                         const ast::VecExpr *arg);
     void mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *context*/);
     void mkVector_Expr(ast::Vector_Expr *ast, ast::VecExpr* expr/*, clang::ASTContext *context*/);
 //    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);

@@ -56,7 +56,7 @@ void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/
     coords2dom_->PutVecVarExpr(var_coords, dom_var);
 }
 
-void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, coords::VecExpr *mem_coords, coords::VecExpr *arg_coords) {
+void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::VecExpr *mem_expr, const ast::VecExpr *arg_expr) {
 
 /*  std::cerr << "Interpretation::mkVecVecAddExpr: START: adding\n";
   std::cerr << "Interpretation::mkVecVecAddExpr: Member is " 
@@ -70,28 +70,55 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *ast, coords::VecExpr *m
   // - make coords for ast, including child coords
   // - update ast2coords map with new coords
   //
-  //coords::VecExpr *mem_coords = mem->getCoords();
-  //coords::VecExpr *arg_coords = arg->getCoords();
-  if (mem_coords == NULL || arg_coords == NULL) {
-    std::cerr << "Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords " 
-        << std::hex << mem_coords << " arg coords " 
-        << std::hex << arg_coords << "\n";
+  // TODO: Casting should be done in ast2coords.
+coords::VecExpr *mem_coords = static_cast<coords::VecExpr*>
+                                (ast2coords_->getStmtCoords(mem_expr));
+coords::VecExpr *arg_coords = static_cast<coords::VecExpr*>
+                                (ast2coords_->getStmtCoords(arg_expr));
+
+if (mem_coords == NULL || arg_coords == NULL)
+{
+  std::cerr << "Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords "
+            << std::hex << mem_coords << " arg coords "
+            << std::hex << arg_coords << "\n";
   }
-  coords::VecVecAddExpr *expr_coords = ast2coords_->mkVecVecAddExpr(ast, mem_coords, arg_coords);
-/*  coords::VecVecAddExpr *stmt_coords = 
+
+
+/*
+domain::VecExpr *dom_mem_expr = coords2dom_->getVecExpr(mem_coords);
+domain::VecExpr *dom_arg_expr = coords2dom_->getVecExpr(arg_coords);
+
+if (dom_mem_expr == NULL || dom_arg_expr == NULL)
+{
+  std::cerr << "Interpretation::mkVecVecAddExpr: bad domain exprs. Mem "
+            << std::hex << dom_mem_expr << " Arg "
+            << std::hex << dom_arg_expr << "\n";
+}
+*/
+
+
+  coords::VecVecAddExpr *expr_coords = ast2coords_->mkVecVecAddExpr(add_ast, mem_coords, arg_coords);
+  /*  coords::VecVecAddExpr *stmt_coords = 
     new coords::VecVecAddExpr(ast, mem_coords, arg_coords);
   // private now?
   ast2coords_->overrideStmt(ast, stmt_coords);*/
- domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
+  domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
 
- domain::VecExpr *mem_expr = coords2dom_->getVecExpr(mem_coords);
- domain::VecExpr *arg_expr = coords2dom_->getVecExpr(arg_coords);
+  domain::VecExpr *dom_mem_expr = coords2dom_->getVecExpr(mem_coords);
+  domain::VecExpr *dom_arg_expr = coords2dom_->getVecExpr(arg_coords);
 
- domain::VecVecAddExpr *dom_add_expr =
-     domain_->mkVecVecAddExpr(space, mem_expr, arg_expr);
- coords2dom_->PutVecVecAddExpr(expr_coords, dom_add_expr);
+  if (dom_mem_expr == NULL || dom_arg_expr == NULL)
+  {
+    std::cerr << "Interpretation::mkVecVecAddExpr: bad domain exprs. Mem "
+              << std::hex << dom_mem_expr << " Arg "
+              << std::hex << dom_arg_expr << "\n";
+  }
 
-/* std::cerr << "Interpretation::mkVecVecAddExpr: Coords at "
+  domain::VecVecAddExpr *dom_add_expr =
+      domain_->mkVecVecAddExpr(space, dom_mem_expr, dom_arg_expr);
+  coords2dom_->PutVecVecAddExpr(expr_coords, dom_add_expr);
+
+  /* std::cerr << "Interpretation::mkVecVecAddExpr: Coords at "
            << std::hex << expr_coords << "\n";
  std::cerr << "Interpretation::mkVecVecAddExpr: Adding add expr to domain: "
            << dom_add_expr->toString() << "\n";
