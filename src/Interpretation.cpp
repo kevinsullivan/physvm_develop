@@ -189,21 +189,18 @@ void Interpretation::mkVector_Expr(
  * of coords, not in terms of domain objects.
  * */
 
-void Interpretation::mkVector_Def(ast::Vector_Def *ast,  
-                                  coords::VecIdent *id_coords, 
-                                  coords::VecExpr *expr_coords)
+void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,  
+                                  ast::VecIdent *id_ast, 
+                                  ast::VecExpr *expr_ast)
 {
     //std::cerr << "START: Interpretation::mkVector_Def.\n.";
-    if (!expr_coords || !id_coords) { 
-      std::cerr << "Interpretation::mkVector_Def: null arg\n"; 
-    }
 
-    // No need for Space at this point, ident and vec already annotated
     // TODO: Move into ast2coords_->makeCoordsForVector_Def
-    //coords::VecIdent *id_coords = id->getCoords();
-    //coords::VecExpr *expr_coords = expr->getCoords();
-
-    coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(ast, id_coords, expr_coords);
+    coords::VecIdent *id_coords = static_cast<coords::VecIdent *>
+      (ast2coords_->getDeclCoords(id_ast));
+    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>
+      (ast2coords_->getStmtCoords(expr_ast));
+    coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(def_ast, id_coords, expr_coords);
 
     domain::VecIdent *vec_ident = coords2dom_->getVecIdent(id_coords);
     domain::VecExpr *vec_expr = coords2dom_->getVecExpr(expr_coords);

@@ -10,6 +10,8 @@ TODO: Consider making Clang AST types visible in type signatures.
 */
 using namespace ast2coords;
 
+ASTToCoords::ASTToCoords() {}
+
 coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast) {
     coords::VecIdent *coord = new coords::VecIdent(ast);
     overrideDecl2Coords(ast,coord);     // Use Clang canonical addresses? 

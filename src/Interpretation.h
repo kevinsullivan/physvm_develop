@@ -16,6 +16,15 @@ namespace interp {
 class Interpretation {
 public:
     Interpretation();
+
+    void addSpace(std::string name) {
+        domain_->mkSpace(name);
+    }
+
+    /*
+    All of these operations work by producing side-effects
+    on ast2_coords_ and on coords2dom.
+    */
  
     void mkVecIdent(ast::VecIdent *ast);
 
@@ -29,7 +38,7 @@ public:
     void mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *context*/);
     void mkVector_Expr(ast::Vector_Expr *ast, ast::VecExpr* expr/*, clang::ASTContext *context*/);
 //    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);
-    void mkVector_Def(ast::Vector_Def *ast, coords::VecIdent *id, coords::VecExpr *exp);
+    void mkVector_Def(ast::Vector_Def *ast, ast::VecIdent *id, ast::VecExpr *exp);
     
     //coords::VecExpr *getCoords(ast::VecExpr *expr);
     
