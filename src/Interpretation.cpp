@@ -56,6 +56,7 @@ void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/
     coords2dom_->PutVecVarExpr(var_coords, dom_var);
 }
 
+
 void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::VecExpr *mem_expr, const ast::VecExpr *arg_expr) {
 
 /*  std::cerr << "Interpretation::mkVecVecAddExpr: START: adding\n";
