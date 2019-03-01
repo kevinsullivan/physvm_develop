@@ -79,21 +79,26 @@ const domain::VecExpr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTCon
   std::cerr << "main::handleMemberCallExpr: Start, recurse on mem and arg\n";
   const clang::Expr *mem_ast = ast->getImplicitObjectArgument();
   const clang::Expr *arg_ast = ast->getArg(0);
+
+  /*
   std::cerr << "Member expr AST is (dump)\n";
   mem_ast->dump();
   std::cerr << "Arg AST is (dump)\n";
   arg_ast->dump();
-
+  */
+ 
+  // TODO: Remove return values requiring knowledge of domain
+  //
   const domain::VecExpr *left_br = handle_member_expr_of_add_call(mem_ast, *context, sm);
   const domain::VecExpr *right_br = handle_arg0_of_add_call(arg_ast, *context, sm);
   if (!left || !right || !left_br || !right_br) {
     std::cerr << "main::handleMemberCallExpr. Null pointer error.\n";
     return NULL;
   }
-  std::cerr << "main::handleMemberCallExpr: End\n";
+  //std::cerr << "main::handleMemberCallExpr: End\n";
 
-  interp_.mkVecVecAddExpr(ast, left_br->getCoords(), right_br->getCoords());
-  return interp_.getVecExpr(ast);
+  interp_.mkVecVecAddExpr(ast, mem_ast, arg_ast/*left_br->getCoords(), right_br->getCoords()*/);
+  return interp_.getVecExpr(ast); 
 }
 
 /*
@@ -105,7 +110,7 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
     const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-    std::cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
+    std::cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr_ast << "\n";
 
     // TODO: Should we be passing context objects with these AST nodes? Do they persist?
     //
