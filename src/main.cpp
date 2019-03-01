@@ -99,9 +99,11 @@ const domain::VecExpr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTCon
   }
   //std::cerr << "main::handleMemberCallExpr: End\n";
 
-  interp_.mkVecVecAddExpr(ast, mem_ast, arg_ast/*left_br->getCoords(), right_br->getCoords()*/);
-  return interp_.getVecExpr(ast); 
+
+  // 
+  interp_.mkVecVecAddExpr(ast, mem_ast, arg_ast);
   std::cerr << "main::handleMemberCallExpr: Done.\n";
+  return interp_.getVecExpr(ast); 
 }
 
 /*
@@ -322,9 +324,9 @@ domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTC
   std::cerr << "main::handle_member_expr_of_add_call at " << std::hex << memexpr << "\n";
   if (memexpr == NULL)
   {
-    std::cerr << "domain::VecExpr *handle_member_expr_of_add_call: Error.Null argument\n";
+    std::cerr << "main::handle_member_expr_of_add_call: Error.Null argument\n";
   }
-  std::cerr << "domain::VecExpr *handle_member_expr_of_add_call ast is (dump)\n";
+  std::cerr << "main::handle_member_expr_of_add_call ast is (dump)\n";
   memexpr->dump();
 
 
@@ -342,9 +344,8 @@ domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTC
   // keyed by memexpr (by an AST wrapper around memexpr).
   // Test postcondition.
 
-  domain::VecExpr *expr = interp_.getVecExpr(memexpr); 
-  std::cerr << "domain::VecExpr *handle_member_expr_of_add_call. Done. domain::VecExpr at " 
-    << std::hex << expr << "\n";  
+  domain::VecExpr *expr = interp_.getVecExpr(memexpr);
+  std::cerr << "domain::VecExpr *handle_member_expr_of_add_call. Done. \n";
   return expr;
  }
 
@@ -363,7 +364,12 @@ public:
   {
     CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(argumentCountIs(3)).bind("VectorLitExpr"), &litHandler_);
     // KEVBOB
-    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(hasDescendant(cxxMemberCallExpr(hasDescendant(memberExpr(hasDeclaration(namedDecl(hasName("vec_add")))))).bind("MemberCallExpr"))).bind("VectorAddExpr"), &addHandler_);
+    CXXConstructExprMatcher_.addMatcher(
+      cxxConstructExpr(hasDescendant(cxxMemberCallExpr(
+        hasDescendant(memberExpr(hasDeclaration(namedDecl(
+          hasName("vec_add"))))))
+          .bind("MemberCallExpr")))
+          .bind("VectorConstructAddExpr"), &addHandler_);
   };
   void match(const clang::CXXConstructExpr *consdecl, ASTContext *context)
   {

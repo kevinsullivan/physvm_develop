@@ -47,7 +47,8 @@ public:
     //
     domain::VecExpr* getVecExpr(ast::VecExpr* ast) {
         // we use these objects as key for query purposes
-        coords::VecExpr *coords = new coords::VecExpr(ast);
+        coords::VecExpr *coords = 
+            static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(ast));
         domain::VecExpr* dom = coords2dom_->getVecExpr(coords);
         if (!dom) {
             std::cerr << "Interpretation::getVecExpr. Error. Undefined for key!\n";
