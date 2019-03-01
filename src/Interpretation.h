@@ -55,7 +55,30 @@ public:
         }
         return dom;
     }
-//private:
+
+    std::string toString() {
+        for (std::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
+    std::cout << ' ' << *it;
+    }
+
+// private
+    std::string toString_Spaces() {
+
+    }
+    std::string toString_Idents() {
+        
+    }
+    std::string toString_Exprs() {
+        
+    }
+    std::string toString_Defs() {
+        
+    }
+    std::string toString_Vectors() {
+        
+    }
+
+    //private:
     // TO DO: normalize domain, factor out need to know coords
     //coords::Coords* coords_;
     domain::Domain *domain_;
