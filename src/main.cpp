@@ -462,18 +462,8 @@ public:
 
     // IDENTIFIER -- should call handle identifier (TODO:)
     //
-    domain::VecIdent *id = interp_.mkVecIdent(vardecl);
-    coords::VecIdent *id_coords = interp_.getCoords(vardecl);
-
-/*
-    domain::Space &space = oracle->getSpaceForVecIdent(vardecl);
-    VecIdent *ast_container = new VecIdent(vardecl);
-    decl_wrappers.insert(std::make_pair(vardecl, ast_container));
-    domain::VecIdent &bi = domain_domain->addVecIdent(space, ast_container);
-    interp->putIdentInterp(*ast_container, bi);
-    //std::cerr << "END: handleCXXConstructVecIdent\n";
-*/
-
+    interp_.mkVecIdent(vardecl);
+    
     // CONSTRUCTOR (VecLitExpr | Add)
     //
     std::cerr << "VectorDeclStmtHandler: start matching on consdecl\n";
@@ -483,30 +473,10 @@ public:
     //
     // Postcondition: domain vector expression now in system
     // fetch result. Checking occurs in getVecExpr.
-    //
-    const domain::VecExpr *expr = interp_.getVecExpr(consdecl);
-    const coords::VecExpr *expr_coords = interp_.getCoords(expr);
   
     // add domain::Vector_Def for variable declaration statement in code
     //
-    interp_.mkVector_Def(declstmt, id_coords, expr_coords);
-
-/*    Vector_Def *declstmt_wrapper = new Vector_Def(declstmt);
-    stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
-    domain::Vector_Def &binding = domain_domain->addVector_Def(declstmt_wrapper, bi, *be);
-    interp->putVector_Def(declstmt_wrapper, binding);
-
-
-    std::cerr << "VectorDeclStmtHandler:: Post Domain State \n"; //declstmt->dump();
-     std::cerr << "Domain expressions:\n";
-    domain_domain->dumpExpressions(); // print contents on std::cerr
-    std::cerr << "Domain VecIdents\n";
-    domain_domain->dumpVecIdents(); // print contents on std::cerr
-    std::cerr << "Domain Vector_Defs\n";
-    domain_domain->dumpVector_Defs(); // print contents on std::cerr
-    std::cerr << "coord2dom_VecExprs\n";
-    interp->dumpExpressions();
-*/
+    interp_.mkVector_Def(declstmt, vardecl, consdecl);
     }
 };
 
@@ -543,8 +513,8 @@ public:
   MyFrontendAction() {}
   void EndSourceFileAction() override
   {
-    bool consistent = interp_.isConsistent();
-    std::cerr << (consistent ? "STUB Analysis result: Good\n" : "STUB: Bad\n");
+    //bool consistent = interp_.isConsistent();
+    std::cerr << "STUB Analysis result\n";
   }
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override

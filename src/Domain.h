@@ -301,7 +301,7 @@ the *domain* VecIdent and Expression objects being bound.
 */
 class Vector_Def  {
 public:
-	Vector_Def(coords::Vector_Def* c, domain::VecIdent* identifier, domain::VecExpr* expr): 
+	Vector_Def(domain::VecIdent* identifier, domain::VecExpr* expr): 
 			identifier_(identifier), expr_(expr) {}
 	//const coords::Vector_Def* getVarDecl() const {return ast_wrapper_; } 
 	const domain::VecExpr* getVecExpr() const { return expr_; }

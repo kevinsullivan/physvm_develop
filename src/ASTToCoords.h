@@ -61,6 +61,7 @@ public:
                                              coords::VecIdent *id, 
                                              coords::VecExpr *vec);
 
+    // TODO -- Have these routines return more specific subclass objects
     coords::Coords *getStmtCoords(const clang::Stmt *s) {
         return stmt_coords[s];
     }
