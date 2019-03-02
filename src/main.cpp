@@ -556,10 +556,10 @@ int main(int argc, const char **argv)
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
-/*  std::cerr << "VecIdents\n";
-  domain_domain->dumpVecIdents();
+  std::cerr << "VecIdents\n";
+  interp_.toString_Idents();
   std::cerr << "Expressions\n";
-  domain_domain->dumpExpressions();
+  interp_.toString_Exprs();
   std::cerr << "Vector_Defs\n";
-  domain_domain->dumpVector_Defs();
-*/}
+  interp_.toString_Defs();
+}

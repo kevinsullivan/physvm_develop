@@ -21,7 +21,7 @@ domain::Space& Oracle::getSpaceForVector(std::string where) {
 }
 
 domain::Space& Oracle::getSpace() {
-    vector<domain::Space*>& spaces = dom_->getAllSpaces();
+    vector<domain::Space*>& spaces = dom_->getSpaces();
 	if (spaces.size() == 0) {
 		std::cerr << "No abstract spaces available for interpretation. Bye!\n";
 		exit(1);

@@ -39,7 +39,7 @@ class Domain {
 public:
 // Space
 	Space& mkSpace(const std::string& name);
-	std::vector<Space*>& getAllSpaces();
+	std::vector<Space*>& getSpaces();
 
 // Idents
 
