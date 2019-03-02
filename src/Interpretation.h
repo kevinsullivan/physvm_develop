@@ -56,13 +56,20 @@ public:
         return dom;
     }
 
+/*
     std::string toString() {
         for (std::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
     std::cout << ' ' << *it;
     }
+*/
 
 // private
     std::string toString_Spaces() {
+        
+        //std::vector<domain::Space*> &spaces = domain_->getSpaces();
+        for (std::vector<domain::Space*>::iterator it = domain_->getSpaces().begin(); 
+                it != domain_->getSpaces().end(); ++it)
+            std::cout << ' ' << (*it)->toString();
 
     }
     std::string toString_Idents() {
