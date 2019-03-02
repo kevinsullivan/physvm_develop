@@ -44,8 +44,10 @@ public:
 // Idents
 
 	VecIdent* mkVecIdent(Space& s);
+	std::vector<VecIdent *> &getVecIdents() { return idents;  }
 
-// Exprs
+	// Exprs
+	std::vector<VecExpr *> &getVecExprs() { return exprs;  }
 
 	// Create a variable object in the domain 
 	// Details available via externally represented backmappings
@@ -58,6 +60,7 @@ public:
 	VecVecAddExpr* mkVecVecAddExpr(Space& s, domain::VecExpr* , domain::VecExpr* right_);
 
 // Values
+	std::vector<Vector *> &getVectors() { return vectors;  }
 
 	// Constructed literal vector value
 	//
@@ -76,7 +79,7 @@ public:
 	// Binding of identifier to contsructed vector
 	//
 	Vector_Def* mkVector_Def(/*ast::Vector_Def* vardecl,*/ domain::VecIdent* identifier, domain::VecExpr* expression);
-
+	std::vector<Vector_Def*> &getVectorDefs() { return defs; }
 
 // Client
 	bool isConsistent();
@@ -91,8 +94,8 @@ private:
 	std::vector<Space*> spaces;
 	std::vector<VecIdent*> idents;
 	std::vector<VecExpr*> exprs;
-	std::vector<Vector_Def*> defs;
 	std::vector<Vector*> vectors;
+	std::vector<Vector_Def*> defs;
 };
 	
 /*
@@ -103,8 +106,11 @@ public:
 	Space() : name_("") {};
 	Space(std::string name) : name_(name) {};
 	std::string getName() const;
-	std::string toString() const { return getName(); } 
-private:
+	std::string toString() const {
+		std::string s("space ");
+		return s.append(getName());
+	}
+  private:
 	std::string name_;
 };
 
@@ -133,7 +139,8 @@ public:
 	VecIdent(Space& space) : space_(&space) {}
 	Space* getSpace() const { return space_; }
 /*
-	coords::VecIdent* getCoords() const { 
+	coor	std::vector<Vector_Def*> defs;
+ds::VecIdent* getCoords() const { 
 		return static_cast<coords::VecIdent*>(getBaseCoords()); // TODO: accessor
 	}
 

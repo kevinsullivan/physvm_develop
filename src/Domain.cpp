@@ -34,9 +34,9 @@ Space &Domain::getSpaceOfVarExpr(const coords::VecExpr *ast)
 }
 */
 
-std::vector<Space*> &Domain::getSpaces()
+std::vector<Space*> &Domain::getSpaces() 
 {
-    return spaces;
+    return spaces; 
 }
 
 
