@@ -346,7 +346,7 @@ domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTC
 
   domain::VecExpr *expr = interp_.getVecExpr(memexpr);
   std::cerr << "domain::VecExpr *handle_member_expr_of_add_call. Done. \n";
-  return expr;
+  return expr; 
  }
 
 
@@ -556,10 +556,14 @@ int main(int argc, const char **argv)
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
-  std::cerr << "VecIdents\n";
-  interp_.toString_Idents();
+  std::cerr << " Spaces\n";
+  std::cerr << interp_.toString_Spaces();
+  std::cerr << "Identifiers\n";
+  std::cerr << interp_.toString_Idents();
   std::cerr << "Expressions\n";
-  interp_.toString_Exprs();
-  std::cerr << "Vector_Defs\n";
-  interp_.toString_Defs();
+  std::cerr << interp_.toString_Exprs();
+  std::cerr << "Vectors\n";
+  std::cerr << interp_.toString_Vectors();
+  std::cerr << "Definitions\n"; 
+  std::cerr << interp_.toString_Defs();
 }

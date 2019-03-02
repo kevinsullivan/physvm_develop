@@ -61,6 +61,9 @@ class CoordsToDomain
 	domain::Vector_Expr *getVector_Expr(coords::Vector_Expr* c) const;
 	coords::Vector_Expr *getVector_Expr(domain::Vector_Expr* d) const;
 
+	coords::Vector *getVector(domain::Vector* v);
+	domain::Vector *getVector(coords::Vector* v);
+
 // Def
 
 	void putVector_Def(coords::Vector_Def *vardecl_wrapper, domain::Vector_Def *b);

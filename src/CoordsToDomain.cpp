@@ -161,6 +161,31 @@ coords::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(domain::VecVecAddExpr *d
 
 // Vector
 
+coords::Vector *CoordsToDomain::getVector(domain::Vector* v) {
+    std::unordered_map<domain::Vector*, coords::Vector*>::iterator it;
+    coords::Vector *coords = NULL;
+    try {
+        coords = dom2coords_Vector.at(v);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Vector *>(coords);
+}
+
+domain::Vector *CoordsToDomain::getVector(coords::Vector* v) {
+    std::unordered_map<coords::Vector*, domain::Vector*>::iterator it;
+    domain::Vector *domvec = NULL;
+    try {
+        domvec = coords2dom_Vector.at(v);
+    }
+    catch (std::out_of_range &e) {
+        domvec = NULL;
+    }
+    return static_cast<domain::Vector *>(domvec);
+}
+
+
 void CoordsToDomain::putVector_Lit(coords::Vector *c, domain::Vector_Lit *d)
 {
     coords2dom_Vector[c] = d;

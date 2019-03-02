@@ -65,24 +65,47 @@ public:
 
 // private
     std::string toString_Spaces() {
-        
-        //std::vector<domain::Space*> &spaces = domain_->getSpaces();
-        for (std::vector<domain::Space*>::iterator it = domain_->getSpaces().begin(); 
-                it != domain_->getSpaces().end(); ++it)
-            std::cout << ' ' << (*it)->toString();
+        std::string retval = "";
+        std::vector<domain::Space*> &s = domain_->getSpaces();
+        for (std::vector<domain::Space*>::iterator it = s.begin(); it != s.end(); ++it)
+            retval = retval.append((*it)->toString()).append("\n");
+        return retval;
+    }
 
-    }
+    // TODO: Private
+    //
     std::string toString_Idents() {
-        
+        std::string retval = "";
+        std::vector<domain::VecIdent*> &id = domain_->getVecIdents();
+        for (std::vector<domain::VecIdent *>::iterator it = id.begin(); it != id.end(); ++it) {
+            coords::VecIdent* coords = coords2dom_->getVecIdent(*it);
+            retval = retval.append(coords->toString()).append("\n");
+        }
+        return retval;
     }
+
     std::string toString_Exprs() {
-        
+        std::string retval = "";
+        std::vector<domain::VecExpr*> &id = domain_->getVecExprs();
+        for (std::vector<domain::VecExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
+            coords::VecExpr* coords = coords2dom_->getVecExpr(*it);
+            retval = retval.append(coords->toString()).append("\n");
+        }
+        return retval;
     }
-    std::string toString_Defs() {
-        
-    }
+
     std::string toString_Vectors() {
-        
+        std::string retval = "";
+        std::vector<domain::Vector*> &id = domain_->getVectors();
+        for (std::vector<domain::Vector *>::iterator it = id.begin(); it != id.end(); ++it) {
+            coords::Vector* coords = coords2dom_->getVector(*it);
+            retval = retval.append(coords->toString()).append("\n");
+        }
+        return retval;
+    }
+
+    std::string toString_Defs() {
+        return std::string("Defs: Stub.");  
     }
 
     //private:
