@@ -14,7 +14,7 @@ namespace oracle {
 class Oracle
 {
 public:
-	Oracle(domain::Domain* d) : dom_(d), space_(*new domain::Space("Oracle:: Error. Stub Space.\n")) {};
+	Oracle(domain::Domain* d) : dom_(d) {};
 
 	domain::Space &getSpace();
 
@@ -68,7 +68,6 @@ public:
 		return getSpace();
 	}
 private:
-	domain::Space& space_;
 	domain::Domain* dom_;
 };
 

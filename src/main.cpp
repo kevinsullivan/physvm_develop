@@ -56,7 +56,7 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
     LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Start.\n";
-    ASTContext *context = Result.Context;
+    //ASTContext *context = Result.Context;
     const clang::CXXConstructExpr *lit_ast = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
 
@@ -197,8 +197,9 @@ public:
     // Recursively handle member call expression
     //
     // TODO: Should not hMCE should not return value. Just trade in AST nodes.
-    // const domain::VecExpr *memberCallExpr = handleMemberCallExpr(vec_vec_add_member_call_ast, context, sm);
-    const domain::VecExpr *memberCallExpr = handleMemberCallExpr(vec_vec_add_member_call_ast, context, sm);
+    //
+    /*const domain::VecExpr *memberCallExpr = */
+    handleMemberCallExpr(vec_vec_add_member_call_ast, context, sm);
 
     // Probably want to fetch VecExpr just constructed and 
     // incorporate it as a chile of the overall node we're making
@@ -479,7 +480,7 @@ public:
     //declstmt->dump();
 
     ASTContext *context = Result.Context;
-    SourceManager &sm = context->getSourceManager();
+    //SourceManager &sm = context->getSourceManager();
 
     // IDENTIFIER -- should call handle identifier (TODO:)
     //
