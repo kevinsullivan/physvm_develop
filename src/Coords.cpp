@@ -1,5 +1,7 @@
 #include "Coords.h"
 
+#include "easylogging++.h"
+
 namespace coords {
 
 /*
@@ -37,7 +39,8 @@ bool Coords::operator==(const Coords &other) const {
 }
 
 std::string Coords::toString() const {
-    return "Coords::toString. Error. Should not be called. Abstract.\n";
+    LOG(ERROR) << "Coords::toString. Error. Should not be called. Abstract.\n";
+    return NULL;
 }
 
 // TODO: Implement proper hashing of AST nodes here
@@ -85,7 +88,8 @@ const clang::Expr *VecExpr::getExpr() {
 }
 
 std::string VecExpr::toString() const { 
-    return "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
+    LOG(ERROR) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
+    return NULL; 
 }
 
 /*
@@ -117,7 +121,7 @@ const clang::CXXMemberCallExpr *VecVecAddExpr::getCXXMemberCallExpr() {
 
 
 std::string VecVecAddExpr::toString() const {
-    return "add (" + mem_->toString() + ") (" + arg_->toString() + ")";
+    return "(add (" + mem_->toString() + ") (" + arg_->toString() + "))";
 }
 
 /*******
@@ -134,14 +138,17 @@ const clang::CXXConstructExpr *Vector::getCXXConstructExpr() const {
 
 VectorCtorType Vector::getVectorType() { return tag_; }
 
-std::string Vector::toString() const { return "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";}
+std::string Vector::toString() const { 
+    LOG(ERROR) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
+    return NULL;
+}
 
 
 Vector_Lit::Vector_Lit(const clang::CXXConstructExpr* ast, ast::Scalar a) 
     : Vector(ast, VEC_CTOR_LIT), a_(a) {}
   
 std::string Vector_Lit::toString() const  { 
-    return "( vector 0 ) --";  
+    return "0";  
 }
 
 Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, coords::VecVarExpr* expr) 
@@ -149,7 +156,8 @@ Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, coords::VecVarExpr* e
 }
 
 std::string Vector_Var::toString() const { 
-    return std::string("Vector_Var::toString() STUB.\n"); 
+    LOG(ERROR) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
+    return NULL;
 }
 
 std::string Vector_Expr::toString() const { 
