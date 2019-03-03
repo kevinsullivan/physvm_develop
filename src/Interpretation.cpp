@@ -169,16 +169,10 @@ void Interpretation::mkVector_Expr(
       ast::Vector_Expr *ctor_ast, ast::VecExpr* expr_ast/*, clang::ASTContext *c*/) {
 
   //  LOG(DEBUG) <<"Interpretation::mkVector_Expr. START. Warn: possibly wrong. Same ast for expr and ctor.";
-
-    
     coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, expr_ast);
-
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr_ast));
-
     domain::Space& s = *new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
-
     domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
-  
     domain::Vector_Expr *dom_vec = domain_->mkVector_Expr(s, expr_dom); 
     coords2dom_->putVector_Expr(ctor_coords, dom_vec);
     LOG(DEBUG) <<"Interpretation::mkVector_Expr. DONE\n";
