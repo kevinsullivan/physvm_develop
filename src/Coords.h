@@ -98,6 +98,7 @@ public:
   }
 };
 
+/*
 // To use VecIdent as key in unordered map
 struct VecIdentHasher
 {
@@ -110,7 +111,7 @@ struct VecIdentHasher
     return h;
     }
 };
-
+*/
 
 
 /*****
@@ -129,6 +130,7 @@ public:
   }
 };
 
+/*
 struct VecExprHasher
 {
   std::size_t operator()(const VecExpr& k) const
@@ -140,7 +142,7 @@ struct VecExprHasher
     return h;
     }
 };
-
+*/
 
 
 /*
@@ -191,6 +193,7 @@ protected:
   const VectorCtorType tag_;
 };
 
+/*
 struct VectorHasher
 {
   std::size_t operator()(const Vector& k) const
@@ -202,6 +205,7 @@ struct VectorHasher
     return h;
   }
 };
+*/
 
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
@@ -257,6 +261,7 @@ private:
   VecExpr *be_;
 };
 
+/*
 struct Vector_DefHasher
 {
   std::size_t operator()(const Vector_Def& k) const
@@ -268,7 +273,7 @@ struct Vector_DefHasher
     return h;
   }
 };
-
+*/
 } // namespace coords
 
 #endif
