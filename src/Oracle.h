@@ -6,6 +6,9 @@
 #include "Coords.h"
 #include "Domain.h"
 
+#include "easylogging++.h"
+
+
 namespace oracle {
 
 class Oracle
@@ -20,38 +23,38 @@ public:
 
 	domain::Space& getSpaceForAddExpression(coords::VecExpr * left_br, coords::VecExpr * right_br)
 	{
-		//std::cerr << "Returning stub space for expression.\n";
-		std::cerr << "Space for add expression?\n";
-	//	std::cerr << "Right is \n" << right_br->toString() << "\n";
-	//	std::cerr << "Left is \n" << left_br->toString() << "\n";
+		//LOG(INFO) <<"Returning stub space for expression.\n";
+		LOG(INFO) <<"Space for add expression?\n";
+	//	LOG(INFO) <<"Right is \n" << right_br->toString() << "\n";
+	//	LOG(INFO) <<"Left is \n" << left_br->toString() << "\n";
 		return getSpace();
 	}
 
 	domain::Space& getSpaceForVecIdent(const clang::VarDecl* v) {
-		//std::cerr << "Returning stub space for identifier.\n";
-		std::cerr << "Space for identifier?\n";
+		//LOG(INFO) <<"Returning stub space for identifier.\n";
+		LOG(INFO) <<"Space for identifier?\n";
 		//v->dump();
 		return getSpace();
 	}
 
 	domain::Space& getSpaceForVector_Lit(const clang::CXXConstructExpr* v) {
-		//std::cerr << "Space for literal?\n";
-		std::cerr << "Space for literal?\n";
+		//LOG(INFO) <<"Space for literal?\n";
+		LOG(INFO) <<"Space for literal?\n";
 		v->dump();
 		return getSpace();
 	}
 
 	domain::Space& getSpaceForVecVarExpr(ast::VecVarExpr *ast)  {
-		//std::cerr << "Space for literal?\n";
-		std::cerr << "Space for variable expression?\n";
+		//LOG(INFO) <<"Space for literal?\n";
+		LOG(INFO) <<"Space for variable expression?\n";
 		ast->dump();
 		return getSpace();
 	}
 
 
 	domain::Space& getSpaceForVecVarExp(ast::VecVarExpr *ast)  {
-		//std::cerr << "Space for literal?\n";
-		std::cerr << "Space for variable expression?\n";
+		//LOG(INFO) <<"Space for literal?\n";
+		LOG(INFO) <<"Space for variable expression?\n";
 		ast->dump();
 		return getSpace();
 	}

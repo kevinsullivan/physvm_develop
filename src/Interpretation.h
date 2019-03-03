@@ -9,6 +9,9 @@
 #include "Domain.h"
 #include "CoordsToDomain.h"
 
+#include "easylogging++.h"
+
+
 namespace interp {
 
 
@@ -51,7 +54,7 @@ public:
             static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(ast));
         domain::VecExpr* dom = coords2dom_->getVecExpr(coords);
         if (!dom) {
-            std::cerr << "Interpretation::getVecExpr. Error. Undefined for key!\n";
+            LOG(INFO) <<"Interpretation::getVecExpr. Error. Undefined for key!\n";
         }
         return dom;
     }

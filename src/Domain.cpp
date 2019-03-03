@@ -3,6 +3,9 @@
 #include "Checker.h"
 #include "Domain.h"
 
+#include "easylogging++.h"
+
+
 using namespace std;
 using namespace domain;
 
@@ -15,7 +18,7 @@ Space &Domain::mkSpace(const string &name)
 {
     Space *s = new Space(name);
     spaces.push_back(s);
-    //std::cerr << "Added space to domain at address " << std::hex << s << "\n";
+    //LOG(INFO) <<"Added space to domain at address " << std::hex << s << "\n";
     return *s;
 }
 
@@ -29,7 +32,7 @@ Space &Domain::getSpaceOfVarExpr(const coords::VecExpr *ast)
     // return s;
 
     // get and return the space assigned to that object
-    //std::cerr << "STUB: Domain: getSpaceOfVarExpr in Domain.cpp\n";
+    //LOG(INFO) <<"STUB: Domain: getSpaceOfVarExpr in Domain.cpp\n";
     return *new Space("_");
 }
 */
@@ -63,7 +66,7 @@ VecIdent *Domain::mkVecIdent(Space &s)
 /*
 std::string VecIdent::getName() const
 {
-    std::cerr << "VecIdent::getName(): vardecl_  addr is STUB\n"; // << std::hex << vardecl_->getVarDecl() << "\n";
+    LOG(INFO) <<"VecIdent::getName(): vardecl_  addr is STUB\n"; // << std::hex << vardecl_->getVarDecl() << "\n";
     return "VecIdent::getName: STUB\n";//"(" + getCoords()->toString() + " : " + getCoords()->space_->getName() + ")";
 }
 */
@@ -77,10 +80,10 @@ std::string VecIdent::getName() const
 domain::VecLitExpr *Domain::mkVecLitExpr(Space &s, const coords::VecLitExpr *e)
 {
     domain::VecExpr *be = new domain::VecExpr(s, e);
-    //std::cerr << "Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
+    //LOG(INFO) <<"Adding Vec Lit Expr to domain, address " << std::hex << be << " dump before is ... \n";
     //dump();
     exprs.push_back(be);
-    //std::cerr << "... dump after is ...\n";
+    //LOG(INFO) <<"... dump after is ...\n";
     //dump();
     return be;
 }
@@ -89,10 +92,10 @@ domain::VecLitExpr *Domain::mkVecLitExpr(Space &s, const coords::VecLitExpr *e)
 domain::VecVarExpr *Domain::mkVecVarExpr(Space &s)
 {
     domain::VecVarExpr *var = new domain::VecVarExpr(s);
-    //std::cerr << "Adding Vec Var Expr to domain, address " << std::hex << var << ": " << var->toString() << "\n";
+    //LOG(INFO) <<"Adding Vec Var Expr to domain, address " << std::hex << var << ": " << var->toString() << "\n";
     //dump();
     exprs.push_back(var);
-    //std::cerr << "... dump after is ...\n";
+    //LOG(INFO) <<"... dump after is ...\n";
     //dump();
     return var;
 }
@@ -101,9 +104,9 @@ domain::VecVecAddExpr *Domain::mkVecVecAddExpr(Space &s, domain::VecExpr *mem, d
 {
     domain::VecVecAddExpr *be = new domain::VecVecAddExpr(s, mem, arg);
     exprs.push_back(be);
-    //std::cerr << "Domain::mkVecVecAddExpr:: Add. Coords are "
+    //LOG(INFO) <<"Domain::mkVecVecAddExpr:: Add. Coords are "
     //    << std::hex << e << " Domain VecExpr at " << std::hex << be << "\n";
-    //std::cerr << "Domain::mkVecVecAddExpr:: VecExpr string is " << be->toString() << "\n";
+    //LOG(INFO) <<"Domain::mkVecVecAddExpr:: VecExpr string is " << be->toString() << "\n";
     return be;
 }
 
@@ -152,9 +155,9 @@ Vector* Domain::mkVector_Var(Space& s, coords::Vector* coords, domain::Expr* exp
 // 
 Vector_Def *Domain::mkVector_Def(domain::VecIdent* i,  domain::VecExpr* e)
 {
-    std::cerr << "Domain::mkVector_Def ";
-//    std::cerr << "identifier is " << i->toString();
-//    std::cerr << " expression is " << e->toString() << "\n";
+    LOG(INFO) <<"Domain::mkVector_Def ";
+//    LOG(INFO) <<"identifier is " << i->toString();
+//    LOG(INFO) <<" expression is " << e->toString() << "\n";
     Vector_Def *bd = new Vector_Def(i, e); 
     defs.push_back(bd);
     return bd;
@@ -169,30 +172,30 @@ Vector_Def *Domain::mkVector_Def(domain::VecIdent* i,  domain::VecExpr* e)
 void Domain::dumpVecIdents()
 {
     for (auto i: idents ){
-        std::cerr << "Domain::dumpVecIdents: An identifier (STUB)\n";
+        LOG(INFO) <<"Domain::dumpVecIdents: An identifier (STUB)\n";
     }
 }
 
 void Domain::dumpExpressions()
 {
     for (auto e: exprs ){
-        std::cerr << "Domain::dumpVecExpressions. An expression. (STUB).\n";
+        LOG(INFO) <<"Domain::dumpVecExpressions. An expression. (STUB).\n";
     }
 }
 
 void Domain::dumpVector_Defs()
 {
     for (auto b: defs ){
-        std::cerr << "Domain::dumpVector_Defs. A def. (STUB)\n";
+        LOG(INFO) <<"Domain::dumpVector_Defs. A def. (STUB)\n";
     }
 }
 
 void Domain::dump() {
-    std::cerr << "Domain expressions:\n";
+    LOG(INFO) <<"Domain expressions:\n";
     dumpExpressions(); // print contents on std::cerr
-    std::cerr << "Domain VecIdents\n";
+    LOG(INFO) <<"Domain VecIdents\n";
     dumpVecIdents(); // print contents on std::cerr
-    std::cerr << "Domain Vector_Defs\n";
+    LOG(INFO) <<"Domain Vector_Defs\n";
     dumpVector_Defs(); // print contents on std::cerr
 }
 

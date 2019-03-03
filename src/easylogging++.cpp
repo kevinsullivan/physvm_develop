@@ -1782,7 +1782,7 @@ std::string TypedConfigurations::resolveFilename(const std::string& filename) {
 void TypedConfigurations::insertFile(Level level, const std::string& fullFilename) {
   std::string resolvedFilename = resolveFilename(fullFilename);
   if (resolvedFilename.empty()) {
-    std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["
+    LOG(INFO) <<"Could not load empty file for logging, please re-check your configurations for level ["
               << LevelHelper::convertToString(level) << "]";
   }
   std::string filePath = base::utils::File::extractPathFromFilename(resolvedFilename, base::consts::kFilePathSeperator);

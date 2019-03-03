@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include "easylogging++.h"
+
+
 //using namespace std;
 using namespace coords2domain;
 
@@ -285,14 +288,14 @@ coords::Vector_Def *CoordsToDomain::getVector_Def(domain::Vector_Def *d) const
 
 void CoordsToDomain::dump() const
 {
-    std::cerr << "CoordsToDomain::dump(). STUB.\n";
+    LOG(INFO) <<"CoordsToDomain::dump(). STUB.\n";
 /*
     for (auto it = coord2dom_VecExpr.begin(); it != coord2dom_VecExpr.end(); ++it)
     {
-        //std::std::cerr << std::hex << &it->first << " : " << std::hex << it.second << "\n";
-        std::cerr << "CoordsToDomain::dump(). STUB.\n";
+        //std::LOG(INFO) <<std::hex << &it->first << " : " << std::hex << it.second << "\n";
+        LOG(INFO) <<"CoordsToDomain::dump(). STUB.\n";
     }
-    std::cerr << std::endl;
+    LOG(INFO) <<std::endl;
 */
 }
 
