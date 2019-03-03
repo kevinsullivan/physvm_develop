@@ -14,6 +14,8 @@
 
 #include "Interpretation.h"
 
+#include "easylogging++.h"
+
 using namespace std;
 using namespace llvm;
 using namespace clang;
@@ -546,17 +548,21 @@ public:
 * Main
 ******/
 
+INITIALIZE_EASYLOGGINGPP
+
 int main(int argc, const char **argv)
 {
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  interp_.addSpace("S1");
-  interp_.addSpace("S2");
+  START_EASYLOGGINGPP(argc, argv);
+
+  interp_.addSpace("time");
+  interp_.addSpace("geom");
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
-  std::cerr << " Spaces\n";
+  std::cerr << "Spaces\n";
   std::cerr << interp_.toString_Spaces();
   std::cerr << "Identifiers\n";
   std::cerr << interp_.toString_Idents();
