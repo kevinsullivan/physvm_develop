@@ -71,7 +71,7 @@ public:
         std::string retval = "";
         std::vector<domain::Space*> &s = domain_->getSpaces();
         for (std::vector<domain::Space*>::iterator it = s.begin(); it != s.end(); ++it)
-            retval = retval.append((*it)->toString()).append("\n");
+            retval = retval.append("space ").append((*it)->toString()).append("\n");
         return retval;
     }
 
@@ -82,7 +82,11 @@ public:
         std::vector<domain::VecIdent*> &id = domain_->getVecIdents();
         for (std::vector<domain::VecIdent *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::VecIdent* coords = coords2dom_->getVecIdent(*it);
-            retval = retval.append(coords->toString()).append("\n");
+            retval = retval .append("(")
+                            .append(coords->toString())
+                            .append(" : vector ")
+                            .append((*it)->getSpace()->toString())
+                            .append(")\n");
         }
         return retval;
     }
@@ -93,7 +97,12 @@ public:
         for (std::vector<domain::VecExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::VecExpr* coords = coords2dom_->getVecExpr(*it);
             std::string thisString = coords->toString();
-            retval = retval.append(thisString).append("\n");
+            retval = retval .append("(")
+                            .append(thisString)
+                            .append(" : _") 
+                            // TODO: fix . instead of -> before toString next line
+                            .append((*it)->getSpace().toString())
+                            .append(")\n");
         }
         return retval;
     }
@@ -103,7 +112,12 @@ public:
         std::vector<domain::Vector*> &id = domain_->getVectors();
         for (std::vector<domain::Vector *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::Vector* coords = coords2dom_->getVector(*it);
-            retval = retval.append(coords->toString()).append("\n");
+            retval = retval
+            .append("(")
+            .append(coords->toString())
+            .append(" : ")
+            .append((*it)->getSpace()->toString())
+            .append(")\n");
         }
         return retval;
     }

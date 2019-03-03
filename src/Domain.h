@@ -110,8 +110,7 @@ public:
 	Space(std::string name) : name_(name) {};
 	std::string getName() const;
 	std::string toString() const {
-		std::string s("space ");
-		return s.append(getName());
+		return getName(); 
 	}
   private:
 	std::string name_;
