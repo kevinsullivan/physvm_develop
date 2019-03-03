@@ -32,12 +32,21 @@ Code coordinates are mapped to domain
 elements via a relation represented 
 externally to Coords objects, namely 
 the coords2domain relation(s). ASTs 
-are mapped to Coords by the external ast2coordinates relations. The mapping from coordinates back to to AST objects 
+are mapped to Coords by the external 
+ast2coordinates relations. The mapping 
+from coordinates back to to AST objects 
 is implemented by references contained 
 within coords objects. Each such object
-represents with dynamic state the kind of AST-level object it maps to, and it provides a pointer back to that object.
+represents with dynamic state the kind 
+of AST-level object it maps to, and it 
+provides a pointer back to that object.
 
-The challenge is to get precisely typed references to AST elements back from Coords objects. But in the current application, we don't really need to do so. In future, dynamic casts seem likely to be useful.
+The challenge is to get precisely typed 
+references to AST elements back from 
+Coords objects. But in the current 
+application, we don't really need to do 
+so. In future, dynamic casts seem likely 
+to be useful.
 */
 
 namespace coords {
@@ -69,12 +78,6 @@ protected:
   const clang::Decl *clang_decl_;
 };
 
-struct CoordsHasher;
-struct VecExprHasher;
-struct VecIdentHasher;
-struct VectorHasher;
-struct Vector_DefHasher;
-
 /*************************************************************
  * Coordinate subclasses, for type checking, override behaviors
  *************************************************************/
@@ -98,21 +101,6 @@ public:
   }
 };
 
-/*
-// To use VecIdent as key in unordered map
-struct VecIdentHasher
-{
-  std::size_t operator()(const VecIdent& k) const
-  {
-    using std::size_t;
-    using std::hash;
-    using std::string;
-    std::size_t h = 1010101010;
-    return h;
-    }
-};
-*/
-
 
 /*****
  * Expr
@@ -130,28 +118,6 @@ public:
   }
 };
 
-/*
-struct VecExprHasher
-{
-  std::size_t operator()(const VecExpr& k) const
-  {
-    using std::size_t;
-    using std::hash;
-    using std::string;
-    std::size_t h = 1010101010;
-    return h;
-    }
-};
-*/
-
-
-/*
-No such intermediate node in Clang AST.
-Goes straight to CXXConstructExpr. Use
-Vector_Lit.
-
-class VecLitExpr : public Coords {};
-*/
 
 class VecVarExpr : public VecExpr {
 public:
@@ -193,19 +159,6 @@ protected:
   const VectorCtorType tag_;
 };
 
-/*
-struct VectorHasher
-{
-  std::size_t operator()(const Vector& k) const
-  {
-    using std::size_t;
-    using std::hash;
-    using std::string;
-    std::size_t h = 1010101010;
-    return h;
-  }
-};
-*/
 
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
@@ -261,19 +214,6 @@ private:
   VecExpr *be_;
 };
 
-/*
-struct Vector_DefHasher
-{
-  std::size_t operator()(const Vector_Def& k) const
-  {
-    using std::size_t;
-    using std::hash;
-    using std::string;
-    std::size_t h = 1010101010;
-    return h;
-  }
-};
-*/
 } // namespace coords
 
 #endif
