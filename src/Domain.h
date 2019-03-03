@@ -8,6 +8,9 @@
 
 #include "Coords.h"
 
+#include "easylogging++.h"
+
+
 //using namespace std;
 
 /*
@@ -158,7 +161,7 @@ public:
     const Space& getSpace() const;
 /*	virtual std::string toString() const {
 		if (getCoords()  != NULL) {
-			//std::cerr << "Domain::VecExpr::toString: coords::VecVecExpr pointer is " << std::hex << ast_ << "\n";
+			//LOG(INFO) <<"Domain::VecExpr::toString: coords::VecVecExpr pointer is " << std::hex << ast_ << "\n";
 			return "(" + getCoords()->toString() + " : " + space_.getName() + ")";
 		}
 		else {
@@ -297,7 +300,7 @@ private:
 //
 class Vector_Var : public Vector {
 	Vector_Var() : Vector(*new Space(""), VEC_NONE ) { 
-		std::cerr << "Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
+		LOG(INFO) <<"Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
 	}
 };
 
