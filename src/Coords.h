@@ -19,8 +19,12 @@ typed ontology. An invariant of the
 design is that AST nodes are properly
 characrterized by coordinate objects.
 
-Code coordinates thus also provide for ontology translation, between the AST types used to represent pertinent 
-code elements, and the AST types used to represent domain elements (id, var, expr, value, def).
+Code coordinates thus also provide for
+ontology translation, between the AST 
+types used to represent pertinent code
+elements, and the AST types used to 
+represent domain elements (id, var, 
+expr, value, def).
 
 Here the AST language a domain-driven 
 projection of Clang. The domain 
@@ -132,7 +136,6 @@ public:
   VecVecAddExpr(const ast::VecVecAddExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg);
   const ast::VecVecAddExpr *getVecVecAddExpr();
   virtual std::string toString() const;
-
 private:
   coords::Coords *mem_;
   coords::Coords *arg_;
@@ -162,7 +165,6 @@ class Vector_Lit : public Vector {
 public:
   Vector_Lit(const ast::Vector_Lit *ast, ast::Scalar a);
   virtual std::string toString() const;
-
 private:
   float a_;
 };
@@ -172,7 +174,6 @@ public:
   Vector_Var(const ast::Vector_Var *ast,  coords::VecVarExpr *expr);
   virtual std::string toString() const;
   VecVarExpr *getVecVarExpr();
-
 private:
   VecVarExpr *expr_;
 };
@@ -183,7 +184,6 @@ public:
   Vector_Expr(const ast::Vector_Expr *ast, coords::VecExpr *expr);
   virtual std::string toString() const;
   Vector_Expr *getVector_Expr();
-
 private:
   VecExpr *expr_;
 };

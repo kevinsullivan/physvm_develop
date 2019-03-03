@@ -107,8 +107,6 @@ public:
   //  Get left and right children of add expression and handle them by calls to other handlers
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    // TODO: Either use or omit context and sm.
-    //
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
     const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
@@ -123,8 +121,8 @@ public:
 
 /*
 A Vector object constructed from a member expression
-Precondition: Provided with match result of type CXXConstructAddExpr
-Postcondition: underlying add expression already intepreted
+Precondition: Given match of type CXXConstructAddExpr
+Postcondition: underlying add expression intepreted
 Strategy:
   - Extract member expression on left, value expression on right
   - Recursively handle to get both of them into the system
@@ -295,59 +293,6 @@ private:
   HandlerForCXXConstructAddExpr addHandler_;
 };
 
-//const domain::VecExpr* handleMemberCall
-
-/*
-Precondition: consdecl of type CXXConstructExpr* is a pointer to an 
-expression, the value of which is being assigned to a variable in a 
-declaration statement. 
-
-Explanation: By the time control reaches this code, we are assured 
-the argument is an AST node for a Vector-valued expression that is
-going to be used to initialize the value of a variable. The purpose 
-of this code is to make sure that this C++ expression is "lifted" to
-a corresponding expression in the domain, and that the
-interpretation links this code/AST-node to that domain object.
-
-Postcondition: the return value of this function is pointer to a new 
-object of type domain::VecExpr; that object is in the domain; it might
-itself represent a complex expression tree; it links back to consdecl;
-and the interpretation is updated to like consdecl to the new domain
-object. This function works recursively to make sure that all of the
-work of handling the top-level CXXConstructExpr is finished by the 
-time this function returns.
-
-Explanation: the way in which this consdecl is turned into a domain 
-object depends on the specific form of the expression being handled.
-The cases to be handled include literal and add expressions.
-- Vec v1(0.0,0.0,0.0) is a literal expression
-- (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
-
-domain::VecExpr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
-{
-  //LOG(DEBUG) <<"handleCXXConstructExpr: Start handleCXXConstructExpr\n";
-  //LOG(DEBUG) <<"Pattern matching Vector CXXConstructExpr.\n";
-  CXXConstructExprMatcher matcher;
-  matcher.match(consdecl, context);
-  // postcondition: consdecl now has an interpretation
-  // How do we get BI to return to user? Look it up
-  // domain::VecExpr* bi = interp->getExpr(consdecl);
-  // TO DO: Architectural change means we need to wrap consdecl to map it
-
-  const Expr *ast = new Expr(consdecl);   // TODO -- BETTER TYPE!
-  domain::VecExpr *be = interp->getVecExpr(*ast);
-  //LOG(DEBUG) <<"handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
-  return be;
-}
-*/
-
-void handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
-{
-  LOG(DEBUG) <<"domain::handleCXXDeclStmt: START. Matching.\n";
-  CXXConstructExprMatcher matcher;
-  matcher.match(consdecl, context);
-  LOG(DEBUG) <<"domain::handleCXXDeclStmt: DONE.\n"; 
-}
 
 /*************************
  * Handle Vector DeclStmts
@@ -357,6 +302,9 @@ void handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, ASTContext *cont
 Role: Handles top-level vector declaration statements
 Precondition: Receives a Vector DeclStmt object to handle
 Postcondition:
+  identifier node is interpreted
+  expression to be bound to identifier is intepreted
+  binding of identifier to expression is interpreted
 */
 
 class VectorDeclStmtHandler : public MatchFinder::MatchCallback
@@ -364,25 +312,15 @@ class VectorDeclStmtHandler : public MatchFinder::MatchCallback
 public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-  
     const clang::DeclStmt *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
     const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
     const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
     LOG(DEBUG) <<"VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
     ASTContext *context = Result.Context;
     //SourceManager &sm = context->getSourceManager();
-
-    // IDENTIFIER -- should call handle identifier (TODO:)
-    //
     interp_.mkVecIdent(vardecl);
-    
-    // CONSTRUCTOR (VecLitExpr | Add)
-    //
     CXXConstructExprMatcher matcher;
     matcher.match(consdecl, context);
-  
-    // add domain::Vector_Def for variable declaration statement in code
-    //
     interp_.mkVector_Def(declstmt, vardecl, consdecl);
     LOG(DEBUG) <<"VectorDeclStmtHandler::run: Done.\n"; 
     }
@@ -450,16 +388,13 @@ int main(int argc, const char **argv)
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  START_EASYLOGGINGPP(argc, argv);
-
   // easylogging configuration file is in /usr/local/easylogging.conf
   // change it there, or select a different file for yourself, below.
+  // TODO: THIS JUST ISN'T WORKING. EASYLOGGING APPEARS TO BE BROKEN.
   //
+  START_EASYLOGGINGPP(argc, argv);
   el::Loggers::configureFromGlobal("/usr/local/easylogging.conf");
 
-
-  // Initialize interpretation with spaces implicit in code to be analyzed
-  //
   interp_.addSpace("time");
   interp_.addSpace("geom");
   
