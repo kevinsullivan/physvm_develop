@@ -107,10 +107,8 @@ std::string VecVarExpr::toString() const {
 
 
 VecVecAddExpr::VecVecAddExpr(
-    const clang::CXXMemberCallExpr *mce, 
-    coords::VecExpr *mem, 
-    coords::VecExpr *arg) : VecExpr(mce) {
-std::cerr << "VecVecAddExpr::VecVecAddExpr. Warn. Empty implementation.\n";
+    const clang::CXXMemberCallExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg) 
+        : VecExpr(mce), mem_(mem), arg_(arg) {
 }
 
 const clang::CXXMemberCallExpr *VecVecAddExpr::getCXXMemberCallExpr() {
@@ -143,7 +141,7 @@ Vector_Lit::Vector_Lit(const clang::CXXConstructExpr* ast, ast::Scalar a)
     : Vector(ast, VEC_CTOR_LIT), a_(a) {}
   
 std::string Vector_Lit::toString() const  { 
-    return "( 0 : Stub)";  
+    return "( vector 0 ) --";  
 }
 
 Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, coords::VecVarExpr* expr) 
