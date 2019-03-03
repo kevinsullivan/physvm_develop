@@ -1,0 +1,2 @@
+2019-03-02 23:05:31,061 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+

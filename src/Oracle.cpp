@@ -18,39 +18,40 @@ void printSpaces(vector<domain::Space*>& spaces);
 int selectSpace(vector<domain::Space*>& spaces, std::string);
 int selectSpace(vector<domain::Space*>& spaces);
 
+/*
 domain::Space& Oracle::getSpaceForVector(std::string where) {
-	LOG(INFO) <<"getSpaceForVector should take AST argument\n";
+	LOG(DEBUG) <<"getSpaceForVector should take AST argument\n";
 	return this->getSpace();
 }
+*/
 
 domain::Space& Oracle::getSpace() {
     vector<domain::Space*>& spaces = dom_->getSpaces();
 	if (spaces.size() == 0) {
-		LOG(INFO) <<"No abstract spaces available for interpretation. Bye!\n";
+		LOG(ERROR) <<"Oracle::getSpace:: No abstract spaces available for interpretation. Bye!\n";
 		exit(1);
 	}
 	printSpaces(spaces);
 	int whichSpace = selectSpace(spaces);
 	domain::Space& result = *spaces[whichSpace];
     return result;
-	LOG(INFO) <<"End getSpacesForVector\n";
 }
 
 
 
 
 void printSpaces(vector<domain::Space*>& spaces) {
-	LOG(INFO) <<"Available spaces:\t" << std::endl;
+	cout <<"Available spaces:\t" << std::endl;
 	int size = spaces.size();
 	for (int i = 0; i < size; i++) {
-		LOG(INFO) <<i << ". " << spaces[i]->getName() << "\n";
+		cout <<i << ". " << spaces[i]->getName() << "\n";
 	}
 }
 
 int selectSpace(vector<domain::Space*>& spaces) {
 	int choice = -1;
 	while (choice == -1) {
-		std::cerr<< "Space? ";
+		std::cout << "Space? ";
 		cin >> choice;
 		if (choice < 0 || choice >= (int)spaces.size())
 		{
