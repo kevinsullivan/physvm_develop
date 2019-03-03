@@ -71,7 +71,9 @@ public:
         std::string retval = "";
         std::vector<domain::Space*> &s = domain_->getSpaces();
         for (std::vector<domain::Space*>::iterator it = s.begin(); it != s.end(); ++it)
-            retval = retval.append("space ").append((*it)->toString()).append("\n");
+            retval = retval .append("(")
+                            .append((*it)->toString())
+                            .append(" : space)\n");
         return retval;
     }
 
@@ -91,6 +93,8 @@ public:
         return retval;
     }
 
+    // TODO: Factor toPrint (printing) out of coords, put here in, or in client of, interpretation
+    //
     std::string toString_Exprs() {
         std::string retval = "";
         std::vector<domain::VecExpr*> &id = domain_->getVecExprs();
@@ -99,7 +103,7 @@ public:
             std::string thisString = coords->toString();
             retval = retval .append("(")
                             .append(thisString)
-                            .append(" : _") 
+                            .append(" : vector ") 
                             // TODO: fix . instead of -> before toString next line
                             .append((*it)->getSpace().toString())
                             .append(")\n");
