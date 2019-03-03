@@ -25,27 +25,19 @@ public:
     }
 
     /*
-    All of these operations work by producing side-effects
-    on ast2_coords_ and on coords2dom.
+    These operations work by side-effecting interpretation state.
+    Precondition: sub-arguments already have interpretations.
     */
  
     void mkVecIdent(ast::VecIdent *ast);
-
-    //void mkVecLitExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/);
-    void mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/);
-
-    // Precondition! Both mem and arg already have interpretations.
-    //
+    void mkVecVarExpr(ast::VecVarExpr *ast);
     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, const ast::VecExpr *mem, 
                          const ast::VecExpr *arg);
-    void mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *context*/);
-    void mkVector_Expr(ast::Vector_Expr *ast, ast::VecExpr* expr/*, clang::ASTContext *context*/);
-//    void mkVector_Var(ast::VecLitExpr *ast, clang::ASTContext *context);
+    void mkVector_Lit(ast::Vector_Lit *ast);
+    void mkVector_Expr(ast::Vector_Expr *ast, ast::VecExpr* expr);
+    void mkVector_Var(ast::VecLitExpr *ast);
     void mkVector_Def(ast::Vector_Def *ast, ast::VecIdent *id, ast::VecExpr *exp);
     
-    //coords::VecExpr *getCoords(ast::VecExpr *expr);
-    
-
     // Precondition: coords2domain_ is defined for exp
     //
     domain::VecExpr* getVecExpr(ast::VecExpr* ast) {
