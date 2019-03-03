@@ -153,7 +153,8 @@ std::string Vector_Var::toString() const {
 }
 
 std::string Vector_Expr::toString() const { 
-    return std::string("Vector_Expr::toString() STUB.\n"); 
+    return expr_->toString();
+    //std::string("Vector_Expr::toString() STUB.\n"); 
 }
 
 Vector_Expr::Vector_Expr(const clang::CXXConstructExpr *ctor_ast, 
@@ -189,8 +190,13 @@ coords::VecExpr *Vector_Def::getExpr() const {
     return be_;
 }
 
+// The coup d'grace.
 std::string Vector_Def::toString() const { 
-    return "Coords::Vector_Def::toString. STUB."; 
+    std::string retval = "def";
+    retval += bv_->toString();
+    retval += " := ";
+    retval += be_->toString();
+    return retval; //"Coords::Vector_Def::toString. STUB."; 
 }
 
 } // namespace codecoords
