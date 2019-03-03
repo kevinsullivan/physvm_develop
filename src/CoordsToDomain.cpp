@@ -286,18 +286,19 @@ coords::Vector_Def *CoordsToDomain::getVector_Def(domain::Vector_Def *d) const
     return static_cast<coords::Vector_Def *>(coords);
 }
 
-void CoordsToDomain::dump() const
+/*void CoordsToDomain::dump() const
 {
-    LOG(INFO) <<"CoordsToDomain::dump(). STUB.\n";
-/*
+    LOG(DEBUG) <<"CoordsToDomain::dump(). STUB.\n";
+
     for (auto it = coord2dom_VecExpr.begin(); it != coord2dom_VecExpr.end(); ++it)
     {
-        //std::LOG(INFO) <<std::hex << &it->first << " : " << std::hex << it.second << "\n";
-        LOG(INFO) <<"CoordsToDomain::dump(). STUB.\n";
+        //std::LOG(DEBUG) <<std::hex << &it->first << " : " << std::hex << it.second << "\n";
+        LOG(DEBUG) <<"CoordsToDomain::dump(). STUB.\n";
     }
-    LOG(INFO) <<std::endl;
-*/
+    LOG(DEBUG) <<std::endl;
+
 }
+*/
 
 //-------------------------
 

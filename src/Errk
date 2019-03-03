@@ -660,11 +660,11 @@ Domain.h:59:14: error: candidate is: domain::Vector_Def* domain::Domain::mkVecto
               ^~~~~~~~~~~~
 Domain.cpp: In member function 'void domain::Domain::dumpVecIdents()':
 Domain.cpp:167:24: error: request for member 'toString' in 'i', which is of pointer type 'domain::VecIdent*' (maybe you meant to use '->' ?)
-         LOG(INFO) <<i.toString() << "\n";
+         LOG(DEBUG) <<i.toString() << "\n";
                         ^~~~~~~~
 Domain.cpp: In member function 'void domain::Domain::dumpVector_Defs()':
 Domain.cpp:181:24: error: request for member 'toString' in 'b', which is of pointer type 'domain::Vector_Def*' (maybe you meant to use '->' ?)
-         LOG(INFO) <<b.toString() << "\n";
+         LOG(DEBUG) <<b.toString() << "\n";
                         ^~~~~~~~
 Makefile:110: recipe for target '../build/ASTMatcher' failed
 make: *** [../build/ASTMatcher] Error 1

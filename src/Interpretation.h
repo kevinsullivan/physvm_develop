@@ -54,7 +54,7 @@ public:
             static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(ast));
         domain::VecExpr* dom = coords2dom_->getVecExpr(coords);
         if (!dom) {
-            LOG(INFO) <<"Interpretation::getVecExpr. Error. Undefined for key!\n";
+            LOG(DEBUG) <<"Interpretation::getVecExpr. Error. Undefined for key!\n";
         }
         return dom;
     }

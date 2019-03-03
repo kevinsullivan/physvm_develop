@@ -55,7 +55,7 @@ class HandlerForCXXConstructLitExpr : public MatchFinder::MatchCallback
 public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    LOG(INFO) <<"main::HandlerForCXXConstructLitExpr::run. Start.\n";
+    LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Start.\n";
     ASTContext *context = Result.Context;
     const clang::CXXConstructExpr *lit_ast = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
@@ -64,7 +64,7 @@ public:
     // NOTE: def will always be of identifier to constructed object
     //
     interp_.mkVector_Lit(lit_ast/*, context*/);
-    LOG(INFO) <<"main::HandlerForCXXConstructLitExpr::run. Done.\n";
+    LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Done.\n";
   }
 };
 
@@ -80,14 +80,14 @@ domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &c
 */
 const domain::VecExpr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTContext *context, SourceManager &sm)
 {
-  LOG(INFO) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
+  LOG(DEBUG) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
   const clang::Expr *mem_ast = ast->getImplicitObjectArgument();
   const clang::Expr *arg_ast = ast->getArg(0);
 
   /*
-  LOG(INFO) <<"Member expr AST is (dump)\n";
+  LOG(DEBUG) <<"Member expr AST is (dump)\n";
   mem_ast->dump();
-  LOG(INFO) <<"Arg AST is (dump)\n";
+  LOG(DEBUG) <<"Arg AST is (dump)\n";
   arg_ast->dump();
   */
  
@@ -96,15 +96,15 @@ const domain::VecExpr *handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTCon
   const domain::VecExpr *left_br = handle_member_expr_of_add_call(mem_ast, *context, sm);
   const domain::VecExpr *right_br = handle_arg0_of_add_call(arg_ast, *context, sm);
   if (!left || !right || !left_br || !right_br) {
-    LOG(INFO) <<"main::handleMemberCallExpr. Null pointer error.\n";
+    LOG(DEBUG) <<"main::handleMemberCallExpr. Null pointer error.\n";
     return NULL;
   }
-  //LOG(INFO) <<"main::handleMemberCallExpr: End\n";
+  //LOG(DEBUG) <<"main::handleMemberCallExpr: End\n";
 
 
   // 
   interp_.mkVecVecAddExpr(ast, mem_ast, arg_ast);
-  LOG(INFO) <<"main::handleMemberCallExpr: Done.\n";
+  LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
   return interp_.getVecExpr(ast); 
 }
 
@@ -117,12 +117,12 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
     const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-    LOG(INFO) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = " << std::hex << declRefExpr_ast << "\n";
+    LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = " << std::hex << declRefExpr_ast << "\n";
   
     // TODO: Should we be passing context objects with these AST nodes? Do they persist?
     //
     interp_.mkVecVarExpr(declRefExpr_ast);
-    LOG(INFO) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.\n";
+    LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.\n";
   }
 };
 
@@ -140,16 +140,16 @@ public:
     const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (memcall == NULL)
     {
-      LOG(INFO) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
+      LOG(DEBUG) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
-    LOG(INFO) <<"main::HandlerForCXXAddMemberCall. Start. Got CXXMemberCallExpr:\n";
-    memcall->dump();
+    LOG(DEBUG) <<"main::HandlerForCXXAddMemberCall. Start. Got CXXMemberCallExpr:\n";
+    //memcall->dump();
 
     // recursive helper function
     /*const domain::VecExpr* memberCallExpr = */
     handleMemberCallExpr(memcall, context, sm);
-    LOG(INFO) <<"main::HandlerForCXXAddMemberCall. Done.\n";
+    LOG(DEBUG) <<"main::HandlerForCXXAddMemberCall. Done.\n";
   }
 };
 
@@ -178,18 +178,19 @@ public:
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorConstructAddExpr");
     if (ctor_ast == NULL)
     {
-      LOG(INFO) <<"Error in HandlerForCXXConstructAddExpr::run. No constructor declaration pointer\n";
+      LOG(DEBUG) <<"Error in HandlerForCXXConstructAddExpr::run. No constructor declaration pointer\n";
       return;
     }
-    LOG(INFO) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
-    ctor_ast->dump();
+    LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
+    //ctor_ast->dump();
 
     const CXXMemberCallExpr *vec_vec_add_member_call_ast =
         Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (vec_vec_add_member_call_ast == NULL)
     {
-      LOG(INFO) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
-      LOG(INFO) <<"Surrounding CXXConstructExpr is "; vec_vec_add_member_call_ast->dump();
+      LOG(DEBUG) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
+      LOG(DEBUG) <<"Surrounding CXXConstructExpr is "; 
+      //vec_vec_add_member_call_ast->dump();
       return;
     }
 
@@ -204,7 +205,7 @@ public:
 
 
     //return interp_.mkVector_Expr(expr_ctor_ast, memberCallExpr->getCoords() /*, context*/);
-    LOG(INFO) <<"main::HandlerForCXXConstructAddExpr: Done. Returning domain Vector_Expr (unnecessary)\n";
+    LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: Done. Returning domain Vector_Expr (unnecessary)\n";
 
     // TODO: Omit return value here. Simplify.
     return interp_.mkVector_Expr(ctor_ast, vec_vec_add_member_call_ast /*, context*/);
@@ -239,9 +240,9 @@ public:
 
   void match(const clang::Expr &call_rhs, ASTContext &context)
   {
-    LOG(INFO) <<"CXXMemberCallExprArg0Matcher::match start\n";
+    LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match start\n";
     CXXMemberCallExprArg0Matcher_.match(call_rhs, context);
-    LOG(INFO) <<"CXXMemberCallExprArg0Matcher::match finish\n";
+    LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match finish\n";
   }
 
 private:
@@ -255,8 +256,8 @@ Handle the single argument to an add application
 */
 domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *arg, ASTContext &context, SourceManager &sm)
 {
-  LOG(INFO) <<"domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:\n";
-  arg->dump();
+  LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:\n";
+  //arg->dump();
 
   CXXMemberCallExprArg0Matcher call_right_arg0_matcher;
   call_right_arg0_matcher.match(*arg, context);
@@ -265,7 +266,7 @@ domain::VecExpr *handle_arg0_of_add_call(const clang::Expr *arg, ASTContext &con
   //
   // TODO: Clear this up, move next line into getVecExpr, no need to return value
   //
-  LOG(INFO) <<"domain::VecExpr *handle_arg0_of_add_call. Done.\n";
+  LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. Done.\n";
   return interp_.getVecExpr(arg);
 }
 
@@ -303,10 +304,10 @@ public:
   void match(const clang::Expr &call_rhs, ASTContext &context)
   {
     // NO MATCH HAPPENING HERE!
-    LOG(INFO) <<"main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:\n";
-      call_rhs.dump();
+    LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:\n";
+    //call_rhs.dump();
     CXXMemberCallExprMemberExprMatcher_.match(call_rhs, context);
-    LOG(INFO) <<"main::CXXMemberCallExprMemberExprMatcher. DONE matching.\n";
+    LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. DONE matching.\n";
   // Postcondtion: member expression in call now "in system" as dom Expr
   }
 
@@ -323,13 +324,13 @@ Strategy: Pattern matching on structure of member expressions
 */
 domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context, SourceManager &sm)
 {
-  LOG(INFO) <<"main::handle_member_expr_of_add_call at " << std::hex << memexpr << "\n";
+  LOG(DEBUG) <<"main::handle_member_expr_of_add_call at " << std::hex << memexpr << "\n";
   if (memexpr == NULL)
   {
-    LOG(INFO) <<"main::handle_member_expr_of_add_call: Error.Null argument\n";
+    LOG(DEBUG) <<"main::handle_member_expr_of_add_call: Error.Null argument\n";
   }
-  LOG(INFO) <<"main::handle_member_expr_of_add_call ast is (dump)\n";
-  memexpr->dump();
+  LOG(DEBUG) <<"main::handle_member_expr_of_add_call ast is (dump)\n";
+  //memexpr->dump();
 
 
   // PROBLEM ZONE
@@ -338,16 +339,16 @@ domain::VecExpr *handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTC
     | vardeclref     :=
     | membercallexpr :=
   */
-  LOG(INFO) <<"domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.\n"; CXXMemberCallExprMemberExprMatcher call_expr_mem_expr_matcher;
+  LOG(DEBUG) <<"domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.\n"; CXXMemberCallExprMemberExprMatcher call_expr_mem_expr_matcher;
   call_expr_mem_expr_matcher.match(*memexpr, context);
-  LOG(INFO) <<"domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.\n"; 
+  LOG(DEBUG) <<"domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.\n"; 
   //
   // Postcondition: member expression is "in the system" as dom expr
   // keyed by memexpr (by an AST wrapper around memexpr).
   // Test postcondition.
 
   domain::VecExpr *expr = interp_.getVecExpr(memexpr);
-  LOG(INFO) <<"domain::VecExpr *handle_member_expr_of_add_call. Done. \n";
+  LOG(DEBUG) <<"domain::VecExpr *handle_member_expr_of_add_call. Done. \n";
   return expr; 
  }
 
@@ -375,9 +376,9 @@ public:
   };
   void match(const clang::CXXConstructExpr *consdecl, ASTContext *context)
   {
-    LOG(INFO) <<"START: Pattern Matching on CXXConstructExpr (Lit | Add): Start\n";
+    LOG(DEBUG) <<"START: Pattern Matching on CXXConstructExpr (Lit | Add): Start\n";
     CXXConstructExprMatcher_.match(*consdecl, *context);
-    LOG(INFO) <<"DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End\n";
+    LOG(DEBUG) <<"DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End\n";
     //
     // Postcondition: identifier and lit or add expression binding is in system
     // Nothing else to do, client will pick up resulting expression via interp
@@ -423,8 +424,8 @@ The cases to be handled include literal and add expressions.
 
 domain::VecExpr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
 {
-  //LOG(INFO) <<"handleCXXConstructExpr: Start handleCXXConstructExpr\n";
-  //LOG(INFO) <<"Pattern matching Vector CXXConstructExpr.\n";
+  //LOG(DEBUG) <<"handleCXXConstructExpr: Start handleCXXConstructExpr\n";
+  //LOG(DEBUG) <<"Pattern matching Vector CXXConstructExpr.\n";
   CXXConstructExprMatcher matcher;
   matcher.match(consdecl, context);
   // postcondition: consdecl now has an interpretation
@@ -434,14 +435,14 @@ domain::VecExpr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl,
 
   const Expr *ast = new Expr(consdecl);   // TODO -- BETTER TYPE!
   domain::VecExpr *be = interp->getVecExpr(*ast);
-  //LOG(INFO) <<"handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
+  //LOG(DEBUG) <<"handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
   return be;
 }
 */
 
 const domain::VecExpr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
 {
-  LOG(INFO) <<"domain::handleCXXDeclStmt: START. Matching.\n";
+  LOG(DEBUG) <<"domain::handleCXXDeclStmt: START. Matching.\n";
   CXXConstructExprMatcher matcher;
   matcher.match(consdecl, context);
   //
@@ -449,7 +450,7 @@ const domain::VecExpr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl
   // Fetch and return result
   //
   const domain::VecExpr *expr = interp_.getVecExpr(consdecl);
-  LOG(INFO) <<"domain::handleCXXDeclStmt: DONE. domain::VecExpr at " 
+  LOG(DEBUG) <<"domain::handleCXXDeclStmt: DONE. domain::VecExpr at " 
     << std::hex << expr << "\n";
   return expr;
 }
@@ -474,8 +475,8 @@ public:
     const clang::DeclStmt *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
     const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
     const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
-    LOG(INFO) <<"VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
-    declstmt->dump();
+    LOG(DEBUG) <<"VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
+    //declstmt->dump();
 
     ASTContext *context = Result.Context;
     SourceManager &sm = context->getSourceManager();
@@ -486,10 +487,10 @@ public:
     
     // CONSTRUCTOR (VecLitExpr | Add)
     //
-    LOG(INFO) <<"VectorDeclStmtHandler: start matching on consdecl\n";
+    LOG(DEBUG) <<"VectorDeclStmtHandler: start matching on consdecl\n";
     CXXConstructExprMatcher matcher;
     matcher.match(consdecl, context);
-    LOG(INFO) <<"VectorDeclStmtHandler: done matching on consdecl\n";
+    LOG(DEBUG) <<"VectorDeclStmtHandler: done matching on consdecl\n";
     //
     // Postcondition: domain vector expression now in system
     // fetch result. Checking occurs in getVecExpr.
@@ -497,7 +498,7 @@ public:
     // add domain::Vector_Def for variable declaration statement in code
     //
     interp_.mkVector_Def(declstmt, vardecl, consdecl);
-    LOG(INFO) <<"VectorDeclStmtHandler::run: Done.\n"; 
+    LOG(DEBUG) <<"VectorDeclStmtHandler::run: Done.\n"; 
     }
 };
 
@@ -535,7 +536,7 @@ public:
   void EndSourceFileAction() override
   {
     //bool consistent = interp_.isConsistent();
-    LOG(INFO) <<"STUB Analysis result\n";
+    LOG(DEBUG) <<"STUB Analysis result\n";
   }
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
@@ -557,19 +558,29 @@ int main(int argc, const char **argv)
 
   START_EASYLOGGINGPP(argc, argv);
 
+  // easylogging configuration file is in /usr/local/easylogging.conf
+  // change it there, or select a different file for yourself, below.
+  //
+  el::Loggers::configureFromGlobal("/usr/local/easylogging.conf");
+
+
+  // Initialize interpretation with spaces implicit in code to be analyzed
+  //
   interp_.addSpace("time");
   interp_.addSpace("geom");
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
-  LOG(INFO) <<"Spaces\n";
-  LOG(INFO) <<interp_.toString_Spaces();
-  LOG(INFO) <<"Identifiers\n";
-  LOG(INFO) <<interp_.toString_Idents();
-  LOG(INFO) <<"Expressions\n";
-  LOG(INFO) <<interp_.toString_Exprs();
-  LOG(INFO) <<"Vectors\n";
-  LOG(INFO) <<interp_.toString_Vectors();
-  LOG(INFO) <<"Definitions\n"; 
-  LOG(INFO) <<interp_.toString_Defs();
+  // See what we got
+  //
+  cout <<"Spaces\n";
+  cout <<interp_.toString_Spaces();
+  cout <<"Identifiers\n";
+  cout <<interp_.toString_Idents(); 
+  cout <<"Expressions\n";
+  cout <<interp_.toString_Exprs();
+  cout <<"Vectors\n";
+  cout <<interp_.toString_Vectors();
+  cout <<"Definitions\n"; 
+  cout <<interp_.toString_Defs();
 }

@@ -19,43 +19,43 @@ public:
 	domain::Space &getSpace();
 
 	//domain::Space& getSpace() { return space_; }
-	domain::Space& getSpaceForVector(std::string where);
+	//domain::Space& getSpaceForVector(std::string where);
 
 	domain::Space& getSpaceForAddExpression(coords::VecExpr * left_br, coords::VecExpr * right_br)
 	{
-		//LOG(INFO) <<"Returning stub space for expression.\n";
-		LOG(INFO) <<"Space for add expression?\n";
-	//	LOG(INFO) <<"Right is \n" << right_br->toString() << "\n";
-	//	LOG(INFO) <<"Left is \n" << left_br->toString() << "\n";
+		//LOG(DEBUG) <<"Returning stub space for expression.\n";
+		std::cout <<"Space for add expression?\n";
+	//	LOG(DEBUG) <<"Right is \n" << right_br->toString() << "\n";
+	//	LOG(DEBUG) <<"Left is \n" << left_br->toString() << "\n";
 		return getSpace();
 	}
 
 	domain::Space& getSpaceForVecIdent(const clang::VarDecl* v) {
-		//LOG(INFO) <<"Returning stub space for identifier.\n";
-		LOG(INFO) <<"Space for identifier?\n";
+		//LOG(DEBUG) <<"Returning stub space for identifier.\n";
+		std::cout <<"Space for identifier?\n";
 		//v->dump();
 		return getSpace();
 	}
 
 	domain::Space& getSpaceForVector_Lit(const clang::CXXConstructExpr* v) {
-		//LOG(INFO) <<"Space for literal?\n";
-		LOG(INFO) <<"Space for literal?\n";
-		v->dump();
+		//LOG(DEBUG) <<"Space for literal?\n";
+		std::cout <<"Space for literal?\n";
+		//v->dump();
 		return getSpace();
 	}
 
 	domain::Space& getSpaceForVecVarExpr(ast::VecVarExpr *ast)  {
-		//LOG(INFO) <<"Space for literal?\n";
-		LOG(INFO) <<"Space for variable expression?\n";
+		//LOG(DEBUG) <<"Space for literal?\n";
+		std::cout <<"Space for variable expression?\n";
 		ast->dump();
 		return getSpace();
 	}
 
 
 	domain::Space& getSpaceForVecVarExp(ast::VecVarExpr *ast)  {
-		//LOG(INFO) <<"Space for literal?\n";
-		LOG(INFO) <<"Space for variable expression?\n";
-		ast->dump();
+		//LOG(DEBUG) <<"Space for literal?\n";
+		std::cout <<"Space for variable expression?\n";
+		//ast->dump();
 		return getSpace();
 	}
 private:

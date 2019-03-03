@@ -1,0 +1,761 @@
+2019-03-02 21:53:53,949 INFO [default] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 21:53:53,949 INFO [default] Space for identifier?
+
+2019-03-02 21:53:53,949 INFO [default] Available spaces:	
+
+2019-03-02 21:53:53,949 INFO [default] 0. time
+
+2019-03-02 21:53:53,949 INFO [default] 1. geom
+
+2019-03-02 21:54:05,883 INFO [default] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 21:54:05,883 INFO [default] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 21:54:05,883 INFO [default] main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019-03-02 21:54:05,883 INFO [default] Interpretation::mkVector_Lit: Warn. Using STUB space.
+
+2019-03-02 21:54:05,883 INFO [default] main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019-03-02 21:54:05,883 INFO [default] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 21:54:05,883 INFO [default] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 21:54:05,883 INFO [default] Domain::mkVector_Def 
+2019-03-02 21:54:05,883 INFO [default] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 21:54:05,883 INFO [default] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 21:54:05,883 INFO [default] Space for identifier?
+
+2019-03-02 21:54:05,883 INFO [default] Available spaces:	
+
+2019-03-02 21:54:05,883 INFO [default] 0. time
+
+2019-03-02 21:54:05,883 INFO [default] 1. geom
+
+2019-03-02 21:54:07,283 INFO [default] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 21:54:07,283 INFO [default] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 21:54:07,283 INFO [default] main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019-03-02 21:54:07,283 INFO [default] Interpretation::mkVector_Lit: Warn. Using STUB space.
+
+2019-03-02 21:54:07,283 INFO [default] main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019-03-02 21:54:07,283 INFO [default] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 21:54:07,283 INFO [default] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 21:54:07,284 INFO [default] Domain::mkVector_Def 
+2019-03-02 21:54:07,284 INFO [default] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 21:54:07,284 INFO [default] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 21:54:07,284 INFO [default] Space for identifier?
+
+2019-03-02 21:54:07,284 INFO [default] Available spaces:	
+
+2019-03-02 21:54:07,284 INFO [default] 0. time
+
+2019-03-02 21:54:07,284 INFO [default] 1. geom
+
+2019-03-02 21:54:10,421 INFO [default] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 21:54:10,421 INFO [default] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 21:54:10,421 INFO [default] main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:
+
+2019-03-02 21:54:10,421 INFO [default] main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019-03-02 21:54:10,421 INFO [default] main::handle_member_expr_of_add_call at 0x5599ab800a08
+
+2019-03-02 21:54:10,421 INFO [default] main::handle_member_expr_of_add_call ast is (dump)
+
+2019-03-02 21:54:10,421 INFO [default] domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.
+
+2019-03-02 21:54:10,421 INFO [default] main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019-03-02 21:54:10,421 INFO [default] main::HandlerForCXXAddMemberCall. Start. Got CXXMemberCallExpr:
+
+2019-03-02 21:54:10,421 INFO [default] main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019-03-02 21:54:10,421 INFO [default] main::handle_member_expr_of_add_call at 0x5599ab800998
+
+2019-03-02 21:54:10,421 INFO [default] main::handle_member_expr_of_add_call ast is (dump)
+
+2019-03-02 21:54:10,421 INFO [default] domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.
+
+2019-03-02 21:54:10,422 INFO [default] main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019-03-02 21:54:10,422 INFO [default] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x5599ab800998
+
+2019-03-02 21:54:10,422 INFO [default] Space for variable expression?
+
+2019-03-02 21:54:10,422 INFO [default] Available spaces:	
+
+2019-03-02 21:54:10,422 INFO [default] 0. time
+
+2019-03-02 21:54:10,422 INFO [default] 1. geom
+
+2019-03-02 21:54:11,736 INFO [default] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 21:54:11,736 INFO [default] main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019-03-02 21:54:11,737 INFO [default] domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.
+
+2019-03-02 21:54:11,737 INFO [default] domain::VecExpr *handle_member_expr_of_add_call. Done. 
+
+2019-03-02 21:54:11,737 INFO [default] domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019-03-02 21:54:11,737 INFO [default] CXXMemberCallExprArg0Matcher::match start
+
+2019-03-02 21:54:11,737 INFO [default] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x5599ab8009e8
+
+2019-03-02 21:54:11,737 INFO [default] Space for variable expression?
+
+2019-03-02 21:54:11,737 INFO [default] Available spaces:	
+
+2019-03-02 21:54:11,737 INFO [default] 0. time
+
+2019-03-02 21:54:11,737 INFO [default] 1. geom
+
+2019-03-02 21:54:12,534 INFO [default] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 21:54:12,534 INFO [default] CXXMemberCallExprArg0Matcher::match finish
+
+2019-03-02 21:54:12,534 INFO [default] domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019-03-02 21:54:12,534 INFO [default] Space for add expression?
+
+2019-03-02 21:54:12,534 INFO [default] Available spaces:	
+
+2019-03-02 21:54:12,534 INFO [default] 0. time
+
+2019-03-02 21:54:12,534 INFO [default] 1. geom
+
+2019-03-02 21:54:13,479 INFO [default] main::handleMemberCallExpr: Done.
+
+2019-03-02 21:54:13,479 INFO [default] main::HandlerForCXXAddMemberCall. Done.
+
+2019-03-02 21:54:13,479 INFO [default] main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019-03-02 21:54:13,479 INFO [default] domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.
+
+2019-03-02 21:54:13,479 INFO [default] domain::VecExpr *handle_member_expr_of_add_call. Done. 
+
+2019-03-02 21:54:13,479 INFO [default] domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019-03-02 21:54:13,479 INFO [default] CXXMemberCallExprArg0Matcher::match start
+
+2019-03-02 21:54:13,479 INFO [default] main::HandlerForCXXAddMemberCall. Start. Got CXXMemberCallExpr:
+
+2019-03-02 21:54:13,479 INFO [default] main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019-03-02 21:54:13,479 INFO [default] main::handle_member_expr_of_add_call at 0x5599ab800a60
+
+2019-03-02 21:54:13,479 INFO [default] main::handle_member_expr_of_add_call ast is (dump)
+
+2019-03-02 21:54:13,479 INFO [default] domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.
+
+2019-03-02 21:54:13,479 INFO [default] main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019-03-02 21:54:13,479 INFO [default] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x5599ab800a60
+
+2019-03-02 21:54:13,479 INFO [default] Space for variable expression?
+
+2019-03-02 21:54:13,479 INFO [default] Available spaces:	
+
+2019-03-02 21:54:13,479 INFO [default] 0. time
+
+2019-03-02 21:54:13,479 INFO [default] 1. geom
+
+2019-03-02 21:54:14,087 INFO [default] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 21:54:14,087 INFO [default] main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019-03-02 21:54:14,087 INFO [default] domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.
+
+2019-03-02 21:54:14,087 INFO [default] domain::VecExpr *handle_member_expr_of_add_call. Done. 
+
+2019-03-02 21:54:14,087 INFO [default] domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019-03-02 21:54:14,087 INFO [default] CXXMemberCallExprArg0Matcher::match start
+
+2019-03-02 21:54:14,087 INFO [default] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x5599ab800ab0
+
+2019-03-02 21:54:14,087 INFO [default] Space for variable expression?
+
+2019-03-02 21:54:14,087 INFO [default] Available spaces:	
+
+2019-03-02 21:54:14,087 INFO [default] 0. time
+
+2019-03-02 21:54:14,087 INFO [default] 1. geom
+
+2019-03-02 21:54:14,631 INFO [default] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 21:54:14,631 INFO [default] CXXMemberCallExprArg0Matcher::match finish
+
+2019-03-02 21:54:14,631 INFO [default] domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019-03-02 21:54:14,631 INFO [default] Space for add expression?
+
+2019-03-02 21:54:14,631 INFO [default] Available spaces:	
+
+2019-03-02 21:54:14,631 INFO [default] 0. time
+
+2019-03-02 21:54:14,631 INFO [default] 1. geom
+
+2019-03-02 21:54:15,223 INFO [default] main::handleMemberCallExpr: Done.
+
+2019-03-02 21:54:15,223 INFO [default] main::HandlerForCXXAddMemberCall. Done.
+
+2019-03-02 21:54:15,223 INFO [default] CXXMemberCallExprArg0Matcher::match finish
+
+2019-03-02 21:54:15,223 INFO [default] domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019-03-02 21:54:15,223 INFO [default] Space for add expression?
+
+2019-03-02 21:54:15,223 INFO [default] Available spaces:	
+
+2019-03-02 21:54:15,223 INFO [default] 0. time
+
+2019-03-02 21:54:15,223 INFO [default] 1. geom
+
+2019-03-02 21:54:15,832 INFO [default] main::handleMemberCallExpr: Done.
+
+2019-03-02 21:54:15,832 INFO [default] main::HandlerForCXXConstructAddExpr: Done. Returning domain Vector_Expr (unnecessary)
+
+2019-03-02 21:54:15,832 INFO [default] Interpretation::mkVector_Expr. DONE
+
+2019-03-02 21:54:15,832 INFO [default] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 21:54:15,832 INFO [default] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 21:54:15,832 INFO [default] Domain::mkVector_Def 
+2019-03-02 21:54:15,832 INFO [default] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 21:54:15,832 INFO [default] STUB Analysis result
+
+2019-03-02 21:54:15,832 INFO [default] Spaces
+
+2019-03-02 21:54:15,832 INFO [default] space time
+space geom
+
+2019-03-02 21:54:15,832 INFO [default] Identifiers
+
+2019-03-02 21:54:15,832 INFO [default] v1
+v2
+v3
+
+2019-03-02 21:54:15,832 INFO [default] Expressions
+
+2019-03-02 21:54:15,832 INFO [default] v2
+v1
+add (v2) (v1)
+v1
+v2
+add (v1) (v2)
+add (add (v2) (v1)) (add (v1) (v2))
+
+2019-03-02 21:54:15,832 INFO [default] Vectors
+
+2019-03-02 21:54:15,832 INFO [default] ( vector 0 ) --
+( vector 0 ) --
+add (add (v2) (v1)) (add (v1) (v2))
+
+2019-03-02 21:54:15,832 INFO [default] Definitions
+
+2019-03-02 21:54:15,832 INFO [default] defv1 := ( vector 0 ) --
+defv2 := ( vector 0 ) --
+defv3 := add (add (v2) (v1)) (add (v1) (v2))
+
+2019-03-02 21:54:35,754 INFO [default] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 21:54:35,754 INFO [default] Space for identifier?
+
+2019-03-02 21:54:35,754 INFO [default] Available spaces:	
+
+2019-03-02 21:54:35,754 INFO [default] 0. time
+
+2019-03-02 21:54:35,754 INFO [default] 1. geom
+
+2019-03-02 22:02:44,806 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:477] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:02:44,806 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForVecIdent(const clang::VarDecl*)] [Oracle.h:35] Space for identifier?
+
+2019-03-02 22:02:44,806 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:02:44,806 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:02:44,806 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:489] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:378] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:58] main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [void interp::Interpretation::mkVector_Lit(ast::Vector_Lit*)] [Interpretation.cpp:149] Interpretation::mkVector_Lit: Warn. Using STUB space.
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:67] main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:380] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:492] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [domain::Vector_Def* domain::Domain::mkVector_Def(domain::VecIdent*, domain::VecExpr*)] [Domain.cpp:158] Domain::mkVector_Def 
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:500] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:477] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForVecIdent(const clang::VarDecl*)] [Oracle.h:35] Space for identifier?
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:02:53,498 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:02:54,466 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:489] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 22:02:54,466 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:378] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 22:02:54,466 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:58] main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019-03-02 22:02:54,466 DEBUG [default] [sullivan@unknown-host] [void interp::Interpretation::mkVector_Lit(ast::Vector_Lit*)] [Interpretation.cpp:149] Interpretation::mkVector_Lit: Warn. Using STUB space.
+
+2019-03-02 22:02:54,466 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:67] main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019-03-02 22:02:54,467 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:380] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 22:02:54,467 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:492] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 22:02:54,467 DEBUG [default] [sullivan@unknown-host] [domain::Vector_Def* domain::Domain::mkVector_Def(domain::VecIdent*, domain::VecExpr*)] [Domain.cpp:158] Domain::mkVector_Def 
+2019-03-02 22:02:54,467 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:500] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 22:02:54,467 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:477] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:02:54,467 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForVecIdent(const clang::VarDecl*)] [Oracle.h:35] Space for identifier?
+
+2019-03-02 22:02:54,467 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:02:54,467 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:02:54,467 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:02:57,692 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:489] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 22:02:57,692 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:378] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 22:02:57,692 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:184] main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:83] main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:326] main::handle_member_expr_of_add_call at 0x55b405304a08
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:331] main::handle_member_expr_of_add_call ast is (dump)
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:341] domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:306] main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:146] main::HandlerForCXXAddMemberCall. Start. Got CXXMemberCallExpr:
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:83] main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:326] main::handle_member_expr_of_add_call at 0x55b405304998
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:331] main::handle_member_expr_of_add_call ast is (dump)
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:341] domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:306] main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019-03-02 22:02:57,693 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:120] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55b405304998
+
+2019-03-02 22:02:57,694 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForVecVarExpr(ast::VecVarExpr*)] [Oracle.h:49] Space for variable expression?
+
+2019-03-02 22:02:57,694 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:02:57,694 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:02:57,694 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:02:58,484 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:125] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 22:02:58,484 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:309] main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019-03-02 22:02:58,484 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:343] domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.
+
+2019-03-02 22:02:58,484 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:350] domain::VecExpr *handle_member_expr_of_add_call. Done. 
+
+2019-03-02 22:02:58,484 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:258] domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019-03-02 22:02:58,484 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:242] CXXMemberCallExprArg0Matcher::match start
+
+2019-03-02 22:02:58,485 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:120] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55b4053049e8
+
+2019-03-02 22:02:58,485 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForVecVarExpr(ast::VecVarExpr*)] [Oracle.h:49] Space for variable expression?
+
+2019-03-02 22:02:58,485 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:02:58,485 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:02:58,485 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:03:06,056 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:125] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 22:03:06,056 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:244] CXXMemberCallExprArg0Matcher::match finish
+
+2019-03-02 22:03:06,056 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:268] domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019-03-02 22:03:06,056 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForAddExpression(coords::VecExpr*, coords::VecExpr*)] [Oracle.h:27] Space for add expression?
+
+2019-03-02 22:03:06,056 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:03:06,056 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:03:06,056 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:107] main::handleMemberCallExpr: Done.
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:152] main::HandlerForCXXAddMemberCall. Done.
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:309] main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:343] domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:350] domain::VecExpr *handle_member_expr_of_add_call. Done. 
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:258] domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:242] CXXMemberCallExprArg0Matcher::match start
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:146] main::HandlerForCXXAddMemberCall. Start. Got CXXMemberCallExpr:
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:83] main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:326] main::handle_member_expr_of_add_call at 0x55b405304a60
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:331] main::handle_member_expr_of_add_call ast is (dump)
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:341] domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:306] main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:120] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55b405304a60
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForVecVarExpr(ast::VecVarExpr*)] [Oracle.h:49] Space for variable expression?
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:03:07,425 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:125] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:309] main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:343] domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:350] domain::VecExpr *handle_member_expr_of_add_call. Done. 
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:258] domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:242] CXXMemberCallExprArg0Matcher::match start
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:120] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55b405304ab0
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForVecVarExpr(ast::VecVarExpr*)] [Oracle.h:49] Space for variable expression?
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:03:08,513 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:03:13,212 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:125] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 22:03:13,212 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:244] CXXMemberCallExprArg0Matcher::match finish
+
+2019-03-02 22:03:13,212 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:268] domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019-03-02 22:03:13,212 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForAddExpression(coords::VecExpr*, coords::VecExpr*)] [Oracle.h:27] Space for add expression?
+
+2019-03-02 22:03:13,212 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:03:13,212 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:03:13,212 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:03:15,101 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:107] main::handleMemberCallExpr: Done.
+
+2019-03-02 22:03:15,101 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:152] main::HandlerForCXXAddMemberCall. Done.
+
+2019-03-02 22:03:15,101 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:244] CXXMemberCallExprArg0Matcher::match finish
+
+2019-03-02 22:03:15,101 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:268] domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019-03-02 22:03:15,101 DEBUG [default] [sullivan@unknown-host] [domain::Space& oracle::Oracle::getSpaceForAddExpression(coords::VecExpr*, coords::VecExpr*)] [Oracle.h:27] Space for add expression?
+
+2019-03-02 22:03:15,101 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:43] Available spaces:	
+
+2019-03-02 22:03:15,101 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 0. time
+
+2019-03-02 22:03:15,101 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:46] 1. geom
+
+2019-03-02 22:03:16,125 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:107] main::handleMemberCallExpr: Done.
+
+2019-03-02 22:03:16,125 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:207] main::HandlerForCXXConstructAddExpr: Done. Returning domain Vector_Expr (unnecessary)
+
+2019-03-02 22:03:16,125 DEBUG [default] [sullivan@unknown-host] [void interp::Interpretation::mkVector_Expr(ast::Vector_Expr*, ast::VecExpr*)] [Interpretation.cpp:184] Interpretation::mkVector_Expr. DONE
+
+2019-03-02 22:03:16,125 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:380] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 22:03:16,125 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:492] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 22:03:16,125 DEBUG [default] [sullivan@unknown-host] [domain::Vector_Def* domain::Domain::mkVector_Def(domain::VecIdent*, domain::VecExpr*)] [Domain.cpp:158] Domain::mkVector_Def 
+2019-03-02 22:03:16,125 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:500] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 22:03:16,125 DEBUG [default] [sullivan@unknown-host] [virtual void MyFrontendAction::EndSourceFileAction()] [main.cpp:538] STUB Analysis result
+
+2019-03-02 22:22:09,739 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:22:09,740 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:47] 0. time
+
+2019-03-02 22:22:09,740 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:47] 1. geom
+
+2019-03-02 22:23:17,173 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:23:17,173 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:47] 0. time
+
+2019-03-02 22:23:17,173 DEBUG [default] [sullivan@unknown-host] [void printSpaces(std::vector<domain::Space*>&)] [Oracle.cpp:47] 1. geom
+
+2019-03-02 22:29:55,668 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:490] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:379] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:58] main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [void interp::Interpretation::mkVector_Lit(ast::Vector_Lit*)] [Interpretation.cpp:149] Interpretation::mkVector_Lit: Warn. Using STUB space.
+
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:67] main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:381] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:493] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [domain::Vector_Def* domain::Domain::mkVector_Def(domain::VecIdent*, domain::VecExpr*)] [Domain.cpp:158] Domain::mkVector_Def 
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:501] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 22:29:56,996 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:49:35,272 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:490] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:379] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:58] main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [void interp::Interpretation::mkVector_Lit(ast::Vector_Lit*)] [Interpretation.cpp:149] Interpretation::mkVector_Lit: Warn. Using STUB space.
+
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:67] main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:381] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:493] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [domain::Vector_Def* domain::Domain::mkVector_Def(domain::VecIdent*, domain::VecExpr*)] [Domain.cpp:158] Domain::mkVector_Def 
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:501] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 22:49:36,385 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:58:03,558 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 22:58:04,494 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:490] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 22:58:04,494 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:379] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 22:58:04,494 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:58] main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019-03-02 22:58:04,494 DEBUG [default] [sullivan@unknown-host] [void interp::Interpretation::mkVector_Lit(ast::Vector_Lit*)] [Interpretation.cpp:149] Interpretation::mkVector_Lit: Warn. Using STUB space.
+
+2019-03-02 22:58:04,494 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:67] main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019-03-02 22:58:04,494 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:381] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 22:58:04,494 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:493] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 22:58:04,494 DEBUG [default] [sullivan@unknown-host] [domain::Vector_Def* domain::Domain::mkVector_Def(domain::VecIdent*, domain::VecExpr*)] [Domain.cpp:158] Domain::mkVector_Def 
+2019-03-02 22:58:04,494 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:501] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 22:58:04,495 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 23:03:45,665 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:490] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:379] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:58] main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [void interp::Interpretation::mkVector_Lit(ast::Vector_Lit*)] [Interpretation.cpp:149] Interpretation::mkVector_Lit: Warn. Using STUB space.
+
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:67] main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:381] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:493] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [domain::Vector_Def* domain::Domain::mkVector_Def(domain::VecIdent*, domain::VecExpr*)] [Domain.cpp:158] Domain::mkVector_Def 
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:501] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 23:03:48,490 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 23:03:49,386 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:490] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 23:03:49,386 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:379] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 23:03:49,386 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:58] main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019-03-02 23:03:49,386 DEBUG [default] [sullivan@unknown-host] [void interp::Interpretation::mkVector_Lit(ast::Vector_Lit*)] [Interpretation.cpp:149] Interpretation::mkVector_Lit: Warn. Using STUB space.
+
+2019-03-02 23:03:49,386 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructLitExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:67] main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019-03-02 23:03:49,387 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:381] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 23:03:49,387 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:493] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 23:03:49,387 DEBUG [default] [sullivan@unknown-host] [domain::Vector_Def* domain::Domain::mkVector_Def(domain::VecIdent*, domain::VecExpr*)] [Domain.cpp:158] Domain::mkVector_Def 
+2019-03-02 23:03:49,387 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:501] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 23:03:49,387 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:478] VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:490] VectorDeclStmtHandler: start matching on consdecl
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:379] START: Pattern Matching on CXXConstructExpr (Lit | Add): Start
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:184] main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:83] main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:327] main::handle_member_expr_of_add_call at 0x55df40b06a08
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:332] main::handle_member_expr_of_add_call ast is (dump)
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:342] domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:307] main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:146] main::HandlerForCXXAddMemberCall. Start. Got CXXMemberCallExpr:
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:83] main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:327] main::handle_member_expr_of_add_call at 0x55df40b06998
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:332] main::handle_member_expr_of_add_call ast is (dump)
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:342] domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:307] main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019-03-02 23:03:52,100 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:120] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55df40b06998
+
+2019-03-02 23:03:55,149 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:125] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 23:03:55,149 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:310] main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019-03-02 23:03:55,149 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:344] domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.
+
+2019-03-02 23:03:55,149 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:351] domain::VecExpr *handle_member_expr_of_add_call. Done. 
+
+2019-03-02 23:03:55,149 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:259] domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019-03-02 23:03:55,149 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:243] CXXMemberCallExprArg0Matcher::match start
+
+2019-03-02 23:03:55,149 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:120] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55df40b069e8
+
+2019-03-02 23:03:55,557 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:125] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 23:03:55,557 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:245] CXXMemberCallExprArg0Matcher::match finish
+
+2019-03-02 23:03:55,557 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:269] domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:107] main::handleMemberCallExpr: Done.
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:152] main::HandlerForCXXAddMemberCall. Done.
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:310] main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:344] domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:351] domain::VecExpr *handle_member_expr_of_add_call. Done. 
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:259] domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:243] CXXMemberCallExprArg0Matcher::match start
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:146] main::HandlerForCXXAddMemberCall. Start. Got CXXMemberCallExpr:
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:83] main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:327] main::handle_member_expr_of_add_call at 0x55df40b06a60
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:332] main::handle_member_expr_of_add_call ast is (dump)
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:342] domain::VecExpr *handle_member_expr_of_add_call: match memexpr START.
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:307] main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019-03-02 23:03:55,974 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:120] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55df40b06a60
+
+2019-03-02 23:03:56,446 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:125] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 23:03:56,446 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprMemberExprMatcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:310] main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019-03-02 23:03:56,446 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:344] domain::VecExpr *handle_member_expr_of_add_call: match memexpr DONE.
+
+2019-03-02 23:03:56,446 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_member_expr_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:351] domain::VecExpr *handle_member_expr_of_add_call. Done. 
+
+2019-03-02 23:03:56,446 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:259] domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019-03-02 23:03:56,446 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:243] CXXMemberCallExprArg0Matcher::match start
+
+2019-03-02 23:03:56,446 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:120] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55df40b06ab0
+
+2019-03-02 23:03:56,862 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXMemberCallExprRight_DeclRefExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:125] main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019-03-02 23:03:56,862 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:245] CXXMemberCallExprArg0Matcher::match finish
+
+2019-03-02 23:03:56,862 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:269] domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019-03-02 23:03:57,294 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:107] main::handleMemberCallExpr: Done.
+
+2019-03-02 23:03:57,294 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXAddMemberCall::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:152] main::HandlerForCXXAddMemberCall. Done.
+
+2019-03-02 23:03:57,294 DEBUG [default] [sullivan@unknown-host] [void CXXMemberCallExprArg0Matcher::match(const clang::Expr&, clang::ASTContext&)] [main.cpp:245] CXXMemberCallExprArg0Matcher::match finish
+
+2019-03-02 23:03:57,294 DEBUG [default] [sullivan@unknown-host] [domain::VecExpr* handle_arg0_of_add_call(const clang::Expr*, clang::ASTContext&, clang::SourceManager&)] [main.cpp:269] domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019-03-02 23:03:57,831 DEBUG [default] [sullivan@unknown-host] [const domain::VecExpr* handleMemberCallExpr(const clang::CXXMemberCallExpr*, clang::ASTContext*, clang::SourceManager&)] [main.cpp:107] main::handleMemberCallExpr: Done.
+
+2019-03-02 23:03:57,831 DEBUG [default] [sullivan@unknown-host] [virtual void HandlerForCXXConstructAddExpr::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:208] main::HandlerForCXXConstructAddExpr: Done. Returning domain Vector_Expr (unnecessary)
+
+2019-03-02 23:03:57,831 DEBUG [default] [sullivan@unknown-host] [void interp::Interpretation::mkVector_Expr(ast::Vector_Expr*, ast::VecExpr*)] [Interpretation.cpp:184] Interpretation::mkVector_Expr. DONE
+
+2019-03-02 23:03:57,831 DEBUG [default] [sullivan@unknown-host] [void CXXConstructExprMatcher::match(const clang::CXXConstructExpr*, clang::ASTContext*)] [main.cpp:381] DONE: Pattern Matching on CXXConstructExpr (Lit | Add): End
+
+2019-03-02 23:03:57,831 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:493] VectorDeclStmtHandler: done matching on consdecl
+
+2019-03-02 23:03:57,831 DEBUG [default] [sullivan@unknown-host] [domain::Vector_Def* domain::Domain::mkVector_Def(domain::VecIdent*, domain::VecExpr*)] [Domain.cpp:158] Domain::mkVector_Def 
+2019-03-02 23:03:57,831 DEBUG [default] [sullivan@unknown-host] [virtual void VectorDeclStmtHandler::run(const clang::ast_matchers::MatchFinder::MatchResult&)] [main.cpp:501] VectorDeclStmtHandler::run: Done.
+
+2019-03-02 23:03:57,831 DEBUG [default] [sullivan@unknown-host] [virtual void MyFrontendAction::EndSourceFileAction()] [main.cpp:539] STUB Analysis result
+
