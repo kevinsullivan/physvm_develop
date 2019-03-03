@@ -19,11 +19,11 @@ expressions and objects.
 //
 
 Coords::Coords(const clang::Stmt *stmt) : 
-    clang_stmt_(stmt), ast_type_tag_(coords::CLANG_AST_STMT) {
+    ast_type_tag_(coords::CLANG_AST_STMT), clang_stmt_(stmt)  {
 }
 
 Coords::Coords(const clang::Decl *decl) : 
-    clang_decl_(decl), ast_type_tag_(coords::CLANG_AST_DECL) {
+    ast_type_tag_(coords::CLANG_AST_DECL), clang_decl_(decl)  {
 }
 
 const clang::Stmt *Coords::getClangStmt() const { return clang_stmt_; }
