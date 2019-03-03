@@ -89,7 +89,8 @@ public:
         std::vector<domain::VecExpr*> &id = domain_->getVecExprs();
         for (std::vector<domain::VecExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::VecExpr* coords = coords2dom_->getVecExpr(*it);
-            retval = retval.append(coords->toString()).append("\n");
+            std::string thisString = coords->toString();
+            retval = retval.append(thisString).append("\n");
         }
         return retval;
     }
@@ -105,7 +106,13 @@ public:
     }
 
     std::string toString_Defs() {
-        return std::string("Defs: Stub.");  
+        std::string retval = "";
+        std::vector<domain::Vector_Def*> &id = domain_->getVectorDefs();
+        for (std::vector<domain::Vector_Def *>::iterator it = id.begin(); it != id.end(); ++it) {
+            coords::Vector_Def* coords = coords2dom_->getVector_Def(*it);
+            retval = retval.append(coords->toString()).append("\n");
+        }
+        return retval;
     }
 
     //private:
