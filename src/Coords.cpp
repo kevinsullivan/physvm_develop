@@ -99,14 +99,14 @@ Included here as stub for possible future use.
 class VecLitExpr : public VecExpr {}
 */
 
-VecVarExpr::VecVarExpr(const clang::DeclRefExpr *d) : VecExpr(d) {}
+VecVarExpr::VecVarExpr(const ast::VecVarExpr *d) : VecExpr(d) {}
 
-const clang::DeclRefExpr *VecVarExpr::getDeclRefExpr() const {
+const ast::VecVarExpr *VecVarExpr::getVecVarExpr() const {
     return static_cast<const clang::DeclRefExpr*> (clang_stmt_);  
 }
 
 std::string VecVarExpr::toString() const { 
-    return getDeclRefExpr()->getDecl()->getNameAsString(); 
+    return getVecVarExpr()->getDecl()->getNameAsString(); 
   }
 
 
@@ -115,7 +115,7 @@ VecVecAddExpr::VecVecAddExpr(
         : VecExpr(mce), mem_(mem), arg_(arg) {
 }
 
-const clang::CXXMemberCallExpr *VecVecAddExpr::getCXXMemberCallExpr() {
+const ast::VecVecAddExpr *VecVecAddExpr::getVecVecAddExpr() {
     return static_cast<const clang::CXXMemberCallExpr*> (clang_stmt_);  
 }
 
@@ -132,7 +132,7 @@ Vector::Vector(const clang::CXXConstructExpr *vec, coords::VectorCtorType tag)
       : VecExpr(vec), tag_(tag) {
 }
   
-const clang::CXXConstructExpr *Vector::getCXXConstructExpr() const { 
+const ast::Vector *Vector::getVector() const { 
     return static_cast<const clang::CXXConstructExpr*>(clang_stmt_); 
 }
 

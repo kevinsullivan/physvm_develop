@@ -61,16 +61,14 @@ public:
   Coords(const clang::Stmt *stmt);
   Coords(const clang::Decl *decl);
 
+  bool astIsClangDecl() { return (ast_type_tag_ == CLANG_AST_DECL); }
+  bool astIsClangStmt() { return (ast_type_tag_ == CLANG_AST_STMT); }
+
   const clang::Stmt *getClangStmt() const;
   const clang::Decl *getClangDecl() const;
 
   virtual bool operator==(const Coords &other) const;
   virtual std::string toString() const;
-
-  bool astIsClangDecl() { return (ast_type_tag_ == CLANG_AST_DECL); }
-
-  // Remember: Clang Expr inherits from Stmt
-  bool astIsClangStmt() { return (ast_type_tag_ == CLANG_AST_STMT); }
 
 protected:
   ast_type ast_type_tag_;
@@ -110,8 +108,8 @@ public:
 // Abstract
 class VecExpr : public Coords {
 public:
-  VecExpr(const clang::Expr *e);
-  const clang::Expr *getExpr();
+  VecExpr(const ast::VecExpr *e);
+  const ast::VecExpr *getExpr();
   virtual std::string toString() const;
   bool operator==(const VecExpr &other) const {
     return (clang_stmt_ == other.clang_stmt_);
@@ -121,19 +119,18 @@ public:
 
 class VecVarExpr : public VecExpr {
 public:
-  VecVarExpr(const clang::DeclRefExpr *d);
-  const clang::DeclRefExpr *getDeclRefExpr() const;
+  VecVarExpr(const ast::VecVarExpr *d);
+  const ast::VecVarExpr *getVecVarExpr() const;
   virtual std::string toString() const;
-
 private:
-  coords::Coords *var_; // TODO: Fix
+//  coords::Coords *var_; // TODO: Fix
 };
 
-// TODO: add accessors for left and right?
+// TODO: add accessors for left and right
 class VecVecAddExpr : public VecExpr {
 public:
-  VecVecAddExpr(const clang::CXXMemberCallExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg);
-  const clang::CXXMemberCallExpr *getCXXMemberCallExpr();
+  VecVecAddExpr(const ast::VecVecAddExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg);
+  const ast::VecVecAddExpr *getVecVecAddExpr();
   virtual std::string toString() const;
 
 private:
@@ -148,8 +145,8 @@ Superclass. Abstract
 */
 class Vector : public VecExpr {
 public:
-  Vector(const clang::CXXConstructExpr *vec, coords::VectorCtorType tag);
-  const clang::CXXConstructExpr *getCXXConstructExpr() const;
+  Vector(const ast::Vector *vec, coords::VectorCtorType tag);
+  const ast::Vector *getVector() const;
   VectorCtorType getVectorType();
   virtual std::string toString() const;
   bool operator==(const Vector &other) const {
@@ -163,7 +160,7 @@ protected:
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
 public:
-  Vector_Lit(const clang::CXXConstructExpr *ast, ast::Scalar a);
+  Vector_Lit(const ast::Vector_Lit *ast, ast::Scalar a);
   virtual std::string toString() const;
 
 private:
@@ -172,7 +169,7 @@ private:
 
 class Vector_Var : public Vector {
 public:
-  Vector_Var(const clang::CXXConstructExpr *ast,  coords::VecVarExpr *expr);
+  Vector_Var(const ast::Vector_Var *ast,  coords::VecVarExpr *expr);
   virtual std::string toString() const;
   VecVarExpr *getVecVarExpr();
 
@@ -183,7 +180,7 @@ private:
 // change name to VecVecAddExpr? Or generalize from that a bit.
 class Vector_Expr : public Vector {
 public:
-  Vector_Expr(const clang::CXXConstructExpr *ast, coords::VecExpr *expr);
+  Vector_Expr(const ast::Vector_Expr *ast, coords::VecExpr *expr);
   virtual std::string toString() const;
   Vector_Expr *getVector_Expr();
 
@@ -197,7 +194,7 @@ private:
 
 class Vector_Def : public Coords {
 public:
-  Vector_Def(const clang::DeclStmt *def, coords::VecIdent *bv,
+  Vector_Def(const ast::Vector_Def *def, coords::VecIdent *bv,
              coords::VecExpr *be);
   //const clang::DeclStmt *getDeclStmt() const;
   coords::VecIdent *getIdent() const;
