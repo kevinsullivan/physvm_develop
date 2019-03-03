@@ -119,7 +119,7 @@ public:
             retval = retval
             .append("(")
             .append(coords->toString())
-            .append(" : ")
+            .append(" : vector ")
             .append((*it)->getSpace()->toString())
             .append(")\n");
         }

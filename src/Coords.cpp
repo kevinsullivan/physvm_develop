@@ -200,7 +200,7 @@ coords::VecExpr *Vector_Def::getExpr() const {
 
 // The coup d'grace.
 std::string Vector_Def::toString() const { 
-    std::string retval = "def";
+    std::string retval = "def ";
     retval += bv_->toString();
     retval += " := ";
     retval += be_->toString();
