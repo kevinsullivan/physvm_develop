@@ -575,12 +575,12 @@ int main(int argc, const char **argv)
   //
   cout <<"Spaces\n";
   cout <<interp_.toString_Spaces();
-  cout <<"Identifiers\n";
+  cout <<"\nIdentifiers\n";
   cout <<interp_.toString_Idents(); 
-  cout <<"Expressions\n";
+  cout <<"\nExpressions\n";
   cout <<interp_.toString_Exprs();
-  cout <<"Vectors\n";
+  cout <<"\nVectors\n";
   cout <<interp_.toString_Vectors();
-  cout <<"Definitions\n"; 
+  cout <<"\nDefinitions\n"; 
   cout <<interp_.toString_Defs();
 }
