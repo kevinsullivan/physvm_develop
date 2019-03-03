@@ -145,8 +145,7 @@ void Interpretation::mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *c*/
   //  LOG(DEBUG) <<"Interpretation::mkVector_Lit. WARN: Scalar stubbed.\n";
   
     coords::Vector_Lit *vec_coords = ast2coords_->mkVector_Lit(ast, 0.0);
-    domain::Space& s = *new domain::Space("STUB");
-    LOG(DEBUG) <<"Interpretation::mkVector_Lit: Warn. Using STUB space.\n";
+    domain::Space& s = oracle_->getSpaceForVector_Lit(ast);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
     domain::Vector_Lit *dom_var = domain_->mkVector_Lit(s);
     coords2dom_->putVector_Lit(vec_coords, dom_var);
   //  LOG(DEBUG) <<"Interpretation::mkVector_Lit. DONE\n";
@@ -171,7 +170,7 @@ void Interpretation::mkVector_Expr(
   //  LOG(DEBUG) <<"Interpretation::mkVector_Expr. START. Warn: possibly wrong. Same ast for expr and ctor.";
     coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, expr_ast);
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr_ast));
-    domain::Space& s = *new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
+    domain::Space& s = oracle_->getSpaceForVector_Expr(ctor_ast);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
     domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
     domain::Vector_Expr *dom_vec = domain_->mkVector_Expr(s, expr_dom); 
     coords2dom_->putVector_Expr(ctor_coords, dom_vec);

@@ -30,6 +30,8 @@ public:
 		return getSpace();
 	}
 
+	// TODO Change argument types here and below to those abstracted in AST.h, rather than clang
+
 	domain::Space& getSpaceForVecIdent(const clang::VarDecl* v) {
 		//LOG(DEBUG) <<"Returning stub space for identifier.\n";
 		std::cout <<"Space for identifier?\n";
@@ -37,8 +39,15 @@ public:
 		return getSpace();
 	}
 
+	domain::Space& getSpaceForVector_Expr(ast::Vector_Expr *ctor_ast) {
+		//LOG(DEBUG) <<"Space for vector constructed from expression?\n";
+		std::cout <<"Space for literal?\n";
+		//v->dump();
+		return getSpace();
+	}
+
 	domain::Space& getSpaceForVector_Lit(const clang::CXXConstructExpr* v) {
-		//LOG(DEBUG) <<"Space for literal?\n";
+		//LOG(DEBUG) <<"Space for vector constructed from literal?\n";
 		std::cout <<"Space for literal?\n";
 		//v->dump();
 		return getSpace();
