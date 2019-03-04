@@ -4,14 +4,13 @@
 #include <iostream>
 #include "AST.h"
 #include "Coords.h"
-#include "ASTToCoords.h"
-#include "Oracle.h"
 #include "Domain.h"
+#include "ASTToCoords.h"
 #include "CoordsToDomain.h"
-
-#include <g3log/g3log.hpp>
-
-
+#include "Oracle.h"
+#include "CoordsToInterp.h"
+#include "InterpToDomain.h"
+#include <g3log/g3log.hpp> 
 
 namespace interp {
 
@@ -134,11 +133,15 @@ public:
     //coords::Coords* coords_;
     domain::Domain *domain_;
     oracle::Oracle *oracle_;
-    ast2coords::ASTToCoords *ast2coords_;
-    coords2domain::CoordsToDomain *coords2dom_;
-};
 
-} // namespace
+    coords2domain::CoordsToDomain *coords2dom_;
+    ast2coords::ASTToCoords *ast2coords_;
+
+    coords2interp::CoordsToInterp *coords2interp_;
+    interp2domain::InterpToDomain *interp2domain_; 
+}; 
+
+} // namespaceT
 
 #endif
 
