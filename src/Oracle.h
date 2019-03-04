@@ -6,7 +6,7 @@
 #include "Coords.h"
 #include "Domain.h"
 
-#include "easylogging++.h"
+#include <g3log/g3log.hpp>
 
 
 namespace oracle {
@@ -56,7 +56,7 @@ public:
 	domain::Space& getSpaceForVecVarExpr(ast::VecVarExpr *ast)  {
 		//LOG(DEBUG) <<"Space for literal?\n";
 		std::cout <<"Space for variable expression?\n";
-		ast->dump();
+		//$(CPLUS_INCLUDE_PATH) ast->dump();
 		return getSpace();
 	}
 

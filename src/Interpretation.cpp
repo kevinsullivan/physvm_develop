@@ -12,7 +12,8 @@ Establish interpretations for various AST nodes:
 
 #include "Interpretation.h"
 
-#include "easylogging++.h"
+#include <g3log/g3log.hpp>
+
 
 
 using namespace interp;

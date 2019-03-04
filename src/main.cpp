@@ -14,7 +14,22 @@
 
 #include "Interpretation.h"
 
-#include "easylogging++.h"
+
+/*
+Hack to get g3log working. Should be in std in c++14 and later libraries.
+*/
+namespace std
+{
+    template<typename T, typename... Args>
+    std::unique_ptr<T> make_unique(Args&&... args)
+    {
+        return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+    }
+}
+
+#include <memory>
+#include <g3log/g3log.hpp>
+#include <g3log/logworker.hpp>
 
 using namespace std;
 using namespace llvm;
@@ -76,7 +91,7 @@ void /*const domain::VecExpr * */handleMemberCallExpr(const CXXMemberCallExpr *a
   const clang::Expr *mem_ast = ast->getImplicitObjectArgument();
   const clang::Expr *arg_ast = ast->getArg(0);
   if (!mem_ast || !arg_ast) {
-    LOG(ERROR) <<"main::handleMemberCallExpr. Null pointer error.\n";
+    LOG(FATAL) <<"main::handleMemberCallExpr. Null pointer error.\n";
     return;
   }
   handle_member_expr_of_add_call(mem_ast, *context, sm);
@@ -112,7 +127,7 @@ public:
     const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (memcall == NULL)
     {
-      LOG(ERROR) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
+      LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
     handleMemberCallExpr(memcall, context, sm);
@@ -139,7 +154,7 @@ public:
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorConstructAddExpr");
     if (ctor_ast == NULL)
     {
-      LOG(ERROR) <<"Error in HandlerForCXXConstructAddExpr::run. No constructor pointer\n";
+      LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No constructor pointer\n";
       return;
     }
     LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
@@ -148,7 +163,7 @@ public:
         Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (vec_vec_add_member_call_ast == NULL)
     {
-      LOG(ERROR) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
+      LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
       return;
     }
     handleMemberCallExpr(vec_vec_add_member_call_ast, context, sm);
@@ -249,7 +264,7 @@ void handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &cont
   LOG(DEBUG) <<"main::handle_member_expr_of_add_call at " << std::hex << memexpr << "\n";
   if (memexpr == NULL)
   {
-    LOG(ERROR) <<"main::handle_member_expr_of_add_call: Error.Null argument\n";
+    LOG(FATAL) <<"main::handle_member_expr_of_add_call: Error.Null argument\n";
   }
   LOG(DEBUG) <<"main::handle_member_expr_of_add_call ast is (dump)\n";
   /*
@@ -373,7 +388,7 @@ public:
 * Main
 ******/
 
-INITIALIZE_EASYLOGGINGPP
+//INITIALIZE_EASYLOGGINGPP
 
 /****************************
 Standard Clang Tooling Set-up
@@ -388,20 +403,18 @@ int main(int argc, const char **argv)
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  // easylogging configuration file is in /usr/local/easylogging.conf
-  // change it there, or select a different file for yourself, below.
-  // TODO: THIS JUST ISN'T WORKING. EASYLOGGING APPEARS TO BE BROKEN.
-  //
-  START_EASYLOGGINGPP(argc, argv);
-  el::Loggers::configureFromGlobal("/usr/local/easylogging.conf");
+  using namespace g3;
+  std::string logFile = "Peirce.log";
+  std::string logDir = ".";
+  auto worker = LogWorker::createLogWorker();
+  auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
+  g3::initializeLogging(worker.get());
 
   interp_.addSpace("time");
   interp_.addSpace("geom");
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
-  // See what we got
-  //
   cout <<"Spaces\n";
   cout <<interp_.toString_Spaces();
   cout <<"\nIdentifiers\n";

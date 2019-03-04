@@ -8,7 +8,8 @@
 
 #include "Coords.h"
 
-#include "easylogging++.h"
+#include <g3log/g3log.hpp>
+
 
 
 //using namespace std;
