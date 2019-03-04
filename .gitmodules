@@ -1,3 +1,6 @@
 [submodule "src/Affine1Space"]
 	path = src/Affine1Space
 	url = https://github.com/kevinsullivan/Affine1Space.git
+[submodule "deps/g3log"]
+	path = deps/g3log
+	url = https://github.com/KjellKod/g3log.git
