@@ -20,9 +20,10 @@ $(info Using LLVM_BUILD_PATH = $(LLVM_BUILD_PATH))
 $(info Using LLVM_BIN_PATH = $(LLVM_BIN_PATH))
 $(info -----------------------------------------------)
 
-CXX := g++
+CXX := clang++
 #CXXFLAGS := -fno-rtti -O0 -g -DBOOST_LOG_DYN_LINK
-CXXFLAGS := -O0 -g -Wall
+CXXFLAGS := -O0 -g -Wall -Wextra -pedantic 
+#-Werror
 
 PLUGIN_CXXFLAGS := -fpic
 CPLUS_INCLUDE_PATH := /usr/lib/gcc/x86_64-linux-gnu/7/include
@@ -109,7 +110,7 @@ OBJS := $(patsubst %.cpp,%.o,$(SRCS))
 
 $(BUILDDIR)/ASTMatcher: $(SRC_CLANG_DIR)/$(SRCS)
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
-		$(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@
+		$(CLANG_LIBS) $(LLVM_LDFLAGS) -lg3logger -o $@
 
 %.o : %.cpp %.h
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \

@@ -8,7 +8,8 @@
 #include <string>
 #include <iostream>
 
-#include "easylogging++.h"
+#include <g3log/g3log.hpp>
+
 
 
 using namespace std;
@@ -28,7 +29,7 @@ domain::Space& Oracle::getSpaceForVector(std::string where) {
 domain::Space& Oracle::getSpace() {
     vector<domain::Space*>& spaces = dom_->getSpaces();
 	if (spaces.size() == 0) {
-		LOG(ERROR) <<"Oracle::getSpace:: No abstract spaces available for interpretation. Bye!\n";
+		LOG(FATAL) <<"Oracle::getSpace:: No abstract spaces available for interpretation. Bye!\n";
 		exit(1);
 	}
 	printSpaces(spaces);

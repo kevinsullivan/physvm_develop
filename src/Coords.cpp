@@ -1,6 +1,7 @@
 #include "Coords.h"
 
-#include "easylogging++.h"
+#include <g3log/g3log.hpp>
+
 
 namespace coords {
 
@@ -39,7 +40,7 @@ bool Coords::operator==(const Coords &other) const {
 }
 
 std::string Coords::toString() const {
-    LOG(ERROR) << "Coords::toString. Error. Should not be called. Abstract.\n";
+    LOG(FATAL) << "Coords::toString. Error. Should not be called. Abstract.\n";
     return NULL;
 }
 
@@ -88,7 +89,7 @@ const clang::Expr *VecExpr::getExpr() {
 }
 
 std::string VecExpr::toString() const { 
-    LOG(ERROR) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
+    LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
     return NULL; 
 }
 
@@ -139,7 +140,7 @@ const ast::Vector *Vector::getVector() const {
 VectorCtorType Vector::getVectorType() { return tag_; }
 
 std::string Vector::toString() const { 
-    LOG(ERROR) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
+    LOG(FATAL) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
     return NULL;
 }
 
@@ -156,7 +157,7 @@ Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, coords::VecVarExpr* e
 }
 
 std::string Vector_Var::toString() const { 
-    LOG(ERROR) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
+    LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
     return NULL;
 }
 

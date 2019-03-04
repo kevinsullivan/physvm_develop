@@ -9,7 +9,8 @@
 #include "Domain.h"
 #include "CoordsToDomain.h"
 
-#include "easylogging++.h"
+#include <g3log/g3log.hpp>
+
 
 
 namespace interp {

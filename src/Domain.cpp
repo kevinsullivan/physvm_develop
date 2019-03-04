@@ -3,7 +3,8 @@
 #include "Checker.h"
 #include "Domain.h"
 
-#include "easylogging++.h"
+#include <g3log/g3log.hpp>
+
 
 
 using namespace std;
