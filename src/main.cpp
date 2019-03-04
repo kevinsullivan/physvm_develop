@@ -123,7 +123,7 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
     ASTContext *context = Result.Context;
-    SourceManager &sm = context->getSourceManager();
+    SourceManager &sm = context->getSourceManager(); 
     const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (memcall == NULL)
     {
