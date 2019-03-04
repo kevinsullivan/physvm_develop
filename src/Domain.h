@@ -11,7 +11,6 @@
 #include <g3log/g3log.hpp>
 
 
-
 //using namespace std;
 
 /*

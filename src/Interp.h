@@ -31,13 +31,14 @@ enum domType {
 
 class Interp {
 public:
-  Interp(coords::Coords c, domain::VecIdent *d);
-  Interp(coords::Coords c, domain::VecExpr *d);
-  Interp(coords::Coords c, domain::Vector *d);
-  Interp(coords::Coords c, domain::Vector_Def *d);
+  Interp(coords::VecIdent *c, domain::VecIdent *d);
+  Interp(coords::VecExpr *c, domain::VecExpr *d);
+  Interp(coords::Vector *c, domain::Vector *d);
+  Interp(coords::Vector_Def *c, domain::Vector_Def *d);
   virtual std::string toString();
-private:
+protected:
   coords::Coords *coords_;
+
   domType type_;
   // TODO: make it a union
   domain::VecIdent * ident_;
@@ -65,7 +66,7 @@ public:
   const clang::VarDecl *getVarDecl() const;
   virtual std::string toString() const;
   bool operator==(const VecIdent &other) const {
-    return (clang_decl_ == other.clang_decl_);
+    return (ident_ == other.ident_);
   }
 };
 
@@ -82,7 +83,7 @@ public:
   const ast::VecExpr *getExpr();
   virtual std::string toString() const;
   bool operator==(const VecExpr &other) const {
-    return (clang_stmt_ == other.clang_stmt_);
+    return (expr_ == other.expr_);
   }
 };
 
@@ -92,8 +93,6 @@ public:
   VecVarExpr(coords::VecVarExpr*, domain::VecVarExpr*);
   const ast::VecVarExpr *getVecVarExpr() const;
   virtual std::string toString() const;
-private:
-//  Interp::Interp *var_; // TODO: Fix
 };
 
 
@@ -103,36 +102,20 @@ public:
   VecVecAddExpr(coords::VecVecAddExpr*, domain::VecVecAddExpr*);
   const ast::VecVecAddExpr *getVecVecAddExpr();
   virtual std::string toString() const;
-private:
-  interp::Interp *mem_;
-  interp::Interp *arg_;
 };
-
 
 
 
 /*
 Superclass. Abstract
 */
-class Vector : public VecExpr {
+class Vector : public Interp {
 public:
   Vector(coords::Vector*, domain::Vector*); // tag?
   const ast::Vector *getVector() const;
-  VectorCtorType getVectorType();
+  coords::VectorCtorType getVectorType();
   virtual std::string toString() const;
-  bool operator==(const Vector &other) const {
-    return (clang_stmt_ == other.clang_stmt_);
-  }
-protected:
-  const VectorCtorType tag_;
 };
-
-
-/*
-	Vector_Var* mkVecVector_Var(coords::Vector_Var*, domain::Vector_Var*);
-	Vector_Expr* mkVecVector_Expr(coords::Vector_Expr*, domain::Vector_Expr*);
-	Vector_Def* mkVecVector_Def(coords::Vector_Def*, domain::Vector_Def*);
-*/
 
 
 
@@ -141,8 +124,6 @@ class Vector_Lit : public Vector {
 public:
   Vector_Lit(coords::Vector_Lit*, domain::Vector_Lit*);
   virtual std::string toString() const;
-private:
-  float a_;
 };
 
 class Vector_Var : public Vector {
@@ -150,8 +131,6 @@ public:
   Vector_Var(coords::Vector_Var*, domain::Vector_Var*);
   virtual std::string toString() const;
   VecVarExpr *getVecVarExpr();
-private:
-  VecVarExpr *expr_;
 };
 
 // change name to VecVecAddExpr? Or generalize from that a bit.
@@ -160,8 +139,6 @@ public:
   Vector_Expr(coords::Vector_Expr*, domain::Vector_Expr*);
   virtual std::string toString() const;
   Vector_Expr *getVector_Expr();
-private:
-  VecExpr *expr_;
 };
 
 /****
@@ -171,19 +148,7 @@ private:
 class Vector_Def : public Interp {
 public:
   Vector_Def(coords::Vector_Def*, domain::Vector_Def*);
-  //const clang::DeclStmt *getDeclStmt() const;
-  coords::VecIdent *getIdent() const;
-  coords::VecExpr *getExpr() const;
   virtual std::string toString() const;
-  // Assumption here and above is that pointer
-  // identity is unique and we don't need to
-  // compare on these additional fields
-  bool operator==(const Vector_Def &other) const {
-    return (clang_decl_ == other.clang_decl_);
-  }
-private:
-  VecIdent *bv_;
-  VecExpr *be_;
 };
 
 } // namespace coords
