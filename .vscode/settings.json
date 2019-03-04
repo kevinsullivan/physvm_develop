@@ -71,6 +71,11 @@
         "sstream": "cpp",
         "thread": "cpp",
         "cinttypes": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "codecvt": "cpp",
+        "csignal": "cpp",
+        "unordered_set": "cpp",
+        "future": "cpp",
+        "iomanip": "cpp"
     }
 }
