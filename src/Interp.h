@@ -153,8 +153,11 @@ private:
 
 class Vector_Def : public Interp {
 public:
-  Vector_Def(coords::Vector_Def*, domain::Vector_Def*);
+  Vector_Def(coords::Vector_Def*, domain::Vector_Def*, interp::VecIdent *id, interp::VecExpr *expr);
   virtual std::string toString() const;
+private:
+  interp::VecIdent *id_;
+  interp::VecExpr *expr_;
 };
 
 } // namespace coords
