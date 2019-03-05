@@ -85,8 +85,8 @@ public:
   bool operator==(const VecExpr &other) const {
     return (expr_ == other.expr_);
   }
-};
 
+};
 
 class VecVarExpr : public VecExpr {
 public:
@@ -99,9 +99,13 @@ public:
 // TODO: add accessors for left and right
 class VecVecAddExpr : public VecExpr {
 public:
-  VecVecAddExpr(coords::VecVecAddExpr*, domain::VecVecAddExpr*);
+  VecVecAddExpr(coords::VecVecAddExpr*, domain::VecVecAddExpr*, 
+                interp::Interp *mem, interp::Interp *arg);
   const ast::VecVecAddExpr *getVecVecAddExpr();
   virtual std::string toString() const;
+private:
+  interp::Interp *mem_;
+  interp::Interp *arg_;
 };
 
 

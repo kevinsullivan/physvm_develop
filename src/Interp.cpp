@@ -42,7 +42,8 @@ std::string VecIdent::toString() const {
  * Expr
  *****/
 
-VecExpr::VecExpr(coords::VecExpr* c, domain::VecExpr* d) : Interp(c, d)  {}
+VecExpr::VecExpr(coords::VecExpr* c, domain::VecExpr* d) 
+: Interp(c, d)  {}
 
 std::string VecExpr::toString() const {}
 
@@ -53,9 +54,11 @@ VecVarExpr::VecVarExpr(coords::VecVarExpr* c, domain::VecVarExpr* d) : VecExpr(c
 std::string VecVarExpr::toString() const {}
 
 
-VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d) : VecExpr(c, d) {}
-
-std::string VecVecAddExpr::toString() const {}
+VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d, 
+                             interp::Interp *mem, interp::Interp *arg)  
+  : VecExpr(c, d), mem_(mem), arg_(arg) {}
+ 
+std::string VecVecAddExpr::toString() const {} 
 
 
 

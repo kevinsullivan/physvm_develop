@@ -78,7 +78,7 @@ coords::VecExpr *CoordsToInterp::getVecExpr(interp::VecExpr *d) const
 
 // var
 
-void CoordsToInterp::PutVecVarExpr(coords::VecVarExpr *c, interp::VecVarExpr *d)
+void CoordsToInterp::pVecVarExpr(coords::VecVarExpr *c, interp::VecVarExpr *d)
 {
     coords2interp_VecExpr[c] = d;
     interp2coords_VecExpr[d] = c;
@@ -112,7 +112,7 @@ coords::VecVarExpr *CoordsToInterp::getVecVarExpr(interp::VecVarExpr *d) const
 
 // vecvecadd
 
-void CoordsToInterp::PutVecVecAddExpr(coords::VecVecAddExpr *c, interp::VecVecAddExpr *d)
+void CoordsToInterp::putVecVecAddExpr(coords::VecVecAddExpr *c, interp::VecVecAddExpr *d)
 {
     coords2interp_VecExpr[c] = d;
     interp2coords_VecExpr[d] = c;

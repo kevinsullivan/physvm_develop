@@ -24,7 +24,7 @@ Interpretation::Interpretation() {
     ast2coords_ = new ast2coords::ASTToCoords();
     coords2dom_ = new coords2domain::CoordsToDomain();
     coords2interp_ = new coords2interp::CoordsToInterp();
-    interp2coords_ = new interp2coords::InterpToCoords();
+    interp2domain_ = new interp2domain::InterpToDomain();
 }
 
 /******
@@ -42,12 +42,6 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
     interp::VecIdent *interp = new interp::VecIdent(coords,dom);
     coords2interp_->putVecIdent(coords, interp);
     interp2domain_->putVecIdent(interp,dom);
-
-    /*LOG(DEBUG) <<"Interpretation::mkVecIdent *mkVecIdent: AST at " << std::hex 
-        << ast << "; Coords at " << std::hex << coords 
-        << ";  coords.toString is " << coords->toString() 
-        << "; dom at " << std::hex << dom << "\n";
-    LOG(DEBUG) <<"END Interpretation::mkVecIdent *mkVecIdent\n";*/
 }
 
 
@@ -63,8 +57,8 @@ void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/
     coords2dom_->PutVecVarExpr(coords, dom);
 
     interp::VecVarExpr *interp = new interp::VecVarExpr(coords,dom);
-    coords2interp_->PutVecVarExpr(coords, interp);
-    interp2domain_->PutVecVarExpr(interp,dom);
+    coords2interp_->putVecVarExpr(coords, interp);
+    interp2domain_->putVecVarExpr(interp,dom);
 }
 
 
@@ -78,7 +72,7 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
             << std::hex << mem_coords << " arg coords "
             << std::hex << arg_coords << "\n";
   }
-  coords::VecVecAddExpr *expr_coords = ast2coords_->mkVecVecAddExpr(add_ast, mem_coords, arg_coords);
+  coords::VecVecAddExpr *coords = ast2coords_->mkVecVecAddExpr(add_ast, mem_coords, arg_coords);
   domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
   domain::VecExpr *dom_mem_expr = coords2dom_->getVecExpr(mem_coords);
   domain::VecExpr *dom_arg_expr = coords2dom_->getVecExpr(arg_coords);
@@ -87,13 +81,14 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
               << std::hex << dom_mem_expr << " Arg "
               << std::hex << dom_arg_expr << "\n";
   }
-  domain::VecVecAddExpr *dom_add_expr =
-      domain_->mkVecVecAddExpr(space, dom_mem_expr, dom_arg_expr);
-  coords2dom_->PutVecVecAddExpr(expr_coords, dom_add_expr);
+  domain::VecVecAddExpr *dom = domain_->mkVecVecAddExpr(space, dom_mem_expr, dom_arg_expr);
+  coords2dom_->PutVecVecAddExpr(coords, dom);
 
   interp::Interp *mem_interp = coords2interp_->getVecExpr(mem_coords);
   interp::Interp *arg_interp = coords2interp_->getVecExpr(arg_coords);
-  interp::VecVecAddExpr *expr_interp = new interp::VecVecAddExpr(mem_i);
+  interp::VecVecAddExpr *interp = new interp::VecVecAddExpr(coords, dom, mem_interp, arg_interp);
+  coords2interp_->putVecVecAddExpr(coords, interp); 
+  interp2domain_->putVecVecAddExpr(interp,dom);
 }
 
 
@@ -111,10 +106,16 @@ void Interpretation::mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *c*/
   //  LOG(DEBUG) <<"Interpretation::mkVector_Lit. START";
   //  LOG(DEBUG) <<"Interpretation::mkVector_Lit. WARN: Scalar stubbed.\n";
   
-    coords::Vector_Lit *vec_coords = ast2coords_->mkVector_Lit(ast, 0.0);
+    coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, 0.0);
     domain::Space& s = oracle_->getSpaceForVector_Lit(ast);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
-    domain::Vector_Lit *dom_var = domain_->mkVector_Lit(s);
-    coords2dom_->putVector_Lit(vec_coords, dom_var);
+    domain::Vector_Lit *dom = domain_->mkVector_Lit(s);
+    coords2dom_->putVector_Lit(coords, dom); 
+
+    interp::Vector_Lit *interp = new interp::Vector_Lit(coords, dom);
+    coords2interp_->putVector_Lit(coords, interp);
+    interp2domain_->putVector_Lit(interp,dom);
+
+
   //  LOG(DEBUG) <<"Interpretation::mkVector_Lit. DONE\n";
 }
 
