@@ -28,11 +28,11 @@ class InterpToDomain
 	domain::VecLitExpr *getLitInterp(interp::VecLitExpr c) const;
 	interp::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;*/
 
-	void PutVecVarExpr(interp::VecVarExpr *n, domain::VecVarExpr *e);
+	void putVecVarExpr(interp::VecVarExpr *n, domain::VecVarExpr *e);
 	domain::VecVarExpr *getVecVarExpr(interp::VecVarExpr* c) const;
 	interp::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;
 
-	void PutVecVecAddExpr(interp::VecVecAddExpr *n, domain::VecVecAddExpr *e);
+	void putVecVecAddExpr(interp::VecVecAddExpr *n, domain::VecVecAddExpr *e);
 	domain::VecVecAddExpr *getVecVecAddExpr(interp::VecVecAddExpr* c) const;
 	interp::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
 

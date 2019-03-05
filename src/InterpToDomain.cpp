@@ -77,7 +77,7 @@ interp::VecExpr *InterpToDomain::getVecExpr(domain::VecExpr *d) const
 
 // var
 
-void InterpToDomain::PutVecVarExpr(interp::VecVarExpr *c, domain::VecVarExpr *d)
+void InterpToDomain::putVecVarExpr(interp::VecVarExpr *c, domain::VecVarExpr *d)
 {
     interp2domain_VecExpr[c] = d;
     domain2interp_VecExpr[d] = c;
@@ -112,7 +112,7 @@ interp::VecVarExpr *InterpToDomain::getVecVarExpr(domain::VecVarExpr *d) const
 
 // vecvecadd
 
-void InterpToDomain::PutVecVecAddExpr(interp::VecVecAddExpr *c, domain::VecVecAddExpr *d)
+void InterpToDomain::putVecVecAddExpr(interp::VecVecAddExpr *c, domain::VecVecAddExpr *d)
 {
     interp2domain_VecExpr[c] = d;
     domain2interp_VecExpr[d] = c;
@@ -267,78 +267,3 @@ interp::Vector_Def *InterpToDomain::getVector_Def(domain::Vector_Def *d) const
     }
     return static_cast<interp::Vector_Def *>(interp);
 }
-
-/*void InterpToDomain::dump() const
-{
-    LOG(DEBUG) <<"InterpToDomain::dump(). STUB.\n";
-
-    for (auto it = coord2domain_VecExpr.begin(); it != coord2domain_VecExpr.end(); ++it)
-    {
-        //std::LOG(DEBUG) <<std::hex << &it->first << " : " << std::hex << it.second << "\n";
-        LOG(DEBUG) <<"InterpToDomain::dump(). STUB.\n";
-    }
-    LOG(DEBUG) <<std::endl;
-
-}
-*/
-
-//-------------------------
-
-/*
-void InterpToDomain::PutVecExpr(const interp::VecExpr* n, domain::VecExpr* e) {
-    coord2domain_VecExpr.insert(std::make_pair(*n, e));
-}
-
-domain::VecExpr* InterpToDomain::getVecExpr
-        (const interp::VecExpr* n)  {
-   return coord2domain_VecExpr[*n]; 
-}
-
-
-
-void InterpToDomain::PutVector(const interp::Vector* n, domain::Vector* e) {
-    coord2domain_VecExpr.insert(std::make_pair(*n, e));
-}
-
-domain::Vector* InterpToDomain::getVector
-        (const interp::Vector* n)  {
-   return coord2domain_VecExpr[*n]; 
-}
-
-
-void InterpToDomain::PutVecVecAddExpr(const interp::VecVecAddExpr* n, domain::VecVecAddExpr* e) {
-    coord2domain_VecExpr.insert(std::make_pair(*n, e));
-}
-
-domain::VecVecAddExpr* InterpToDomain::getVecVecAddExpr
-        (const interp::VecVecAddExpr* n)  {
-   return coord2domain_VecExpr[*n]; 
-}
-
-void InterpToDomain::putVecIdent(const interp::VecIdent *key, domain::VecIdent *v) {
-    coord2domain_VecIdent.insert(std::make_pair(*key, v));
-}
-
-const domain::VecIdent* InterpToDomain::getVecIdent(const interp::VecIdent* n) 
-{
-    return coord2domain_VecIdent[*n];
-}
-
-void InterpToDomain::putVector_Def(interp::Vector_Def *key, domain::Vector_Def& b)
-{
-    coord2domain_Vector_Def.insert(std::make_pair(*key,&b));
-}
-
-const domain::Vector_Def* InterpToDomain::getVector_Def(const interp::Vector_Def* key)  {
-   return coord2domain_Vector_Def[*key];     
-}
-
-void InterpToDomain::PutVector(const interp::Vector* n, domain::Vector* e) {
-    coord2domain_Vector.insert(std::make_pair(*n, e));
-}
-
-domain::Vector* InterpToDomain::Vector(const interp::Vector* n)  {
-   return coord2domain_Vector[*n]; 
-}
-
-*/
