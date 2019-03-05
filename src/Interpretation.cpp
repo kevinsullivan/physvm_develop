@@ -2,15 +2,15 @@
 Establish interpretations for various AST nodes:
 
 - 1. get required information from oracle 
-- 2. create coordinates for object (updates ast2coords)
-- 3. add (creates) corresponding domain object (linking back to coords)
-- 4. update coords2domain
-
-- TODO: factor back links from domain object into separate table
+- 2. create coordinates for object, updating ast-coord bijection
+- 3. add corresponding domain object, updating coord-domain bijection
 */
 
-
+// TODO: These two can be integrated
 #include "Interpretation.h"
+#include "Interp.h"
+#include "CoordsToInterp.h"
+#include "InterpToDomain.h"
 
 #include <g3log/g3log.hpp>
 
@@ -19,14 +19,13 @@ Establish interpretations for various AST nodes:
 using namespace interp;
 
 Interpretation::Interpretation() {
-//    coords_ = new coords::Coords();
     domain_ = new domain::Domain();
     oracle_ = new oracle::Oracle(domain_);
-    // these objects maintain forward and inverse functions
     ast2coords_ = new ast2coords::ASTToCoords();
     coords2dom_ = new coords2domain::CoordsToDomain();
+    coords2interp_ = new coords2interp::CoordsToInterp();
+    interp2coords_ = new interp2coords::InterpToCoords();
 }
-
 
 /******
 * Ident
@@ -37,8 +36,12 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
     //LOG(DEBUG) <<"Interpretation::mkVecIdent. BEG\n";
     domain::Space &space = oracle_->getSpaceForVecIdent(ast);
     coords::VecIdent *coords = ast2coords_->mkVecIdent(ast);
-    domain::VecIdent *dom = domain_->mkVecIdent(space);
+    domain::VecIdent *dom = domain_->mkVecIdent(space); 
     coords2dom_->putVecIdent(coords, dom);
+
+    interp::VecIdent *interp = new interp::VecIdent(coords,dom);
+    coords2interp_->putVecIdent(coords, interp);
+    interp2domain_->putVecIdent(interp,dom);
 
     /*LOG(DEBUG) <<"Interpretation::mkVecIdent *mkVecIdent: AST at " << std::hex 
         << ast << "; Coords at " << std::hex << coords 
@@ -54,80 +57,43 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
 
 
 void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/) {
-    coords::VecVarExpr *var_coords = ast2coords_->mkVecVarExpr(ast);
+    coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast);
     domain::Space& space = oracle_->getSpaceForVecVarExpr(ast);
-    domain::VecVarExpr *dom_var = domain_->mkVecVarExpr(space);
-    coords2dom_->PutVecVarExpr(var_coords, dom_var);
+    domain::VecVarExpr *dom = domain_->mkVecVarExpr(space);
+    coords2dom_->PutVecVarExpr(coords, dom);
+
+    interp::VecVarExpr *interp = new interp::VecVarExpr(coords,dom);
+    coords2interp_->PutVecVarExpr(coords, interp);
+    interp2domain_->PutVecVarExpr(interp,dom);
 }
 
 
 void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::VecExpr *mem_expr, const ast::VecExpr *arg_expr) {
-
-/*  LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: START: adding\n";
-  LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: Member is " 
-    << mem_coords->toString() << " \n";
-  LOG(DEBUG) <<"Argument is " << arg_coords->toString() << "\n";
-  LOG(DEBUG) <<"AST is (dump)";
-  ast->dump();
-*/
-
-  // - get coords of children in domain
-  // - make coords for ast, including child coords
-  // - update ast2coords map with new coords
-  //
-  // TODO: Casting should be done in ast2coords.
-coords::VecExpr *mem_coords = static_cast<coords::VecExpr*>
-                                (ast2coords_->getStmtCoords(mem_expr));
-coords::VecExpr *arg_coords = static_cast<coords::VecExpr*>
-                                (ast2coords_->getStmtCoords(arg_expr));
-
-if (mem_coords == NULL || arg_coords == NULL)
-{
-  LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords "
+  coords::VecExpr *mem_coords = static_cast<coords::VecExpr*>
+                                  (ast2coords_->getStmtCoords(mem_expr));
+  coords::VecExpr *arg_coords = static_cast<coords::VecExpr*>
+                                  (ast2coords_->getStmtCoords(arg_expr));
+  if (mem_coords == NULL || arg_coords == NULL) {
+    LOG(FATAL) <<"Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords "
             << std::hex << mem_coords << " arg coords "
             << std::hex << arg_coords << "\n";
   }
-
-
-/*
-domain::VecExpr *dom_mem_expr = coords2dom_->getVecExpr(mem_coords);
-domain::VecExpr *dom_arg_expr = coords2dom_->getVecExpr(arg_coords);
-
-if (dom_mem_expr == NULL || dom_arg_expr == NULL)
-{
-  LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: bad domain exprs. Mem "
-            << std::hex << dom_mem_expr << " Arg "
-            << std::hex << dom_arg_expr << "\n";
-}
-*/
-
-
   coords::VecVecAddExpr *expr_coords = ast2coords_->mkVecVecAddExpr(add_ast, mem_coords, arg_coords);
-  /*  coords::VecVecAddExpr *stmt_coords = 
-    new coords::VecVecAddExpr(ast, mem_coords, arg_coords);
-  // private now?
-  ast2coords_->overrideStmt(ast, stmt_coords);*/
   domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
-
   domain::VecExpr *dom_mem_expr = coords2dom_->getVecExpr(mem_coords);
   domain::VecExpr *dom_arg_expr = coords2dom_->getVecExpr(arg_coords);
-
-  if (dom_mem_expr == NULL || dom_arg_expr == NULL)
-  {
+  if (dom_mem_expr == NULL || dom_arg_expr == NULL) {
     LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: bad domain exprs. Mem "
               << std::hex << dom_mem_expr << " Arg "
               << std::hex << dom_arg_expr << "\n";
   }
-
   domain::VecVecAddExpr *dom_add_expr =
       domain_->mkVecVecAddExpr(space, dom_mem_expr, dom_arg_expr);
   coords2dom_->PutVecVecAddExpr(expr_coords, dom_add_expr);
 
-  /* LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: Coords at "
-           << std::hex << expr_coords << "\n";
- LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: Adding add expr to domain: "
-           << dom_add_expr->toString() << "\n";
- LOG(DEBUG) <<"FINISHED: adding member call expression to system\n";*/
+  interp::Interp *mem_interp = coords2interp_->getVecExpr(mem_coords);
+  interp::Interp *arg_interp = coords2interp_->getVecExpr(arg_coords);
+  interp::VecVecAddExpr *expr_interp = new interp::VecVecAddExpr(mem_i);
 }
 
 
