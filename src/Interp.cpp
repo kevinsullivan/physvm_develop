@@ -85,7 +85,8 @@ std::string Vector_Var::toString() const {
 
 }
 
-Vector_Expr::Vector_Expr(coords::Vector_Expr *c, domain::Vector_Expr* d) : Vector(c,d) {
+Vector_Expr::Vector_Expr(coords::Vector_Expr *c, domain::Vector_Expr* d, interp::VecExpr *expr_interp) 
+  : Vector(c,d), expr_interp_(expr_interp) {
 
 }
 

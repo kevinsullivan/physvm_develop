@@ -140,9 +140,11 @@ public:
 // change name to VecVecAddExpr? Or generalize from that a bit.
 class Vector_Expr : public Vector {
 public:
-  Vector_Expr(coords::Vector_Expr*, domain::Vector_Expr*);
+  Vector_Expr(coords::Vector_Expr*, domain::Vector_Expr*, interp::VecExpr *expr_interp);
   virtual std::string toString() const;
   Vector_Expr *getVector_Expr();
+private:
+  interp::VecExpr *expr_interp_;
 };
 
 /****
