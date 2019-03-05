@@ -119,19 +119,6 @@ void Interpretation::mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *c*/
   //  LOG(DEBUG) <<"Interpretation::mkVector_Lit. DONE\n";
 }
 
-/*
-void Interpretation::mkVector_Var(
-      ast::Vector_Var *ast, domain::VecVarExpr* expr, clang::ASTContext *c) {
-    LOG(DEBUG) <<"Interpretation::mkVector_Var. START";
-    coords::VecVarExpr *expr_coords = expr->getCoords();
-    coords::Vector_Var *var_coords = ast2coords_->mkVector_Var(ast, expr_coords);
-    oracle::Space& space = oracle_->getSpaceForVector_Var(ast, expr); // infer?
-    domain::Vector_Var* dom_vec = domain_->mkVector_Var(space, vec_coords, expr);
-    coords2dom_->PutVecVar(var_coords, dom_var);
-    LOG(DEBUG) <<"Interpretation::mkVector_Var. DONE\n";
-}
-*/
-
 void Interpretation::mkVector_Expr(
       ast::Vector_Expr *ctor_ast, ast::VecExpr* expr_ast/*, clang::ASTContext *c*/) {
 
@@ -142,6 +129,12 @@ void Interpretation::mkVector_Expr(
     domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
     domain::Vector_Expr *dom_vec = domain_->mkVector_Expr(s, expr_dom); 
     coords2dom_->putVector_Expr(ctor_coords, dom_vec);
+
+    interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
+    interp::Vector_Expr *interp = new interp::Vector_Expr(ctor_coords, dom_vec, expr_interp);
+    coords2interp_->putVector_Expr(ctor_coords, interp);
+    interp2domain_->putVector_Expr(interp, dom_vec);
+
     LOG(DEBUG) <<"Interpretation::mkVector_Expr. DONE\n";
 }
 
