@@ -85,7 +85,6 @@ public:
   bool operator==(const VecExpr &other) const {
     return (expr_ == other.expr_);
   }
-
 };
 
 class VecVarExpr : public VecExpr {

@@ -97,13 +97,9 @@ public:
         std::vector<domain::VecExpr*> &id = domain_->getVecExprs();
         for (std::vector<domain::VecExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::VecExpr* coords = coords2dom_->getVecExpr(*it);
-            std::string thisString = coords->toString();
-            retval = retval .append("(")
-                            .append(thisString)
-                            .append(" : vector ") 
-                            // TODO: fix . instead of -> before toString next line
-                            .append((*it)->getSpace().toString())
-                            .append(")\n");
+            interp::VecExpr *interp = coords2interp_->getVecExpr(coords);
+            retval = retval.append(interp->toString());
+            retval = retval.append("\n");
         }
         return retval;
     }
