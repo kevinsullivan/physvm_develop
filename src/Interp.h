@@ -92,6 +92,7 @@ class VecVarExpr : public VecExpr {
 public:
   VecVarExpr(coords::VecVarExpr*, domain::VecVarExpr*);
   const ast::VecVarExpr *getVecVarExpr() const;
+  const coords::VecVarExpr *getVecVarCoords() const;
   virtual std::string toString() const;
 };
 

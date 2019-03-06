@@ -32,10 +32,10 @@ VecIdent::VecIdent(coords::VecIdent* c, domain::VecIdent* d) : Interp(c, d) {
 }
 
 std::string VecIdent::toString() const {
-  std::cerr << "Need to implement interp::VecIdent::toString()\n";
+  LOG(FATAL) << "Need to implement interp::VecIdent::toString()\n";
+  return "Error! Need to implement interp::VecIdent::toString().";
 }
 
-  
 
 
 /*****
@@ -45,14 +45,18 @@ std::string VecIdent::toString() const {
 VecExpr::VecExpr(coords::VecExpr* c, domain::VecExpr* d) 
 : Interp(c, d)  {}
 
-std::string VecExpr::toString() const {}
-
-
+std::string VecExpr::toString() const {
+  LOG(FATAL) << "Error. Call to abstract interp::VecIdent::toString().\n";
+  return "Should not call abstract interp::VecIdent::toString().";
+}
 
 VecVarExpr::VecVarExpr(coords::VecVarExpr* c, domain::VecVarExpr* d) : VecExpr(c, d) {}
 
-std::string VecVarExpr::toString() const {}
-
+std::string VecVarExpr::toString() const {
+  std::string ret = "";
+  ret += "(vector.add ";
+  ret += mem
+}
 
 VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d, 
                              interp::Interp *mem, interp::Interp *arg)  
