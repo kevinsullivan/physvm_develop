@@ -410,6 +410,7 @@ int main(int argc, const char **argv)
   auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
   g3::initializeLogging(worker.get());
 
+  interp_.addSpace("_");
   interp_.addSpace("time");
   interp_.addSpace("geom");
   

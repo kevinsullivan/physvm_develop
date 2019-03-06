@@ -117,8 +117,10 @@ Vector_Var::Vector_Var(coords::Vector_Var* c, domain::Vector_Var* d) : Vector(c,
 }
 
 std::string Vector_Var::toString() const {
-  return getVecVarExpr()->toString(); 
+  LOG(FATAL) << "interp::Vector_Var::toString. Error. Not implemented.\n";
+  return "";
 }
+
 
 Vector_Expr::Vector_Expr(coords::Vector_Expr *c, domain::Vector_Expr* d, interp::VecExpr *expr_interp) 
   : Vector(c,d), expr_interp_(expr_interp) {
