@@ -143,7 +143,7 @@ class Vector_Expr : public Vector {
 public:
   Vector_Expr(coords::Vector_Expr*, domain::Vector_Expr*, interp::VecExpr *expr_interp);
   virtual std::string toString() const;
-  Vector_Expr *getVector_Expr() const;
+  interp::VecExpr *getVector_Expr() const { return expr_interp_; }
 private:
   interp::VecExpr *expr_interp_;
 };
