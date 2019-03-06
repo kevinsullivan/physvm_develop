@@ -167,18 +167,13 @@ void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,
       domain_->mkVector_Def(vec_ident, vec_expr);
     coords2dom_->putVector_Def(def_coords, dom_vec_def);
 
-    /*
-    domain::Vector_Def *vec_def = domain_->putVector_Def(bind_coords, id, exp);
-    coords2dom_->putVector_Def(bind_coords, vec_def);
-  
-    LOG(DEBUG) <<
-        "Interpretation::mkVector_Def:\n";  */
-        /* identifier at " << std::hex << id 
-            << " wrapped addr is " << std::hex << id_coords->get() << "\n";
-    LOG(DEBUG) <<"Interpretation::mkVector_Def: wrapped dump is \n";
-    id_coords->get()->dump();
-    LOG(DEBUG) <<"Interpretation::mkVector_Def: name is " << id_coords->toString() << "\n";
-    LOG(DEBUG) <<"DONE: Interpretation::mkVector_Def..\n";*/
+    interp::VecIdent *id_interp = coords2interp_->getVecIdent(id_coords);
+    interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
+
+    interp::Vector_Def *interp = new interp::Vector_Def(def_coords, dom_vec_def, id_interp, expr_interp);
+    coords2interp_->putVector_Def(def_coords, interp);
+    interp2domain_->putVector_Def(interp, dom_vec_def);
+
 }
 
 /*
