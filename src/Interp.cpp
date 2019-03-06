@@ -19,6 +19,10 @@ Interp::Interp(coords::Vector *c, domain::Vector *d)
 
 }
 
+/**********
+ * Abstract
+ **********/
+
 Interp::Interp(coords::Vector_Def *c, domain::Vector_Def *d) 
   : type_(dom_vector_def_type), coords_(c), def_(d) {
   
@@ -36,10 +40,14 @@ VecIdent::VecIdent(coords::VecIdent* c, domain::VecIdent* d) : Interp(c, d) {
 }
 
 std::string VecIdent::toString() const {
-  LOG(FATAL) << "Need to implement interp::VecIdent::toString()\n";
-  return "Error! Need to implement interp::VecIdent::toString().";
+  std::string ret = "";
+  ret += "( ";
+  ret += coords_->toString();
+  ret += " : ";
+  ret += ident_->getSpace()->toString();
+  ret += " )";
+  return ret;
 }
-
 
 /*****
  * Expr
@@ -53,35 +61,55 @@ std::string VecExpr::toString() const {
   return "Should not call abstract interp::VecIdent::toString().";
 }
 
+
 VecVarExpr::VecVarExpr(coords::VecVarExpr* c, domain::VecVarExpr* d) : VecExpr(c, d) {}
 
 std::string VecVarExpr::toString() const {
   std::string ret = "";
-  ret += "(vector.add ";
-  ret += mem
+  ret += "( ";
+  ret += coords_->toString();
+  ret += " : ";
+  ret += ident_->getSpace()->toString();
+  ret += " )";
+  return ret;
 }
+
 
 VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d, 
                              interp::Interp *mem, interp::Interp *arg)  
   : VecExpr(c, d), mem_(mem), arg_(arg) {}
  
-std::string VecVecAddExpr::toString() const {} 
-
-
+std::string VecVecAddExpr::toString() const {
+  std::string ret = "";
+  ret += "( add ";
+  ret += mem_->toString();
+  ret += " ";
+  ret += arg_->toString();
+  ret += " : ";
+  ret += ident_->getSpace()->toString();
+  ret += " )";
+  return ret;  
+} 
 
  
 Vector::Vector(coords::Vector* c, domain::Vector* d) : Interp(c, d) {}
 
-std::string Vector::toString() const {}
+std::string Vector::toString() const {
+  LOG(FATAL) << "Error. Call to abstract interp::Vector::toString().\n";
+  return "Should not call abstract interp::Vector::toString().";
+}
 
 
 
 Vector_Lit::Vector_Lit(coords::Vector_Lit* c, domain::Vector_Lit* d) : Vector(c,d) {
-
 }
 
 std::string Vector_Lit::toString() const {
-
+  std::string ret = "";
+  ret += "mkVector ";
+  ret += vector_->getSpace()->getName();
+  ret += " 0";
+  return ret;
 }
 
 Vector_Var::Vector_Var(coords::Vector_Var* c, domain::Vector_Var* d) : Vector(c,d) {
@@ -89,7 +117,7 @@ Vector_Var::Vector_Var(coords::Vector_Var* c, domain::Vector_Var* d) : Vector(c,
 }
 
 std::string Vector_Var::toString() const {
-
+  return getVecVarExpr()->toString(); 
 }
 
 Vector_Expr::Vector_Expr(coords::Vector_Expr *c, domain::Vector_Expr* d, interp::VecExpr *expr_interp) 
@@ -98,7 +126,7 @@ Vector_Expr::Vector_Expr(coords::Vector_Expr *c, domain::Vector_Expr* d, interp:
 }
 
 std::string Vector_Expr::toString() const {
-
+  return getVector_Expr()->toString(); 
 }
 
 
@@ -111,7 +139,11 @@ Vector_Def::Vector_Def(coords::Vector_Def* c, domain::Vector_Def* d, interp::Vec
 
 }
 std::string Vector_Def::toString() const {
-
+  std::string ret = "";
+  ret += id_->toString();
+  ret += " := ";
+  ret += expr_->toString();
+  return ret;  
 }
 
 } // namespace coords
