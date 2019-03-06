@@ -1,0 +1,138 @@
+		g3log created log at: Wed Mar 06 16:41:32 2019
+		LOG format: [YYYY/MM/DD hh:mm:ss uuu* LEVEL FILE->FUNCTION:LINE] messagen
+		(uuu*: microseconds fractions of the seconds value)
+
+2019/03/06 16:41:32 624474	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/06 16:41:34 182902	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/06 16:41:34 638614	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/06 16:41:34 638695	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/06 16:41:34 638721	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/06 16:41:34 638747	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/06 16:41:34 934558	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/06 16:41:35 286685	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/06 16:41:35 286722	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/06 16:41:35 286743	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/06 16:41:35 286771	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/06 16:41:35 678696	DEBUG [main.cpp->run:160]	main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:
+
+2019/03/06 16:41:35 678706	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/06 16:41:35 678715	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x251e3b8
+
+2019/03/06 16:41:35 678717	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/06 16:41:35 678727	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/06 16:41:35 678731	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/06 16:41:35 678734	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x251e348
+
+2019/03/06 16:41:35 678736	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/06 16:41:35 678742	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/06 16:41:35 678746	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x251e348
+
+2019/03/06 16:42:24 440841	DEBUG [main.cpp->run:114]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019/03/06 16:42:24 440849	DEBUG [main.cpp->match:248]	main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019/03/06 16:42:24 440851	DEBUG [main.cpp->handle_member_expr_of_add_call:277]	main::handle_member_expr_of_add_call. Done. 
+
+2019/03/06 16:42:24 440855	DEBUG [main.cpp->handle_arg0_of_add_call:215]	domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019/03/06 16:42:24 440861	DEBUG [main.cpp->match:199]	CXXMemberCallExprArg0Matcher::match start
+
+2019/03/06 16:42:24 440871	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x251e398
+
+2019/03/06 16:42:30 844484	DEBUG [main.cpp->run:114]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019/03/06 16:42:30 844496	DEBUG [main.cpp->match:201]	CXXMemberCallExprArg0Matcher::match finish
+
+2019/03/06 16:42:30 844498	DEBUG [main.cpp->handle_arg0_of_add_call:218]	domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019/03/06 16:42:40 742930	DEBUG [main.cpp->handleMemberCallExpr:100]	main::handleMemberCallExpr: Done.
+
+2019/03/06 16:42:40 742942	DEBUG [main.cpp->match:248]	main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019/03/06 16:42:40 742945	DEBUG [main.cpp->handle_member_expr_of_add_call:277]	main::handle_member_expr_of_add_call. Done. 
+
+2019/03/06 16:42:40 742949	DEBUG [main.cpp->handle_arg0_of_add_call:215]	domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019/03/06 16:42:40 742955	DEBUG [main.cpp->match:199]	CXXMemberCallExprArg0Matcher::match start
+
+2019/03/06 16:42:40 742960	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/06 16:42:40 742966	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x251e410
+
+2019/03/06 16:42:40 742969	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/06 16:42:40 742975	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/06 16:42:40 742979	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x251e410
+
+2019/03/06 16:42:42 150910	DEBUG [main.cpp->run:114]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019/03/06 16:42:42 150922	DEBUG [main.cpp->match:248]	main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019/03/06 16:42:42 150924	DEBUG [main.cpp->handle_member_expr_of_add_call:277]	main::handle_member_expr_of_add_call. Done. 
+
+2019/03/06 16:42:42 150928	DEBUG [main.cpp->handle_arg0_of_add_call:215]	domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019/03/06 16:42:42 150934	DEBUG [main.cpp->match:199]	CXXMemberCallExprArg0Matcher::match start
+
+2019/03/06 16:42:42 150941	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x251e460
+
+2019/03/06 16:42:42 958689	DEBUG [main.cpp->run:114]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019/03/06 16:42:42 958701	DEBUG [main.cpp->match:201]	CXXMemberCallExprArg0Matcher::match finish
+
+2019/03/06 16:42:42 958704	DEBUG [main.cpp->handle_arg0_of_add_call:218]	domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019/03/06 16:42:43 726863	DEBUG [main.cpp->handleMemberCallExpr:100]	main::handleMemberCallExpr: Done.
+
+2019/03/06 16:42:43 726876	DEBUG [main.cpp->match:201]	CXXMemberCallExprArg0Matcher::match finish
+
+2019/03/06 16:42:43 726878	DEBUG [main.cpp->handle_arg0_of_add_call:218]	domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019/03/06 16:42:44 622805	DEBUG [main.cpp->handleMemberCallExpr:100]	main::handleMemberCallExpr: Done.
+
+2019/03/06 16:42:44 622815	DEBUG [main.cpp->run:170]	main::HandlerForCXXConstructAddExpr: Done.
+
+2019/03/06 16:42:45 430845	DEBUG [Interpretation.cpp->mkVector_Expr:138]	Interpretation::mkVector_Expr. DONE
+
+2019/03/06 16:42:45 430877	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/06 16:42:45 430899	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/06 16:42:45 430935	DEBUG [main.cpp->EndSourceFileAction:378]	STUB Analysis result
+
+2019/03/06 16:42:54 600928	DEBUG [Interpretation.h->toString_Exprs:100]	v2
+2019/03/06 16:44:01 817433	DEBUG [Interpretation.h->toString_Exprs:100]	v1
+2019/03/06 16:44:40 730000	DEBUG [Interpretation.h->toString_Exprs:100]	(add (v2) (v1))
+2019/03/06 16:44:50 089365	FATAL [Interp.cpp->toString:31]	
+	*******	 EXIT trigger caused by LOG(FATAL) entry: 
+	"Interp::toString: Error. Should not be called. Abstract.
+
+*******	STACKDUMP *******
+
+	stack dump [1]  /usr/local/lib/libg3logger.so.1.3.2-74 : LogCapture::LogCapture(char const*, int, char const*, LEVELS const&, char const*, int, char const*)+0x31f [0x7ffff69e84df]
+	stack dump [2]  /home/sullivan/Projects/Peirce/build/ASTMatcher() [0x561c2d]
+	stack dump [3]  /home/sullivan/Projects/Peirce/build/ASTMatcher() [0x56241f]
+	stack dump [4]  /home/sullivan/Projects/Peirce/build/ASTMatcher() [0x5516cf]
+	stack dump [5]  /home/sullivan/Projects/Peirce/build/ASTMatcher() [0x54fa97]
+	stack dump [6]  /lib/x86_64-linux-gnu/libc.so.6__libc_start_main+0xe7 [0x7ffff605db97]
+	stack dump [7]  /home/sullivan/Projects/Peirce/build/ASTMatcher() [0x4ed90a]
+
+Exiting after fatal event  (FATAL). Fatal type:  SIGABRT
+Log content flushed sucessfully to sink
+
+"g3log g3FileSink shutdown at: 16:44:50 089561

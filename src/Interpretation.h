@@ -97,6 +97,7 @@ public:
         std::vector<domain::VecExpr*> &id = domain_->getVecExprs();
         for (std::vector<domain::VecExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::VecExpr* coords = coords2dom_->getVecExpr(*it);
+            LOG(DEBUG) << coords->toString();  
             interp::VecExpr *interp = coords2interp_->getVecExpr(coords);
             retval = retval.append(interp->toString());
             retval = retval.append("\n");
