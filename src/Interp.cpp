@@ -23,7 +23,11 @@ Interp::Interp(coords::Vector_Def *c, domain::Vector_Def *d)
   : type_(dom_vector_def_type), coords_(c), def_(d) {
   
 }
- 
+
+std::string Interp::toString() {
+  LOG(FATAL) << "Interp::toString: Error. Should not be called. Abstract.\n";
+}
+
 /******
  * Ident
  ******/
@@ -35,7 +39,6 @@ std::string VecIdent::toString() const {
   LOG(FATAL) << "Need to implement interp::VecIdent::toString()\n";
   return "Error! Need to implement interp::VecIdent::toString().";
 }
-
 
 
 /*****
@@ -103,7 +106,8 @@ std::string Vector_Expr::toString() const {
  * Def
  ****/
 
-Vector_Def::Vector_Def(coords::Vector_Def* c, domain::Vector_Def* d) : Interp(c,d) {
+Vector_Def::Vector_Def(coords::Vector_Def* c, domain::Vector_Def* d, interp::VecIdent *id, interp::VecExpr *expr) 
+  : Interp(c,d), id_(id), expr_(expr) {
 
 }
 std::string Vector_Def::toString() const {

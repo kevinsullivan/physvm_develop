@@ -110,7 +110,7 @@ OBJS := $(patsubst %.cpp,%.o,$(SRCS))
 
 $(BUILDDIR)/ASTMatcher: $(SRC_CLANG_DIR)/$(SRCS)
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
-		$(CLANG_LIBS) $(LLVM_LDFLAGS) -lg3logger -o $@
+		$(CLANG_LIBS) $(LLVM_LDFLAGS) -L/usr/local/lib -lg3logger -o $@
 
 %.o : %.cpp %.h
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
