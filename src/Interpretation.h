@@ -58,6 +58,13 @@ public:
     }
 */
 
+
+/******
+ * 
+ * TODO: Replace all this with direct calls to interp objects
+ * 
+ * ****/
+
 // private
     std::string toString_Spaces() {
         std::string retval = "";
@@ -76,11 +83,9 @@ public:
         std::vector<domain::VecIdent*> &id = domain_->getVecIdents();
         for (std::vector<domain::VecIdent *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::VecIdent* coords = coords2dom_->getVecIdent(*it);
-            retval = retval .append("(")
-                            .append(coords->toString())
-                            .append(" : vector ")
-                            .append((*it)->getSpace()->toString())
-                            .append(")\n");
+            interp::VecIdent *interp = coords2interp_->getVecIdent(coords);
+            retval = retval.append(interp->toString());
+            retval = retval.append("\n"); 
         }
         return retval;
     }
