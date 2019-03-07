@@ -59,8 +59,9 @@ void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/
     interp::VecVarExpr *interp = new interp::VecVarExpr(coords,dom);
     coords2interp_->putVecVarExpr(coords, interp);
     interp2domain_->putVecVarExpr(interp,dom);
+    std::string deleteme = interp->toString();
+    LOG(DEBUG) << deleteme;
 }
-
 
 void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::VecExpr *mem_expr, const ast::VecExpr *arg_expr) {
   coords::VecExpr *mem_coords = static_cast<coords::VecExpr*>
@@ -83,9 +84,14 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
   }
   domain::VecVecAddExpr *dom = domain_->mkVecVecAddExpr(space, dom_mem_expr, dom_arg_expr);
   coords2dom_->PutVecVecAddExpr(coords, dom);
+  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Coords: " << mem_coords->toString() << "\n";
+  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Coords: " << arg_coords->toString() << "\n";
 
-  interp::Interp *mem_interp = coords2interp_->getVecExpr(mem_coords);
+  interp::Interp *mem_interp = coords2interp_->getVecExpr(mem_coords);  // dyn type's toString not being called
+  std::string mi_str = mem_interp->toString();
+  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Interp: " << mi_str << "\n";
   interp::Interp *arg_interp = coords2interp_->getVecExpr(arg_coords);
+  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Interp: " << mem_interp->toString() << "\n";
   interp::VecVecAddExpr *interp = new interp::VecVecAddExpr(coords, dom, mem_interp, arg_interp);
   coords2interp_->putVecVecAddExpr(coords, interp); 
   interp2domain_->putVecVecAddExpr(interp,dom);
