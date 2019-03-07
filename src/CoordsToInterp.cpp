@@ -80,6 +80,10 @@ coords::VecExpr *CoordsToInterp::getVecExpr(interp::VecExpr *d) const
 
 void CoordsToInterp::putVecVarExpr(coords::VecVarExpr *c, interp::VecVarExpr *d)
 {
+    std::string cstr = c->toString();
+    std::string dstr = d->toString();
+    LOG(DEBUG) << "CoordsToInterp::putVecVarExpr c " << cstr << "\n";
+    LOG(DEBUG) << "CoordsToInterp::putVecVarExpr d " << dstr << "\n";
     coords2interp_VecExpr[c] = d;
     interp2coords_VecExpr[d] = c;
 }
@@ -114,6 +118,10 @@ coords::VecVarExpr *CoordsToInterp::getVecVarExpr(interp::VecVarExpr *d) const
 
 void CoordsToInterp::putVecVecAddExpr(coords::VecVecAddExpr *c, interp::VecVecAddExpr *d)
 {
+    std::string cstr = c->toString();
+    std::string dstr = d->toString();
+    LOG(DEBUG) << "CoordsToInterp::putVecVarExpr c " << cstr << "\n";
+    LOG(DEBUG) << "CoordsToInterp::putVecVarExpr d " << dstr << "\n";
     coords2interp_VecExpr[c] = d;
     interp2coords_VecExpr[d] = c;
 }

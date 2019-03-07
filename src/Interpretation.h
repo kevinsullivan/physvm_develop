@@ -131,8 +131,8 @@ public:
     }
 
     //private:
-    // TO DO: normalize domain, factor out need to know coords
-    //coords::Coords* coords_;
+    // TO DO: normalize 
+    //coords::Coords* coords
     domain::Domain *domain_;
     oracle::Oracle *oracle_;
 
