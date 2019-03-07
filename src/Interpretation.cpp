@@ -169,7 +169,6 @@ void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,
 
     interp::VecIdent *id_interp = coords2interp_->getVecIdent(id_coords);
     interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
-
     interp::Vector_Def *interp = new interp::Vector_Def(def_coords, dom_vec_def, id_interp, expr_interp);
     coords2interp_->putVector_Def(def_coords, interp);
     interp2domain_->putVector_Def(interp, dom_vec_def);

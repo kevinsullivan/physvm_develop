@@ -15,7 +15,6 @@ using VecIdent = const clang::VarDecl;
 
 // Expr
 using VecExpr = const clang::Expr;
-// TODO: this next one is wrong, just use Vector_Lit
 using VecLitExpr = const clang::CXXConstructExpr;
 using VecVarExpr = const clang::DeclRefExpr;
 using VecVecAddExpr = const clang::CXXMemberCallExpr;
