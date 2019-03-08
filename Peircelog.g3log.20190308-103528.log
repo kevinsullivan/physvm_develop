@@ -1,0 +1,110 @@
+		g3log created log at: Fri Mar 08 10:35:28 2019
+		LOG format: [YYYY/MM/DD hh:mm:ss uuu* LEVEL FILE->FUNCTION:LINE] messagen
+		(uuu*: microseconds fractions of the seconds value)
+
+2019/03/08 10:35:28 266327	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/08 10:35:29 499512	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/08 10:35:30 114160	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/08 10:35:30 114236	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/08 10:35:30 114256	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/08 10:35:30 114281	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/08 10:35:30 514166	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/08 10:35:30 906030	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/08 10:35:30 906069	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/08 10:35:30 906090	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/08 10:35:30 906116	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/08 10:35:31 301856	DEBUG [main.cpp->run:160]	main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:
+
+2019/03/08 10:35:31 301863	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/08 10:35:31 301870	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x563fdd2ae3b8
+
+2019/03/08 10:35:31 301872	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/08 10:35:31 301880	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/08 10:35:31 301883	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/08 10:35:31 301886	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x563fdd2ae348
+
+2019/03/08 10:35:31 301888	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/08 10:35:31 301892	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/08 10:35:31 301896	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x563fdd2ae348
+
+2019/03/08 10:35:31 730144	DEBUG [CoordsToInterp.cpp->putVecVarExpr:85]	CoordsToInterp::putVecVarExpr c v2
+
+2019/03/08 10:35:31 730150	DEBUG [CoordsToInterp.cpp->putVecVarExpr:86]	CoordsToInterp::putVecVarExpr d ( v2 : time )
+
+2019/03/08 10:35:31 730156	DEBUG [CoordsToInterp.cpp->putVecVarExpr:92]	Debug ( v2 : time )
+
+2019/03/08 10:35:31 730297	FATAL [Interp.cpp->toString:31]	
+	*******	 EXIT trigger caused by LOG(FATAL) entry: 
+	"Interp::toString: Error. Should not be called. Abstract.
+
+*******	STACKDUMP *******
+
+	stack dump [1]  /usr/local/lib/libg3logger.so.1.3.2-74 : LogCapture::LogCapture(char const*, int, char const*, LEVELS const&, char const*, int, char const*)+0x31f [0x7f686e9014df]
+	stack dump [2]  build/ASTMatcher+0x43a86a [0x563fd9b6b86a]
+	stack dump [3]  build/ASTMatcher+0x4030df [0x563fd9b340df]
+	stack dump [4]  build/ASTMatcher+0x42b89c [0x563fd9b5c89c]
+	stack dump [5]  build/ASTMatcher+0x692c50 [0x563fd9dc3c50]
+	stack dump [6]  build/ASTMatcher+0x6b4658 [0x563fd9de5658]
+	stack dump [7]  build/ASTMatcher+0x6947b9 [0x563fd9dc57b9]
+	stack dump [8]  build/ASTMatcher+0x694c12 [0x563fd9dc5c12]
+	stack dump [9]  build/ASTMatcher+0x42ea59 [0x563fd9b5fa59]
+	stack dump [10]  build/ASTMatcher+0x42ca5a [0x563fd9b5da5a]
+	stack dump [11]  build/ASTMatcher+0x42902c [0x563fd9b5a02c]
+	stack dump [12]  build/ASTMatcher+0x428998 [0x563fd9b59998]
+	stack dump [13]  build/ASTMatcher+0x42bb3b [0x563fd9b5cb3b]
+	stack dump [14]  build/ASTMatcher+0x692c50 [0x563fd9dc3c50]
+	stack dump [15]  build/ASTMatcher+0x6b4658 [0x563fd9de5658]
+	stack dump [16]  build/ASTMatcher+0x6947b9 [0x563fd9dc57b9]
+	stack dump [17]  build/ASTMatcher+0x694c12 [0x563fd9dc5c12]
+	stack dump [18]  build/ASTMatcher+0x42ea59 [0x563fd9b5fa59]
+	stack dump [19]  build/ASTMatcher+0x42ca5a [0x563fd9b5da5a]
+	stack dump [20]  build/ASTMatcher+0x42902c [0x563fd9b5a02c]
+	stack dump [21]  build/ASTMatcher+0x428998 [0x563fd9b59998]
+	stack dump [22]  build/ASTMatcher+0x42be97 [0x563fd9b5ce97]
+	stack dump [23]  build/ASTMatcher+0x692c50 [0x563fd9dc3c50]
+	stack dump [24]  build/ASTMatcher+0x6b4658 [0x563fd9de5658]
+	stack dump [25]  build/ASTMatcher+0x6947b9 [0x563fd9dc57b9]
+	stack dump [26]  build/ASTMatcher+0x694c12 [0x563fd9dc5c12]
+	stack dump [27]  build/ASTMatcher+0x42f163 [0x563fd9b60163]
+	stack dump [28]  build/ASTMatcher+0x42d23d [0x563fd9b5e23d]
+	stack dump [29]  build/ASTMatcher+0x42d462 [0x563fd9b5e462]
+	stack dump [30]  build/ASTMatcher+0x692c50 [0x563fd9dc3c50]
+	stack dump [31]  build/ASTMatcher+0x6b4658 [0x563fd9de5658]
+	stack dump [32]  build/ASTMatcher+0x6947b9 [0x563fd9dc57b9]
+	stack dump [33]  build/ASTMatcher+0x6a70b7 [0x563fd9dd80b7]
+	stack dump [34]  build/ASTMatcher+0x31d635 [0x563fd9a4e635]
+	stack dump [35]  build/ASTMatcher+0x6a8b29 [0x563fd9dd9b29]
+	stack dump [36]  build/ASTMatcher+0x6b0834 [0x563fd9de1834]
+	stack dump [37]  build/ASTMatcher+0x6a48eb [0x563fd9dd58eb]
+	stack dump [38]  build/ASTMatcher+0x6a6aa1 [0x563fd9dd7aa1]
+	stack dump [39]  build/ASTMatcher+0x6a4864 [0x563fd9dd5864]
+	stack dump [40]  build/ASTMatcher+0x6a66f0 [0x563fd9dd76f0]
+	stack dump [41]  build/ASTMatcher+0x42db51 [0x563fd9b5eb51]
+	stack dump [42]  build/ASTMatcher+0x862ef1 [0x563fd9f93ef1]
+	stack dump [43]  build/ASTMatcher+0x6f9e6e [0x563fd9e2ae6e]
+	stack dump [44]  build/ASTMatcher+0x729a66 [0x563fd9e5aa66]
+	stack dump [45]  build/ASTMatcher+0x105b9ef [0x563fda78c9ef]
+	stack dump [46]  build/ASTMatcher+0x1053589 [0x563fda784589]
+	stack dump [47]  build/ASTMatcher+0x1056bdd [0x563fda787bdd]
+	stack dump [48]  build/ASTMatcher+0x1059c77 [0x563fda78ac77]
+	stack dump [49]  build/ASTMatcher+0x429564 [0x563fd9b5a564]
+
+Exiting after fatal event  (FATAL). Fatal type:  SIGABRT
+Log content flushed sucessfully to sink
+
+"g3log g3FileSink shutdown at: 10:35:31 730591

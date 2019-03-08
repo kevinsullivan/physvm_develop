@@ -86,6 +86,10 @@ void CoordsToInterp::putVecVarExpr(coords::VecVarExpr *c, interp::VecVarExpr *d)
     LOG(DEBUG) << "CoordsToInterp::putVecVarExpr d " << dstr << "\n";
     coords2interp_VecExpr[c] = d;
     interp2coords_VecExpr[d] = c;
+
+    interp::VecVarExpr *foo = getVecVarExpr(c);
+    std::string s = foo->toString();
+    LOG(DEBUG) << "Debug " << s << "\n";
 }
 
 interp::VecVarExpr *CoordsToInterp::getVecVarExpr(coords::VecVarExpr *c) const

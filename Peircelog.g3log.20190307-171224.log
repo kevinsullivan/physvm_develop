@@ -1,0 +1,134 @@
+		g3log created log at: Thu Mar 07 17:12:24 2019
+		LOG format: [YYYY/MM/DD hh:mm:ss uuu* LEVEL FILE->FUNCTION:LINE] messagen
+		(uuu*: microseconds fractions of the seconds value)
+
+2019/03/07 17:12:24 419286	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/07 17:12:27 029064	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/07 17:12:27 429047	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/07 17:12:27 429125	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/07 17:12:27 429148	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/07 17:12:27 429179	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/07 17:12:27 861109	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/07 17:12:28 229208	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/07 17:12:28 229251	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/07 17:12:28 229286	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/07 17:12:28 229312	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/07 17:12:28 549301	DEBUG [main.cpp->run:160]	main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:
+
+2019/03/07 17:12:28 549312	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/07 17:12:28 549318	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x5555579c83b8
+
+2019/03/07 17:12:28 549320	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/07 17:12:28 549328	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/07 17:12:28 549331	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/07 17:12:28 549334	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x5555579c8348
+
+2019/03/07 17:12:28 549337	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/07 17:12:28 549345	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/07 17:12:28 549349	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x5555579c8348
+
+2019/03/07 17:12:42 040643	DEBUG [CoordsToInterp.cpp->putVecVarExpr:85]	CoordsToInterp::putVecVarExpr c v2
+
+2019/03/07 17:12:45 256588	DEBUG [CoordsToInterp.cpp->putVecVarExpr:86]	CoordsToInterp::putVecVarExpr d ( v2 : time )
+
+2019/03/07 17:13:07 408737	DEBUG [CoordsToInterp.cpp->putVecVarExpr:92]	Debug ( v2 : time )
+
+2019/03/07 17:13:22 271889	DEBUG [Interpretation.cpp->mkVecVarExpr:63]	( v2 : time )
+2019/03/07 17:13:22 271894	DEBUG [main.cpp->run:114]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019/03/07 17:13:22 271899	DEBUG [main.cpp->match:248]	main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019/03/07 17:13:22 271901	DEBUG [main.cpp->handle_member_expr_of_add_call:277]	main::handle_member_expr_of_add_call. Done. 
+
+2019/03/07 17:13:22 271905	DEBUG [main.cpp->handle_arg0_of_add_call:215]	domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019/03/07 17:13:22 271911	DEBUG [main.cpp->match:199]	CXXMemberCallExprArg0Matcher::match start
+
+2019/03/07 17:13:22 271918	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x5555579c8398
+
+2019/03/07 17:13:36 654798	DEBUG [CoordsToInterp.cpp->putVecVarExpr:85]	CoordsToInterp::putVecVarExpr c v1
+
+2019/03/07 17:13:37 733207	DEBUG [CoordsToInterp.cpp->putVecVarExpr:86]	CoordsToInterp::putVecVarExpr d ( v1 : time )
+
+2019/03/07 17:13:49 026656	DEBUG [CoordsToInterp.cpp->putVecVarExpr:92]	Debug ( v1 : time )
+
+2019/03/07 17:14:15 721202	DEBUG [Interpretation.cpp->mkVecVarExpr:63]	( v1 : time )
+2019/03/07 17:14:24 174268	DEBUG [main.cpp->run:114]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019/03/07 17:14:28 519028	DEBUG [main.cpp->match:201]	CXXMemberCallExprArg0Matcher::match finish
+
+2019/03/07 17:14:28 519034	DEBUG [main.cpp->handle_arg0_of_add_call:218]	domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019/03/07 17:14:48 693984	DEBUG [Interpretation.cpp->mkVecVecAddExpr:87]	Interpretation::mkVecVecAddExpr: Mem_Coords: v2
+
+2019/03/07 17:14:50 029760	DEBUG [Interpretation.cpp->mkVecVecAddExpr:88]	Interpretation::mkVecVecAddExpr: Arg_Coords: v1
+
+2019/03/07 17:15:54 499350	FATAL [Interp.cpp->toString:31]	
+	*******	 EXIT trigger caused by LOG(FATAL) entry: 
+	"Interp::toString: Error. Should not be called. Abstract.
+
+*******	STACKDUMP *******
+
+	stack dump [1]  /usr/local/lib/libg3logger.so.1.3.2-74 : LogCapture::LogCapture(char const*, int, char const*, LEVELS const&, char const*, int, char const*)+0x31f [0x7ffff75534df]
+	stack dump [2]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x43a824 [0x55555598e824]
+	stack dump [3]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x4037fe [0x5555559577fe]
+	stack dump [4]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x428992 [0x55555597c992]
+	stack dump [5]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42baf5 [0x55555597faf5]
+	stack dump [6]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x692f10 [0x555555be6f10]
+	stack dump [7]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6b4918 [0x555555c08918]
+	stack dump [8]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x694a79 [0x555555be8a79]
+	stack dump [9]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x694ed2 [0x555555be8ed2]
+	stack dump [10]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42ea13 [0x555555982a13]
+	stack dump [11]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42ca14 [0x555555980a14]
+	stack dump [12]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x428fe2 [0x55555597cfe2]
+	stack dump [13]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42894e [0x55555597c94e]
+	stack dump [14]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42be51 [0x55555597fe51]
+	stack dump [15]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x692f10 [0x555555be6f10]
+	stack dump [16]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6b4918 [0x555555c08918]
+	stack dump [17]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x694a79 [0x555555be8a79]
+	stack dump [18]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x694ed2 [0x555555be8ed2]
+	stack dump [19]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42f11d [0x55555598311d]
+	stack dump [20]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42d1f7 [0x5555559811f7]
+	stack dump [21]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42d41c [0x55555598141c]
+	stack dump [22]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x692f10 [0x555555be6f10]
+	stack dump [23]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6b4918 [0x555555c08918]
+	stack dump [24]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x694a79 [0x555555be8a79]
+	stack dump [25]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6a7377 [0x555555bfb377]
+	stack dump [26]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x31d665 [0x555555871665]
+	stack dump [27]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6a8de9 [0x555555bfcde9]
+	stack dump [28]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6b0af4 [0x555555c04af4]
+	stack dump [29]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6a4bab [0x555555bf8bab]
+	stack dump [30]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6a6d61 [0x555555bfad61]
+	stack dump [31]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6a4b24 [0x555555bf8b24]
+	stack dump [32]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6a69b0 [0x555555bfa9b0]
+	stack dump [33]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42db0b [0x555555981b0b]
+	stack dump [34]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x8631b1 [0x555555db71b1]
+	stack dump [35]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x6fa12e [0x555555c4e12e]
+	stack dump [36]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x729d26 [0x555555c7dd26]
+	stack dump [37]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x105bcaf [0x5555565afcaf]
+	stack dump [38]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x1053849 [0x5555565a7849]
+	stack dump [39]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x1056e9d [0x5555565aae9d]
+	stack dump [40]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x1059f37 [0x5555565adf37]
+	stack dump [41]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x42951a [0x55555597d51a]
+	stack dump [42]  /lib/x86_64-linux-gnu/libc.so.6__libc_start_main+0xe7 [0x7ffff682ab97]
+	stack dump [43]  /home/sullivan/Projects/Peirce/build/ASTMatcher+0x3ce25a [0x55555592225a]
+
+Exiting after fatal event  (FATAL). Fatal type:  SIGABRT
+Log content flushed sucessfully to sink
+
+"g3log g3FileSink shutdown at: 17:15:54 499560
