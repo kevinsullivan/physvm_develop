@@ -65,9 +65,9 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
 }*/
 
 // Assume 1-d space
-coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast, ast::Scalar scalar) {
-    // TODO: Abstracted coords from actual code
-    coords::Vector_Lit *coord = new coords::Vector_Lit(ast, scalar);
+coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast, ast::Scalar x, ast::Scalar y, ast::Scalar z) {
+    // TODO: Abstracted coords from actual code 
+    coords::Vector_Lit *coord = new coords::Vector_Lit(ast, x, y, z); 
     overrideStmt2Coords(ast,coord); 
     overrideCoords2Stmt(coord,ast); 
     return coord;

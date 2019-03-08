@@ -70,7 +70,13 @@ public:
     //ASTContext *context = Result.Context;
     const clang::CXXConstructExpr *lit_ast = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
-    interp_.mkVector_Lit(lit_ast/*, context*/);
+
+    // TODO: Get actual coordinates from AST
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    
+    interp_.mkVector_Lit(lit_ast, x, y, z);
     LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Done.\n";
   }
 };
@@ -330,14 +336,14 @@ public:
     const clang::DeclStmt *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
     const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
     const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
-    LOG(DEBUG) <<"VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
+    LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
     ASTContext *context = Result.Context;
     //SourceManager &sm = context->getSourceManager();
     interp_.mkVecIdent(vardecl);
     CXXConstructExprMatcher matcher;
     matcher.match(consdecl, context);
     interp_.mkVector_Def(declstmt, vardecl, consdecl);
-    LOG(DEBUG) <<"VectorDeclStmtHandler::run: Done.\n"; 
+    LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: Done.\n"; 
     }
 };
 
