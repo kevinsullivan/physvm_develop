@@ -1,0 +1,142 @@
+		g3log created log at: Fri Mar 08 11:18:41 2019
+		LOG format: [YYYY/MM/DD hh:mm:ss uuu* LEVEL FILE->FUNCTION:LINE] messagen
+		(uuu*: microseconds fractions of the seconds value)
+
+2019/03/08 11:18:41 603130	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/08 11:18:42 306735	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/08 11:18:42 666760	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/08 11:18:42 666861	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/08 11:18:42 666888	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/08 11:18:42 666915	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/08 11:18:43 050847	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/08 11:18:43 426715	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/08 11:18:43 426754	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/08 11:18:43 426776	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/08 11:18:43 426803	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/08 11:18:43 794616	DEBUG [main.cpp->run:160]	main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:
+
+2019/03/08 11:18:43 794627	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/08 11:18:43 794633	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x55b3391633b8
+
+2019/03/08 11:18:43 794635	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/08 11:18:43 794658	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/08 11:18:43 794663	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/08 11:18:43 794667	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x55b339163348
+
+2019/03/08 11:18:43 794668	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/08 11:18:43 794676	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/08 11:18:43 794680	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55b339163348
+
+2019/03/08 11:18:44 202755	DEBUG [CoordsToInterp.cpp->putVecVarExpr:85]	CoordsToInterp::putVecVarExpr c v2
+
+2019/03/08 11:18:44 202765	DEBUG [CoordsToInterp.cpp->putVecVarExpr:86]	CoordsToInterp::putVecVarExpr d ( v2 : time )
+
+2019/03/08 11:18:44 202771	DEBUG [CoordsToInterp.cpp->putVecVarExpr:92]	Debug ( v2 : time )
+
+2019/03/08 11:18:44 202776	DEBUG [main.cpp->run:114]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019/03/08 11:18:44 202780	DEBUG [main.cpp->match:248]	main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019/03/08 11:18:44 202783	DEBUG [main.cpp->handle_member_expr_of_add_call:277]	main::handle_member_expr_of_add_call. Done. 
+
+2019/03/08 11:18:44 202786	DEBUG [main.cpp->handle_arg0_of_add_call:215]	domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019/03/08 11:18:44 202791	DEBUG [main.cpp->match:199]	CXXMemberCallExprArg0Matcher::match start
+
+2019/03/08 11:18:44 202806	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x55b339163398
+
+2019/03/08 11:18:44 594685	DEBUG [CoordsToInterp.cpp->putVecVarExpr:85]	CoordsToInterp::putVecVarExpr c v1
+
+2019/03/08 11:18:44 594695	DEBUG [CoordsToInterp.cpp->putVecVarExpr:86]	CoordsToInterp::putVecVarExpr d ( v1 : time )
+
+2019/03/08 11:18:44 594701	DEBUG [CoordsToInterp.cpp->putVecVarExpr:92]	Debug ( v1 : time )
+
+2019/03/08 11:18:44 594706	DEBUG [main.cpp->run:114]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019/03/08 11:18:44 594710	DEBUG [main.cpp->match:201]	CXXMemberCallExprArg0Matcher::match finish
+
+2019/03/08 11:18:44 594712	DEBUG [main.cpp->handle_arg0_of_add_call:218]	domain::VecExpr *handle_arg0_of_add_call. Done.
+
+2019/03/08 11:18:44 994729	DEBUG [Interpretation.cpp->mkVecVecAddExpr:90]	Interpretation::mkVecVecAddExpr: Mem_Coords: v2
+
+2019/03/08 11:18:44 994740	DEBUG [Interpretation.cpp->mkVecVecAddExpr:91]	Interpretation::mkVecVecAddExpr: Arg_Coords: v1
+
+2019/03/08 11:18:44 994745	DEBUG [Interpretation.cpp->mkVecVecAddExpr:95]	Interpretation::mkVecVecAddExpr: Mem_Interp: ( v2 : time )
+
+2019/03/08 11:18:44 994748	DEBUG [Interpretation.cpp->mkVecVecAddExpr:97]	Interpretation::mkVecVecAddExpr: Arg_Interp: ( v1 : time )
+
+2019/03/08 11:18:44 994910
+
+***** FATAL SIGNAL RECEIVED ******* 
+Received fatal signal: SIGSEGV(11)	PID: 27830
+
+***** SIGNAL SIGSEGV(11)
+
+*******	STACKDUMP *******
+	stack dump [1]  /usr/local/lib/libg3logger.so.1.3.2-74+0x1147e [0x7fcfa796247e]
+	stack dump [2]  /lib/x86_64-linux-gnu/libpthread.so.0+0x12890 [0x7fcfa7b99890]
+	stack dump [3]  build/ASTMatcher+0x43baba [0x55b335188aba]
+	stack dump [4]  build/ASTMatcher+0x43acf8 [0x55b335187cf8]
+	stack dump [5]  build/ASTMatcher+0x40ac60 [0x55b335157c60]
+	stack dump [6]  build/ASTMatcher+0x4037ec [0x55b3351507ec]
+	stack dump [7]  build/ASTMatcher+0x428728 [0x55b335175728]
+	stack dump [8]  build/ASTMatcher+0x42b883 [0x55b335178883]
+	stack dump [9]  build/ASTMatcher+0x692c90 [0x55b3353dfc90]
+	stack dump [10]  build/ASTMatcher+0x6b4698 [0x55b335401698]
+	stack dump [11]  build/ASTMatcher+0x6947f9 [0x55b3353e17f9]
+	stack dump [12]  build/ASTMatcher+0x694c52 [0x55b3353e1c52]
+	stack dump [13]  build/ASTMatcher+0x42e7a1 [0x55b33517b7a1]
+	stack dump [14]  build/ASTMatcher+0x42c7a2 [0x55b3351797a2]
+	stack dump [15]  build/ASTMatcher+0x428d78 [0x55b335175d78]
+	stack dump [16]  build/ASTMatcher+0x4286e4 [0x55b3351756e4]
+	stack dump [17]  build/ASTMatcher+0x42bbdf [0x55b335178bdf]
+	stack dump [18]  build/ASTMatcher+0x692c90 [0x55b3353dfc90]
+	stack dump [19]  build/ASTMatcher+0x6b4698 [0x55b335401698]
+	stack dump [20]  build/ASTMatcher+0x6947f9 [0x55b3353e17f9]
+	stack dump [21]  build/ASTMatcher+0x694c52 [0x55b3353e1c52]
+	stack dump [22]  build/ASTMatcher+0x42eeab [0x55b33517beab]
+	stack dump [23]  build/ASTMatcher+0x42cf85 [0x55b335179f85]
+	stack dump [24]  build/ASTMatcher+0x42d1aa [0x55b33517a1aa]
+	stack dump [25]  build/ASTMatcher+0x692c90 [0x55b3353dfc90]
+	stack dump [26]  build/ASTMatcher+0x6b4698 [0x55b335401698]
+	stack dump [27]  build/ASTMatcher+0x6947f9 [0x55b3353e17f9]
+	stack dump [28]  build/ASTMatcher+0x6a70f7 [0x55b3353f40f7]
+	stack dump [29]  build/ASTMatcher+0x31d595 [0x55b33506a595]
+	stack dump [30]  build/ASTMatcher+0x6a8b69 [0x55b3353f5b69]
+	stack dump [31]  build/ASTMatcher+0x6b0874 [0x55b3353fd874]
+	stack dump [32]  build/ASTMatcher+0x6a492b [0x55b3353f192b]
+	stack dump [33]  build/ASTMatcher+0x6a6ae1 [0x55b3353f3ae1]
+	stack dump [34]  build/ASTMatcher+0x6a48a4 [0x55b3353f18a4]
+	stack dump [35]  build/ASTMatcher+0x6a6730 [0x55b3353f3730]
+	stack dump [36]  build/ASTMatcher+0x42d899 [0x55b33517a899]
+	stack dump [37]  build/ASTMatcher+0x862f31 [0x55b3355aff31]
+	stack dump [38]  build/ASTMatcher+0x6f9eae [0x55b335446eae]
+	stack dump [39]  build/ASTMatcher+0x729aa6 [0x55b335476aa6]
+	stack dump [40]  build/ASTMatcher+0x105ba2f [0x55b335da8a2f]
+	stack dump [41]  build/ASTMatcher+0x10535c9 [0x55b335da05c9]
+	stack dump [42]  build/ASTMatcher+0x1056c1d [0x55b335da3c1d]
+	stack dump [43]  build/ASTMatcher+0x1059cb7 [0x55b335da6cb7]
+	stack dump [44]  build/ASTMatcher+0x4292b0 [0x55b3351762b0]
+	stack dump [45]  /lib/x86_64-linux-gnu/libc.so.6__libc_start_main+0xe7 [0x7fcfa6c42b97]
+	stack dump [46]  build/ASTMatcher+0x3ce18a [0x55b33511b18a]
+
+Exiting after fatal event  (FATAL_SIGNAL). Fatal type:  SIGSEGV
+Log content flushed sucessfully to sink
+
+
+g3log g3FileSink shutdown at: 11:18:44 995062

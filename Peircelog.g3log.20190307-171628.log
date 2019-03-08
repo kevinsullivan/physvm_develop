@@ -1,0 +1,63 @@
+		g3log created log at: Thu Mar 07 17:16:28 2019
+		LOG format: [YYYY/MM/DD hh:mm:ss uuu* LEVEL FILE->FUNCTION:LINE] messagen
+		(uuu*: microseconds fractions of the seconds value)
+
+2019/03/07 17:16:28 469476	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/07 17:16:31 069231	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/07 17:16:31 517308	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/07 17:16:31 517391	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/07 17:16:31 517413	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/07 17:16:31 517442	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/07 17:16:31 893046	DEBUG [main.cpp->run:69]	main::HandlerForCXXConstructLitExpr::run. Start.
+
+2019/03/07 17:16:32 221380	DEBUG [main.cpp->run:74]	main::HandlerForCXXConstructLitExpr::run. Done.
+
+2019/03/07 17:16:32 221422	DEBUG [Domain.cpp->mkVector_Def:159]	Domain::mkVector_Def 
+2019/03/07 17:16:32 221442	DEBUG [main.cpp->run:340]	VectorDeclStmtHandler::run: Done.
+
+2019/03/07 17:16:32 221471	DEBUG [main.cpp->run:333]	VectorDeclStmtHandler::run: START. AST (dump) is 
+
+2019/03/07 17:16:32 557196	DEBUG [main.cpp->run:160]	main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:
+
+2019/03/07 17:16:32 557206	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/07 17:16:32 557212	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x5555579c83b8
+
+2019/03/07 17:16:32 557214	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/07 17:16:32 557222	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/07 17:16:32 557226	DEBUG [main.cpp->handleMemberCallExpr:90]	main::handleMemberCallExpr: Start, recurse on mem and arg
+
+2019/03/07 17:16:32 557229	DEBUG [main.cpp->handle_member_expr_of_add_call:264]	main::handle_member_expr_of_add_call at 0x5555579c8348
+
+2019/03/07 17:16:32 557231	DEBUG [main.cpp->handle_member_expr_of_add_call:269]	main::handle_member_expr_of_add_call ast is (dump)
+
+2019/03/07 17:16:32 557235	DEBUG [main.cpp->match:246]	main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:
+
+2019/03/07 17:16:32 557240	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x5555579c8348
+
+2019/03/07 17:16:40 434384	DEBUG [CoordsToInterp.cpp->putVecVarExpr:85]	CoordsToInterp::putVecVarExpr c v2
+
+2019/03/07 17:16:40 434393	DEBUG [CoordsToInterp.cpp->putVecVarExpr:86]	CoordsToInterp::putVecVarExpr d ( v2 : time )
+
+2019/03/07 17:16:40 434404	DEBUG [CoordsToInterp.cpp->putVecVarExpr:92]	Debug ( v2 : time )
+
+2019/03/07 17:16:40 434410	DEBUG [Interpretation.cpp->mkVecVarExpr:63]	( v2 : time )
+2019/03/07 17:16:40 434415	DEBUG [main.cpp->run:114]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.
+
+2019/03/07 17:16:40 434419	DEBUG [main.cpp->match:248]	main::CXXMemberCallExprMemberExprMatcher. DONE matching.
+
+2019/03/07 17:16:40 434422	DEBUG [main.cpp->handle_member_expr_of_add_call:277]	main::handle_member_expr_of_add_call. Done. 
+
+2019/03/07 17:16:40 434425	DEBUG [main.cpp->handle_arg0_of_add_call:215]	domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:
+
+2019/03/07 17:16:40 434431	DEBUG [main.cpp->match:199]	CXXMemberCallExprArg0Matcher::match start
+
+2019/03/07 17:16:40 434445	DEBUG [main.cpp->run:112]	main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = 0x5555579c8398
+

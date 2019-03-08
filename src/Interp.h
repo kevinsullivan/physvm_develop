@@ -35,7 +35,7 @@ public:
   Interp(coords::VecExpr *c, domain::VecExpr *d);
   Interp(coords::Vector *c, domain::Vector *d);
   Interp(coords::Vector_Def *c, domain::Vector_Def *d);
-  virtual std::string toString();
+  virtual std::string toString() const;
 protected:
   coords::Coords *coords_;
 
@@ -81,10 +81,10 @@ class VecExpr : public Interp {
 public:
   VecExpr(coords::VecExpr*, domain::VecExpr*);
   const ast::VecExpr *getExpr();
-  virtual std::string toString() const;
   bool operator==(const VecExpr &other) const {
     return (expr_ == other.expr_);
   }
+  virtual std::string toString() const;
 };
 
 class VecVarExpr : public VecExpr {

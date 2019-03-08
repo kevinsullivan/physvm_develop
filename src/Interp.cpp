@@ -27,7 +27,7 @@ Interp::Interp(coords::Vector_Def *c, domain::Vector_Def *d)
  **********/
 
 
-std::string Interp::toString() {
+std::string Interp::toString() const {
   LOG(FATAL) << "Interp::toString: Error. Should not be called. Abstract.\n";
 }
 
@@ -60,7 +60,6 @@ std::string VecExpr::toString() const {
   return "Should not call abstract interp::VecIdent::toString().";
 }
 
-
 VecVarExpr::VecVarExpr(coords::VecVarExpr* c, domain::VecVarExpr* d) : VecExpr(c, d) {
 }
 
@@ -77,7 +76,10 @@ std::string VecVarExpr::toString() const {
 
 VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d, 
                              interp::Interp *mem, interp::Interp *arg)  
-  : VecExpr(c, d), mem_(mem), arg_(arg) {}
+  : VecExpr(c, d), mem_(mem), arg_(arg) {
+
+  }
+
  
 std::string VecVecAddExpr::toString() const {
   std::string ret = "";
@@ -86,7 +88,7 @@ std::string VecVecAddExpr::toString() const {
   ret += " ";
   ret += arg_->toString();
   ret += " : ";
-  ret += ident_->getSpace()->toString();
+  ret += expr_->getSpace().toString(); 
   ret += " )";
   return ret;  
 } 
@@ -98,7 +100,6 @@ std::string Vector::toString() const {
   LOG(FATAL) << "Error. Call to abstract interp::Vector::toString().\n";
   return "Should not call abstract interp::Vector::toString().";
 }
-
 
 
 Vector_Lit::Vector_Lit(coords::Vector_Lit* c, domain::Vector_Lit* d) : Vector(c,d) {
