@@ -111,21 +111,14 @@ design showing through here, as clang separated things like function appl
 expressions and objects constructed from them.
 */
 
-void Interpretation::mkVector_Lit(ast::Vector_Lit *ast/*, clang::ASTContext *c*/) {
-  //  LOG(DEBUG) <<"Interpretation::mkVector_Lit. START";
-  //  LOG(DEBUG) <<"Interpretation::mkVector_Lit. WARN: Scalar stubbed.\n";
-  
-    coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, 0.0);
+void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float z) {
+    coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, x, y, z);  
     domain::Space& s = oracle_->getSpaceForVector_Lit(ast);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
-    domain::Vector_Lit *dom = domain_->mkVector_Lit(s);
+    domain::Vector_Lit *dom = domain_->mkVector_Lit(s, x, y, z);
     coords2dom_->putVector_Lit(coords, dom); 
-
     interp::Vector_Lit *interp = new interp::Vector_Lit(coords, dom);
     coords2interp_->putVector_Lit(coords, interp);
     interp2domain_->putVector_Lit(interp,dom);
-
-
-  //  LOG(DEBUG) <<"Interpretation::mkVector_Lit. DONE\n";
 }
 
 void Interpretation::mkVector_Expr(
@@ -160,25 +153,31 @@ void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,
                                   ast::VecIdent *id_ast, 
                                   ast::VecExpr *expr_ast)
 {
-    //LOG(DEBUG) <<"START: Interpretation::mkVector_Def.\n.";
-
-    // TODO: Move into ast2coords_->makeCoordsForVector_Def
     coords::VecIdent *id_coords = static_cast<coords::VecIdent *>
       (ast2coords_->getDeclCoords(id_ast));
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>
+
+    coords::Vector *vec_coords = static_cast<coords::Vector *>
       (ast2coords_->getStmtCoords(expr_ast));
-    coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(def_ast, id_coords, expr_coords);
+
+    coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(def_ast, id_coords, vec_coords);
 
     domain::VecIdent *vec_ident = coords2dom_->getVecIdent(id_coords);
-    domain::VecExpr *vec_expr = coords2dom_->getVecExpr(expr_coords);
+
+    /*
+    Here there is some subtlety. We don't know if what was left in our
+    interpretation by previous work was a Vector_Lit or a Vector_Expr.
+    So we check first for a Vector_Expr
+    */
+    domain::Vector *vec = coords2dom_->getVector(vec_coords);
 
     domain::Vector_Def* dom_vec_def = 
-      domain_->mkVector_Def(vec_ident, vec_expr);
+      domain_->mkVector_Def(vec_ident, vec); 
+
     coords2dom_->putVector_Def(def_coords, dom_vec_def);
 
     interp::VecIdent *id_interp = coords2interp_->getVecIdent(id_coords);
-    interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
-    interp::Vector_Def *interp = new interp::Vector_Def(def_coords, dom_vec_def, id_interp, expr_interp);
+    interp::Vector *vec_interp = coords2interp_->getVector(vec_coords);
+    interp::Vector_Def *interp = new interp::Vector_Def(def_coords, dom_vec_def, id_interp, vec_interp);
     coords2interp_->putVector_Def(def_coords, interp);
     interp2domain_->putVector_Def(interp, dom_vec_def);
 

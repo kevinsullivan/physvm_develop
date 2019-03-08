@@ -40,11 +40,11 @@ VecIdent::VecIdent(coords::VecIdent* c, domain::VecIdent* d) : Interp(c,d) {
 
 std::string VecIdent::toString() const {
   std::string ret = "";
-  ret += "( ";
+//  ret += "( ";
   ret += coords_->toString();
-  ret += " : ";
+  ret += " : vector ";
   ret += ident_->getSpace()->toString();
-  ret += " )";
+//  ret += " )";
   return ret;
 }
 
@@ -67,7 +67,7 @@ std::string VecVarExpr::toString() const {
   std::string ret = "";
   ret += "( ";
   ret += coords_->toString();
-  ret += " : ";
+  ret += " : vector ";
   ret += expr_->getSpace().toString(); 
   ret += " )";
   return ret;
@@ -97,8 +97,8 @@ std::string VecVecAddExpr::toString() const {
 Vector::Vector(coords::Vector* c, domain::Vector* d) : Interp(c, d) {}
 
 std::string Vector::toString() const {
-  LOG(FATAL) << "Error. Call to abstract interp::Vector::toString().\n";
-  return "Should not call abstract interp::Vector::toString().";
+  LOG(INFO) << "Interp::Vector::toString().\n";
+  return "A_Vector";
 }
 
 
@@ -107,9 +107,11 @@ Vector_Lit::Vector_Lit(coords::Vector_Lit* c, domain::Vector_Lit* d) : Vector(c,
 
 std::string Vector_Lit::toString() const {
   std::string ret = "";
-  ret += "mkVector ";
+  ret += "( mkVector ";
   ret += vector_->getSpace()->getName();
-  ret += " 0";
+  ret += " ";
+  ret += static_cast<coords::Vector_Lit *>(coords_)->toString();
+  ret += " )";
   return ret;
 }
 
@@ -137,16 +139,15 @@ std::string Vector_Expr::toString() const {
  * Def
  ****/
 
-Vector_Def::Vector_Def(coords::Vector_Def* c, domain::Vector_Def* d, interp::VecIdent *id, interp::VecExpr *expr) 
-  : Interp(c,d), id_(id), expr_(expr) {
-
+Vector_Def::Vector_Def(coords::Vector_Def* c, domain::Vector_Def* d, interp::VecIdent *id, interp::Vector *vec) 
+  : Interp(c,d), id_(id), vec_(vec) { 
 }
 std::string Vector_Def::toString() const {
-  std::string ret = "";
+  std::string ret = "def ";
   ret += id_->toString();
   ret += " := ";
-  ret += expr_->toString();
-  return ret;  
+  ret += vec_->toString(); 
+  return ret;
 }
 
 } // namespace coords

@@ -67,7 +67,7 @@ public:
 
 	// Constructed literal vector value
 	//
-	Vector_Lit* mkVector_Lit(Space& space);
+	Vector_Lit* mkVector_Lit(Space& space, float x, float y, float z); 
 
 	// Constructed vector from variable expression
 	//
@@ -81,7 +81,7 @@ public:
 
 	// Binding of identifier to contsructed vector
 	//
-	Vector_Def* mkVector_Def(/*ast::Vector_Def* vardecl,*/ domain::VecIdent* identifier, domain::VecExpr* expression);
+	Vector_Def* mkVector_Def(/*ast::Vector_Def* vardecl,*/ domain::VecIdent* identifier, domain::Vector* vec);
 	std::vector<Vector_Def*> &getVectorDefs() { return defs; }
 
 // Client
@@ -222,7 +222,8 @@ private:
 This is a sum type capable of representing different kinds of fully constructed vectors.
 */
 
-enum VecCtorType {VEC_EXPR, VEC_LIT, VEC_VAR, VEC_NONE } ; 
+enum VecCtorType {VEC_EXPR, VEC_LIT, /*VEC_VAR,*/ VEC_NONE } ; 
+// var is a kind of expression, so not needed separately
 
 // Superclass for construced vector values
 //
@@ -233,7 +234,7 @@ public:
 	}
 	bool isLit() { return (tag_ == VEC_LIT); } 
 	bool isExpr() { return (tag_ == VEC_EXPR); } 
-	bool isVar() { return (tag_ == VEC_VAR); } 
+//	bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
 	const Space* getSpace() {return space_; }
 
 /*
@@ -256,21 +257,14 @@ private:
 //
 class Vector_Lit : public Vector {
 public:
-	Vector_Lit(const Space& s) :
-		Vector(s, VEC_LIT) { 
+	Vector_Lit(const Space& s, float x, float y, float z) :
+		Vector(s, VEC_LIT), x_(x), y_(y), z_(z) {
 	}
-/*
-	coords::Vector* getCoords() const {
-		return static_cast<coords::Vector_Lit*>(getBaseCoords()); 
-	} 
-
-	std::string toString() const {
-		return "domain::Vector_Lit::toString: STUB.\n";
-	}
-*/
+private:
+  float x_;
+  float y_;
+  float z_;
 };
-
-
 
 /*
 Todo: Domain vector constructed from domain vector expression 
@@ -282,6 +276,7 @@ public:
 	Vector_Expr(const Space& s, domain::VecExpr* e) :
 		Vector(s, VEC_EXPR), expr_(e) { 
 	}
+
 	const domain::VecExpr* getVecExpr() const { return expr_; }
 /*
 	coords::Vector* getCoords() const {
@@ -296,9 +291,13 @@ private:
 };
 
 // Constructed vector from vector-valued variable expression
+// TODO: This is unnecessary, as variable expressions are just expressions
+// and expressions are already taken care of.
+//
+// DELETE THIS
 //
 class Vector_Var : public Vector {
-	Vector_Var() : Vector(*new Space(""), VEC_NONE ) { 
+	Vector_Var() : Vector(*new Space(""), VEC_EXPR ) { 
 		LOG(DEBUG) <<"Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
 	}
 };
@@ -310,11 +309,11 @@ the *domain* VecIdent and Expression objects being bound.
 */
 class Vector_Def  {
 public:
-	Vector_Def(domain::VecIdent* identifier, domain::VecExpr* expr): 
-			identifier_(identifier), expr_(expr) {}
+	Vector_Def(domain::VecIdent* id, domain::Vector* vec): 
+			id_(id), vec_(vec) {}
 	//const coords::Vector_Def* getVarDecl() const {return ast_wrapper_; } 
-	const domain::VecExpr* getVecExpr() const { return expr_; }
-	const domain::VecIdent* getVecIdent() { return identifier_; }
+	const domain::Vector* getVector() const { return vec_; }
+	const domain::VecIdent* getIdent() { return id_; }
 /*
 	coords::Vector_Def* getCoords() const {
 		return static_cast<coords::Vector_Def*>(getBaseCoords()); 
@@ -326,8 +325,8 @@ public:
 private:
 	// TODO: Inconsistency: Ref by coords here, to domain objs above
 	//const coords::Vector_Def* ast_wrapper_;
-	const VecIdent* identifier_;
-	const VecExpr* expr_;
+	const VecIdent* id_;
+	const Vector* vec_;
 };
 
 

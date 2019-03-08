@@ -52,7 +52,7 @@ public:
                                              coords::VecExpr *mem, 
                                              coords::VecExpr *arg);
     coords::Vector_Lit      *mkVector_Lit   (const ast::Vector_Lit *ast, 
-                                             ast::Scalar s);
+                                             ast::Scalar x, ast::Scalar y, ast::Scalar  z);
     coords::Vector_Var      *mkVector_Var   (const ast::Vector_Var *ast,
                                              coords::VecVarExpr *var);
     coords::Vector_Expr     *mkVector_Expr  (const ast::Vector_Expr *ctor_ast,
