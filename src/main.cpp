@@ -48,7 +48,7 @@ and call interpretation module to handle all other work.
 Fundamental data structure populated by this tool
 ***************************************************/
 
-interp::Interpretation interp_;
+interp::Interpretation* interp_;
 
 // TODO: Decide whether we should pass context to interpretation.
 // Answer is probably yes. Not currently being done.
@@ -76,7 +76,7 @@ public:
     float y = 0;
     float z = 0;
     
-    interp_.mkVector_Lit(lit_ast, x, y, z);
+    interp_->mkVector_Lit(lit_ast, x, y, z);
     LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Done.\n";
   }
 };
@@ -102,7 +102,7 @@ void /*const domain::VecExpr * */handleMemberCallExpr(const CXXMemberCallExpr *a
   }
   handle_member_expr_of_add_call(mem_ast, *context, sm);
   handle_arg0_of_add_call(arg_ast, *context, sm);
-  interp_.mkVecVecAddExpr(ast, mem_ast, arg_ast);
+  interp_->mkVecVecAddExpr(ast, mem_ast, arg_ast);
   LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
 }
 
@@ -116,7 +116,7 @@ public:
   {
     const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
     LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = " << std::hex << declRefExpr_ast << "\n";
-    interp_.mkVecVarExpr(declRefExpr_ast /*, context? */);
+    interp_->mkVecVarExpr(declRefExpr_ast /*, context? */);
     LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.\n";
   }
 };
@@ -174,7 +174,7 @@ public:
     }
     handleMemberCallExpr(vec_vec_add_member_call_ast, context, sm);
     LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: Done.\n";
-    interp_.mkVector_Expr(ctor_ast, vec_vec_add_member_call_ast /*, context*/);
+    interp_->mkVector_Expr(ctor_ast, vec_vec_add_member_call_ast /*, context*/);
   }
 };
 
@@ -339,10 +339,10 @@ public:
     LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
     ASTContext *context = Result.Context;
     //SourceManager &sm = context->getSourceManager();
-    interp_.mkVecIdent(vardecl);
+    interp_->mkVecIdent(vardecl);
     CXXConstructExprMatcher matcher;
     matcher.match(consdecl, context);
-    interp_.mkVector_Def(declstmt, vardecl, consdecl);
+    interp_->mkVector_Def(declstmt, vardecl, consdecl);
     LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: Done.\n"; 
     }
 };
@@ -416,20 +416,22 @@ int main(int argc, const char **argv)
   auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
   g3::initializeLogging(worker.get());
 
-  interp_.addSpace("_");
-  interp_.addSpace("time");
-  interp_.addSpace("geom");
+  interp_ = new interp::Interpretation();   // default oracle
+  
+  interp_->addSpace("_");
+  interp_->addSpace("time");
+  interp_->addSpace("geom");
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
 
   cout <<"Spaces\n";
-  cout <<interp_.toString_Spaces();
+  cout <<interp_->toString_Spaces();
   cout <<"\nIdentifiers\n";
-  cout <<interp_.toString_Idents(); 
+  cout <<interp_->toString_Idents(); 
   cout <<"\nExpressions\n";
-  cout <<interp_.toString_Exprs();
+  cout <<interp_->toString_Exprs();
   cout <<"\nVectors\n";
-  cout <<interp_.toString_Vectors();
+  cout <<interp_->toString_Vectors();
   cout <<"\nDefinitions\n"; 
-  cout <<interp_.toString_Defs();
+  cout <<interp_->toString_Defs();
 } 

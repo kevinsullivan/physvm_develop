@@ -1,9 +1,13 @@
 /*
-Establish interpretations for various AST nodes:
+Establish interpretations for AST nodes:
 
-- 1. get required information from oracle 
-- 2. create coordinates for object, updating ast-coord bijection
-- 3. add corresponding domain object, updating coord-domain bijection
+-  get any required information from oracle 
+-  create coordinates for object
+-  update ast-coord bijections
+-  create corresponding domain object
+-  update coord-domain bijection
+-  create element-wise inter object
+-  update maps: coords-interp, interp-domain
 */
 
 // TODO: These two can be integrated
@@ -11,16 +15,15 @@ Establish interpretations for various AST nodes:
 #include "Interp.h"
 #include "CoordsToInterp.h"
 #include "InterpToDomain.h"
+#include "Oracle_AskAll.h"    // default oracle
 
 #include <g3log/g3log.hpp>
 
-
-
 using namespace interp;
 
-Interpretation::Interpretation() {
+Interpretation::Interpretation() { 
     domain_ = new domain::Domain();
-    oracle_ = new oracle::Oracle(domain_);
+    oracle_ = new oracle::Oracle_AskAll(domain_); // default
     ast2coords_ = new ast2coords::ASTToCoords();
     coords2dom_ = new coords2domain::CoordsToDomain();
     coords2interp_ = new coords2interp::CoordsToInterp();
@@ -33,12 +36,10 @@ Interpretation::Interpretation() {
 
 void Interpretation::mkVecIdent(ast::VecIdent *ast)
 {
-    //LOG(DEBUG) <<"Interpretation::mkVecIdent. BEG\n";
-    domain::Space &space = oracle_->getSpaceForVecIdent(ast);
     coords::VecIdent *coords = ast2coords_->mkVecIdent(ast);
+    domain::Space &space = oracle_->getSpaceForVecIdent(coords);
     domain::VecIdent *dom = domain_->mkVecIdent(space); 
     coords2dom_->putVecIdent(coords, dom);
-
     interp::VecIdent *interp = new interp::VecIdent(coords,dom);
     coords2interp_->putVecIdent(coords, interp);
     interp2domain_->putVecIdent(interp,dom);
@@ -52,19 +53,14 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
 
 void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/) {
     coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast);
-    domain::Space& space = oracle_->getSpaceForVecVarExpr(ast);
+    domain::Space& space = oracle_->getSpaceForVecVarExpr(coords);
     domain::VecVarExpr *dom = domain_->mkVecVarExpr(space);
     coords2dom_->PutVecVarExpr(coords, dom);
     interp::VecVarExpr *interp = new interp::VecVarExpr(coords,dom);
     coords2interp_->putVecVarExpr(coords, interp);
     interp2domain_->putVecVarExpr(interp,dom);
-/*
-    interp::Interp *base_interp = coords2interp_->getVecExpr(coords);
-    std::string good = interp->toString(); 
-    std::string expect = base_interp->toString();
-    LOG(DEBUG) << expect << "\n";
-*/
 }
+
 
 void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::VecExpr *mem_expr, const ast::VecExpr *arg_expr) {
   coords::VecExpr *mem_coords = static_cast<coords::VecExpr*>
@@ -113,7 +109,7 @@ expressions and objects constructed from them.
 
 void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float z) {
     coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, x, y, z);  
-    domain::Space& s = oracle_->getSpaceForVector_Lit(ast);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
+    domain::Space& s = oracle_->getSpaceForVector_Lit(coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
     domain::Vector_Lit *dom = domain_->mkVector_Lit(s, x, y, z);
     coords2dom_->putVector_Lit(coords, dom); 
     interp::Vector_Lit *interp = new interp::Vector_Lit(coords, dom);
@@ -123,21 +119,16 @@ void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float 
 
 void Interpretation::mkVector_Expr(
       ast::Vector_Expr *ctor_ast, ast::VecExpr* expr_ast/*, clang::ASTContext *c*/) {
-
-  //  LOG(DEBUG) <<"Interpretation::mkVector_Expr. START. Warn: possibly wrong. Same ast for expr and ctor.";
     coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, expr_ast);
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr_ast));
-    domain::Space& s = oracle_->getSpaceForVector_Expr(ctor_ast);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
+    domain::Space& s = oracle_->getSpaceForVector_Expr(expr_coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
     domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
     domain::Vector_Expr *dom_vec = domain_->mkVector_Expr(s, expr_dom); 
     coords2dom_->putVector_Expr(ctor_coords, dom_vec);
-
     interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
     interp::Vector_Expr *interp = new interp::Vector_Expr(ctor_coords, dom_vec, expr_interp);
     coords2interp_->putVector_Expr(ctor_coords, interp);
     interp2domain_->putVector_Expr(interp, dom_vec);
-
-    LOG(DEBUG) <<"Interpretation::mkVector_Expr. DONE\n";
 }
 
 /****
@@ -146,7 +137,7 @@ void Interpretation::mkVector_Expr(
 
 /****
  * Note: Have made decision that main communicates with Interpretation in terms
- * of coords, not in terms of domain objects.
+ * of coords objects alone, not in terms of interp, oracle, or domain objects.
  * */
 
 void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,  
@@ -155,38 +146,109 @@ void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,
 {
     coords::VecIdent *id_coords = static_cast<coords::VecIdent *>
       (ast2coords_->getDeclCoords(id_ast));
-
     coords::Vector *vec_coords = static_cast<coords::Vector *>
       (ast2coords_->getStmtCoords(expr_ast));
-
     coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(def_ast, id_coords, vec_coords);
-
     domain::VecIdent *vec_ident = coords2dom_->getVecIdent(id_coords);
-
     /*
     Here there is some subtlety. We don't know if what was left in our
     interpretation by previous work was a Vector_Lit or a Vector_Expr.
     So we check first for a Vector_Expr
     */
     domain::Vector *vec = coords2dom_->getVector(vec_coords);
-
     domain::Vector_Def* dom_vec_def = 
       domain_->mkVector_Def(vec_ident, vec); 
-
     coords2dom_->putVector_Def(def_coords, dom_vec_def);
-
     interp::VecIdent *id_interp = coords2interp_->getVecIdent(id_coords);
     interp::Vector *vec_interp = coords2interp_->getVector(vec_coords);
     interp::Vector_Def *interp = new interp::Vector_Def(def_coords, dom_vec_def, id_interp, vec_interp);
     coords2interp_->putVector_Def(def_coords, interp);
     interp2domain_->putVector_Def(interp, dom_vec_def);
-
 }
 
-/*
-coords::VecExpr *Interpretation::getCoords(ast::VecExpr *expr)  // fix ret type name
-{
-    return ast2coords_->getCoords(expr);
+// private
+// Precondition: coords2domain_ is defined for exp
+//
+domain::VecExpr* Interpretation::getVecExpr(ast::VecExpr* ast) {
+    // we use these objects as key for query purposes
+    coords::VecExpr *coords = 
+        static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(ast));
+    domain::VecExpr* dom = coords2dom_->getVecExpr(coords);
+    if (!dom) {
+        LOG(DEBUG) <<"Interpretation::getVecExpr. Error. Undefined for key!\n";
+    }
+    return dom;
 }
-*/
+
+/******
+ * 
+ * TODO: Replace all this with direct calls to interp objects
+ * 
+ * ****/
+
+// private
+std::string Interpretation::toString_Spaces() {
+    std::string retval = "";
+    std::vector<domain::Space*> &s = domain_->getSpaces();
+    for (std::vector<domain::Space*>::iterator it = s.begin(); it != s.end(); ++it)
+        retval = retval .append("(")
+                        .append((*it)->toString())
+                        .append(" : space)\n");
+    return retval;
+}
+
+// TODO: Private
+//
+std::string Interpretation::toString_Idents() {
+    std::string retval = "";
+    std::vector<domain::VecIdent*> &id = domain_->getVecIdents();
+    for (std::vector<domain::VecIdent *>::iterator it = id.begin(); it != id.end(); ++it) {
+        coords::VecIdent* coords = coords2dom_->getVecIdent(*it);
+        interp::VecIdent *interp = coords2interp_->getVecIdent(coords);
+        retval = retval.append(interp->toString());
+        retval = retval.append("\n"); 
+    }
+    return retval;
+}
+
+// TODO: Factor toPrint (printing) out of coords, put here in, or in client of, interpretation
+//
+std::string Interpretation::toString_Exprs() {
+  std::string retval = "";
+  std::vector<domain::VecExpr*> &id = domain_->getVecExprs();
+  for (std::vector<domain::VecExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
+      coords::VecExpr* coords = coords2dom_->getVecExpr(*it);
+      interp::VecExpr *interp = coords2interp_->getVecExpr(coords);
+      retval = retval.append(interp->toString());
+      retval = retval.append("\n");
+  }
+  return retval;
+}
+
+std::string Interpretation::toString_Vectors() {
+  std::string retval = "";
+  std::vector<domain::Vector*> &id = domain_->getVectors();
+  for (std::vector<domain::Vector *>::iterator it = id.begin(); it != id.end(); ++it) {
+      coords::Vector* coords = coords2dom_->getVector(*it);
+      interp::Vector *interp = coords2interp_->getVector(coords);   
+      retval = retval
+      .append("(")
+      .append(interp->toString())
+      .append(" : vector ")
+      .append((*it)->getSpace()->toString())
+      .append(")\n");
+  }
+  return retval;
+}
+
+std::string Interpretation::toString_Defs() {
+  std::string retval = "";
+  std::vector<domain::Vector_Def*> &id = domain_->getVectorDefs();
+  for (std::vector<domain::Vector_Def *>::iterator it = id.begin(); it != id.end(); ++it) {
+      coords::Vector_Def* coords = coords2dom_->getVector_Def(*it);
+      interp::Vector_Def *interp = coords2interp_->getVector_Def(coords);
+      retval = retval.append(interp->toString()).append("\n");
+  }
+  return retval;
+}
 
