@@ -16,11 +16,13 @@ public:
 	domain::Space& getSpaceForAddExpression(coords::VecExpr *mem, coords::VecExpr *arg)
 	{
 		std::string query = "";
-		query += "Space for vector-vector add expression, ";
+		query += "Space for expression, add  ";
 		query += mem->toString();
-		query += " "; 
+		query += " ";
 		query += arg->toString();
-		query += "?";
+		query += ", at ";
+		query += mem->getSourceLoc();
+		query += "? ";
 		std::cout << query;
 		return getSpace();
 	}
@@ -28,30 +30,38 @@ public:
 	domain::Space& getSpaceForVecIdent(coords::VecIdent* v) {
 	std::string query = "Space for vector identifier, ";
 	query += v->toString();
+	query += " at ";
+	query += v->getSourceLoc();
 	query += "? ";
 	std::cout << query;
 	return getSpace();
 	}
 
-	domain::Space& getSpaceForVector_Expr(coords::VecExpr *expr_coords) {
+	domain::Space& getSpaceForVector_Expr(coords::VecExpr *expr) {
 		std::string query = "Space for vector constructed from expression, ?\n";
-		query += expr_coords->toString();  
+		query += expr->toString();  
+		query += " at ";
+		query += expr->getSourceLoc();
 		query += "? ";
 		std::cout << query;
 		return getSpace();
 	}
 
-	domain::Space& getSpaceForVector_Lit(coords::Vector_Lit *coords) {
+	domain::Space& getSpaceForVector_Lit(coords::Vector_Lit *lit) {
 		std::string query = "Space for vector constructed from literal, ";
-		query += coords->toString();
+		query += lit->toString();
+		query += " at ";
+		query += lit->getSourceLoc();
 		query += "? ";
 		std::cout << query;
 		return getSpace();
 	}
 
-	domain::Space& getSpaceForVecVarExpr(coords::VecVarExpr *coords)  {
+	domain::Space& getSpaceForVecVarExpr(coords::VecVarExpr *var)  {
 		std::string query = "Space for vector variable expression, ";
-		query += coords->toString();
+		query += var->toString();
+		query += " at ";
+		query += var->getSourceLoc();
 		query += "? ";
 		std::cout << query;
 		return getSpace();

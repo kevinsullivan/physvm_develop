@@ -347,7 +347,8 @@ public:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
-    context_ = &CI.getASTContext();   // grab context for future use
+    context_ = &CI.getASTContext();
+    interp_->setASTContext(context_);
     return llvm::make_unique<MyASTConsumer>(); 
   }
 };

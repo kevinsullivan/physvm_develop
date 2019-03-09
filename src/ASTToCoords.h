@@ -44,20 +44,20 @@ class ASTToCoords {
 public:
 
     ASTToCoords();
-    coords::VecIdent        *mkVecIdent     (const ast::VecIdent *ast);
+    coords::VecIdent* mkVecIdent(const ast::VecIdent *ast, clang::ASTContext *c);
     // no VecExpr because we always know exactly what subtype we're creating
-    coords::VecVarExpr      *mkVecVarExpr   (const ast::VecVarExpr *ast);
+    coords::VecVarExpr* mkVecVarExpr(const ast::VecVarExpr *ast, clang::ASTContext *c);
 
-    coords::VecVecAddExpr   *mkVecVecAddExpr(const ast::VecVecAddExpr *ast, 
+    coords::VecVecAddExpr* mkVecVecAddExpr(const ast::VecVecAddExpr *ast, clang::ASTContext *c, 
                                              coords::VecExpr *mem, 
                                              coords::VecExpr *arg);
-    coords::Vector_Lit      *mkVector_Lit   (const ast::Vector_Lit *ast, 
+    coords::Vector_Lit* mkVector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c, 
                                              ast::Scalar x, ast::Scalar y, ast::Scalar  z);
-    coords::Vector_Var      *mkVector_Var   (const ast::Vector_Var *ast,
+    coords::Vector_Var* mkVector_Var(const ast::Vector_Var *ast, clang::ASTContext *c,
                                              coords::VecVarExpr *var);
-    coords::Vector_Expr     *mkVector_Expr  (const ast::Vector_Expr *ctor_ast,
+    coords::Vector_Expr* mkVector_Expr(const ast::Vector_Expr *ctor_ast, clang::ASTContext *c,
                                              ast::VecExpr *expr_ast);
-    coords::Vector_Def      *mkVector_Def   (const ast::Vector_Def *ast,
+    coords::Vector_Def* mkVector_Def(const ast::Vector_Def *ast, clang::ASTContext *c,
                                              coords::VecIdent *id, 
                                              coords::VecExpr *vec);
 
