@@ -20,7 +20,7 @@ $(info Using LLVM_BUILD_PATH = $(LLVM_BUILD_PATH))
 $(info Using LLVM_BIN_PATH = $(LLVM_BIN_PATH))
 $(info -----------------------------------------------)
 
-CXX := clang++
+CXX := g++
 #CXXFLAGS := -fno-rtti -O0 -g -DBOOST_LOG_DYN_LINK
 CXXFLAGS := -O0 -g -Wall -Wextra -pedantic 
 #-Werror

@@ -145,11 +145,17 @@ std::string Vector::toString() const {
 }
 
 
-Vector_Lit::Vector_Lit(const clang::CXXConstructExpr* ast, ast::Scalar a) 
-    : Vector(ast, VEC_CTOR_LIT), a_(a) {}
+Vector_Lit::Vector_Lit(const clang::CXXConstructExpr* ast, ast::Scalar x, ast::Scalar y, ast::Scalar z ) 
+    : Vector(ast, VEC_CTOR_LIT), x_(x), y_(y), z_(z) {} 
   
-std::string Vector_Lit::toString() const  { 
-    return "0";  
+std::string Vector_Lit::toString() const  {
+    std::string retval = "";
+    retval += std::to_string(x_); 
+    retval.append(" ");
+    retval += std::to_string(y_); 
+    retval.append(" ");
+    retval += std::to_string(z_);
+    return retval;
 }
 
 Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, coords::VecVarExpr* expr) 

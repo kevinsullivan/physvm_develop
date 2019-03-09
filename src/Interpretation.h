@@ -33,7 +33,7 @@ public:
     void mkVecVarExpr(ast::VecVarExpr *ast);
     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, const ast::VecExpr *mem, 
                          const ast::VecExpr *arg);
-    void mkVector_Lit(ast::Vector_Lit *ast);
+    void mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float z);
     void mkVector_Expr(ast::Vector_Expr *ast, ast::VecExpr* expr);
     void mkVector_Var(ast::VecLitExpr *ast);
     void mkVector_Def(ast::Vector_Def *ast, ast::VecIdent *id, ast::VecExpr *exp);
@@ -97,7 +97,6 @@ public:
         std::vector<domain::VecExpr*> &id = domain_->getVecExprs();
         for (std::vector<domain::VecExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::VecExpr* coords = coords2dom_->getVecExpr(*it);
-            LOG(DEBUG) << coords->toString();  
             interp::VecExpr *interp = coords2interp_->getVecExpr(coords);
             retval = retval.append(interp->toString());
             retval = retval.append("\n");
@@ -110,9 +109,10 @@ public:
         std::vector<domain::Vector*> &id = domain_->getVectors();
         for (std::vector<domain::Vector *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::Vector* coords = coords2dom_->getVector(*it);
+            interp::Vector *interp = coords2interp_->getVector(coords);   
             retval = retval
             .append("(")
-            .append(coords->toString())
+            .append(interp->toString())
             .append(" : vector ")
             .append((*it)->getSpace()->toString())
             .append(")\n");
@@ -125,14 +125,15 @@ public:
         std::vector<domain::Vector_Def*> &id = domain_->getVectorDefs();
         for (std::vector<domain::Vector_Def *>::iterator it = id.begin(); it != id.end(); ++it) {
             coords::Vector_Def* coords = coords2dom_->getVector_Def(*it);
-            retval = retval.append(coords->toString()).append("\n");
+            interp::Vector_Def *interp = coords2interp_->getVector_Def(coords);
+            retval = retval.append(interp->toString()).append("\n");
         }
         return retval;
     }
 
     //private:
-    // TO DO: normalize domain, factor out need to know coords
-    //coords::Coords* coords_;
+    // TO DO: normalize 
+    //coords::Coords* coords
     domain::Domain *domain_;
     oracle::Oracle *oracle_;
 
