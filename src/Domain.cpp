@@ -125,8 +125,8 @@ domain::VecExpr *VecVecAddExpr::getArgVecExpr()
 * Value
 *******/
 
-Vector_Lit* Domain::mkVector_Lit(Space& space) {
-    Vector_Lit* vec = new domain::Vector_Lit(space);
+Vector_Lit* Domain::mkVector_Lit(Space& space, float x, float y, float z) {
+    Vector_Lit* vec = new domain::Vector_Lit(space, x, y, z); 
     vectors.push_back(vec); 
     return vec;
 }
@@ -154,13 +154,13 @@ Vector* Domain::mkVector_Var(Space& s, coords::Vector* coords, domain::Expr* exp
 
 // TODO: Should be binding to Vector, not Expr
 // 
-Vector_Def *Domain::mkVector_Def(domain::VecIdent* i,  domain::VecExpr* e)
+Vector_Def *Domain::mkVector_Def(domain::VecIdent* i, domain::Vector* v)
 {
     LOG(DEBUG) <<"Domain::mkVector_Def ";
 //    LOG(DEBUG) <<"identifier is " << i->toString();
 //    LOG(DEBUG) <<" expression is " << e->toString() << "\n";
-    Vector_Def *bd = new Vector_Def(i, e); 
-    defs.push_back(bd);
+    Vector_Def *bd = new Vector_Def(i, v);  
+    defs.push_back(bd); 
     return bd;
 }
 

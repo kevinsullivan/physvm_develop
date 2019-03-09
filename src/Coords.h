@@ -163,10 +163,12 @@ protected:
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
 public:
-  Vector_Lit(const ast::Vector_Lit *ast, ast::Scalar a);
+  Vector_Lit(const ast::Vector_Lit *ast, ast::Scalar x, ast::Scalar y, ast::Scalar z);
   virtual std::string toString() const;
 private:
-  float a_;
+  ast::Scalar x_;
+  ast::Scalar y_;
+  ast::Scalar z_;
 };
 
 class Vector_Var : public Vector {
