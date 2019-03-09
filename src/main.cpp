@@ -40,24 +40,22 @@ using namespace clang::tooling;
 
 
 /*
-Architectural decision: This component should deal in AST nodes only,
-and call interpretation module to handle all other work.
+Architectural decision: Main parser should deal in AST nodes only,
+and call interpretation module to handle all other work. Do not use
+coords, interp, domain objects.
 */
 
-/**************************************************
-Fundamental data structure populated by this tool
-***************************************************/
+/***************************************
+Data structure instantiated by this tool
+****************************************/
 
 interp::Interpretation* interp_;
+clang::ASTContext *context_;
 
 // TODO: Decide whether we should pass context to interpretation.
 // Answer is probably yes. Not currently being done.
 
-/*****************************
- * CXXConstructExpr (LITERALS) 
- *****************************/
-
-// In Clang, a vector literal is a ctor applied to numerical args.
+// A vector literal is a constructor node applied to scalar args.
 // There is no subordinate expression as there is when the value
 // is given by an expression.
 //
@@ -86,12 +84,12 @@ public:
  *******************************/
 
 //Forward-reference handlers for member (left) and argument (expressions) of add application
-void handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
-void handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm);
+void handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context);
+void handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context);
 
 /*
 */
-void /*const domain::VecExpr * */handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTContext *context, SourceManager &sm)
+void /*const domain::VecExpr * */handleMemberCallExpr(const CXXMemberCallExpr *ast, ASTContext *context)
 {
   LOG(DEBUG) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
   const clang::Expr *mem_ast = ast->getImplicitObjectArgument();
@@ -100,8 +98,8 @@ void /*const domain::VecExpr * */handleMemberCallExpr(const CXXMemberCallExpr *a
     LOG(FATAL) <<"main::handleMemberCallExpr. Null pointer error.\n";
     return;
   }
-  handle_member_expr_of_add_call(mem_ast, *context, sm);
-  handle_arg0_of_add_call(arg_ast, *context, sm);
+  handle_member_expr_of_add_call(mem_ast, *context);
+  handle_arg0_of_add_call(arg_ast, *context);
   interp_->mkVecVecAddExpr(ast, mem_ast, arg_ast);
   LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
 }
@@ -129,14 +127,13 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
     ASTContext *context = Result.Context;
-    SourceManager &sm = context->getSourceManager(); 
     const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (memcall == NULL)
     {
       LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
-    handleMemberCallExpr(memcall, context, sm);
+    handleMemberCallExpr(memcall, context);
   }
 };
 
@@ -155,7 +152,6 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
     ASTContext *context = Result.Context;
-    SourceManager &sm = context->getSourceManager();
     const CXXConstructExpr *ctor_ast = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorConstructAddExpr");
     if (ctor_ast == NULL)
@@ -172,7 +168,7 @@ public:
       LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
       return;
     }
-    handleMemberCallExpr(vec_vec_add_member_call_ast, context, sm);
+    handleMemberCallExpr(vec_vec_add_member_call_ast, context);
     LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: Done.\n";
     interp_->mkVector_Expr(ctor_ast, vec_vec_add_member_call_ast /*, context*/);
   }
@@ -216,10 +212,10 @@ private:
 
 // Handle the single argument to an add application 
 //
-void handle_arg0_of_add_call(const clang::Expr *arg, ASTContext &context, SourceManager &sm)
+void handle_arg0_of_add_call(const clang::Expr *arg, ASTContext &context)
 {
   LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:\n";
-  CXXMemberCallExprArg0Matcher call_right_arg0_matcher;
+  CXXMemberCallExprArg0Matcher call_right_arg0_matcher; 
   call_right_arg0_matcher.match(*arg, context);
   LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. Done.\n";
 }
@@ -265,7 +261,7 @@ Precondition:
 Postcondition: member call expression is "in the system".
 Strategy: Pattern matching on structure of member expressions
 */
-void handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context, SourceManager &sm)
+void handle_member_expr_of_add_call(const clang::Expr *memexpr, ASTContext &context)
 {
   LOG(DEBUG) <<"main::handle_member_expr_of_add_call at " << std::hex << memexpr << "\n";
   if (memexpr == NULL)
@@ -338,7 +334,6 @@ public:
     const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
     LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
     ASTContext *context = Result.Context;
-    //SourceManager &sm = context->getSourceManager();
     interp_->mkVecIdent(vardecl);
     CXXConstructExprMatcher matcher;
     matcher.match(consdecl, context);
@@ -386,15 +381,14 @@ public:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
-    return llvm::make_unique<MyASTConsumer>();
+    context_ = &CI.getASTContext();   // grab context for future use
+    return llvm::make_unique<MyASTConsumer>(); 
   }
 };
 
 /*****
 * Main
 ******/
-
-//INITIALIZE_EASYLOGGINGPP
 
 /****************************
 Standard Clang Tooling Set-up
