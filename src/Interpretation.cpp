@@ -23,8 +23,11 @@ using namespace interp;
 
 Interpretation::Interpretation() { 
     domain_ = new domain::Domain();
-    oracle_ = new oracle::Oracle_AskAll(domain_); // default
-    ast2coords_ = new ast2coords::ASTToCoords();
+    oracle_ = new oracle::Oracle_AskAll(domain_);
+    /* 
+    context_ can only be set later, once Clang starts parse
+    */
+    ast2coords_ = new ast2coords::ASTToCoords(); 
     coords2dom_ = new coords2domain::CoordsToDomain();
     coords2interp_ = new coords2interp::CoordsToInterp();
     interp2domain_ = new interp2domain::InterpToDomain();
@@ -36,7 +39,7 @@ Interpretation::Interpretation() {
 
 void Interpretation::mkVecIdent(ast::VecIdent *ast)
 {
-    coords::VecIdent *coords = ast2coords_->mkVecIdent(ast);
+    coords::VecIdent *coords = ast2coords_->mkVecIdent(ast, context_);
     domain::Space &space = oracle_->getSpaceForVecIdent(coords);
     domain::VecIdent *dom = domain_->mkVecIdent(space); 
     coords2dom_->putVecIdent(coords, dom);
@@ -52,7 +55,7 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
 
 
 void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/) {
-    coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast);
+    coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast, context_);
     domain::Space& space = oracle_->getSpaceForVecVarExpr(coords);
     domain::VecVarExpr *dom = domain_->mkVecVarExpr(space);
     coords2dom_->PutVecVarExpr(coords, dom);
@@ -72,7 +75,7 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
             << std::hex << mem_coords << " arg coords "
             << std::hex << arg_coords << "\n";
   }
-  coords::VecVecAddExpr *coords = ast2coords_->mkVecVecAddExpr(add_ast, mem_coords, arg_coords);
+  coords::VecVecAddExpr *coords = ast2coords_->mkVecVecAddExpr(add_ast, context_, mem_coords, arg_coords);
   domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
   domain::VecExpr *dom_mem_expr = coords2dom_->getVecExpr(mem_coords);
   domain::VecExpr *dom_arg_expr = coords2dom_->getVecExpr(arg_coords);
@@ -108,7 +111,7 @@ expressions and objects constructed from them.
 */
 
 void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float z) {
-    coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, x, y, z);  
+    coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, context_, x, y, z);  
     domain::Space& s = oracle_->getSpaceForVector_Lit(coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
     domain::Vector_Lit *dom = domain_->mkVector_Lit(s, x, y, z);
     coords2dom_->putVector_Lit(coords, dom); 
@@ -119,7 +122,7 @@ void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float 
 
 void Interpretation::mkVector_Expr(
       ast::Vector_Expr *ctor_ast, ast::VecExpr* expr_ast/*, clang::ASTContext *c*/) {
-    coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, expr_ast);
+    coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, context_, expr_ast);
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr_ast));
     domain::Space& s = oracle_->getSpaceForVector_Expr(expr_coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
     domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
@@ -148,7 +151,7 @@ void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,
       (ast2coords_->getDeclCoords(id_ast));
     coords::Vector *vec_coords = static_cast<coords::Vector *>
       (ast2coords_->getStmtCoords(expr_ast));
-    coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(def_ast, id_coords, vec_coords);
+    coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(def_ast, context_, id_coords, vec_coords);
     domain::VecIdent *vec_ident = coords2dom_->getVecIdent(id_coords);
     /*
     Here there is some subtlety. We don't know if what was left in our

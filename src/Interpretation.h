@@ -24,6 +24,10 @@ public:
         oracle_ = oracle;
     }
 
+    void setASTContext(clang::ASTContext *context) {
+        context_ = context;
+    }
+
     void addSpace(std::string name) {
         domain_->mkSpace(name);
     }
@@ -55,6 +59,7 @@ public:
 // TODO: Make private
     domain::Domain *domain_;
     oracle::Oracle *oracle_;
+    clang::ASTContext *context_;
     coords2domain::CoordsToDomain *coords2dom_;
     ast2coords::ASTToCoords *ast2coords_;
     coords2interp::CoordsToInterp *coords2interp_;

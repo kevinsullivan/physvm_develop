@@ -14,56 +14,35 @@ Code coordinate objects wrap AST
 objects to provide inherited behavior
 necessary and appropriate for each
 referenced code object. They give
-these objects types in our domain
-typed ontology. An invariant of the 
-design is that AST nodes are properly
-characrterized by coordinate objects.
+AST objects types in our domain's
+ontology. 
 
-Code coordinates thus also provide for
-ontology translation, between the AST 
-types used to represent pertinent code
-elements, and the AST types used to 
-represent domain elements (id, var, 
-expr, value, def).
+We maintain a bijection betwen AST and 
+Coord objects: specifically between the
+memory addresses of these objects. It is
+thus critical not to map one AST node
+address to more than one Coord object.
 
-Here the AST language a domain-driven 
-projection of Clang. The domain 
-language, as is clear, is rather one 
-of vector space expressions, values, 
-identifiers, and definitions.
-
-Code coordinates are mapped to domain 
-elements via a relation represented 
-externally to Coords objects, namely 
-the coords2domain relation(s). ASTs 
-are mapped to Coords by the external 
-ast2coordinates relations. The mapping 
-from coordinates back to to AST objects 
-is implemented by references contained 
-within coords objects. Each such object
-represents with dynamic state the kind 
-of AST-level object it maps to, and it 
-provides a pointer back to that object.
-
-The challenge is to get precisely typed 
-references to AST elements back from 
-Coords objects. But in the current 
-application, we don't really need to do 
-so. In future, dynamic casts seem likely 
-to be useful.
+Code coordinates provide for ontology 
+translation, between the Clang's AST 
+types and our domain elements (id, 
+var expr, function application expr, 
+constructed vector, and definition).
 */
 
 namespace coords {
 
-// Ontology of code object types that can be coordinatized
-// clang::Decl unused by Peirce, here for generalizability
+// Ontology of Clang object types that can be 
+// coordinatized. We do not currently use 
+// clang::Decl but we include it here to 
+// establish a path togeneralizability
 //
-enum ast_type { CLANG_AST_STMT, CLANG_AST_DECL };
+enum ast_type { CLANG_AST_STMT, CLANG_AST_DECL }; 
 
 class Coords {
 public:
-  Coords(const clang::Stmt *stmt);
-  Coords(const clang::Decl *decl);
+  Coords(const clang::Stmt *stmt, clang::ASTContext *context);
+  Coords(const clang::Decl *decl, clang::ASTContext *context);
 
   bool astIsClangDecl() { return (ast_type_tag_ == CLANG_AST_DECL); }
   bool astIsClangStmt() { return (ast_type_tag_ == CLANG_AST_STMT); }
@@ -73,11 +52,12 @@ public:
 
   virtual bool operator==(const Coords &other) const;
   virtual std::string toString() const;
-
+  virtual std::string getSourceLoc() const;
 protected:
   ast_type ast_type_tag_;
   const clang::Stmt *clang_stmt_;
   const clang::Decl *clang_decl_;
+  clang::ASTContext *context_;
 };
 
 /*************************************************************
@@ -88,14 +68,9 @@ protected:
  * Ident
  ******/
 
-
-/***
-**** TODO: Change types in all methods to ast:: abstractions.
-***/
-
 class VecIdent : public Coords {
 public:
-  VecIdent(const ast::VecIdent *ast);
+  VecIdent(const ast::VecIdent *ast, clang::ASTContext *c);
   const clang::VarDecl *getVarDecl() const;
   virtual std::string toString() const;
   bool operator==(const VecIdent &other) const {
@@ -112,7 +87,7 @@ public:
 // Abstract
 class VecExpr : public Coords {
 public:
-  VecExpr(const ast::VecExpr *e);
+  VecExpr(const ast::VecExpr *e, clang::ASTContext *c);
   const ast::VecExpr *getExpr();
   virtual std::string toString() const;
   bool operator==(const VecExpr &other) const {
@@ -123,17 +98,15 @@ public:
 
 class VecVarExpr : public VecExpr {
 public:
-  VecVarExpr(const ast::VecVarExpr *d);
+  VecVarExpr(const ast::VecVarExpr *d, clang::ASTContext *c);
   const ast::VecVarExpr *getVecVarExpr() const;
   virtual std::string toString() const;
-private:
-//  coords::Coords *var_; // TODO: Fix
 };
 
 // TODO: add accessors for left and right
 class VecVecAddExpr : public VecExpr {
 public:
-  VecVecAddExpr(const ast::VecVecAddExpr *mce, coords::VecExpr *mem, coords::VecExpr *arg);
+  VecVecAddExpr(const ast::VecVecAddExpr *mce, clang::ASTContext *c, coords::VecExpr *mem, coords::VecExpr *arg);
   const ast::VecVecAddExpr *getVecVecAddExpr();
   virtual std::string toString() const;
 private:
@@ -143,12 +116,10 @@ private:
 
 enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
 
-/*
-Superclass. Abstract
-*/
+// Superclass. Abstract
 class Vector : public VecExpr {
 public:
-  Vector(const ast::Vector *vec, coords::VectorCtorType tag);
+  Vector(const ast::Vector *vec, clang::ASTContext *c, coords::VectorCtorType tag);
   const ast::Vector *getVector() const;
   VectorCtorType getVectorType();
   virtual std::string toString() const;
@@ -163,7 +134,7 @@ protected:
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
 public:
-  Vector_Lit(const ast::Vector_Lit *ast, ast::Scalar x, ast::Scalar y, ast::Scalar z);
+  Vector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c, ast::Scalar x, ast::Scalar y, ast::Scalar z);
   virtual std::string toString() const;
 private:
   ast::Scalar x_;
@@ -173,17 +144,17 @@ private:
 
 class Vector_Var : public Vector {
 public:
-  Vector_Var(const ast::Vector_Var *ast,  coords::VecVarExpr *expr);
+  Vector_Var(const ast::Vector_Var *ast, clang::ASTContext *c, coords::VecVarExpr *expr);
   virtual std::string toString() const;
   VecVarExpr *getVecVarExpr();
 private:
   VecVarExpr *expr_;
 };
 
-// change name to VecVecAddExpr? Or generalize from that a bit.
+// TODO: change name to VecVecAddExpr?
 class Vector_Expr : public Vector {
 public:
-  Vector_Expr(const ast::Vector_Expr *ast, coords::VecExpr *expr);
+  Vector_Expr(const ast::Vector_Expr *ast, clang::ASTContext *c, coords::VecExpr *expr);
   virtual std::string toString() const;
   Vector_Expr *getVector_Expr();
 private:
@@ -196,21 +167,17 @@ private:
 
 class Vector_Def : public Coords {
 public:
-  Vector_Def(const ast::Vector_Def *def, coords::VecIdent *bv,
-             coords::VecExpr *be);
-  //const clang::DeclStmt *getDeclStmt() const;
+  Vector_Def(const ast::Vector_Def *def, clang::ASTContext *c, coords::VecIdent *id,
+             coords::VecExpr *expr);
   coords::VecIdent *getIdent() const;
   coords::VecExpr *getExpr() const;
   virtual std::string toString() const;
-  // Assumption here and above is that pointer
-  // identity is unique and we don't need to
-  // compare on these additional fields
   bool operator==(const Vector_Def &other) const {
     return (clang_decl_ == other.clang_decl_);
   }
 private:
-  VecIdent *bv_;
-  VecExpr *be_;
+  VecIdent *id_;
+  VecExpr *expr_;
 };
 
 } // namespace coords
