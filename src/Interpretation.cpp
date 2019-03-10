@@ -39,13 +39,14 @@ Interpretation::Interpretation() {
 
 void Interpretation::mkVecIdent(ast::VecIdent *ast)
 {
-    coords::VecIdent *coords = ast2coords_->mkVecIdent(ast, context_);
-    domain::Space &space = oracle_->getSpaceForVecIdent(coords);
-    domain::VecIdent *dom = domain_->mkVecIdent(space); 
-    coords2dom_->putVecIdent(coords, dom);
-    interp::VecIdent *interp = new interp::VecIdent(coords,dom);
-    coords2interp_->putVecIdent(coords, interp);
-    interp2domain_->putVecIdent(interp,dom);
+  coords::VecIdent *coords = ast2coords_->mkVecIdent(ast, context_);
+  LOG(DEBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
+  domain::Space &space = oracle_->getSpaceForVecIdent(coords);
+  domain::VecIdent *dom = domain_->mkVecIdent(space);
+  coords2dom_->putVecIdent(coords, dom);
+  interp::VecIdent *interp = new interp::VecIdent(coords, dom);
+  coords2interp_->putVecIdent(coords, interp);
+  interp2domain_->putVecIdent(interp, dom);
 }
 
 
@@ -56,7 +57,9 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
 
 void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/) {
     coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast, context_);
-    domain::Space& space = oracle_->getSpaceForVecVarExpr(coords);
+    LOG(DEBUG) << "Interpretation::mkVecVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
+    ast->dump();
+    domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
     domain::VecVarExpr *dom = domain_->mkVecVarExpr(space);
     coords2dom_->PutVecVarExpr(coords, dom);
     interp::VecVarExpr *interp = new interp::VecVarExpr(coords,dom);
@@ -70,6 +73,8 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
                                   (ast2coords_->getStmtCoords(mem_expr));
   coords::VecExpr *arg_coords = static_cast<coords::VecExpr*>
                                   (ast2coords_->getStmtCoords(arg_expr));
+  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr. ast=" << std::hex << add_ast << "\n";
+  add_ast->dump();
   if (mem_coords == NULL || arg_coords == NULL) {
     LOG(FATAL) <<"Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords "
             << std::hex << mem_coords << " arg coords "
