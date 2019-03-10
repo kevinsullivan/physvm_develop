@@ -219,12 +219,31 @@ class CXXMemberCallExprMemberExprMatcher
 public:
   CXXMemberCallExprMemberExprMatcher()
   {
+    // Member expression is a variable expression
+    //
     const StatementMatcher DeclRefExprPattern = declRefExpr().bind("DeclRefExpr");
     CXXMemberCallExprMemberExprMatcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
-    const StatementMatcher ParenCXXMemberCallExprPattern = parenExpr(hasDescendant(cxxMemberCallExpr().bind("MemberCallExpr")));
+
+    // Member expression is a paren expression with some child expression inside
+    //
+    /* KEVIN: THE PROBLEM IS RIGHT HERE.
+    This is an anti-pattern, in which we pass only the child node of a given AST node
+    to be interpreted. The problem is that an invariant is violated, which is that after
+    handling of the mem and arg ast nodes, the top-level mem node is no interpreted, but
+    only the child member call expr node that we're handing off here to the handler. The
+    solution, I think, will be for higher-level matching to strip the parens so that we
+    never see a parenthesized expression at this level. INVARIANT: We must always create 
+    an interpretation for the AST node we're given, not just for one of its children.
+    */
+    const StatementMatcher ParenCXXMemberCallExprPattern = 
+      parenExpr(hasDescendant(cxxMemberCallExpr().bind("MemberCallExpr")));
+    CXXMemberCallExprMemberExprMatcher_.addMatcher(ParenCXXMemberCallExprPattern, &mce_handler_);
+
+    // Member expression a member call expression
+    // TODO: We don't currently select for add calls, in particular, need to refine predicate
+    //
     const StatementMatcher CXXMemberCallExprPattern = cxxMemberCallExpr().bind("MemberCallExpr");
     CXXMemberCallExprMemberExprMatcher_.addMatcher(CXXMemberCallExprPattern, &mce_handler_);
-    CXXMemberCallExprMemberExprMatcher_.addMatcher(ParenCXXMemberCallExprPattern, &mce_handler_);
   }
   void match(const clang::Expr &call_rhs)
   {
@@ -236,6 +255,7 @@ private:
   MatchFinder CXXMemberCallExprMemberExprMatcher_;
   HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
   HandlerForCXXAddMemberCall mce_handler_;
+  // HandlerForCXXParenExpr
 };
 
 /*

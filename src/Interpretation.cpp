@@ -74,7 +74,12 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
   coords::VecExpr *arg_coords = static_cast<coords::VecExpr*>
                                   (ast2coords_->getStmtCoords(arg_expr));
   LOG(DEBUG) << "Interpretation::mkVecVecAddExpr. ast=" << std::hex << add_ast << "\n";
+  std::cerr << "mem = ";
   add_ast->dump();
+  std::cerr << "arg = ";
+  mem_expr->dump();
+  std::cerr << "arg = ";
+  arg_expr->dump();
   if (mem_coords == NULL || arg_coords == NULL) {
     LOG(FATAL) <<"Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords "
             << std::hex << mem_coords << " arg coords "
