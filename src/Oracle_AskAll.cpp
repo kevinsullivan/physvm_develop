@@ -28,6 +28,7 @@ domain::Space& Oracle_AskAll::getSpace() {
 
 
 void printSpaces(std::vector<domain::Space*>& spaces) {
+	std::cout << std::endl; 
 	int size = spaces.size();
 	for (int i = 0; i < size; i++) {
 		std::cout <<i << ". " << spaces[i]->getName() << "\n";
