@@ -77,8 +77,7 @@ std::string VecVarExpr::toString() const {
 VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d, 
                              interp::Interp *mem, interp::Interp *arg)  
   : VecExpr(c, d), mem_(mem), arg_(arg) {
-
-  }
+}
 
  
 std::string VecVecAddExpr::toString() const {
@@ -93,6 +92,30 @@ std::string VecVecAddExpr::toString() const {
   return ret;  
 } 
 
+
+VecParenExpr::VecParenExpr
+    (coords::VecParenExpr* c, domain::VecParenExpr* d, interp::VecExpr *e) 
+    : VecExpr(c, d), paren_expr_(e) {
+}
+
+std::string VecParenExpr::toString() const {
+  std::string ret = "";
+  ret += "( ";
+  ret += paren_expr_->toString();
+  ret += " ) : ";
+
+  // TODO: Abstract superclass data members
+  ret += expr_->getSpace().toString(); 
+
+  ret += " )";
+  return ret;  
+} 
+
+
+
+/*******
+* Vector
+********/
  
 Vector::Vector(coords::Vector* c, domain::Vector* d) : Interp(c, d) {}
 

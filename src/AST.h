@@ -7,16 +7,6 @@
 //#include "clang/AST/Stmt.h"
 
 
-/*
-In horizontal modularization, AST.h #includes
-a header file each syntactic concept.
-
-These concepts, in turn, are represented in 
-project-specific AST node structures.
-*/
-
-//#include "VecParenExpr.h"
-
 namespace ast {
 // Scalar
 using Scalar = float;

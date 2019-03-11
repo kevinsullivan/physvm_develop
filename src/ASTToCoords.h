@@ -57,7 +57,7 @@ public:
 
     // KEVIN: Added for new horizontal vector paren expr module
     coords::VecParenExpr *mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c,
-                                                coords::VecExpr *expr);
+                                                ast::VecExpr *expr);
 
     coords::Vector_Lit *mkVector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c,
                                                 ast::Scalar x, ast::Scalar y, ast::Scalar z);

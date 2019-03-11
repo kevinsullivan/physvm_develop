@@ -144,6 +144,37 @@ interp::VecVecAddExpr *InterpToDomain::getVecVecAddExpr(domain::VecVecAddExpr *d
     return static_cast<interp::VecVecAddExpr *>(interp);
 }
 
+void InterpToDomain::putVecParenExpr(interp::VecParenExpr *c, domain::VecParenExpr *d) {
+    interp2domain_VecExpr[c] = d;
+    domain2interp_VecExpr[d] = c;
+
+}
+
+domain::VecParenExpr *InterpToDomain::getVecParenExpr(interp::VecParenExpr* c) const {
+    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = interp2domain_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::VecParenExpr*>(dom);
+}
+
+interp::VecParenExpr *InterpToDomain::getVecParenExpr(domain::VecParenExpr* d) const {
+    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
+    interp::VecExpr *interp = NULL;
+    try {
+        interp = domain2interp_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::VecParenExpr *>(interp);
+}
+
+
 // Vector
 
 interp::Vector *InterpToDomain::getVector(domain::Vector* v) {

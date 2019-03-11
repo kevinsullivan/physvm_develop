@@ -111,8 +111,8 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
 
 
 void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
+    coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
-    coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr_coords); 
     LOG(DEBUG) << 
       "Interpretation::mkVecParenExpr. ast=" << 
       std::hex << ast << ", " << coords->toString() << 
