@@ -109,6 +109,15 @@ private:
 };
 
 
+class VecParenExpr : public VecExpr {
+public:
+VecParenExpr(coords::VecParenExpr*, domain::VecParenExpr*, interp::VecExpr *expr_); 
+virtual std::string toString() const;
+interp::VecExpr *getVector_Expr() const { return expr_; }
+private:
+interp::VecExpr *expr_;
+};
+
 
 /*
 Superclass. Abstract

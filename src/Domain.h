@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 
+#include "AST.h"
 #include "Coords.h"
 
 #include <g3log/g3log.hpp>
@@ -30,6 +31,10 @@ class VecExpr;
 //class VecLitExpr;
 class VecVarExpr;
 class VecVecAddExpr;
+
+// KEVIN ADDING FOR HORIZONTAL MODULE
+class VecParenExpr;
+
 class Vector;
 class Vector_Lit;
 class Vector_Expr;
@@ -62,7 +67,12 @@ public:
 	//
 	VecVecAddExpr* mkVecVecAddExpr(Space& s, domain::VecExpr* , domain::VecExpr* right_);
 
-// Values
+
+	// KEVIN: For new VecParenExpr horizontal module
+	//
+	VecParenExpr *mkVecParenExpr(Space &s, domain::VecExpr *);
+
+	// Values
 	std::vector<Vector *> &getVectors() { return vectors;  }
 
 	// Constructed literal vector value
@@ -218,6 +228,23 @@ private:
     domain::VecExpr* mem_;
 };
 
+
+class VecParenExpr : public VecExpr  {
+public:
+		VecParenExpr(Space &s, domain::VecExpr *e); 
+		const domain::VecExpr* getVecExpr() const { return expr_; }
+/*
+		coords::Vector* getCoords() const {
+				return static_cast<coords::Vector_Expr*>(getBaseCoords()); 
+		} 
+		std::string toString() const {
+				return expr_->toString();
+		}
+*/
+private:
+		const domain::VecExpr* expr_; // vec expr from which vector is constructed
+};
+
 /*
 This is a sum type capable of representing different kinds of fully constructed vectors.
 */
@@ -289,6 +316,7 @@ public:
 private:
 	const domain::VecExpr* expr_; // vec expr from which vector is constructed
 };
+
 
 // Constructed vector from vector-valued variable expression
 // TODO: This is unnecessary, as variable expressions are just expressions

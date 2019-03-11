@@ -2,9 +2,20 @@
 #define AST_H
 
 #include "clang/AST/AST.h"
-#include "clang/AST/ASTConsumer.h"
-#include "clang/AST/Expr.h"
-#include "clang/AST/Stmt.h"
+//#include "clang/AST/ASTConsumer.h"
+//#include "clang/AST/Expr.h"
+//#include "clang/AST/Stmt.h"
+
+
+/*
+In horizontal modularization, AST.h #includes
+a header file each syntactic concept.
+
+These concepts, in turn, are represented in 
+project-specific AST node structures.
+*/
+
+//#include "VecParenExpr.h"
 
 namespace ast {
 // Scalar
@@ -18,6 +29,9 @@ using VecExpr = const clang::Expr;
 using VecLitExpr = const clang::CXXConstructExpr;
 using VecVarExpr = const clang::DeclRefExpr;
 using VecVecAddExpr = const clang::CXXMemberCallExpr;
+
+// KEVIN: Add for VecParenExpr module
+using VecParenExpr = const clang::ParenExpr;
 
 // Value
 using Vector = const clang::CXXConstructExpr;

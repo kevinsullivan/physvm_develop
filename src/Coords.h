@@ -114,6 +114,28 @@ private:
   coords::Coords *arg_;
 };
 
+/*************
+* VecParenExpr
+**************/
+
+// Should hold coordinates of child expression
+class VecParenExpr : public VecExpr {
+  public:
+  VecParenExpr(const ast::VecParenExpr *vec, clang::ASTContext *c, ast::VecExpr *expr);
+  const ast::VecExpr *getVecExpr() const; 
+  virtual std::string toString() const;
+  bool operator==(const VecParenExpr &other) const {
+      return (clang_stmt_ == other.clang_stmt_);
+  }
+  protected:
+    ast::VecExpr *expr_;
+};
+
+
+/*******
+* Vector
+********/
+
 enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
 
 // Superclass. Abstract
