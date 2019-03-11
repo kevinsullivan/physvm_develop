@@ -1,4 +1,5 @@
 #include "ASTToCoords.h"
+#include <g3log/g3log.hpp>
 
 
 /*
@@ -19,33 +20,12 @@ coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast, clang::ASTCo
     return coord;
 }
 
-/* coords::VecExpr *ASTToCoords::mkVecExpr(const ast::VecExpr *ast) {
-    coords::VecExpr *c = new coords::VecExpr(ast);
-    overrideStmt(ast,coord);                          // TO DO Canonicalize
-    return coord;
-}*/
-
-/*coords::VecLitExpr *ASTToCoords::mkVecLitExpr(const ast::VecLitExpr *ast) {
-    coords::VecLitExpr *c = new coords::VecLitExpr(ast);
-    overrideStmt(ast,coord);                          // TO DO Canonicalize
-    return coord;
-}*/
-
-
 coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast, clang::ASTContext *c) {
     coords::VecVarExpr *coord = new coords::VecVarExpr(ast, c);
     overrideStmt2Coords(ast, coord);   // DeclRefExpr is ako Stmt
     overrideCoords2Stmt(coord, ast);   // DeclRefExpr is ako Stmt
     return coord;
 }
-
-/*
-coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast) {
-    coords::VecVarExpr *c = new coords::VecVarExpr(ast);
-    overrideStmt(ast,c);                          // TO DO Canonicalize
-    return c;
-}
-*/
 
 coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
         const ast::VecVecAddExpr *ast, clang::ASTContext *c, 
@@ -57,16 +37,19 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
     return coord;
 }
 
+coords::VecParenExpr *ASTToCoords::mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c, ast::VecExpr *expr) {
+    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords[expr]);
+    if (!expr_coords) {
+        LOG(FATAL) << "ASTToCoords::mkVecParenExpr: Error. No expr coords.\n"; 
+    }
+    coords::VecParenExpr *coord = new coords::VecParenExpr(ast, c, expr_coords); 
+    overrideStmt2Coords(ast, coord); 
+    overrideCoords2Stmt(coord, ast);
+    return coord;  
+}
     
-/*coords::Vector *ASTToCoords::Vector(const ast::Vector *ast) {
-    coords::Vector *c = new coords::Vector(ast);
-    overrideStmt(ast,coord);                          // TO DO Canonicalize
-    return coord;
-}*/
 
-// Assume 1-d space
 coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c, ast::Scalar x, ast::Scalar y, ast::Scalar z) {
-    // TODO: Abstracted coords from actual code 
     coords::Vector_Lit *coord = new coords::Vector_Lit(ast, c, x, y, z); 
     overrideStmt2Coords(ast,coord); 
     overrideCoords2Stmt(coord,ast); 
@@ -90,9 +73,6 @@ coords::Vector_Expr *ASTToCoords::mkVector_Expr(
     overrideCoords2Stmt(coord,ctor_ast);
     return coord;    
 }
-
-
-// TO DO : VECTOR_DEF
 
 coords::Vector_Def *ASTToCoords::mkVector_Def(
         const ast::Vector_Def *ast, clang::ASTContext *c, coords::VecIdent *id_coords, coords::VecExpr *vec_coords) {
