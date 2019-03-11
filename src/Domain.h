@@ -94,8 +94,8 @@ public:
 	Vector_Def* mkVector_Def(/*ast::Vector_Def* vardecl,*/ domain::VecIdent* identifier, domain::Vector* vec);
 	std::vector<Vector_Def*> &getVectorDefs() { return defs; }
 
-// Client
-	bool isConsistent();
+// Client -- Separated from Domain
+//	bool isConsistent();
 
 // Details
 	void dump();
