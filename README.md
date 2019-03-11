@@ -63,4 +63,4 @@ The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student,
 
 ## Acknowledgements
 
-Kevin Sullivan's work on this project has been supported by the Systems Engineering Research Center. (A proper, approved acknowledgement wil be provided here.) This work draws heavily on prior work by both PIs, including Sullivan's work with Jian Xiang (now a postdoc at Harvard) and John Knight, and Elbaum's work on efficient units checking. We acknolwege our collaborators' essential prior contributions to this line of work.
+Kevin Sullivan's work on this project has been supported by the Systems Engineering Research Center. (A proper, approved acknowledgement will be provided here.) This work draws heavily on prior work by both PIs, including Sullivan's work with Jian Xiang (now a postdoc at Harvard) and John Knight, and Elbaum's work on efficient units checking. We acknolwege our collaborators' essential prior contributions to this line of work.
