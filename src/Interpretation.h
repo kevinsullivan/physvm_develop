@@ -28,11 +28,13 @@ public:
         context_ = context;
     }
 
-    void addSpace(std::string name) {
+    void addSpace(std::string name) { 
         domain_->mkSpace(name);
     }
 
-    domain::Domain* getDomain() { return domain_; }
+    domain::Domain* getDomain() { 
+        return domain_; 
+    }
 
     /*
     These operations work by side-effecting interpretation state.
@@ -40,8 +42,14 @@ public:
     */
     void mkVecIdent(ast::VecIdent *ast);
     void mkVecVarExpr(ast::VecVarExpr *ast);
+
+    // TODO: remove the following two const constraints
     void mkVecVecAddExpr(ast::VecVecAddExpr *ast, const ast::VecExpr *mem, 
                          const ast::VecExpr *arg);
+
+    // KEVIN: Added for new horizontal module
+    void mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr);
+
     void mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float z);
     void mkVector_Expr(ast::Vector_Expr *ast, ast::VecExpr* expr);
     void mkVector_Var(ast::VecLitExpr *ast);

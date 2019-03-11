@@ -121,6 +121,17 @@ domain::VecExpr *VecVecAddExpr::getArgVecExpr()
     return arg_;
 }
 
+// KEVIN: Added for VecParen module, has to stay in Domain.h
+domain::VecParenExpr *Domain::mkVecParenExpr(Space &s, domain::VecExpr *expr)
+{
+		domain::VecParenExpr *var = new domain::VecParenExpr(s, expr);
+		exprs.push_back(var);
+		return var;
+}
+
+
+
+
 /******
 * Value
 *******/

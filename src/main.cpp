@@ -133,6 +133,29 @@ public:
   }
 };
 
+// AddMemberParenExpr is: "(" some expression ")"
+class HandlerForAddMemberParen : public MatchFinder::MatchCallback
+{
+public:
+  //  Get left and right children of add expression and handle them by calls to other handlers
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    const ParenExpr *memparen = Result.Nodes.getNodeAs<clang::ParenExpr>("ParenExpr");
+    if (memparen == NULL)
+    {
+      LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
+      return;
+    }
+    const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
+    if (memcall == NULL)
+    {
+      LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
+      return;
+    }
+    handleMemberCallExpr(memcall);
+    interp_->mkVecParenExpr(memparen, memcall);
+  }
+};
 /*
 A Vector object constructed from a member expression
 - Extract member expression on left, value expression on right
@@ -236,8 +259,8 @@ public:
     an interpretation for the AST node we're given, not just for one of its children.
     */
     const StatementMatcher ParenCXXMemberCallExprPattern = 
-      parenExpr(hasDescendant(cxxMemberCallExpr().bind("MemberCallExpr")));
-    CXXMemberCallExprMemberExprMatcher_.addMatcher(ParenCXXMemberCallExprPattern, &mce_handler_);
+      parenExpr(hasDescendant(cxxMemberCallExpr().bind("MemberCallExpr"))).bind("ParenExpr");
+    CXXMemberCallExprMemberExprMatcher_.addMatcher(ParenCXXMemberCallExprPattern, &mpe_handler_);
 
     // Member expression a member call expression
     // TODO: We don't currently select for add calls, in particular, need to refine predicate
@@ -255,7 +278,7 @@ private:
   MatchFinder CXXMemberCallExprMemberExprMatcher_;
   HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
   HandlerForCXXAddMemberCall mce_handler_;
-  // HandlerForCXXParenExpr
+  HandlerForAddMemberParen mpe_handler_;
 };
 
 /*

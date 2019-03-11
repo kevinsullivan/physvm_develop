@@ -5,6 +5,9 @@
 #include "clang/AST/AST.h"
 #include "Coords.h"
 
+// KEVIN: For VecParenExpr module
+#include "VecParenExpr.h"
+
 /*
 This relational class maps Clang AST nodes to code coordinates
 in our ontology. We want a single base type for all coordinates. 
@@ -51,10 +54,15 @@ public:
     coords::VecVecAddExpr* mkVecVecAddExpr(const ast::VecVecAddExpr *ast, clang::ASTContext *c, 
                                              coords::VecExpr *mem, 
                                              coords::VecExpr *arg);
-    coords::Vector_Lit* mkVector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c, 
-                                             ast::Scalar x, ast::Scalar y, ast::Scalar  z);
+
+    // KEVIN: Added for new horizontal vector paren expr module
+    coords::VecParenExpr *mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c,
+                                                coords::VecExpr *expr);
+
+    coords::Vector_Lit *mkVector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c,
+                                                ast::Scalar x, ast::Scalar y, ast::Scalar z);
     coords::Vector_Var* mkVector_Var(const ast::Vector_Var *ast, clang::ASTContext *c,
-                                             coords::VecVarExpr *var);
+                                                coords::VecVarExpr *var);
     coords::Vector_Expr* mkVector_Expr(const ast::Vector_Expr *ctor_ast, clang::ASTContext *c,
                                              ast::VecExpr *expr_ast);
     coords::Vector_Def* mkVector_Def(const ast::Vector_Def *ast, clang::ASTContext *c,

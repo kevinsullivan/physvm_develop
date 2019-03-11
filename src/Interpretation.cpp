@@ -23,7 +23,7 @@ using namespace interp;
 
 Interpretation::Interpretation() { 
     domain_ = new domain::Domain();
-    oracle_ = new oracle::Oracle_AskAll(domain_);
+    oracle_ = new oracle::Oracle_AskAll(domain_); 
     /* 
     context_ can only be set later, once Clang starts parse
     */
@@ -107,6 +107,24 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
   interp::VecVecAddExpr *interp = new interp::VecVecAddExpr(coords, dom, mem_interp, arg_interp);
   coords2interp_->putVecVecAddExpr(coords, interp); 
   interp2domain_->putVecVecAddExpr(interp,dom);
+}
+
+
+void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
+    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
+    coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr_coords); 
+    LOG(DEBUG) << 
+      "Interpretation::mkVecParenExpr. ast=" << 
+      std::hex << ast << ", " << coords->toString() << 
+      "expr = " << expr_coords->toString() << "\n";
+    domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
+    domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
+    domain::VecParenExpr *dom = domain_->mkVecParenExpr(space, dom_expr);
+    coords2dom_->PutVecParenExpr(coords, dom);
+    interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
+    interp::VecParenExpr *interp = new interp::VecParenExpr(coords, dom, expr_interp);
+    coords2interp_->putVecParenExpr(coords, interp);  
+    interp2domain_->putVecParenExpr(interp,dom);
 }
 
 

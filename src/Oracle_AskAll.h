@@ -38,7 +38,7 @@ public:
 	}
 
 	domain::Space& getSpaceForVector_Expr(coords::VecExpr *expr) {
-		std::string query = "Space for vector constructed from expression, ?\n";
+		std::string query = "Space for vector constructed from expression, \n";
 		query += expr->toString();  
 		query += " at ";
 		query += expr->getSourceLoc();
@@ -46,6 +46,19 @@ public:
 		std::cout << query;
 		return getSpace();
 	}
+
+
+	domain::Space& getSpaceForVecParenExpr(coords::VecExpr *expr) {
+		std::string query = "Space for vector parenthesized expression, \n";
+		query += expr->toString();  
+		query += " at ";
+		query += expr->getSourceLoc();
+		query += "? ";
+		std::cout << query;
+		return getSpace();
+	}
+
+
 
 	domain::Space& getSpaceForVector_Lit(coords::Vector_Lit *lit) {
 		std::string query = "Space for vector constructed from literal, ";
