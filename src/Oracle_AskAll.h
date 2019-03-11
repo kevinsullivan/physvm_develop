@@ -16,7 +16,7 @@ public:
 	domain::Space& getSpaceForAddExpression(coords::VecExpr *mem, coords::VecExpr *arg)
 	{
 		std::string query = "";
-		query += "Space for expression, add  ";
+		query += "Space for vector expression, add ";
 		query += mem->toString();
 		query += " ";
 		query += arg->toString();
@@ -49,7 +49,7 @@ public:
 
 
 	domain::Space& getSpaceForVecParenExpr(coords::VecExpr *expr) {
-		std::string query = "Space for vector parenthesized expression, \n";
+		std::string query = "Space for vector parenthesized expression, ";
 		query += expr->toString();  
 		query += " at ";
 		query += expr->getSourceLoc();

@@ -131,7 +131,7 @@ VecParenExpr::VecParenExpr(const ast::VecParenExpr *ast, clang::ASTContext *c, c
 const coords::VecExpr *VecParenExpr::getVecExpr() const { return expr_;  }
 
 std::string VecParenExpr::toString() const {
-    return "( " + expr_->toString() + ")";
+    return "(" + expr_->toString() + ")";
 }
 
 /*******
