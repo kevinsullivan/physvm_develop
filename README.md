@@ -61,3 +61,6 @@ Our first use cases for this work will focus on robotics code, e.g., for UAV dro
 ## Who's Involved
 The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student, Hannah Leung, is carrying out our initial prototyping work as part of her MS Thesis project. Stay tuned.
 
+## Acknowledgements
+
+Kevin Sullivan's work on this project has been supported by the Systems Engineering Research Center. (A proper, approved acknowledgement wil be provided here.)
