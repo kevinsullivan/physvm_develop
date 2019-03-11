@@ -1,6 +1,10 @@
 #include <vector>
 #include <iostream>
-#include "Checker.h"
+
+
+// DONE: Separate clients from Domain
+// #include "Checker.h"
+
 #include "Domain.h"
 
 #include <g3log/g3log.hpp>
@@ -154,19 +158,3 @@ void Domain::dump() {
     LOG(DEBUG) <<"Domain Vector_Defs\n";
     dumpVector_Defs(); // print contents on std::cerr
 }
-
-
-
-
-// Check domain for consistency
-// Precondition: true
-// Postcondition: return value true indicates presence of inconsistencies
-// Implementation: Call Lean-specific checking code below (make virtual)
-bool Domain::isConsistent()
-{
-    Checker *c = new Checker(*this);
-    bool result = c->Check();
-    delete c;
-    return result;
-}
-
