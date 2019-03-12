@@ -67,7 +67,7 @@ std::string VecVarExpr::toString() const {
   std::string ret = "";
   ret += "( ";
   ret += coords_->toString();
-  ret += " : vector ";
+  ret += " : peirce.vec ";
   ret += expr_->getSpace().toString(); 
   ret += " )";
   return ret;
@@ -82,11 +82,11 @@ VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d,
  
 std::string VecVecAddExpr::toString() const {
   std::string ret = "";
-  ret += "( add ";
+  ret += "( peirce.add ";
   ret += mem_->toString();
   ret += " ";
   ret += arg_->toString();
-  ret += " : ";
+  ret += " : space ";
   ret += expr_->getSpace().toString(); 
   ret += " )";
   return ret;  
