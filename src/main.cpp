@@ -423,7 +423,7 @@ int main(int argc, const char **argv)
 
   interp_ = new interp::Interpretation();   // default oracle
   
-  interp_->addSpace("_");
+  //interp_->addSpace("_");
   interp_->addSpace("time");
   interp_->addSpace("geom");
   

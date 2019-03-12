@@ -208,18 +208,21 @@ domain::VecExpr* Interpretation::getVecExpr(ast::VecExpr* ast) {
 /******
  * 
  * TODO: Replace all this with direct calls to interp objects
- * 
+ * TODO: Move checker-specific unparsing to separate client class.
  * ****/
 
 // private
 std::string Interpretation::toString_Spaces() {
-    std::string retval = "";
-    std::vector<domain::Space*> &s = domain_->getSpaces();
-    for (std::vector<domain::Space*>::iterator it = s.begin(); it != s.end(); ++it)
-        retval = retval .append("(")
-                        .append((*it)->toString())
-                        .append(" : space)\n");
-    return retval;
+  int index = 0;
+  std::string retval = "";
+  std::vector<domain::Space *> &s = domain_->getSpaces();
+  for (std::vector<domain::Space *>::iterator it = s.begin(); it != s.end(); ++it)
+    retval = retval.append("def ")
+                 .append((*it)->toString())
+                 .append(" : peirce.space := peirce.space.mk ")
+                 .append(std::to_string(index++)) 
+                 .append("\n");
+  return retval;
 }
 
 // TODO: Private
@@ -259,7 +262,7 @@ std::string Interpretation::toString_Vectors() {
       retval = retval
       .append("(")
       .append(interp->toString())
-      .append(" : vector ")
+      .append(" : vec ")
       .append((*it)->getSpace()->toString())
       .append(")\n");
   }

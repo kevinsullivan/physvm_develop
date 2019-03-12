@@ -58,6 +58,7 @@ public:
     // Precondition: coords2domain_ is defined for ast
     domain::VecExpr *getVecExpr(ast::VecExpr *ast);
 
+    // TODO: Factor this out into client
     std::string toString_Spaces();
     std::string toString_Idents();
     std::string toString_Exprs();
