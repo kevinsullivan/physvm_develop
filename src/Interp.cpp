@@ -86,7 +86,7 @@ std::string VecVecAddExpr::toString() const {
   ret += mem_->toString();
   ret += " ";
   ret += arg_->toString();
-  ret += " : space ";
+  ret += " : peirce.space ";
   ret += expr_->getSpace().toString(); 
   ret += " )";
   return ret;  
@@ -102,7 +102,7 @@ std::string VecParenExpr::toString() const {
   std::string ret = "";
   ret += "( ";
   ret += paren_expr_->toString();
-  ret += " ) : ";
+  ret += " ) : peirce.space ";
 
   // TODO: Abstract superclass data members
   ret += expr_->getSpace().toString(); 
