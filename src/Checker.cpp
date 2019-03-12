@@ -15,14 +15,14 @@ struct aFile {
 };
 
 aFile* openFile();
-void generateMath(aFile* f, domain::Domain& dom);
+void generateMath(aFile* f, interp::Interpretation* i);
 bool checkMath(aFile*);
 void cleanup(aFile*);
 
 // return true if domain is consistent
 bool Checker::Check() {
     aFile* f = openFile();
-    generateMath(f, dom_);
+    generateMath(f, interp_); 
     bool status = checkMath(f);
     cleanup(f);
     return status;
@@ -45,9 +45,10 @@ aFile* openFile() {
     return f;
 }
 
-void generateMath(aFile* f, domain::Domain& dom) {
+void generateMath(aFile* f, interp::Interpretation* interp) {
     writeTheory(f->file);
-    writeDomain(f->file, dom);
+    std::string math = interp->toString_Defs();
+    fputs(math.c_str(), f->file);
     fclose(f->file);
 }
 
@@ -56,22 +57,10 @@ void cleanup(aFile* f) {
     delete f;
 }
 
-// output Euclidean space header definitions to f
+// output vector space header definitions to f
 void writeTheory(FILE* f) 
 {
-    // STUB: output nothing
-}
-
-/*
- iterate over vectors and output Lean "def" constructs
-      def v1_aFilename_lino := (mkVector <space>)
- iterate over expressions outputting Lean "def" constructs
-      def expr123 : Vector <space1> := v1 + v2 
-*/
-void writeDomain(FILE* f, domain::Domain& d) {
-
-    // STUB -- write one0line Lean with type error
-    fputs ("def s : string := 1\n", f);
+    fputs("import vec\n\n", f);
 }
 
 /*
@@ -84,14 +73,3 @@ bool checkMath(aFile* f) {
     return (status == 0); 
 }
 
-/*
-bool Domain::Reuse(Expression& expr) {
-    if(expr.getVecParam1().getVecSpace().getName() == expr.getVecParam2().getVecSpace().getName()){
-        std::cerr<<"This expression is consistent!"<<endl;
-    }
-    else{
-        std::cerr<<"This expression is inconsistent!"<<endl;
-    }
-    return false;
-}
-*/

@@ -13,6 +13,7 @@
 
 
 #include "Interpretation.h"
+#include "Checker.h"
 
 
 /*
@@ -438,4 +439,8 @@ int main(int argc, const char **argv)
   cout <<interp_->toString_Vectors();
   cout <<"\nDefinitions\n"; 
   cout <<interp_->toString_Defs();
-} 
+  cout << "\n";
+
+  Checker *checker = new Checker(interp_);
+  checker->Check();
+}

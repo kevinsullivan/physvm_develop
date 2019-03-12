@@ -4,3 +4,6 @@
 [submodule "deps/g3log"]
 	path = deps/g3log
 	url = https://github.com/KjellKod/g3log.git
+[submodule "phys"]
+	path = phys
+	url = https://github.com/kevinsullivan/phys.git
