@@ -24,10 +24,6 @@ class CoordsToInterp
 	interp::VecExpr *getVecExpr(coords::VecExpr* c);
 	coords::VecExpr *getVecExpr(interp::VecExpr* d) const;
 
-/*	void putVecLitExpr(coords::VecLitExpr n, interp::VecLitExpr &v);
-	interp::VecLitExpr *getLitInterp(coords::VecLitExpr c) const;
-	coords::VecLitExpr *getLitInterp(interp::VecLitExpr d) const;*/
-
 	void putVecVarExpr(coords::VecVarExpr *n, interp::VecVarExpr *e);
 	interp::VecVarExpr *getVecVarExpr(coords::VecVarExpr* c) const;
 	coords::VecVarExpr *getVecVarExpr(interp::VecVarExpr* d) const;
@@ -35,6 +31,11 @@ class CoordsToInterp
 	void putVecVecAddExpr(coords::VecVecAddExpr *n, interp::VecVecAddExpr *e);
 	interp::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
 	coords::VecVecAddExpr *getVecVecAddExpr(interp::VecVecAddExpr* d) const;
+
+	// KEVIN: This stuff here for VecParenExpr module
+	void putVecParenExpr(coords::VecParenExpr *ast, interp::VecParenExpr *expr);
+	interp::VecParenExpr *getVecParenExpr(coords::VecParenExpr* c) const;
+	coords::VecParenExpr *getVecParenExpr(interp::VecParenExpr* d) const;
 
 // Vector
 

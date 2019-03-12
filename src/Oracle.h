@@ -6,69 +6,20 @@
 #include "Coords.h"
 #include "Domain.h"
 
-#include <g3log/g3log.hpp>
-
-
 namespace oracle {
 
 class Oracle
 {
 public:
-	Oracle(domain::Domain* d) : dom_(d) {};
+	virtual domain::Space &getSpaceForVecIdent(coords::VecIdent *v) = 0;
+	virtual domain::Space& getSpaceForVecVarExpr(coords::VecVarExpr *coords) = 0;
+	virtual domain::Space &getSpaceForAddExpression(coords::VecExpr *mem, coords::VecExpr *arg) = 0;
 
-	domain::Space &getSpace();
-
-	//domain::Space& getSpace() { return space_; }
-	//domain::Space& getSpaceForVector(std::string where);
-
-	domain::Space& getSpaceForAddExpression(coords::VecExpr * left_br, coords::VecExpr * right_br)
-	{
-		//LOG(DEBUG) <<"Returning stub space for expression.\n";
-		std::cout <<"Space for add expression?\n";
-	//	LOG(DEBUG) <<"Right is \n" << right_br->toString() << "\n";
-	//	LOG(DEBUG) <<"Left is \n" << left_br->toString() << "\n";
-		return getSpace();
-	}
-
-	// TODO Change argument types here and below to those abstracted in AST.h, rather than clang
-
-	domain::Space& getSpaceForVecIdent(const clang::VarDecl* v) {
-		//LOG(DEBUG) <<"Returning stub space for identifier.\n";
-		std::cout <<"Space for identifier?\n";
-		//v->dump();
-		return getSpace();
-	}
-
-	domain::Space& getSpaceForVector_Expr(ast::Vector_Expr *ctor_ast) {
-		//LOG(DEBUG) <<"Space for vector constructed from expression?\n";
-		std::cout <<"Space for literal?\n";
-		//v->dump();
-		return getSpace();
-	}
-
-	domain::Space& getSpaceForVector_Lit(const clang::CXXConstructExpr* v) {
-		//LOG(DEBUG) <<"Space for vector constructed from literal?\n";
-		std::cout <<"Space for literal?\n";
-		//v->dump();
-		return getSpace();
-	}
-
-	domain::Space& getSpaceForVecVarExpr(ast::VecVarExpr *ast)  {
-		//LOG(DEBUG) <<"Space for literal?\n";
-		std::cout <<"Space for variable expression?\n";
-		//$(CPLUS_INCLUDE_PATH) ast->dump();
-		return getSpace();
-	}
-
-
-	domain::Space& getSpaceForVecVarExp(ast::VecVarExpr *ast)  {
-		//LOG(DEBUG) <<"Space for literal?\n";
-		std::cout <<"Space for variable expression?\n";
-		//ast->dump();
-		return getSpace();
-	}
-private:
-	domain::Domain* dom_;
+	// KEVIN: Added for VecParenExpr module
+	virtual domain::Space &getSpaceForVecParenExpr(coords::VecExpr *expr_coords) = 0;
+	
+	virtual domain::Space& getSpaceForVector_Expr(coords::VecExpr *expr_coords) = 0; 
+	virtual domain::Space& getSpaceForVector_Lit(coords::Vector_Lit *coords) = 0;
 };
 
 } // namespace
