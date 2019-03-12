@@ -1,14 +1,14 @@
 #ifndef CHECKER_H
 #define CHECKER_H
 
-#include "Domain.h"
+#include "Interpretation.h" 
 
 class Checker {
 public:
-    Checker(domain::Domain& d) : dom_(d) {}
-    bool Check();
+    Checker(interp::Interpretation* i) : interp_(i) {}
+    bool Check(); 
 private:
-    domain::Domain& dom_;
+    interp::Interpretation* interp_;
 };
 
 #endif
