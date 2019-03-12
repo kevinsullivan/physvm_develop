@@ -34,7 +34,6 @@ bool Checker::Check() {
  * Implementation Details
  * **********************/
 
-void writeTheory(FILE*);
 void writeDomain(FILE*, domain::Domain& d);
 
 aFile* openFile() {
@@ -48,7 +47,6 @@ aFile* openFile() {
 }
 
 void generateMath(aFile* f, interp::Interpretation* interp) {
-    writeTheory(f->file);
     std::string math = "";
     math += "import vec\n\n";
     math += interp->toString_Spaces();
@@ -62,12 +60,6 @@ void generateMath(aFile* f, interp::Interpretation* interp) {
 void cleanup(aFile* f) {
     delete f->name;
     delete f;
-}
-
-// output vector space header definitions to f
-void writeTheory(FILE* f) 
-{
-    fputs("import vec\n\n", f);
 }
 
 /*
