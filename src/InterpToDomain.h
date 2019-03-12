@@ -5,6 +5,8 @@
 #include "Domain.h"
 #include "Interp.h"
 
+#include "VecParenExpr.h"
+
 #include <unordered_map>
 
 namespace interp2domain {
@@ -35,6 +37,11 @@ class InterpToDomain
 	void putVecVecAddExpr(interp::VecVecAddExpr *n, domain::VecVecAddExpr *e);
 	domain::VecVecAddExpr *getVecVecAddExpr(interp::VecVecAddExpr* c) const;
 	interp::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
+
+	// KEVIN: Added for VecParenExpr horizontal module
+	void putVecParenExpr(interp::VecParenExpr *n, domain::VecParenExpr *e);
+	domain::VecParenExpr *getVecParenExpr(interp::VecParenExpr* c) const;
+	interp::VecParenExpr *getVecParenExpr(domain::VecParenExpr* d) const;
 
 // Vector
 

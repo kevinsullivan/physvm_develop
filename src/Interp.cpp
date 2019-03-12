@@ -42,7 +42,7 @@ std::string VecIdent::toString() const {
   std::string ret = "";
 //  ret += "( ";
   ret += coords_->toString();
-  ret += " : vector ";
+  ret += " : peirce.vec ";
   ret += ident_->getSpace()->toString();
 //  ret += " )";
   return ret;
@@ -67,7 +67,7 @@ std::string VecVarExpr::toString() const {
   std::string ret = "";
   ret += "( ";
   ret += coords_->toString();
-  ret += " : vector ";
+  ret += " : peirce.vec ";
   ret += expr_->getSpace().toString(); 
   ret += " )";
   return ret;
@@ -77,22 +77,45 @@ std::string VecVarExpr::toString() const {
 VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d, 
                              interp::Interp *mem, interp::Interp *arg)  
   : VecExpr(c, d), mem_(mem), arg_(arg) {
-
-  }
+}
 
  
 std::string VecVecAddExpr::toString() const {
   std::string ret = "";
-  ret += "( add ";
+  ret += "( peirce.add ";
   ret += mem_->toString();
   ret += " ";
   ret += arg_->toString();
-  ret += " : ";
+  ret += " : peirce.vec ";
   ret += expr_->getSpace().toString(); 
   ret += " )";
   return ret;  
 } 
 
+
+VecParenExpr::VecParenExpr
+    (coords::VecParenExpr* c, domain::VecParenExpr* d, interp::VecExpr *e) 
+    : VecExpr(c, d), paren_expr_(e) {
+}
+
+std::string VecParenExpr::toString() const {
+  std::string ret = "";
+  ret += "( ( ";
+  ret += paren_expr_->toString();
+  ret += " ) : peirce.vec ";
+
+  // TODO: Abstract superclass data members
+  ret += expr_->getSpace().toString(); 
+
+  ret += " )";
+  return ret;  
+} 
+
+
+
+/*******
+* Vector
+********/
  
 Vector::Vector(coords::Vector* c, domain::Vector* d) : Interp(c, d) {}
 
@@ -107,7 +130,7 @@ Vector_Lit::Vector_Lit(coords::Vector_Lit* c, domain::Vector_Lit* d) : Vector(c,
 
 std::string Vector_Lit::toString() const {
   std::string ret = "";
-  ret += "( mkVector ";
+  ret += "( peirce.vec.mkVector ";
   ret += vector_->getSpace()->getName();
   ret += " ";
   ret += static_cast<coords::Vector_Lit *>(coords_)->toString();

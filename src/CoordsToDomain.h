@@ -51,6 +51,12 @@ class CoordsToDomain
 	domain::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
 	coords::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
 
+	// KEVIN: Added for horizontal VecParenExpr module.
+	//
+	void PutVecParenExpr(coords::VecParenExpr *n, domain::VecParenExpr *e);
+	domain::VecParenExpr *getParenExpr(coords::VecParenExpr* c) const;
+	coords::VecParenExpr *getParenExpr(domain::VecParenExpr* d) const;
+
 // Vector
 
 	void putVector_Lit(coords::Vector *ast, domain::Vector_Lit *v);

@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/ASTMatcher",
-            "args": ["inputs/temp.7.cpp"],
+            "args": ["inputs/temp.4.cpp"],
             "stopAtEntry": false, 
             "cwd": "${workspaceFolder}",
             "environment": [],

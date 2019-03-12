@@ -122,10 +122,6 @@ coords::VecVarExpr *CoordsToInterp::getVecVarExpr(interp::VecVarExpr *d) const
 
 void CoordsToInterp::putVecVecAddExpr(coords::VecVecAddExpr *c, interp::VecVecAddExpr *d)
 {
-    std::string cstr = c->toString();
-    std::string dstr = d->toString();
-    LOG(DEBUG) << "CoordsToInterp::putVecVarExpr c " << cstr << "\n";
-    LOG(DEBUG) << "CoordsToInterp::putVecVarExpr d " << dstr << "\n";
     coords2interp_VecExpr[c] = d;
     interp2coords_VecExpr[d] = c;
 }
@@ -155,6 +151,40 @@ coords::VecVecAddExpr *CoordsToInterp::getVecVecAddExpr(interp::VecVecAddExpr *d
     }
     return static_cast<coords::VecVecAddExpr *>(coords);
 }
+
+// vecparenexpr
+
+void CoordsToInterp::putVecParenExpr(coords::VecParenExpr *c, interp::VecParenExpr *i) {
+    coords2interp_VecExpr[c] = i;
+    interp2coords_VecExpr[i] = c;
+}
+
+interp::VecParenExpr *CoordsToInterp::getVecParenExpr(coords::VecParenExpr* c) const {
+    std::unordered_map<coords::VecExpr*, interp::VecExpr*>::iterator it;
+    interp::VecExpr *dom = NULL;
+    try {
+        dom = coords2interp_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::VecParenExpr*>(dom);
+}
+
+
+// TODO: A few template functions should take care of most of this file
+coords::VecParenExpr *CoordsToInterp::getVecParenExpr(interp::VecParenExpr* d) const {
+    std::unordered_map<interp::VecExpr*, coords::VecExpr*>::iterator it;
+    coords::VecExpr *coords = NULL;
+    try {
+        coords = interp2coords_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::VecParenExpr *>(coords);
+}
+
 
 // Vector
 
