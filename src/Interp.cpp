@@ -135,7 +135,7 @@ std::string Vector_Lit::toString() const {
   ret += " ";
   ret += static_cast<coords::Vector_Lit *>(coords_)->toString();
   ret += " ) : peirce.vec ";
-  ret += d->getSpace(); 
+  ret += d->getSpace();
   ret += " )";
 
   return ret;
