@@ -42,7 +42,7 @@ std::string VecIdent::toString() const {
   std::string ret = "";
 //  ret += "( ";
   ret += coords_->toString();
-  ret += " : vector ";
+  ret += " : peirce.vec ";
   ret += ident_->getSpace()->toString();
 //  ret += " )";
   return ret;
@@ -130,7 +130,7 @@ Vector_Lit::Vector_Lit(coords::Vector_Lit* c, domain::Vector_Lit* d) : Vector(c,
 
 std::string Vector_Lit::toString() const {
   std::string ret = "";
-  ret += "( mkVector ";
+  ret += "( peirce.vec.mkVector ";
   ret += vector_->getSpace()->getName();
   ret += " ";
   ret += static_cast<coords::Vector_Lit *>(coords_)->toString();
