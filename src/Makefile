@@ -1,23 +1,3 @@
-# LLVM_BUILD_PATH is the directory in which you built LLVM - where you ran
-# configure or cmake.
-#
-# For linking vs. a binary build of LLVM, point to the main untarred directory.
-# LLVM_BIN_PATH is the directory where binaries are placed by the LLVM build
-# process. It should contain the tools like opt, llc and clang. The default
-# reflects a release build with CMake and Ninja. binary build of LLVM, point it
-# to the bin/ directory.
-
-LLVM_SRC_PATH   := /home/sullivan/Projects/llvm-project
-LLVM_BUILD_PATH := $(LLVM_SRC_PATH)/build
-LLVM_BIN_PATH 	:= /usr/local/bin
-
-$(info -----------------------------------------------)
-$(info Using LLVM_SRC_PATH = $(LLVM_SRC_PATH))
-$(info Using LLVM_BUILD_PATH = $(LLVM_BUILD_PATH))
-$(info Using LLVM_BIN_PATH = $(LLVM_BIN_PATH))
-$(info -----------------------------------------------)
-
-
 # output binary
 BIN := peirce
 
@@ -61,12 +41,12 @@ CXXFLAGS := -O0 -g -Wall -Wextra -pedantic
 # C/C++ flags
 CPPFLAGS := 
 # Clang C++ flags
-LLVM_CXXFLAGS := `$(LLVM_BIN_PATH)/llvm-config --cxxflags`
+LLVM_CXXFLAGS := `llvm-config --cxxflags`
 
 # linker flags
 LDFLAGS := -L/usr/local/lib 
 # LLVM linker flags
-LLVM_LDFLAGS := `$(LLVM_BIN_PATH)/llvm-config --ldflags --libs --system-libs`
+LLVM_LDFLAGS := `llvm-config --ldflags --libs --system-libs`
 
 # flags required for dependency generation; passed to compilers
 DEPFLAGS = -MT $@ -MD -MP -MF $(DEPDIR)/$*.Td
