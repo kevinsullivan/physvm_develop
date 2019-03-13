@@ -218,7 +218,7 @@ std::string Interpretation::toString_Spaces() {
   std::vector<domain::Space *> &s = domain_->getSpaces();
   for (std::vector<domain::Space *>::iterator it = s.begin(); it != s.end(); ++it)
     retval = retval.append("def ")
-                 .append((*it)->toString())
+                 .append((*it)->toString()) 
                  .append(" : peirce.space := peirce.space.mk ")
                  .append(std::to_string(index++)) 
                  .append("\n");

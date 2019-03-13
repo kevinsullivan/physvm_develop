@@ -19,7 +19,7 @@ $(info -----------------------------------------------)
 
 CXX := g++
 #CXXFLAGS := -fno-rtti -O0 -g -DBOOST_LOG_DYN_LINK
-CXXFLAGS := -O0 -g -Wall -Wextra -pedantic 
+CXXFLAGS := -O0 -g -Wall -Wextra -pedantic -MMD -MP
 #-Werror
 
 PLUGIN_CXXFLAGS := -fpic
@@ -102,8 +102,11 @@ make_builddir:
 
 # $(wildcard *.cpp /xxx/xxx/*.cpp): get all .cpp files from the current directory and dir "/xxx/xxx/"
 SRCS := $(wildcard *.cpp)
+
 # $(patsubst %.cpp,%.o,$(SRCS)): substitute all ".cpp" file name strings to ".o" file name strings
 OBJS := $(patsubst %.cpp,%.o,$(SRCS))
+
+DEPENDS = ${OBJS:.o=.d}    # substitutes ".o" with ".d"
 
 $(BUILDDIR)/ASTMatcher: $(SRC_CLANG_DIR)/$(SRCS)
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) $^ \
@@ -120,3 +123,5 @@ clean:
 
 format:
 	find . -name "*.cpp" | xargs clang-format -style=file -i
+
+-include ${DEPENDS}           # copies files x.d, y.d, z.d (if they exist)
