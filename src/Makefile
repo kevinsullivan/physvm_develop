@@ -136,6 +136,7 @@ distclean: clean
 
 .PHONY: install
 install:
+	cp peirce ../bin
 
 .PHONY: uninstall
 uninstall:
