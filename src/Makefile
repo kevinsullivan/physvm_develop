@@ -153,25 +153,25 @@ $(BIN): $(OBJS)
 	$(LINK.o) $^ $(CLANG_LIBS) $(LDFLAGS) $(LLVM_LDFLAGS) $(LDLIBS) 
 
 $(OBJDIR)/%.o: %.c
-$(OBJDIR)/%.o: %.c $(DEPDIR)/%.d
+$(OBJDIR)/%.o: %.c 
 	$(PRECOMPILE)
 	$(COMPILE.c) $<
 	$(POSTCOMPILE)
 
 $(OBJDIR)/%.o: %.cpp
-$(OBJDIR)/%.o: %.cpp $(DEPDIR)/%.d
+$(OBJDIR)/%.o: %.cpp 
 	$(PRECOMPILE)
 	$(COMPILE.cc) $<
 	$(POSTCOMPILE)
 
 $(OBJDIR)/%.o: %.cc
-$(OBJDIR)/%.o: %.cc $(DEPDIR)/%.d
+$(OBJDIR)/%.o: %.cc 
 	$(PRECOMPILE)
 	$(COMPILE.cc) $<
 	$(POSTCOMPILE)
 
 $(OBJDIR)/%.o: %.cxx
-$(OBJDIR)/%.o: %.cxx $(DEPDIR)/%.d
+$(OBJDIR)/%.o: %.cxx 
 	$(PRECOMPILE)
 	$(COMPILE.cc) $<
 	$(POSTCOMPILE)
