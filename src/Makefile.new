@@ -1,6 +1,3 @@
-# LLVM_BUILD_PATH is the directory in which you built LLVM - where you ran
-# configure or cmake.
-#
 # For linking vs. a binary build of LLVM, point to the main untarred directory.
 # LLVM_BIN_PATH is the directory where binaries are placed by the LLVM build
 # process. It should contain the tools like opt, llc and clang. The default
@@ -8,12 +5,10 @@
 # to the bin/ directory.
 
 LLVM_SRC_PATH   := /home/sullivan/Projects/llvm-project
-LLVM_BUILD_PATH := $(LLVM_SRC_PATH)/build
 LLVM_BIN_PATH 	:= /usr/local/bin
 
 $(info -----------------------------------------------)
 $(info Using LLVM_SRC_PATH = $(LLVM_SRC_PATH))
-$(info Using LLVM_BUILD_PATH = $(LLVM_BUILD_PATH))
 $(info Using LLVM_BIN_PATH = $(LLVM_BIN_PATH))
 $(info -----------------------------------------------)
 
@@ -32,11 +27,13 @@ DISTOUTPUT := $(BIN).tar.gz
 
 # intermediate directory for generated object files
 OBJDIR := .o
+
 # intermediate directory for generated dependency files
 DEPDIR := .d
 
 # object files, auto generated from source files
 OBJS := $(patsubst %,$(OBJDIR)/%.o,$(basename $(SRCS)))
+
 # dependency files, auto generated from source files
 DEPS := $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
 
@@ -59,10 +56,20 @@ CFLAGS := -O0 -g -Wall -Wextra -pedantic
 CXXFLAGS := -O0 -g -Wall -Wextra -pedantic
 # C/C++ flags
 CPPFLAGS := 
-# linker flags
-LDFLAGS :=
+
+# Clang C++ flags
+LLVM_CXXFLAGS := `$(LLVM_BIN_PATH)/llvm-config --cxxflags`
+
 # flags required for dependency generation; passed to compilers
 DEPFLAGS = -MT $@ -MD -MP -MF $(DEPDIR)/$*.Td
+
+# LLVM linker flags
+LLVM_LDFLAGS := `$(LLVM_BIN_PATH)/llvm-config --ldflags --libs --system-libs`
+# Other linker flags
+LDFLAGS := -L/usr/local/lib 
+# Other linker libraries
+LDLIBS = -lg3logger 
+
 
 # List of Clang libraries to link. The proper -L will be provided by the
 # call to llvm-config
@@ -97,15 +104,14 @@ CLANG_LIBS := \
 	-lclangFormat \
 	-Wl,--end-group
 
-# compile C source files
+# compile C source files (delete clang_libs llvm_ldflags?)
 COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@
 
 # compile C++ source files
-COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@
 COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) -c -o $@
 
 # link object files to binary
-LINK.o = $(LD) $(LDFLAGS) $(LDLIBS) $(CLANG_LIBS) $(LLVM_LDFLAGS) -L/usr/local/lib -lg3logger -o $@
+LINK.o = $(LD) -o $@
 
 # precompile step
 PRECOMPILE =
@@ -142,7 +148,7 @@ help:
 	@echo available targets: all dist clean distclean install uninstall check
 
 $(BIN): $(OBJS)
-	$(LINK.o) $^
+	$(LINK.o) $^ $(CLANG_LIBS) $(LDFLAGS) $(LLVM_LDFLAGS) $(LDLIBS) 
 
 $(OBJDIR)/%.o: %.c
 $(OBJDIR)/%.o: %.c $(DEPDIR)/%.d

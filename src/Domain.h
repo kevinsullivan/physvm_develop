@@ -210,11 +210,16 @@ private:
 
 // Constructed literal vector value
 //
+// TODO: Replace float with domain::scalar
+//
 class Vector_Lit : public Vector {
 public:
 	Vector_Lit(const Space& s, float x, float y, float z) :
 		Vector(s, VEC_LIT), x_(x), y_(y), z_(z) {
 	}
+	float getX() { return x_; }
+	float getY() { return y_; }
+	float getZ() { return z_; }
 private:
   float x_;
   float y_;
