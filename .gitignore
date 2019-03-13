@@ -6,4 +6,5 @@ build/
 *.log
 .vscode
 .DS_Store
-peirce
+bin/peirce
+src/peirce
