@@ -40,7 +40,7 @@ By *clients* we meantools that use interpretations to provide fundamental new so
 ![ArchitectureDiagram](https://github.com/kevinsullivan/Pierce/blob/master/blueprint.png)
 
 ## Who's Involved
-The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student, Hannah Leung, is carrying out our initial prototyping work as part of her MS Thesis project. Stay tuned for great things.
+The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student, Hannah Leung, is carrying out our initial prototyping work as part of her MS Thesis project. John Knight and Jian Xiang along with Kevin Sullivan were responsible for early development of many of the ideas that are still central to this work.
 
 ## Development Infrastructure and Processes
 To work on this project requires some set-up, but it's not bad. First, clone the project or fork it depending on your and our workflows. Second, visit the dockerSetup directory and follow the directions there to create a docker image that contains our LLVM-based development environment. Third, from the top-level project directory, launch a corresponding docker container and obtain a bash terminal. In the docker containder, cd into /pierce. This links to the project directory on your host machine from which you launched the docker image. Now cd into the src directory, type "make clean" just to be sure, then "make". The code should build. To run the code, run "../build/ASTMatcher ../inputs/temp.cpp". Now you can make changes to the code on your host machine, then you back into the container and type "make" again. You can use ordinary git workflows, issuing commands on your host machine, to push your changes to github or to post pull request, depending on how we are working together.
