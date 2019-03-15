@@ -44,7 +44,7 @@ By *clients* we meantools that use interpretations to provide fundamental new so
 
 
 ### Architecture diagram
-![ArchitectureDiagram](https://github.com/kevinsullivan/Pierce/blob/master/blueprint.png)
+![ArchitectureDiagram](https://github.com/kevinsullivan/Pierce/doc/images/architecture.png)
 
 ## Who's Involved
 The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student, Hannah Leung, is carrying out our initial prototyping work as part of her MS Thesis project. John Knight and Jian Xiang along with Kevin Sullivan were responsible for early development of many of the ideas that are still central to this work.
