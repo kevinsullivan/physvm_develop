@@ -2,52 +2,82 @@
 #define INTERPRETATION_H
 
 #include <iostream>
-#include "CodeCoordinate.h"
-#include "Bridge.h"
+#include "AST.h"
+#include "Coords.h"
+#include "Domain.h"
+#include "ASTToCoords.h"
+#include "CoordsToDomain.h"
+#include "Oracle.h"
+#include "CoordsToInterp.h"
+#include "InterpToDomain.h"
+#include <g3log/g3log.hpp> 
 
-#include <unordered_map>
+namespace interp {
 
-using namespace std;
-using namespace bridge;
 
-class Interpretation
-{
-  public:
-	void putIdentInterp(const IdentifierASTNode &key, bridge::Identifier &bi);
-	const bridge::Identifier *getIdentInterp(const IdentifierASTNode &key);
+// TODO: Take clang::ASTContext
+class Interpretation {
+public:
+    Interpretation();
 
-	// ??? delete ???
-	/*
-	void putVectorInterp(const VectorASTNode& n, VecVarExpr& v);
-	VecVarExpr* getVectorInterp(const VectorASTNode& n);
-	*/
+    void setOracle(oracle::Oracle* oracle) {
+        oracle_ = oracle;
+    }
 
-	void putLitInterp(const LitASTNode &n, VecLitExpr &v);
-	VecLitExpr *getLitInterp(const LitASTNode &n);
+    void setASTContext(clang::ASTContext *context) {
+        context_ = context;
+    }
 
-	void putExpressionInterp(const ExprASTNode &n, const bridge::Expr &e);
-	const bridge::Expr *getExpressionInterp(const ExprASTNode &n);
+    void addSpace(std::string name) { 
+        domain_->mkSpace(name);
+    }
 
-	void putBindingInterp(BindingASTNode *vardecl_wrapper, Binding &b);
-	Binding *getBindingInterp(BindingASTNode &vardecl_wrapper);
+    domain::Domain* getDomain() { 
+        return domain_; 
+    }
 
-	void dumpExpressions() {
-		for (auto it = interpExpression.begin(); it != interpExpression.end(); ++it) {
-			//std::cerr << std::hex << &it->first << " : " << std::hex << it.second << "\n";
-			cerr << "InterpExpr!\n";
-		}
-		std::cerr << std::endl;
-	}
+    /*
+    These operations work by side-effecting interpretation state.
+    Precondition: subsequent ast arguments already interpretated.
+    */
+    void mkVecIdent(ast::VecIdent *ast);
+    void mkVecVarExpr(ast::VecVarExpr *ast);
 
-  private:
-	/* 
-	We implement an interpretation as a collection of typed maps. The keys are "Code Coordinate" objects, which, in 
-	turn, are currently just containers for pointers to AST
-	nodes, adding operator==() and hash functions.
-	*/
-	unordered_map<IdentifierASTNode, bridge::Identifier *, IdentifierASTNodeHasher> interpIdent;
-	unordered_map<const ExprASTNode, const bridge::Expr *, ExprASTNodeHasher> interpExpression;
-	unordered_map<BindingASTNode, bridge::Binding *, BindingASTNodeHasher> interpBinding;
-};
+    // TODO: remove the following two const constraints
+    void mkVecVecAddExpr(ast::VecVecAddExpr *ast, const ast::VecExpr *mem, 
+                         const ast::VecExpr *arg);
+
+    // KEVIN: Added for new horizontal module
+    void mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr);
+
+    void mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float z);
+    void mkVector_Expr(ast::Vector_Expr *ast, ast::VecExpr* expr);
+    void mkVector_Var(ast::VecLitExpr *ast);
+    void mkVector_Def(ast::Vector_Def *ast, ast::VecIdent *id, ast::VecExpr *exp);
+    
+    // Precondition: coords2domain_ is defined for ast
+    domain::VecExpr *getVecExpr(ast::VecExpr *ast);
+
+    // TODO: Factor this out into client
+    std::string toString_Spaces();
+    std::string toString_Idents();
+    std::string toString_Exprs();
+    std::string toString_Vectors();
+    std::string toString_Defs();
+
+// TODO: Make private
+    domain::Domain *domain_;
+    oracle::Oracle *oracle_;
+    clang::ASTContext *context_;
+    coords2domain::CoordsToDomain *coords2dom_;
+    ast2coords::ASTToCoords *ast2coords_;
+    coords2interp::CoordsToInterp *coords2interp_;
+    interp2domain::InterpToDomain *interp2domain_; 
+}; 
+
+} // namespaceT
 
 #endif
+
+
+

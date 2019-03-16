@@ -2,48 +2,26 @@
 #define ORACLE_H
 
 #include <string>
-#include "CodeCoordinate.h"
-#include "Bridge.h"
+#include <iostream>
+#include "Coords.h"
+#include "Domain.h"
 
-using namespace bridge;
+namespace oracle {
 
 class Oracle
 {
 public:
-	Oracle(Bridge& d) : dom_(d) {};
+	virtual domain::Space &getSpaceForVecIdent(coords::VecIdent *v) = 0;
+	virtual domain::Space& getSpaceForVecVarExpr(coords::VecVarExpr *coords) = 0;
+	virtual domain::Space &getSpaceForAddExpression(coords::VecExpr *mem, coords::VecExpr *arg) = 0;
 
-	// Precondition: true
-	// Effects: get space annotation from environment
-	// Postcondition: return value is space to associate with vector
-	//
-	Space& getSpaceForVector(string where);
-
-	Space& getSpaceForAddExpression(const bridge::Expr * left_br, const bridge::Expr * right_br)
-	{
-		//cerr << "Returning stub space for expression.\n";
-		cerr << "Space for add expression?\n";
-		cerr << "Left is \n" << left_br->toString() << "\n";
-		cerr << "Right is \n" << right_br->toString() << "\n";
-		return getSpace();
-	}
-
-	Space& getSpaceForIdentifier(const clang::VarDecl* v) {
-		//cerr << "Returning stub space for identifier.\n";
-		cerr << "Space for identifier?\n";
-		v->dump();
-		return getSpace();
-	}
-
-	Space& getSpaceForLitVector(const clang::Expr* v) {
-		//cerr << "Space for literal?\n";
-		cerr << "Space for literal?\n";
-		v->dump();
-		return getSpace();
-	}
-
-private:
-	Space& getSpace();
-	Bridge& dom_;
+	// KEVIN: Added for VecParenExpr module
+	virtual domain::Space &getSpaceForVecParenExpr(coords::VecExpr *expr_coords) = 0;
+	
+	virtual domain::Space& getSpaceForVector_Expr(coords::VecExpr *expr_coords) = 0; 
+	virtual domain::Space& getSpaceForVector_Lit(coords::Vector_Lit *coords) = 0;
 };
+
+} // namespace
 
 #endif

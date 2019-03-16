@@ -1,0 +1,149 @@
+/*                                                            Coord
+Coords Name         New Name            Clang               Syntax              Domain
+-----------         --------            -----               ------              ------
+Vector              Vector              CXXConstructExpr                        vector    
+Ident               Ident               VarDecl             identifier
+Stmt                VectorStmt          DeclStmt            ? binding
+Expr                Expr                Expr                Expr: lit, var, fn
+Binding             Binding             VarDecl             bind id, value
+AddExpr             AddExpr             CXXMemberCallExpr   vec_add appl
+Var                 Var                 DeclRefExpr         var expr
+
+                                                                                Expr-polym
+
+WHAT                What                DeclStmt            --mistake?
+
+
+Literal             Literal             CXXConstructExpr     ?
+VecConstrAddExpr    VecConstrAddExpr                        <vector>-from-add 
+
+(Could I take Jesus as my witness? A question from a student in my class. )
+*/
+
+/*
+Vector      VecCtor (lit or expr to actual vector)
+Ident       VecIdent
+Stmt        VecBinding
+Expr        VecExpr
+Binding     ??? (VarDecl)
+AddExpr     VecVecAddExpr
+Var         VecVarExpr
+*/
+
+//What do we do with Stmt binding vs VarDecl "Binding"
+
+/* 
+A Vector is a fully fledged representation of a mathematical vector in a vector space, typically one that code intends to 
+represent concretely. 
+*/
+
+/*
+The language bridge connects the concept representation spaces.
+
+An interpretation maps from code, across a language bridge,
+to a mathematical space, richer and more abstract, filling 
+in lost information from an oracle. The oracle is the true 
+interpreter. This system supports an infinitude of different 
+oracles. Our first oracle is a human analyst. Efficiency ot
+expression is afforded to the oracle by harnessing the type
+inference system of the target language of the constructive 
+logic prover. A precisely correct mapping is preserved at 
+all times through the use of this approach, thereby giving
+a physical semantics to the code, which inherently external
+to the code, and thereby not subject to checking by means
+of source language checking. It is the very rare software
+design today that does not overabstract from reality, and
+thereby free itself from its constraints.
+*/
+
+/*
+Key to understanding the design of this system is to
+understand how different types of clang nodes map to
+domain concepts. What are the set theory properties
+of these crucial *design* relations? The connector is
+from clang types to coordinate types, where values of
+coordinate types are (1) just wrappers around clang
+ast objects,, but (2) now typed in the domain. The
+property we seem to need is the injectivity of this
+mapping. That's what we need at the end of the day is
+an injective mapping from clang ast node types, on
+one side, to types for both a domain language and for
+expressing domain objects directly.  
+
+Some ideas traverse the bridge conceptually intact.
+For example, identifiers map to identifiers.
+
+
+// AddConstruct
+
+// Parsing Grammar
+
+CXXConstructExpr    HandlerForCXXConstructLitExpr
+
+
+
+
+Domain Grammar
+--------------
+
+Expr (lit, var, fn) -- used to build inductively defined expression trees in domain language
+Interpretation::mkVecVecAddExpr : ast -> mem_coords -> arg_coords -> domain::Expr
+
+
+member_expr_of_add_call CXXMemberCallExpr
+
+MATCHERS
+CXXMemberCallExprArg0Matcher (var | fn)
+CXXMemberCallExprMemberExprMatcher (var | fn)
+CXXConstructExprMatcher ( | lit | add)
+MyASTConsumer : stream of (declStmt -- cxxConstructExpr VarDecl) (VarDecl CXXConstructExpr)) 
+
+HANDLERS
+HandlerForCXXConstructLitExpr
+HandlerForCXXAddMemberCall
+HandlerForCXXConstructAddExpr
+
+
+select: VectorDeclStmtHandler --> CXXConstructExprMatcher <Stream of DeclStmt>
+bind: DeclStmt [ [VarDecl(Ident), CXXConstructExpr(Lit|Add) ] : add ident, match cxxcons, bind
+
+match expr: CXXConstructExprMatcher -- ctor exprs within declstms
+
+construct: HandlerForCXXConstructAddExpr -- construct domain vector recursively handle member and arg 
+
+recurse: HandlerForCXXAddMemberCall --> populate domain with left/member, right/arg objects 
+
+match mem call member: (member.add_vec[arg0]) CXXMemberCallExprMemberExprMatcher (var | fn)
+match mem call arg: CXXMemberCallExprArg0Matcher --> match on (var | fn)
+
+CXXMemberCallExprMemberExprMatcher::match -->CXXMemberCallExprMemberExprMatcher
+
+MyASTConsumer
+
+
+domain::Expr *handle_member_expr_of_add_call
+domain::Expr *handleMemberCallExpr
+domain::Expr *handle_arg0_of_add_call
+domain::Expr *handle_member_expr_of_add_call
+domain::Expr *handleCXXDeclStmt
+ 
+
+
+
+// Vocabulary transformation systems
+// This is a critical bridge: needs to precisely reflect
+// clang structures, and mapping from them, via oracle, to 
+// domain.
+//
+// The precise set of right terms is not yet established
+// But we're pretty close. Parts of it appear to be right
+//
+// To help, we'll expand into a glossary
+//
+
+/*
+This is a vocabulary that precisely explains the mapping
+from clang to coords.
+*/
+
+

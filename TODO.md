@@ -42,7 +42,7 @@ DONE:
 
 ~~*Implement domain.isConsistent. This means iterating over the domain objects and writing out a corresponding Lean file and sending it off to the type checker.~~
 
-~~*Connect "ASTNode" object to the Clang AST node objects that you're
+~~*Connect "" object to the Clang AST node objects that you're
 finding in the code.~~
 
 ~~*Update the oracle so that it asks you about which spaces vectors belong to.~~

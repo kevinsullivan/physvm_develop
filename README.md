@@ -1,47 +1,47 @@
 # PeirceProject
-This repository supports the collaborative development of Pierce, a system for implementing real-world semantics for code. The project name recalls the great American logician, Charles Saunders Peirce, who carried out seminal work on both logic and semiotics: the study of the meanings of symbols.  See https://plato.stanford.edu/entries/peirce-semiotics/. 
+This repository supports the collaborative development of Pierce, a system for implementing a physical or other exterior semantics for code. The project name recalls the great American logician, Charles Saunders Peirce, who carried out seminal work on logic and semiotics: the study of the meanings of symbols.  See https://plato.stanford.edu/entries/peirce-semiotics/. 
 
 ## Overview
-The aim of the project is to establish formalized *interpretations* of symbolic expressions in code to underpin a theory of the *real-world*, or *physical*, as opposed to *programming language* semantics of code. To start, we are focusing on the physical semantics of code for cyber-physicals systems, and for robotics systems, in particular. We hypothesize, and have already produced some substantial evidence for the proposition that, such code is prone to contain many *physical type errors*. These are errors that arise when the type system of the programming language allows operations to occur that are inconsistent with the *intended* but not formalized or enforced, *physical interpretations* of such symbolic expressions. 
+The semantics of ordinary propositional, predicate, and constructive logic are defined in terms of
+*interpretations*. An interpretation defines a correspondence between the symbols *within* a set of logical expressions to objects in some *domain of discourse*. Such a domain  lies beyond the symbols and rules of deduction internal in the logic itself.
+
+A programming language is of course just a logic, and a computer program is just an expression in such a logic. As a logic, a programming language is equipped with a set of rules of inference that explain how expressions, in this case programs, in the language are evaluated. 
+
+And yet, for decades, the concept of the semantics of a programming language, and of an expression in such a logic, has been defined in terms of the rules of deduction (and in paritcular the rules of computation) *internal* to the logic. What is fundamentally missing from this account of the semantics of software is any notion of a formal *interpretation* of a given program, in the sense of an explication of the intended meanings, in some domain of discourse *exterior to the code*, of the logical symbols within the code.
+
+This project aims to establish a new formal semantics of code rooted in the definition of *interpretations,* mapping symbolic expressions in code to objects in domains of discourse *exterior to the code and the underlying programming language and system*. 
+
+To start, we are focusing on the physical semantics of code for cyber-physicals systems, and for robotics systems, in particular. We hypothesize, and have already produced some substantial evidence for the proposition that, such code is prone to contain many *abstract type errors*. These are errors that arise when the type system of the programming language allows operations to occur that are inconsistent with the *intended* but not formalized or enforced, *real-world interpretations* of such symbolic expressions. 
 
 ## Abstract Type Errors
-As an example, it is a a physical type error to add two concrete instances of some vector class, even if the programming language's type system and the programmer-defined types in the code allow it, if it is intended that those vectors objects in code are intended to represent vectors in different physical spaces, e.g., representing a geometric displacement and a time interval. The problem is that it is very common for code to be overly abstracted from the mathematical physics of the real world, and thus to be underconstrained with respect to computational behaviors that are consistent with the intended physical interpretation of the software. 
+Software is typically over-abstracted from its intended domain of discourse. A significant body of work has focused on the problem that when physical quantities are represented by numberical symbolic expressions in code, corresponding physical units are often abstracted away. As a result, *internally* well typed code can perform operations that have no meanings in corresponding *external* domain. The Mars Polar Orbiter mission was famously lost due to the execution of an internally well typed computation that had no physical meaning due to mismatched assumptions about the units in which quanitities were expressed.
 
-## Interpretations and Semantics
-The central idea in our work is that to give code a physical semantics, to link it to the level of the physical system that it monitors and controls, requires the notion of an *interpretation*, analogous to that which is used to define the semantics of a logic, such as first-order predicate logic. In such a logic, the truth of a logical proposition is evaluated with respect to a given *interpretation* that connects symbolic terms in the logic to objects in a separate *domain of discourse*. 
-
-Intepretations are essential for giving expressions in predicate logic a semantics. What has long been missing from software is a corresponding notion. We view the code as fundamentally symbolic stuff with internal type-checking and inference rules that define how computations unfold; but such checking and evaluation rules are insufficient to enforce the constraints inherited from the world that the terms in the software are intended to represent. 
+We refer to such errors as *abstract type errors*. These are type errors *in the domain of discourse* as represented by symbols in the code. Such errors cannot be detected by programming language type systems because, by our definition, they involve information that has been abstracted away in the mapping of the domain of discourse to its symbolic representation in the logic of a programming language.  
 
 ## Automated Construction of Interpretations
-This project aims to substantially automate the process of building formal, computable interpretations of code to enable new forms of software consistency checking and other capabilities. Code does not contain enough computable information to fully determine an interpretation. For example, a robotics software system might never make explicit and computable the assumptions that are made about what vector spaces certain vectors inhabit. Information of this kind has to be provided by other means. Our interpretation builder uses interchangeable *oracle* objects to obtain additional information necessary to construct formalized interpretations of selected elements in code. One implementation of our oracle just asks the programmer for relevant additional bits of information such as the space that a given vector object in the code is assumed to inhabit.
+This project aims to substantially automate the process of constructing formal interpretations of code. By definition, the code does not contain enough computable information to fully determine an interpretation. On the other hand, because an interpretation is a mapping from expressions in the code to meanings in another domain, the code provides a precise map of where additional information needs to be provided to fully specify the intended interpretation of the code. Our approach thus involves analysis of the code and appeal to an external *oracle*, which can take different forms for different applications, that serves to provide the additional information needed to establish a complete, formal interpretation of of given system. 
 
-## Overall Function of Demonstration Prototype
-What we have demonstrated is the ability to select C++ code elements that implement certain physically relevant comptuations, particularly ones involving vector spaces and vector operations. Code elements representing vectors and operations on them are mapped to corresponding elements in the language of a constructive logic proof assistant, a kind of software systems that is now being used not only for formal specification and verification of software, but also to formalize abtract mathematics, including the kinds of mathematics central to mathematical physics. Our near- to mid-term aim is to show the feasibility of constructing, largely automatically, interpretations of code that carry out computations important in classical dynamics. Beyond mere checking of *code* for consistency with the constraints of mathematical physics, we anticipate that this work will enable reasoning *in physical domain terms* about system behaviors driven by underlying software. 
+## A New Approach to Reasoning About Software and the Systems it Runs
 
-Making formal, computable connections between code and physics is essential to effective development and validation of future cyberphysical, especially robotic, systems. This project aims to link code to various mathematical formalisms critical for any effective reasoning about system properties. Such formalisms include vector, affine, and, in particular, Euclidean spaces, and, for systems that experience relativistic effects, Minkoski spaces. This work is expected to lead to a significant and extensive generalization of previous work on adding single-dimensional physical units to code, and to make explcit deep connections to the mathematical physics underlying such metrological efforts.
+It is impossibly to reason adequately from software that is stripped of essential information from its corresponding domain of discourse. Are there abstract type errors in a given system? No amount of ordinary code analysis can say, because the information necessary to make such a decision is either missing from the code entirely, or it is in a form (e.g., comments or variable identifiers) that is generally not carefully engineered to support rigorous analysis. 
+
+For example, a robotics software system might never make critical assumptions explicit about what vector spaces certain vectors belong to that are represented in the code. Does this scalar represent a temporal duration or a distance in a geometric space? Information of this kind, that has been stripped from the code, has to be provided by other means. Our interpretation builder uses formal domain models, e.g., of vector spaces, along with an *oracle* to obtain the additional information necessary to construct a proper interpretation of given elements of a code base. What our system builds, then, are fully formal, complete interpretations of selected *aspects* of code, such as its representation of physical quantities. 
+
+With such an interpretation in hand for a given piece of software, new kinds of reasoning, and new software and systems engineering capabilities, become possible. Our first application is abstract type-checking. We achieve this capability by mapping selected, physically relevant aspects of source code (currently for C++ robotics code) to corresponding expressions in an abstract mathematical language, currently of affine and Euclidean space expressions formalized in the expressive logic of a constructive logic proof assistant. We then rely on the foundational type checking capabilities of these tools to type check expressions *lifted from the code to interpretations in the domain* for abstract type errors.
+
+Prior work has confirmed the difficulty of manually annotating large bodies of code with meta-data for physical units. Our work shows that it is at least possible to take advantage of the sophsticated *type inference* capabilites of such checkers to dramatically reduce the burden of annotating code without writing a single line of additional inferencing software.
+
+There are many directions for future work, building on our concept of software interpretations and on our demonstration prototype system.
 
 ## System Architecture
 
-### Code analyzer
+### Parser
 
-Based on LLVM and on the Clang Tooling framework, in particular.
+We craft code-specific pattern matchers using Clang tooling to project domain-relevant abstract syntax tree elements from code.
 
-### Domain model
+### Interpretation builder
 
-Currently a mutable store of Euclidean space types (e.g., Vector, Point), and of instances that correspong to code expressions that are intended to represent abstract objects of these types.
-
-### Interpretation
-
-An associative store that links code elements, identified by what we think of as *code coordinates*, to objects in the domain.
-
-### Semantic oracle
-
-Currently queries user interactively to provide additional information needed, which can be though of as code annotations, to fully construct a desired interpretation.
-
-### Clients and Use Cases
-
-By *clients* we meantools that use interpretations to provide fundamental new software engineering capabilities. Chief among these are checking of code for abstract type errors. Another is to improve the generation of test cases to target only those states that a system might encounter in the real world. A third is to improve program understandability by helping to explain the intended real-world meanings of symbolic expressions in code. A fourth is to optimize physical simulations given the added constraints that the real-world imposes on the permissible behaviors of a software system. There are more.
-
+We establish interpretations for each such AST element. An interpretation comprises, for each AST element (generally a subtree of the overall AST), an isomorphic tree of *code coordinates*, an isomorphic tree of *domain expressions*, and an isomorphic tree of *interpretation objects*, with relational mappings connecting all of these objects in forwards and backwards directions. An oracle is invoked to create domain objects for each selected code object. Oracles implement a simple oracle interface. We currently have oracles that query a human analyst for the required additional information. 
 
 ### Architecture diagram
 ![ArchitectureDiagram](https://github.com/kevinsullivan/Pierce/doc/images/architecture.png)
@@ -49,39 +49,25 @@ By *clients* we meantools that use interpretations to provide fundamental new so
 ## Who's Involved
 The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student, Hannah Leung, is carrying out our initial prototyping work as part of her MS Thesis project. Jian Xiang working with Kevin Sullivan helped to develop some of the early ideas around the "lifting" of ordinary code to enriched models formalized in a constructive logic. 
 
-## Development Infrastructure and Processes
-To work on this project requires some set-up, but it's not bad. First, clone the project or fork it depending on your and our workflows. Second, visit the dockerSetup directory and follow the directions there to create a docker image that contains our LLVM-based development environment. Third, from the top-level project directory, launch a corresponding docker container and obtain a bash terminal. In the docker containder, cd into /pierce. This links to the project directory on your host machine from which you launched the docker image. Now cd into the src directory, type "make clean" just to be sure, then "make". The code should build. To run the code, run "../build/ASTMatcher ../inputs/temp.cpp". Now you can make changes to the code on your host machine, then you back into the container and type "make" again. You can use ordinary git workflows, issuing commands on your host machine, to push your changes to github or to post pull request, depending on how we are working together.
+### Clients and Use Cases
 
-## Organization of the project.
+By *clients* we mean tools that use interpretations to provide fundamental new software engineering capabilities. Chief among these are checking of code for abstract type errors. Another is to improve the generation of test cases to target only those states that a system might encounter in the real world. A third is to improve program understandability by helping to explain the intended real-world meanings of symbolic expressions in code. A fourth is to optimize physical simulations given the added constraints that the real-world imposes on the permissible behaviors of a software system. There are more.
 
-Here is a description of the hierarchy of the files.
-```
-pwd = path/to/Pierce
+### Development Infrastructure and Processes
+The best way to work on this project is to download our PeirceVM: an Ubuntu VM set up to develop and test the code for this project. It includes Clang, Lean, required Lean libraries, VSCode configured for C++ development, C++ libraries, search path settings, and so on. It's about a 30GB VM image file. Kevin Sullivan routinely works on this project on a 2015 core i7 MacBook Pro laptop with a 500GB SSD and 16GB of RAM, as well as on a desktop PC with a core i9-9900k, 64GB or RAM, and a 2TB PCIe NVMe SSD. It is better to work on the desktop machine, but it's viable to work on the laptop. Once you download the VM image, *import* it into VirtualBox (or VMWare Player, though this is not tested). Then run the VM, log into to the *Charles Saunders Peirce* account, cd into Project/Peirce, do a *git pull* with your own GitHub credentials, launch VS Code from the project directory, do a CTRL-SHIFT-b to compile the code, and you are then up and running. In a terminal window, do *make install*. This will copy the compiled binary to the bin subdirectory of the top-level project directory.
 
-    ./|--/src(contains the source files of the clang tool)
-      |
-      |--/inputs(contains code we experiment on)
-      |
-      |--/dockerSetup(contians instructions for setting up the docker container)
-      |
-      |--/build(contians the binary format of the bool)
-      |
-      |--README(Introduction for the project)
-      |
-      |--TODO.txt(maintains the todos along the development)
-```
-## Run the program
+### Run the program
 
-First, make sure you followed the instructions in the `./dockerSetup` to setup the docker container properly. Then go to the top level directory of this repo.
-Simply run the following command to how the tool works.
-```
-cd ./src
-make
-../build/ASTMatcher ../inputs/temp.cpp --
-```
-This is an example on the `./inputs/temp.cpp` file and the `--` at the end of the command is to tell information about the compilation database. 
+Go to the top level project directory. You can then run the command, *bin/peirce inputs/temp.4.cpp --*, to run the interpretation builder on a simple C++ program implementing a few basic vector space operations. 
 
 
+## Significance to Systems Engineering
 
+Our first use cases for this work will focus on robotics code, e.g., for UAV drones, programmed in C++ using ROS. The expected significance of this work for the systems engineering community is that it finally gives us a way to lift knowledge from code to knowledge expressed in *physical* terms. By lifting code abstractions to Euclidean space abstractions, for example, we represent critical what the code is doing in the language of mathematical physics rather than in the logic of some arcane programming language. We think that this work has the potential to provide systemms engineers with significant insights into what the software in their systems is doing by explaining what it means not in the language of code but in the language of the phsysical domain of discourse. 
 
+## Who's Involved
+The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student, Hannah Leung, is carrying out our initial prototyping work as part of her MS Thesis project. Stay tuned.
 
+## Acknowledgements
+
+Kevin Sullivan's work on this project has been supported by the Systems Engineering Research Center. (A proper, SERC-approved acknowledgement will be provided here.) This work draws heavily on prior work by both PIs, including Sullivan's work with Jian Xiang and John Knight, and on Elbaum's work with his colleagues on easing the task of annotating programs with physical (SI) units. 

@@ -1,8 +1,6 @@
-#include <string>
 #include <iostream>
-#include "clang/AST/AST.h"
-#include "clang/AST/ASTConsumer.h"
-#include "clang/AST/Expr.h"
+#include <string>
+
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/Frontend/CompilerInstance.h"
@@ -10,80 +8,74 @@
 #include "clang/Rewrite/Core/Rewriter.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
-#include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/CommandLine.h"
+#include "llvm/Support/raw_ostream.h"
 
-#include "CodeCoordinate.h"
+
 #include "Interpretation.h"
-#include "Oracle.h"
-#include "Bridge.h"
+#include "Checker.h"
 
+
+/*
+Hack to get g3log working. Should be in std in c++14 and later libraries.
+*/
+namespace std
+{
+    template<typename T, typename... Args>
+    std::unique_ptr<T> make_unique(Args&&... args)
+    {
+        return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+    }
+}
+
+#include <memory>
+#include <g3log/g3log.hpp>
+#include <g3log/logworker.hpp>
+
+using namespace std;
+using namespace llvm;
 using namespace clang;
 using namespace clang::ast_matchers;
 using namespace clang::driver;
 using namespace clang::tooling;
-using namespace std;
-using namespace llvm;
-using namespace bridge;
 
-/**************************************************
-Fundamental data structure constructed by this tool
-***************************************************/
 
 /*
-Sharing data via global variables is a bad idea, but we'll 
-do it to get a working system. These variables are initialized 
-in main() and updated during the parse tree traversal, as AST
-node handlers are triggered. 
+Architectural decision: Main parser should deal in AST nodes only,
+and call interpretation module to handle all other work. Do not use
+coords, interp, domain objects.
 */
-Oracle *oracle;
-Bridge *bridge_domain;
-Interpretation *interp;
 
-unordered_map<const clang::Expr *, const ExprASTNode *> expr_wrappers;
-unordered_map<const clang::Stmt *, const ExprASTNode *> stmt_wrappers;
-unordered_map<const clang::Decl *, const ExprASTNode *> decl_wrappers;
+/***************************************
+Data structure instantiated by this tool
+****************************************/
 
-/****************************
-Standard Clang Tooling Set-up
-*****************************/
+interp::Interpretation* interp_;
+clang::ASTContext *context_;
 
-/*
-Set up a custom category for all command-line options; a help 
-message with Clang's standard common command-line options; and 
-a tool-specific help message.
-*/
-static llvm::cl::OptionCategory MyToolCategory("Peirce options");
-static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
-static cl::extrahelp MoreHelp("No additional options available for Peirce.");
+// TODO: Decide whether we should pass context to interpretation.
+// Answer is probably yes. Not currently being done.
 
-/*****************************
- * CXXConstructExpr (LITERALS) 
- *****************************/
-
-// Class: Match Callback class for handling Vector Literal Expressions
+// A vector literal is a constructor node applied to scalar args.
+// There is no subordinate expression as there is when the value
+// is given by an expression.
+//
 class HandlerForCXXConstructLitExpr : public MatchFinder::MatchCallback
 {
 public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    //cerr << "HandlerForCXXConstructLitExpr. AST:\n";
-    const clang::CXXConstructExpr *litexpr /*consdecl*/ = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
+    LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Start.\n";
+    const clang::CXXConstructExpr *lit_ast = 
+      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
 
-    //ASTContext *context = Result.Context;
-    //SourceManager &sm = context->getSourceManager();
-
-    // Get space for literal expression
-    // Create ast container object for AST Node
-    // Create bridge node for lifted AST expression
-    // Add (ast container, bridge node) to interpretation
-    Space &space = oracle->getSpaceForLitVector(litexpr);
-    LitASTNode *litexpr_wrapper = new LitASTNode(litexpr);
-    expr_wrappers.insert(std::make_pair(litexpr, litexpr_wrapper));
-    bridge::Expr &br_lit = bridge_domain->addVecLitExpr(space, litexpr_wrapper);
-    interp->putExpressionInterp(*litexpr_wrapper, br_lit);
-    // assert: postcondition (inter def for consdecl) satisfied
-    //cerr << "END HandlerForCXXConstructLitExpr\n";
+    // TODO: Get actual coordinates from AST
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    
+    interp_->mkVector_Lit(lit_ast, x, y, z);
+    LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Done.\n";
   }
 };
 
@@ -92,411 +84,256 @@ public:
  *******************************/
 
 //Forward-reference handlers for member (left) and argument (expressions) of add application
-const bridge::Expr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm);
-const bridge::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm);
+void handle_member_expr_of_add_call(const clang::Expr *left);
+void handle_arg0_of_add_call(const clang::Expr *right);
 
-const bridge::Expr *handleMemberCallExpr(const CXXMemberCallExpr *addexpr, ASTContext *context, SourceManager &sm)
+void handleMemberCallExpr(const CXXMemberCallExpr *ast)
 {
-  const clang::Expr *left = addexpr->getImplicitObjectArgument();
-  if (!left)
-  {
-    cerr << "handleMemberCallExpr:: Null left clang pointer\n";
-    return NULL;
+  LOG(DEBUG) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
+  const clang::Expr *mem_ast = ast->getImplicitObjectArgument();
+  const clang::Expr *arg_ast = ast->getArg(0);
+  if (!mem_ast || !arg_ast) {
+    LOG(FATAL) <<"main::handleMemberCallExpr. Null pointer error.\n";
+    return;
   }
-  //cerr << "handleMemberCallExpr::run, left is elided\n";
-  //left->dump();
-
-  const clang::Expr *right = addexpr->getArg(0);
-  if (!right)
-  {
-    cerr << "Got null right clang pointer\n";
-    return NULL;
-  }
-  //cerr << "HandlerForCXXConstructAddExpr::run, right is elided\n";
-  //right->dump();
-
-  // KEVIN
-
-  const bridge::Expr *left_br = handle_member_expr_of_add_call(left, *context, sm);
-  if (!left_br)
-  {
-    cerr << "Got null left bridge pointer (STUB)\n";
-    //return;
-  }
-
-  const bridge::Expr *right_br = handle_arg0_of_add_call(right, *context, sm);
-  if (!right_br)
-  {
-    cerr << "Got null right bridge pointer (STUB)\n";
-    //return;
-  }
-
-  // pre-condition: these objects are already in these maps
-  const ExprASTNode *left_wrapper = expr_wrappers[left];
-  const ExprASTNode *right_wrapper = expr_wrappers[right];
-  if (left_wrapper == NULL || right_wrapper == NULL)
-  {
-    cerr << "BAD WRAPPER\n";
-  }
-
-  VectorAddExprASTNode *wrapper = new VectorAddExprASTNode(addexpr, left_wrapper, right_wrapper);
-  Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
-  const bridge::Expr &br_add_expr = bridge_domain->addVecAddExpr(s, wrapper, *left_br, *right_br);
-  interp->putExpressionInterp(*wrapper, br_add_expr);
-  expr_wrappers.insert(std::make_pair(addexpr, wrapper));
-  return &br_add_expr;
+  handle_member_expr_of_add_call(mem_ast);
+  handle_arg0_of_add_call(arg_ast);
+  interp_->mkVecVecAddExpr(ast, mem_ast, arg_ast);
+  LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
 }
 
 /*
-TODO: CONSIDER inlining this code.
+TODO: CONSIDER inlining this code?
 */
 class HandlerForCXXMemberCallExprRight_DeclRefExpr : public MatchFinder::MatchCallback
 {
 public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    const auto *declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-    cerr << "HandlerForCXXMemberCallExprRight_DeclRefExpr: Got declRefExpr = " << std::hex << declRefExpr << "\n";
-    // ASTContext *context = Result.Context;
-    // SourceManager &sm = context->getSourceManager();
-    const VarDeclRefASTNode *wrapper = new VarDeclRefASTNode(declRefExpr);
-    expr_wrappers.insert(std::make_pair(declRefExpr, wrapper));
-    bridge::Expr &be = bridge_domain->addVecVarExpr(wrapper);
-    interp->putExpressionInterp(*wrapper, be);
-    // postcondition, be can now be found through interpret with wrapped declRefExpr as key
+    const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+    LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = " << std::hex << declRefExpr_ast << "\n";
+    interp_->mkVecVarExpr(declRefExpr_ast);
+    LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.\n";
   }
 };
 
-//CXXMemberCallExpr := CXXMemberCallExprLeft + CXXMemberCallExprRight
+// CXXMemberCallExpr is CXXMemberCallExprLeft + CXXMemberCallExprRight
 class HandlerForCXXAddMemberCall : public MatchFinder::MatchCallback
 {
 public:
   //  Get left and right children of add expression and handle them by calls to other handlers
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    cerr << "HandlerForCXXAddMemberCall.\n";
-
-    ASTContext *context = Result.Context;
-    SourceManager &sm = context->getSourceManager();
-
     const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (memcall == NULL)
     {
-      cerr << "Error in HandlerForCXXAddMemberCall::run. No memcall pointer\n";
+      LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
-
-    const clang::Expr *left = memcall->getImplicitObjectArgument();
-    if (!left)
-    {
-      cerr << "handleMemberCallExpr:: Null left clang pointer\n";
-      return;
-    }
-    //cerr << "handleMemberCallExpr::run, left is elided\n";
-    //left->dump();
-
-    const clang::Expr *right = memcall->getArg(0);
-    if (!right)
-    {
-      cerr << "Got null right clang pointer\n";
-      return;
-    }
-    //cerr << "HandlerForCXXAddMemberCall::run, right is elided\n";
-    //right->dump();
-
-    // KEVIN
-
-    const bridge::Expr *left_br = handle_member_expr_of_add_call(left, *context, sm);
-    if (!left_br)
-    {
-      cerr << "Got null left bridge pointer (STUB)\n";
-      //return;
-    }
-
-    const bridge::Expr *right_br = handle_arg0_of_add_call(right, *context, sm);
-    if (!right_br)
-    {
-      cerr << "Got null right bridge pointer (STUB)\n";
-      //return;
-    }
-
-    // pre-condition: these objects are already in these maps
-    const ExprASTNode *left_wrapper = expr_wrappers[left];
-    const ExprASTNode *right_wrapper = expr_wrappers[right];
-    if (left_wrapper == NULL || right_wrapper == NULL)
-    {
-      cerr << "BAD WRAPPER\n";
-    }
-
-    VectorAddExprASTNode *ast = new VectorAddExprASTNode(memcall, left_wrapper, right_wrapper);
-    expr_wrappers.insert(std::make_pair(memcall, ast));
-    Space &s = oracle->getSpaceForAddExpression(left_br, right_br);
-    const bridge::Expr &br_add_expr = bridge_domain->addVecAddExpr(s, ast, *left_br, *right_br);
-    interp->putExpressionInterp(*ast, br_add_expr);
+    handleMemberCallExpr(memcall);
   }
 };
 
-//CXXMemberCallExpr := CXXMemberCallExprLeft + CXXMemberCallExprRight
-class HandlerForCXXConstructAddExpr : public MatchFinder::MatchCallback
+// AddMemberParenExpr is: "(" some expression ")"
+class HandlerForAddMemberParen : public MatchFinder::MatchCallback
 {
 public:
   //  Get left and right children of add expression and handle them by calls to other handlers
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    cerr << "!!!!!!!!!!!!!!!!!!!!!!!! HandlerForCXXConstructAddExpr !!!!!!!!!!!!!!!!!!!!!!.\n";
-
-    ASTContext *context = Result.Context;
-    SourceManager &sm = context->getSourceManager();
-
-    const CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorAddExpr");
-    if (consdecl == NULL)
+    const ParenExpr *memparen = Result.Nodes.getNodeAs<clang::ParenExpr>("ParenExpr");
+    if (memparen == NULL)
     {
-      cerr << "Error in HandlerForCXXConstructAddExpr::run. No constructor declaration pointer\n";
+      LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
-
-    // match on member call expr, assume "Expr* mce" back
-
-    const CXXMemberCallExpr *addexpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
-    if (addexpr == NULL)
+    const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
+    if (memcall == NULL)
     {
-      cerr << "Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
+      LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
-
-    //cerr << "HandlerForCXXConstructAddExpr::run\n";
-    //cerr << "addexpr is\n"; addexpr->dump();
-
-    const bridge::Expr *memberCallExpr = handleMemberCallExpr(addexpr, context, sm);
-    const ExprASTNode* addexprWrapper =expr_wrappers[addexpr]; 
-    const AddConstructASTNode* wrapper = new AddConstructASTNode(consdecl, addexprWrapper);      
-    expr_wrappers.insert(std::make_pair(consdecl,wrapper));
-    interp->putExpressionInterp(*wrapper, *memberCallExpr);
+    handleMemberCallExpr(memcall);
+    interp_->mkVecParenExpr(memparen, memcall);
+  }
+};
+/*
+A Vector object constructed from a member expression
+- Extract member expression on left, value expression on right
+- Recursively handle each to give each an interpretation
+- Finally give top-level node an interpretation
+*/
+class HandlerForCXXConstructAddExpr : public MatchFinder::MatchCallback
+{
+public:
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    const CXXConstructExpr *ctor_ast = 
+      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorConstructAddExpr");
+    if (ctor_ast == NULL)
+    {
+      LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No constructor pointer\n";
+      return;
     }
+    LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
+
+    const CXXMemberCallExpr *vec_vec_add_member_call_ast =
+        Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
+    if (vec_vec_add_member_call_ast == NULL)
+    {
+      LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
+      return;
+    }
+    handleMemberCallExpr(vec_vec_add_member_call_ast);
+    LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: Done.\n";
+    interp_->mkVector_Expr(ctor_ast, vec_vec_add_member_call_ast);
+  }
 };
 
-/***** Handle Right Expr of expr.add(expr) Call Expr ******/
-
 /*
-handle_arg0_of_add_call:
-
-match mem call right expr with
-  | decl ref expr ==> decl_ref_expr_handler_
-  | cxx member call expr ==> addHandler_
+In a member call, m.f(a), m is a member expression and a is an
+argument expression. Each can take one of seeral forms. Each can
+be either a variable expression or another call expression. Here
+is where we do this case analysis. 
 */
 class CXXMemberCallExprArg0Matcher
 {
 public:
   CXXMemberCallExprArg0Matcher()
   {
-
-    // case: arg0 is a declaration reference expression
+    // case: arg0 is a variable declaration reference expression
     // action: invoke dre_handler_::run as a match finder action
     const StatementMatcher DeclRefExprPattern = declRefExpr().bind("DeclRefExpr");
     CXXMemberCallExprArg0Matcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
-
+    //
     // case: arg0 is a cxx member call expression
     // action: invoke addHandler_::run as a match finder action
     const StatementMatcher CXXMemberCallExprPattern = cxxMemberCallExpr().bind("MemberCallExpr");
     CXXMemberCallExprArg0Matcher_.addMatcher(CXXMemberCallExprPattern, &mce_handler_);
   }
-
-  void match(const clang::Expr &call_rhs, ASTContext &context)
+  void match(const clang::Expr &call_rhs)
   {
-    cerr << "CXXMemberCallExprArg0Matcher::match start\n";
-    CXXMemberCallExprArg0Matcher_.match(call_rhs, context);
-    cerr << "CXXMemberCallExprArg0Matcher::match finish\n";
+    LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match start\n";
+    CXXMemberCallExprArg0Matcher_.match(call_rhs, *context_);
+    LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match finish\n";
   }
-
 private:
   MatchFinder CXXMemberCallExprArg0Matcher_;
   HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
   HandlerForCXXAddMemberCall mce_handler_;
 };
 
-/*
-Handle the single argument to an add application 
-*/
-const bridge::Expr *handle_arg0_of_add_call(const clang::Expr *right, ASTContext &context, SourceManager &sm)
-{
-  cerr << "handle_arg0_of_add_call (match).\n";
-  right->dump(); // KJS
-  CXXMemberCallExprArg0Matcher call_right_arg0_matcher;
-  call_right_arg0_matcher.match(*right, context);
 
-  // postcondition: look up right in interp and return corresponding value
-  const ExprASTNode *wrapper = new ExprASTNode(right);
-  const bridge::Expr *expr = interp->getExpressionInterp(*wrapper);
-  expr_wrappers.insert(std::make_pair(right, wrapper));
-  //cerr << "END: handle_arg0_of_add_call: returning " << std::hex << expr << ". STUB?\n";
-  return expr;
+// Handle the single argument to an add application 
+// TODO: Not handling all possible cases, e.g., literal
+//
+void handle_arg0_of_add_call(const clang::Expr *arg)
+{
+  LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:\n";
+  CXXMemberCallExprArg0Matcher call_right_arg0_matcher; 
+  call_right_arg0_matcher.match(*arg); 
+  LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. Done.\n";
 }
 
 /*
-handle_member_expr_of_add_call:
-
-match mem call expr with
-  | decl ref expr ==> decl_ref_expr_handler_
-  | cxx member call expr ==> addHandler_
+Member expression could be variable or function application
 */
 class CXXMemberCallExprMemberExprMatcher
 {
 public:
   CXXMemberCallExprMemberExprMatcher()
   {
-
-    // case 1: arg0 is a declaration reference expression
-    // action: invoke dre_handler_::run as a match finder action
-    // case 2: arg0 is a cxx member call expression
-    // action: invoke addHandler_::run as a match finder action
+    // Member expression is a variable expression
+    //
     const StatementMatcher DeclRefExprPattern = declRefExpr().bind("DeclRefExpr");
-    //const StatementMatcher DeclRefExprPattern = memberExpr(parenExpr(declRefExpr().bind("LeftDeclRefExpr")));
     CXXMemberCallExprMemberExprMatcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
 
-    const StatementMatcher CXXMemberCallExprPattern = parenExpr(hasDescendant(cxxMemberCallExpr().bind("MemberCallExpr")));
+    // Member expression is a paren expression with some child expression inside
+    //
+    /* KEVIN: THE PROBLEM IS RIGHT HERE.
+    This is an anti-pattern, in which we pass only the child node of a given AST node
+    to be interpreted. The problem is that an invariant is violated, which is that after
+    handling of the mem and arg ast nodes, the top-level mem node is no interpreted, but
+    only the child member call expr node that we're handing off here to the handler. The
+    solution, I think, will be for higher-level matching to strip the parens so that we
+    never see a parenthesized expression at this level. INVARIANT: We must always create 
+    an interpretation for the AST node we're given, not just for one of its children.
+    */
+    const StatementMatcher ParenCXXMemberCallExprPattern = 
+      parenExpr(hasDescendant(cxxMemberCallExpr().bind("MemberCallExpr"))).bind("ParenExpr");
+    CXXMemberCallExprMemberExprMatcher_.addMatcher(ParenCXXMemberCallExprPattern, &mpe_handler_);
+
+    // Member expression a member call expression
+    // TODO: We don't currently select for add calls, in particular, need to refine predicate
+    //
+    const StatementMatcher CXXMemberCallExprPattern = cxxMemberCallExpr().bind("MemberCallExpr");
     CXXMemberCallExprMemberExprMatcher_.addMatcher(CXXMemberCallExprPattern, &mce_handler_);
   }
-
-  void match(const clang::Expr &call_rhs, ASTContext &context)
+  void match(const clang::Expr &call_rhs)
   {
-    //cerr << "CXXMemberCallExprMemberExprMatcher::match start\n";
-    //call_rhs.dump();
-    CXXMemberCallExprMemberExprMatcher_.match(call_rhs, context);
-    //cerr << "CXXMemberCallExprMemberExprMatcher::match finish\n";
+    LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:\n";
+    CXXMemberCallExprMemberExprMatcher_.match(call_rhs, *context_);
+    LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. DONE matching.\n";
   }
-
 private:
   MatchFinder CXXMemberCallExprMemberExprMatcher_;
   HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
   HandlerForCXXAddMemberCall mce_handler_;
+  HandlerForAddMemberParen mpe_handler_;
 };
 
 /*
-Handle the single argument to an add application 
+TODO: Inline? Looks like we can.
 */
-const bridge::Expr *handle_member_expr_of_add_call(const clang::Expr *left, ASTContext &context, SourceManager &sm)
+void handle_member_expr_of_add_call(const clang::Expr *memexpr)
 {
-  cerr << "handle_member_expr_of_add_call\n";
-  if (left == NULL)
+  LOG(DEBUG) <<"main::handle_member_expr_of_add_call\n";
+  if (memexpr == NULL)
   {
-    cerr << "Null argument\n";
+    LOG(FATAL) <<"main::handle_member_expr_of_add_call: Error.Null argument\n";
   }
-  else
-    left->dump();
   CXXMemberCallExprMemberExprMatcher call_expr_mem_expr_matcher;
-  call_expr_mem_expr_matcher.match(*left, context);
+  call_expr_mem_expr_matcher.match(*memexpr);
+  LOG(DEBUG) <<"main::handle_member_expr_of_add_call. Done. \n";
+ }
 
-  // postcondition: look up left in interp and return corresponding value
-  const ExprASTNode *wrapper = new ExprASTNode(left);
-  const bridge::Expr *expr = interp->getExpressionInterp(*wrapper);
-  expr_wrappers.insert(std::make_pair(left, wrapper));
-  //cerr << "END: handle_member_expr_of_add_call: returning " << std::hex << expr << ". STUB?\n";
-  return expr;
-}
-
-/********************/
 
 /*
-match CXXConstructExpr with
-  | literal 3-float initializer ==> lit_handler
-  | cxx member call expr (member_expr.add(arg0_expr)==> mem_call_expr_handler
+A CXXConstructExpr is used to construct a vector object from
+either a literal or from a vector expression. Here we do this
+case analysis and dispatch accordingly.
 */
-class CXXConstructExprMatcher // (Constructor = Lit | Add left right )
+class CXXConstructExprMatcher
 {
 public:
   CXXConstructExprMatcher()
   {
     CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(argumentCountIs(3)).bind("VectorLitExpr"), &litHandler_);
-    // v1 = v2
-    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(hasDescendant(cxxMemberCallExpr(hasDescendant(memberExpr(hasDeclaration(namedDecl(hasName("vec_add")))))).bind("MemberCallExpr"))).bind("VectorAddExpr"), &addHandler_);
+    CXXConstructExprMatcher_.addMatcher(
+      cxxConstructExpr(hasDescendant(cxxMemberCallExpr(
+        hasDescendant(memberExpr(hasDeclaration(namedDecl(
+          hasName("vec_add"))))))
+          .bind("MemberCallExpr")))
+          .bind("VectorConstructAddExpr"), &addHandler_);
   };
-  void match(const clang::CXXConstructExpr *consdecl, ASTContext *context)
+  void match(const clang::CXXConstructExpr *consdecl)
   {
-    cout << "START: Pattern Matching on CXXConstructExpr: Start\n";
-    CXXConstructExprMatcher_.match(*consdecl, *context);
-    cout << "DONE: Pattern Matching on CXXConstructExpr: Start\n";
-    // assert: interp now defined for consdecl
-
-    //cout << "END Pattern Matching on CXXConstructExpr\n";
+    CXXConstructExprMatcher_.match(*consdecl, *context_);
   }
-
 private:
   MatchFinder CXXConstructExprMatcher_;
   HandlerForCXXConstructLitExpr litHandler_;
   HandlerForCXXConstructAddExpr addHandler_;
 };
 
-//--------------------
-
-//const bridge::Expr* handleMemberCall
-
-//--------------------
 
 /*
-Precondition: consdecl of type CXXConstructExpr* is a pointer to an 
-expression, the value of which is being assigned to a variable in a 
-declaration statement. 
-
-Explanation: By the time control reaches this code, we are assured 
-the argument is an AST node for a Vector-valued expression that is
-going to be used to initialize the value of a variable. The purpose 
-of this code is to make sure that this C++ expression is "lifted" to
-a corresponding expression in the domain/bridge, and that the
-interpretation links this code/AST-node to that domain/bridge object.
-
-Postcondition: the return value of this function is pointer to a new 
-object of type bridge::Expr; that object is in the bridge; it might
-itself represent a complex expression tree; it links back to consdecl;
-and the interpretation is updated to like consdecl to the new bridge
-object. This function works recursively to make sure that all of the
-work of handling the top-level CXXConstructExpr is finished by the 
-time this function returns.
-
-Explanation: the way in which this consdecl is turned into a bridge 
-object depends on the specific form of the expression being handled.
-The cases to be handled include literal and add expressions.
-- Vec v1(0.0,0.0,0.0) is a literal expression
-- (v1.add(v2)).(v3.add(v4)) is an add expression (recursive)
-
-bridge::Expr *handleCXXConstructExpr(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
-{
-  //cerr << "handleCXXConstructExpr: Start handleCXXConstructExpr\n";
-  //cerr << "Pattern matching Vector CXXConstructExpr.\n";
-  CXXConstructExprMatcher matcher;
-  matcher.match(consdecl, context);
-  // postcondition: consdecl now has an interpretation
-  // How do we get BI to return to user? Look it up
-  // bridge::Expr* bi = interp->getExpr(consdecl);
-  // TO DO: Architectural change means we need to wrap consdecl to map it
-
-  const ExprASTNode *ast = new ExprASTNode(consdecl);   // TODO -- BETTER TYPE!
-  bridge::Expr *be = interp->getExpressionInterp(*ast);
-  //cerr << "handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
-  return be;
-}
+A vector declaration statement binds a vector-typed
+identifier to a constructed vector object. This method
+is invoked for each such declaration. It first builds
+an interpretation for the identifier, then for the 
+expression, and finally for the binding.
 */
-
-const bridge::Expr *handleCXXDeclStmt(const clang::CXXConstructExpr *consdecl, ASTContext *context, SourceManager &sm)
-{
-  //cerr << "handleCXXConstructExpr: Start handleCXXConstructExpr\n";
-  //cerr << "Pattern matching Vector CXXConstructExpr.\n";
-  CXXConstructExprMatcher matcher;
-  matcher.match(consdecl, context);
-  // postcondition: consdecl now has an interpretation
-  // How do we get BI to return to user? Look it up
-  // bridge::Expr* bi = interp->getExpr(consdecl);
-  // TO DO: Architectural change means we need to wrap consdecl to map it
-
-  const ExprASTNode *wrapper = new ExprASTNode(consdecl); // TODO -- BETTER TYPE!
-  const bridge::Expr *be = interp->getExpressionInterp(*wrapper);
-  expr_wrappers.insert(std::make_pair(consdecl, wrapper));
-  //cerr << "handleCXXConstructExpr: Returning Expr at " << std::hex << be << "\n";
-  return be;
-}
-
-/*************************
- * Handle Vector DeclStmts
- *************************/
 
 class VectorDeclStmtHandler : public MatchFinder::MatchCallback
 {
@@ -506,55 +343,13 @@ public:
     const clang::DeclStmt *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
     const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
     const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
-
-    ASTContext *context = Result.Context;
-    SourceManager &sm = context->getSourceManager();
-
-    cerr << "VectorDeclStmtHandler:: Decl Statement is \n"; declstmt->dump();
-    cerr << "VectorDeclStmtHandler:: ConstructorExpr is \n"; consdecl->dump();
-    cerr << "VectorDeclStmtHandler:: vardecl is\n"; vardecl->dump();
-
-
-    // IDENTIFIER
-    //
-    Space &space = oracle->getSpaceForIdentifier(vardecl);
-    IdentifierASTNode *ast_container = new IdentifierASTNode(vardecl);
-    decl_wrappers.insert(std::make_pair(vardecl, ast_container));
-    bridge::Identifier &bi = bridge_domain->addIdentifier(space, ast_container);
-    interp->putIdentInterp(*ast_container, bi);
-    //cerr << "END: handleCXXConstructIdentifier\n";
-
-    // CONSTRUCTOR (Lit | Add)
-    //
-    cerr << "VectorDeclStmtHandler: matching on consdecl\n";
+    LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
+    interp_->mkVecIdent(vardecl);
     CXXConstructExprMatcher matcher;
-    matcher.match(consdecl, context);
-    const ExprASTNode *wrapper = new ExprASTNode(consdecl); // TODO -- BETTER TYPE!
-    expr_wrappers.insert(std::make_pair(consdecl, wrapper));
-    const bridge::Expr *be = interp->getExpressionInterp(*wrapper);
-    if (be == NULL)
-    {
-      cerr << "NULL expression in DeclStmt.\n";
+    matcher.match(consdecl);
+    interp_->mkVector_Def(declstmt, vardecl, consdecl);
+    LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: Done.\n"; 
     }
-    cerr << "VectorDeclStmtHandler: done matching on consdecl\n";
-
-    cerr << "Bridge expressions:\n";
-    bridge_domain->dumpExpressions(); // print contents on cerr
-    cerr << "Bridge Identifiers\n";
-    bridge_domain->dumpIdentifiers(); // print contents on cerr
-    cerr << "Bridge Bindings\n";
-    bridge_domain->dumpBindings(); // print contents on cerr
-    cerr << "InterpExpressions\n";
-    interp->dumpExpressions();
-
-
-    // BINDING
-    //
-    BindingASTNode *declstmt_wrapper = new BindingASTNode(declstmt);
-    stmt_wrappers.insert(std::make_pair(declstmt, declstmt_wrapper));
-    bridge::Binding &binding = bridge_domain->addBinding(declstmt_wrapper, bi, *be);
-    interp->putBindingInterp(declstmt_wrapper, binding);
-   }
 };
 
 /********************************************
@@ -570,9 +365,9 @@ public:
         declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("class Vec"))).bind("CXXConstructExpr"))).bind("VarDecl"))).bind("VectorDeclStatement");
     VectorDeclStmtMatcher.addMatcher(match_Vector_general_decl, &HandlerForVectorDeclStmt);
   }
-  void HandleTranslationUnit(ASTContext &Context) override
+  void HandleTranslationUnit(ASTContext &context) override
   {
-    VectorDeclStmtMatcher.matchAST(Context);
+    VectorDeclStmtMatcher.matchAST(context);
   }
 
 private:
@@ -590,13 +385,15 @@ public:
   MyFrontendAction() {}
   void EndSourceFileAction() override
   {
-    bool consistent = bridge_domain->isConsistent();
-    cerr << (consistent ? "STUB Analysis result: Good\n" : "STUB: Bad\n");
+    //bool consistent = interp_.isConsistent();
+    LOG(DEBUG) <<"STUB Analysis result\n";
   }
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
-    return llvm::make_unique<MyASTConsumer>();
+    context_ = &CI.getASTContext();
+    interp_->setASTContext(context_);
+    return llvm::make_unique<MyASTConsumer>(); 
   }
 };
 
@@ -604,20 +401,46 @@ public:
 * Main
 ******/
 
+/****************************
+Standard Clang Tooling Set-up
+*****************************/
+
+static llvm::cl::OptionCategory MyToolCategory("Peirce options");
+static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
+static cl::extrahelp MoreHelp("No additional options available for Peirce.");
+
 int main(int argc, const char **argv)
 {
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
-  bridge_domain = new Bridge();
-  bridge_domain->addSpace("S1");
-  bridge_domain->addSpace("S2");
-  interp = new Interpretation();
-  oracle = new Oracle(*bridge_domain);
+
+  using namespace g3;
+  std::string logFile = "Peirce.log";
+  std::string logDir = ".";
+  auto worker = LogWorker::createLogWorker();
+  auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
+  g3::initializeLogging(worker.get());
+
+  interp_ = new interp::Interpretation();   // default oracle
+  
+  //interp_->addSpace("_");
+  interp_->addSpace("time");
+  interp_->addSpace("geom");
+  
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
-  cerr << "Identifiers\n";
-  bridge_domain->dumpIdentifiers();
-  cerr << "Expressions\n";
-  bridge_domain->dumpExpressions();
-  cerr << "Bindings\n";
-  bridge_domain->dumpBindings();
+
+  cout <<"Spaces\n";
+  cout <<interp_->toString_Spaces();
+  cout <<"\nIdentifiers\n";
+  cout <<interp_->toString_Idents(); 
+  cout <<"\nExpressions\n";
+  cout <<interp_->toString_Exprs();
+  cout <<"\nVectors\n";
+  cout <<interp_->toString_Vectors();
+  cout <<"\nDefinitions\n"; 
+  cout <<interp_->toString_Defs();
+  cout << "\n";
+
+  Checker *checker = new Checker(interp_);
+  checker->Check();
 }

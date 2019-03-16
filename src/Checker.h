@@ -1,15 +1,14 @@
 #ifndef CHECKER_H
 #define CHECKER_H
 
-#include "Bridge.h"
-using namespace bridge;
+#include "Interpretation.h" 
 
 class Checker {
 public:
-    Checker(Bridge& d) : dom_(d) {}
-    bool Check();
+    Checker(interp::Interpretation* i) : interp_(i) {}
+    bool Check(); 
 private:
-    Bridge& dom_;
+    interp::Interpretation* interp_;
 };
 
 #endif
