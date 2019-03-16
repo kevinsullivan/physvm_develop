@@ -44,7 +44,7 @@ We craft code-specific pattern matchers using Clang tooling to project domain-re
 We establish interpretations for each such AST element. An interpretation comprises, for each AST element (generally a subtree of the overall AST), an isomorphic tree of *code coordinates*, an isomorphic tree of *domain expressions*, and an isomorphic tree of *interpretation objects*, with relational mappings connecting all of these objects in forwards and backwards directions. An oracle is invoked to create domain objects for each selected code object. Oracles implement a simple oracle interface. We currently have oracles that query a human analyst for the required additional information. 
 
 ### Architecture diagram
-![ArchitectureDiagram](https://github.com/kevinsullivan/Pierce/doc/images/architecture.png)
+![ArchitectureDiagram](https://github.com/kevinsullivan/Peirce/blob/master/doc/images/Architecture.png)
 
 ## Who's Involved
 The project is run by Kevin Sullivan and Sebastian Elbaum. Our graduate student, Hannah Leung, is carrying out our initial prototyping work as part of her MS Thesis project. Jian Xiang working with Kevin Sullivan helped to develop some of the early ideas around the "lifting" of ordinary code to enriched models formalized in a constructive logic. 
