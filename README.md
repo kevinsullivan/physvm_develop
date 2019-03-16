@@ -45,7 +45,7 @@ The following diagram provides an overview of the function and architecture of o
 
 ![ArchitectureDiagram](https://github.com/kevinsullivan/Peirce/blob/master/doc/images/Architecture.png)
 
-In this diagram, code is orange, the corresponding domain model is green, and purple represents the interpretation, or the mapping, from the former to the latter. The oracle model is a greenish color to indicate that it provides domain information missing from the code. In our current implementation, an oracle just asks the human user for missing physical type information for each expression in the code. Without going into details, suffice it to say that our design is highly modular, extensible, and can readily be adapted to deal with code written in different styles.
+In this diagram, code is orange, the corresponding domain of discourse is green. Purple represents the interpretation: the mapping, from the former to the latter, as well as the mechanisms we have developed and demonstrated to construct physical interpretations for code. The oracle model is a greenish color to indicate that it provides crucial domain information missing from the code, such as the physical spaces that different vectors represented in the code are assumed to inhabit. In our current implementation, an oracle asks the human user for missing physical type information for each expression in the code. We are now working on automated mechanisms to provide the bulk of the required information. Without going into details, suffice it to say that our design is highly modular, extensible, and can readily be adapted to deal with code written in project-specific styles.
 
 ## Next Steps
 
