@@ -308,13 +308,17 @@ class CXXConstructExprMatcher
 public:
   CXXConstructExprMatcher()
   {
-    CXXConstructExprMatcher_.addMatcher(cxxConstructExpr(argumentCountIs(3)).bind("VectorLitExpr"), &litHandler_);
-    CXXConstructExprMatcher_.addMatcher(
-      cxxConstructExpr(hasDescendant(cxxMemberCallExpr(
-        hasDescendant(memberExpr(hasDeclaration(namedDecl(
-          hasName("vec_add"))))))
+    const StatementMatcher litMatcher = cxxConstructExpr(argumentCountIs(3))
+      .bind("VectorLitExpr");
+    CXXConstructExprMatcher_.addMatcher(litMatcher, &litHandler_);
+
+    const StatementMatcher addOpMatcher =
+        cxxConstructExpr(hasDescendant(cxxMemberCallExpr(
+                         hasDescendant(memberExpr(
+                         hasDeclaration(namedDecl(hasName("vec_add"))))))
           .bind("MemberCallExpr")))
-          .bind("VectorConstructAddExpr"), &addHandler_);
+          .bind("VectorConstructAddExpr");
+    CXXConstructExprMatcher_.addMatcher(addOpMatcher, &addHandler_);
   };
   void match(const clang::CXXConstructExpr *consdecl)
   {
@@ -391,6 +395,7 @@ public:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
+    LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
     context_ = &CI.getASTContext();
     interp_->setASTContext(context_);
     return llvm::make_unique<MyASTConsumer>(); 
