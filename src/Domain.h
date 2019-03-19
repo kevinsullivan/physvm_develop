@@ -97,12 +97,6 @@ public:
 // Client -- Separated from Domain
 //	bool isConsistent();
 
-// Details
-	void dump();
-	void dumpExpressions(); // print contents on std::cerr
-	void dumpVecIdents(); // print contents on std::cerr
-	void dumpVector_Defs(); // print contents on std::cerr
-
 private:
 	std::vector<Space*> spaces;
 	std::vector<VecIdent*> idents;

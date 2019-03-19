@@ -42,7 +42,6 @@ public:
 
 protected:
   coords::Coords *coords_;
-
   domType type_;
   // TODO: make it a union
   domain::VecIdent *ident_;

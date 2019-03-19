@@ -7,19 +7,19 @@
 namespace interp {
 
 Interp::Interp(coords::VecIdent* c, domain::VecIdent *d) 
-  : type_(dom_vecIdent_type), coords_(c), ident_(d) {
+  : coords_(c), type_(dom_vecIdent_type), ident_(d) {
 }
 
 Interp::Interp(coords::VecExpr *c, domain::VecExpr *d) 
-  : type_(dom_vecExpr_type), coords_(c), expr_(d)  {
+  : coords_(c), type_(dom_vecExpr_type), expr_(d)  {
 }
 
 Interp::Interp(coords::Vector *c, domain::Vector *d)
-  : type_(dom_vector_type), coords_(c), vector_(d) {
+  : coords_(c), type_(dom_vector_type), vector_(d) {
 }
 
 Interp::Interp(coords::Vector_Def *c, domain::Vector_Def *d) 
-  : type_(dom_vector_def_type), coords_(c), def_(d) {
+  : coords_(c), type_(dom_vector_def_type), def_(d) {
 }
 
 /**********
@@ -29,6 +29,7 @@ Interp::Interp(coords::Vector_Def *c, domain::Vector_Def *d)
 
 std::string Interp::toString() const {
   LOG(FATAL) << "Interp::toString: Error. Should not be called. Abstract.\n";
+  return "";
 }
 
 /******

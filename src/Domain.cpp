@@ -122,39 +122,3 @@ Vector_Def *Domain::mkVector_Def(domain::VecIdent* i, domain::Vector* v)
     defs.push_back(bd); 
     return bd;
 }
-
-/********
-* Details
-********/
-
-
-// TODO: Use pointers everywhere here?
-void Domain::dumpVecIdents()
-{
-    for (auto i: idents ){
-        LOG(DEBUG) <<"Domain::dumpVecIdents: An identifier (STUB)\n";
-    }
-}
-
-void Domain::dumpExpressions()
-{
-    for (auto e: exprs ){
-        LOG(DEBUG) <<"Domain::dumpVecExpressions. An expression. (STUB).\n";
-    }
-}
-
-void Domain::dumpVector_Defs()
-{
-    for (auto b: defs ){
-        LOG(DEBUG) <<"Domain::dumpVector_Defs. A def. (STUB)\n";
-    }
-}
-
-void Domain::dump() {
-    LOG(DEBUG) <<"Domain expressions:\n";
-    dumpExpressions(); // print contents on std::cerr
-    LOG(DEBUG) <<"Domain VecIdents\n";
-    dumpVecIdents(); // print contents on std::cerr
-    LOG(DEBUG) <<"Domain Vector_Defs\n";
-    dumpVector_Defs(); // print contents on std::cerr
-}
