@@ -22,8 +22,17 @@ domain::Space& Oracle_AskAll::getSpace() {
 	}
 	printSpaces(spaces);
 	int whichSpace = selectSpace(spaces);
-	domain::Space& result = *spaces[whichSpace];
-    return result;
+	if (whichSpace < 0 || whichSpace >= (int)spaces.size())
+	{
+		domain::Space& result = *spaces[whichSpace];
+		return result;
+		domain::Space* resultptr = nullptr;
+		return *resultptr;
+	}
+	else{
+		domain::Space& result = *spaces[whichSpace];
+		return result;
+	}
 }
 
 
@@ -38,12 +47,12 @@ void printSpaces(std::vector<domain::Space*>& spaces) {
 int selectSpace(std::vector<domain::Space*>& spaces) {
 	int choice = -1;
 	while (choice == -1) {
-		std::cout << "Space? ";
+		std::cout << "Space? (Space will be inferred if no valid option is not selected) ";
 		std::cin >> choice;
 		if (choice < 0 || choice >= (int)spaces.size())
 		{
 			choice = -1;
-			continue;
+			break;
 		}
 	}
 	return choice;

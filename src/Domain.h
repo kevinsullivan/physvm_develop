@@ -51,42 +51,49 @@ public:
 
 // Idents
 
-	VecIdent* mkVecIdent(Space& s);
+	VecIdent* mkVecIdent(Space* s);
+	VecIdent* mkVecIdent();
 	std::vector<VecIdent *> &getVecIdents() { return idents;  }
 
 	// Exprs
 	std::vector<VecExpr *> &getVecExprs() { return exprs;  }
 
 	// Create a variable object in the domain 
+
 	// Details available via externally represented backmappings
 	//
-	VecVarExpr* mkVecVarExpr(Space& s);
+	VecVarExpr* mkVecVarExpr(Space* s);
+	VecVarExpr* mkVecVarExpr();
 
 	// Create a vector-vector-add expression, mem-expr.add(arg-expr) object in domain
 	// Precondition: sub-expressions mem-expr and arg-expr are already in domain
 	//
-	VecVecAddExpr* mkVecVecAddExpr(Space& s, domain::VecExpr* , domain::VecExpr* right_);
+	VecVecAddExpr* mkVecVecAddExpr(Space* s, domain::VecExpr* , domain::VecExpr* right_);
+	VecVecAddExpr* mkVecVecAddExpr(domain::VecExpr*, domain::VecExpr* right_);
 
 
 	// KEVIN: For new VecParenExpr horizontal module
 	//
-	VecParenExpr *mkVecParenExpr(Space &s, domain::VecExpr *);
+	VecParenExpr* mkVecParenExpr(Space *s, domain::VecExpr *);
+	VecParenExpr* mkVecParenExpr(domain::VecExpr*);
 
 	// Values
 	std::vector<Vector *> &getVectors() { return vectors;  }
 
 	// Constructed literal vector value
 	//
-	Vector_Lit* mkVector_Lit(Space& space, float x, float y, float z); 
+	Vector_Lit* mkVector_Lit(Space* space, float x, float y, float z); 
+	Vector_Lit* mkVector_Lit(float x, float y, float z);
 
 	// Constructed vector from variable expression
 	//
-	Vector* mkVector_Var(Space& s /*coords::Vector* v, domain::VecExpr *vec*/);
+	Vector* mkVector_Var(Space* s /*coords::Vector* v, domain::VecExpr *vec*/);
+	Vector* mkVector_Var();
 
 	// Constructed vector from vector-valued expression
 	//
-	Vector_Expr* mkVector_Expr(Space& space/*, coords::Vector* v*/, domain::VecExpr *vec);
-
+	Vector_Expr* mkVector_Expr(Space* space/*, coords::Vector* v*/, domain::VecExpr *vec);
+	Vector_Expr* mkVector_Expr(domain::VecExpr *vec);
 // Defs
 
 	// Binding of identifier to contsructed vector
@@ -129,7 +136,9 @@ expressions lifted to domain expressions.
 class VecIdent {
 public:
 	VecIdent(Space& space) : space_(&space) {}
+	VecIdent(){}
 	Space* getSpace() const { return space_; }
+	void setSpace(Space* space);
 	// TODO: Reconsider abstracting away of name
 private:
 	Space* space_;
@@ -138,18 +147,21 @@ private:
 // TODO - Change name of this class? DomainExpr?
 class VecExpr  {
 public:
-    VecExpr(Space& s) : space_(s) {}
-    const Space& getSpace() const;
+    VecExpr(Space* s) : space_(s) {}
+		VecExpr() {}
+    Space* getSpace() const;
+		void setSpace(Space* s);
 		// virtual std::string toString() const;
 	protected:
-    const Space& space_;
+    Space* space_;
 };
 
 
 
 class VecVarExpr : public VecExpr {
 public:
-    VecVarExpr(Space& s) : VecExpr(s) {}
+    VecVarExpr(Space* s) : VecExpr(s) {}
+		VecVarExpr() : VecExpr() {}
 		// virtual std::string toString() const;
 	private:
 };
@@ -157,9 +169,10 @@ public:
 class VecVecAddExpr : public VecExpr {
 public:
    VecVecAddExpr(
-        Space& s, domain::VecExpr *mem, domain::VecExpr *arg) : 
-			domain::VecExpr(s), arg_(arg), mem_(mem) {	
-	}
+        Space* s, domain::VecExpr *mem, domain::VecExpr *arg) : 
+			domain::VecExpr(s), arg_(arg), mem_(mem) {	}
+	 VecVecAddExpr(domain::VecExpr *mem, domain::VecExpr *arg) :
+	 		domain::VecExpr(), arg_(arg), mem_(mem) { }
 	domain::VecExpr *getMemberVecExpr();
 	domain::VecExpr *getArgVecExpr();
 	// virtual std::string toString() const;
@@ -172,7 +185,8 @@ private:
 
 class VecParenExpr : public VecExpr  {
 public:
-		VecParenExpr(Space &s, domain::VecExpr *e) : domain::VecExpr(s), expr_(e) {}
+		VecParenExpr(Space *s, domain::VecExpr *e) : domain::VecExpr(s), expr_(e) {}
+		VecParenExpr(domain::VecExpr *e) : domain::VecExpr(), expr_(e) {}
 		const domain::VecExpr* getVecExpr() const { return expr_; }
 		//std::string toString() const; 
 private:
@@ -191,10 +205,13 @@ public:
 	Vector(const Space& s, VecCtorType tag) :
 		space_(&s), tag_(tag) { 
 	}
+	Vector(VecCtorType tag) : space_(nullptr), tag_(tag) {}
+
 	bool isLit() { return (tag_ == VEC_LIT); } 
 	bool isExpr() { return (tag_ == VEC_EXPR); } 
 	//bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
 	const Space* getSpace() {return space_; }
+	void setSpace(Space* space);
 	// virtual std::string toString() const {
 private:
 	const Space* space_; // TODO: INFER?
@@ -211,6 +228,9 @@ public:
 	Vector_Lit(const Space& s, float x, float y, float z) :
 		Vector(s, VEC_LIT), x_(x), y_(y), z_(z) {
 	}
+
+	Vector_Lit(float x, float y, float z) : Vector(VEC_LIT), x_(x), y_(y), z_(z) {}
+
 	float getX() { return x_; }
 	float getY() { return y_; }
 	float getZ() { return z_; }
@@ -227,6 +247,8 @@ public:
 	Vector_Expr(const Space& s, domain::VecExpr* e) :
 		Vector(s, VEC_EXPR), expr_(e) { 
 	}
+
+	Vector_Expr(domain::VecExpr* e) : Vector(VEC_EXPR) {}
 
 	const domain::VecExpr* getVecExpr() const { return expr_; }
 	std::string toString() const;

@@ -94,6 +94,8 @@ coords::VecLitExpr *CoordsToDomain::getLitInterp(domain::VecLitExpr d) const {
 }
 */
 
+
+
 // var
 
 void CoordsToDomain::PutVecVarExpr(coords::VecVarExpr *c, domain::VecVarExpr *d)

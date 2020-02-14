@@ -41,8 +41,8 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
 {
   coords::VecIdent *coords = ast2coords_->mkVecIdent(ast, context_);
   LOG(DEBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-  domain::Space &space = oracle_->getSpaceForVecIdent(coords);
-  domain::VecIdent *dom = domain_->mkVecIdent(space);
+  //domain::Space &space = oracle_->getSpaceForVecIdent(coords);
+  domain::VecIdent *dom = domain_->mkVecIdent();
   coords2dom_->putVecIdent(coords, dom);
   interp::VecIdent *interp = new interp::VecIdent(coords, dom);
   coords2interp_->putVecIdent(coords, interp);
@@ -59,8 +59,8 @@ void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/
     coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast, context_);
     LOG(DEBUG) << "Interpretation::mkVecVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
     //ast->dump();
-    domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
-    domain::VecVarExpr *dom = domain_->mkVecVarExpr(space);
+    //domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
+    domain::VecVarExpr *dom = domain_->mkVecVarExpr();
     coords2dom_->PutVecVarExpr(coords, dom);
     interp::VecVarExpr *interp = new interp::VecVarExpr(coords,dom);
     coords2interp_->putVecVarExpr(coords, interp);
@@ -80,7 +80,7 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
             << std::hex << arg_coords << "\n";
   }
   coords::VecVecAddExpr *coords = ast2coords_->mkVecVecAddExpr(add_ast, context_, mem_coords, arg_coords);
-  domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
+  //domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
   domain::VecExpr *dom_mem_expr = coords2dom_->getVecExpr(mem_coords);
   domain::VecExpr *dom_arg_expr = coords2dom_->getVecExpr(arg_coords);
   if (dom_mem_expr == NULL || dom_arg_expr == NULL) {
@@ -88,7 +88,7 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
               << std::hex << dom_mem_expr << " Arg "
               << std::hex << dom_arg_expr << "\n";
   }
-  domain::VecVecAddExpr *dom = domain_->mkVecVecAddExpr(space, dom_mem_expr, dom_arg_expr);
+  domain::VecVecAddExpr *dom = domain_->mkVecVecAddExpr(dom_mem_expr, dom_arg_expr);
   coords2dom_->PutVecVecAddExpr(coords, dom);
   LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Coords: " << mem_coords->toString() << "\n";
   LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Coords: " << arg_coords->toString() << "\n";
@@ -111,15 +111,15 @@ void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) 
       "Interpretation::mkVecParenExpr. ast=" << 
       std::hex << ast << ", " << coords->toString() << 
       "expr = " << expr_coords->toString() << "\n";
-    domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
+    //domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
     domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
-    domain::VecParenExpr *dom = domain_->mkVecParenExpr(space, dom_expr);
+    domain::VecParenExpr *dom = domain_->mkVecParenExpr(dom_expr);
     coords2dom_->PutVecParenExpr(coords, dom);
     interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
     interp::VecParenExpr *interp = new interp::VecParenExpr(coords, dom, expr_interp);
     coords2interp_->putVecParenExpr(coords, interp);  
     interp2domain_->putVecParenExpr(interp,dom);
-}
+} 
 
 
 /*******
@@ -134,8 +134,8 @@ expressions and objects constructed from them.
 
 void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float z) {
     coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, context_, x, y, z);  
-    domain::Space& s = oracle_->getSpaceForVector_Lit(coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
-    domain::Vector_Lit *dom = domain_->mkVector_Lit(s, x, y, z);
+    //domain::Space& s = oracle_->getSpaceForVector_Lit(coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
+    domain::Vector_Lit *dom = domain_->mkVector_Lit(x, y, z);
     coords2dom_->putVector_Lit(coords, dom); 
     interp::Vector_Lit *interp = new interp::Vector_Lit(coords, dom);
     coords2interp_->putVector_Lit(coords, interp);
@@ -146,9 +146,9 @@ void Interpretation::mkVector_Expr(
       ast::Vector_Expr *ctor_ast, ast::VecExpr* expr_ast/*, clang::ASTContext *c*/) {
     coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, context_, expr_ast);
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr_ast));
-    domain::Space& s = oracle_->getSpaceForVector_Expr(expr_coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
+    //domain::Space& s = oracle_->getSpaceForVector_Expr(expr_coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
     domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
-    domain::Vector_Expr *dom_vec = domain_->mkVector_Expr(s, expr_dom); 
+    domain::Vector_Expr *dom_vec = domain_->mkVector_Expr(expr_dom); 
     coords2dom_->putVector_Expr(ctor_coords, dom_vec);
     interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
     interp::Vector_Expr *interp = new interp::Vector_Expr(ctor_coords, dom_vec, expr_interp);
@@ -279,4 +279,121 @@ std::string Interpretation::toString_Defs() {
   }
   return retval;
 }
+
+void Interpretation::setAll_Spaces() {
+  auto vecIdents = domain_->getVecIdents();
+  auto vecExprs = domain_->getVecExprs();
+  auto vecs = domain_->getVectors();
+  auto vecDefs = domain_->getVectorDefs();
+
+  for(auto beg = vecIdents.begin(); beg != vecIdents.end(); beg++)
+  {
+   /* coords::VecIdent *coords = ast2coords_->mkVecIdent(ast, context_);
+  LOG(DEBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
+  //domain::Space &space = oracle_->getSpaceForVecIdent(coords);
+  domain::VecIdent *dom = domain_->mkVecIdent();
+  coords2dom_->putVecIdent(coords, dom);
+  interp::VecIdent *interp = new interp::VecIdent(coords, dom);
+  coords2interp_->putVecIdent(coords, interp);
+  interp2domain_->putVecIdent(interp, dom);
+*/
+
+    auto p = *beg;
+
+    coords::VecIdent *coords = coords2dom_->getVecIdent(*beg);
+    domain::Space& space = oracle_->getSpaceForVecIdent(coords);
+    p->setSpace(&space);
+
+  }
+
+  for(auto beg = vecExprs.begin(); beg != vecExprs.end(); beg++)
+  {
+    /*
+    coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast, context_);
+    LOG(DEBUG) << "Interpretation::mkVecVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
+    //ast->dump();
+    domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
+    domain::VecVarExpr *dom = domain_->mkVecVarExpr(space);
+    coords2dom_->PutVecVarExpr(coords, dom);
+    interp::VecVarExpr *interp = new interp::VecVarExpr(coords,dom);
+    coords2interp_->putVecVarExpr(coords, interp);
+    interp2domain_->putVecVarExpr(interp,dom);
+
+    */
+    auto ve = *beg;
+
+    auto vve = (domain::VecVarExpr*)ve;
+    auto vpr = (domain::VecParenExpr*)ve;
+    auto vvae = (domain::VecVecAddExpr*)ve;
+
+    coords::VecExpr *coords = coords2dom_->getVecExpr(*beg);
+
+    auto cvve = (coords::VecVarExpr*)coords;
+    auto cvvpr = (coords::VecParenExpr*)coords;
+    auto cvvae = (coords::VecVecAddExpr*)coords;
+
+    if(vve)
+    {
+
+      domain::Space& space = oracle_->getSpaceForVecVarExpr(coords);
+      ve->setSpace(&space);
+    }
+    else if(vpr)
+    {
+
+      domain::Space& space = oracle_->getSpaceForVecParenExpr(coords);
+      ve->setSpace(&space);
+    }
+    else if(vvae)
+    {
+      auto left = (coords::VecExpr*) cvvae->getLeft();
+      auto right = (coords::VecExpr*) cvvae->getRight();
+
+      domain::Space& space = oracle_->getSpaceForAddExpression(left, right);
+      ve->setSpace(&space);
+    }
+    
+  }
+
+  for(auto beg = vecs.begin(); beg != vecs.end(); beg++)
+  {
+    /*
+    coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, context_, x, y, z);  
+    //domain::Space& s = oracle_->getSpaceForVector_Lit(coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
+    domain::Vector_Lit *dom = domain_->mkVector_Lit(x, y, z);
+    coords2dom_->putVector_Lit(coords, dom); 
+    interp::Vector_Lit *interp = new interp::Vector_Lit(coords, dom);
+    coords2interp_->putVector_Lit(coords, interp);
+    interp2domain_->putVector_Lit(interp,dom);
+    */
+    auto vec = *beg;
+
+    auto vl = (domain::Vector_Lit*)vec;
+    auto ve = (domain::Vector_Expr*)vec;
+
+    if(vl)
+    {
+      coords::Vector_Lit* cvl = coords2dom_->getVector_Lit(vl);
+
+      domain::Space& s = oracle_->getSpaceForVector_Lit(cvl);
+      vec->setSpace(&s);
+    }
+    else if(ve)
+    {
+      coords::Vector_Expr* cve = coords2dom_->getVector_Expr(ve);
+      domain::Space& s = oracle_->getSpaceForVector_Expr(cve);
+      vec->setSpace(&s);
+    }
+
+  }
+  //not required for these
+  for(auto beg = vecDefs.begin(); beg != vecDefs.end(); beg++)
+  {
+    auto vd = *beg;
+
+    int i = 1;
+  }
+
+}
+
 

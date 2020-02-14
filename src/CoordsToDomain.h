@@ -43,6 +43,8 @@ class CoordsToDomain
 	domain::VecLitExpr *getLitInterp(coords::VecLitExpr c) const;
 	coords::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;*/
 
+
+
 	void PutVecVarExpr(coords::VecVarExpr *n, domain::VecVarExpr *e);
 	domain::VecVarExpr *getVecVarExpr(coords::VecVarExpr* c) const;
 	coords::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;
