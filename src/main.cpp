@@ -433,6 +433,8 @@ int main(int argc, const char **argv)
   interp_->addSpace("geom");
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
+  interp_->setAll_Spaces();
+
 
   cout <<"Spaces\n";
   cout <<interp_->toString_Spaces();

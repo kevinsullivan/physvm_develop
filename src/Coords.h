@@ -109,6 +109,9 @@ public:
   VecVecAddExpr(const ast::VecVecAddExpr *mce, clang::ASTContext *c, coords::VecExpr *mem, coords::VecExpr *arg);
   const ast::VecVecAddExpr *getVecVecAddExpr();
   virtual std::string toString() const;
+  coords::Coords* getLeft() const { return mem_; }
+  coords::Coords* getRight() const { return arg_; }
+
 private:
   coords::Coords *mem_;
   coords::Coords *arg_;

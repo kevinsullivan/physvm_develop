@@ -13,6 +13,9 @@ public:
 
 	domain::Space &getSpace();
 
+
+
+
 	domain::Space& getSpaceForAddExpression(coords::VecExpr *mem, coords::VecExpr *arg)
 	{
 		std::string query = "";
@@ -28,13 +31,13 @@ public:
 	}
 
 	domain::Space& getSpaceForVecIdent(coords::VecIdent* v) {
-	std::string query = "Space for vector identifier, ";
-	query += v->toString();
-	query += " at ";
-	query += v->getSourceLoc();
-	query += "? ";
-	std::cout << query;
-	return getSpace();
+		std::string query = "Space for vector identifier, ";
+		query += v->toString();
+		query += " at ";
+		query += v->getSourceLoc();
+		query += "? ";
+		std::cout << query;
+		return getSpace();
 	}
 
 	domain::Space& getSpaceForVector_Expr(coords::VecExpr *expr) {
@@ -70,7 +73,7 @@ public:
 		return getSpace();
 	}
 
-	domain::Space& getSpaceForVecVarExpr(coords::VecVarExpr *var)  {
+	domain::Space& getSpaceForVecVarExpr(coords::VecExpr *var)  {
 		std::string query = "Space for vector variable expression, ";
 		query += var->toString();
 		query += " at ";

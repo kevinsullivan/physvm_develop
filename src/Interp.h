@@ -64,7 +64,7 @@ protected:
 
 class VecIdent : public Interp
 {
-public:
+  public:
   VecIdent(coords::VecIdent *c, domain::VecIdent *d);
   const clang::VarDecl *getVarDecl() const;
   virtual std::string toString() const;

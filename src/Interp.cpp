@@ -69,7 +69,7 @@ std::string VecVarExpr::toString() const {
   ret += "( ";
   ret += coords_->toString();
   ret += " : peirce.vec ";
-  ret += expr_->getSpace().toString(); 
+  ret += expr_->getSpace()->toString(); 
   ret += " )";
   return ret;
 }
@@ -88,7 +88,7 @@ std::string VecVecAddExpr::toString() const {
   ret += " ";
   ret += arg_->toString();
   ret += " : peirce.vec ";
-  ret += expr_->getSpace().toString(); 
+  ret += expr_->getSpace()->toString(); 
   ret += " )";
   return ret;  
 } 
@@ -106,7 +106,7 @@ std::string VecParenExpr::toString() const {
   ret += " ) : peirce.vec ";
 
   // TODO: Abstract superclass data members
-  ret += expr_->getSpace().toString(); 
+  ret += expr_->getSpace()->toString(); 
 
   ret += " )";
   return ret;  
@@ -170,7 +170,14 @@ std::string Vector_Def::toString() const {
   std::string ret = "def ";
   ret += id_->toString();
   ret += " := ";
-  ret += vec_->toString(); 
+  try{
+    if(vec_)
+      ret += vec_->toString(); 
+  }
+  catch(std::exception ex)
+  {
+
+  }
   return ret;
 }
 

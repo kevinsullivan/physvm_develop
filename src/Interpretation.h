@@ -65,6 +65,8 @@ public:
     std::string toString_Vectors();
     std::string toString_Defs();
 
+    void setAll_Spaces();
+
 // TODO: Make private
     domain::Domain *domain_;
     oracle::Oracle *oracle_;
