@@ -117,6 +117,25 @@ public:
   }
 };
 
+class HandlerForCXXConstructVecVarExpr : public MatchFinder::MatchCallback
+{
+public:
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    const CXXConstructExpr *ctor_ast = 
+      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VecVarExpr4");
+    const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecVarExpr2");
+    LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Start. VecVarExpr = " << std::hex << declRefExpr_ast << "\n";
+    if(ctor_ast and declRefExpr_ast and !(ctor_ast->getNumArgs() == 3)){
+      interp_->mkVecVarExpr(declRefExpr_ast);
+      interp_->mkVector_Expr(ctor_ast, declRefExpr_ast); //????
+    }
+    LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Done.\n";
+  }
+};
+
+
+
 // CXXMemberCallExpr is CXXMemberCallExprLeft + CXXMemberCallExprRight
 class HandlerForCXXAddMemberCall : public MatchFinder::MatchCallback
 {
@@ -311,14 +330,25 @@ public:
     const StatementMatcher litMatcher = cxxConstructExpr(argumentCountIs(3))
       .bind("VectorLitExpr");
     CXXConstructExprMatcher_.addMatcher(litMatcher, &litHandler_);
-
+/*
+    const StatementMatcher exprMatcher = declRefExpr().bind("VecVarExpr");
+    CXXConstructExprMatcher_.addMatcher(exprMatcher, &vecVarHandler_); 
+    const StatementMatcher exprMatcher2 = atomicExpr().bind("VecVarExpr");
+    CXXConstructExprMatcher_.addMatcher(exprMatcher, &vecVarHandler_);
+    const StatementMatcher exprMatcher3 = constantExpr().bind("VecVarExpr");
+    CXXConstructExprMatcher_.addMatcher(exprMatcher, &vecVarHandler_);*/
+    
+    const StatementMatcher exprMatcher4 = cxxConstructExpr(hasDescendant(declRefExpr().bind("VecVarExpr2"))).bind("VecVarExpr4");
+    CXXConstructExprMatcher_.addMatcher(exprMatcher4, &vecVarHandler_);
+    
+    /*
     const StatementMatcher addOpMatcher =
         cxxConstructExpr(hasDescendant(cxxMemberCallExpr(
                          hasDescendant(memberExpr(
                          hasDeclaration(namedDecl(hasName("vec_add"))))))
           .bind("MemberCallExpr")))
           .bind("VectorConstructAddExpr");
-    CXXConstructExprMatcher_.addMatcher(addOpMatcher, &addHandler_);
+    CXXConstructExprMatcher_.addMatcher(addOpMatcher, &addHandler_);*/
   };
   void match(const clang::CXXConstructExpr *consdecl)
   {
@@ -328,6 +358,7 @@ private:
   MatchFinder CXXConstructExprMatcher_;
   HandlerForCXXConstructLitExpr litHandler_;
   HandlerForCXXConstructAddExpr addHandler_;
+  HandlerForCXXConstructVecVarExpr vecVarHandler_;
 };
 
 
@@ -433,7 +464,10 @@ int main(int argc, const char **argv)
   interp_->addSpace("geom");
   
   Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
-  interp_->setAll_Spaces();
+  //interp_->setAll_Spaces();
+  interp_->mkVarTable();
+  interp_->printVarTable();
+  interp_->updateVarTable();
 
 
   cout <<"Spaces\n";

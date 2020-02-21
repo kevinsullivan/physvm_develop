@@ -12,6 +12,9 @@
 #include "InterpToDomain.h"
 #include <g3log/g3log.hpp> 
 
+
+#include <unordered_map>
+
 namespace interp {
 
 
@@ -67,6 +70,10 @@ public:
 
     void setAll_Spaces();
 
+    void mkVarTable();
+    void printVarTable();
+    void updateVarTable();
+
 // TODO: Make private
     domain::Domain *domain_;
     oracle::Oracle *oracle_;
@@ -75,6 +82,9 @@ public:
     ast2coords::ASTToCoords *ast2coords_;
     coords2interp::CoordsToInterp *coords2interp_;
     interp2domain::InterpToDomain *interp2domain_; 
+
+    std::unordered_map<int, coords::Coords*> index2coords_;
+    std::unordered_map<int, void*> index2dom_;
 }; 
 
 } // namespaceT

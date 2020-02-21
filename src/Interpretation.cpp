@@ -11,9 +11,11 @@ Establish interpretations for AST nodes:
 */
 
 // TODO: These two can be integrated
+#include "Coords.h"
 #include "Interpretation.h"
 #include "Interp.h"
 #include "CoordsToInterp.h"
+#include "CoordsToDomain.h"
 #include "InterpToDomain.h"
 #include "Oracle_AskAll.h"    // default oracle
 
@@ -57,7 +59,7 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
 
 void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/) {
     coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast, context_);
-    LOG(DEBUG) << "Interpretation::mkVecVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
+    //LOG(DEBUG) << "Interpretation::mkVecVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
     //ast->dump();
     //domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
     domain::VecVarExpr *dom = domain_->mkVecVarExpr();
@@ -263,7 +265,7 @@ std::string Interpretation::toString_Vectors() {
       .append("(")
       .append(interp->toString())
       .append(" : vec ")
-      .append((*it)->getSpace()->toString())
+      .append((*it)->getSpaceContainer()->toString())
       .append(")\n");
   }
   return retval;
@@ -396,4 +398,192 @@ void Interpretation::setAll_Spaces() {
 
 }
 
+void Interpretation::mkVarTable(){
+  auto vecIdents = domain_->getVecIdents();
+  auto vecExprs = domain_->getVecExprs();
+  auto vecs = domain_->getVectors();
+  auto vecDefs = domain_->getVectorDefs();
+
+  auto idx = 1;
+
+  for(auto it = vecIdents.begin(); it != vecIdents.end();it++)
+  {
+    auto q = this->coords2dom_->getVecIdent(this->coords2dom_->getVecIdent(*it));
+
+    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVecIdent(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVecIdent(*it));
+    //this->index2dom_[idx++]=
+  }
+  for(auto it = vecExprs.begin(); it != vecExprs.end();it++)
+  {
+    auto q = this->coords2dom_->getVecExpr(this->coords2dom_->getVecExpr(*it));
+    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVecExpr(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVecExpr(*it));
+
+  }
+  for(auto it = vecs.begin(); it != vecs.end(); it++)
+  {
+
+    auto q = this->coords2dom_->getVector(this->coords2dom_->getVector(*it));
+
+    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVector(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVector(*it));
+
+  }/*
+  for(auto it = vecDefs.begin(); it != vecDefs.end(); it++)
+  {
+    this->index2coords_[idx++]=static_cast<coords::Coords*>(this->coords2dom_->getVector_Def(*it));
+
+  }
+  */
+}
+
+void Interpretation::printVarTable(){
+  int sz = this->index2coords_.size();
+
+  for(int i = 1; i<=sz;i++)
+  {
+    auto variable = this->index2coords_.at(i);
+    auto v = static_cast<coords::Vector*>(variable);
+    auto dom_v = this->coords2dom_->getVector(v);
+    auto dom_vi = this->coords2dom_->getVecIdent((coords::VecIdent*)variable);
+    auto dom_ve = this->coords2dom_->getVecExpr((coords::VecExpr*)variable);
+
+    /*
+    auto cvi = (coords::VecIdent*)variable;
+    auto cvve = (coords::VecVarExpr*)variable;
+    auto cvpr = (coords::VecParenExpr*)variable;
+    auto cvvae = (coords::VecVecAddExpr*)variable;
+    auto cvl = (coords::Vector_Lit*)variable;
+    auto cve = (coords::Vector_Expr*)variable;
+
+    if(cvi)
+      std::cout<<cvi->toString()<<std::endl;
+    if(cvve)
+      std::cout<<cvve->toString()<<std::endl;
+    if(cvpr)
+      std::cout<<cvpr->toString()<<std::endl;
+    if(cvvae)
+      std::cout<<cvvae->toString()<<std::endl;
+    if(cvl)
+      std::cout<<cvl->toString()<<std::endl;
+    if(cve)
+      std::cout<<cve->toString()<<std::endl;
+    */
+
+    if ((coords::Vector_Def*)variable and false){
+      auto dom_vd = this->coords2dom_->getVector_Def((coords::Vector_Def*)variable);
+      //std::cout<<"Index:"<<i<<", Physical Variable:"<<this->index2coords_.at(i)->toString()<<", Physical Type:"<<dom_vd->getSpaceContainer()->toString()<<std::endl;
+    }
+    else if(dom_v){
+      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_v->getSpaceContainer()->toString()<<std::endl;
+
+    }
+    else if(dom_vi){
+      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_vi->getSpaceContainer()->toString()<<std::endl;
+
+    }
+    else if(dom_ve){
+      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_ve->getSpaceContainer()->toString()<<std::endl;
+
+    }
+  }
+
+  /*
+  for(auto it = this->index2coords_.begin(); it != this->index2coords_.end(); it++)
+  {
+    std::cout<<"Index:"<<it->first<<",Physical Variable:"<<it->second->toString()<<std::endl;
+  }
+  */
+}
+
+void Interpretation::updateVarTable(){
+  auto vecIdents = domain_->getVecIdents();
+  auto vecExprs = domain_->getVecExprs();
+  auto vecs = domain_->getVectors();
+  auto vecDefs = domain_->getVectorDefs();
+
+  auto sz = (int)this->index2coords_.size()+1;
+  try{
+    std::cout<<"Enter 0 to print the Variable Table again. Enter the index of a Variable to update its physical type. Enter "<<sz<<" to exit and check."<<std::endl;
+    int choice;
+    std::cin >> choice;
+
+    while((choice == 0 || this->index2coords_.find(choice) != this->index2coords_.end()) && choice != sz)
+    {
+      auto b = choice == 0;
+
+      if(choice == 0){
+        this->printVarTable();
+      }
+      else{
+        auto v = this->index2coords_.find(choice)->second;
+
+        auto cvi = (coords::VecIdent*)v;
+        auto cvve = (coords::VecVarExpr*)v;
+        auto cvpr = (coords::VecParenExpr*)v;
+        auto cvvae = (coords::VecVecAddExpr*)v;
+        auto cvl = (coords::Vector_Lit*)v;
+        auto cve = (coords::Vector_Expr*)v;
+
+
+        auto dom_v = this->coords2dom_->getVector((coords::Vector*)v);
+        auto dom_vi = this->coords2dom_->getVecIdent((coords::VecIdent*)v);
+        auto dom_ve = this->coords2dom_->getVecExpr((coords::VecExpr*)v);
+
+        domain::Space* space = nullptr;
+
+        if(cvi){
+          space = &this->oracle_->getSpaceForVecIdent(cvi);
+        }
+        else if(cvve){
+          space = &this->oracle_->getSpaceForVecVarExpr(cvve);
+        }
+        else if (cvpr){
+          space = &this->oracle_->getSpaceForVecParenExpr(cvpr);
+        }
+        else if(cvvae){
+          auto left = (coords::VecExpr*) cvvae->getLeft();
+          auto right = (coords::VecExpr*) cvvae->getRight();
+
+          space = &this->oracle_->getSpaceForAddExpression(left, right);
+        }
+        else if(cvl){
+          space = &this->oracle_->getSpaceForVector_Lit(cvl);
+        }
+        else if(cve){
+          space = &this->oracle_->getSpaceForVector_Expr(cve);
+        }
+        else{
+
+        }
+
+
+        if(dom_v){
+          dom_v->setSpace(space);
+        }
+        else if(dom_vi){
+          dom_vi->setSpace(space);
+        }
+        else if(dom_ve){
+          dom_ve->setSpace(space);
+        }
+
+        
+      }
+      std::cout<<"Enter 0 to print the Variable Table again. Enter the index of a Variable to update its physical type. Enter "<<sz<<" to exit and check."<<std::endl;
+      std::cin >> choice;
+      try{
+      if(choice == 0 || this->index2coords_.find(choice) != this->index2coords_.end()){
+        choice = choice;
+      }
+      }
+      catch(std::exception ex){
+        std::cout<<ex.what()<<std::endl;
+      }
+
+    }
+  }
+  catch(std::exception& ex){
+    std::cout<<ex.what();
+  }
+
+}
 
