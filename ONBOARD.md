@@ -42,5 +42,12 @@ This document contains an abbreviated set of steps to be followed to pepare your
 
 ## Development Workflow
 
-1. 
-2. 
+1. Instructions do not vary much between developing on the "Peirce Docker Builder" or "Peirce" project.
+2. All work must be done on a "feature branch", thus, create a branch titled "feature/%MY_DESCRIPTIVE_FEATURE-SPECIFIC_BRANCH_NAME%"
+3. Switch to that branch for development.
+4. Perform development,rigorously test changes, ensure no issues in building
+5. Push your changes. 
+6. This should trigger a build on GitLab. Navigate to "CI/CD" and check the jobs tab. One should coincide with your push time.
+7. If your build succeeds, this should trigger a built image to get pushed to DockerHub with the Docker Project, or, for Peirce, it will upload the built binary as an "artifact" to be downloaded as an attachment to the job itself
+8. If it fails, please check the job output to see what triggered the failure. If it was not your fault, contact the Runner administrator (Andrew)
+9. When everything is ready, submit a merge request to merge your changes back into the master branch
