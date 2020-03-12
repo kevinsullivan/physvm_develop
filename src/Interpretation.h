@@ -10,7 +10,7 @@
 #include "Oracle.h"
 #include "CoordsToInterp.h"
 #include "InterpToDomain.h"
-#include <g3log/g3log.hpp> 
+//#include <g3log/g3log.hpp> 
 
 
 #include <unordered_map>

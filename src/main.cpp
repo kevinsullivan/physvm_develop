@@ -29,8 +29,8 @@ namespace std
 }
 
 #include <memory>
-#include <g3log/g3log.hpp>
-#include <g3log/logworker.hpp>
+//#include <g3log/g3log.hpp>
+//#include <g3log/logworker.hpp>
 
 using namespace std;
 using namespace llvm;
@@ -65,7 +65,7 @@ class HandlerForCXXConstructLitExpr : public MatchFinder::MatchCallback
 public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
-    LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Start.\n";
+    //LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Start.\n";
     const clang::CXXConstructExpr *lit_ast = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
 
@@ -75,7 +75,7 @@ public:
     float z = 0;
     
     interp_->mkVector_Lit(lit_ast, x, y, z);
-    LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Done.\n";
+    //LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Done.\n";
   }
 };
 
@@ -89,17 +89,17 @@ void handle_arg0_of_add_call(const clang::Expr *right);
 
 void handleMemberCallExpr(const CXXMemberCallExpr *ast)
 {
-  LOG(DEBUG) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
+  //LOG(DEBUG) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
   const clang::Expr *mem_ast = ast->getImplicitObjectArgument();
   const clang::Expr *arg_ast = ast->getArg(0);
   if (!mem_ast || !arg_ast) {
-    LOG(FATAL) <<"main::handleMemberCallExpr. Null pointer error.\n";
+    //LOG(FATAL) <<"main::handleMemberCallExpr. Null pointer error.\n";
     return;
   }
   handle_member_expr_of_add_call(mem_ast);
   handle_arg0_of_add_call(arg_ast);
   interp_->mkVecVecAddExpr(ast, mem_ast, arg_ast);
-  LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
+  //LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
 }
 
 /*
@@ -111,9 +111,9 @@ public:
   virtual void run(const MatchFinder::MatchResult &Result)
   {
     const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-    LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = " << std::hex << declRefExpr_ast << "\n";
+    //LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = " << std::hex << declRefExpr_ast << "\n";
     interp_->mkVecVarExpr(declRefExpr_ast);
-    LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.\n";
+    //LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.\n";
   }
 };
 
@@ -125,12 +125,12 @@ public:
     const CXXConstructExpr *ctor_ast = 
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VecVarExpr4");
     const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecVarExpr2");
-    LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Start. VecVarExpr = " << std::hex << declRefExpr_ast << "\n";
+    //LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Start. VecVarExpr = " << std::hex << declRefExpr_ast << "\n";
     if(ctor_ast and declRefExpr_ast and !(ctor_ast->getNumArgs() == 3)){
       interp_->mkVecVarExpr(declRefExpr_ast);
       interp_->mkVector_Expr(ctor_ast, declRefExpr_ast); //????
     }
-    LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Done.\n";
+    //LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Done.\n";
   }
 };
 
@@ -146,7 +146,7 @@ public:
     const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (memcall == NULL)
     {
-      LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
+      //LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
     handleMemberCallExpr(memcall);
@@ -163,13 +163,13 @@ public:
     const ParenExpr *memparen = Result.Nodes.getNodeAs<clang::ParenExpr>("ParenExpr");
     if (memparen == NULL)
     {
-      LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
+      //LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
     const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (memcall == NULL)
     {
-      LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
+      //LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
       return;
     }
     handleMemberCallExpr(memcall);
@@ -191,20 +191,20 @@ public:
       Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorConstructAddExpr");
     if (ctor_ast == NULL)
     {
-      LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No constructor pointer\n";
+      //LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No constructor pointer\n";
       return;
     }
-    LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
+    //LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
 
     const CXXMemberCallExpr *vec_vec_add_member_call_ast =
         Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (vec_vec_add_member_call_ast == NULL)
     {
-      LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
+      //LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
       return;
     }
     handleMemberCallExpr(vec_vec_add_member_call_ast);
-    LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: Done.\n";
+    //LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: Done.\n";
     interp_->mkVector_Expr(ctor_ast, vec_vec_add_member_call_ast);
   }
 };
@@ -232,9 +232,9 @@ public:
   }
   void match(const clang::Expr &call_rhs)
   {
-    LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match start\n";
+    //LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match start\n";
     CXXMemberCallExprArg0Matcher_.match(call_rhs, *context_);
-    LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match finish\n";
+    //LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match finish\n";
   }
 private:
   MatchFinder CXXMemberCallExprArg0Matcher_;
@@ -248,10 +248,10 @@ private:
 //
 void handle_arg0_of_add_call(const clang::Expr *arg)
 {
-  LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:\n";
+  //LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:\n";
   CXXMemberCallExprArg0Matcher call_right_arg0_matcher; 
   call_right_arg0_matcher.match(*arg); 
-  LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. Done.\n";
+  //LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. Done.\n";
 }
 
 /*
@@ -290,9 +290,9 @@ public:
   }
   void match(const clang::Expr &call_rhs)
   {
-    LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:\n";
+    //LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:\n";
     CXXMemberCallExprMemberExprMatcher_.match(call_rhs, *context_);
-    LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. DONE matching.\n";
+    //LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. DONE matching.\n";
   }
 private:
   MatchFinder CXXMemberCallExprMemberExprMatcher_;
@@ -306,14 +306,14 @@ TODO: Inline? Looks like we can.
 */
 void handle_member_expr_of_add_call(const clang::Expr *memexpr)
 {
-  LOG(DEBUG) <<"main::handle_member_expr_of_add_call\n";
+  //LOG(DEBUG) <<"main::handle_member_expr_of_add_call\n";
   if (memexpr == NULL)
   {
-    LOG(FATAL) <<"main::handle_member_expr_of_add_call: Error.Null argument\n";
+    //LOG(FATAL) <<"main::handle_member_expr_of_add_call: Error.Null argument\n";
   }
   CXXMemberCallExprMemberExprMatcher call_expr_mem_expr_matcher;
   call_expr_mem_expr_matcher.match(*memexpr);
-  LOG(DEBUG) <<"main::handle_member_expr_of_add_call. Done. \n";
+  //LOG(DEBUG) <<"main::handle_member_expr_of_add_call. Done. \n";
  }
 
 
@@ -378,12 +378,12 @@ public:
     const clang::DeclStmt *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
     const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
     const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
-    LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
+    //LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
     interp_->mkVecIdent(vardecl);
     CXXConstructExprMatcher matcher;
     matcher.match(consdecl);
     interp_->mkVector_Def(declstmt, vardecl, consdecl);
-    LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: Done.\n"; 
+    //LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: Done.\n"; 
     }
 };
 
@@ -421,12 +421,12 @@ public:
   void EndSourceFileAction() override
   {
     //bool consistent = interp_.isConsistent();
-    LOG(DEBUG) <<"STUB Analysis result\n";
+    //LOG(DEBUG) <<"STUB Analysis result\n";
   }
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
-    LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
+    //LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
     context_ = &CI.getASTContext();
     interp_->setASTContext(context_);
     return llvm::make_unique<MyASTConsumer>(); 
@@ -450,12 +450,12 @@ int main(int argc, const char **argv)
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  using namespace g3;
+  //using namespace g3;
   std::string logFile = "Peirce.log";
   std::string logDir = ".";
-  auto worker = LogWorker::createLogWorker();
-  auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
-  g3::initializeLogging(worker.get());
+  //auto worker = LogWorker::createLogWorker();
+  //auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
+  //g3::initializeLogging(worker.get());
 
   interp_ = new interp::Interpretation();   // default oracle
   

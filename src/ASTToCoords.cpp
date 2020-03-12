@@ -1,5 +1,5 @@
 #include "ASTToCoords.h"
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 
 /*
@@ -40,7 +40,7 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
 coords::VecParenExpr *ASTToCoords::mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c, ast::VecExpr *expr) {
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords[expr]);
     if (!expr_coords) {
-        LOG(FATAL) << "ASTToCoords::mkVecParenExpr: Error. No expr coords.\n"; 
+        //LOG(FATAL) << "ASTToCoords::mkVecParenExpr: Error. No expr coords.\n"; 
     }
     coords::VecParenExpr *coord = new coords::VecParenExpr(ast, c, expr_coords); 
     overrideStmt2Coords(ast, coord); 

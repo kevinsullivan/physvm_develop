@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 
 using namespace coords2interp;
@@ -82,14 +82,14 @@ void CoordsToInterp::putVecVarExpr(coords::VecVarExpr *c, interp::VecVarExpr *d)
 {
     std::string cstr = c->toString();
     std::string dstr = d->toString();
-    LOG(DEBUG) << "CoordsToInterp::putVecVarExpr c " << cstr << "\n";
-    LOG(DEBUG) << "CoordsToInterp::putVecVarExpr d " << dstr << "\n";
+    //LOG(DEBUG) << "CoordsToInterp::putVecVarExpr c " << cstr << "\n";
+    //LOG(DEBUG) << "CoordsToInterp::putVecVarExpr d " << dstr << "\n";
     coords2interp_VecExpr[c] = d;
     interp2coords_VecExpr[d] = c;
 
     interp::VecVarExpr *foo = getVecVarExpr(c);
     std::string s = foo->toString();
-    LOG(DEBUG) << "Debug " << s << "\n";
+    //LOG(DEBUG) << "Debug " << s << "\n";
 }
 
 interp::VecVarExpr *CoordsToInterp::getVecVarExpr(coords::VecVarExpr *c) const

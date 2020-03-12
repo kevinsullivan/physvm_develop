@@ -1,6 +1,6 @@
 #include "Coords.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 
 namespace coords {
@@ -40,7 +40,7 @@ bool Coords::operator==(const Coords &other) const {
 }
 
 std::string Coords::toString() const {
-    LOG(FATAL) << "Coords::toString. Error. Should not be called. Abstract.\n";
+    //LOG(FATAL) << "Coords::toString. Error. Should not be called. Abstract.\n";
     return NULL;
 }
 
@@ -48,17 +48,17 @@ std::string Coords::getSourceLoc() const {
     clang::FullSourceLoc FullLocation;
     if (ast_type_tag_ == CLANG_AST_STMT)
     {
-      FullLocation = context_->getFullLoc(clang_stmt_->getBeginLoc());
+      //FullLocation = context_->getFullLoc(clang_stmt_->getBeginLoc());
     } else {
-      FullLocation = context_->getFullLoc(clang_decl_->getBeginLoc());
+      //FullLocation = context_->getFullLoc(clang_decl_->getBeginLoc());
 
       //uto p = clang_decl_->getBeginLoc();
       //auto j = std::to_string(p.getLineNumber()); ;
     }
     std::string retval = "line ";
-    retval += std::to_string(FullLocation.getSpellingLineNumber()); 
+    //retval += std::to_string(FullLocation.getSpellingLineNumber()); 
     retval +=  ", column ";
-    retval +=  std::to_string(FullLocation.getSpellingColumnNumber());
+    //retval +=  std::to_string(FullLocation.getSpellingColumnNumber());
     return retval;
 }
 
@@ -92,7 +92,7 @@ const clang::Expr *VecExpr::getExpr() {
 }
 
 std::string VecExpr::toString() const { 
-    LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
+    //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
     return NULL; 
 }
 
@@ -152,7 +152,7 @@ const ast::Vector *Vector::getVector() const {
 VectorCtorType Vector::getVectorType() { return tag_; }
 
 std::string Vector::toString() const { 
-    LOG(FATAL) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
+    //LOG(FATAL) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
     return NULL;
 }
 
@@ -175,7 +175,7 @@ Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, clang::ASTContext *c,
 }
 
 std::string Vector_Var::toString() const { 
-    LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
+    //LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
     return NULL;
 }
 

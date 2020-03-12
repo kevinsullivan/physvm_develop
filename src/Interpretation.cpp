@@ -19,7 +19,7 @@ Establish interpretations for AST nodes:
 #include "InterpToDomain.h"
 #include "Oracle_AskAll.h"    // default oracle
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 using namespace interp;
 
@@ -42,7 +42,7 @@ Interpretation::Interpretation() {
 void Interpretation::mkVecIdent(ast::VecIdent *ast)
 {
   coords::VecIdent *coords = ast2coords_->mkVecIdent(ast, context_);
-  LOG(DEBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
+  //LOG(DEBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
   //domain::Space &space = oracle_->getSpaceForVecIdent(coords);
   domain::VecIdent *dom = domain_->mkVecIdent();
   coords2dom_->putVecIdent(coords, dom);
@@ -75,31 +75,31 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
                                   (ast2coords_->getStmtCoords(mem_expr));
   coords::VecExpr *arg_coords = static_cast<coords::VecExpr*>
                                   (ast2coords_->getStmtCoords(arg_expr));
-  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr. ast=" << std::hex << add_ast << "\n";
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr. ast=" << std::hex << add_ast << "\n";
   if (mem_coords == NULL || arg_coords == NULL) {
-    LOG(FATAL) <<"Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords "
-            << std::hex << mem_coords << " arg coords "
-            << std::hex << arg_coords << "\n";
+    //LOG(FATAL) <<"Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords "
+    //        << std::hex << mem_coords << " arg coords "
+    //        << std::hex << arg_coords << "\n";
   }
   coords::VecVecAddExpr *coords = ast2coords_->mkVecVecAddExpr(add_ast, context_, mem_coords, arg_coords);
   //domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
   domain::VecExpr *dom_mem_expr = coords2dom_->getVecExpr(mem_coords);
   domain::VecExpr *dom_arg_expr = coords2dom_->getVecExpr(arg_coords);
   if (dom_mem_expr == NULL || dom_arg_expr == NULL) {
-    LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: bad domain exprs. Mem "
-              << std::hex << dom_mem_expr << " Arg "
-              << std::hex << dom_arg_expr << "\n";
+    //LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: bad domain exprs. Mem "
+    //          << std::hex << dom_mem_expr << " Arg "
+    //          << std::hex << dom_arg_expr << "\n";
   }
   domain::VecVecAddExpr *dom = domain_->mkVecVecAddExpr(dom_mem_expr, dom_arg_expr);
   coords2dom_->PutVecVecAddExpr(coords, dom);
-  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Coords: " << mem_coords->toString() << "\n";
-  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Coords: " << arg_coords->toString() << "\n";
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Coords: " << mem_coords->toString() << "\n";
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Coords: " << arg_coords->toString() << "\n";
 
   interp::Interp *mem_interp = coords2interp_->getVecExpr(mem_coords);  // dyn type's toString not being called
   std::string mi_str = mem_interp->toString();
-  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Interp: " << mi_str << "\n";
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Interp: " << mi_str << "\n";
   interp::Interp *arg_interp = coords2interp_->getVecExpr(arg_coords);
-  LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Interp: " << arg_interp->toString() << "\n";
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Interp: " << arg_interp->toString() << "\n";
   interp::VecVecAddExpr *interp = new interp::VecVecAddExpr(coords, dom, mem_interp, arg_interp);
   coords2interp_->putVecVecAddExpr(coords, interp); 
   interp2domain_->putVecVecAddExpr(interp,dom);
@@ -109,10 +109,10 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
 void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
     coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
-    LOG(DEBUG) << 
-      "Interpretation::mkVecParenExpr. ast=" << 
-      std::hex << ast << ", " << coords->toString() << 
-      "expr = " << expr_coords->toString() << "\n";
+    //LOG(DEBUG) << 
+    //  "Interpretation::mkVecParenExpr. ast=" << 
+    //  std::hex << ast << ", " << coords->toString() << 
+    //  "expr = " << expr_coords->toString() << "\n";
     //domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
     domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
     domain::VecParenExpr *dom = domain_->mkVecParenExpr(dom_expr);
@@ -202,7 +202,7 @@ domain::VecExpr* Interpretation::getVecExpr(ast::VecExpr* ast) {
         static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(ast));
     domain::VecExpr* dom = coords2dom_->getVecExpr(coords);
     if (!dom) {
-        LOG(DEBUG) <<"Interpretation::getVecExpr. Error. Undefined for key!\n";
+       // LOG(DEBUG) <<"Interpretation::getVecExpr. Error. Undefined for key!\n";
     }
     return dom;
 }
