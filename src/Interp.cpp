@@ -44,7 +44,7 @@ std::string VecIdent::toString() const {
 //  ret += "( ";
   ret += coords_->toString();
   ret += " : peirce.vec ";
-  ret += ident_->getSpace()->toString();
+  ret += ident_->getSpaceContainer()->toString();
 //  ret += " )";
   return ret;
 }
@@ -69,7 +69,7 @@ std::string VecVarExpr::toString() const {
   ret += "( ";
   ret += coords_->toString();
   ret += " : peirce.vec ";
-  ret += expr_->getSpace()->toString(); 
+  ret += expr_->getSpaceContainer()->toString(); 
   ret += " )";
   return ret;
 }
@@ -88,7 +88,7 @@ std::string VecVecAddExpr::toString() const {
   ret += " ";
   ret += arg_->toString();
   ret += " : peirce.vec ";
-  ret += expr_->getSpace()->toString(); 
+  ret += expr_->getSpaceContainer()->toString(); 
   ret += " )";
   return ret;  
 } 
@@ -106,7 +106,7 @@ std::string VecParenExpr::toString() const {
   ret += " ) : peirce.vec ";
 
   // TODO: Abstract superclass data members
-  ret += expr_->getSpace()->toString(); 
+  ret += expr_->getSpaceContainer()->toString(); 
 
   ret += " )";
   return ret;  
@@ -132,7 +132,7 @@ Vector_Lit::Vector_Lit(coords::Vector_Lit* c, domain::Vector_Lit* d) : Vector(c,
 std::string Vector_Lit::toString() const {
   std::string ret = "";
   ret += "( peirce.vec.mkVector ";
-  ret += vector_->getSpace()->getName();
+  ret += vector_->getSpaceContainer()->toString();
   ret += " ";
   ret += static_cast<coords::Vector_Lit *>(coords_)->toString();
   ret += " )";

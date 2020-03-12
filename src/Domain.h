@@ -1,6 +1,10 @@
 #ifndef BRIDGE_H
 #define BRIDGE_H
 
+#ifndef leanInferenceWildcard
+#define leanInferenceWildcard "_"
+#endif
+
 #include <cstddef>  
 #include "clang/AST/AST.h"
 #include <vector>
@@ -40,6 +44,8 @@ class Vector_Lit;
 class Vector_Expr;
 class Vector_Var;
 class Vector_Def;
+
+
 
 // Definition for Domain class 
 
@@ -127,6 +133,40 @@ public:
 	std::string name_;
 };
 
+union SpaceContainer{
+		SpaceContainer() { setDefault(); }//this->inferenceSymbol = leanInferenceWildcard; }
+		~SpaceContainer(){
+			space = nullptr;
+			inferenceSymbol = nullptr;
+		}
+    domain::Space* space;
+    std::string* inferenceSymbol;
+
+		void setDefault(){
+			//this->space = nullptr;
+			this->inferenceSymbol = new std::string("_");
+		}
+
+		void setSpace(Space* space){
+			if(space){
+				this->space = space;
+			}
+			else{
+				this->inferenceSymbol = new std::string("_");
+			}
+		}
+
+		std::string toString(){
+			if (*this->inferenceSymbol == "_"){
+				return *this->inferenceSymbol;
+			}
+			else{
+				return this->space->toString();
+			}
+		}
+};
+
+
 
 /*
 The next set of definitions provides a basis for representing code 
@@ -136,24 +176,29 @@ expressions lifted to domain expressions.
 class VecIdent {
 public:
 	VecIdent(Space& space) : space_(&space) {}
-	VecIdent(){}
+	VecIdent() { this->spaceContainer_ = new SpaceContainer(); }// this->spaceContainer_-> }
 	Space* getSpace() const { return space_; }
+	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
+
 	void setSpace(Space* space);
 	// TODO: Reconsider abstracting away of name
 private:
 	Space* space_;
+	SpaceContainer* spaceContainer_;
 };
 
 // TODO - Change name of this class? DomainExpr?
 class VecExpr  {
 public:
     VecExpr(Space* s) : space_(s) {}
-		VecExpr() {}
-    Space* getSpace() const;
+		VecExpr() { this->spaceContainer_ = new SpaceContainer(); }
+    Space* getSpace() const { return space_; };
+		SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
 		void setSpace(Space* s);
 		// virtual std::string toString() const;
 	protected:
     Space* space_;
+		SpaceContainer* spaceContainer_;
 };
 
 
@@ -203,18 +248,19 @@ enum VecCtorType {VEC_EXPR, VEC_LIT, /*VEC_VAR,*/ VEC_NONE } ;
 class Vector   {
 public:
 	Vector(const Space& s, VecCtorType tag) :
-		space_(&s), tag_(tag) { 
-	}
-	Vector(VecCtorType tag) : space_(nullptr), tag_(tag) {}
+		space_(&s), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
+	Vector(VecCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
 
 	bool isLit() { return (tag_ == VEC_LIT); } 
 	bool isExpr() { return (tag_ == VEC_EXPR); } 
 	//bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
 	const Space* getSpace() {return space_; }
+	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
 	void setSpace(Space* space);
 	// virtual std::string toString() const {
 private:
 	const Space* space_; // TODO: INFER?
+	SpaceContainer* spaceContainer_;
 	VecCtorType tag_;
 };
 

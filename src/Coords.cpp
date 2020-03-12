@@ -51,6 +51,9 @@ std::string Coords::getSourceLoc() const {
       FullLocation = context_->getFullLoc(clang_stmt_->getBeginLoc());
     } else {
       FullLocation = context_->getFullLoc(clang_decl_->getBeginLoc());
+
+      //uto p = clang_decl_->getBeginLoc();
+      //auto j = std::to_string(p.getLineNumber()); ;
     }
     std::string retval = "line ";
     retval += std::to_string(FullLocation.getSpellingLineNumber()); 
@@ -163,6 +166,7 @@ std::string Vector_Lit::toString() const  {
     retval += std::to_string(y_); 
     retval.append(" ");
     retval += std::to_string(z_);
+    //retval = "(" + retval + ")";
     return retval;
 }
 
@@ -206,7 +210,8 @@ std::string Vector_Def::toString() const {
     std::string retval = "def ";
     retval += id_->toString();
     retval += " := ";
-    retval += expr_->toString();
+    if(expr_)
+        retval += expr_->toString();
     return retval;
 }
 

@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <string>
 
 
 // DONE: Separate clients from Domain
@@ -9,7 +10,9 @@
 
 #include <g3log/g3log.hpp>
 
-
+#ifndef leanInferenceWildcard
+#define leanInferenceWildcard "_"
+#endif
 
 using namespace std;
 using namespace domain;
@@ -18,6 +21,7 @@ using namespace domain;
 /******
 * Space
 ******/
+
 
 Space &Domain::mkSpace(const string &name)
 {
@@ -35,7 +39,6 @@ std::vector<Space*> &Domain::getSpaces()
 // TODO: MOVE THIS STUFF
 std::string Space::getName() const { return name_; }
 
-Space *domain::VecExpr::getSpace() const { return space_; }
 
 
 /****
@@ -62,12 +65,20 @@ VecIdent* Domain::mkVecIdent()
  * **/
 
 void VecIdent::setSpace(Space* space) {
-    this->space_ = space;
+    if(!this->spaceContainer_)
+        this->spaceContainer_ = new domain::SpaceContainer();
+    this->spaceContainer_->setSpace(space);
 }
 
 void VecExpr::setSpace(Space* space) {
-    this->space_ = space;
+    if(!this->spaceContainer_)
+        this->spaceContainer_ = new domain::SpaceContainer();
+    this->spaceContainer_->setSpace(space);
 }
+
+/****
+ * Get
+ * **/
 
 
 /****
@@ -134,9 +145,11 @@ domain::VecParenExpr* Domain::mkVecParenExpr(domain::VecExpr* expr)
 *******/
 
 void Vector::setSpace(Space* space){
-    this->space_ = space; 
-}
 
+    if(!this->spaceContainer_)
+        this->spaceContainer_ = new domain::SpaceContainer();
+    this->spaceContainer_->setSpace(space);
+}
 
 Vector_Lit* Domain::mkVector_Lit(Space* space, float x, float y, float z) {
     Vector_Lit* vec = new domain::Vector_Lit(*space, x, y, z); 

@@ -47,7 +47,7 @@ void printSpaces(std::vector<domain::Space*>& spaces) {
 int selectSpace(std::vector<domain::Space*>& spaces) {
 	int choice = -1;
 	while (choice == -1) {
-		std::cout << "Space? (Space will be inferred if no valid option is not selected) ";
+		std::cout << "Space? (Space will be inferred if a valid option is not selected) ";
 		std::cin >> choice;
 		if (choice < 0 || choice >= (int)spaces.size())
 		{
