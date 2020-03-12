@@ -30,14 +30,17 @@ This document contains an abbreviated set of steps to be followed to pepare your
  
 ## Running Peirce in VSCode
 
-1. In a terminal: "docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce andrewe8/andrewpeircetest:latest /bin/bash"
+1. In a terminal: "docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_DIRECTORY_GOES_HERE%:/peirce andrewe8/andrewpeircetest:latest /bin/bash"
 2. In VSCode: Use the Command Palette (Ctrl + Shift + P)
 3. Type in "attach" to trigger auto-complete -> Select ~ "Remote-Contaiers - Attach to Running Container"
 4. Choose "peirce_docker" from the list
-5. There should be an "open folder" option that will open a dialog, from which you should navigate to "/peirce".
+5. There should be an "open folder" option that will open a dialog, from which you should navigate to "/peirce" (This will be the same as your local peirce repository directory if you performed Step 1 correctly).
 6. Go to your Extensions
 7. Click on C/C++ and Clang Command Adapter, and, for both, click on "Install in Container"
 8. You'll (theoretically) be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
 
 
 ## Development Workflow
+
+1. 
+2. 
