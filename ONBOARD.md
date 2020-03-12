@@ -9,7 +9,7 @@ This document contains an abbreviated set of steps to be followed to pepare your
 3. Contact the Docker administrator for Peirce who will add your account as a collaborator to the Peirce Docker
 4. Download Docker for your respective platform and ensure daemon is running
 5. Issue the following command: "docker login docker.io -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKER_PASSWORD_HERE%"
-6. Next in a terminal window: "docker pull andrewe8/andrewpeircetest". A 3GB file download will ensue. Image name subject to change.
+6. Next in a terminal window: "docker pull andrewe8/andrewpeircetest". A 3GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
 7. Test image with: docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce andrewe8/andrewpeircetest:latest /bin/bash
 8. This can be shut off with : "docker container stop peirce_docker"
 
