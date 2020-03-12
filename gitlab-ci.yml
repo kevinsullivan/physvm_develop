@@ -1,0 +1,7 @@
+image: andrewe8/andrewpeircetest
+build:
+    stage: build
+    script: cd src && make && make install && cd ..
+    artifacts:
+        paths:
+        - bin/peirce
