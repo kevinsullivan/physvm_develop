@@ -1,6 +1,6 @@
 #include "Interp.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 //using namespace g3; 
 
@@ -28,7 +28,7 @@ Interp::Interp(coords::Vector_Def *c, domain::Vector_Def *d)
 
 
 std::string Interp::toString() const {
-  LOG(FATAL) << "Interp::toString: Error. Should not be called. Abstract.\n";
+  //LOG(FATAL) << "Interp::toString: Error. Should not be called. Abstract.\n";
   return "";
 }
 
@@ -57,7 +57,7 @@ VecExpr::VecExpr(coords::VecExpr* c, domain::VecExpr* d)  : Interp(c, d)  {
 }
 
 std::string VecExpr::toString() const {
-  LOG(FATAL) << "Error. Call to abstract interp::VecIdent::toString().\n";
+  //LOG(FATAL) << "Error. Call to abstract interp::VecIdent::toString().\n";
   return "Should not call abstract interp::VecIdent::toString().";
 }
 
@@ -121,7 +121,7 @@ std::string VecParenExpr::toString() const {
 Vector::Vector(coords::Vector* c, domain::Vector* d) : Interp(c, d) {}
 
 std::string Vector::toString() const {
-  LOG(INFO) << "Interp::Vector::toString().\n";
+  //LOG(INFO) << "Interp::Vector::toString().\n";
   return "A_Vector";
 }
 
@@ -144,7 +144,7 @@ Vector_Var::Vector_Var(coords::Vector_Var* c, domain::Vector_Var* d) : Vector(c,
 }
 
 std::string Vector_Var::toString() const {
-  LOG(FATAL) << "interp::Vector_Var::toString. Error. Not implemented.\n";
+  //LOG(FATAL) << "interp::Vector_Var::toString. Error. Not implemented.\n";
   return "";
 }
 

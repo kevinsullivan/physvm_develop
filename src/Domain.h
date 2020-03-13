@@ -13,7 +13,7 @@
 #include "AST.h"
 #include "Coords.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 
 //using namespace std;
@@ -308,7 +308,7 @@ private:
 //
 class Vector_Var : public Vector {
 	Vector_Var() : Vector(*new Space(""), VEC_EXPR ) { 
-		LOG(DEBUG) <<"Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
+		//LOG(DEBUG) <<"Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
 	}
 };
 

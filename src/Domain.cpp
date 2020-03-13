@@ -8,7 +8,7 @@
 
 #include "Domain.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 #ifndef leanInferenceWildcard
 #define leanInferenceWildcard "_"
@@ -186,7 +186,7 @@ Vector_Expr* Domain::mkVector_Expr(domain::VecExpr* exp){
 // 
 Vector_Def *Domain::mkVector_Def(domain::VecIdent* i, domain::Vector* v)
 {
-    LOG(DEBUG) <<"Domain::mkVector_Def ";
+    //LOG(DEBUG) <<"Domain::mkVector_Def ";
     Vector_Def *bd = new Vector_Def(i, v);  
     defs.push_back(bd); 
     return bd;

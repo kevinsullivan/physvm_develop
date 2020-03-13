@@ -36,7 +36,7 @@ This document contains an abbreviated set of steps to be followed to pepare your
 4. Choose "peirce_docker" from the list
 5. There should be an "open folder" option that will open a dialog, from which you should navigate to "/peirce" (This will be the same as your local peirce repository directory if you performed Step 1 correctly).
 6. Go to your Extensions
-7. Click on C/C++ and Clang Command Adapter, and, for both, click on "Install in Container"
+7. Click on C/C++ and Clang Command Adapter, and, for both, click on "Install in Container" ---?
 8. You'll (theoretically) be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
 
 

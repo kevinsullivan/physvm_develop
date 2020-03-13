@@ -3,12 +3,8 @@ build/
 .d
 .o
 *.*~
-<<<<<<< HEAD
-.DS_Store
-=======
 *.log
 .vscode
 .DS_Store
 peirce
 *.tar.gz
->>>>>>> merge-hannah

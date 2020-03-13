@@ -5,7 +5,7 @@
 
 #include <string>
 #include <iostream>
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 //using namespace std;
 using namespace oracle;
@@ -17,7 +17,7 @@ int selectSpace(std::vector<domain::Space*>& spaces);
 domain::Space& Oracle_AskAll::getSpace() {
     std::vector<domain::Space*>& spaces = dom_->getSpaces();
 	if (spaces.size() == 0) {
-		LOG(FATAL) <<"Oracle_AskAll::getSpace:: No abstract spaces available for interpretation. Bye!\n";
+		//LOG(FATAL) <<"Oracle_AskAll::getSpace:: No abstract spaces available for interpretation. Bye!\n";
 		exit(1);
 	}
 	printSpaces(spaces);

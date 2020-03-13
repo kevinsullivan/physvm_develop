@@ -52,7 +52,7 @@ LLVM_LDFLAGS := `llvm-config --ldflags --libs --system-libs`
 DEPFLAGS = -MT $@ -MD -MP -MF $(DEPDIR)/$*.Td
 
 # linker libraries
-LDLIBS = -lg3logger 
+# LDLIBS = -lg3logger 
 
 # List of Clang libraries to link. The proper -L will be provided by the
 # call to llvm-config
@@ -91,7 +91,7 @@ CLANG_LIBS := \
 COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(CLANG_LIBS) $(LLVM_LDFLAGS) -c -o $@
 
 # compile C++ source files
-COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) -c -o $@
+COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) -c -fexceptions -o $@
 
 # link object files to binary
 LINK.o = $(LD) -o $@

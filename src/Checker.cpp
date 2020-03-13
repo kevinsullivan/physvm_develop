@@ -9,7 +9,7 @@ Lean-specific consistency-checking functionality
 #include "Checker.h"
 #include "Domain.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 struct aFile {
     FILE* file;
@@ -51,8 +51,8 @@ void generateMath(aFile* f, interp::Interpretation* interp) {
     math += "import vec\n\n";
     math += interp->toString_Spaces();
     math += interp->toString_Defs();
-    LOG(DEBUG) << "Checker::generateMath generated this: \n"
-               << math << "\n";
+    //LOG(DEBUG) << "Checker::generateMath generated this: \n"
+    //           << math << "\n";
     fputs(math.c_str(), f->file);
     fclose(f->file);
 }
