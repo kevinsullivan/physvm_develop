@@ -9,7 +9,7 @@ This document contains an abbreviated set of steps to be followed to pepare your
 3. Contact the Docker administrator for Peirce who will add your account as a collaborator to the Peirce Docker
 4. Download Docker for your respective platform and ensure daemon is running
 5. Issue the following command: "docker login docker.io -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKER_PASSWORD_HERE%"
-6. Next: "docker pull andrewe8/andrewpeircetest". A 3GB file download will ensue. Image name subject to change.
+6. Next in a terminal window: "docker pull andrewe8/andrewpeircetest". A 3GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
 7. Test image with: docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce andrewe8/andrewpeircetest:latest /bin/bash
 8. This can be shut off with : "docker container stop peirce_docker"
 
@@ -36,7 +36,7 @@ This document contains an abbreviated set of steps to be followed to pepare your
 4. Choose "peirce_docker" from the list
 5. There should be an "open folder" option that will open a dialog, from which you should navigate to "/peirce" (This will be the same as your local peirce repository directory if you performed Step 1 correctly).
 6. Go to your Extensions
-7. Click on C/C++ and Clang Command Adapter, and, for both, click on "Install in Container"
+7. Click on C/C++ and Clang Command Adapter, and, for both, click on "Install in Container" ---?
 8. You'll (theoretically) be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
 
 
