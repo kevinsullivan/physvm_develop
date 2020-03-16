@@ -46,6 +46,42 @@ coords::VecIdent *CoordsToInterp::getVecIdent(interp::VecIdent *d) const
     return coords;
 }
 
+void CoordsToInterp::putFloatExpr(coords::FloatExpr *c, interp::FloatExpr *d)
+{
+    coords2interp_FloatExpr[c] = d;
+    interp2coords_FloatExpr[d] = c;
+    //    coords2interp_VecIdent.insert(std::make_pair(c, d));
+    //    interp2coords_VecIdent.insert(std::make_pair(d, c));
+}
+
+// TODO: Decide whether or not these maps can be partial on queried keys
+// As defined here, yes, and asking for a missing key returns NULL
+//
+interp::FloatExpr *CoordsToInterp::getFloatExpr(coords::FloatExpr *c) const
+{
+    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
+    interp::FloatExpr *dom = NULL;
+    try {
+        dom = coords2interp_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+
+coords::FloatExpr *CoordsToInterp::getFloatExpr(interp::FloatExpr *d) const
+{
+    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = interp2coords_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return coords;
+}
 // Expr
 
 // base
@@ -152,6 +188,37 @@ coords::VecVecAddExpr *CoordsToInterp::getVecVecAddExpr(interp::VecVecAddExpr *d
     return static_cast<coords::VecVecAddExpr *>(coords);
 }
 
+void CoordsToInterp::putVecScalarMulExpr(coords::VecScalarMulExpr *c, interp::VecScalarMulExpr *d)
+{
+    coords2interp_VecExpr[c] = d;
+    interp2coords_VecExpr[d] = c;
+}
+
+interp::VecScalarMulExpr *CoordsToInterp::getVecScalarMulExpr(coords::VecScalarMulExpr *c) const
+{
+    std::unordered_map<coords::VecExpr*, interp::VecExpr*>::iterator it;
+    interp::VecExpr *dom = NULL;
+    try {
+        dom = coords2interp_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::VecScalarMulExpr*>(dom);
+}
+
+coords::VecScalarMulExpr *CoordsToInterp::getVecScalarMulExpr(interp::VecVecAddExpr *d) const
+{
+    std::unordered_map<interp::VecExpr*, coords::VecExpr*>::iterator it;
+    coords::VecExpr *coords = NULL;
+    try {
+        coords = interp2coords_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::VecScalarMulExpr *>(coords);
+}
 // vecparenexpr
 
 void CoordsToInterp::putVecParenExpr(coords::VecParenExpr *c, interp::VecParenExpr *i) {

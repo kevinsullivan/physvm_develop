@@ -20,6 +20,8 @@ using VecLitExpr = const clang::CXXConstructExpr;
 using VecVarExpr = const clang::DeclRefExpr;
 using VecVecAddExpr = const clang::CXXMemberCallExpr;
 
+using VecScalarMulExpr = const clang::BinaryOperator;
+
 // KEVIN: Add for VecParenExpr module
 using VecParenExpr = const clang::ParenExpr;
 

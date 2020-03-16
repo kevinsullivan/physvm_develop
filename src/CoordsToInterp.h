@@ -20,6 +20,10 @@ class CoordsToInterp
 	coords::VecIdent *getVecIdent(interp::VecIdent *d) const;
 
 // Expr
+	void putFloatExpr(coords::FloatExpr *key, interp::FloatExpr *i);
+	interp::VecExpr *getFloatExpr(coords::FloatExpr* c);
+	coords::VecExpr *getFloatExpr(interp::FloatExpr* d) const;
+
 
 	interp::VecExpr *getVecExpr(coords::VecExpr* c);
 	coords::VecExpr *getVecExpr(interp::VecExpr* d) const;
@@ -32,6 +36,10 @@ class CoordsToInterp
 	interp::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
 	coords::VecVecAddExpr *getVecVecAddExpr(interp::VecVecAddExpr* d) const;
 
+	void putVecScalarMulExpr(coords::VecScalarMulExpr *n, interp::VecScalarMulExpr *e);
+	interp::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
+	coords::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* d) const;
+	
 	// KEVIN: This stuff here for VecParenExpr module
 	void putVecParenExpr(coords::VecParenExpr *ast, interp::VecParenExpr *expr);
 	interp::VecParenExpr *getVecParenExpr(coords::VecParenExpr* c) const;
@@ -75,10 +83,14 @@ class CoordsToInterp
 	std::unordered_map <coords::Vector*, 	interp::Vector*		> 	coords2interp_Vector;
 	std::unordered_map <coords::Vector_Def*,interp::Vector_Def*	> 	coords2interp_Vector_Def;
 
+	std::unordered_map <coords::FloatExpr*, interp::FloatExpr*	> 	coords2interp_FloatExpr;
+
 	std::unordered_map<interp::VecIdent*, 	coords::VecIdent*	> 	interp2coords_VecIdent;
 	std::unordered_map<interp::VecExpr*, 	coords::VecExpr*	> 	interp2coords_VecExpr;
 	std::unordered_map<interp::Vector*, 	coords::Vector*		> 	interp2coords_Vector;
 	std::unordered_map<interp::Vector_Def*, coords::Vector_Def*	> 	interp2coords_Vector_Def;
+
+	std::unordered_map<interp::FloatExpr*, coords::FloatExpr*	> 	interp2coords_FloatExpr;
 };
 
 } // namespace

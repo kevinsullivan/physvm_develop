@@ -36,6 +36,10 @@ class CoordsToDomain
 
 // Expr
 
+	void PutFloatExpr(coords::FloatExpr *n, domain::FloatExpr *e);
+	domain::FloatExpr *getFloatExpr(coords::FloatExpr* c) const;
+	coords::FloatExpr getFloatExpr(domain::FloatExpr* d) const;
+
 	domain::VecExpr *getVecExpr(coords::VecExpr* c);
 	coords::VecExpr *getVecExpr(domain::VecExpr* d) const;
 
@@ -52,6 +56,10 @@ class CoordsToDomain
 	void PutVecVecAddExpr(coords::VecVecAddExpr *n, domain::VecVecAddExpr *e);
 	domain::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
 	coords::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
+
+	void PutVecScalarMulExpr(coords::VecScalarMulExpr *n, domain::VecScalarMulExpr *e);
+	domain::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
+	coords::VecScalarMulExpr *getVecSCalarMulExpr(domain::VecScalarMulExpr* d) const;
 
 	// KEVIN: Added for horizontal VecParenExpr module.
 	//
@@ -99,10 +107,14 @@ class CoordsToDomain
 	std::unordered_map <coords::Vector*, 	domain::Vector*		> 	coords2dom_Vector;
 	std::unordered_map <coords::Vector_Def*,domain::Vector_Def*	> 	coords2dom_Vector_Def;
 
+	std::unordered_map <coords::FloatExpr*, domain::FloatExpr*	> 	coords2dom_FloatExpr;
+
 	std::unordered_map<domain::VecIdent*, 	coords::VecIdent*	> 	dom2coords_VecIdent;
 	std::unordered_map<domain::VecExpr*, 	coords::VecExpr*	> 	dom2coords_VecExpr;
 	std::unordered_map<domain::Vector*, 	coords::Vector*		> 	dom2coords_Vector;
 	std::unordered_map<domain::Vector_Def*, coords::Vector_Def*	> 	dom2coords_Vector_Def;
+
+	std::unordered_map <domain::FloatExpr*, coords::FloatExpr* 	>	dom2coords_FloatExpr;
 };
 
 } // namespace

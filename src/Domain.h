@@ -32,9 +32,13 @@ namespace domain {
 class Space;
 class VecIdent;
 class VecExpr;
+
+class FloatIdent;
+class FloatExpr;
 //class VecLitExpr;
 class VecVarExpr;
 class VecVecAddExpr;
+class VecScalarMulExpr;
 
 // KEVIN ADDING FOR HORIZONTAL MODULE
 class VecParenExpr;
@@ -44,6 +48,13 @@ class Vector_Lit;
 class Vector_Expr;
 class Vector_Var;
 class Vector_Def;
+
+class Float;
+class Float_Lit;
+class Float_Expr;
+class Float_Var;
+class Float_Def;
+
 
 
 
@@ -63,6 +74,8 @@ public:
 
 	// Exprs
 	std::vector<VecExpr *> &getVecExprs() { return exprs;  }
+
+	std::vector<FloatExpr *> &getFloatExprs() { return  }
 
 	// Create a variable object in the domain 
 
@@ -114,8 +127,12 @@ private:
 	std::vector<Space*> spaces;
 	std::vector<VecIdent*> idents;
 	std::vector<VecExpr*> exprs;
+	std::vector<FloatExpr*> float_exprs;
+	std::vector<FloatExprs*> floatExprs;
 	std::vector<Vector*> vectors;
 	std::vector<Vector_Def*> defs;
+	std::vector<Float*> floats;
+	std::vector<Float_Def*> float_defs;
 };
 	
 /*
@@ -201,6 +218,32 @@ public:
 		SpaceContainer* spaceContainer_;
 };
 
+class FloatIdent {
+public:
+	FloatIdent(Space& space) : space_(&space) {}
+	FloatIdent() { this->spaceContainer_ = new SpaceContainer(); }// this->spaceContainer_-> }
+	Space* getSpace() const { return space_; }
+	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
+
+	void setSpace(Space* space);
+	// TODO: Reconsider abstracting away of name
+private:
+	Space* space_;
+	SpaceContainer* spaceContainer_;
+};
+
+class FloatExpr {
+	FloatExpr(Space* s) : space_(s) {}
+	FloatExpr() { this->spaceContainer_ = new SpaceContainer(); }
+	Space* getSpace() const { return space_; };
+	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
+	void setSpace(Space* s);
+
+	protected:
+		Space* space_;
+		SpaceContainer* spaceContainer_;
+};
+
 
 
 class VecVarExpr : public VecExpr {
@@ -225,6 +268,15 @@ public:
 private:
     domain::VecExpr* arg_;
     domain::VecExpr* mem_;
+};
+
+class VecScalarMulExpr : public VecExpr {
+	VecScalarMulExpr(
+		Space* s, domain::FloatExpr *flt, domain::VecExpr *vec) :
+			domain::FloatExpr(s), flt_(flt), vec_(vec) {	}
+	VecScalarMulExpr(
+		domain::FloatExpr *flt, domain::VecExpr *vec) :
+			domain::FloatExpr(), flt_(flt), vec_(vec) {	}
 };
 
 
@@ -262,6 +314,26 @@ private:
 	const Space* space_; // TODO: INFER?
 	SpaceContainer* spaceContainer_;
 	VecCtorType tag_;
+};
+
+enum FloatCtorType {FLOAT_EXPR, FLOAT_LIT, /*VEC_VAR,*/ FLOAT_NONE } ; 
+class Float{
+public:
+	Float(const Space& s, VecCtorType tag) :
+		space_(&s), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
+	Float(VecCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
+
+	bool isLit() { return (tag_ == VEC_LIT); } 
+	bool isExpr() { return (tag_ == VEC_EXPR); } 
+	//bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
+	const Space* getSpace() {return space_; }
+	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
+	void setSpace(Space* space);
+	// virtual std::string toString() const {
+private:
+	const Space* space_; // TODO: INFER?
+	SpaceContainer* spaceContainer_;
+	FloatCtorType tag_;
 };
 
 
@@ -312,6 +384,42 @@ class Vector_Var : public Vector {
 	}
 };
 
+class Float_Lit : public Float {
+public:
+	Float_Lit(const Space& s, float scalar) :
+		Float(s, FLOAT_LIT), x_(x), y_(y), z_(z) {
+	}
+
+	Float_Lit(float scalar) : Float(FLOAT_LIT), scalar_(scalar){}
+
+	float getScalar() { return scalar_; }
+private:
+  float scalar_;
+};
+
+// Constructed vector value from vector-valued expression
+//
+class Float_Expr : public Float  {
+public:
+	Float_Expr(const Space& s, domain::FloatExpr* e) :
+		Float(s, FLOAT_EXPR), expr_(e) { 
+	}
+
+	Float_Expr(domain::FloatExpr* e) : Float(FLOAT_EXPR) {}
+
+	const domain::FloatExpr* getFloatExpr() const { return expr_; }
+	std::string toString() const;
+private:
+	const domain::FloatExpr* expr_; // vec expr from which vector is constructed
+};
+
+class Float_Var : public Vector {
+	Float_Var() : Float(*new Space(""), FLOAT_EXPR ) { 
+		//LOG(DEBUG) <<"Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
+	}
+};
+
+
 /*
 Domain representation of binding of identifier to expression.
 Takes clang::VarDecl establishing binding (in a wrapper) and 
@@ -328,6 +436,21 @@ private:
 	const VecIdent* id_;
 	const Vector* vec_;
 };
+
+
+class Float_Def  {
+public:
+	Float_Def(domain::VecIdent* id, domain::Vector* vec): 
+			id_(id), vec_(vec) {}
+	const domain::Vector* getVector() const { return vec_; }
+	const domain::VecIdent* getIdent() { return id_; }
+	// std::string toString() const;
+private:
+	const VecIdent* id_;
+	const Vector* vec_;
+};
+
+
 
 
 } // end namespace

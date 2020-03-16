@@ -48,6 +48,43 @@ coords::VecIdent *CoordsToDomain::getVecIdent(domain::VecIdent *d) const
     return coords;
 }
 
+void CoordsToDomain::PutFloatExpr(coords::FloatExpr *c, domain::FloatExpr *d)
+{
+    coords2dom_FloatExpr[c] = d;
+    dom2coords_FloatExpr[d] = c;
+    //    coords2dom_VecIdent.insert(std::make_pair(c, d));
+    //    dom2coords_VecIdent.insert(std::make_pair(d, c));
+}
+
+// TODO: Decide whether or not these maps can be partial on queried keys
+// As defined here, yes, and asking for a missing key returns NULL
+//
+domain::FloatExpr *CoordsToDomain::getFloatExpr(coords::FloatExpr *c) const
+{
+    std::unordered_map<coords::FloatExpr*, domain::FloatExpr*>::iterator it;
+    domain::FloatExpr *dom = NULL;
+    try {
+        dom = coords2dom_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+
+coords::FloatExpr *CoordsToDomain::getFloatExpr(domain::FloatExpr *d) const
+{
+    std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = dom2coords_VecIdent.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return coords;
+}
+
 // Expr
 
 // base
@@ -165,6 +202,37 @@ coords::VecVecAddExpr *CoordsToDomain::getVecVecAddExpr(domain::VecVecAddExpr *d
     return static_cast<coords::VecVecAddExpr *>(coords);
 }
 
+void CoordsToDomain::PutVecScalarMulExpr(coords::VecScalarMulExpr *c, domain::VecScalarMulExpr *d)
+{
+    coords2dom_VecExpr[c] = d;
+    dom2coords_VecExpr[d] = c;
+}
+
+domain::VecVecAddExpr *CoordsToDomain::getVecScalarMulExpr(coords::VecScalarMulExpr *c) const
+{
+    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::VecScalarMulExpr*>(dom);
+}
+
+coords::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(domain::VecScalarMulExpr *d) const
+{
+    std::unordered_map<domain::VecExpr*, coords::VecExpr*>::iterator it;
+    coords::VecExpr *coords = NULL;
+    try {
+        coords = dom2coords_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::VecScalarMulExpr *>(coords);
+}
 
 void CoordsToDomain::PutVecParenExpr(coords::VecParenExpr *c, domain::VecParenExpr *d) {
     coords2dom_VecExpr[c] = d;

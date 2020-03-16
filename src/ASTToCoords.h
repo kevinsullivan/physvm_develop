@@ -55,6 +55,9 @@ public:
                                              coords::VecExpr *mem, 
                                              coords::VecExpr *arg);
 
+    coordS::VecScalarMulExpr* mkVecScalarMulExpr(const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
+                                             coords::ScalarExpr *flt, coords::VecExpr *vec);
+
     // KEVIN: Added for new horizontal vector paren expr module
     coords::VecParenExpr *mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c,
                                                 ast::VecExpr *expr);

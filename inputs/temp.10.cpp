@@ -1,3 +1,5 @@
+#include "memory"
+
 class Vec {
 
 public:
@@ -20,6 +22,9 @@ public:
       return *this;
     }
 
+  Vec& operator*(const float& scalar){
+    return *std::unique_ptr<Vec>(new Vec{this->_x*scalar,this->_y*scalar,this->_z*scalar});
+  }
   
   ~Vec(){};
 

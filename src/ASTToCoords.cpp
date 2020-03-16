@@ -37,6 +37,15 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
     return coord;
 }
 
+coords::VecScalarMulExpr *ASTToCoords::mkVecScalarExpr(
+       const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
+       coords::ScalarExpr *flt, coords::VecExpr *vec 
+    ){
+    coords::VecScalarMulExpr *coord = new coords::VecScalarMulExpr(ast, c, flt, vec);
+    overrideStmt2Coords(ast, coord);
+    overrideCoords2Stmt(coord, ast);
+}
+
 coords::VecParenExpr *ASTToCoords::mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c, ast::VecExpr *expr) {
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords[expr]);
     if (!expr_coords) {

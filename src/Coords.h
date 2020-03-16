@@ -83,6 +83,18 @@ public:
  * Expr
  *****/
 
+class FloatExpr : public Coords {
+public:
+  FloatExpr(const ast::FloatExpr *e, clang::ASTContext *c);
+  const ast::FloatExpr *getExpr();
+  virtual std::string toString() const;
+  bool operator==(const FloatExpr &other) const {
+    return (clang_stmt_ == other.clang_stmt_);
+  }
+};
+
+
+
 // TODO: Add a dynamic type tag here
 // Abstract
 class VecExpr : public Coords {
@@ -115,6 +127,19 @@ public:
 private:
   coords::Coords *mem_;
   coords::Coords *arg_;
+};
+
+class VecScalarMulExpr : public VecExpr {
+public:
+  VecVecAddExpr(const ast::VecScalarMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec);
+  const ast::VecVecAddExpr *getVecVecAddExpr();
+  virtual std::string toString() const;
+  coords::Coords* getLeft() const { return flt_; }
+  coords::Coords* getRight() const { return vec_; }
+
+private:
+  coords::Coords *flt_;
+  coords::Coords *vec_;
 };
 
 /*************

@@ -84,6 +84,17 @@ std::string VecIdent::toString() const {
 * Expr
 *****/
 
+FloatExpr::FloatExpr(const clang::Expr *v, clang::ASTContext *c) : Coords(v, c) {}
+
+const clang::Expr *FloatExpr::getExpr() {
+    return static_cast<const clang::Expr*>(clang_stmt_);  
+}
+
+std::string FloatExpr::toString() const { 
+    //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
+    return NULL; 
+}
+
 
 VecExpr::VecExpr(const clang::Expr *v, clang::ASTContext *c) : Coords(v, c) {}
 
@@ -124,6 +135,19 @@ const ast::VecVecAddExpr *VecVecAddExpr::getVecVecAddExpr() {
 
 std::string VecVecAddExpr::toString() const {
     return "(add (" + mem_->toString() + ") (" + arg_->toString() + "))";
+}
+
+VecScalarMulExpr::VecScalarMulExpr(
+    const clang::CXXMemberCallExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec) 
+        : VecExpr(mce, c), mem_(flt), _(vec) {
+}
+
+const ast::VecScalarMulExpr *VecScalarMulExpr::getVecScalarMulExpr() {
+    return static_cast<const clang::CXXMemberCallExpr*> (clang_stmt_);  
+}
+
+std::string VecScalarMulExpr::toString() const {
+    return "(mul (" + flt_->toString() + ") (" + vec_->toString() + "))";
 }
 
 
