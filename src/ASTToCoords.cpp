@@ -20,12 +20,28 @@ coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast, clang::ASTCo
     return coord;
 }
 
+coords::FloatIdent *ASTToCoords::mkFloatIdent(const ast::FloatIdent *ast, clang::ASTContext *c) {
+    coords::FloatIdent *coord = new coords::FloatIdent(ast, c);
+    overrideDecl2Coords(ast,coord);     // Use Clang canonical addresses? 
+    overrideCoords2Decl(coord, ast);     // Use Clang canonical addresses? 
+    return coord;
+}
+
 coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast, clang::ASTContext *c) {
     coords::VecVarExpr *coord = new coords::VecVarExpr(ast, c);
     overrideStmt2Coords(ast, coord);   // DeclRefExpr is ako Stmt
     overrideCoords2Stmt(coord, ast);   // DeclRefExpr is ako Stmt
     return coord;
 }
+
+coords::FloatVarExpr *ASTToCoords::mkFloatVarExpr(const ast::FloatVarExpr *ast, clang::ASTContext *c) {
+    coords::FloatVarExpr *coord = new coords::FloatVarExpr(ast, c);
+    overrideStmt2Coords(ast, coord);   // DeclRefExpr is ako Stmt
+    overrideCoords2Stmt(coord, ast);   // DeclRefExpr is ako Stmt
+    return coord;
+}
+
+
 
 coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
         const ast::VecVecAddExpr *ast, clang::ASTContext *c, 
@@ -37,6 +53,7 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
     return coord;
 }
 
+
 coords::VecScalarMulExpr *ASTToCoords::mkVecScalarExpr(
        const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
        coords::ScalarExpr *flt, coords::VecExpr *vec 
@@ -45,6 +62,7 @@ coords::VecScalarMulExpr *ASTToCoords::mkVecScalarExpr(
     overrideStmt2Coords(ast, coord);
     overrideCoords2Stmt(coord, ast);
 }
+
 
 coords::VecParenExpr *ASTToCoords::mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c, ast::VecExpr *expr) {
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords[expr]);
@@ -56,10 +74,29 @@ coords::VecParenExpr *ASTToCoords::mkVecParenExpr(ast::VecParenExpr *ast, clang:
     overrideCoords2Stmt(coord, ast);
     return coord;  
 }
-    
+
+
+coords::FloatParenExpr *ASTToCoords::mkFloatParenExpr(ast::FloatParenExpr *ast, clang::ASTContext *c, ast::FloatExpr *expr) {
+    coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr*>(stmt_coords[expr]);
+    if (!expr_coords) {
+        //LOG(FATAL) << "ASTToCoords::mkVecParenExpr: Error. No expr coords.\n"; 
+    }
+    coords::FloatParenExpr *coord = new coords::FloatParenExpr(ast, c, expr_coords); 
+    overrideStmt2Coords(ast, coord); 
+    overrideCoords2Stmt(coord, ast);
+    return coord;  
+}    
+
 
 coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c, ast::Scalar x, ast::Scalar y, ast::Scalar z) {
     coords::Vector_Lit *coord = new coords::Vector_Lit(ast, c, x, y, z); 
+    overrideStmt2Coords(ast,coord); 
+    overrideCoords2Stmt(coord,ast); 
+    return coord;
+}
+
+coords::Float_Lit *ASTToCoords::mkFloat_Lit(const ast::Float_Lit *ast, clang::ASTContext *c, ast::Scalar scalar) {
+    coords::Float_Lit *coord = new coords::Float_Lit(ast, c, scalar); 
     overrideStmt2Coords(ast,coord); 
     overrideCoords2Stmt(coord,ast); 
     return coord;
@@ -73,6 +110,16 @@ coords::Vector_Var *ASTToCoords::mkVector_Var(
     return coord;
 }
 
+coords::Float_Var *ASTToCoords::mkFloat_Var(
+        const ast::Float_Var *ast, clang::ASTContext *c, coords::FloatVarExpr *var_coords) {
+    coords::Float_Var *coord = new coords::Float_Var(ast, c, float_coords);
+    overrideStmt2Coords(ast,coord);
+    overrideCoords2Stmt(coord,ast);
+    return coord;
+}
+
+
+
 
 coords::Vector_Expr *ASTToCoords::mkVector_Expr(
         const ast::Vector_Expr *ctor_ast, clang::ASTContext *c, const ast::VecExpr *expr_ast) {
@@ -83,6 +130,18 @@ coords::Vector_Expr *ASTToCoords::mkVector_Expr(
     return coord;    
 }
 
+
+coords::Float_Expr *ASTToCoords::mkFloat_Expr(
+        const ast::Float_Expr *ctor_ast, clang::ASTContext *c, const ast::FloatExpr *expr_ast) {
+    coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr*>(stmt_coords[expr_ast]);
+    coords::Float_Expr *coord = new coords::Float_Expr(ctor_ast, c, expr_coords);
+    overrideStmt2Coords(ctor_ast,coord);
+    overrideCoords2Stmt(coord,ctor_ast);
+    return coord;    
+}
+
+
+
 coords::Vector_Def *ASTToCoords::mkVector_Def(
         const ast::Vector_Def *ast, clang::ASTContext *c, coords::VecIdent *id_coords, coords::VecExpr *vec_coords) {
     coords::Vector_Def *coord = new coords::Vector_Def(ast, c, id_coords, vec_coords);
@@ -91,17 +150,35 @@ coords::Vector_Def *ASTToCoords::mkVector_Def(
     return coord;
 }
 
+
+coords::Float_Def *ASTToCoords::mkFloat_Def(
+        const ast::Float_Def *ast, clang::ASTContext *c, coords::FloatIdent *id_coords, coords::FloatExpr *flt_coords) {
+    coords::Float_Def *coord = new coords::Float_Def(ast, c, id_coords, flt_coords);
+    overrideStmt2Coords(ast,coord);
+    overrideCoords2Stmt(coord, ast);
+    return coord;
+}
+
+
+
+
 void ASTToCoords::overrideStmt2Coords(const clang::Stmt *s, coords::Coords *c) {
     stmt_coords.insert(std::make_pair(s, c));
 }
+
+
 
 void ASTToCoords::overrideDecl2Coords(const clang::Decl *d, coords::Coords *c) {
     decl_coords.insert(std::make_pair(d, c));
 }
 
+
+
 void ASTToCoords::overrideCoords2Stmt(coords::Coords *c, const clang::Stmt *s) {
     coords_stmt.insert(std::make_pair(c, s));
 }
+
+
 
 void ASTToCoords::overrideCoords2Decl(coords::Coords *c, const clang::Decl *d) {
     coords_decl.insert(std::make_pair(c, d));

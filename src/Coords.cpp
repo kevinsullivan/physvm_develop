@@ -80,21 +80,22 @@ std::string VecIdent::toString() const {
     return getVarDecl()->getNameAsString(); 
 }
 
+
+FloatIdent::FloatIdent(const clang::VarDecl *v, clang::ASTContext *c) : Coords(v, c) {}
+
+const clang::VarDecl *FloatIdent::getVarDecl() const {
+    return static_cast<const clang::VarDecl*>(clang_decl_);  
+}
+
+std::string FloatIdent::toString() const { 
+    return getVarDecl()->getNameAsString(); 
+}
+
+
+
 /*****
 * Expr
 *****/
-
-FloatExpr::FloatExpr(const clang::Expr *v, clang::ASTContext *c) : Coords(v, c) {}
-
-const clang::Expr *FloatExpr::getExpr() {
-    return static_cast<const clang::Expr*>(clang_stmt_);  
-}
-
-std::string FloatExpr::toString() const { 
-    //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
-    return NULL; 
-}
-
 
 VecExpr::VecExpr(const clang::Expr *v, clang::ASTContext *c) : Coords(v, c) {}
 
@@ -103,6 +104,17 @@ const clang::Expr *VecExpr::getExpr() {
 }
 
 std::string VecExpr::toString() const { 
+    //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
+    return NULL; 
+}
+
+FloatExpr::FloatExpr(const clang::Expr *v, clang::ASTContext *c) : Coords(v, c) {}
+
+const clang::Expr *FloatExpr::getExpr() {
+    return static_cast<const clang::Expr*>(clang_stmt_);  
+}
+
+std::string FloatExpr::toString() const { 
     //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
     return NULL; 
 }
@@ -121,7 +133,18 @@ const ast::VecVarExpr *VecVarExpr::getVecVarExpr() const {
 
 std::string VecVarExpr::toString() const { 
     return getVecVarExpr()->getDecl()->getNameAsString(); 
-  }
+}
+
+
+FloatVarExpr::FloatVarExpr(const ast::FloatVarExpr *d, clang::ASTContext *c) : FloatExpr(d, c) {}
+
+const ast::FloatVarExpr *FloatVarExpr::getFloatVarExpr() const {
+    return static_cast<const clang::DeclRefExpr*> (clang_stmt_);  
+}
+
+std::string FloatVarExpr::toString() const { 
+    return getFloatVarExpr()->getDecl()->getNameAsString(); 
+}
 
 
 VecVecAddExpr::VecVecAddExpr(
@@ -136,6 +159,8 @@ const ast::VecVecAddExpr *VecVecAddExpr::getVecVecAddExpr() {
 std::string VecVecAddExpr::toString() const {
     return "(add (" + mem_->toString() + ") (" + arg_->toString() + "))";
 }
+
+
 
 VecScalarMulExpr::VecScalarMulExpr(
     const clang::CXXMemberCallExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec) 
@@ -161,6 +186,19 @@ std::string VecParenExpr::toString() const {
     return "(" + expr_->toString() + ")";
 }
 
+
+FloatParenExpr::FloatParenExpr(const ast::FloatParenExpr *ast, clang::ASTContext *c, coords::FloatExpr *expr) 
+        : FloatExpr(ast, c), expr_(expr) { 
+}
+
+const coords::FloatExpr *FloatParenExpr::getFloatExpr() const { return expr_;  }
+
+std::string FloatParenExpr::toString() const {
+    return "(" + expr_->toString() + ")";
+}
+
+
+
 /*******
 * Values
 *******/
@@ -180,6 +218,22 @@ std::string Vector::toString() const {
     return NULL;
 }
 
+Float::Float(const clang::CXXConstructExpr *vec, clang::ASTContext *c, coords::FloatCtorType tag)
+      : FloatExpr(vec, c), tag_(tag) {
+}
+  
+const ast::Float *Float::getFloat() const { 
+    return static_cast<const clang::CXXConstructExpr*>(clang_stmt_); 
+}
+
+FloatCtorType Float::getFloatType() { return tag_; }
+
+std::string Float::toString() const { 
+    //LOG(FATAL) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
+    return NULL;
+}
+
+
 Vector_Lit::Vector_Lit(const clang::CXXConstructExpr* ast, clang::ASTContext *c, ast::Scalar x, ast::Scalar y, ast::Scalar z ) 
     : Vector(ast, c, VEC_CTOR_LIT), x_(x), y_(y), z_(z) {} 
   
@@ -194,11 +248,31 @@ std::string Vector_Lit::toString() const  {
     return retval;
 }
 
+
+Float_Lit::Float_Lit(const clang::CXXConstructExpr* ast, clang::ASTContext *c, ast::Scalar scalar) 
+    : Float(ast, c, FLOAT_CTOR_LIT), scalar_(scalar) {} 
+  
+std::string Vector_Lit::toString() const  {
+    std::string retval = "";
+    retval += std::to_string(scalar_); 
+    //retval = "(" + retval + ")";
+    return retval;
+}
+
 Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, clang::ASTContext *c, coords::VecVarExpr* expr) 
     : Vector(ast, c, VEC_CTOR_VAR), expr_(expr) { 
 }
 
 std::string Vector_Var::toString() const { 
+    //LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
+    return NULL;
+}
+
+Float_Var::Float_Var(const clang::CXXConstructExpr* ast, clang::ASTContext *c, coords::FloatVarExpr* expr) 
+    : Float(ast, c, FLOAT_CTOR_VAR), expr_(expr) { 
+}
+
+std::string Float_Var::toString() const { 
     //LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
     return NULL;
 }
@@ -211,6 +285,16 @@ std::string Vector_Expr::toString() const {
 Vector_Expr::Vector_Expr(const clang::CXXConstructExpr *ctor_ast, clang::ASTContext *c, 
                      coords::VecExpr* expr_coords) 
     : Vector(ctor_ast, c, VEC_CTOR_EXPR), expr_(expr_coords) {
+}
+
+std::string Float_Expr::toString() const { 
+    return expr_->toString();
+    //std::string("Vector_Expr::toString() STUB.\n"); 
+}
+
+Float_Expr::Float_Expr(const clang::CXXConstructExpr *ctor_ast, clang::ASTContext *c, 
+                     coords::FloatExpr* expr_coords) 
+    : Float(ctor_ast, c, FLOAT_CTOR_EXPR), expr_(expr_coords) {
 }
 
 /****
@@ -231,6 +315,27 @@ coords::VecExpr *Vector_Def::getExpr() const {
 
 // The coup d'grace.
 std::string Vector_Def::toString() const { 
+    std::string retval = "def ";
+    retval += id_->toString();
+    retval += " := ";
+    if(expr_)
+        retval += expr_->toString();
+    return retval;
+}
+
+Float_Def::Float_Def(const clang::DeclStmt *ast, clang::ASTContext *c, coords::FloatIdent *id, coords::FloatExpr *expr)
+      : Coords(ast, c), id_(id), expr_(expr) {
+}
+
+coords::FloatIdent *Float_Def::getIdent() const {
+    return id_;
+}
+
+coords::FloatExpr *Float_Def::getExpr() const {
+    return expr_;
+}
+
+std::string Float_Def::toString() const { 
     std::string retval = "def ";
     retval += id_->toString();
     retval += " := ";

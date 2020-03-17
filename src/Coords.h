@@ -78,22 +78,21 @@ public:
   }
 };
 
-
-/*****
- * Expr
- *****/
-
-class FloatExpr : public Coords {
+class FloatIdent : public Coords {
 public:
-  FloatExpr(const ast::FloatExpr *e, clang::ASTContext *c);
-  const ast::FloatExpr *getExpr();
+  FloatIdent(const ast::VecIdent *ast, clang::ASTContext *c);
+  const clang::VarDecl *getVarDecl() const;
   virtual std::string toString() const;
-  bool operator==(const FloatExpr &other) const {
-    return (clang_stmt_ == other.clang_stmt_);
+  bool operator==(const FloatIdent &other) const {
+    return (clang_decl_ == other.clang_decl_);
   }
 };
 
 
+
+/*****
+ * Expr
+ *****/
 
 // TODO: Add a dynamic type tag here
 // Abstract
@@ -107,11 +106,27 @@ public:
   }
 };
 
+class FloatExpr : public Coords {
+public:
+  FloatExpr(const ast::FloatExpr *e, clang::ASTContext *c);
+  const ast::FloatExpr *getExpr();
+  virtual std::string toString() const;
+  bool operator==(const FloatExpr &other) const {
+    return (clang_stmt_ == other.clang_stmt_);
+  }
+};
 
 class VecVarExpr : public VecExpr {
 public:
   VecVarExpr(const ast::VecVarExpr *d, clang::ASTContext *c);
   const ast::VecVarExpr *getVecVarExpr() const;
+  virtual std::string toString() const;
+};
+
+class FloatVarExpr : public FloatExpr {
+public:
+  FloatVarExpr(const ast::FloatVarExpr *d, clang::ASTContext *c);
+  const ast::FloatVarExpr *getFloatVarExpr() const;
   virtual std::string toString() const;
 };
 
@@ -159,12 +174,25 @@ class VecParenExpr : public VecExpr {
     coords::VecExpr *expr_;
 };
 
+class FloatParenExpr : public FloatExpr {
+  public:
+  FloatParenExpr(const ast::FloatParenExpr *flt, clang::ASTContext *c, coords::FloatExpr *expr);
+  const coords::FloatExpr *getFloatExpr() const; 
+  virtual std::string toString() const;
+  bool operator==(const FloatParenExpr &other) const {
+      return (clang_stmt_ == other.clang_stmt_);
+  }
+  protected:
+    coords::VecExpr *expr_;
+};
+
 
 /*******
 * Vector
 ********/
 
 enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
+enum FloatCtorType { FLOAT_CTOR_TYPE, FLOAT_CTOR_EXPR, FLOAT_CTOR_VAR };
 
 // Superclass. Abstract
 class Vector : public VecExpr {
@@ -180,6 +208,18 @@ protected:
   const VectorCtorType tag_;
 };
 
+class Float : public VecExpr {
+public:
+  Float(const ast::Float *vec, clang::ASTContext *c, coords::FloatCtorType tag);
+  const ast::Float *getFloat() const;
+  FloatCtorType getFloatType();
+  virtual std::string toString() const;
+  bool operator==(const Float &other) const {
+    return (clang_stmt_ == other.clang_stmt_);
+  }
+protected:
+  const VectorCtorType tag_;
+};
 
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
@@ -192,6 +232,15 @@ private:
   ast::Scalar z_;
 };
 
+class Float_Lit : public Float {
+public:
+  Float_Lit(const ast::Float_Lit *ast, clang::ASTContext *c, ast::Scalar scalar);
+  virtual std::string toString() const;
+private:
+  ast::Scalar scalar_;
+};
+
+
 class Vector_Var : public Vector {
 public:
   Vector_Var(const ast::Vector_Var *ast, clang::ASTContext *c, coords::VecVarExpr *expr);
@@ -201,6 +250,17 @@ private:
   VecVarExpr *expr_;
 };
 
+
+class Float_Var : public Float {
+public:
+  Float_Var(const ast::Float_Var *ast, clang::ASTContext *c, coords::FloatVarExpr *expr);
+  virtual std::string toString() const;
+  FloatVarExpr *getFloatVarExpr();
+private:
+  FloatVarExpr *expr_;
+};
+
+
 // TODO: change name to VecVecAddExpr?
 class Vector_Expr : public Vector {
 public:
@@ -209,6 +269,16 @@ public:
   Vector_Expr *getVector_Expr();
 private:
   VecExpr *expr_;
+};
+
+
+class Float_Expr : public Float {
+public:
+  Float_Expr(const ast::Float_Expr *ast, clang::ASTContext *c, coords::FloatExpr *expr);
+  virtual std::string toString() const;
+  Float_Expr *getFloat_Expr();
+private:
+  FloatExpr *expr_;
 };
 
 /****
@@ -229,6 +299,22 @@ private:
   VecIdent *id_;
   VecExpr *expr_;
 };
+
+class Float_Def : public Coords {
+public:
+  Float_Def(const ast::Float_Def *def, clang::ASTContext *c, coords::FloatIdent *id,
+             coords::FloatExpr *expr);
+  coords::FloatIdent *getIdent() const;
+  coords::FloatExpr *getExpr() const;
+  virtual std::string toString() const;
+  bool operator==(const Float_Def &other) const {
+    return (clang_decl_ == other.clang_decl_);
+  }
+private:
+  FloatIdent *id_;
+  FloatExpr *expr_;
+};
+
 
 } // namespace coords
 

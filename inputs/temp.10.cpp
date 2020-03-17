@@ -42,5 +42,11 @@ public:
 int main(int argc, char **argv){
   Vec v1(1.0,1.0,1.0);
   Vec v2 = v1;
+
+  float flt = 2.0;
+  float flt2 = 3.0;
+
+  Vec v3 = v2*flt2;
+
   return 0;
 }
