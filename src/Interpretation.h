@@ -58,16 +58,39 @@ public:
     void mkVector_Var(ast::VecLitExpr *ast);
     void mkVector_Def(ast::Vector_Def *ast, ast::VecIdent *id, ast::VecExpr *exp);
     
+    void mkFloatIdent(ast::FloatIdent *ast);
+    void mkFloatVarExpr(ast::FloatVarExpr *ast);
+
+    // TODO: remove the following two const constraints
+    void mkVecScalarMulExpr(ast::VecScalarMulExpr *ast, const ast::FloatExpr *mem, 
+                         const ast::FloatExpr *arg);
+
+    // KEVIN: Added for new horizontal module
+    void mkFloatParenExpr(ast::FloatParenExpr *ast, ast::FloatExpr *expr);
+
+    void mkFloat_Lit(ast::Float_Lit *ast, float scalar);
+    void mkFloat_Expr(ast::Float_Expr *ast, ast::FloatExpr* expr);
+    void mkFloat_Var(ast::FloatLitExpr *ast);
+    void mkFloat_Def(ast::Float_Def *ast, ast::FloatIdent *id, ast::FloatExpr *exp);
+    
     // Precondition: coords2domain_ is defined for ast
     domain::VecExpr *getVecExpr(ast::VecExpr *ast);
 
+    domain::FloatExpr *getFloatExpr(ast::FloatExpr *ast);
+
     // TODO: Factor this out into client
     std::string toString_Spaces();
+
     std::string toString_Idents();
     std::string toString_Exprs();
     std::string toString_Vectors();
     std::string toString_Defs();
 
+    std::string toString_FloatIdents();
+    std::string toString_FloatExprs();
+    std::string toString_FloatVectors();
+    std::string toString_FloatDefs();
+    
     void setAll_Spaces();
 
     void mkVarTable();

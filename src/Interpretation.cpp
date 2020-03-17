@@ -51,6 +51,17 @@ void Interpretation::mkVecIdent(ast::VecIdent *ast)
   interp2domain_->putVecIdent(interp, dom);
 }
 
+void Interpretation::mkFloatIdent(ast::FloatIdent *ast)
+{
+  coords::FloatIdent *coords = ast2coords_->mkFloatIdent(ast, context_);
+  //LOG(DEBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
+  //domain::Space &space = oracle_->getSpaceForVecIdent(coords);
+  domain::FloatIdent *dom = domain_->mkFloatIdent();
+  coords2dom_->putFloatIdent(coords, dom);
+  interp::FloatIdent *interp = new interp::FloatIdent(coords, dom);
+  coords2interp_->putFloatIdent(coords, interp);
+  interp2domain_->putFloatIdent(interp, dom);
+}
 
 /*****
 * Expr
@@ -69,6 +80,17 @@ void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/
     interp2domain_->putVecVarExpr(interp,dom);
 }
 
+void Interpretation::mkFloatVarExpr(ast::FloatVarExpr *ast/*, clang::ASTContext *c*/) {
+    coords::FloatVarExpr *coords = ast2coords_->mkFloatVarExpr(ast, context_);
+    //LOG(DEBUG) << "Interpretation::mkVecVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
+    //ast->dump();
+    //domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
+    domain::FloatVarExpr *dom = domain_->mkFloatVarExpr();
+    coords2dom_->PutFloatVarExpr(coords, dom);
+    interp::FloatVarExpr *interp = new interp::FloatVarExpr(coords,dom);
+    coords2interp_->putFloatVarExpr(coords, interp);
+    interp2domain_->putFloatVarExpr(interp,dom);
+}
 
 void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::VecExpr *mem_expr, const ast::VecExpr *arg_expr) {
   coords::VecExpr *mem_coords = static_cast<coords::VecExpr*>
@@ -105,6 +127,40 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
   interp2domain_->putVecVecAddExpr(interp,dom);
 }
 
+void Interpretation::mkVecScalarMulExpr(ast::VecScalarMulExpr *mul_ast, const ast::VecExpr *flt_expr, const ast::VecExpr *vec_expr) {
+  coords::FloatExpr *flt_coords = static_cast<coords::FloatExpr*>
+                                  (ast2coords_->getStmtCoords(flt_expr));
+  coords::VecExpr *vec_coords = static_cast<coords::VecExpr*>
+                                  (ast2coords_->getStmtCoords(vec_expr));
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr. ast=" << std::hex << add_ast << "\n";
+  if (flt_coords == NULL || vec_coords == NULL) {
+    //LOG(FATAL) <<"Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords "
+    //        << std::hex << mem_coords << " arg coords "
+    //        << std::hex << arg_coords << "\n";
+  }
+  coords::VecScalarMulExpr *coords = ast2coords_->mkVecScalarMulExpr(mul_ast, context_, flt_coords, vec_coords);
+  //domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
+  domain::FloatExpr *dom_flt_expr = coords2dom_->getFloatExpr(flt_coords);
+  domain::VecExpr *dom_vec_expr = coords2dom_->getVecExpr(vec_coords);
+  if (dom_flt_expr == NULL || dom_vec_expr == NULL) {
+    //LOG(DEBUG) <<"Interpretation::mkVecVecAddExpr: bad domain exprs. Mem "
+    //          << std::hex << dom_mem_expr << " Arg "
+    //          << std::hex << dom_arg_expr << "\n";
+  }
+  domain::VecScalarMulExpr *dom = domain_->mkVecScalarMulExpr(dom_flt_expr, dom_vec_expr);
+  coords2dom_->PutVecScalarMulExpr(coords, dom);
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Coords: " << mem_coords->toString() << "\n";
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Coords: " << arg_coords->toString() << "\n";
+
+  interp::Interp *flt_interp = coords2interp_->getFloatExpr(flt_coords);  // dyn type's toString not being called
+  std::string mi_str = flt_interp->toString();
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Interp: " << mi_str << "\n";
+  interp::Interp *vec_interp = coords2interp_->getVecExpr(vec_coords);
+  //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Interp: " << arg_interp->toString() << "\n";
+  interp::VecScalarMulExpr *interp = new interp::VecScalarMulExpr(coords, dom, flt_interp, vec_interp);
+  coords2interp_->putVecScalarMulExpr(coords, interp); 
+  interp2domain_->putVecScalarMulExpr(interp,dom);
+}
 
 void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
     coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
@@ -121,6 +177,23 @@ void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) 
     interp::VecParenExpr *interp = new interp::VecParenExpr(coords, dom, expr_interp);
     coords2interp_->putVecParenExpr(coords, interp);  
     interp2domain_->putVecParenExpr(interp,dom);
+} 
+
+void Interpretation::mkFloatParenExpr(ast::VecParenExpr *ast, ast::FloatExpr *expr) { 
+    coords::FloatParenExpr *coords = ast2coords_->mkFloatParenExpr(ast, context_, expr);   
+    coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(expr));
+    //LOG(DEBUG) << 
+    //  "Interpretation::mkVecParenExpr. ast=" << 
+    //  std::hex << ast << ", " << coords->toString() << 
+    //  "expr = " << expr_coords->toString() << "\n";
+    //domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
+    domain::FloatExpr *dom_expr = coords2dom_->getFloatExpr(expr_coords);
+    domain::FloatParenExpr *dom = domain_->mkFloatParenExpr(dom_expr);
+    coords2dom_->PutFloatParenExpr(coords, dom);
+    interp::FloatExpr *expr_interp = coords2interp_->getFloatExpr(expr_coords);
+    interp::FloatParenExpr *interp = new interp::FloatParenExpr(coords, dom, expr_interp);
+    coords2interp_->putFloatParenExpr(coords, interp);  
+    interp2domain_->putFloatParenExpr(interp,dom);
 } 
 
 
@@ -144,6 +217,16 @@ void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float 
     interp2domain_->putVector_Lit(interp,dom);
 }
 
+void Interpretation::mkFloat_Lit(ast::Float_Lit *ast, float scalar) {
+    coords::Float_Lit *coords = ast2coords_->mkFloat_Lit(ast, context_, scalar);  
+    //domain::Space& s = oracle_->getSpaceForVector_Lit(coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
+    domain::Float_Lit *dom = domain_->mkFloat_Lit(x, y, z);
+    coords2dom_->putFloat_Lit(coords, dom); 
+    interp::Float_Lit *interp = new interp::Float_Lit(coords, dom);
+    coords2interp_->putFloat_Lit(coords, interp);
+    interp2domain_->putFloat_Lit(interp,dom);
+}
+
 void Interpretation::mkVector_Expr(
       ast::Vector_Expr *ctor_ast, ast::VecExpr* expr_ast/*, clang::ASTContext *c*/) {
     coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, context_, expr_ast);
@@ -156,6 +239,20 @@ void Interpretation::mkVector_Expr(
     interp::Vector_Expr *interp = new interp::Vector_Expr(ctor_coords, dom_vec, expr_interp);
     coords2interp_->putVector_Expr(ctor_coords, interp);
     interp2domain_->putVector_Expr(interp, dom_vec);
+}
+
+void Interpretation::mkFloat_Expr(
+      ast::Float_Expr *ctor_ast, ast::FloatExpr* expr_ast/*, clang::ASTContext *c*/) {
+    coords::Float_Expr *ctor_coords = ast2coords_->mkFloat_Expr(ctor_ast, context_, expr_ast);
+    coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(expr_ast));
+    //domain::Space& s = oracle_->getSpaceForVector_Expr(expr_coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
+    domain::FloatExpr *expr_dom = coords2dom_->getFloatExpr(expr_coords);
+    domain::Float_Expr *dom_flt = domain_->mkFloat_Expr(expr_dom); 
+    coords2dom_->putFloat_Expr(ctor_coords, dom_flt);
+    interp::FloatExpr *expr_interp = coords2interp_->getFloatExpr(expr_coords);
+    interp::Float_Expr *interp = new interp::Float_Expr(ctor_coords, dom_flt, expr_interp);
+    coords2interp_->putFloat_Expr(ctor_coords, interp);
+    interp2domain_->putFloat_Expr(interp, dom_flt);
 }
 
 /****
@@ -193,6 +290,33 @@ void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,
     interp2domain_->putVector_Def(interp, dom_vec_def);
 }
 
+
+void Interpretation::mkFloat_Def(ast::Float_Def *def_ast,  
+                                  ast::FloatIdent *id_ast, 
+                                  ast::FloatExpr *expr_ast)
+{
+    coords::FloatIdent *id_coords = static_cast<coords::FloatIdent *>
+      (ast2coords_->getDeclCoords(id_ast));
+    coords::Float *flt_coords = static_cast<coords::Float *>
+      (ast2coords_->getStmtCoords(expr_ast));
+    coords::Float_Def *def_coords = ast2coords_->mkFloat_Def(def_ast, context_, id_coords, flt_coords);
+    domain::FloatIdent *flt_ident = coords2dom_->getFloatIdent(id_coords);
+    /*
+    Here there is some subtlety. We don't know if what was left in our
+    interpretation by previous work was a Vector_Lit or a Vector_Expr.
+    So we check first for a Vector_Expr
+    */
+    domain::Float *flt = coords2dom_->getFloat(flt_coords);
+    domain::Float_Def* dom_flt_def = 
+      domain_->mkFloat_Def(flt_ident, flt); 
+    coords2dom_->putFloat_Def(def_coords, dom_flt_def);
+    interp::FloatIdent *id_interp = coords2interp_->getFloatIdent(id_coords);
+    interp::Float *flt_interp = coords2interp_->geFloat(flt_coords);
+    interp::Float_Def *interp = new interp::Float_Def(def_coords, dom_flt_def, id_interp, flt_interp);
+    coords2interp_->putFloat_Def(def_coords, interp);
+    interp2domain_->putFloat_Def(interp, dom_flt_def);
+}
+
 // private
 // Precondition: coords2domain_ is defined for exp
 //
@@ -206,6 +330,35 @@ domain::VecExpr* Interpretation::getVecExpr(ast::VecExpr* ast) {
     }
     return dom;
 }
+
+domain::FloatExpr* Interpretation::getFloatExpr(ast::FloatExpr* ast) {
+    // we use these objects as key for query purposes
+    coords::FloatExpr *coords = 
+        static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(ast));
+    domain::FloatExpr* dom = coords2dom_->getFloatExpr(coords);
+    if (!dom) {
+       // LOG(DEBUG) <<"Interpretation::getVecExpr. Error. Undefined for key!\n";
+    }
+    return dom;
+}
+/*
+    void mkFloatIdent(ast::FloatIdent *ast);
+    void mkFloatVarExpr(ast::FloatVarExpr *ast);
+
+    // TODO: remove the following two const constraints
+    void mkVecScalarMulExpr(ast::VecScalarMulExpr *ast, const ast::FloatExpr *mem, 
+                         const ast::FloatExpr *arg);
+
+    // KEVIN: Added for new horizontal module
+    void mkFloatParenExpr(ast::FloatParenExpr *ast, ast::FloatExpr *expr);
+
+    void mkFloat_Lit(ast::Float_Lit *ast, float scalar);
+    void mkFloat_Expr(ast::Float_Expr *ast, ast::FloatExpr* expr);
+    void mkFloat_Var(ast::FloatLitExpr *ast);
+    void mkFloat_Def(ast::Float_Def *ast, ast::FloatIdent *id, ast::FloatExpr *exp);
+
+*/
+
 
 /******
  * 
@@ -281,6 +434,70 @@ std::string Interpretation::toString_Defs() {
   }
   return retval;
 }
+
+std::string Interpretation::toString_FloatIdents() {
+    std::string retval = "";
+    std::vector<domain::FloatIdent*> &id = domain_->getFloatIdents();
+    for (std::vector<domain::FloatIdent *>::iterator it = id.begin(); it != id.end(); ++it) {
+        coords::FloatIdent* coords = coords2dom_->getFloatIdent(*it);
+        interp::FloatIdent *interp = coords2interp_->getFloatIdent(coords);
+        retval = retval.append(interp->toString());
+        retval = retval.append("\n"); 
+    }
+    return retval;
+}
+
+std::string Interpretation::toString_FloatExprs() {
+  std::string retval = "";
+  std::vector<domain::FloatExpr*> &id = domain_->getFloatExprs();
+  for (std::vector<domain::FloatExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
+      coords::FloatExpr* coords = coords2dom_->getFloatExpr(*it);
+      interp::FloatExpr *interp = coords2interp_->getFloatExpr(coords);
+      retval = retval.append(interp->toString());
+      retval = retval.append("\n");
+  }
+  return retval;
+}
+
+std::string Interpretation::toString_FloatVectors() {
+  std::string retval = "";
+  std::vector<domain::Float*> &id = domain_->getFloats();
+  for (std::vector<domain::Float *>::iterator it = id.begin(); it != id.end(); ++it) {
+      coords::Vector* coords = coords2dom_->getFloat(*it);
+      interp::Vector *interp = coords2interp_->getFloat(coords);   
+      retval = retval
+      .append("(")
+      .append(interp->toString())
+      .append(" : vec ")
+      .append((*it)->getSpaceContainer()->toString())
+      .append(")\n");
+  }
+  return retval;
+}
+
+std::string Interpretation::toString_FloatDefs() {
+  std::string retval = "";
+  std::vector<domain::Float_Def*> &id = domain_->getFloatDefs();
+  for (std::vector<domain::Float_Def *>::iterator it = id.begin(); it != id.end(); ++it) {
+      coords::Float_Def* coords = coords2dom_->getFloat_Def(*it);
+      interp::Float_Def *interp = coords2interp_->getFloat_Def(coords);
+      retval = retval.append(interp->toString()).append("\n");
+  }
+  return retval;
+}
+
+
+
+
+/*
+
+    std::string toString_FloatIdents();
+    std::string toString_FloatExprs();
+    std::string toString_FloatVectors();
+    std::string toString_FloatDefs();
+    
+
+*/
 
 void Interpretation::setAll_Spaces() {
   auto vecIdents = domain_->getVecIdents();

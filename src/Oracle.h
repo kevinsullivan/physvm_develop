@@ -20,6 +20,16 @@ public:
 	
 	virtual domain::Space& getSpaceForVector_Expr(coords::VecExpr *expr_coords) = 0; 
 	virtual domain::Space& getSpaceForVector_Lit(coords::Vector_Lit *coords) = 0;
+	
+	virtual domain::Space &getSpaceForFloatIdent(coords::FloatIdent *v) = 0;
+	virtual domain::Space& getSpaceForFloatVarExpr(coords::FloatExpr *coords) = 0;
+	virtual domain::Space &getSpaceForMulExpression(coords::FloatExpr *flt, coords::VecExpr *vec) = 0;
+
+	// KEVIN: Added for VecParenExpr module
+	virtual domain::Space &getSpaceForFloatParenExpr(coords::FloatExpr *expr_coords) = 0;
+	
+	virtual domain::Space& getSpaceForFloat_Expr(coords::FloatExpr *expr_coords) = 0; 
+	virtual domain::Space& getSpaceForFloat_Lit(coords::Float_Lit *coords) = 0;
 };
 
 } // namespace
