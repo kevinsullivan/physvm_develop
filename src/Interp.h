@@ -23,12 +23,31 @@ class Vector_Var;
 class Vector_Expr;
 class Vector_Def;
 
+class FloatIdent;
+class FloatExpr;
+class FloatVarExpr;
+class VecScalarMulExpr;
+
+class Float;
+class Float_Lit;
+class Float_Var;
+class Float_Expr;
+class Float_Def;
+
 enum domType
 {
   dom_vecIdent_type,
   dom_vecExpr_type,
   dom_vector_type,
   dom_vector_def_type
+};
+
+enum floatDomType
+{
+  dom_floatIdent_type,
+  dom_floatExpr_type,
+  dom_float_type,
+  dom_float_def_type
 };
 
 class Interp

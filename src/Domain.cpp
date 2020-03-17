@@ -191,3 +191,115 @@ Vector_Def *Domain::mkVector_Def(domain::VecIdent* i, domain::Vector* v)
     defs.push_back(bd); 
     return bd;
 }
+
+
+/*
+
+	FloatIdent* mkFloatIdent(Space* s); 
+	FloatIdent* mkFloatIdent();
+
+	FloatExpr* mkFloatExpr(Space* s);
+	FloatExpr* mkFloatExpr();
+
+*/
+
+FloatIdent* mkFloatIdent(Space* s){
+    domain::FloatIdent flt = new domain::FloatIdent(s);
+    float_idents.push_back(flt);
+    return flt;
+}
+
+FloatIdent* mkFloatIdent(){
+    domain::FloatIdent flt = new domain::FloatIdent();
+    float_idents.push_back(flt);
+    return flt;
+}
+
+FloatExpr* mkFloatExpr(Space* s){
+    domain::FloatExpr flt = new domain::FloatExpr(s);
+    float_exprs.push_back(flt);
+    return flt;
+}
+
+FloatExpr* mkFloatExpr(){
+    domain::FloatExpr flt = new domain::FloatExpr();
+    float_exprs.push_back(flt);
+    return flt;
+}
+
+
+/*  
+	VecScalarMulExpr* mkScalarMulExpr(Space* s, domain::FloatExpr* flt_, domain::VecExpr* vec_);
+	VecScalarMulExpr* mkScalarMulExpr(domain::Float_Expr* flt_, domain::VecExpr* vec_);
+*/
+
+VecScalarMulExpr* mkVecScalarMulExpr(Space* s, domain::FloatExpr* flt_, domain::VecExpr* vec_){
+    domain::VecScalarMulExpr expr = new domain::VecScalarMulExpr(s, flt_, vec_);
+    exprs.push_back(expr);
+    return expr;
+}
+
+VecScalarMulExpr* mkVecScalarMulExpr(domain::Float_Expr* flt_, domain::VecExpr* vec_){
+    auto expr = new domain::VecScalarMulExpr(flt_, vec_);
+    exprs.push_back(expr);
+    return expr;
+}
+
+
+/*
+
+	Float_Lit* mkFloat_Lit(Space* space, float scalar);
+	Float_Lit* mkFloat_Lit(float scalar);
+
+	Float* mkFloat_Var(Space* s);
+	Float* mkFloat_Var();
+
+	Float_Expr* mkFloat_Expr(Space* space, domain::FloatExpr *vec);
+	Float_Expr* mkFloat_Expr(domain::FloatExpr *vec);
+    
+	std::vector<FloatIdent*> float_idents;
+	std::vector<FloatExpr*> float_exprs;
+	std::vector<Float*> floats;
+	std::vector<Float_Def*> float_defs;
+*/
+
+Float_Lit* mkFloat_Lit(Space* space, float scalar){
+    auto flt = new domain::Float_Lit(space, scalar);
+    floats.push_back(flt);
+    return flt;
+}
+
+Float_Lit* mkFloat_Lit(float scalar){
+    auto flt = new domain::Float_Lit(scalar);
+    floats.push_back(flt);
+    return flt;
+}
+
+Vector_Expr* Domain::mkFloat_Expr(Space* s, domain::VecExpr* exp) {
+    Float_Expr* vec = new domain::Float_Expr(*s, exp);
+    vectors.push_back(vec);
+    return vec;
+}
+
+Float_Expr* Domain::mkFloat_Expr(domain::FloatExpr* exp){
+    Float_Expr* vec = new domain::Float_Expr(exp);
+    vectors.push_back(vec);
+    return vec;
+}
+
+
+/****
+* Def
+*****/
+
+
+// TODO: Should be binding to Vector, not Expr
+// 
+Float_Def *Domain::mkFloat_Def(domain::VecIdent* i, domain::Vector* v)
+{
+    //LOG(DEBUG) <<"Domain::mkVector_Def ";
+    Float_Def *bd = new Float_Def(i, v);  
+    defs.push_back(bd); 
+    return bd;
+}
+

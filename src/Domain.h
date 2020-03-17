@@ -75,7 +75,13 @@ public:
 	// Exprs
 	std::vector<VecExpr *> &getVecExprs() { return exprs;  }
 
-	std::vector<FloatExpr *> &getFloatExprs() { return  }
+	FloatIdent* mkFloatIdent(Space* s);
+	FloatIdent* mkFloatIdent();
+	std::vector<FloatIdent*> &getFloatIdents() { return float_idents; }
+
+	FloatExpr* mkFloatExpr(Space* s);
+	FloatExpr* mkFloatExpr();
+	std::vector<FloatExpr *> &getFloatExprs() { return float_exprs; }
 
 	// Create a variable object in the domain 
 
@@ -87,9 +93,11 @@ public:
 	// Create a vector-vector-add expression, mem-expr.add(arg-expr) object in domain
 	// Precondition: sub-expressions mem-expr and arg-expr are already in domain
 	//
-	VecVecAddExpr* mkVecVecAddExpr(Space* s, domain::VecExpr* , domain::VecExpr* right_);
-	VecVecAddExpr* mkVecVecAddExpr(domain::VecExpr*, domain::VecExpr* right_);
+	VecVecAddExpr* mkVecVecAddExpr(Space* s, domain::VecExpr* left_, domain::VecExpr* right_);
+	VecVecAddExpr* mkVecVecAddExpr(domain::VecExpr* left_, domain::VecExpr* right_);
 
+	VecScalarMulExpr* mkVecScalarMulExpr(Space* s, domain::FloatExpr* flt_, domain::VecExpr* vec_);
+	VecScalarMulExpr* mkVecScalarMulExpr(domain::Float_Expr* flt_, domain::VecExpr* vec_);
 
 	// KEVIN: For new VecParenExpr horizontal module
 	//
@@ -113,12 +121,30 @@ public:
 	//
 	Vector_Expr* mkVector_Expr(Space* space/*, coords::Vector* v*/, domain::VecExpr *vec);
 	Vector_Expr* mkVector_Expr(domain::VecExpr *vec);
+
+	std::vector<Float *> &getFloats() { return floats; }
+
+
+	Float_Lit* mkFloat_Lit(Space* space, float scalar);
+	Float_Lit* mkFloat_Lit(float scalar);
+
+	Float* mkFloat_Var(Space* s);
+	Float* mkFloat_Var();
+
+	Float_Expr* mkFloat_Expr(Space* space, domain::FloatExpr *vec);
+	Float_Expr* mkFloat_Expr(domain::FloatExpr *vec);
+
+
 // Defs
 
 	// Binding of identifier to contsructed vector
 	//
 	Vector_Def* mkVector_Def(/*ast::Vector_Def* vardecl,*/ domain::VecIdent* identifier, domain::Vector* vec);
 	std::vector<Vector_Def*> &getVectorDefs() { return defs; }
+
+
+	Float_Def* mkFloat_Def(domain::FloatIdent* identifier, domain::Float* vec);
+	std::vector<Float_Def*> &getFloatDefs { return float_defs; }
 
 // Client -- Separated from Domain
 //	bool isConsistent();
@@ -127,8 +153,8 @@ private:
 	std::vector<Space*> spaces;
 	std::vector<VecIdent*> idents;
 	std::vector<VecExpr*> exprs;
+	std::vector<FloatIdent*> float_idents;
 	std::vector<FloatExpr*> float_exprs;
-	std::vector<FloatExprs*> floatExprs;
 	std::vector<Vector*> vectors;
 	std::vector<Vector_Def*> defs;
 	std::vector<Float*> floats;
