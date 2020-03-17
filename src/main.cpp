@@ -151,7 +151,7 @@ public:
   }
 };
 
-
+jlkkj
 
 // CXXMemberCallExpr is CXXMemberCallExprLeft + CXXMemberCallExprRight
 class HandlerForCXXAddMemberCall : public MatchFinder::MatchCallback
@@ -169,6 +169,8 @@ public:
     handleMemberCallExpr(memcall);
   }
 };
+
+
 
 // AddMemberParenExpr is: "(" some expression ")"
 class HandlerForAddMemberParen : public MatchFinder::MatchCallback
@@ -347,25 +349,17 @@ public:
     const StatementMatcher litMatcher = cxxConstructExpr(argumentCountIs(3))
       .bind("VectorLitExpr");
     CXXConstructExprMatcher_.addMatcher(litMatcher, &litHandler_);
-/*
-    const StatementMatcher exprMatcher = declRefExpr().bind("VecVarExpr");
-    CXXConstructExprMatcher_.addMatcher(exprMatcher, &vecVarHandler_); 
-    const StatementMatcher exprMatcher2 = atomicExpr().bind("VecVarExpr");
-    CXXConstructExprMatcher_.addMatcher(exprMatcher, &vecVarHandler_);
-    const StatementMatcher exprMatcher3 = constantExpr().bind("VecVarExpr");
-    CXXConstructExprMatcher_.addMatcher(exprMatcher, &vecVarHandler_);*/
-    
+
     const StatementMatcher exprMatcher4 = cxxConstructExpr(hasDescendant(declRefExpr().bind("VecVarExpr2"))).bind("VecVarExpr4");
     CXXConstructExprMatcher_.addMatcher(exprMatcher4, &vecVarHandler_);
-    
-    /*
+
     const StatementMatcher addOpMatcher =
         cxxConstructExpr(hasDescendant(cxxMemberCallExpr(
                          hasDescendant(memberExpr(
                          hasDeclaration(namedDecl(hasName("vec_add"))))))
           .bind("MemberCallExpr")))
           .bind("VectorConstructAddExpr");
-    CXXConstructExprMatcher_.addMatcher(addOpMatcher, &addHandler_);*/
+    CXXConstructExprMatcher_.addMatcher(addOpMatcher, &addHandler_);
   };
   void match(const clang::CXXConstructExpr *consdecl)
   {
@@ -375,9 +369,32 @@ private:
   MatchFinder CXXConstructExprMatcher_;
   HandlerForCXXConstructLitExpr litHandler_;
   HandlerForCXXConstructAddExpr addHandler_;
+  HandlerForCXXConstructMulExpr mulHandler_;
   HandlerForCXXConstructVecVarExpr vecVarHandler_;
 };
 
+class CXXConstructScalarExprMatcher
+{
+public:
+  CXXConstructScalarExprMatcher()
+  {
+    const StatementMatcher litMatcher = cxxConstructExpr(argumentCountIs(1))
+      .bind("ScalarLitExpr");
+    CXXConstructExprMatcher_.addMatcher(litMatcher, &litHandler_);
+
+    const StatementMatcher exprMatcher4 = cxxConstructExpr(hasDescendant(declRefExpr().bind("VecVarExpr2"))).bind("VecVarExpr4");
+    CXXConstructExprMatcher_.addMatcher(exprMatcher4, &vecVarHandler_);
+    
+  };
+  void match(const clang::CXXConstructExpr *consdecl)
+  {
+    CXXConstructExprMatcher_.match(*consdecl, *context_);
+  }
+private:
+  MatchFinder CXXConstructExprMatcher_;
+  HandlerForCXXConstructScalarLitExpr scalarLitHandler_;
+  HandlerForCXXConstructScalarVarExpr scalarVarHandler_;
+};
 
 /*
 A vector declaration statement binds a vector-typed
@@ -404,6 +421,23 @@ public:
     }
 };
 
+class ScalarDeclStmtHandler : public MatchFinder::MatchCallback
+{
+public:
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    const clang::DeclStmt *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("ScalarDeclStatement");
+    const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
+    const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
+    //LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
+    interp_->mkVecIdent(vardecl);
+    CXXConstructExprMatcher matcher;
+    matcher.match(consdecl);
+    interp_->mkVector_Def(declstmt, vardecl, consdecl);
+    //LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: Done.\n"; 
+    }
+};
+
 /********************************************
  * Top-level analyzer: Match Vector DeclStmts
  ********************************************/
@@ -415,7 +449,11 @@ public:
   {
     StatementMatcher match_Vector_general_decl =
         declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("class Vec"))).bind("CXXConstructExpr"))).bind("VarDecl"))).bind("VectorDeclStatement");
+    StatementMatcher match_Scalar_general_decl =
+        declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("float"))).bind("CXXConstructExpr"))).bind("VarDecl"))).bind("ScalarDeclStatement");
+    
     VectorDeclStmtMatcher.addMatcher(match_Vector_general_decl, &HandlerForVectorDeclStmt);
+    ScalarDeclStmtMatcher.addMatcher(match_Scalar_general_decl, &HandlerForScalarDeclStmt);
   }
   void HandleTranslationUnit(ASTContext &context) override
   {
@@ -425,6 +463,7 @@ public:
 private:
   MatchFinder VectorDeclStmtMatcher;
   VectorDeclStmtHandler HandlerForVectorDeclStmt;
+  ScalarDeclStmtHandler HandlerForScalarDeclStmt;
 };
 
 /*******************************
