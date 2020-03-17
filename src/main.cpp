@@ -79,6 +79,23 @@ public:
   }
 };
 
+class HandlerForCXXConstructFloatLitExpr : public MatchFinder::MatchCallback
+{
+public:
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    //LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Start.\n";
+    const clang::CXXConstructExpr *lit_ast = 
+      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("FloatLitExpr");
+
+    // TODO: Get actual coordinates from AST
+    float scalar = 0;
+    
+    interp_->mkFloat_Lit(lit_ast, scalar);
+    //LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Done.\n";
+  }
+};
+
 /*******************************
  * Handle Member Call Expression
  *******************************/
