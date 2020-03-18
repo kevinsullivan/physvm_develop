@@ -127,7 +127,7 @@ void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::Vec
   interp2domain_->putVecVecAddExpr(interp,dom);
 }
 
-void Interpretation::mkVecScalarMulExpr(ast::VecScalarMulExpr *mul_ast, const ast::VecExpr *flt_expr, const ast::VecExpr *vec_expr) {
+void Interpretation::mkVecScalarMulExpr(ast::VecScalarMulExpr *mul_ast, const ast::VecExpr *vec_expr, const ast::FloatExpr *flt_expr) {
   coords::FloatExpr *flt_coords = static_cast<coords::FloatExpr*>
                                   (ast2coords_->getStmtCoords(flt_expr));
   coords::VecExpr *vec_coords = static_cast<coords::VecExpr*>
@@ -147,7 +147,7 @@ void Interpretation::mkVecScalarMulExpr(ast::VecScalarMulExpr *mul_ast, const as
     //          << std::hex << dom_mem_expr << " Arg "
     //          << std::hex << dom_arg_expr << "\n";
   }
-  domain::VecScalarMulExpr *dom = domain_->mkVecScalarMulExpr(dom_flt_expr, dom_vec_expr);
+  domain::VecScalarMulExpr *dom = domain_->mkVecScalarMulExpr(dom_vec_expr, dom_flt_expr);
   coords2dom_->PutVecScalarMulExpr(coords, dom);
   //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Mem_Coords: " << mem_coords->toString() << "\n";
   //LOG(DEBUG) << "Interpretation::mkVecVecAddExpr: Arg_Coords: " << arg_coords->toString() << "\n";
@@ -179,7 +179,7 @@ void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) 
     interp2domain_->putVecParenExpr(interp,dom);
 } 
 
-void Interpretation::mkFloatParenExpr(ast::VecParenExpr *ast, ast::FloatExpr *expr) { 
+void Interpretation::mkFloatParenExpr(ast::FloatParenExpr *ast, ast::FloatExpr *expr) { 
     coords::FloatParenExpr *coords = ast2coords_->mkFloatParenExpr(ast, context_, expr);   
     coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(expr));
     //LOG(DEBUG) << 
@@ -220,7 +220,7 @@ void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float 
 void Interpretation::mkFloat_Lit(ast::Float_Lit *ast, float scalar) {
     coords::Float_Lit *coords = ast2coords_->mkFloat_Lit(ast, context_, scalar);  
     //domain::Space& s = oracle_->getSpaceForVector_Lit(coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
-    domain::Float_Lit *dom = domain_->mkFloat_Lit(x, y, z);
+    domain::Float_Lit *dom = domain_->mkFloat_Lit(scalar);
     coords2dom_->putFloat_Lit(coords, dom); 
     interp::Float_Lit *interp = new interp::Float_Lit(coords, dom);
     coords2interp_->putFloat_Lit(coords, interp);
@@ -311,7 +311,7 @@ void Interpretation::mkFloat_Def(ast::Float_Def *def_ast,
       domain_->mkFloat_Def(flt_ident, flt); 
     coords2dom_->putFloat_Def(def_coords, dom_flt_def);
     interp::FloatIdent *id_interp = coords2interp_->getFloatIdent(id_coords);
-    interp::Float *flt_interp = coords2interp_->geFloat(flt_coords);
+    interp::Float *flt_interp = coords2interp_->getFloat(flt_coords);
     interp::Float_Def *interp = new interp::Float_Def(def_coords, dom_flt_def, id_interp, flt_interp);
     coords2interp_->putFloat_Def(def_coords, interp);
     interp2domain_->putFloat_Def(interp, dom_flt_def);
@@ -463,8 +463,8 @@ std::string Interpretation::toString_FloatVectors() {
   std::string retval = "";
   std::vector<domain::Float*> &id = domain_->getFloats();
   for (std::vector<domain::Float *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Vector* coords = coords2dom_->getFloat(*it);
-      interp::Vector *interp = coords2interp_->getFloat(coords);   
+      coords::Float* coords = coords2dom_->getFloat(*it);
+      interp::Float *interp = coords2interp_->getFloat(coords);   
       retval = retval
       .append("(")
       .append(interp->toString())

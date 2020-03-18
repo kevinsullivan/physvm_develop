@@ -54,9 +54,9 @@ coords::VecVecAddExpr *ASTToCoords::mkVecVecAddExpr(
 }
 
 
-coords::VecScalarMulExpr *ASTToCoords::mkVecScalarExpr(
+coords::VecScalarMulExpr *ASTToCoords::mkVecScalarMulExpr(
        const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
-       coords::ScalarExpr *flt, coords::VecExpr *vec 
+       coords::FloatExpr *flt, coords::VecExpr *vec 
     ){
     coords::VecScalarMulExpr *coord = new coords::VecScalarMulExpr(ast, c, flt, vec);
     overrideStmt2Coords(ast, coord);
@@ -112,7 +112,7 @@ coords::Vector_Var *ASTToCoords::mkVector_Var(
 
 coords::Float_Var *ASTToCoords::mkFloat_Var(
         const ast::Float_Var *ast, clang::ASTContext *c, coords::FloatVarExpr *var_coords) {
-    coords::Float_Var *coord = new coords::Float_Var(ast, c, float_coords);
+    coords::Float_Var *coord = new coords::Float_Var(ast, c, var_coords);
     overrideStmt2Coords(ast,coord);
     overrideCoords2Stmt(coord,ast);
     return coord;

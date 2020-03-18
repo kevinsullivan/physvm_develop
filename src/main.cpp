@@ -354,7 +354,7 @@ private:
 class CXXMemberCallExprMemberScalarExprMatcher
 {
 public:
-  CXXMemberCallExprMemberExprMatcher()
+  CXXMemberCallExprMemberScalarExprMatcher()
   {
     // Member expression is a variable expression
     //
@@ -391,19 +391,19 @@ void handle_member_expr_of_add_call(const clang::Expr *memexpr)
 
 
 
-void handleBinaryCallExpr(const CXXMemberCallExpr *ast)
+void handleBinaryCallExpr(const BinaryOperator *ast)
 {
   //LOG(DEBUG) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
-  const clang::Expr *vec_ast = ast->getArg(0);
-  const clang::Expr *flt_ast = ast->getArg(1);
+  const clang::Expr *vec_ast = ast->getLHS();
+  const clang::Expr *flt_ast = ast->getRHS();
   if (!vec_ast || !flt_ast) {
     //LOG(FATAL) <<"main::handleMemberCallExpr. Null pointer error.\n";
     return;
   }
   //handle_member_expr_of_add_call(mem_ast);
   //handle_arg0_of_add_call(arg_ast);
-  handle_arg0_of_mul_call(vec_ast);
-  handle_arg1_of_mul_call(flt_ast);
+  handle_arg0_expr_of_mul_call(vec_ast);
+  handle_arg1_expr_of_mul_call(flt_ast);
 
   interp_->mkVecScalarMulExpr(ast, flt_ast, vec_ast);
   //LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
@@ -436,8 +436,8 @@ public:
     }
     //LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
 
-    const CXXMemberCallExpr *vec_scalar_mul_member_call_ast =
-        Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
+    const BinaryOperator *vec_scalar_mul_member_call_ast =
+        Result.Nodes.getNodeAs<clang::BinaryOperator>("MemberCallExpr");
     if (vec_scalar_mul_member_call_ast == NULL)
     {
       //LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
@@ -499,10 +499,10 @@ public:
   {
     const StatementMatcher litMatcher = cxxConstructExpr(argumentCountIs(1))
       .bind("ScalarLitExpr");
-    CXXConstructExprMatcher_.addMatcher(litMatcher, &litHandler_);
+    CXXConstructExprMatcher_.addMatcher(litMatcher, &scalarLitHandler_);
 
     const StatementMatcher exprMatcher4 = cxxConstructExpr(hasDescendant(declRefExpr().bind("VecVarExpr2"))).bind("VecVarExpr4");
-    CXXConstructExprMatcher_.addMatcher(exprMatcher4, &vecVarHandler_);
+    CXXConstructExprMatcher_.addMatcher(exprMatcher4, &scalarVarHandler_);
     
   };
   void match(const clang::CXXConstructExpr *consdecl)
@@ -571,16 +571,16 @@ public:
     StatementMatcher match_Scalar_general_decl =
         declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("float"))).bind("CXXConstructExpr"))).bind("VarDecl"))).bind("ScalarDeclStatement");
     
-    VectorDeclStmtMatcher.addMatcher(match_Vector_general_decl, &HandlerForVectorDeclStmt);
-    ScalarDeclStmtMatcher.addMatcher(match_Scalar_general_decl, &HandlerForScalarDeclStmt);
+    DeclStmtMatcher.addMatcher(match_Vector_general_decl, &HandlerForVectorDeclStmt);
+    DeclStmtMatcher.addMatcher(match_Scalar_general_decl, &HandlerForScalarDeclStmt);
   }
   void HandleTranslationUnit(ASTContext &context) override
   {
-    VectorDeclStmtMatcher.matchAST(context);
+    DeclStmtMatcher.matchAST(context);
   }
 
 private:
-  MatchFinder VectorDeclStmtMatcher;
+  MatchFinder DeclStmtMatcher;
   VectorDeclStmtHandler HandlerForVectorDeclStmt;
   ScalarDeclStmtHandler HandlerForScalarDeclStmt;
 };

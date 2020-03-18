@@ -55,8 +55,8 @@ public:
                                              coords::VecExpr *mem, 
                                              coords::VecExpr *arg);
 
-    coordS::VecScalarMulExpr* mkVecScalarMulExpr(const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
-                                             coords::ScalarExpr *flt, coords::VecExpr *vec);
+    coords::VecScalarMulExpr* mkVecScalarMulExpr(const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
+                                             coords::FloatExpr *flt, coords::VecExpr *vec);
 
     // KEVIN: Added for new horizontal vector paren expr module
     coords::VecParenExpr *mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c,
@@ -76,22 +76,19 @@ public:
     // no VecExpr because we always know exactly what subtype we're creating
     coords::FloatVarExpr* mkFloatVarExpr(const ast::FloatVarExpr *ast, clang::ASTContext *c);
 
-    coordS::VecScalarMulExpr* mkVecScalarMulExpr(const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
-                                             coords::ScalarExpr *flt, coords::VecExpr *vec);
-
     // KEVIN: Added for new horizontal vector paren expr module
-    coords::VecParenExpr *mkFloatParenExpr(ast::FloatParenExpr *ast, clang::ASTContext *c,
+    coords::FloatParenExpr *mkFloatParenExpr(ast::FloatParenExpr *ast, clang::ASTContext *c,
                                                 ast::FloatExpr *expr);
 
-    coords::Vector_Lit *mkFloat_Lit(const ast::Float_Lit *ast, clang::ASTContext *c,
-                                                ast::Scalar x, ast::Scalar y, ast::Scalar z);
-    coords::Vector_Var* mkFloat_Var(const ast::Float_Var *ast, clang::ASTContext *c,
+    coords::Float_Lit *mkFloat_Lit(const ast::Float_Lit *ast, clang::ASTContext *c,
+                                                ast::Scalar scalar);
+    coords::Float_Var* mkFloat_Var(const ast::Float_Var *ast, clang::ASTContext *c,
                                                 coords::FloatVarExpr *var);
-    coords::Vector_Expr* mkFloat_Expr(const ast::Float_Expr *ctor_ast, clang::ASTContext *c,
+    coords::Float_Expr* mkFloat_Expr(const ast::Float_Expr *ctor_ast, clang::ASTContext *c,
                                              ast::FloatExpr *expr_ast);
     coords::Float_Def* mkFloat_Def(const ast::Float_Def *ast, clang::ASTContext *c,
                                              coords::FloatIdent *id, 
-                                             coords::FloatExpr *vec);
+                                             coords::FloatExpr *flt);
 
 
     // TODO -- Have these routines return more specific subclass objects

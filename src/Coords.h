@@ -147,7 +147,7 @@ private:
 class VecScalarMulExpr : public VecExpr {
 public:
   VecScalarMulExpr(const ast::VecScalarMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec);
-  const ast::VecVecAddExpr *getVecVecAddExpr();
+  const ast::VecScalarMulExpr *getVecScalarMulExpr();
   virtual std::string toString() const;
   coords::Coords* getLeft() const { return flt_; }
   coords::Coords* getRight() const { return vec_; }
@@ -183,7 +183,7 @@ class FloatParenExpr : public FloatExpr {
       return (clang_stmt_ == other.clang_stmt_);
   }
   protected:
-    coords::VecExpr *expr_;
+    coords::FloatExpr *expr_;
 };
 
 
@@ -192,7 +192,7 @@ class FloatParenExpr : public FloatExpr {
 ********/
 
 enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
-enum FloatCtorType { FLOAT_CTOR_TYPE, FLOAT_CTOR_EXPR, FLOAT_CTOR_VAR };
+enum FloatCtorType { FLOAT_CTOR_LIT, FLOAT_CTOR_EXPR, FLOAT_CTOR_VAR };
 
 // Superclass. Abstract
 class Vector : public VecExpr {
@@ -208,7 +208,7 @@ protected:
   const VectorCtorType tag_;
 };
 
-class Float : public VecExpr {
+class Float : public FloatExpr {
 public:
   Float(const ast::Float *vec, clang::ASTContext *c, coords::FloatCtorType tag);
   const ast::Float *getFloat() const;
@@ -218,7 +218,7 @@ public:
     return (clang_stmt_ == other.clang_stmt_);
   }
 protected:
-  const VectorCtorType tag_;
+  const FloatCtorType tag_;
 };
 
 // TODO: methods to get x, y, z

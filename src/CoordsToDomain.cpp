@@ -15,8 +15,12 @@ void CoordsToDomain::putVecIdent(coords::VecIdent *c, domain::VecIdent *d)
 {
     coords2dom_VecIdent[c] = d;
     dom2coords_VecIdent[d] = c;
-    //    coords2dom_VecIdent.insert(std::make_pair(c, d));
-    //    dom2coords_VecIdent.insert(std::make_pair(d, c));
+}
+
+void CoordsToDomain::putFloatIdent(coords::FloatIdent *c, domain::FloatIdent *d)
+{
+    coords2dom_FloatIdent[c] = d;
+    dom2coords_FloatIdent[d] = c;
 }
 
 // TODO: Decide whether or not these maps can be partial on queried keys
@@ -48,6 +52,32 @@ coords::VecIdent *CoordsToDomain::getVecIdent(domain::VecIdent *d) const
     return coords;
 }
 
+domain::FloatIdent *CoordsToDomain::getFloatIdent(coords::FloatIdent *c) const
+{
+    std::unordered_map<coords::FloatIdent*, domain::FloatIdent*>::iterator it;
+    domain::FloatIdent *dom = NULL;
+    try {
+        dom = coords2dom_FloatIdent.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+
+coords::FloatIdent *CoordsToDomain::getFloatIdent(domain::FloatIdent *d) const
+{
+    std::unordered_map<domain::FloatIdent*, coords::FloatIdent*>::iterator it;
+    coords::FloatIdent *coords = NULL;
+    try {
+        coords = dom2coords_FloatIdent.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return coords;
+}
+/*
 void CoordsToDomain::PutFloatExpr(coords::FloatExpr *c, domain::FloatExpr *d)
 {
     coords2dom_FloatExpr[c] = d;
@@ -55,6 +85,7 @@ void CoordsToDomain::PutFloatExpr(coords::FloatExpr *c, domain::FloatExpr *d)
     //    coords2dom_VecIdent.insert(std::make_pair(c, d));
     //    dom2coords_VecIdent.insert(std::make_pair(d, c));
 }
+*/
 
 // TODO: Decide whether or not these maps can be partial on queried keys
 // As defined here, yes, and asking for a missing key returns NULL
@@ -77,7 +108,7 @@ coords::FloatExpr *CoordsToDomain::getFloatExpr(domain::FloatExpr *d) const
     std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
     coords::FloatExpr *coords = NULL;
     try {
-        coords = dom2coords_VecIdent.at(d);
+        coords = dom2coords_FloatExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
@@ -89,7 +120,7 @@ coords::FloatExpr *CoordsToDomain::getFloatExpr(domain::FloatExpr *d) const
 
 // base
 
-domain::VecExpr *CoordsToDomain::getVecExpr(coords::VecExpr *c)
+domain::VecExpr *CoordsToDomain::getVecExpr(coords::VecExpr *c) const
 {
     std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
     domain::VecExpr *dom = NULL;
@@ -168,6 +199,39 @@ coords::VecVarExpr *CoordsToDomain::getVecVarExpr(domain::VecVarExpr *d) const
     return static_cast<coords::VecVarExpr *>(coords);
 }
 
+void CoordsToDomain::PutFloatVarExpr(coords::FloatVarExpr *c, domain::FloatVarExpr *d)
+{
+    coords2dom_FloatExpr[c] = d;
+    dom2coords_FloatExpr[d] = c;
+//    coord2dom_FloatExpr.insert(std::make_pair(*c, d));
+}
+
+domain::FloatVarExpr *CoordsToDomain::getFloatVarExpr(coords::FloatVarExpr *c) const
+{
+    std::unordered_map<coords::FloatExpr*, domain::FloatExpr*>::iterator it;
+    domain::FloatExpr *dom = NULL;
+    try {
+        dom = coords2dom_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::FloatVarExpr*>(dom);
+}
+
+coords::FloatVarExpr *CoordsToDomain::getFloatVarExpr(domain::FloatVarExpr *d) const
+{
+    std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = dom2coords_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::FloatVarExpr *>(coords);
+}
+
 // vecvecadd
 
 void CoordsToDomain::PutVecVecAddExpr(coords::VecVecAddExpr *c, domain::VecVecAddExpr *d)
@@ -208,19 +272,9 @@ void CoordsToDomain::PutVecScalarMulExpr(coords::VecScalarMulExpr *c, domain::Ve
     dom2coords_VecExpr[d] = c;
 }
 
-domain::VecVecAddExpr *CoordsToDomain::getVecScalarMulExpr(coords::VecScalarMulExpr *c) const
-{
-    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
-    domain::VecExpr *dom = NULL;
-    try {
-        dom = coords2dom_VecExpr.at(c);
-    }
-    catch (std::out_of_range &e) {
-        dom = NULL;
-    }
-    return static_cast<domain::VecScalarMulExpr*>(dom);
-}
 
+
+//coords::VecScalarMulExpr *getVecSCalarMulExpr(domain::VecScalarMulExpr* d) const;
 coords::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(domain::VecScalarMulExpr *d) const
 {
     std::unordered_map<domain::VecExpr*, coords::VecExpr*>::iterator it;
@@ -232,6 +286,21 @@ coords::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(domain::VecScalarM
         coords = NULL;
     }
     return static_cast<coords::VecScalarMulExpr *>(coords);
+}
+
+
+//domain::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
+domain::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(coords::VecScalarMulExpr *c) const
+{
+    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::VecScalarMulExpr*>(dom);
 }
 
 void CoordsToDomain::PutVecParenExpr(coords::VecParenExpr *c, domain::VecParenExpr *d) {
@@ -264,6 +333,36 @@ coords::VecParenExpr *CoordsToDomain::getParenExpr(domain::VecParenExpr* d) cons
 }
 
 
+void CoordsToDomain::PutFloatParenExpr(coords::FloatParenExpr *c, domain::FloatParenExpr *d) {
+    coords2dom_FloatExpr[c] = d;
+    dom2coords_FloatExpr[d] = c;
+}
+
+domain::FloatParenExpr *CoordsToDomain::getParenExpr(coords::FloatParenExpr* c) const {
+    std::unordered_map<coords::FloatExpr*, domain::FloatExpr*>::iterator it;
+    domain::FloatExpr *dom = NULL;
+    try {
+        dom = coords2dom_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::FloatParenExpr*>(dom);
+}
+
+coords::FloatParenExpr *CoordsToDomain::getParenExpr(domain::FloatParenExpr* d) const {
+    std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = dom2coords_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::FloatParenExpr *>(coords);
+}
+
+
 
 // Vector
 
@@ -290,6 +389,31 @@ domain::Vector *CoordsToDomain::getVector(coords::Vector* v) {
     }
     return static_cast<domain::Vector *>(domvec);
 }
+
+coords::Float *CoordsToDomain::getFloat(domain::Float* v) {
+    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
+    coords::Float *coords = NULL;
+    try {
+        coords = dom2coords_Float.at(v);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Float *>(coords);
+}
+
+domain::Float *CoordsToDomain::getFloat(coords::Float* v) {
+    std::unordered_map<coords::Float*, domain::Float*>::iterator it;
+    domain::Float *domvec = NULL;
+    try {
+        domvec = coords2dom_Float.at(v);
+    }
+    catch (std::out_of_range &e) {
+        domvec = NULL;
+    }
+    return static_cast<domain::Float *>(domvec);
+}
+
 
 
 void CoordsToDomain::putVector_Lit(coords::Vector *c, domain::Vector_Lit *d)
@@ -324,6 +448,38 @@ coords::Vector_Lit *CoordsToDomain::getVector_Lit(domain::Vector_Lit *d) const
     return static_cast<coords::Vector_Lit *>(coords);
 }
 
+void CoordsToDomain::putFloat_Lit(coords::Float *c, domain::Float_Lit *d)
+{
+    coords2dom_Float[c] = d;
+    dom2coords_Float[d] = c;
+}
+
+domain::Float_Lit *CoordsToDomain::getFloat_Lit(coords::Float_Lit *c) const
+{
+    std::unordered_map<coords::Float_Lit*, domain::Float_Lit*>::iterator it;
+    domain::Float *dom = NULL;
+    try {
+        dom = coords2dom_Float.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Float_Lit*>(dom);
+}
+
+coords::Float_Lit *CoordsToDomain::getFloat_Lit(domain::Float_Lit *d) const
+{
+    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = dom2coords_Float.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Float_Lit *>(coords);
+}
+
 void CoordsToDomain::putVector_Expr(coords::Vector *c, domain::Vector_Expr *d)
 {
     coords2dom_Vector[c] = d;
@@ -356,6 +512,38 @@ coords::Vector_Expr *CoordsToDomain::getVector_Expr(domain::Vector_Expr *d) cons
     return static_cast<coords::Vector_Expr *>(coords);
 }
 
+
+void CoordsToDomain::putFloat_Expr(coords::Float *c, domain::Float_Expr *d)
+{
+    coords2dom_Float[c] = d;
+    dom2coords_Float[d] = c;
+}
+
+domain::Float_Expr *CoordsToDomain::getFloat_Expr(coords::Float_Expr *c) const
+{
+    std::unordered_map<coords::Float_Expr*, domain::Float_Expr*>::iterator it;
+    domain::Float *dom = NULL;
+    try {
+        dom = coords2dom_Float.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Float_Expr*>(dom);
+}
+
+coords::Float_Expr *CoordsToDomain::getFloat_Expr(domain::Float_Expr *d) const
+{
+    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = dom2coords_Float.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Float_Expr *>(coords);
+}
 // Def
 
 void CoordsToDomain::putVector_Def(coords::Vector_Def *c, domain::Vector_Def *d)
@@ -387,6 +575,37 @@ coords::Vector_Def *CoordsToDomain::getVector_Def(domain::Vector_Def *d) const
       coords = NULL;
     }
     return static_cast<coords::Vector_Def *>(coords);
+}
+
+void CoordsToDomain::putFloat_Def(coords::Float_Def *c, domain::Float_Def *d)
+{
+    coords2dom_Float_Def[c] = d;
+    dom2coords_Float_Def[d] = c;
+}
+
+domain::Float_Def *CoordsToDomain::getFloat_Def(coords::Float_Def *c) const
+{
+    std::unordered_map<coords::Float_Def*, domain::Float_Def*>::iterator it;
+    domain::Float_Def *dom = NULL;
+    try {
+        dom = coords2dom_Float_Def.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Float_Def*>(dom);
+}
+
+coords::Float_Def *CoordsToDomain::getFloat_Def(domain::Float_Def *d) const
+{
+    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
+    coords::Float_Def *coords = NULL;
+    try {
+        coords = dom2coords_Float_Def.at(d);
+    } catch (std::out_of_range &e) {
+      coords = NULL;
+    }
+    return static_cast<coords::Float_Def *>(coords);
 }
 
 /*void CoordsToDomain::dump() const

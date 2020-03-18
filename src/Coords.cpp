@@ -162,13 +162,15 @@ std::string VecVecAddExpr::toString() const {
 
 
 
+ // VecScalarMulExpr(const ast::VecScalarMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec);
+ // const ast::VecScalarMulExpr *getVecScalarMulExpr();
 VecScalarMulExpr::VecScalarMulExpr(
-    const clang::CXXMemberCallExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec) 
-        : VecExpr(mce, c), mem_(flt), _(vec) {
+    const clang::BinaryOperator *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec) 
+        : VecExpr(mce, c), flt_(flt), vec_(vec) {
 }
 
 const ast::VecScalarMulExpr *VecScalarMulExpr::getVecScalarMulExpr() {
-    return static_cast<const clang::CXXMemberCallExpr*> (clang_stmt_);  
+    return static_cast<const clang::BinaryOperator *> (clang_stmt_);  
 }
 
 std::string VecScalarMulExpr::toString() const {
@@ -252,7 +254,7 @@ std::string Vector_Lit::toString() const  {
 Float_Lit::Float_Lit(const clang::CXXConstructExpr* ast, clang::ASTContext *c, ast::Scalar scalar) 
     : Float(ast, c, FLOAT_CTOR_LIT), scalar_(scalar) {} 
   
-std::string Vector_Lit::toString() const  {
+std::string Float_Lit::toString() const  {
     std::string retval = "";
     retval += std::to_string(scalar_); 
     //retval = "(" + retval + ")";

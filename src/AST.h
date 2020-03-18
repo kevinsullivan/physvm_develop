@@ -13,6 +13,7 @@ using Scalar = float;
 
 // Ident
 using VecIdent = const clang::VarDecl;
+using FloatIdent = const clang::VarDecl;
 
 // Expr
 using VecExpr = const clang::Expr;

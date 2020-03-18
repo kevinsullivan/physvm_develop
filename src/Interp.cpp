@@ -22,6 +22,22 @@ Interp::Interp(coords::Vector_Def *c, domain::Vector_Def *d)
   : coords_(c), type_(dom_vector_def_type), def_(d) {
 }
 
+Interp::Interp(coords::FloatIdent* c, domain::FloatIdent *d) 
+  : coords_(c), type_(dom_floatIdent_type), float_ident_(d) {
+}
+
+Interp::Interp(coords::FloatExpr *c, domain::FloatExpr *d) 
+  : coords_(c), type_(dom_floatExpr_type), float_expr_(d)  {
+}
+
+Interp::Interp(coords::Float *c, domain::Float *d)
+  : coords_(c), type_(dom_float_type), float_(d) {
+}
+
+Interp::Interp(coords::Float_Def *c, domain::Float_Def *d) 
+  : coords_(c), type_(dom_float_def_type), float_def_(d) {
+}
+
 /**********
  * Abstract
  **********/
@@ -49,6 +65,19 @@ std::string VecIdent::toString() const {
   return ret;
 }
 
+FloatIdent::FloatIdent(coords::FloatIdent* c, domain::FloatIdent* d) : Interp(c,d) {
+}
+
+std::string FloatIdent::toString() const {
+  std::string ret = "";
+//  ret += "( ";
+  ret += coords_->toString();
+  ret += " : peirce.scalar ";
+  ret += ident_->getSpaceContainer()->toString();
+//  ret += " )";
+  return ret;
+}
+
 /*****
  * Expr
  *****/
@@ -58,7 +87,15 @@ VecExpr::VecExpr(coords::VecExpr* c, domain::VecExpr* d)  : Interp(c, d)  {
 
 std::string VecExpr::toString() const {
   //LOG(FATAL) << "Error. Call to abstract interp::VecIdent::toString().\n";
-  return "Should not call abstract interp::VecIdent::toString().";
+  return "Should not call abstract interp::VecExpr::toString().";
+}
+
+FloatExpr::FloatExpr(coords::FloatExpr* c, domain::FloatExpr* d)  : Interp(c, d)  {
+}
+
+std::string FloatExpr::toString() const {
+  //LOG(FATAL) << "Error. Call to abstract interp::FloatIdent::toString().\n";
+  return "Should not call abstract interp::FloatIdent::toString().";
 }
 
 VecVarExpr::VecVarExpr(coords::VecVarExpr* c, domain::VecVarExpr* d) : VecExpr(c, d) {
@@ -74,6 +111,20 @@ std::string VecVarExpr::toString() const {
   return ret;
 }
 
+FloatVarExpr::FloatVarExpr(coords::FloatVarExpr* c, domain::FloatVarExpr* d) :FloatExpr(c, d) {
+}
+
+std::string FloatVarExpr::toString() const {
+  std::string ret = "";
+  ret += "( ";
+  ret += coords_->toString();
+  ret += " : peirce.float ";
+  ret += expr_->getSpaceContainer()->toString(); 
+  ret += " )";
+  return ret;
+}
+
+
 
 VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d, 
                              interp::Interp *mem, interp::Interp *arg)  
@@ -87,6 +138,24 @@ std::string VecVecAddExpr::toString() const {
   ret += mem_->toString();
   ret += " ";
   ret += arg_->toString();
+  ret += " : peirce.vec ";
+  ret += expr_->getSpaceContainer()->toString(); 
+  ret += " )";
+  return ret;  
+} 
+
+VecScalarMulExpr::VecScalarMulExpr(coords::VecScalarMulExpr* c, domain::VecScalarMulExpr* d, 
+                             interp::Interp *vec, interp::Interp *flt)  
+  : VecExpr(c, d), vec_(vec), flt_(flt) {
+}
+
+ 
+std::string VecScalarMulExpr::toString() const {
+  std::string ret = "";
+  ret += "( peirce.mul ";
+  ret += vec_->toString();
+  ret += " ";
+  ret += flt_->toString();
   ret += " : peirce.vec ";
   ret += expr_->getSpaceContainer()->toString(); 
   ret += " )";
@@ -113,6 +182,26 @@ std::string VecParenExpr::toString() const {
 } 
 
 
+FloatParenExpr::FloatParenExpr
+    (coords::FloatParenExpr* c, domain::FloatParenExpr* d, interp::FloatExpr *e) 
+    : FloatExpr(c, d), paren_expr_(e) {
+}
+
+std::string FloatParenExpr::toString() const {
+  std::string ret = "";
+  ret += "( ( ";
+  ret += paren_expr_->toString();
+  ret += " ) : peirce.scalar ";
+
+  // TODO: Abstract superclass data members
+  ret += expr_->getSpaceContainer()->toString(); 
+
+  ret += " )";
+  return ret;  
+} 
+
+
+
 
 /*******
 * Vector
@@ -124,7 +213,13 @@ std::string Vector::toString() const {
   //LOG(INFO) << "Interp::Vector::toString().\n";
   return "A_Vector";
 }
+ 
+Float::Float(coords::Float* c, domain::Float* d) : Interp(c, d) {}
 
+std::string Float::toString() const {
+  //LOG(INFO) << "Interp::Vector::toString().\n";
+  return "A_Float";
+}
 
 Vector_Lit::Vector_Lit(coords::Vector_Lit* c, domain::Vector_Lit* d) : Vector(c,d) {
 }
@@ -133,6 +228,19 @@ std::string Vector_Lit::toString() const {
   std::string ret = "";
   ret += "( peirce.vec.mkVector ";
   ret += vector_->getSpaceContainer()->toString();
+  ret += " ";
+  ret += static_cast<coords::Vector_Lit *>(coords_)->toString();
+  ret += " )";
+  return ret;
+}
+
+Float_Lit::Float_Lit(coords::Float_Lit* c, domain::Float_Lit* d) : Float(c,d) {
+}
+
+std::string Float_Lit::toString() const {
+  std::string ret = "";
+  ret += "( peirce.vec.mkScalar ";
+  ret += float_->getSpaceContainer()->toString();
   ret += " ";
   ret += static_cast<coords::Vector_Lit *>(coords_)->toString();
   ret += " )";
@@ -148,6 +256,14 @@ std::string Vector_Var::toString() const {
   return "";
 }
 
+Float_Var::Float_Var(coords::Float_Var* c, domain::Float_Var* d) : Float(c,d) {
+
+}
+
+std::string Float_Var::toString() const {
+  //LOG(FATAL) << "interp::Vector_Var::toString. Error. Not implemented.\n";
+  return "";
+}
 
 Vector_Expr::Vector_Expr(coords::Vector_Expr *c, domain::Vector_Expr* d, interp::VecExpr *expr_interp) 
   : Vector(c,d), expr_interp_(expr_interp) {
@@ -156,6 +272,16 @@ Vector_Expr::Vector_Expr(coords::Vector_Expr *c, domain::Vector_Expr* d, interp:
 
 std::string Vector_Expr::toString() const {
   return getVector_Expr()->toString(); 
+}
+
+
+Float_Expr::Float_Expr(coords::Float_Expr *c, domain::Float_Expr* d, interp::FloatExpr *expr_interp) 
+  : Float(c,d), expr_interp_(expr_interp) {
+
+}
+
+std::string Float_Expr::toString() const {
+  return getFloat_Expr()->toString(); 
 }
 
 
@@ -173,6 +299,24 @@ std::string Vector_Def::toString() const {
   try{
     if(vec_)
       ret += vec_->toString(); 
+  }
+  catch(std::exception ex)
+  {
+
+  }
+  return ret;
+}
+
+Float_Def::Float_Def(coords::Float_Def* c, domain::Float_Def* d, interp::FloatIdent *id, interp::Float *flt) 
+  : Interp(c,d), id_(id), flt_(flt) { 
+}
+std::string Float_Def::toString() const {
+  std::string ret = "def ";
+  ret += id_->toString();
+  ret += " := ";
+  try{
+    if(flt_)
+      ret += flt_->toString(); 
   }
   catch(std::exception ex)
   {

@@ -41,7 +41,7 @@ class InterpToDomain
 	domain::VecVarExpr *getVecVarExpr(interp::VecVarExpr* c) const;
 	interp::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;
 
-	void putFloatVarExpr(interp::FloatVarExpr *n, domain::FloatVarExpr *e) const;
+	void putFloatVarExpr(interp::FloatVarExpr *n, domain::FloatVarExpr *e);
 	domain::FloatVarExpr *getFloatVarExpr(interp::FloatVarExpr* c) const;
 	interp::FloatVarExpr *getFloatVarExpr(domain::FloatVarExpr* d) const;
 
@@ -89,10 +89,10 @@ class InterpToDomain
 	domain::Float_Expr *getFloat_Expr(interp::Float_Expr* c) const;
 	interp::Float_Expr *getFloat_Expr(domain::Float_Expr* d) const;
 
-	interp::Vector* getVector(domain::Vector* v);
-	domain::Vector* getVector(interp::Vector* v);
+	interp::Float* getFloat(domain::Float* v);
+	domain::Float* getFloat(interp::Float* v);
 
-	void putVector_Def(interp::Float_Def *vardecl_wrapper, domain::Float_Def *b);
+	void putFloat_Def(interp::Float_Def *vardecl_wrapper, domain::Float_Def *b);
 	domain::Float_Def* getFloat_Def(interp::Float_Def* c) const;
 	interp::Float_Def* getFloat_Def(domain::Float_Def* d) const;
 

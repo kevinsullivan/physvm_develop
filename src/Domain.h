@@ -103,14 +103,16 @@ public:
 	VecVecAddExpr* mkVecVecAddExpr(Space* s, domain::VecExpr* left_, domain::VecExpr* right_);
 	VecVecAddExpr* mkVecVecAddExpr(domain::VecExpr* left_, domain::VecExpr* right_);
 
-	VecScalarMulExpr* mkVecScalarMulExpr(Space* s, domain::FloatExpr* flt_, domain::VecExpr* vec_);
-	VecScalarMulExpr* mkVecScalarMulExpr(domain::Float_Expr* flt_, domain::VecExpr* vec_);
+	VecScalarMulExpr* mkVecScalarMulExpr(Space* s, domain::VecExpr *vec, domain::FloatExpr *flt);
+	VecScalarMulExpr* mkVecScalarMulExpr(domain::VecExpr *vec, domain::FloatExpr *flt);
 
 	// KEVIN: For new VecParenExpr horizontal module
 	//
 	VecParenExpr* mkVecParenExpr(Space *s, domain::VecExpr *);
 	VecParenExpr* mkVecParenExpr(domain::VecExpr*);
 
+	FloatParenExpr* mkFloatParenExpr(Space *s, domain::FloatExpr *);
+	FloatParenExpr* mkFloatParenExpr(domain::FloatExpr*);
 	// Values
 	std::vector<Vector *> &getVectors() { return vectors;  }
 
@@ -312,6 +314,7 @@ private:
 };
 
 class VecScalarMulExpr : public VecExpr {
+public:
 	VecScalarMulExpr(
 		Space* s, domain::VecExpr *vec, domain::FloatExpr *flt) :
 			domain::VecExpr(), vec_(vec), flt_(flt) {	}

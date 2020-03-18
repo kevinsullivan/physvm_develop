@@ -86,7 +86,7 @@ interp::FloatIdent *InterpToDomain::getFloatIdent(domain::FloatIdent *d) const
 
 // base
 
-domain::VecExpr *InterpToDomain::getVecExpr(interp::VecExpr *c)
+domain::VecExpr *InterpToDomain::getVecExpr(interp::VecExpr *c) const
 {
     std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
     domain::VecExpr *dom = NULL;
@@ -112,7 +112,7 @@ interp::VecExpr *InterpToDomain::getVecExpr(domain::VecExpr *d) const
     return interp;
 }
 
-domain::FloatExpr *InterpToDomain::getFloatExpr(interp::FloatExpr *c)
+domain::FloatExpr *InterpToDomain::getFloatExpr(interp::FloatExpr *c) const
 {
     std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
     domain::FloatExpr *dom = NULL;
@@ -125,7 +125,7 @@ domain::FloatExpr *InterpToDomain::getFloatExpr(interp::FloatExpr *c)
     return dom;
 }
 
-interp::VecExpr *InterpToDomain::getFloatExpr(domain::VecExpr *d) const
+interp::FloatExpr *InterpToDomain::getFloatExpr(domain::FloatExpr *d) const
 {
     std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
     interp::FloatExpr *interp = NULL;
@@ -365,7 +365,7 @@ domain::Vector *InterpToDomain::getVector(interp::Vector* v) {
 
 interp::Float *InterpToDomain::getFloat(domain::Float* v) {
     std::unordered_map<domain::Float*, interp::Float*>::iterator it;
-    interp::Vector *interp = NULL;
+    interp::Float *interp = NULL;
     try {
         interp = domain2interp_Float.at(v);
     }

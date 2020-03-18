@@ -20,10 +20,6 @@ class CoordsToInterp
 	coords::VecIdent *getVecIdent(interp::VecIdent *d) const;
 
 // Expr
-	void putFloatExpr(coords::FloatExpr *key, interp::FloatExpr *i);
-	interp::VecExpr *getFloatExpr(coords::FloatExpr* c);
-	coords::VecExpr *getFloatExpr(interp::FloatExpr* d) const;
-
 
 	interp::VecExpr *getVecExpr(coords::VecExpr* c);
 	coords::VecExpr *getVecExpr(interp::VecExpr* d) const;
@@ -35,15 +31,35 @@ class CoordsToInterp
 	void putVecVecAddExpr(coords::VecVecAddExpr *n, interp::VecVecAddExpr *e);
 	interp::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
 	coords::VecVecAddExpr *getVecVecAddExpr(interp::VecVecAddExpr* d) const;
-
-	void putVecScalarMulExpr(coords::VecScalarMulExpr *n, interp::VecScalarMulExpr *e);
-	interp::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
-	coords::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* d) const;
 	
 	// KEVIN: This stuff here for VecParenExpr module
 	void putVecParenExpr(coords::VecParenExpr *ast, interp::VecParenExpr *expr);
 	interp::VecParenExpr *getVecParenExpr(coords::VecParenExpr* c) const;
 	coords::VecParenExpr *getVecParenExpr(interp::VecParenExpr* d) const;
+
+	void putVecScalarMulExpr(coords::VecScalarMulExpr *n, interp::VecScalarMulExpr *e);
+	interp::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
+	coords::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* d) const;
+
+// Ident
+
+	void putFloatIdent(coords::FloatIdent *key, interp::FloatIdent *i);
+	interp::FloatIdent *getFloatIdent(coords::FloatIdent *c) const;
+	coords::FloatIdent *getFloatIdent(interp::FloatIdent *d) const;
+
+// Expr
+
+	interp::FloatExpr *getFloatExpr(coords::FloatExpr* c) const;
+	coords::FloatExpr *getFloatExpr(interp::FloatExpr* d) const;
+
+	void putFloatVarExpr(coords::FloatVarExpr *n, interp::FloatVarExpr *e);
+	interp::FloatVarExpr *getFloatVarExpr(coords::FloatVarExpr* c) const;
+	coords::FloatVarExpr *getFloatVarExpr(interp::FloatVarExpr* d) const;
+	
+	// KEVIN: This stuff here for FloatParenExpr module
+	void putFloatParenExpr(coords::FloatParenExpr *ast, interp::FloatParenExpr *expr);
+	interp::FloatParenExpr *getFloatParenExpr(coords::FloatParenExpr* c) const;
+	coords::FloatParenExpr *getFloatParenExpr(interp::FloatParenExpr* d) const;
 
 // Vector
 
@@ -64,6 +80,25 @@ class CoordsToInterp
 	interp::Vector_Def *getVector_Def(coords::Vector_Def* c) const;
 	coords::Vector_Def *getVector_Def(interp::Vector_Def* d) const;
 
+// Float
+
+	void putFloat_Lit(coords::Float *ast, interp::Float_Lit *v);
+	interp::Float_Lit *getFloat_Lit(coords::Float_Lit* c) const;
+	coords::Float_Lit *getFloat_Lit(interp::Float_Lit* d) const;
+
+	void putFloat_Expr(coords::Float *ast, interp::Float_Expr *v);
+	interp::Float_Expr *getFloat_Expr(coords::Float_Expr* c) const;
+	coords::Float_Expr *getFloat_Expr(interp::Float_Expr* d) const;
+
+	coords::Float *getFloat(interp::Float* v);
+	interp::Float *getFloat(coords::Float* v);
+
+// Def
+
+	void putFloat_Def(coords::Float_Def *vardecl_wrapper, interp::Float_Def *b);
+	interp::Float_Def *getFloat_Def(coords::Float_Def* c) const;
+	coords::Float_Def *getFloat_Def(interp::Float_Def* d) const;
+
 	void dump() const;
 
   private:
@@ -83,14 +118,22 @@ class CoordsToInterp
 	std::unordered_map <coords::Vector*, 	interp::Vector*		> 	coords2interp_Vector;
 	std::unordered_map <coords::Vector_Def*,interp::Vector_Def*	> 	coords2interp_Vector_Def;
 
-	std::unordered_map <coords::FloatExpr*, interp::FloatExpr*	> 	coords2interp_FloatExpr;
 
 	std::unordered_map<interp::VecIdent*, 	coords::VecIdent*	> 	interp2coords_VecIdent;
 	std::unordered_map<interp::VecExpr*, 	coords::VecExpr*	> 	interp2coords_VecExpr;
 	std::unordered_map<interp::Vector*, 	coords::Vector*		> 	interp2coords_Vector;
 	std::unordered_map<interp::Vector_Def*, coords::Vector_Def*	> 	interp2coords_Vector_Def;
 
-	std::unordered_map<interp::FloatExpr*, coords::FloatExpr*	> 	interp2coords_FloatExpr;
+	std::unordered_map <coords::FloatIdent*,interp::FloatIdent* > 	coords2interp_FloatIdent;
+	std::unordered_map <coords::FloatExpr*, interp::FloatExpr*	> 	coords2interp_FloatExpr;
+	std::unordered_map <coords::Float*, 	interp::Float*		> 	coords2interp_Float;
+	std::unordered_map <coords::Float_Def*, interp::Float_Def*	> 	coords2interp_Float_Def;
+
+
+	std::unordered_map<interp::FloatIdent*, coords::FloatIdent*	> 	interp2coords_FloatIdent;
+	std::unordered_map<interp::FloatExpr*, 	coords::FloatExpr*	> 	interp2coords_FloatExpr;
+	std::unordered_map<interp::Float*, 		coords::Float*		> 	interp2coords_Float;
+	std::unordered_map<interp::Float_Def*, 	coords::Float_Def*	> 	interp2coords_Float_Def;
 };
 
 } // namespace

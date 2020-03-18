@@ -43,11 +43,7 @@ enum domType
   dom_vecIdent_type,
   dom_vecExpr_type,
   dom_vector_type,
-  dom_vector_def_type
-};
-
-enum floatDomType
-{
+  dom_vector_def_type,
   dom_floatIdent_type,
   dom_floatExpr_type,
   dom_float_type,
@@ -61,6 +57,11 @@ public:
   Interp(coords::VecExpr *c, domain::VecExpr *d);
   Interp(coords::Vector *c, domain::Vector *d);
   Interp(coords::Vector_Def *c, domain::Vector_Def *d);
+
+  Interp(coords::FloatIdent *c, domain::FloatIdent *d);
+  Interp(coords::FloatExpr *c, domain::FloatExpr *d);
+  Interp(coords::Float *c, domain::Float *d);
+  Interp(coords::Float_Def *c, domain::Float_Def *d);
   virtual std::string toString() const;
 
 protected:
@@ -71,6 +72,11 @@ protected:
   domain::VecExpr *expr_;
   domain::Vector *vector_;
   domain::Vector_Def *def_;
+
+  domain::FloatIdent *float_ident_;
+  domain::FloatExpr *float_expr_;
+  domain::Float *float_;
+  domain::Float_Def *float_def_;
 };
 
 /*************************************************************
@@ -97,6 +103,18 @@ class VecIdent : public Interp
   }
 };
 
+class FloatIdent : public Interp
+{
+  public:
+  FloatIdent(coords::FloatIdent *c, domain::FloatIdent *d);
+  const clang::VarDecl *getVarDecl() const;
+  virtual std::string toString() const;
+  bool operator==(const FloatIdent &other) const
+  {
+    return (ident_ == other.ident_);
+  }
+};
+
 /*****
  * Expr
  *****/
@@ -115,6 +133,18 @@ public:
   virtual std::string toString() const;
 };
 
+class FloatExpr : public Interp
+{
+public:
+  FloatExpr(coords::FloatExpr *, domain::FloatExpr *);
+  const ast::FloatExpr *getExpr();
+  bool operator==(const FloatExpr &other) const
+  {
+    return (expr_ == other.expr_);
+  }
+  virtual std::string toString() const;
+};
+
 class VecVarExpr : public VecExpr
 {
 public:
@@ -123,6 +153,16 @@ public:
   const coords::VecVarExpr *getVecVarCoords() const;
   virtual std::string toString() const;
 };
+
+class FloatVarExpr : public FloatExpr
+{
+public:
+  FloatVarExpr(coords::FloatVarExpr *, domain::FloatVarExpr *);
+  const ast::FloatVarExpr *getFloatVarExpr() const;
+  const coords::FloatVarExpr *getFloatVarCoords() const;
+  virtual std::string toString() const;
+};
+
 
 // TODO: add accessors for left and right
 class VecVecAddExpr : public VecExpr
@@ -136,6 +176,19 @@ public:
 private:
   interp::Interp *mem_;
   interp::Interp *arg_;
+};
+
+class VecScalarMulExpr : public VecExpr
+{
+public:
+  VecScalarMulExpr(coords::VecScalarMulExpr *, domain::VecScalarMulExpr *,
+                interp::Interp *vec, interp::Interp *flt);
+  const ast::VecScalarMulExpr *getVecScalarMulExpr();
+  virtual std::string toString() const;
+
+private:
+  interp::Interp *vec_;
+  interp::Interp *flt_;
 };
 
 class VecParenExpr : public VecExpr
@@ -172,6 +225,15 @@ public:
   virtual std::string toString() const;
 };
 
+class Float : public Interp
+{
+public:
+  Float(coords::Float *, domain::Float *); // tag?
+  const ast::Float *getFloat() const;
+  coords::FloatCtorType getFloatType();
+  virtual std::string toString() const;
+};
+
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector
 {
@@ -180,10 +242,26 @@ public:
   virtual std::string toString() const;
 };
 
+class Float_Lit : public Float
+{
+public:
+  Float_Lit(coords::Float_Lit *, domain::Float_Lit *);
+  virtual std::string toString() const;
+};
+
+
 class Vector_Var : public Vector
 {
 public:
   Vector_Var(coords::Vector_Var *, domain::Vector_Var *);
+  virtual std::string toString() const;
+  //VecVarExpr *getVecVarExpr() const;
+};
+
+class Float_Var : public Float
+{
+public:
+  Float_Var(coords::Float_Var *, domain::Float_Var *);
   virtual std::string toString() const;
   //VecVarExpr *getVecVarExpr() const;
 };
@@ -200,6 +278,17 @@ private:
   interp::VecExpr *expr_interp_;
 };
 
+class Float_Expr : public Float
+{
+public:
+  Float_Expr(coords::Float_Expr *, domain::Float_Expr *, interp::FloatExpr *expr_interp);
+  virtual std::string toString() const;
+  interp::FloatExpr *getFloat_Expr() const { return expr_interp_; }
+
+private:
+  interp::FloatExpr *expr_interp_;
+};
+
 /****
  * Def
  ****/
@@ -213,6 +302,17 @@ public:
 private:
   interp::VecIdent *id_;
   interp::Vector *vec_;
+};
+
+class Float_Def : public Interp
+{
+public:
+  Float_Def(coords::Float_Def *, domain::Float_Def *, interp::FloatIdent *id, interp::Float *flt);
+  virtual std::string toString() const;
+
+private:
+  interp::FloatIdent *id_;
+  interp::Float *flt_;
 };
 
 } // namespace interp
