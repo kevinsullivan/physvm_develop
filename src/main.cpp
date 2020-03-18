@@ -437,7 +437,7 @@ public:
     //LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
 
     const BinaryOperator *vec_scalar_mul_member_call_ast =
-        Result.Nodes.getNodeAs<clang::BinaryOperator>("MemberCallExpr");
+        Result.Nodes.getNodeAs<clang::BinaryOperator>("BinaryCallExpr");
     if (vec_scalar_mul_member_call_ast == NULL)
     {
       //LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
@@ -475,10 +475,17 @@ public:
     CXXConstructExprMatcher_.addMatcher(addOpMatcher, &addHandler_);
 
     const StatementMatcher mulOpMatcher =
-        cxxConstructExpr(hasDescendant(binaryOperator(
-                         hasOperatorName("*"))
-          .bind("MemberCallExpr")))
+        cxxConstructExpr(hasDescendant(binaryOperator()
+          .bind("BinaryCallExpr")))
           .bind("VectorConstructMulExpr");
+    const StatementMatcher mulOpMatcher2 =
+        cxxConstructExpr(hasDescendant(cxxMemberCallExpr(
+                         hasDescendant(memberExpr(
+                         hasDeclaration(namedDecl(hasName("operator*"))))))
+          .bind("MemberCallExpr")))
+          .bind("VectorConstructAddExpr");
+    CXXConstructExprMatcher_.addMatcher(mulOpMatcher, &mulHandler_);
+    CXXConstructExprMatcher_.addMatcher(mulOpMatcher2, &mulHandler_);
   };
   void match(const clang::CXXConstructExpr *consdecl)
   {
@@ -549,10 +556,10 @@ public:
     const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
     const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
     //LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
-    interp_->mkVecIdent(vardecl);
+    interp_->mkFloatIdent(vardecl);
     CXXConstructExprMatcher matcher;
     matcher.match(consdecl);
-    interp_->mkVector_Def(declstmt, vardecl, consdecl);
+    interp_->mkFloat_Def(declstmt, vardecl, consdecl);
     //LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: Done.\n"; 
     }
 };

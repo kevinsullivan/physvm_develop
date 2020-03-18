@@ -650,6 +650,32 @@ void Interpretation::mkVarTable(){
 
   }
   */
+  auto floatIdents = domain_->getFloatIdents();
+  auto floatExprs = domain_->getFloatExprs();
+  auto floats = domain_->getFloats();
+  auto floatDefs = domain_->getFloatDefs();
+
+  for(auto it = floatIdents.begin(); it != floatIdents.end();it++)
+  {
+    auto q = this->coords2dom_->getFloatIdent(this->coords2dom_->getFloatIdent(*it));
+
+    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getFloatIdent(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVecIdent(*it));
+    //this->index2dom_[idx++]=
+  }
+  for(auto it = floatExprs.begin(); it != floatExprs.end();it++)
+  {
+    auto q = this->coords2dom_->getFloatExpr(this->coords2dom_->getFloatExpr(*it));
+    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getFloatExpr(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVecExpr(*it));
+
+  }
+  for(auto it = floats.begin(); it != floats.end(); it++)
+  {
+
+    auto q = this->coords2dom_->getFloat(this->coords2dom_->getFloat(*it));
+
+    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getFloat(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVector(*it));
+
+  }
 }
 
 void Interpretation::printVarTable(){
@@ -662,28 +688,11 @@ void Interpretation::printVarTable(){
     auto dom_v = this->coords2dom_->getVector(v);
     auto dom_vi = this->coords2dom_->getVecIdent((coords::VecIdent*)variable);
     auto dom_ve = this->coords2dom_->getVecExpr((coords::VecExpr*)variable);
+    auto f = static_cast<coords::Float*>(variable);
+    auto dom_f = this->coords2dom_->getFloat(f);
+    auto dom_fi = this->coords2dom_->getFloatIdent((coords::FloatIdent*)variable);
+    auto dom_fe = this->coords2dom_->getFloatExpr((coords::FloatExpr*)variable);
 
-    /*
-    auto cvi = (coords::VecIdent*)variable;
-    auto cvve = (coords::VecVarExpr*)variable;
-    auto cvpr = (coords::VecParenExpr*)variable;
-    auto cvvae = (coords::VecVecAddExpr*)variable;
-    auto cvl = (coords::Vector_Lit*)variable;
-    auto cve = (coords::Vector_Expr*)variable;
-
-    if(cvi)
-      std::cout<<cvi->toString()<<std::endl;
-    if(cvve)
-      std::cout<<cvve->toString()<<std::endl;
-    if(cvpr)
-      std::cout<<cvpr->toString()<<std::endl;
-    if(cvvae)
-      std::cout<<cvvae->toString()<<std::endl;
-    if(cvl)
-      std::cout<<cvl->toString()<<std::endl;
-    if(cve)
-      std::cout<<cve->toString()<<std::endl;
-    */
 
     if ((coords::Vector_Def*)variable and false){
       auto dom_vd = this->coords2dom_->getVector_Def((coords::Vector_Def*)variable);
@@ -699,6 +708,18 @@ void Interpretation::printVarTable(){
     }
     else if(dom_ve){
       std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_ve->getSpaceContainer()->toString()<<std::endl;
+
+    }
+    else if(dom_f){
+      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_f->getSpaceContainer()->toString()<<std::endl;
+
+    }
+    else if(dom_fi){
+      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_fi->getSpaceContainer()->toString()<<std::endl;
+
+    }
+    else if(dom_fe){
+      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_fe->getSpaceContainer()->toString()<<std::endl;
 
     }
   }
