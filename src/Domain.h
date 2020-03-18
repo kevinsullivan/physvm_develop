@@ -38,10 +38,14 @@ class FloatExpr;
 //class VecLitExpr;
 class VecVarExpr;
 class VecVecAddExpr;
+
 class VecScalarMulExpr;
+class FloatVarExpr;
 
 // KEVIN ADDING FOR HORIZONTAL MODULE
 class VecParenExpr;
+
+class FloatParenExpr;
 
 class Vector;
 class Vector_Lit;
@@ -89,6 +93,9 @@ public:
 	//
 	VecVarExpr* mkVecVarExpr(Space* s);
 	VecVarExpr* mkVecVarExpr();
+
+	FloatVarExpr* mkFloatVarExpr(Space* s);
+	FloatVarExpr* mkFloatVarExpr();
 
 	// Create a vector-vector-add expression, mem-expr.add(arg-expr) object in domain
 	// Precondition: sub-expressions mem-expr and arg-expr are already in domain
@@ -144,11 +151,10 @@ public:
 
 
 	Float_Def* mkFloat_Def(domain::FloatIdent* identifier, domain::Float* vec);
-	std::vector<Float_Def*> &getFloatDefs { return float_defs; }
+	std::vector<Float_Def*> &getFloatDefs() { return float_defs; }
 
 // Client -- Separated from Domain
 //	bool isConsistent();
-
 private:
 	std::vector<Space*> spaces;
 	std::vector<VecIdent*> idents;
@@ -259,6 +265,7 @@ private:
 };
 
 class FloatExpr {
+public:
 	FloatExpr(Space* s) : space_(s) {}
 	FloatExpr() { this->spaceContainer_ = new SpaceContainer(); }
 	Space* getSpace() const { return space_; };
@@ -276,6 +283,14 @@ class VecVarExpr : public VecExpr {
 public:
     VecVarExpr(Space* s) : VecExpr(s) {}
 		VecVarExpr() : VecExpr() {}
+		// virtual std::string toString() const;
+	private:
+};
+
+class FloatVarExpr : public FloatExpr {
+public:
+    FloatVarExpr(Space* s) : FloatExpr(s) {}
+		FloatVarExpr() : FloatExpr() {}
 		// virtual std::string toString() const;
 	private:
 };
@@ -298,11 +313,26 @@ private:
 
 class VecScalarMulExpr : public VecExpr {
 	VecScalarMulExpr(
-		Space* s, domain::FloatExpr *flt, domain::VecExpr *vec) :
-			domain::FloatExpr(s), flt_(flt), vec_(vec) {	}
+		Space* s, domain::VecExpr *vec, domain::FloatExpr *flt) :
+			domain::VecExpr(), vec_(vec), flt_(flt) {	}
 	VecScalarMulExpr(
-		domain::FloatExpr *flt, domain::VecExpr *vec) :
-			domain::FloatExpr(), flt_(flt), vec_(vec) {	}
+		domain::VecExpr *vec, domain::FloatExpr *flt) :
+			domain::VecExpr(), vec_(vec), flt_(flt) {	}
+	private:
+		domain::VecExpr* vec_;
+		domain::FloatExpr* flt_;
+
+};
+
+
+class FloatParenExpr : public FloatExpr  {
+public:
+		FloatParenExpr(Space *s, domain::FloatExpr *e) : domain::FloatExpr(s), expr_(e) {}
+		FloatParenExpr(domain::FloatExpr *e) : domain::FloatExpr(), expr_(e) {}
+		const domain::FloatExpr* getFloatExpr() const { return expr_; }
+		//std::string toString() const; 
+private:
+		const domain::FloatExpr* expr_; // vec expr from which vector is constructed
 };
 
 
@@ -345,12 +375,12 @@ private:
 enum FloatCtorType {FLOAT_EXPR, FLOAT_LIT, /*VEC_VAR,*/ FLOAT_NONE } ; 
 class Float{
 public:
-	Float(const Space& s, VecCtorType tag) :
+	Float(const Space& s, FloatCtorType tag) :
 		space_(&s), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
-	Float(VecCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
+	Float(FloatCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
 
-	bool isLit() { return (tag_ == VEC_LIT); } 
-	bool isExpr() { return (tag_ == VEC_EXPR); } 
+	bool isLit() { return (tag_ == FLOAT_LIT); } 
+	bool isExpr() { return (tag_ == FLOAT_EXPR); } 
 	//bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
 	const Space* getSpace() {return space_; }
 	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
@@ -413,7 +443,7 @@ class Vector_Var : public Vector {
 class Float_Lit : public Float {
 public:
 	Float_Lit(const Space& s, float scalar) :
-		Float(s, FLOAT_LIT), x_(x), y_(y), z_(z) {
+		Float(s, FLOAT_LIT), scalar_(scalar) {
 	}
 
 	Float_Lit(float scalar) : Float(FLOAT_LIT), scalar_(scalar){}
@@ -439,7 +469,7 @@ private:
 	const domain::FloatExpr* expr_; // vec expr from which vector is constructed
 };
 
-class Float_Var : public Vector {
+class Float_Var : public Float {
 	Float_Var() : Float(*new Space(""), FLOAT_EXPR ) { 
 		//LOG(DEBUG) <<"Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
 	}
@@ -466,14 +496,14 @@ private:
 
 class Float_Def  {
 public:
-	Float_Def(domain::VecIdent* id, domain::Vector* vec): 
-			id_(id), vec_(vec) {}
-	const domain::Vector* getVector() const { return vec_; }
-	const domain::VecIdent* getIdent() { return id_; }
+	Float_Def(domain::FloatIdent* id, domain::Float* flt): 
+			id_(id), flt_(flt) {}
+	const domain::Float* getFloat() const { return flt_; }
+	const domain::FloatIdent* getIdent() { return id_; }
 	// std::string toString() const;
 private:
-	const VecIdent* id_;
-	const Vector* vec_;
+	const FloatIdent* id_;
+	const Float* flt_;
 };
 
 

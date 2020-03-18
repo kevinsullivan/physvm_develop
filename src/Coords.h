@@ -146,7 +146,7 @@ private:
 
 class VecScalarMulExpr : public VecExpr {
 public:
-  VecVecAddExpr(const ast::VecScalarMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec);
+  VecScalarMulExpr(const ast::VecScalarMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec);
   const ast::VecVecAddExpr *getVecVecAddExpr();
   virtual std::string toString() const;
   coords::Coords* getLeft() const { return flt_; }

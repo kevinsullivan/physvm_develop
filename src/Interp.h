@@ -34,6 +34,10 @@ class Float_Var;
 class Float_Expr;
 class Float_Def;
 
+
+class VecParenExpr;
+class FloatParenExpr;
+
 enum domType
 {
   dom_vecIdent_type,
@@ -143,6 +147,17 @@ public:
 
 private:
   interp::VecExpr *paren_expr_;
+};
+
+class FloatParenExpr : public FloatExpr
+{
+public:
+  FloatParenExpr(coords::FloatParenExpr *, domain::FloatParenExpr *, interp::FloatExpr *expr_);
+  virtual std::string toString() const;
+  interp::FloatExpr *getVector_Expr() const { return paren_expr_; }
+
+private:
+  interp::FloatExpr *paren_expr_;
 };
 
 /*

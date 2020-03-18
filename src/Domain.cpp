@@ -100,6 +100,20 @@ domain::VecVarExpr* Domain::mkVecVarExpr()
     return var;
 }
 
+domain::FloatVarExpr *Domain::mkFloatVarExpr(Space *s)
+{
+    domain::FloatVarExpr *var = new domain::FloatVarExpr(s);
+    exprs.push_back(var);
+    return var;
+}
+
+domain::FloatVarExpr* Domain::mkFloatVarExpr()
+{
+    domain::FloatVarExpr *var = new domain::FloatVarExpr();
+    exprs.push_back(var);
+    return var;
+}
+
 domain::VecVecAddExpr *Domain::mkVecVecAddExpr(Space *s, domain::VecExpr *mem, domain::VecExpr *arg)
 {
     domain::VecVecAddExpr *be = new domain::VecVecAddExpr(s, mem, arg);
@@ -125,6 +139,20 @@ domain::VecExpr *VecVecAddExpr::getArgVecExpr()
 }
 
 // KEVIN: Added for VecParen module, has to stay in Domain.h
+domain::VecParenExpr *Domain::mkFloatParenExpr(Space *s, domain::VecExpr *expr)
+{
+		domain::VecParenExpr *var = new domain::VecParenExpr(s, expr);
+		exprs.push_back(var);
+		return var;
+}
+
+domain::FloatParenExpr* Domain::mkFloatParenExpr(domain::VecExpr* expr)
+{
+    domain::FloatParenExpr* var = new domain::FloatParenExpr(expr);
+    exprs.push_back(var);
+    return var;
+}
+
 domain::VecParenExpr *Domain::mkVecParenExpr(Space *s, domain::VecExpr *expr)
 {
 		domain::VecParenExpr *var = new domain::VecParenExpr(s, expr);
@@ -138,8 +166,6 @@ domain::VecParenExpr* Domain::mkVecParenExpr(domain::VecExpr* expr)
     exprs.push_back(var);
     return var;
 }
-
-
 /******
 * Value
 *******/

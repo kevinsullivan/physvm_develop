@@ -104,6 +104,9 @@ public:
 void handle_member_expr_of_add_call(const clang::Expr *left);
 void handle_arg0_of_add_call(const clang::Expr *right);
 
+void handle_arg0_expr_of_mul_call(const clang::Expr *left);
+void handle_arg1_expr_of_mul_call(const clang::Expr *right);
+
 void handleMemberCallExpr(const CXXMemberCallExpr *ast)
 {
   //LOG(DEBUG) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
@@ -134,6 +137,18 @@ public:
   }
 };
 
+class HandlerForCXXMemberCallScalarExprRight_DeclRefExpr : public MatchFinder::MatchCallback
+{
+public:
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+    //LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = " << std::hex << declRefExpr_ast << "\n";
+    interp_->mkFloatVarExpr(declRefExpr_ast);
+    //LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.\n";
+  }
+};
+
 class HandlerForCXXConstructVecVarExpr : public MatchFinder::MatchCallback
 {
 public:
@@ -151,7 +166,23 @@ public:
   }
 };
 
-jlkkj
+
+class HandlerForCXXConstructFloatVarExpr : public MatchFinder::MatchCallback
+{
+public:
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    const CXXConstructExpr *ctor_ast = 
+      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VecVarExpr4");
+    const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecVarExpr2");
+    //LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Start. VecVarExpr = " << std::hex << declRefExpr_ast << "\n";
+    if(ctor_ast and declRefExpr_ast and !(ctor_ast->getNumArgs() == 1)){
+      interp_->mkFloatVarExpr(declRefExpr_ast);
+      interp_->mkFloat_Expr(ctor_ast, declRefExpr_ast); //????
+    }
+    //LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Done.\n";
+  }
+};
 
 // CXXMemberCallExpr is CXXMemberCallExprLeft + CXXMemberCallExprRight
 class HandlerForCXXAddMemberCall : public MatchFinder::MatchCallback
@@ -320,6 +351,27 @@ private:
   HandlerForAddMemberParen mpe_handler_;
 };
 
+class CXXMemberCallExprMemberScalarExprMatcher
+{
+public:
+  CXXMemberCallExprMemberExprMatcher()
+  {
+    // Member expression is a variable expression
+    //
+    const StatementMatcher DeclRefExprPattern = declRefExpr().bind("DeclRefExpr");
+    CXXMemberCallExprMemberExprMatcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
+  }
+  void match(const clang::Expr &call_rhs)
+  {
+    //LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:\n";
+    CXXMemberCallExprMemberExprMatcher_.match(call_rhs, *context_);
+    //LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. DONE matching.\n";
+  }
+private:
+  MatchFinder CXXMemberCallExprMemberExprMatcher_;
+  HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
+};
+
 /*
 TODO: Inline? Looks like we can.
 */
@@ -335,6 +387,67 @@ void handle_member_expr_of_add_call(const clang::Expr *memexpr)
   //LOG(DEBUG) <<"main::handle_member_expr_of_add_call. Done. \n";
  }
 
+
+
+
+
+void handleBinaryCallExpr(const CXXMemberCallExpr *ast)
+{
+  //LOG(DEBUG) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
+  const clang::Expr *vec_ast = ast->getArg(0);
+  const clang::Expr *flt_ast = ast->getArg(1);
+  if (!vec_ast || !flt_ast) {
+    //LOG(FATAL) <<"main::handleMemberCallExpr. Null pointer error.\n";
+    return;
+  }
+  //handle_member_expr_of_add_call(mem_ast);
+  //handle_arg0_of_add_call(arg_ast);
+  handle_arg0_of_mul_call(vec_ast);
+  handle_arg1_of_mul_call(flt_ast);
+
+  interp_->mkVecScalarMulExpr(ast, flt_ast, vec_ast);
+  //LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
+}
+
+
+void handle_arg0_expr_of_mul_call(const clang::Expr *left){
+  
+  CXXMemberCallExprMemberExprMatcher call_expr_mem_expr_matcher;
+  call_expr_mem_expr_matcher.match(*left);
+}
+
+void handle_arg1_expr_of_mul_call(const clang::Expr *right){
+  //t
+  CXXMemberCallExprMemberScalarExprMatcher call_expr_mem_expr_matcher;
+  call_expr_mem_expr_matcher.match(*right);
+}
+
+class HandlerForCXXConstructMulExpr : public MatchFinder::MatchCallback
+{
+public:
+  virtual void run(const MatchFinder::MatchResult &Result)
+  {
+    const CXXConstructExpr *ctor_ast = 
+      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorConstructMulExpr");
+    if (ctor_ast == NULL)
+    {
+      //LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No constructor pointer\n";
+      return;
+    }
+    //LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
+
+    const CXXMemberCallExpr *vec_scalar_mul_member_call_ast =
+        Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
+    if (vec_scalar_mul_member_call_ast == NULL)
+    {
+      //LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
+      return;
+    }
+    handleBinaryCallExpr(vec_scalar_mul_member_call_ast);
+    //LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: Done.\n";
+    interp_->mkVector_Expr(ctor_ast, vec_scalar_mul_member_call_ast);
+  }
+};
 
 /*
 A CXXConstructExpr is used to construct a vector object from
@@ -360,6 +473,12 @@ public:
           .bind("MemberCallExpr")))
           .bind("VectorConstructAddExpr");
     CXXConstructExprMatcher_.addMatcher(addOpMatcher, &addHandler_);
+
+    const StatementMatcher mulOpMatcher =
+        cxxConstructExpr(hasDescendant(binaryOperator(
+                         hasOperatorName("*"))
+          .bind("MemberCallExpr")))
+          .bind("VectorConstructMulExpr");
   };
   void match(const clang::CXXConstructExpr *consdecl)
   {
@@ -392,8 +511,8 @@ public:
   }
 private:
   MatchFinder CXXConstructExprMatcher_;
-  HandlerForCXXConstructScalarLitExpr scalarLitHandler_;
-  HandlerForCXXConstructScalarVarExpr scalarVarHandler_;
+  HandlerForCXXConstructFloatLitExpr scalarLitHandler_;
+  HandlerForCXXConstructFloatVarExpr scalarVarHandler_;
 };
 
 /*

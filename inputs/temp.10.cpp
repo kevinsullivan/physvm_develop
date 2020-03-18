@@ -25,6 +25,10 @@ public:
   Vec& operator*(const float& scalar){
     return *std::unique_ptr<Vec>(new Vec{this->_x*scalar,this->_y*scalar,this->_z*scalar});
   }
+
+  Vec& vec_mul(float& scalar){
+    return *std::unique_ptr<Vec>(new Vec{this->_x*scalar,this->_y*scalar,this->_z*scalar});
+  }
   
   ~Vec(){};
 
