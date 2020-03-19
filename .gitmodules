@@ -6,7 +6,7 @@
 	url = https://github.com/KjellKod/g3log.git
 [submodule "phys"]
 	path = deps/phys
-	url = git@gitlab.cs.virginia.edu:physicalsemantics/Peirce.git
+	url = git@gitlab.cs.virginia.edu:kjs5d/phys.git
 [submodule "mathlib"]
     path = deps/mathlib
     url = https://github.com/leanprover-community/mathlib.git
