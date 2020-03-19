@@ -9,11 +9,9 @@ This document contains an abbreviated set of steps to be followed to pepare your
 3. Contact the Docker administrator for Peirce who will add your account as a collaborator to the Peirce Docker
 4. Download Docker for your respective platform and ensure daemon is running
 5. Issue the following command: "docker login gitlab.cs.virginia.edu:5099 -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKER_PASSWORD_HERE%"
-6. Next in a terminal window: "docker pull gitlab.cs.virginia.edu:5099/physicalsemantics/peirce". A 3GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
+6. Next in a terminal window: "docker pull gitlab.cs.virginia.edu:5099/physicalsemantics/peirce". A several GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
 7. Test image with: docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash
 8. This can be shut off with : "docker container stop peirce_docker"
-
-#### This will need to be updated when UVA's Gitlab Docker Registry is fully working and our image is migrated internally.
 
 ## Gitlab Setup
 
@@ -36,7 +34,7 @@ This document contains an abbreviated set of steps to be followed to pepare your
 4. Choose "peirce_docker" from the list
 5. There should be an "open folder" option that will open a dialog, from which you should navigate to "/peirce" (This will be the same as your local peirce repository directory if you performed Step 1 correctly).
 6. Go to your Extensions
-7. VSCode does not have all of your extensions installed by default within the container context. You will likely receive an installation prompt as you did in section VSCode Setup, Step 4. If not, proceed to your extensions tab, filter to "installed", click on C/C++ and Clang Command Adapter, and, for both, click on "Install in Container"
+7. VSCode does not have all of your extensions installed by default within the container context. After you are attached to the container, you will likely receive an installation prompt as you did in section VSCode Setup, Step 4. If not, proceed to your extensions tab, filter to "installed", click on all recommended extensions, including C/C++ and Clang Command Adapter, and, for all, click on "Install in Container". This will likely require you to click "Reload", afterwards
 8. You'll (theoretically) be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
 
 
