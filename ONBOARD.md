@@ -13,6 +13,8 @@ This document contains an abbreviated set of steps to be followed to pepare your
 7. Test image with: docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash
 8. This can be shut off with : "docker container stop peirce_docker"
 
+#### NOTE: It is important that you mount your local directory to /peirce . The path variables use locations within /peirce
+
 ## Gitlab Setup
 
 1. Ensure you have an account with and access to https://gitlab.cs.virginia.edu/
