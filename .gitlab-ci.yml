@@ -1,0 +1,7 @@
+image: gitlab.cs.virginia.edu:5099/physicalsemantics/peirce
+build:
+    stage: build
+    script: git submodule update --init --recursive && cd src && make && make install && cd ..
+    artifacts:
+        paths:
+        - bin/peirce
