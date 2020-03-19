@@ -18,6 +18,7 @@ This document contains an abbreviated set of steps to be followed to pepare your
 1. Ensure you have an account with and access to https://gitlab.cs.virginia.edu/
 2. Obtain developer access to the "Peirce Docker Builder" and "Peirce" repositories if you don't already.
 3. Clone both repositories locally
+4. In your local Peirce repository directory, type "git submodule update --init --recursive" to download dependencies
 
 ## VSCode Setup
 
