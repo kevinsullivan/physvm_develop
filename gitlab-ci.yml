@@ -1,4 +1,4 @@
-image: andrewe8/andrewpeircetest
+image: gitlab.cs.virginia.edu:5099/physicalsemantics/peirce
 build:
     stage: build
     script: cd src && make && make install && cd ..
