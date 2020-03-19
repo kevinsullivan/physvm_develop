@@ -6,4 +6,7 @@
 	url = https://github.com/KjellKod/g3log.git
 [submodule "phys"]
 	path = deps/phys
-	url = https://github.com/kevinsullivan/phys.git
+	url = https://gitlab.cs.virginia.edu/kjs5d/phys.git
+[submodule "mathlib"]
+    path = deps/mathlib
+    url = https://github.com/leanprover-community/mathlib.git
