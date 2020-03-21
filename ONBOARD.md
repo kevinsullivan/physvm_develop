@@ -31,7 +31,9 @@ This document contains an abbreviated set of steps to be followed to pepare your
 
 ## Running Peirce in VSCode
 
-1. In a terminal: "docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash"
+1. In a terminal start the docker image for the build environment
+- Linux/OSX: "docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash"
+- Windows/GitBash: "winpty docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash" 
 2. In VSCode: Use the Command Palette (Ctrl + Shift + P)
 3. Type in "attach" to trigger auto-complete -> Select ~ "Remote-Contaiers - Attach to Running Container"
 4. Choose "peirce_docker" from the list
