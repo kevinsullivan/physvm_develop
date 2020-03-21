@@ -14,8 +14,10 @@ docker login gitlab.cs.virginia.edu:5099 -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKE
 ```
 6. Next in a terminal window: 
 ```shell
-"docker pull gitlab.cs.virginia.edu:5099/physicalsemantics/peirce". A several GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
+docker pull gitlab.cs.virginia.edu:5099/physicalsemantics/peirce
 ```
+A several GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
+
 7. Test image:
 ```shell
 docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash
