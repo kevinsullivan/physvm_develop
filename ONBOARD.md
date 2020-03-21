@@ -24,7 +24,7 @@ docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --nam
 ```
 8. This can be shut off with : 
 ```shell
-docker container stop peirce_docker"
+docker container stop peirce_docker
 ```
 
 #### NOTE: It is important that you mount your local directory to /peirce . The path variables use locations within /peirce
