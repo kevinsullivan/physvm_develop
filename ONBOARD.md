@@ -8,10 +8,22 @@ This document contains an abbreviated set of steps to be followed to pepare your
 2. Create a user account
 3. Contact the Docker administrator for Peirce who will add your account as a collaborator to the Peirce Docker
 4. Download Docker for your respective platform and ensure daemon is running
-5. Issue the following command: "docker login gitlab.cs.virginia.edu:5099 -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKER_PASSWORD_HERE%"
-6. Next in a terminal window: "docker pull gitlab.cs.virginia.edu:5099/physicalsemantics/peirce". A several GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
-7. Test image with: docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash
-8. This can be shut off with : "docker container stop peirce_docker"
+5. Issue the following command with appropriate substitutions
+```shell
+docker login gitlab.cs.virginia.edu:5099 -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKER_PASSWORD_HERE%"
+```
+6. Next in a terminal window: 
+```shell
+"docker pull gitlab.cs.virginia.edu:5099/physicalsemantics/peirce". A several GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
+```
+7. Test image:
+```shell
+docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash
+```
+8. This can be shut off with : 
+```shell
+docker container stop peirce_docker"
+```
 
 #### NOTE: It is important that you mount your local directory to /peirce . The path variables use locations within /peirce
 
@@ -20,7 +32,10 @@ This document contains an abbreviated set of steps to be followed to pepare your
 1. Ensure you have an account with and access to https://gitlab.cs.virginia.edu/
 2. Obtain developer access to the "Peirce Docker Builder" and "Peirce" repositories if you don't already.
 3. Clone both repositories locally
-4. In your local Peirce repository directory, type "git submodule update --init --recursive" to download dependencies
+4. In your local Peirce repository directory, type the following to download dependencies
+```shell
+git submodule update --init --recursive
+```
 
 ## VSCode Setup
 
