@@ -4,25 +4,22 @@ This document contains an abbreviated set of steps to be followed to pepare your
 
 ## Docker Setup
 
-1. Go to Docker.io
-2. Create a user account
-3. Contact the Docker administrator for Peirce who will add your account as a collaborator to the Peirce Docker
-4. Download Docker for your respective platform and ensure daemon is running
-5. Issue the following command with appropriate substitutions
+1. Download Docker for your respective platform and ensure daemon is running
+2. Issue the following command with appropriate substitutions
 ```shell
 docker login gitlab.cs.virginia.edu:5099 -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKER_PASSWORD_HERE%"
 ```
-6. Next in a terminal window: 
+3. Next in a terminal window: 
 ```shell
 docker pull gitlab.cs.virginia.edu:5099/physicalsemantics/peirce
 ```
 A several GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
 
-7. Test image:
+4. Test image:
 ```shell
 docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash
 ```
-8. This can be shut off with : 
+5. This can be shut off with : 
 ```shell
 docker container stop peirce_docker
 ```
