@@ -1,8 +1,6 @@
 #ifndef INTERP_H
 #define INTERP_H
 
-#include "clang/AST/AST.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
 #include <cstddef>
 #include <iostream> // for cheap logging only
 

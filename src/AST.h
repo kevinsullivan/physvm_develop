@@ -26,7 +26,7 @@ using FloatExpr = const clang::Expr;
 using FloatLitExpr = const clang::CXXConstructExpr;
 using FloatVarExpr = const clang::DeclRefExpr;
 
-using VecScalarMulExpr = const clang::BinaryOperator;
+using VecScalarMulExpr = const clang::CXXMemberCallExpr;
 
 // KEVIN: Add for VecParenExpr module
 using VecParenExpr = const clang::ParenExpr;

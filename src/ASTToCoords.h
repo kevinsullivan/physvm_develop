@@ -21,7 +21,7 @@ code element types.
 
 Note: At present, the only kind of Clang AST nodes that we need
 are Stmt nodes. Stmt is a deep base class for Clang AST nodes,
-including clang::Expr, clang::DeclRefExpr, clang:MemberCallExpr,
+including clang::Expr, ast::VecIdentRefExpr, clang:MemberCallExpr,
 and so forth. So the current class is overbuilt in a sense; but
 we design it as we have to show the intended path to generality.
 
@@ -96,20 +96,20 @@ public:
         return stmt_coords[s];
     }
 
-    coords::Coords *getDeclCoords(const clang::Decl *d) {
+    coords::Coords *getDeclCoords(const ast::VecIdent *d) {
         return decl_coords[d];
     }
 
   private:
     void overrideStmt2Coords(const clang::Stmt *s, coords::Coords *c);
-    void overrideDecl2Coords(const clang::Decl *d, coords::Coords *c);
+    void overrideDecl2Coords(const ast::VecIdent *d, coords::Coords *c);
     void overrideCoords2Stmt(coords::Coords *c, const clang::Stmt *s);
-    void overrideCoords2Decl(coords::Coords *c, const clang::Decl *d);
+    void overrideCoords2Decl(coords::Coords *c, const ast::VecIdent *d);
 
     std::unordered_map<const clang::Stmt *, coords::Coords *> stmt_coords;
-    std::unordered_map<const clang::Decl *, coords::Coords *> decl_coords;
+    std::unordered_map<const ast::VecIdent *, coords::Coords *> decl_coords;
     std::unordered_map<coords::Coords *, const clang::Stmt *> coords_stmt;
-    std::unordered_map<coords::Coords *, const clang::Decl *> coords_decl;
+    std::unordered_map<coords::Coords *, const ast::VecIdent *> coords_decl;
 };
 
 } // namespace

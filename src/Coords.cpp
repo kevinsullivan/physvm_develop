@@ -165,12 +165,12 @@ std::string VecVecAddExpr::toString() const {
  // VecScalarMulExpr(const ast::VecScalarMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec);
  // const ast::VecScalarMulExpr *getVecScalarMulExpr();
 VecScalarMulExpr::VecScalarMulExpr(
-    const clang::BinaryOperator *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec) 
+    const clang::CXXMemberCallExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec) 
         : VecExpr(mce, c), flt_(flt), vec_(vec) {
 }
 
 const ast::VecScalarMulExpr *VecScalarMulExpr::getVecScalarMulExpr() {
-    return static_cast<const clang::BinaryOperator *> (clang_stmt_);  
+    return static_cast<const clang::CXXMemberCallExpr *> (clang_stmt_);  
 }
 
 std::string VecScalarMulExpr::toString() const {

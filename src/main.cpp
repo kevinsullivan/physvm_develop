@@ -15,6 +15,8 @@
 #include "Interpretation.h"
 #include "Checker.h"
 
+#include "MainMatcher.h"
+//#include "ASTParse/VectorExprMatcher.h"
 
 /*
 Hack to get g3log working. Should be in std in c++14 and later libraries.
@@ -52,6 +54,7 @@ Data structure instantiated by this tool
 
 interp::Interpretation* interp_;
 clang::ASTContext *context_;
+MainMatcher *programMatcher_;
 
 // TODO: Decide whether we should pass context to interpretation.
 // Answer is probably yes. Not currently being done.
@@ -219,7 +222,7 @@ public:
     const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
     if (memcall == NULL)
     {
-      //LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
+      //LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::ru`n: null memcall\n";
       return;
     }
     handleMemberCallExpr(memcall);
@@ -405,7 +408,8 @@ void handleBinaryCallExpr(const BinaryOperator *ast)
   handle_arg0_expr_of_mul_call(vec_ast);
   handle_arg1_expr_of_mul_call(flt_ast);
 
-  interp_->mkVecScalarMulExpr(ast, flt_ast, vec_ast);
+  //-----
+  //interp_->mkVecScalarMulExpr(ast, flt_ast, vec_ast);
   //LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
 }
 
@@ -482,8 +486,8 @@ public:
         cxxConstructExpr(hasDescendant(cxxMemberCallExpr(
                          hasDescendant(memberExpr(
                          hasDeclaration(namedDecl(hasName("operator*"))))))
-          .bind("MemberCallExpr")))
-          .bind("VectorConstructAddExpr");
+          .bind("BinaryCallExpr")))
+          .bind("VectorConstructMulExpr");
     CXXConstructExprMatcher_.addMatcher(mulOpMatcher, &mulHandler_);
     CXXConstructExprMatcher_.addMatcher(mulOpMatcher2, &mulHandler_);
   };
@@ -573,21 +577,37 @@ class MyASTConsumer : public ASTConsumer
 public:
   MyASTConsumer()
   {
-    StatementMatcher match_Vector_general_decl =
-        declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("class Vec"))).bind("CXXConstructExpr"))).bind("VarDecl"))).bind("VectorDeclStatement");
+    //StatementMatcher match_Vector_general_decl =to(cxxMethodDecl(hasName("=")))
+    //    declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("class Vec"))).bind("CXXConstructExpr"))).bind("VarDecl"))).bind("VectorDeclStatement");
     StatementMatcher match_Scalar_general_decl =
-        declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("float"))).bind("CXXConstructExpr"))).bind("VarDecl"))).bind("ScalarDeclStatement");
-    
-    DeclStmtMatcher.addMatcher(match_Vector_general_decl, &HandlerForVectorDeclStmt);
-    DeclStmtMatcher.addMatcher(match_Scalar_general_decl, &HandlerForScalarDeclStmt);
+      binaryOperator(allOf(hasLHS(anyOf(implicitCastExpr(expr()),binaryOperator())),hasRHS(anyOf(implicitCastExpr(expr()), binaryOperator())))).bind("ScalarDeclStatement");
+      //cxxMemberCallExpr(has(memberExpr(member(hasName("vec_add")))));
+      //cxxOperatorCallExpr(allOf(hasOverloadedOperatorName("="),has(declRefExpr(hasType(asString("class Vec"))))));
+      //binaryOperator(allOf(hasOperatorName("="),has(declRefExpr(hasType(asString("float"))))));
+      //cxxOperatorCallExpr(allOf(isAssignmentOperator(),has(declRefExpr(hasType(asString("class Vec"))))));
+      //cxxOperatorCallExpr(allOf(hasType(asString("class Vec"),has(implicitCastExpr(has(declRefExpr()))))));
+        //declStmt(has(varDecl(allOf(hasType(asString("float")),has(expr().bind("CXXConstructExpr")))))).bind("ScalarDeclStatement");
+        /*
+        CXXOperatorCallExpr 0x55e4e95e2c90 <line:80:3, col:11> 'Vec' lvalue
+    | |-ImplicitCastExpr 0x55e4e95e2c78 <col:6> 'Vec &(*)(const Vec &) noexcept' <FunctionToPointerDecay>
+    | | `-DeclRefExpr 0x55e4e95e28a8 <col:6> 'Vec &(const Vec &) noexcept' lvalue CXXMethod 0x55e4e95e26d0 'operator=' 
+
+        */
+      
+
+    //DeclStmtMatcher.addMatcher(match_Vector_general_decl, &HandlerForVectorDeclStmt);
+    //DeclStmtMatcher.addMatcher(match_Scalar_general_decl, &HandlerForScalarDeclStmt);
   }
   void HandleTranslationUnit(ASTContext &context) override
   {
-    DeclStmtMatcher.matchAST(context);
+    //DeclStmtMatcher.matchAST(context);
+    programMatcher_->search();
+    programMatcher_->start();
+    
   }
 
 private:
-  MatchFinder DeclStmtMatcher;
+  MatchFinder ProgramFinder;
   VectorDeclStmtHandler HandlerForVectorDeclStmt;
   ScalarDeclStmtHandler HandlerForScalarDeclStmt;
 };
@@ -611,6 +631,7 @@ public:
     //LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
     context_ = &CI.getASTContext();
     interp_->setASTContext(context_);
+    programMatcher_ = new MainMatcher(context_);
     return llvm::make_unique<MyASTConsumer>(); 
   }
 };

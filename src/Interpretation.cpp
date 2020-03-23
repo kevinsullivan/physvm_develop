@@ -489,15 +489,6 @@ std::string Interpretation::toString_FloatDefs() {
 
 
 
-/*
-
-    std::string toString_FloatIdents();
-    std::string toString_FloatExprs();
-    std::string toString_FloatVectors();
-    std::string toString_FloatDefs();
-    
-
-*/
 
 void Interpretation::setAll_Spaces() {
   auto vecIdents = domain_->getVecIdents();
@@ -507,15 +498,6 @@ void Interpretation::setAll_Spaces() {
 
   for(auto beg = vecIdents.begin(); beg != vecIdents.end(); beg++)
   {
-   /* coords::VecIdent *coords = ast2coords_->mkVecIdent(ast, context_);
-  LOG(DEBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-  //domain::Space &space = oracle_->getSpaceForVecIdent(coords);
-  domain::VecIdent *dom = domain_->mkVecIdent();
-  coords2dom_->putVecIdent(coords, dom);
-  interp::VecIdent *interp = new interp::VecIdent(coords, dom);
-  coords2interp_->putVecIdent(coords, interp);
-  interp2domain_->putVecIdent(interp, dom);
-*/
 
     auto p = *beg;
 
@@ -527,18 +509,6 @@ void Interpretation::setAll_Spaces() {
 
   for(auto beg = vecExprs.begin(); beg != vecExprs.end(); beg++)
   {
-    /*
-    coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast, context_);
-    LOG(DEBUG) << "Interpretation::mkVecVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-    //ast->dump();
-    domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
-    domain::VecVarExpr *dom = domain_->mkVecVarExpr(space);
-    coords2dom_->PutVecVarExpr(coords, dom);
-    interp::VecVarExpr *interp = new interp::VecVarExpr(coords,dom);
-    coords2interp_->putVecVarExpr(coords, interp);
-    interp2domain_->putVecVarExpr(interp,dom);
-
-    */
     auto ve = *beg;
 
     auto vve = (domain::VecVarExpr*)ve;
@@ -576,15 +546,6 @@ void Interpretation::setAll_Spaces() {
 
   for(auto beg = vecs.begin(); beg != vecs.end(); beg++)
   {
-    /*
-    coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, context_, x, y, z);  
-    //domain::Space& s = oracle_->getSpaceForVector_Lit(coords);  //*new domain::Space("Interpretation::mkVector_Expr:: Warning. Using Stub Space\n.");
-    domain::Vector_Lit *dom = domain_->mkVector_Lit(x, y, z);
-    coords2dom_->putVector_Lit(coords, dom); 
-    interp::Vector_Lit *interp = new interp::Vector_Lit(coords, dom);
-    coords2interp_->putVector_Lit(coords, interp);
-    interp2domain_->putVector_Lit(interp,dom);
-    */
     auto vec = *beg;
 
     auto vl = (domain::Vector_Lit*)vec;

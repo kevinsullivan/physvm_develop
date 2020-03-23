@@ -1,6 +1,8 @@
 #include "ASTToCoords.h"
 //#include <g3log/g3log.hpp>
 
+#include<iostream>
+#include<exception>
 
 /*
 Create Coords object for given AST node and update AST-to_Coords
@@ -15,8 +17,15 @@ ASTToCoords::ASTToCoords() {}
 
 coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast, clang::ASTContext *c) {
     coords::VecIdent *coord = new coords::VecIdent(ast, c);
-    overrideDecl2Coords(ast,coord);     // Use Clang canonical addresses? 
-    overrideCoords2Decl(coord, ast);     // Use Clang canonical addresses? 
+    //overrideDecl2Coords(ast,coord);     // Use Clang canonical addresses? 
+   //overrideCoords2Decl(coord, ast);     // Use Clang canonical addresses?  
+    try{
+        coords_decl.insert(std::make_pair(coord, ast));
+    }
+    catch(std::exception& e){
+        std::cout<<e.what()<<std::endl;
+    }
+    decl_coords.insert(std::make_pair(ast, coord));
     return coord;
 }
 
@@ -161,25 +170,33 @@ coords::Float_Def *ASTToCoords::mkFloat_Def(
 
 
 
-
+using namespace std;
 void ASTToCoords::overrideStmt2Coords(const clang::Stmt *s, coords::Coords *c) {
-    stmt_coords.insert(std::make_pair(s, c));
+    for (auto x : stmt_coords) 
+      cout << x.first << " " << x.second << endl; 
+    if(stmt_coords.find(s) != stmt_coords.end())
+        stmt_coords.insert(std::make_pair(s, c));
 }
 
 
 
-void ASTToCoords::overrideDecl2Coords(const clang::Decl *d, coords::Coords *c) {
-    decl_coords.insert(std::make_pair(d, c));
+void ASTToCoords::overrideDecl2Coords(const ast::VecIdent *d, coords::Coords *c) {
+    for (auto x : decl_coords) 
+      cout << x.first << " " << x.second << endl; 
+    if(decl_coords.find(d) != decl_coords.end())
+        decl_coords.insert(std::make_pair(d, c));
 }
 
 
 
 void ASTToCoords::overrideCoords2Stmt(coords::Coords *c, const clang::Stmt *s) {
-    coords_stmt.insert(std::make_pair(c, s));
+    if(coords_stmt.find(c) != coords_stmt.end())
+        coords_stmt.insert(std::make_pair(c, s));
 }
 
 
 
-void ASTToCoords::overrideCoords2Decl(coords::Coords *c, const clang::Decl *d) {
-    coords_decl.insert(std::make_pair(c, d));
+void ASTToCoords::overrideCoords2Decl(coords::Coords *c, const ast::VecIdent *d) {
+    if(coords_decl.find(c) != coords_decl.end())
+        coords_decl.insert(std::make_pair(c, d));
 }

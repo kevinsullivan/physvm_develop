@@ -37,7 +37,7 @@ TAR := tar
 # C flags
 CFLAGS := -O0 -g -Wall -Wextra -pedantic
 # C++ flags
-CXXFLAGS := -O0 -g -Wall -Wextra -pedantic
+CXXFLAGS := -Od -g -Wall -Wextra -pedantic
 # C/C++ flags
 CPPFLAGS := 
 # Clang C++ flags
