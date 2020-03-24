@@ -43,6 +43,15 @@ public:
     These operations work by side-effecting interpretation state.
     Precondition: subsequent ast arguments already interpretated.
     */
+
+    //this is necessary because of the immediate-parent-paradigm
+    void mkVecWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::VecExpr *expr);
+    void mkVecWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::VecExpr *expr);
+    void mkFloatWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::FloatExpr *expr);
+    void mkFloatWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::FloatExpr *expr);
+
+
+
     void mkVecIdent(ast::VecIdent *ast);
     void mkVecVarExpr(ast::VecVarExpr *ast);
 

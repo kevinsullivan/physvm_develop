@@ -37,6 +37,14 @@ class InterpToDomain
 	domain::VecLitExpr *getLitInterp(interp::VecLitExpr c) const;
 	interp::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;*/
 
+	void putVecWrapper(interp::VecWrapper *n, domain::VecWrapper *e);
+	domain::VecWrapper *getVecWrapper(interp::VecWrapper* c) const;
+	interp::VecWrapper *getVecWrapper(domain::VecWrapper* d) const;
+
+	void putFloatWrapper(interp::FloatWrapper *n, domain::FloatWrapper *e);
+	domain::FloatWrapper *getFloatWrapper(interp::FloatWrapper* c) const;
+	interp::FloatWrapper *getFloatWrapper(domain::FloatWrapper* d) const;
+
 	void putVecVarExpr(interp::VecVarExpr *n, domain::VecVarExpr *e);
 	domain::VecVarExpr *getVecVarExpr(interp::VecVarExpr* c) const;
 	interp::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;

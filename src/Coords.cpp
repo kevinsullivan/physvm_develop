@@ -45,7 +45,7 @@ std::string Coords::toString() const {
 }
 
 std::string Coords::getSourceLoc() const {
-    clang::FullSourceLoc FullLocation;
+    //clang::FullSourceLoc FullLocation;
     if (ast_type_tag_ == CLANG_AST_STMT)
     {
       //FullLocation = context_->getFullLoc(clang_stmt_->getBeginLoc());
@@ -118,6 +118,54 @@ std::string FloatExpr::toString() const {
     //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
     return NULL; 
 }
+/*
+
+class VecWrapper : public VecExpr {
+public:
+  VecWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c);
+  VecWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c);
+
+  const ast::VecExpr *getVecWrapper() const;
+
+  virtual std::string toString() const;
+};
+
+class FloatWrapper : public VecExpr {
+public:
+  FloatWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c);
+  FloatWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c);
+
+  const ast::VecExpr *getFloatWrapper() const;
+
+  virtual std::string toString() const;
+};
+
+*/
+VecWrapper::VecWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
+
+VecWrapper::VecWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
+
+const ast::VecExpr *VecWrapper::getVecWrapper() const {
+    return static_cast<const clang::Expr*>(this->clang_stmt_);
+};
+
+std::string VecWrapper::toString() const {
+    return expr_->toString();//We simply ignore the wrapper
+};
+
+
+FloatWrapper::FloatWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::FloatExpr *expr) : FloatExpr(d, c), expr_(expr) {}
+
+FloatWrapper::FloatWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::FloatExpr *expr) : FloatExpr(d, c), expr_(expr) {}
+
+const ast::VecExpr *FloatWrapper::getFloatWrapper() const{
+    return static_cast<const clang::Expr*>(this->clang_stmt_);
+}
+
+std::string FloatWrapper::toString() const{
+    return expr_->toString();//We simply ignore the wrapper
+}
+
 
 /*
 No such intermediate node in Clang AST.

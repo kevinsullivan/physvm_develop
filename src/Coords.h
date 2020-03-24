@@ -116,6 +116,31 @@ public:
   }
 };
 
+class VecWrapper : public VecExpr {
+public:
+  VecWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
+  VecWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
+
+  const ast::VecExpr *getVecWrapper() const;
+
+  virtual std::string toString() const;
+  
+  protected:
+    coords::VecExpr *expr_;
+};
+
+class FloatWrapper : public FloatExpr {
+public:
+  FloatWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::FloatExpr *expr);
+  FloatWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::FloatExpr *expr);
+
+  const ast::VecExpr *getFloatWrapper() const;
+
+  virtual std::string toString() const;
+  
+  protected:
+    coords::FloatExpr *expr_;
+};
 class VecVarExpr : public VecExpr {
 public:
   VecVarExpr(const ast::VecVarExpr *d, clang::ASTContext *c);

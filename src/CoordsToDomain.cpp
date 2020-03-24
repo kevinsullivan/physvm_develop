@@ -163,6 +163,75 @@ coords::VecLitExpr *CoordsToDomain::getLitInterp(domain::VecLitExpr d) const {
 */
 
 
+void CoordsToDomain::putVecWrapper(coords::VecWrapper *c, domain::VecWrapper *d)
+{
+    coords2dom_VecExpr[c] = d;
+    dom2coords_VecExpr[d] = c;
+//    coord2dom_VecExpr.insert(std::make_pair(*c, d));
+}
+
+domain::VecWrapper *CoordsToDomain::getVecWrapper(coords::VecWrapper *c) const
+{
+    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::VecWrapper*>(dom);
+}
+
+coords::VecWrapper *CoordsToDomain::getVecWrapper(domain::VecWrapper *d) const
+{
+    std::unordered_map<domain::VecExpr*, coords::VecExpr*>::iterator it;
+    coords::VecExpr *coords = NULL;
+    try {
+        coords = dom2coords_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::VecWrapper *>(coords);
+}
+
+
+
+void CoordsToDomain::putFloatWrapper(coords::FloatWrapper *c, domain::FloatWrapper *d)
+{
+    coords2dom_FloatExpr[c] = d;
+    dom2coords_FloatExpr[d] = c;
+//    coord2dom_VecExpr.insert(std::make_pair(*c, d));
+}
+
+domain::FloatWrapper *CoordsToDomain::getFloatWrapper(coords::FloatWrapper *c) const
+{
+    std::unordered_map<coords::FloatExpr*, domain::FloatExpr*>::iterator it;
+    domain::FloatExpr *dom = NULL;
+    try {
+        dom = coords2dom_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::FloatWrapper*>(dom);
+}
+
+coords::FloatWrapper *CoordsToDomain::getFloatWrapper(domain::FloatWrapper *d) const
+{
+    std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = dom2coords_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::FloatWrapper *>(coords);
+}
+
+
 
 // var
 

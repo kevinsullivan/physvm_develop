@@ -5,6 +5,10 @@
 #include "clang/AST/AST.h"
 #include "Coords.h"
 
+#include <memory>
+
+#include <iostream>
+
 // KEVIN: For VecParenExpr module
 #include "VecParenExpr.h"
 
@@ -21,7 +25,7 @@ code element types.
 
 Note: At present, the only kind of Clang AST nodes that we need
 are Stmt nodes. Stmt is a deep base class for Clang AST nodes,
-including clang::Expr, ast::VecIdentRefExpr, clang:MemberCallExpr,
+including clang::Expr, clang::DeclRefExpr, clang:MemberCallExpr,
 and so forth. So the current class is overbuilt in a sense; but
 we design it as we have to show the intended path to generality.
 
@@ -47,6 +51,12 @@ class ASTToCoords {
 public:
 
     ASTToCoords();
+
+    coords::VecWrapper* mkVecWrapper(const ast::ExprWithCleanupsWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
+    coords::VecWrapper* mkVecWrapper(const ast::ImplicitCastExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
+    coords::FloatWrapper* mkFloatWrapper(const ast::ExprWithCleanupsWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr);
+    coords::FloatWrapper* mkFloatWrapper(const ast::ImplicitCastExprWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr);
+
     coords::VecIdent* mkVecIdent(const ast::VecIdent *ast, clang::ASTContext *c);
     // no VecExpr because we always know exactly what subtype we're creating
     coords::VecVarExpr* mkVecVarExpr(const ast::VecVarExpr *ast, clang::ASTContext *c);
@@ -93,23 +103,41 @@ public:
 
     // TODO -- Have these routines return more specific subclass objects
     coords::Coords *getStmtCoords(const clang::Stmt *s) {
-        return stmt_coords[s];
+        auto dl = stmt_coords->find(s);
+        //std::cout<<dl->first<<" "<<dl->second<<std::endl;
+        for(auto it = stmt_coords->begin(); it != stmt_coords->end();it++){
+            std::cout<<it->first<<" "<<it->second<<std::endl;
+        }
+
+        return stmt_coords->find(s)->second;
     }
 
-    coords::Coords *getDeclCoords(const ast::VecIdent *d) {
-        return decl_coords[d];
+    coords::Coords *getDeclCoords(const clang::Decl *d) {
+        auto dl = decl_coords->find(d);
+        std::cout<<dl->first<<" "<<dl->second<<std::endl;
+        for(auto it = decl_coords->begin(); it != decl_coords->end();it++){
+            std::cout<<it->first<<" "<<it->second<<std::endl;
+        }
+
+        return dl->second;
     }
 
   private:
     void overrideStmt2Coords(const clang::Stmt *s, coords::Coords *c);
-    void overrideDecl2Coords(const ast::VecIdent *d, coords::Coords *c);
+    void overrideDecl2Coords(const clang::Decl*, coords::Coords *c);
     void overrideCoords2Stmt(coords::Coords *c, const clang::Stmt *s);
-    void overrideCoords2Decl(coords::Coords *c, const ast::VecIdent *d);
-
+    void overrideCoords2Decl(coords::Coords *c, const clang::Decl *d);
+    /*
     std::unordered_map<const clang::Stmt *, coords::Coords *> stmt_coords;
-    std::unordered_map<const ast::VecIdent *, coords::Coords *> decl_coords;
-    std::unordered_map<coords::Coords *, const clang::Stmt *> coords_stmt;
-    std::unordered_map<coords::Coords *, const ast::VecIdent *> coords_decl;
+    std::unordered_map<const clang::Decl *, coords::Coords *> decl_coords;
+    std::unordered_map<coords::Coords *,const clang::Stmt *> coords_stmt;
+    std::unordered_map<coords::Coords *,const clang::Decl *> coords_decl;
+    */
+    std::unordered_map<const clang::Stmt *, coords::Coords *> *stmt_coords;
+    std::unordered_map<const clang::Decl *, coords::Coords *> *decl_coords;
+    std::unordered_map<coords::Coords *,const clang::Stmt *> *coords_stmt;
+    std::unordered_map<coords::Coords *,const clang::Decl *> *coords_decl;
+    
 };
 
 } // namespace

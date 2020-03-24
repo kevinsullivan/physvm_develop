@@ -77,6 +77,46 @@ coords::VecExpr *CoordsToInterp::getVecExpr(interp::VecExpr *d) const
 }
 
 // var
+void CoordsToInterp::putVecWrapper(coords::VecWrapper *c, interp::VecWrapper *d)
+{
+    std::string cstr = c->toString();
+    std::string dstr = d->toString();
+    //LOG(DEBUG) << "CoordsToInterp::putVecWrapper c " << cstr << "\n";
+    //LOG(DEBUG) << "CoordsToInterp::putVecWrapper d " << dstr << "\n";
+    coords2interp_VecExpr[c] = d;
+    interp2coords_VecExpr[d] = c;
+
+    interp::VecWrapper *foo = getVecWrapper(c);
+    std::string s = foo->toString();
+    //LOG(DEBUG) << "Debug " << s << "\n";
+}
+
+interp::VecWrapper *CoordsToInterp::getVecWrapper(coords::VecWrapper *c) const
+{
+    std::unordered_map<coords::VecExpr*, interp::VecExpr*>::iterator it;
+    interp::VecExpr *dom = NULL;
+    try {
+        dom = coords2interp_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::VecWrapper*>(dom);
+}
+
+coords::VecWrapper *CoordsToInterp::getVecWrapper(interp::VecWrapper *d) const
+{
+    std::unordered_map<interp::VecExpr*, coords::VecExpr*>::iterator it;
+    coords::VecExpr *coords = NULL;
+    try {
+        coords = interp2coords_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::VecWrapper *>(coords);
+}
+
 
 void CoordsToInterp::putVecVarExpr(coords::VecVarExpr *c, interp::VecVarExpr *d)
 {
@@ -279,6 +319,47 @@ coords::FloatExpr *CoordsToInterp::getFloatExpr(interp::FloatExpr *d) const
     }
     return coords;
 }
+
+void CoordsToInterp::putFloatWrapper(coords::FloatWrapper *c, interp::FloatWrapper *d)
+{
+    std::string cstr = c->toString();
+    std::string dstr = d->toString();
+    //LOG(DEBUG) << "CoordsToInterp::putFloatWrapper c " << cstr << "\n";
+    //LOG(DEBUG) << "CoordsToInterp::putFloatWrapper d " << dstr << "\n";
+    coords2interp_FloatExpr[c] = d;
+    interp2coords_FloatExpr[d] = c;
+
+    interp::FloatWrapper *foo = getFloatWrapper(c);
+    std::string s = foo->toString();
+    //LOG(DEBUG) << "Debug " << s << "\n";
+}
+
+interp::FloatWrapper *CoordsToInterp::getFloatWrapper(coords::FloatWrapper *c) const
+{
+    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
+    interp::FloatExpr *dom = NULL;
+    try {
+        dom = coords2interp_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::FloatWrapper*>(dom);
+}
+
+coords::FloatWrapper *CoordsToInterp::getFloatWrapper(interp::FloatWrapper *d) const
+{
+    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = interp2coords_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::FloatWrapper *>(coords);
+}
+
 
 // var
 

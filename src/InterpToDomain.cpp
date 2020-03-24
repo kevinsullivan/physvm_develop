@@ -138,6 +138,73 @@ interp::FloatExpr *InterpToDomain::getFloatExpr(domain::FloatExpr *d) const
     return interp;
 }
 
+void InterpToDomain::putVecWrapper(interp::VecWrapper *c, domain::VecWrapper *d)
+{
+    interp2domain_VecExpr[c] = d;
+    domain2interp_VecExpr[d] = c;
+//    coord2domain_VecExpr.insert(std::make_pair(*c, d));
+}
+
+domain::VecWrapper *InterpToDomain::getVecWrapper(interp::VecWrapper *c) const
+{
+    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = interp2domain_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::VecWrapper*>(dom);
+}
+
+interp::VecWrapper *InterpToDomain::getVecWrapper(domain::VecWrapper *d) const
+{
+    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
+    interp::VecExpr *interp = NULL;
+    try {
+        interp = domain2interp_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::VecWrapper *>(interp);
+}
+
+void InterpToDomain::putFloatWrapper(interp::FloatWrapper *c, domain::FloatWrapper *d)
+{
+    interp2domain_FloatExpr[c] = d;
+    domain2interp_FloatExpr[d] = c;
+//    coord2domain_VecExpr.insert(std::make_pair(*c, d));
+}
+
+domain::FloatWrapper *InterpToDomain::getFloatWrapper(interp::FloatWrapper *c) const
+{
+    std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
+    domain::FloatExpr *dom = NULL;
+    try {
+        dom = interp2domain_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::FloatWrapper*>(dom);
+}
+
+interp::FloatWrapper *InterpToDomain::getFloatWrapper(domain::FloatWrapper *d) const
+{
+    std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
+    interp::FloatExpr *interp = NULL;
+    try {
+        interp = domain2interp_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::FloatWrapper *>(interp);
+}
+
+
 // var
 
 void InterpToDomain::putVecVarExpr(interp::VecVarExpr *c, domain::VecVarExpr *d)

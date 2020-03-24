@@ -1,4 +1,4 @@
-
+#pragma once
 
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
@@ -42,7 +42,7 @@ void VectorExprMatcher::search(){
     StatementMatcher vectorLiteral = 
         //anyOf(
         //    cxxConstructExpr(allOf(hasType(asString("class Vec")),hasDeclaration(namedDecl(hasName("void (float, float, float)"))))).bind("VectorLiteralExpr"),
-            cxxConstructExpr(allOf(hasType(asString("class Vec")),argumentCountIs(3))).bind("VectorLiteral");
+            cxxConstructExpr(allOf(hasType(asString("class Vec")),argumentCountIs(3))).bind("VectorLiteralExpr");
 
         //);
 
@@ -58,16 +58,16 @@ void VectorExprMatcher::search(){
 };
 
 void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
-    auto parenExpr = Result.Nodes.getNodeAs<clang::ParenExpr>("VectorParenExpr");
-    auto innerExpr = Result.Nodes.getNodeAs<clang::Expr>("VectorInnerExpr");
-    auto vectorAddExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddExpr");
-    auto vectorAddMember = Result.Nodes.getNodeAs<clang::Expr>("VectorAddMember");
-    auto vectorAddArgument = Result.Nodes.getNodeAs<clang::Expr>("VectorAddArgument");
-    auto vectorMulExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddExpr");
-    auto vectorMulMember = Result.Nodes.getNodeAs<clang::Expr>("VectorMulMember");
-    auto vectorMulArgument = Result.Nodes.getNodeAs<clang::Expr>("VectorMulArgument");
-    auto vectorDeclRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VectorDeclRefExpr");
-    auto vectorLiteral = Result.Nodes.getNodeAs<clang::CXXTemporaryObjectExpr>("VectorLiteralExpr");
+    const auto parenExpr = Result.Nodes.getNodeAs<clang::ParenExpr>("VectorParenExpr");
+    const auto innerExpr = Result.Nodes.getNodeAs<clang::Expr>("VectorInnerExpr");
+    const auto vectorAddExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddExpr");
+    const auto vectorAddMember = Result.Nodes.getNodeAs<clang::Expr>("VectorAddMember");
+    const auto vectorAddArgument = Result.Nodes.getNodeAs<clang::Expr>("VectorAddArgument");
+    const auto vectorMulExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddExpr");
+    const auto vectorMulMember = Result.Nodes.getNodeAs<clang::Expr>("VectorMulMember");
+    const auto vectorMulArgument = Result.Nodes.getNodeAs<clang::Expr>("VectorMulArgument");
+    const auto vectorDeclRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VectorDeclRefExpr");
+    const auto vectorLiteral = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLiteralExpr");
 
     auto vectorExprWithCleanups = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
     auto vectorImplicitCastExpr = Result.Nodes.getNodeAs<clang::ImplicitCastExpr>("ImplicitCastExprDiscard");
@@ -78,7 +78,7 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
         if(parenExpr and innerExpr){
             interp_->mkVecParenExpr(parenExpr, innerExpr);
 
-            VectorExprMatcher exprMatcher{this->context_};
+            VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
         }
@@ -89,10 +89,10 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
     else if(vectorAddExpr or vectorAddMember or vectorAddArgument){
         if(vectorAddExpr and vectorAddMember and vectorAddArgument){
             
-            VectorExprMatcher memMatcher{this->context_};
+            VectorExprMatcher memMatcher{this->context_, this->interp_};
             memMatcher.search();
             memMatcher.visit(*vectorAddMember);
-            VectorExprMatcher argMatcher{this->context_};
+            VectorExprMatcher argMatcher{this->context_, this->interp_};
             argMatcher.search();
             argMatcher.visit(*vectorAddArgument);
             interp_->mkVecVecAddExpr(vectorAddExpr, vectorAddMember, vectorAddArgument);
@@ -103,10 +103,10 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(vectorMulExpr or vectorMulMember or vectorMulArgument){
         if(vectorMulExpr and vectorMulMember and vectorMulArgument){
-            VectorExprMatcher memMatcher{this->context_};
+            VectorExprMatcher memMatcher{this->context_, this->interp_};
             memMatcher.search();
             memMatcher.visit(*vectorMulMember);
-            ScalarExprMatcher argMatcher{this->context_};
+            ScalarExprMatcher argMatcher{this->context_, this->interp_};
             argMatcher.search();
             argMatcher.visit(*vectorMulArgument);
             interp_->mkVecScalarMulExpr(vectorMulExpr, vectorMulMember, vectorMulArgument);
@@ -122,15 +122,17 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
         interp_->mkVector_Lit(vectorLiteral, 0, 0, 0);
     }
     else if(vectorExprWithCleanups){
-        VectorExprMatcher exprMatcher{this->context_};
+        VectorExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*vectorExprWithCleanups->getSubExpr());
+        interp_->mkVecWrapperExpr(vectorExprWithCleanups, vectorExprWithCleanups->getSubExpr());
     }
     else if(vectorImplicitCastExpr){
 
-        VectorExprMatcher exprMatcher{this->context_};
+        VectorExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*vectorImplicitCastExpr->getSubExpr());
+        interp_->mkVecWrapperExpr(vectorExprWithCleanups, vectorExprWithCleanups->getSubExpr());
     }
     else{
         //this can occur if the compound statement calling this matcher is empty. if that is checked beforehand, then this state cannot occur, and thus, no match is an error.

@@ -1,4 +1,4 @@
-
+#pragma once
 
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
@@ -49,25 +49,25 @@ void ScalarExprMatcher::search(){
 };
 
 void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
-    auto parenExpr = Result.Nodes.getNodeAs<clang::ParenExpr>("ScalarParenExpr");
-    auto innerExpr = Result.Nodes.getNodeAs<clang::Expr>("ScalarInnerExpr");
-    auto addExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("ScalarAddExpr");
-    auto addMember = Result.Nodes.getNodeAs<clang::Expr>("ScalarAddMember");
-    auto addArgument = Result.Nodes.getNodeAs<clang::Expr>("ScalarAddArgument");
-    auto mulExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("ScalarAddExpr");
-    auto mulMember = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulMember");
-    auto mulArgument = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulArgument");
-    auto declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("ScalarDeclRefExpr");
-    auto literal = Result.Nodes.getNodeAs<clang::CXXTemporaryObjectExpr>("ScalarLiteralExpr");
+    const auto parenExpr = Result.Nodes.getNodeAs<clang::ParenExpr>("ScalarParenExpr");
+    const auto innerExpr = Result.Nodes.getNodeAs<clang::Expr>("ScalarInnerExpr");
+    const auto addExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("ScalarAddExpr");
+    const auto addMember = Result.Nodes.getNodeAs<clang::Expr>("ScalarAddMember");
+    const auto addArgument = Result.Nodes.getNodeAs<clang::Expr>("ScalarAddArgument");
+    const auto mulExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("ScalarAddExpr");
+    const auto mulMember = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulMember");
+    const auto mulArgument = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulArgument");
+    const auto declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("ScalarDeclRefExpr");
+    const auto literal = Result.Nodes.getNodeAs<clang::CXXTemporaryObjectExpr>("ScalarLiteralExpr");
 
-    auto scalarExprWithCleanups = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
-    auto scalarImplicitCastExpr = Result.Nodes.getNodeAs<clang::ImplicitCastExpr>("ImplicitCastExprDiscard");
+    const auto scalarExprWithCleanups = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
+    const auto scalarImplicitCastExpr = Result.Nodes.getNodeAs<clang::ImplicitCastExpr>("ImplicitCastExprDiscard");
 
     if(parenExpr or innerExpr){
         if(parenExpr and innerExpr){
             interp_->mkFloatParenExpr(parenExpr, innerExpr);
 
-            ScalarExprMatcher exprMatcher{this->context_};
+            ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
         }
@@ -77,7 +77,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(addExpr or addMember or addArgument){
         if(addExpr and addMember and addArgument){
-            //NOT IMPLEMENTED ON BACKEND
+            //NOT IMPLEMENTED
             
             //interp_->mkFloat
         }
@@ -87,7 +87,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(mulExpr or mulMember or mulArgument){
         if(mulExpr and mulMember and mulArgument){
-            //NOT IMPLEMENTED ON BACKEND+
+            //NOT IMPLEMENTED
 
         }
         else{
@@ -101,15 +101,17 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
         interp_->mkFloat_Lit(literal, 0);
     }
     else if(scalarExprWithCleanups){
-        ScalarExprMatcher exprMatcher{this->context_};
+        ScalarExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*scalarExprWithCleanups->getSubExpr());
+        interp_->mkFloatWrapperExpr(scalarExprWithCleanups, scalarExprWithCleanups->getSubExpr());
     }
     else if(scalarImplicitCastExpr){
 
-        ScalarExprMatcher exprMatcher{this->context_};
+        ScalarExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*scalarImplicitCastExpr->getSubExpr());
+        interp_->mkFloatWrapperExpr(scalarExprWithCleanups, scalarExprWithCleanups->getSubExpr());
     }
     else{
         //this can occur if the compound statement calling this matcher is empty. if that is checked beforehand, then this state cannot occur, and thus, no match is an error.

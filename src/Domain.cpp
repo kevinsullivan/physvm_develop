@@ -86,6 +86,34 @@ void VecExpr::setSpace(Space* space) {
 ****/
 
 
+domain::VecWrapper *Domain::mkVecWrapper(Space *s, domain::VecExpr* expr)
+{
+    domain::VecWrapper *var = new domain::VecWrapper(s, expr);
+    exprs.push_back(var);
+    return var;
+}
+
+domain::VecWrapper* Domain::mkVecWrapper(domain::VecExpr* expr)
+{
+    domain::VecWrapper *var = new domain::VecWrapper(expr);
+    exprs.push_back(var);
+    return var;
+}
+
+domain::FloatWrapper *Domain::mkFloatWrapper(Space *s, domain::FloatExpr* expr)
+{
+    domain::FloatWrapper *var = new domain::FloatWrapper(s, expr);
+    float_exprs.push_back(var);
+    return var;
+}
+
+domain::FloatWrapper* Domain::mkFloatWrapper(domain::FloatExpr* expr)
+{
+    domain::FloatWrapper *var = new domain::FloatWrapper(expr);
+    float_exprs.push_back(var);
+    return var;
+}
+
 domain::VecVarExpr *Domain::mkVecVarExpr(Space *s)
 {
     domain::VecVarExpr *var = new domain::VecVarExpr(s);

@@ -1,3 +1,4 @@
+#pragma once
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 
@@ -15,7 +16,7 @@ using namespace clang::ast_matchers;
 
 class BaseMatcher : public MatchFinder::MatchCallback {
 public:
-    BaseMatcher(clang::ASTContext* context) : context_(context) {}
+    BaseMatcher(clang::ASTContext* context, interp::Interpretation* interp) : context_(context), interp_(interp) {}
 
     virtual void search() = 0;
     virtual void run(const MatchFinder::MatchResult &Result) = 0;

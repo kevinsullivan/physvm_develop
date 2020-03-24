@@ -11,6 +11,7 @@
 
 #include <iostream>
 
+#include "ASTToCoords.h"
 /*
     virtual void Traverse() = 0;
     virtual void BuildRepresentation() = 0;
@@ -29,8 +30,10 @@ void StatementProductionMatcher::search(){
                 .bind("ScalarVarDecl")))
                 .bind("ScalarDeclStatement");
     StatementMatcher vectorDecl =
-       declStmt(has(varDecl(has(
-           expr().bind("VectorDeclRV"))).bind("VectorVarDecl"))).bind("VectorDeclStatement");
+       declStmt(has(varDecl(anyOf(
+           has(expr().bind("VectorDeclRV")),
+           has(exprWithCleanups().bind("VectorDeclRV"))
+           )).bind("VectorVarDecl"))).bind("VectorDeclStatement");
            //cxxConstructExpr(allOf(hasType(asString("class Vec")),has(expr().bind("VectorDeclRV")))))).bind("VectorVarDecl"))).bind("VectorDeclStatement");
     StatementMatcher floatExpr = 
         expr(hasType(asString("float"))).bind("ScalarExprStatement");
@@ -56,30 +59,33 @@ void StatementProductionMatcher::search(){
 
 void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     
-    auto scalarDecl = Result.Nodes.getNodeAs<clang::DeclStmt>("ScalarDeclStatement");
-    auto scalarVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("ScalarVarStatement");
-    auto scalarDeclRV = Result.Nodes.getNodeAs<clang::Expr>("ScalarDeclRV");
-    auto vectorDecl = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
-    auto vectorVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("VectorVarDecl");
-    auto vectorDeclRV = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorDeclRV");
-    auto floatExpr = Result.Nodes.getNodeAs<clang::Expr>("ScalarExprStatement");
-    auto vecExpr = Result.Nodes.getNodeAs<clang::Expr>("VectorExprStatement");
-    auto scalarAssign = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignStatement");
-    auto scalarAssignLV = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignLV");
-    auto scalarAssignRV = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignRV");
-    auto vectorAssign = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignmentStatement");
-    auto vectorAssignLV = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignLV");
-    auto vectorAssignRV = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignRV");
-
+    const auto scalarDecl = Result.Nodes.getNodeAs<clang::DeclStmt>("ScalarDeclStatement");
+    const auto scalarVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("ScalarVarStatement");
+    const auto scalarDeclRV = Result.Nodes.getNodeAs<clang::Expr>("ScalarDeclRV");
+    const auto vectorDecl = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
+    const clang::VarDecl* vectorVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("VectorVarDecl");
+    const auto vectorDeclRV = Result.Nodes.getNodeAs<clang::Expr>("VectorDeclRV");
+    const auto floatExpr = Result.Nodes.getNodeAs<clang::Expr>("ScalarExprStatement");
+    const auto vecExpr = Result.Nodes.getNodeAs<clang::Expr>("VectorExprStatement");
+    const auto scalarAssign = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignStatement");
+    const auto scalarAssignLV = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignLV");
+    const auto scalarAssignRV = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignRV");
+    const auto vectorAssign = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignmentStatement");
+    const auto vectorAssignLV = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignLV");
+    const auto vectorAssignRV = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignRV");
+    std::cout<<"dumping decl"<<std::endl;
     vectorDecl->dump();
+    vectorVarDecl->dump();
+    vectorDeclRV->dump();
+
 
     if(scalarDecl or scalarVarDecl or scalarDeclRV){
         if(scalarDecl and scalarVarDecl and scalarDeclRV){
-            this->interp_->mkVecIdent(scalarVarDecl);
-            this->interp_->mkVector_Def(scalarDecl, scalarVarDecl, scalarDeclRV);
-            ScalarExprMatcher exprMatcher{this->context_};
+            this->interp_->mkFloatIdent(scalarVarDecl);
+            ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*scalarDeclRV);
+            this->interp_->mkFloat_Def(scalarDecl, scalarVarDecl, scalarDeclRV);
         }
         else{
             //log error
@@ -88,21 +94,22 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     else if(vectorDecl or vectorVarDecl or vectorDeclRV){
         if(vectorDecl and vectorVarDecl and vectorDeclRV){
             //vectorVarDecl->dump();
+            std::cout<<"dumped"<<std::endl;
             vectorDeclRV->dump();
             //vectorDeclRV->getConstructor()->dump();
             //vectorDeclRV->getConstructor()->getDefinition()->dump();
 
             //std::cout<<
 
-            std::cout<<"tmp"<<vectorDeclRV->getConstructor()->getDefinition()->getNameInfo().getAsString()<<std::endl;
+            //std::cout<<"tmp"<<vectorDeclRV->getConstructor()->getDefinition()->getNameInfo().getAsString()<<std::endl;
 
-            std::cout<<"tmp"<<vectorDeclRV->getConstructor()->getDefinition()->getName().str()<<std::endl;
+           // std::cout<<"tmp"<<vectorDeclRV->getConstructor()->getDefinition()->getName().str()<<std::endl;
 
             this->interp_->mkVecIdent(vectorVarDecl);
-            this->interp_->mkVector_Def(vectorDecl, vectorVarDecl, vectorDeclRV);
-            VectorExprMatcher exprMatcher{this->context_};
+            VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*vectorDeclRV);
+            this->interp_->mkVector_Def(vectorDecl, vectorVarDecl, vectorDeclRV);
 
         }
         else{
@@ -110,13 +117,13 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
         }
     }
     else if(floatExpr){
-            ScalarExprMatcher exprMatcher{this->context_};
+            ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*floatExpr);
 
     }
     else if(vecExpr){
-            VectorExprMatcher exprMatcher{this->context_};
+            VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*vecExpr);
 

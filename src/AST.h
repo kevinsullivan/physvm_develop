@@ -11,6 +11,10 @@ namespace ast {
 // Scalar
 using Scalar = float;
 
+// Wrapper
+using ExprWithCleanupsWrapper = const clang::ExprWithCleanups;
+using ImplicitCastExprWrapper = const clang::ImplicitCastExpr;
+
 // Ident
 using VecIdent = const clang::VarDecl;
 using FloatIdent = const clang::VarDecl;

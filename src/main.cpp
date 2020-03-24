@@ -631,7 +631,7 @@ public:
     //LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
     context_ = &CI.getASTContext();
     interp_->setASTContext(context_);
-    programMatcher_ = new MainMatcher(context_);
+    programMatcher_ = new MainMatcher(context_, interp_);
     return llvm::make_unique<MyASTConsumer>(); 
   }
 };

@@ -17,6 +17,7 @@ Establish interpretations for AST nodes:
 #include "CoordsToInterp.h"
 #include "CoordsToDomain.h"
 #include "InterpToDomain.h"
+#include "ASTToCoords.h"
 #include "Oracle_AskAll.h"    // default oracle
 
 //#include <g3log/g3log.hpp>
@@ -33,6 +34,81 @@ Interpretation::Interpretation() {
     coords2dom_ = new coords2domain::CoordsToDomain();
     coords2interp_ = new coords2interp::CoordsToInterp();
     interp2domain_ = new interp2domain::InterpToDomain();
+}
+
+/******
+ * Wrapper
+******/
+
+/*
+void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
+    coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
+    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
+    //LOG(DEBUG) << 
+    //  "Interpretation::mkVecParenExpr. ast=" << 
+    //  std::hex << ast << ", " << coords->toString() << 
+    //  "expr = " << expr_coords->toString() << "\n";
+    //domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
+    domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
+    domain::VecParenExpr *dom = domain_->mkVecParenExpr(dom_expr);
+    coords2dom_->PutVecParenExpr(coords, dom);
+    interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
+    interp::VecParenExpr *interp = new interp::VecParenExpr(coords, dom, expr_interp);
+    coords2interp_->putVecParenExpr(coords, interp);  
+    interp2domain_->putVecParenExpr(interp,dom);
+} 
+ 
+void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
+    coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
+    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
+*/
+
+void Interpretation::mkVecWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::VecExpr *inner){
+  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
+  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
+
+  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
+  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
+  coords2dom_->putVecWrapper(coords, dom);
+  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
+  coords2interp_->putVecWrapper(coords, interp);
+  interp2domain_->putVecWrapper(interp, dom);
+}
+void Interpretation::mkVecWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::VecExpr *inner){
+  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
+  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
+
+  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
+  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
+  coords2dom_->putVecWrapper(coords, dom);
+  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
+  coords2interp_->putVecWrapper(coords, interp);
+  interp2domain_->putVecWrapper(interp, dom);
+
+}
+
+void Interpretation::mkFloatWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::FloatExpr *inner){
+  coords::FloatWrapper *coords = ast2coords_->mkFloatWrapper(wrapper, context_, inner);
+  coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(inner));
+
+  domain::FloatExpr *dom_expr = coords2dom_->getFloatExpr(expr_coords);
+  domain::FloatWrapper *dom = domain_->mkFloatWrapper(dom_expr);
+  coords2dom_->putFloatWrapper(coords, dom);
+  interp::FloatWrapper *interp = new interp::FloatWrapper(coords, dom);
+  coords2interp_->putFloatWrapper(coords, interp);
+  interp2domain_->putFloatWrapper(interp, dom);
+}
+void Interpretation::mkFloatWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::FloatExpr *inner){
+  coords::FloatWrapper *coords = ast2coords_->mkFloatWrapper(wrapper, context_, inner);
+  coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(inner));
+
+  domain::FloatExpr *dom_expr = coords2dom_->getFloatExpr(expr_coords);
+  domain::FloatWrapper *dom = domain_->mkFloatWrapper(dom_expr);
+  coords2dom_->putFloatWrapper(coords, dom);
+  interp::FloatWrapper *interp = new interp::FloatWrapper(coords, dom);
+  coords2interp_->putFloatWrapper(coords, interp);
+  interp2domain_->putFloatWrapper(interp, dom);
+
 }
 
 /******

@@ -58,7 +58,8 @@ Vec tmp(Vec hey){
 
 
 int main(int argc, char **argv){
-  Vec v1 = Vec(1.0,1.0,1.0);
+  //Vec v1 = Vec(1.0,1.0,1.0);
+  Vec v1(0,0,0);
   Vec v2 = v1;
 
   (v2.vec_add(v1));

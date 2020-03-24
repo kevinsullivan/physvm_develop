@@ -42,6 +42,9 @@ class VecVecAddExpr;
 class VecScalarMulExpr;
 class FloatVarExpr;
 
+class VecWrapper;
+class FloatWrapper;
+
 // KEVIN ADDING FOR HORIZONTAL MODULE
 class VecParenExpr;
 
@@ -88,6 +91,12 @@ public:
 	std::vector<FloatExpr *> &getFloatExprs() { return float_exprs; }
 
 	// Create a variable object in the domain 
+
+	VecWrapper* mkVecWrapper(Space* s, domain::VecExpr* expr);
+	VecWrapper* mkVecWrapper(domain::VecExpr* expr);
+
+	FloatWrapper* mkFloatWrapper(Space* s, domain::FloatExpr* expr);
+	FloatWrapper* mkFloatWrapper(domain::FloatExpr* expr);
 
 	// Details available via externally represented backmappings
 	//
@@ -278,6 +287,40 @@ public:
 		Space* space_;
 		SpaceContainer* spaceContainer_;
 };
+
+/*
+
+class VecParenExpr : public VecExpr  {
+public:
+		VecParenExpr(Space *s, domain::VecExpr *e) : domain::VecExpr(s), expr_(e) {}
+		VecParenExpr(domain::VecExpr *e) : domain::VecExpr(), expr_(e) {}
+		const domain::VecExpr* getVecExpr() const { return expr_; }
+		//std::string toString() const; 
+private:
+		const domain::VecExpr* expr_; // vec expr from which vector is constructed
+};
+
+
+*/
+
+class VecWrapper : public VecExpr {
+public:
+    VecWrapper(Space* s, domain::VecExpr *e) : VecExpr(s), expr_{e} {}
+	VecWrapper(domain::VecExpr *e) : VecExpr(), expr_{e} {}
+		// virtual std::string toString() const;
+	private:
+		const domain::VecExpr* expr_;
+};
+
+class FloatWrapper : public FloatExpr {
+public:
+    FloatWrapper(Space* s, domain::FloatExpr *e) : FloatExpr(s), expr_{e} {}
+	FloatWrapper(domain::FloatExpr *e) : FloatExpr(), expr_{e} {}
+		// virtual std::string toString() const;
+	private:
+		const domain::FloatExpr* expr_;
+};
+
 
 
 
