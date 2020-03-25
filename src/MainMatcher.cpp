@@ -33,25 +33,17 @@ void MainMatcher::run(const MatchFinder::MatchResult &Result){
 
 
     if(mainCandidate->isMain()){
-        //mainCandidate->dump();
-        //mainCompoundStatement->dump();
-
-        //this->interp_->ast2coords_ = new ast2coords::ASTToCoords();
 
         StatementProductionMatcher rootMatcher{this->context_, this->interp_};
         rootMatcher.search();
-        //mainCompoundStatement->dump();
-        //(*(mainCompoundStatement->body_front())).dump();
-        //rootMatcher.visit(*(mainCompoundStatement->body_front()));
 
         for(auto it = mainCompoundStatement->body_begin(); it != mainCompoundStatement->body_end();it++)
         {
-            std::cout<<"dumping node"<<std::endl;
-            (*it)->dump();
-            std::cout<<"dumped"<<std::endl;
+            //std::cout<<"dumping node"<<std::endl;
+            //(*it)->dump();
+            //std::cout<<"dumped"<<std::endl;
             rootMatcher.visit(**it);
         }
 
-       // rootMatcher.visit(*mainCompoundStatement);
     }
 };

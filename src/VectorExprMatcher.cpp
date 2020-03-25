@@ -89,7 +89,6 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
     auto vectorMaterializeTemporaryChild = Result.Nodes.getNodeAs<clang::Expr>("MaterializeTemporaryExprChild");
 
     //std::cout<<"matching vector"<<std:
-    Result.Nodes.getNodeAs<clang::Expr>("hello")->dump();
 
     if(parenExpr or innerExpr){
         if(parenExpr and innerExpr){
@@ -145,8 +144,8 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
         interp_->mkVecWrapperExpr(vectorExprWithCleanups, vectorExprWithCleanups->getSubExpr());
     }
     else if(vectorImplicitCastExpr){
-        vectorImplicitCastExpr->getSubExpr()->dump();
-        vectorImplicitCastExpr->dump();
+       // vectorImplicitCastExpr->getSubExpr()->dump();
+        //vectorImplicitCastExpr->dump();
         VectorExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*vectorImplicitCastExpr->getSubExpr());
@@ -158,8 +157,8 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*vectorConstructExprChild);
-            std::cout<<"cstrct"<<std::endl;
-            vectorConstructExpr->dump();
+            //std::cout<<"cstrct"<<std::endl;
+            //vectorConstructExpr->dump();
             interp_->mkVecWrapperExpr(vectorConstructExpr, vectorConstructExprChild);
         }
         else{
@@ -171,8 +170,8 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*vectorBindTemporaryExprChild);
-            std::cout<<"cstrct"<<std::endl;
-            vectorConstructExpr->dump();
+            //std::cout<<"cstrct"<<std::endl;
+            //vectorConstructExpr->dump();
             interp_->mkVecWrapperExpr(vectorBindTemporaryExpr, vectorBindTemporaryExprChild);
         }
         else{
@@ -184,8 +183,8 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*vectorMaterializeTemporaryChild);
-            std::cout<<"cstrct"<<std::endl;
-            vectorMaterializeTemporaryExpr->dump();
+            //std::cout<<"cstrct"<<std::endl;
+            //vectorMaterializeTemporaryExpr->dump();
             interp_->mkVecWrapperExpr(vectorMaterializeTemporaryExpr, vectorMaterializeTemporaryChild);
 
         }

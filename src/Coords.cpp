@@ -45,25 +45,20 @@ std::string Coords::toString() const {
 }
 
 std::string Coords::getSourceLoc() const {
-    clang::FullSourceLoc FullLocation;
+    //clang::FullSourceLoc FullLocation;
+    //const clang::SourceManager& SrcManager = this->context_->getSourceManager();
     if (ast_type_tag_ == CLANG_AST_STMT)
     {
-     //
-      //auto p = static_cast<const clang::CXXConstructExpr *>(clang_stmt_)->getLocation();
-      auto p = clang_stmt_->getSourceRange().getBegin();
-      FullLocation = context_->getFullLoc(clang_stmt_->getSourceRange().getBegin());
+      //this->toString();
+      //auto p = clang_stmt_->getSourceRange();
+      //FullLocation = context_->getFullLoc(clang_stmt_->getSourceRange().getEnd());
     } else {
-      auto p = clang_decl_->getLocation();
-      //auto d = p.getBegin();
-      FullLocation = context_->getFullLoc(clang_decl_->getLocation());
-
-      //uto p = clang_decl_->getBeginLoc();
-      //auto j = std::to_string(p.getLineNumber()); ;
+      //FullLocation = context_->getFullLoc(clang_decl_->getLocation());
     }
     std::string retval = "line ";
-    retval += std::to_string(FullLocation.getSpellingLineNumber()); 
+    //retval += std::to_string(FullLocation.getFileLoc().getSpellingLineNumber()); 
     retval +=  ", column ";
-    retval +=  std::to_string(FullLocation.getSpellingColumnNumber());
+    //retval +=  std::to_string(FullLocation.getFileLoc().getSpellingColumnNumber());
     return retval;
 }
 
