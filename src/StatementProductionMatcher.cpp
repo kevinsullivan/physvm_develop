@@ -38,7 +38,7 @@ void StatementProductionMatcher::search(){
     StatementMatcher floatExpr = 
         expr(hasType(asString("float"))).bind("ScalarExprStatement");
     StatementMatcher vectorExpr = 
-        expr(hasType(asString("Vec"))).bind("VectorExprStatement");
+        expr(hasType(asString("class Vec"))).bind("VectorExprStatement");
     StatementMatcher scalarAssign =
         binaryOperator(allOf(
             hasOperatorName("="),
@@ -60,7 +60,7 @@ void StatementProductionMatcher::search(){
 void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     
     const auto scalarDecl = Result.Nodes.getNodeAs<clang::DeclStmt>("ScalarDeclStatement");
-    const auto scalarVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("ScalarVarStatement");
+    const auto scalarVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("ScalarVarDecl");
     const auto scalarDeclRV = Result.Nodes.getNodeAs<clang::Expr>("ScalarDeclRV");
     const auto vectorDecl = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
     const clang::VarDecl* vectorVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("VectorVarDecl");
@@ -73,10 +73,6 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     const auto vectorAssign = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignmentStatement");
     const auto vectorAssignLV = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignLV");
     const auto vectorAssignRV = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignRV");
-    std::cout<<"dumping decl"<<std::endl;
-    vectorDecl->dump();
-    vectorVarDecl->dump();
-    vectorDeclRV->dump();
 
 
     if(scalarDecl or scalarVarDecl or scalarDeclRV){
@@ -93,17 +89,6 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(vectorDecl or vectorVarDecl or vectorDeclRV){
         if(vectorDecl and vectorVarDecl and vectorDeclRV){
-            //vectorVarDecl->dump();
-            std::cout<<"dumped"<<std::endl;
-            vectorDeclRV->dump();
-            //vectorDeclRV->getConstructor()->dump();
-            //vectorDeclRV->getConstructor()->getDefinition()->dump();
-
-            //std::cout<<
-
-            //std::cout<<"tmp"<<vectorDeclRV->getConstructor()->getDefinition()->getNameInfo().getAsString()<<std::endl;
-
-           // std::cout<<"tmp"<<vectorDeclRV->getConstructor()->getDefinition()->getName().str()<<std::endl;
 
             this->interp_->mkVecIdent(vectorVarDecl);
             VectorExprMatcher exprMatcher{this->context_, this->interp_};

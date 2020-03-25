@@ -56,6 +56,10 @@ Vec tmp(Vec hey){
   return v6;
 }
 
+float tmp2(float hey){
+  return hey;
+}
+
 
 int main(int argc, char **argv){
   //Vec v1 = Vec(1.0,1.0,1.0);
@@ -72,53 +76,53 @@ int main(int argc, char **argv){
 
   Vec v3 = v2.vec_mul(flt2);
 
-  Vec v4 = (v3.vec_add(v2*flt));
+  Vec v4 = (v3.vec_add(v2.vec_mul(flt)));
 
-  float float3 = ((flt2 + flt) + flt2);
+  //float float3 = ((flt2 + flt) + flt2);
 
-  float3 = float3 + flt2;
+  //float3 = float3 + flt2;
 
   v4 = (v4);
-  v4 = tmp(v4);
-  Vec v8 = tmp(v4);
+  //v4 = tmp(v4);
+  //Vec v8 = tmp(v4);
 
-  (2.0f + 2.0f);
+  //(2.0f + 2.0f);
 
-  (((flt2) + flt));
+  //(((flt2) + flt));
 
-  (v4.vec_add(v3));
+  //(v4.vec_add(v3));
 
   (Vec(0,0,0));
 
-  v4;
+ // v4;
 
-  (v4);
+ // (v4);
 
-  Vec v9 = Vec(0,0,0);
+ // Vec v9 = Vec(0,0,0);
 
-  Vec v10 = (v9.vec_add(v4).vec_add(v3)).vec_add(v2);
+ // Vec v10 = (v9.vec_add(v4).vec_add(v3)).vec_add(v2);
 
-  float five = flt2 * flt * (flt + flt * (flt));
+  //float five = flt2 * flt * (flt + flt * (flt));
 
-  float t = 3.0f;
-  3.0f;
-  3.1f + 3.2f;
-  t = t + 3.2f;
+  //float t = 3.0f;
+ // 3.0f;
+  //3.1f + 3.2f;
+  //t = t + 3.2f;
   
-  v4 = (v4);
-  v4 = tmp(v4);
-  v2 = v2.vec_add(v3);
+ // v4 = (v4);
+ // v4 = tmp(v4);
+  //v2 = v2.vec_add(v3);
 
   Vec(0,0,0);
   (Vec(0,0,0).vec_add( v2));
 
-  Vec f = Vec(0,0,0);
+ // Vec f = Vec(0,0,0);
 
-  Vec y = (Vec(0,0,0).vec_add(f));
+ // Vec y = (Vec(0,0,0).vec_add(f));
 
-  Vec p = f;
+ // Vec p = f;
 
-
+  //t = (tmp2(t));
 
   return 0;
 }

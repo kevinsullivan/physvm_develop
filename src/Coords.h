@@ -118,6 +118,9 @@ public:
 
 class VecWrapper : public VecExpr {
 public:
+  VecWrapper(const ast::MaterializeTemporaryExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
+  VecWrapper(const ast::CXXBindTemporaryWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
+  VecWrapper(const ast::CXXConstructExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
   VecWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
   VecWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
 

@@ -22,7 +22,14 @@ void VectorExprMatcher::search(){
     StatementMatcher vectorExprWithCleanups = 
         exprWithCleanups(has(expr().bind("UsefulExpr"))).bind("ExprWithCleanupsDiscard");
     StatementMatcher vectorImplicitCastExpr = 
-        implicitCastExpr().bind("ImplicitCastExprDiscard");
+        implicitCastExpr().bind("ImplicitCastExprDiscard"); //could also potentially use ignoringImplicit(expr().bind).bind...but need to modify EVERY matcher to handle this, then
+    StatementMatcher vectorCXXConstructExpr = //could also use isMoveConstructor / isCopyConstructor
+        cxxConstructExpr(allOf(unless(argumentCountIs(3)),has(expr().bind("CXXConstructExprChild")))).bind("CXXConstructExprDiscard");
+    StatementMatcher vectorCXXBindTemporaryExpr =
+        cxxBindTemporaryExpr(has(expr().bind("CXXBindTemporaryExprChild"))).bind("CXXBindTemporaryExprDiscard");
+    StatementMatcher vectorMaterializeTemporaryExpr =
+        materializeTemporaryExpr(has(expr().bind("MaterializeTemporaryExprChild"))).bind("MaterializeTemporaryExprDiscard");
+    
 
     //these are valid without pointers and functions.
     StatementMatcher vectorParenExpr =
@@ -48,6 +55,9 @@ void VectorExprMatcher::search(){
 
     localFinder_.addMatcher(vectorExprWithCleanups, this);
     localFinder_.addMatcher(vectorImplicitCastExpr, this);
+    localFinder_.addMatcher(vectorCXXConstructExpr, this);
+    localFinder_.addMatcher(vectorCXXBindTemporaryExpr, this);
+    localFinder_.addMatcher(vectorMaterializeTemporaryExpr, this);
 
     localFinder_.addMatcher(vectorParenExpr, this);
     localFinder_.addMatcher(vectorAddExpr, this);
@@ -63,24 +73,31 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
     const auto vectorAddExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddExpr");
     const auto vectorAddMember = Result.Nodes.getNodeAs<clang::Expr>("VectorAddMember");
     const auto vectorAddArgument = Result.Nodes.getNodeAs<clang::Expr>("VectorAddArgument");
-    const auto vectorMulExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorAddExpr");
+    const auto vectorMulExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorMulExpr");
     const auto vectorMulMember = Result.Nodes.getNodeAs<clang::Expr>("VectorMulMember");
     const auto vectorMulArgument = Result.Nodes.getNodeAs<clang::Expr>("VectorMulArgument");
     const auto vectorDeclRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VectorDeclRefExpr");
     const auto vectorLiteral = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLiteralExpr");
 
+    auto vectorConstructExpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExprDiscard");
+    auto vectorConstructExprChild = Result.Nodes.getNodeAs<clang::Expr>("CXXConstructExprChild");
     auto vectorExprWithCleanups = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
     auto vectorImplicitCastExpr = Result.Nodes.getNodeAs<clang::ImplicitCastExpr>("ImplicitCastExprDiscard");
+    auto vectorBindTemporaryExpr = Result.Nodes.getNodeAs<clang::CXXBindTemporaryExpr>("CXXBindTemporaryExprDiscard");
+    auto vectorBindTemporaryExprChild = Result.Nodes.getNodeAs<clang::Expr>("CXXBindTemporaryExprChild");
+    auto vectorMaterializeTemporaryExpr = Result.Nodes.getNodeAs<clang::MaterializeTemporaryExpr>("MaterializeTemporaryExprDiscard");
+    auto vectorMaterializeTemporaryChild = Result.Nodes.getNodeAs<clang::Expr>("MaterializeTemporaryExprChild");
 
+    //std::cout<<"matching vector"<<std:
     Result.Nodes.getNodeAs<clang::Expr>("hello")->dump();
 
     if(parenExpr or innerExpr){
         if(parenExpr and innerExpr){
-            interp_->mkVecParenExpr(parenExpr, innerExpr);
 
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
+            interp_->mkVecParenExpr(parenExpr, innerExpr);
         }
         else{
             //log error
@@ -128,11 +145,53 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
         interp_->mkVecWrapperExpr(vectorExprWithCleanups, vectorExprWithCleanups->getSubExpr());
     }
     else if(vectorImplicitCastExpr){
-
+        vectorImplicitCastExpr->getSubExpr()->dump();
+        vectorImplicitCastExpr->dump();
         VectorExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*vectorImplicitCastExpr->getSubExpr());
-        interp_->mkVecWrapperExpr(vectorExprWithCleanups, vectorExprWithCleanups->getSubExpr());
+        interp_->mkVecWrapperExpr(vectorImplicitCastExpr, vectorImplicitCastExpr->getSubExpr());
+        std::cout<<"endl"<<std::endl;
+    }
+    else if(vectorConstructExpr or vectorConstructExprChild){
+        if(vectorConstructExpr and vectorConstructExprChild){
+            VectorExprMatcher exprMatcher{this->context_, this->interp_};
+            exprMatcher.search();
+            exprMatcher.visit(*vectorConstructExprChild);
+            std::cout<<"cstrct"<<std::endl;
+            vectorConstructExpr->dump();
+            interp_->mkVecWrapperExpr(vectorConstructExpr, vectorConstructExprChild);
+        }
+        else{
+            //log error
+        }
+    }
+    else if(vectorBindTemporaryExpr or vectorBindTemporaryExprChild){
+        if(vectorBindTemporaryExpr and vectorBindTemporaryExprChild){
+            VectorExprMatcher exprMatcher{this->context_, this->interp_};
+            exprMatcher.search();
+            exprMatcher.visit(*vectorBindTemporaryExprChild);
+            std::cout<<"cstrct"<<std::endl;
+            vectorConstructExpr->dump();
+            interp_->mkVecWrapperExpr(vectorBindTemporaryExpr, vectorBindTemporaryExprChild);
+        }
+        else{
+            //log error
+        }
+    }
+    else if(vectorMaterializeTemporaryExpr and vectorMaterializeTemporaryChild){
+        if(vectorMaterializeTemporaryExpr and vectorMaterializeTemporaryChild){
+            VectorExprMatcher exprMatcher{this->context_, this->interp_};
+            exprMatcher.search();
+            exprMatcher.visit(*vectorMaterializeTemporaryChild);
+            std::cout<<"cstrct"<<std::endl;
+            vectorMaterializeTemporaryExpr->dump();
+            interp_->mkVecWrapperExpr(vectorMaterializeTemporaryExpr, vectorMaterializeTemporaryChild);
+
+        }
+        else{
+            //log error
+        }
     }
     else{
         //this can occur if the compound statement calling this matcher is empty. if that is checked beforehand, then this state cannot occur, and thus, no match is an error.

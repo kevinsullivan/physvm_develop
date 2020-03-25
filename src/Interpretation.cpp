@@ -62,6 +62,43 @@ void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) 
     coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
 */
+void Interpretation::mkVecWrapperExpr(ast::MaterializeTemporaryExprWrapper *wrapper, ast::VecExpr *inner){
+  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
+  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
+
+  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
+  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
+  coords2dom_->putVecWrapper(coords, dom);
+  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
+  coords2interp_->putVecWrapper(coords, interp);
+  interp2domain_->putVecWrapper(interp, dom);
+}
+
+void Interpretation::mkVecWrapperExpr(ast::CXXBindTemporaryWrapper *wrapper, ast::VecExpr *inner){
+  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
+  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
+
+  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
+  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
+  coords2dom_->putVecWrapper(coords, dom);
+  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
+  coords2interp_->putVecWrapper(coords, interp);
+  interp2domain_->putVecWrapper(interp, dom);
+}
+
+
+
+void Interpretation::mkVecWrapperExpr(ast::CXXConstructExprWrapper *wrapper, ast::VecExpr *inner){
+  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
+  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
+
+  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
+  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
+  coords2dom_->putVecWrapper(coords, dom);
+  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
+  coords2interp_->putVecWrapper(coords, interp);
+  interp2domain_->putVecWrapper(interp, dom);
+}
 
 void Interpretation::mkVecWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::VecExpr *inner){
   coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
@@ -86,6 +123,19 @@ void Interpretation::mkVecWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast
   interp2domain_->putVecWrapper(interp, dom);
 
 }
+/*
+void Interpretation::mkFloatWrapperExpr(ast::CXXConstructExprWrapper *wrapper, ast::FloatExpr *inner){
+  coords::FloatWrapper *coords = ast2coords_->mkFloatWrapper(wrapper, context_, inner);
+  coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(inner));
+
+  domain::FloatExpr *dom_expr = coords2dom_->getFloatExpr(expr_coords);
+  domain::FloatWrapper *dom = domain_->mkFloatWrapper(dom_expr);
+  coords2dom_->putFloatWrapper(coords, dom);
+  interp::FloatWrapper *interp = new interp::FloatWrapper(coords, dom);
+  coords2interp_->putFloatWrapper(coords, interp);
+  interp2domain_->putFloatWrapper(interp, dom);
+}
+*/
 
 void Interpretation::mkFloatWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::FloatExpr *inner){
   coords::FloatWrapper *coords = ast2coords_->mkFloatWrapper(wrapper, context_, inner);
@@ -98,6 +148,7 @@ void Interpretation::mkFloatWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, a
   coords2interp_->putFloatWrapper(coords, interp);
   interp2domain_->putFloatWrapper(interp, dom);
 }
+
 void Interpretation::mkFloatWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::FloatExpr *inner){
   coords::FloatWrapper *coords = ast2coords_->mkFloatWrapper(wrapper, context_, inner);
   coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(inner));

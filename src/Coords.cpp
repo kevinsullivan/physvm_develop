@@ -45,20 +45,25 @@ std::string Coords::toString() const {
 }
 
 std::string Coords::getSourceLoc() const {
-    //clang::FullSourceLoc FullLocation;
+    clang::FullSourceLoc FullLocation;
     if (ast_type_tag_ == CLANG_AST_STMT)
     {
-      //FullLocation = context_->getFullLoc(clang_stmt_->getBeginLoc());
+     //
+      //auto p = static_cast<const clang::CXXConstructExpr *>(clang_stmt_)->getLocation();
+      auto p = clang_stmt_->getSourceRange().getBegin();
+      FullLocation = context_->getFullLoc(clang_stmt_->getSourceRange().getBegin());
     } else {
-      //FullLocation = context_->getFullLoc(clang_decl_->getBeginLoc());
+      auto p = clang_decl_->getLocation();
+      //auto d = p.getBegin();
+      FullLocation = context_->getFullLoc(clang_decl_->getLocation());
 
       //uto p = clang_decl_->getBeginLoc();
       //auto j = std::to_string(p.getLineNumber()); ;
     }
     std::string retval = "line ";
-    //retval += std::to_string(FullLocation.getSpellingLineNumber()); 
+    retval += std::to_string(FullLocation.getSpellingLineNumber()); 
     retval +=  ", column ";
-    //retval +=  std::to_string(FullLocation.getSpellingColumnNumber());
+    retval +=  std::to_string(FullLocation.getSpellingColumnNumber());
     return retval;
 }
 
@@ -141,6 +146,12 @@ public:
 };
 
 */
+VecWrapper::VecWrapper(const ast::MaterializeTemporaryExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
+
+VecWrapper::VecWrapper(const ast::CXXBindTemporaryWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
+
+VecWrapper::VecWrapper(const ast::CXXConstructExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
+
 VecWrapper::VecWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
 
 VecWrapper::VecWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
@@ -268,7 +279,7 @@ std::string Vector::toString() const {
     return NULL;
 }
 
-Float::Float(const clang::CXXConstructExpr *vec, clang::ASTContext *c, coords::FloatCtorType tag)
+Float::Float(const clang::Expr *vec, clang::ASTContext *c, coords::FloatCtorType tag)
       : FloatExpr(vec, c), tag_(tag) {
 }
   
@@ -299,7 +310,7 @@ std::string Vector_Lit::toString() const  {
 }
 
 
-Float_Lit::Float_Lit(const clang::CXXConstructExpr* ast, clang::ASTContext *c, ast::Scalar scalar) 
+Float_Lit::Float_Lit(const clang::Expr* ast, clang::ASTContext *c, ast::Scalar scalar) 
     : Float(ast, c, FLOAT_CTOR_LIT), scalar_(scalar) {} 
   
 std::string Float_Lit::toString() const  {
@@ -318,7 +329,7 @@ std::string Vector_Var::toString() const {
     return NULL;
 }
 
-Float_Var::Float_Var(const clang::CXXConstructExpr* ast, clang::ASTContext *c, coords::FloatVarExpr* expr) 
+Float_Var::Float_Var(const clang::Expr* ast, clang::ASTContext *c, coords::FloatVarExpr* expr) 
     : Float(ast, c, FLOAT_CTOR_VAR), expr_(expr) { 
 }
 
@@ -342,7 +353,7 @@ std::string Float_Expr::toString() const {
     //std::string("Vector_Expr::toString() STUB.\n"); 
 }
 
-Float_Expr::Float_Expr(const clang::CXXConstructExpr *ctor_ast, clang::ASTContext *c, 
+Float_Expr::Float_Expr(const clang::Expr *ctor_ast, clang::ASTContext *c, 
                      coords::FloatExpr* expr_coords) 
     : Float(ctor_ast, c, FLOAT_CTOR_EXPR), expr_(expr_coords) {
 }

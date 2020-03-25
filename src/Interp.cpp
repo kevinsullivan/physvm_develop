@@ -136,7 +136,7 @@ std::string FloatVarExpr::toString() const {
   ret += "( ";
   ret += coords_->toString();
   ret += " : peirce.float ";
-  ret += expr_->getSpaceContainer()->toString(); 
+  ret += float_expr_->getSpaceContainer()->toString(); 
   ret += " )";
   return ret;
 }

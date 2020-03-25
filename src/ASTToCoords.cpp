@@ -34,6 +34,35 @@ coords::VecParenExpr *ASTToCoords::mkVecParenExpr(ast::VecParenExpr *ast, clang:
     return coord;  
 }
 */
+coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::MaterializeTemporaryExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
+    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
+    
+    coords::VecWrapper *coord = new coords::VecWrapper(wrapper, c, expr_coords);
+    overrideStmt2Coords(wrapper, coord);
+    overrideCoords2Stmt(coord, wrapper);
+
+    return coord;
+}
+
+coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::CXXBindTemporaryWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
+    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
+    
+    coords::VecWrapper *coord = new coords::VecWrapper(wrapper, c, expr_coords);
+    overrideStmt2Coords(wrapper, coord);
+    overrideCoords2Stmt(coord, wrapper);
+
+    return coord;
+}
+
+coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::CXXConstructExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
+    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
+    
+    coords::VecWrapper *coord = new coords::VecWrapper(wrapper, c, expr_coords);
+    overrideStmt2Coords(wrapper, coord);
+    overrideCoords2Stmt(coord, wrapper);
+
+    return coord;
+}
 
 coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::ExprWithCleanupsWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));

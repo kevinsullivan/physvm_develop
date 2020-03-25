@@ -12,8 +12,11 @@ namespace ast {
 using Scalar = float;
 
 // Wrapper
+using MaterializeTemporaryExprWrapper = const clang::MaterializeTemporaryExpr;
+using CXXBindTemporaryWrapper = const clang::CXXBindTemporaryExpr;
 using ExprWithCleanupsWrapper = const clang::ExprWithCleanups;
 using ImplicitCastExprWrapper = const clang::ImplicitCastExpr;
+using CXXConstructExprWrapper = const clang::CXXConstructExpr;
 
 // Ident
 using VecIdent = const clang::VarDecl;
@@ -43,10 +46,10 @@ using Vector_Lit = const clang::CXXConstructExpr;
 using Vector_Var = const clang::CXXConstructExpr;
 using Vector_Expr = const clang::CXXConstructExpr; // A Clang Stmt!
 
-using Float = const clang::CXXConstructExpr;
-using Float_Lit = const clang::CXXConstructExpr;
-using Float_Var = const clang::CXXConstructExpr;
-using Float_Expr = const clang::CXXConstructExpr;
+using Float = const clang::Expr;
+using Float_Lit = const clang::Expr;
+using Float_Var = const clang::Expr;
+using Float_Expr = const clang::Expr;
 
 
 // Def

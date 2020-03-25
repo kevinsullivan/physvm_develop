@@ -37,7 +37,10 @@ void ScalarExprMatcher::search(){
     StatementMatcher scalarVar = 
         declRefExpr(anyOf(hasType(asString("float")), hasType(asString("double")))).bind("ScalarDeclRefExpr");
     StatementMatcher scalarLiteral =
-        floatLiteral().bind("ScalarLiteralExpr");
+        anyOf(
+            floatLiteral().bind("ScalarLiteralExpr"),
+            implicitCastExpr(has(floatLiteral().bind("ScalarLiteralExpr")))
+        );
     localFinder_.addMatcher(scalarExprWithCleanups, this);
     localFinder_.addMatcher(scalarImplicitCastExpr, this);
 
@@ -58,18 +61,18 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     const auto mulMember = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulMember");
     const auto mulArgument = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulArgument");
     const auto declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("ScalarDeclRefExpr");
-    const auto literal = Result.Nodes.getNodeAs<clang::CXXTemporaryObjectExpr>("ScalarLiteralExpr");
+    const auto literal = Result.Nodes.getNodeAs<clang::Expr>("ScalarLiteralExpr");
 
     const auto scalarExprWithCleanups = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
     const auto scalarImplicitCastExpr = Result.Nodes.getNodeAs<clang::ImplicitCastExpr>("ImplicitCastExprDiscard");
 
     if(parenExpr or innerExpr){
         if(parenExpr and innerExpr){
-            interp_->mkFloatParenExpr(parenExpr, innerExpr);
 
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
+            interp_->mkFloatParenExpr(parenExpr, innerExpr);
         }
         else{
             //log error
@@ -106,12 +109,12 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
         exprMatcher.visit(*scalarExprWithCleanups->getSubExpr());
         interp_->mkFloatWrapperExpr(scalarExprWithCleanups, scalarExprWithCleanups->getSubExpr());
     }
-    else if(scalarImplicitCastExpr){
+    else if(scalarImplicitCastExpr){//this needs to run after literal expr, not all implicit cast has an expression beneath
 
         ScalarExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*scalarImplicitCastExpr->getSubExpr());
-        interp_->mkFloatWrapperExpr(scalarExprWithCleanups, scalarExprWithCleanups->getSubExpr());
+        interp_->mkFloatWrapperExpr(scalarImplicitCastExpr, scalarImplicitCastExpr->getSubExpr());
     }
     else{
         //this can occur if the compound statement calling this matcher is empty. if that is checked beforehand, then this state cannot occur, and thus, no match is an error.

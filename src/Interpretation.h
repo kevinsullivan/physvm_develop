@@ -45,6 +45,9 @@ public:
     */
 
     //this is necessary because of the immediate-parent-paradigm
+    void mkVecWrapperExpr(ast::MaterializeTemporaryExprWrapper *wrapper, ast::VecExpr *expr);
+    void mkVecWrapperExpr(ast::CXXBindTemporaryWrapper *wrapper, ast::VecExpr *expr);
+    void mkVecWrapperExpr(ast::CXXConstructExprWrapper *wrapper, ast::VecExpr *expr);
     void mkVecWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::VecExpr *expr);
     void mkVecWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::VecExpr *expr);
     void mkFloatWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::FloatExpr *expr);
