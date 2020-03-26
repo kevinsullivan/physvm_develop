@@ -234,6 +234,40 @@ std::string VecScalarMulExpr::toString() const {
 }
 
 
+
+FloatFloatAddExpr::FloatFloatAddExpr(
+    const ast::FloatFloatAddExpr *mce, clang::ASTContext *c, coords::FloatExpr *lhs, coords::FloatExpr *rhs) 
+        : FloatExpr(mce, c), lhs_(lhs), rhs_(rhs) {
+}
+
+const ast::FloatFloatAddExpr *FloatFloatAddExpr::getFloatFloatAddExpr() {
+    return static_cast<const clang::BinaryOperator*> (clang_stmt_);  
+}
+
+std::string FloatFloatAddExpr::toString() const {
+    return "(add (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
+}
+
+
+
+FloatFloatMulExpr::FloatFloatMulExpr(
+    const ast::FloatFloatMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *lhs, coords::FloatExpr *rhs) 
+        : FloatExpr(mce, c), lhs_(lhs), rhs_(rhs) {
+}
+
+const ast::FloatFloatMulExpr *FloatFloatMulExpr::getFloatFloatMulExpr() {
+    return static_cast<const clang::BinaryOperator*> (clang_stmt_);  
+}
+
+std::string FloatFloatMulExpr::toString() const {
+    return "(mul (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
+}
+
+
+
+
+
+
 VecParenExpr::VecParenExpr(const ast::VecParenExpr *ast, clang::ASTContext *c, coords::VecExpr *expr) 
         : VecExpr(ast, c), expr_(expr) { 
 }

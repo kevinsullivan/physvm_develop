@@ -81,6 +81,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*scalarDeclRV);
+            exprMatcher.getChildExprStore()->dump();
             this->interp_->mkFloat_Def(scalarDecl, scalarVarDecl, exprMatcher.getChildExprStore());
         }
         else{
@@ -94,9 +95,6 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*vectorDeclRV);
-            std::cout<<"matched vector decl"<<std::endl;
-            vectorDecl->dump();
-            vectorDeclRV->dump();
             this->interp_->mkVector_Def(vectorDecl, vectorVarDecl, exprMatcher.getChildExprStore());
 
         }

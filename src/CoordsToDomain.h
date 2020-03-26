@@ -73,6 +73,14 @@ class CoordsToDomain
 	domain::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
 	coords::VecScalarMulExpr *getVecScalarMulExpr(domain::VecScalarMulExpr* d) const;
 
+	void PutFloatFloatAddExpr(coords::FloatFloatAddExpr *n, domain::FloatFloatAddExpr *e);
+	domain::FloatFloatAddExpr *getFloatFloatAddExpr(coords::FloatFloatAddExpr* c) const;
+	coords::FloatFloatAddExpr *getFloatFloatAddExpr(domain::FloatFloatAddExpr* d) const;
+
+	void PutFloatFloatMulExpr(coords::FloatFloatMulExpr *n, domain::FloatFloatMulExpr *e);
+	domain::FloatFloatMulExpr *getFloatFloatMulExpr(coords::FloatFloatMulExpr* c) const;
+	coords::FloatFloatMulExpr *getFloatFloatMulExpr(domain::FloatFloatMulExpr* d) const;
+
 	// KEVIN: Added for horizontal VecParenExpr module.
 	//
 	void PutVecParenExpr(coords::VecParenExpr *n, domain::VecParenExpr *e);

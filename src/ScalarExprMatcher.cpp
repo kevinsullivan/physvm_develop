@@ -28,12 +28,14 @@ void ScalarExprMatcher::search(){
         parenExpr(allOf(hasType(asString("float")),has(expr().bind("ScalarInnerExpr")))).bind("ScalarParenExpr");
     StatementMatcher scalarAddExpr =
         binaryOperator(allOf(hasOperatorName("+"),
-            hasLHS(anyOf(implicitCastExpr(expr().bind("ScalarAddLHSExpr")),binaryOperator().bind("ScalarAddLHSExpr"))),
-            hasRHS(anyOf(implicitCastExpr(expr().bind("ScalarAddRHSExpr")), binaryOperator().bind("ScalarAddRHSExpr")))));
+            hasLHS(expr().bind("ScalarAddLHS")),
+            hasRHS(expr().bind("ScalarAddRHS"))
+            )).bind("ScalarAddExpr");
     StatementMatcher scalarMulExpr =
         binaryOperator(allOf(hasOperatorName("*"),
-            hasLHS(anyOf(implicitCastExpr(expr().bind("ScalarMulLHSExpr")),binaryOperator().bind("ScalarMulLHSExpr"))),
-            hasRHS(anyOf(implicitCastExpr(expr().bind("ScalarMulRHSExpr")), binaryOperator().bind("ScalarMulRHSExpr")))));
+            hasLHS(expr().bind("ScalarMulLHS")),
+            hasRHS(expr().bind("ScalarMulRHS"))
+        )).bind("ScalarMulExpr");
     StatementMatcher scalarVar = 
         declRefExpr(anyOf(hasType(asString("float")), hasType(asString("double")))).bind("ScalarDeclRefExpr");
     StatementMatcher scalarLiteral =
@@ -54,12 +56,12 @@ void ScalarExprMatcher::search(){
 void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     const auto parenExpr = Result.Nodes.getNodeAs<clang::ParenExpr>("ScalarParenExpr");
     const auto innerExpr = Result.Nodes.getNodeAs<clang::Expr>("ScalarInnerExpr");
-    const auto addExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("ScalarAddExpr");
-    const auto addMember = Result.Nodes.getNodeAs<clang::Expr>("ScalarAddMember");
-    const auto addArgument = Result.Nodes.getNodeAs<clang::Expr>("ScalarAddArgument");
-    const auto mulExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("ScalarAddExpr");
-    const auto mulMember = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulMember");
-    const auto mulArgument = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulArgument");
+    const auto addExpr = Result.Nodes.getNodeAs<clang::BinaryOperator>("ScalarAddExpr");
+    const auto addLHS = Result.Nodes.getNodeAs<clang::Expr>("ScalarAddLHS");
+    const auto addRHS = Result.Nodes.getNodeAs<clang::Expr>("ScalarAddRHS");
+    const auto mulExpr = Result.Nodes.getNodeAs<clang::BinaryOperator>("ScalarMulExpr");
+    const auto mulLHS = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulLHS");
+    const auto mulRHS = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulRHS");
     const auto declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("ScalarDeclRefExpr");
     const auto literal = Result.Nodes.getNodeAs<clang::Expr>("ScalarLiteralExpr");
 
@@ -79,20 +81,38 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             //log error
         }
     }
-    else if(addExpr or addMember or addArgument){
-        if(addExpr and addMember and addArgument){
+    else if(addExpr or addLHS or addRHS){
+        if(addExpr and addLHS and addRHS){
             //NOT IMPLEMENTED
+            ScalarExprMatcher lhsMatcher{this->context_, this->interp_};
+            lhsMatcher.search();
+            lhsMatcher.visit(*addLHS);
             
+            ScalarExprMatcher rhsMatcher{this->context_, this->interp_};
+            rhsMatcher.search();
+            rhsMatcher.visit(*addRHS);
+
+            interp_->mkFloatFloatAddExpr(addExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+            this->childExprStore_ = (clang::Expr*)addExpr;
             //interp_->mkFloat
         }
         else{
             //log error
         }
     }
-    else if(mulExpr or mulMember or mulArgument){
-        if(mulExpr and mulMember and mulArgument){
+    else if(mulExpr or mulLHS or mulRHS){
+        if(mulExpr and mulLHS and mulRHS){
             //NOT IMPLEMENTED
+            ScalarExprMatcher lhsMatcher{this->context_, this->interp_};
+            lhsMatcher.search();
+            lhsMatcher.visit(*mulLHS);
+            
+            ScalarExprMatcher rhsMatcher{this->context_, this->interp_};
+            rhsMatcher.search();
+            rhsMatcher.visit(*mulRHS);
 
+            interp_->mkFloatFloatMulExpr(mulExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+            this->childExprStore_ = (clang::Expr*)mulExpr;
         }
         else{
             //log error
@@ -110,10 +130,6 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
         ScalarExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*scalarExprWithCleanups->getSubExpr());
-
-        //interp_->mkFloatWrapperExpr(scalarExprWithCleanups, scalarExprWithCleanups->getSubExpr());
-
-        
         this->childExprStore_ = exprMatcher.getChildExprStore();
     }
     else if(scalarImplicitCastExpr){//this needs to run after literal expr, not all implicit cast has an expression beneath
@@ -121,8 +137,6 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
         ScalarExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*scalarImplicitCastExpr->getSubExpr());
-        //interp_->mkFloatWrapperExpr(scalarImplicitCastExpr, scalarImplicitCastExpr->getSubExpr());
-
         this->childExprStore_ = exprMatcher.getChildExprStore();
     }
     else{

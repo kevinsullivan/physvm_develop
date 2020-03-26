@@ -322,7 +322,81 @@ void Interpretation::mkFloatParenExpr(ast::FloatParenExpr *ast, ast::FloatExpr *
     coords2interp_->putFloatParenExpr(coords, interp);  
     interp2domain_->putFloatParenExpr(interp,dom);
 } 
+/*
 
+    void mkFloatFloatAddExpr(ast::FloatFloatAddExpr *ast, const ast::FloatExpr *lhs, const ast::FloatExpr *rhs);
+    void mkFloatFloarMulExpr(ast::FloatFloatMulExpr *ast, const ast::FloatExpr *lhs, const ast::FloatExpr *rhs);
+
+*/
+void Interpretation::mkFloatFloatAddExpr(ast::FloatFloatAddExpr *ast, const ast::FloatExpr* lhs, const ast::FloatExpr *rhs){
+  coords::FloatExpr *lhs_coords = static_cast<coords::FloatExpr*>
+                                  (ast2coords_->getStmtCoords(lhs));
+  coords::FloatExpr *rhs_coords = static_cast<coords::FloatExpr*>
+                                  (ast2coords_->getStmtCoords(rhs));
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatAddExpr. ast=" << std::hex << add_ast << "\n";
+  if (lhs_coords == NULL || rhs_coords == NULL) {
+    //LOG(FATAL) <<"Interpretation::mkFloatFloatAddExpr: bad coordinates. Mem coords "
+    //        << std::hex << mem_coords << " arg coords "
+    //        << std::hex << arg_coords << "\n";
+  }
+  coords::FloatFloatAddExpr *coords = ast2coords_->mkFloatFloatAddExpr(ast, context_, lhs_coords, rhs_coords);
+  //domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
+  domain::FloatExpr *dom_lhs_expr = coords2dom_->getFloatExpr(lhs_coords);
+  domain::FloatExpr *dom_rhs_expr = coords2dom_->getFloatExpr(rhs_coords);
+  if (dom_lhs_expr == NULL || dom_rhs_expr == NULL) {
+    //LOG(DEBUG) <<"Interpretation::mkFloatFloatAddExpr: bad domain exprs. Mem "
+    //          << std::hex << dom_mem_expr << " Arg "
+    //          << std::hex << dom_arg_expr << "\n";
+  }
+  domain::FloatFloatAddExpr *dom = domain_->mkFloatFloatAddExpr(dom_lhs_expr, dom_rhs_expr);
+  coords2dom_->PutFloatFloatAddExpr(coords, dom);
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatAddExpr: Mem_Coords: " << mem_coords->toString() << "\n";
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatAddExpr: Arg_Coords: " << arg_coords->toString() << "\n";
+
+  interp::Interp *lhs_interp = coords2interp_->getFloatExpr(lhs_coords);  // dyn type's toString not being called
+  std::string mi_str = lhs_interp->toString();
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatAddExpr: Mem_Interp: " << mi_str << "\n";
+  interp::Interp *rhs_interp = coords2interp_->getFloatExpr(rhs_coords);
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatAddExpr: Arg_Interp: " << arg_interp->toString() << "\n";
+  interp::FloatFloatAddExpr *interp = new interp::FloatFloatAddExpr(coords, dom, lhs_interp, rhs_interp);
+  coords2interp_->putFloatFloatAddExpr(coords, interp); 
+  interp2domain_->putFloatFloatAddExpr(interp,dom);
+}
+
+void Interpretation::mkFloatFloatMulExpr(ast::FloatFloatMulExpr *ast, const ast::FloatExpr* lhs, const ast::FloatExpr *rhs){
+  coords::FloatExpr *lhs_coords = static_cast<coords::FloatExpr*>
+                                  (ast2coords_->getStmtCoords(lhs));
+  coords::FloatExpr *rhs_coords = static_cast<coords::FloatExpr*>
+                                  (ast2coords_->getStmtCoords(rhs));
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatMulExpr. ast=" << std::hex << Mul_ast << "\n";
+  if (lhs_coords == NULL || rhs_coords == NULL) {
+    //LOG(FATAL) <<"Interpretation::mkFloatFloatMulExpr: bad coordinates. lhs coords "
+    //        << std::hex << lhs_coords << " rhs coords "
+    //        << std::hex << rhs_coords << "\n";
+  }
+  coords::FloatFloatMulExpr *coords = ast2coords_->mkFloatFloatMulExpr(ast, context_, lhs_coords, rhs_coords);
+  //domain::Space &space = oracle_->getSpaceForMulExpression(lhs_coords, rhs_coords);
+  domain::FloatExpr *dom_lhs_expr = coords2dom_->getFloatExpr(lhs_coords);
+  domain::FloatExpr *dom_rhs_expr = coords2dom_->getFloatExpr(rhs_coords);
+  if (dom_lhs_expr == NULL || dom_rhs_expr == NULL) {
+    //LOG(DEBUG) <<"Interpretation::mkFloatFloatMulExpr: bad domain exprs. lhs "
+    //          << std::hex << dom_lhs_expr << " rhs "
+    //          << std::hex << dom_rhs_expr << "\n";
+  }
+  domain::FloatFloatMulExpr *dom = domain_->mkFloatFloatMulExpr(dom_lhs_expr, dom_rhs_expr);
+  coords2dom_->PutFloatFloatMulExpr(coords, dom);
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatMulExpr: lhs_Coords: " << lhs_coords->toString() << "\n";
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatMulExpr: rhs_Coords: " << rhs_coords->toString() << "\n";
+
+  interp::Interp *lhs_interp = coords2interp_->getFloatExpr(lhs_coords);  // dyn type's toString not being called
+  std::string mi_str = lhs_interp->toString();
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatMulExpr: lhs_Interp: " << mi_str << "\n";
+  interp::Interp *rhs_interp = coords2interp_->getFloatExpr(rhs_coords);
+  //LOG(DEBUG) << "Interpretation::mkFloatFloatMulExpr: rhs_Interp: " << rhs_interp->toString() << "\n";
+  interp::FloatFloatMulExpr *interp = new interp::FloatFloatMulExpr(coords, dom, lhs_interp, rhs_interp);
+  coords2interp_->putFloatFloatMulExpr(coords, interp); 
+  interp2domain_->putFloatFloatMulExpr(interp,dom);
+}
 
 /*******
 * Vector
@@ -849,6 +923,7 @@ void Interpretation::updateVarTable(){
         auto cvve = (coords::VecVarExpr*)v;
         auto cvpr = (coords::VecParenExpr*)v;
         auto cvvae = (coords::VecVecAddExpr*)v;
+        auto cvsme = (coords::VecScalarMulExpr*)v;
         auto cvl = (coords::Vector_Lit*)v;
         auto cve = (coords::Vector_Expr*)v;
 
@@ -856,6 +931,8 @@ void Interpretation::updateVarTable(){
         auto dom_v = this->coords2dom_->getVector((coords::Vector*)v);
         auto dom_vi = this->coords2dom_->getVecIdent((coords::VecIdent*)v);
         auto dom_ve = this->coords2dom_->getVecExpr((coords::VecExpr*)v);
+
+        
 
         domain::Space* space = nullptr;
 
@@ -874,11 +951,65 @@ void Interpretation::updateVarTable(){
 
           space = &this->oracle_->getSpaceForAddExpression(left, right);
         }
+        else if(cvsme){
+          auto left = (coords::VecExpr*) cvsme->getLeft();
+          auto right = (coords::FloatExpr*) cvsme->getRight();
+
+          space = &this->oracle_->getSpaceForMulExpression(left, right);
+        }
         else if(cvl){
           space = &this->oracle_->getSpaceForVector_Lit(cvl);
         }
         else if(cve){
           space = &this->oracle_->getSpaceForVector_Expr(cve);
+        }
+        else{
+
+        }
+        auto csi = (coords::FloatIdent*)v;
+        auto csvve = (coords::FloatVarExpr*)v;
+        auto cspe = (coords::FloatParenExpr*)v;
+        auto cssae = (coords::FloatFloatAddExpr*)v;
+        auto cssme = (coords::FloatFloatMulExpr*)v;
+        auto csl = (coords::Float_Lit*)v;
+        auto cse = (coords::Float_Expr*)v;
+
+        auto dom_f = this->coords2dom_->getFloat((coords::Float*)v);
+        auto dom_fi = this->coords2dom_->getFloatIdent((coords::FloatIdent*)v);
+        auto dom_fe = this->coords2dom_->getFloatExpr((coords::FloatExpr*)v);
+
+        if(csi){
+          space = &this->oracle_->getSpaceForFloatIdent(csi);
+        }
+        else if(csvve){
+          space = &this->oracle_->getSpaceForFloatVarExpr(csvve);
+
+        }
+        else if(cspe){
+          space = &this->oracle_->getSpaceForFloatParenExpr(cspe);
+
+        }
+        else if(cssae){
+          auto left = (coords::FloatExpr*)cssae->getLeft();
+          auto right = (coords::FloatExpr*)cssae->getRight();
+
+          space = &this->oracle_->getSpaceForFloatAddExpression(left, right);
+
+        }
+        else if(cssme){
+          auto left = (coords::FloatExpr*)cssme->getLeft();
+          auto right = (coords::FloatExpr*)cssme->getRight();
+
+          space = &this->oracle_->getSpaceForFloatMulExpression(left, right);
+
+        }
+        else if(csl){
+          space = &this->oracle_->getSpaceForFloat_Lit(csl);
+
+        }
+        else if(cse){
+          space = &this->oracle_->getSpaceForFloat_Expr(cse);
+
         }
         else{
 

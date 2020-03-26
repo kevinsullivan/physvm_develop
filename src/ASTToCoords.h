@@ -51,16 +51,7 @@ class ASTToCoords {
 public:
 
     ASTToCoords();
-/*
-    coords::VecWrapper* mkVecWrapper(const ast::MaterializeTemporaryExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
-    coords::VecWrapper* mkVecWrapper(const ast::CXXBindTemporaryWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
-    coords::VecWrapper* mkVecWrapper(const ast::CXXConstructExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
-    coords::VecWrapper* mkVecWrapper(const ast::ExprWithCleanupsWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
-    coords::VecWrapper* mkVecWrapper(const ast::ImplicitCastExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
-    //coords::FloatWrapper* mkFloatWrapper(const ast::CXXConstructExprWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr);
-    coords::FloatWrapper* mkFloatWrapper(const ast::ExprWithCleanupsWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr);
-    coords::FloatWrapper* mkFloatWrapper(const ast::ImplicitCastExprWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr);
-*/
+
     coords::VecIdent* mkVecIdent(const ast::VecIdent *ast, clang::ASTContext *c);
     // no VecExpr because we always know exactly what subtype we're creating
     coords::VecVarExpr* mkVecVarExpr(const ast::VecVarExpr *ast, clang::ASTContext *c);
@@ -71,6 +62,16 @@ public:
 
     coords::VecScalarMulExpr* mkVecScalarMulExpr(const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
                                              coords::FloatExpr *flt, coords::VecExpr *vec);
+
+
+    coords::FloatFloatAddExpr* mkFloatFloatAddExpr(const ast::FloatFloatAddExpr *ast, clang::ASTContext *c, 
+                                             coords::FloatExpr *lhs, 
+                                             coords::FloatExpr *rhs);
+
+    coords::FloatFloatMulExpr* mkFloatFloatMulExpr(const ast::FloatFloatMulExpr *ast, clang::ASTContext *c, 
+                                             coords::FloatExpr *lhs, 
+                                             coords::FloatExpr *rhs);
+
 
     // KEVIN: Added for new horizontal vector paren expr module
     coords::VecParenExpr *mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c,

@@ -36,15 +36,7 @@ class InterpToDomain
 /*	void putVecLitExpr(interp::VecLitExpr n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(interp::VecLitExpr c) const;
 	interp::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;*/
-/*
-	void putVecWrapper(interp::VecWrapper *n, domain::VecWrapper *e);
-	domain::VecWrapper *getVecWrapper(interp::VecWrapper* c) const;
-	interp::VecWrapper *getVecWrapper(domain::VecWrapper* d) const;
 
-	void putFloatWrapper(interp::FloatWrapper *n, domain::FloatWrapper *e);
-	domain::FloatWrapper *getFloatWrapper(interp::FloatWrapper* c) const;
-	interp::FloatWrapper *getFloatWrapper(domain::FloatWrapper* d) const;
-*/
 	void putVecVarExpr(interp::VecVarExpr *n, domain::VecVarExpr *e);
 	domain::VecVarExpr *getVecVarExpr(interp::VecVarExpr* c) const;
 	interp::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;
@@ -60,6 +52,15 @@ class InterpToDomain
 	void putVecScalarMulExpr(interp::VecScalarMulExpr *n, domain::VecScalarMulExpr* e);
 	domain::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* n) const;
 	interp::VecScalarMulExpr *getVecScalarMulExpr(domain::VecScalarMulExpr* e) const;
+
+	void putFloatFloatAddExpr(interp::FloatFloatAddExpr *n, domain::FloatFloatAddExpr *e);
+	domain::FloatFloatAddExpr *getFloatFloatAddExpr(interp::FloatFloatAddExpr* c) const;
+	interp::FloatFloatAddExpr *getFloatFloatAddExpr(domain::FloatFloatAddExpr* d) const;
+
+	void putFloatFloatMulExpr(interp::FloatFloatMulExpr *n, domain::FloatFloatMulExpr *e);
+	domain::FloatFloatMulExpr *getFloatFloatMulExpr(interp::FloatFloatMulExpr* c) const;
+	interp::FloatFloatMulExpr *getFloatFloatMulExpr(domain::FloatFloatMulExpr* d) const;
+
 
 	// KEVIN: Added for VecParenExpr horizontal module
 	void putVecParenExpr(interp::VecParenExpr *n, domain::VecParenExpr *e);

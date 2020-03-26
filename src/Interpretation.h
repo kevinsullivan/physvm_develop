@@ -44,18 +44,6 @@ public:
     Precondition: subsequent ast arguments already interpretated.
     */
 
-    //this is necessary because of the immediate-parent-paradigm
-  /*
-    void mkVecWrapperExpr(ast::MaterializeTemporaryExprWrapper *wrapper, ast::VecExpr *expr);
-    void mkVecWrapperExpr(ast::CXXBindTemporaryWrapper *wrapper, ast::VecExpr *expr);
-    void mkVecWrapperExpr(ast::CXXConstructExprWrapper *wrapper, ast::VecExpr *expr);
-    void mkVecWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::VecExpr *expr);
-    void mkVecWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::VecExpr *expr);
-    void mkFloatWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::FloatExpr *expr);
-    void mkFloatWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::FloatExpr *expr);
-*/
-
-
     void mkVecIdent(ast::VecIdent *ast);
     void mkVecVarExpr(ast::VecVarExpr *ast);
 
@@ -82,7 +70,7 @@ public:
     void mkFloatParenExpr(ast::FloatParenExpr *ast, ast::FloatExpr *expr);
 
     void mkFloatFloatAddExpr(ast::FloatFloatAddExpr *ast, const ast::FloatExpr *lhs, const ast::FloatExpr *rhs);
-    void mkFloatFloarMulExpr(ast::FloatFloatMulExpr *ast, const ast::FloatExpr *lhs, const ast::FloatExpr *rhs);
+    void mkFloatFloatMulExpr(ast::FloatFloatMulExpr *ast, const ast::FloatExpr *lhs, const ast::FloatExpr *rhs);
     //void mkFloatAssignExpr(ast:: )
 
     void mkFloat_Lit(ast::Float_Lit *ast, float scalar);

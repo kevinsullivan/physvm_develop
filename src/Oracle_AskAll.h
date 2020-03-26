@@ -104,7 +104,7 @@ public:
 	}
 
 
-	domain::Space& getSpaceForMulExpression(coords::FloatExpr *flt, coords::VecExpr *vec)
+	domain::Space& getSpaceForMulExpression(coords::VecExpr *vec, coords::FloatExpr *flt)
 	{
 		std::string query = "";
 		query += "Space for float scalar times vector expression, mul ";
@@ -117,6 +117,34 @@ public:
 		std::cout << query;
 		return getSpace();
 	}
+
+		domain::Space& getSpaceForFloatAddExpression(coords::FloatExpr *lhs, coords::FloatExpr *rhs)
+	{
+		std::string query = "";
+		query += "Space for float expression, add ";
+		query += lhs->toString();
+		query += " ";
+		query += rhs->toString();
+		query += ", at ";
+		query += lhs->getSourceLoc();
+		query += "? ";
+		std::cout << query;
+		return getSpace();
+	}
+		domain::Space& getSpaceForFloatMulExpression(coords::FloatExpr *lhs, coords::FloatExpr *rhs)
+	{
+		std::string query = "";
+		query += "Space for float expression, mul ";
+		query += lhs->toString();
+		query += " ";
+		query += rhs->toString();
+		query += ", at ";
+		query += lhs->getSourceLoc();
+		query += "? ";
+		std::cout << query;
+		return getSpace();
+	}
+
 
 	domain::Space& getSpaceForFloatParenExpr(coords::FloatExpr *expr) {
 		std::string query = "Space for float parenthesized expression, ";

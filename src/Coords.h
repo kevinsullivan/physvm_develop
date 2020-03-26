@@ -115,35 +115,7 @@ public:
     return (clang_stmt_ == other.clang_stmt_);
   }
 };
-/*
-class VecWrapper : public VecExpr {
-public:
-  VecWrapper(const ast::MaterializeTemporaryExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
-  VecWrapper(const ast::CXXBindTemporaryWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
-  VecWrapper(const ast::CXXConstructExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
-  VecWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
-  VecWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
 
-  const ast::VecExpr *getVecWrapper() const;
-
-  virtual std::string toString() const;
-  
-  protected:
-    coords::VecExpr *expr_;
-};
-
-class FloatWrapper : public FloatExpr {
-public:
-  FloatWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::FloatExpr *expr);
-  FloatWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::FloatExpr *expr);
-
-  const ast::VecExpr *getFloatWrapper() const;
-
-  virtual std::string toString() const;
-  
-  protected:
-    coords::FloatExpr *expr_;
-};*/
 class VecVarExpr : public VecExpr {
 public:
   VecVarExpr(const ast::VecVarExpr *d, clang::ASTContext *c);
@@ -184,6 +156,33 @@ private:
   coords::Coords *flt_;
   coords::Coords *vec_;
 };
+
+class FloatFloatAddExpr : public FloatExpr {
+public:
+  FloatFloatAddExpr(const ast::FloatFloatAddExpr *mce, clang::ASTContext *c, coords::FloatExpr *lhs, coords::FloatExpr *rhs);
+  const ast::FloatFloatAddExpr *getFloatFloatAddExpr();
+  virtual std::string toString() const;
+  coords::Coords* getLeft() const { return lhs_; }
+  coords::Coords* getRight() const { return rhs_; }
+
+private:
+  coords::Coords *lhs_;
+  coords::Coords *rhs_;
+};
+
+class FloatFloatMulExpr : public FloatExpr {
+public:
+  FloatFloatMulExpr(const ast::FloatFloatMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *lhs, coords::FloatExpr *rhs);
+  const ast::FloatFloatMulExpr *getFloatFloatMulExpr();
+  virtual std::string toString() const;
+  coords::Coords* getLeft() const { return lhs_; }
+  coords::Coords* getRight() const { return rhs_; }
+
+private:
+  coords::Coords *lhs_;
+  coords::Coords *rhs_;
+};
+
 
 /*************
 * VecParenExpr

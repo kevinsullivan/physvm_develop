@@ -62,6 +62,9 @@ class Float_Expr;
 class Float_Var;
 class Float_Def;
 
+class FloatFloatAddExpr;
+class FloatFloatMulExpr;
+
 
 
 
@@ -115,6 +118,11 @@ public:
 	VecScalarMulExpr* mkVecScalarMulExpr(Space* s, domain::VecExpr *vec, domain::FloatExpr *flt);
 	VecScalarMulExpr* mkVecScalarMulExpr(domain::VecExpr *vec, domain::FloatExpr *flt);
 
+	FloatFloatAddExpr* mkFloatFloatAddExpr(Space* s, domain::FloatExpr* left_, domain::FloatExpr* right_);
+	FloatFloatAddExpr* mkFloatFloatAddExpr(domain::FloatExpr* left_, domain::FloatExpr* right_);
+
+	FloatFloatMulExpr* mkFloatFloatMulExpr(Space* s, domain::FloatExpr* left_, domain::FloatExpr* right_);
+	FloatFloatMulExpr* mkFloatFloatMulExpr(domain::FloatExpr* left_, domain::FloatExpr* right_);
 	// KEVIN: For new VecParenExpr horizontal module
 	//
 	VecParenExpr* mkVecParenExpr(Space *s, domain::VecExpr *);
@@ -350,6 +358,38 @@ public:
 };
 
 
+class FloatFloatAddExpr : public FloatExpr {
+public:
+   FloatFloatAddExpr(
+        Space* s, domain::FloatExpr *lhs, domain::FloatExpr *rhs) : 
+			domain::FloatExpr(s), lhs_(lhs), rhs_(rhs) {	}
+	 FloatFloatAddExpr(domain::FloatExpr *lhs, domain::FloatExpr *rhs) :
+	 		domain::FloatExpr(), lhs_(lhs), rhs_(rhs) { }
+	domain::FloatExpr *getLHSFloatExpr();
+	domain::FloatExpr *getRHSFloatExpr();
+	// virtual std::string toString() const;
+	// const Space& getFloatFloatAddExprDefaultSpace();
+private:
+    domain::FloatExpr* lhs_;
+    domain::FloatExpr* rhs_;
+};
+
+class FloatFloatMulExpr : public FloatExpr {
+public:
+   	FloatFloatMulExpr(
+        Space* s, domain::FloatExpr *lhs, domain::FloatExpr *rhs) : 
+			domain::FloatExpr(s), lhs_(lhs), rhs_(rhs) {	}
+	FloatFloatMulExpr(domain::FloatExpr *lhs, domain::FloatExpr *rhs) :
+	 		domain::FloatExpr(), lhs_(lhs), rhs_(rhs) { }
+	domain::FloatExpr *getLHSFloatExpr();
+	domain::FloatExpr *getRHSFloatExpr();
+	// virtual std::string toString() const;
+	// const Space& getFloatFloatAddExprDefaultSpace();
+private:
+    domain::FloatExpr* lhs_;
+    domain::FloatExpr* rhs_;
+};
+
 class FloatParenExpr : public FloatExpr  {
 public:
 		FloatParenExpr(Space *s, domain::FloatExpr *e) : domain::FloatExpr(s), expr_(e) {}
@@ -454,26 +494,8 @@ public:
 private:
 	const domain::VecExpr* expr_; // vec expr from which vector is constructed
 };
-/*
-class VecWrapper : public Vector {
-public:
-    VecWrapper(Space& s, domain::VecExpr *e) : Vector(s, VEC_EXPR), expr_{e} {}
-	VecWrapper(domain::VecExpr *e) : Vector(VEC_EXPR), expr_{e} {}
-		// virtual std::string toString() const;
-	private:
-		const domain::VecExpr* expr_;
-};
 
 
-class FloatWrapper : public Float {
-public:
-    FloatWrapper(Space& s, domain::FloatExpr *e) : Float(s, FLOAT_EXPR), expr_{e} {}
-	FloatWrapper(domain::FloatExpr *e) : Float(FLOAT_EXPR), expr_{e} {}
-		// virtual std::string toString() const;
-	private:
-		const domain::FloatExpr* expr_;
-};
-*/
 // TODO: This is unnecessary, as variable expressions are just expressions
 // and expressions are already taken care of?
 //

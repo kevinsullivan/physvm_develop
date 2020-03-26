@@ -152,8 +152,6 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
         //interp_->mkVecWrapperExpr(vectorExprWithCleanups, vectorExprWithCleanups->getSubExpr());
     }
     else if(vectorImplicitCastExpr){
-       // vectorImplicitCastExpr->getSubExpr()->dump();
-        //vectorImplicitCastExpr->dump();
         VectorExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*vectorImplicitCastExpr->getSubExpr());

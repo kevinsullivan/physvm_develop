@@ -85,35 +85,6 @@ void VecExpr::setSpace(Space* space) {
  Expr
 ****/
 
-/*
-domain::VecWrapper *Domain::mkVecWrapper(Space *s, domain::VecExpr* expr)
-{
-    domain::VecWrapper *var = new domain::VecWrapper(s, expr);
-    //exprs.push_back(var);
-    return var;
-}
-
-domain::VecWrapper* Domain::mkVecWrapper(domain::VecExpr* expr)
-{
-    domain::VecWrapper *var = new domain::VecWrapper(expr);
-    //exprs.push_back(var);
-    return var;
-}
-
-domain::FloatWrapper *Domain::mkFloatWrapper(Space *s, domain::FloatExpr* expr)
-{
-    domain::FloatWrapper *var = new domain::FloatWrapper(s, expr);
-    //float_exprs.push_back(var);
-    return var;
-}
-
-domain::FloatWrapper* Domain::mkFloatWrapper(domain::FloatExpr* expr)
-{
-    domain::FloatWrapper *var = new domain::FloatWrapper(expr);
-    //float_exprs.push_back(var);
-    return var;
-}*/
-
 domain::VecVarExpr *Domain::mkVecVarExpr(Space *s)
 {
     domain::VecVarExpr *var = new domain::VecVarExpr(s);
@@ -165,6 +136,57 @@ domain::VecExpr *VecVecAddExpr::getArgVecExpr()
 {
     return arg_;
 }
+
+
+
+domain::FloatFloatAddExpr *Domain::mkFloatFloatAddExpr(Space *s, domain::FloatExpr *lhs, domain::FloatExpr *rhs)
+{
+    domain::FloatFloatAddExpr *be = new domain::FloatFloatAddExpr(s, lhs, rhs);
+    float_exprs.push_back(be);
+    return be;
+}
+
+domain::FloatFloatAddExpr* Domain::mkFloatFloatAddExpr(domain::FloatExpr* lhs, domain::FloatExpr* rhs)
+{
+    domain::FloatFloatAddExpr *b = new domain::FloatFloatAddExpr(lhs, rhs);
+    float_exprs.push_back(b);
+    return b;
+}
+
+domain::FloatExpr *FloatFloatAddExpr::getLHSFloatExpr()
+{
+    return lhs_;
+}
+
+domain::FloatExpr *FloatFloatAddExpr::getRHSFloatExpr()
+{
+    return rhs_;
+}
+
+domain::FloatFloatMulExpr *Domain::mkFloatFloatMulExpr(Space *s, domain::FloatExpr *lhs, domain::FloatExpr *rhs)
+{
+    domain::FloatFloatMulExpr *be = new domain::FloatFloatMulExpr(s, lhs, rhs);
+    float_exprs.push_back(be);
+    return be;
+}
+
+domain::FloatFloatMulExpr* Domain::mkFloatFloatMulExpr(domain::FloatExpr* lhs, domain::FloatExpr* rhs)
+{
+    domain::FloatFloatMulExpr *b = new domain::FloatFloatMulExpr(lhs, rhs);
+    float_exprs.push_back(b);
+    return b;
+}
+
+domain::FloatExpr *FloatFloatMulExpr::getLHSFloatExpr()
+{
+    return lhs_;
+}
+
+domain::FloatExpr *FloatFloatMulExpr::getRHSFloatExpr()
+{
+    return rhs_;
+}
+
 
 // KEVIN: Added for VecParen module, has to stay in Domain.h
 domain::FloatParenExpr *Domain::mkFloatParenExpr(Space *s, domain::FloatExpr *expr)

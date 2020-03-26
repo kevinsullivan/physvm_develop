@@ -20,76 +20,6 @@ ASTToCoords::ASTToCoords() {
    this->coords_stmt = new std::unordered_map<coords::Coords *,const clang::Stmt *>();
    this->coords_decl = new std::unordered_map<coords::Coords *,const clang::Decl *>();
 }
-/*
-coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::MaterializeTemporaryExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
-    
-    coords::VecWrapper *coord = new coords::VecWrapper(wrapper, c, expr_coords);
-    overrideStmt2Coords(wrapper, coord);
-    overrideCoords2Stmt(coord, wrapper);
-
-    return coord;
-}
-
-coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::CXXBindTemporaryWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
-    
-    coords::VecWrapper *coord = new coords::VecWrapper(wrapper, c, expr_coords);
-    overrideStmt2Coords(wrapper, coord);
-    overrideCoords2Stmt(coord, wrapper);
-
-    return coord;
-}
-
-coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::CXXConstructExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
-    
-    coords::VecWrapper *coord = new coords::VecWrapper(wrapper, c, expr_coords);
-    overrideStmt2Coords(wrapper, coord);
-    overrideCoords2Stmt(coord, wrapper);
-
-    return coord;
-}
-
-coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::ExprWithCleanupsWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
-    
-    coords::VecWrapper *coord = new coords::VecWrapper(wrapper, c, expr_coords);
-    overrideStmt2Coords(wrapper, coord);
-    overrideCoords2Stmt(coord, wrapper);
-
-    return coord;
-}
-
-coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::ImplicitCastExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
-    
-    coords::VecWrapper *coord = new coords::VecWrapper(wrapper, c, expr_coords);
-    overrideStmt2Coords(wrapper, coord);
-    overrideCoords2Stmt(coord, wrapper);
-
-    return coord;
-}
-
-coords::FloatWrapper *ASTToCoords::mkFloatWrapper(const ast::ExprWithCleanupsWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr){
-    coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr*>(stmt_coords->at(expr));
-    
-    coords::FloatWrapper *coord = new coords::FloatWrapper(wrapper, c, expr_coords);
-    overrideStmt2Coords(wrapper, coord);
-    overrideCoords2Stmt(coord, wrapper);
-
-    return coord;
-}
-
-coords::FloatWrapper *ASTToCoords::mkFloatWrapper(const ast::ImplicitCastExprWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr){
-    coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr*>(stmt_coords->at(expr));
-    
-    coords::FloatWrapper *coord = new coords::FloatWrapper(wrapper, c, expr_coords);
-    overrideStmt2Coords(wrapper, coord);
-    overrideCoords2Stmt(coord, wrapper);
-
-    return coord;
-}*/
 
 coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast, clang::ASTContext *c) {
     coords::VecIdent *coord = new coords::VecIdent(ast, c);
@@ -144,6 +74,26 @@ coords::VecScalarMulExpr *ASTToCoords::mkVecScalarMulExpr(
     coords::VecScalarMulExpr *coord = new coords::VecScalarMulExpr(ast, c, flt, vec);
     overrideStmt2Coords(ast, coord);
     overrideCoords2Stmt(coord, ast);
+    return coord;
+}
+
+coords::FloatFloatAddExpr *ASTToCoords::mkFloatFloatAddExpr(
+        const ast::FloatFloatAddExpr *ast, clang::ASTContext *c, 
+        coords::FloatExpr *lhs, 
+        coords::FloatExpr *rhs) {
+    coords::FloatFloatAddExpr *coord = new coords::FloatFloatAddExpr(ast, c, lhs,rhs);
+    overrideStmt2Coords(ast,coord);                          // TO DO Canonicalize
+    overrideCoords2Stmt(coord, ast);                          // TO DO Canonicalize
+    return coord;
+}
+
+coords::FloatFloatMulExpr *ASTToCoords::mkFloatFloatMulExpr(
+        const ast::FloatFloatMulExpr *ast, clang::ASTContext *c, 
+        coords::FloatExpr *lhs, 
+        coords::FloatExpr *rhs) {
+    coords::FloatFloatMulExpr *coord = new coords::FloatFloatMulExpr(ast, c, lhs,rhs);
+    overrideStmt2Coords(ast,coord);                          // TO DO Canonicalize
+    overrideCoords2Stmt(coord, ast);                          // TO DO Canonicalize
     return coord;
 }
 

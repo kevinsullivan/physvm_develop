@@ -23,13 +23,17 @@ public:
 	
 	virtual domain::Space &getSpaceForFloatIdent(coords::FloatIdent *v) = 0;
 	virtual domain::Space& getSpaceForFloatVarExpr(coords::FloatExpr *coords) = 0;
-	virtual domain::Space &getSpaceForMulExpression(coords::FloatExpr *flt, coords::VecExpr *vec) = 0;
+	virtual domain::Space &getSpaceForMulExpression(coords::VecExpr *vec, coords::FloatExpr *flt) = 0;
 
 	// KEVIN: Added for VecParenExpr module
 	virtual domain::Space &getSpaceForFloatParenExpr(coords::FloatExpr *expr_coords) = 0;
 	
 	virtual domain::Space& getSpaceForFloat_Expr(coords::FloatExpr *expr_coords) = 0; 
 	virtual domain::Space& getSpaceForFloat_Lit(coords::Float_Lit *coords) = 0;
+
+	virtual domain::Space& getSpaceForFloatAddExpression(coords::FloatExpr *lhs, coords::FloatExpr *rhs) = 0;
+	virtual domain::Space& getSpaceForFloatMulExpression(coords::FloatExpr *lhs, coords::FloatExpr *rhs) = 0;
+
 };
 
 } // namespace

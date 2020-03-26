@@ -39,8 +39,8 @@ void MainMatcher::run(const MatchFinder::MatchResult &Result){
 
         for(auto it = mainCompoundStatement->body_begin(); it != mainCompoundStatement->body_end();it++)
         {
-            //std::cout<<"dumping node"<<std::endl;
-            //(*it)->dump();
+            std::cout<<"dumping node"<<std::endl;
+            (*it)->dump();
             //std::cout<<"dumped"<<std::endl;
             rootMatcher.visit(**it);
         }

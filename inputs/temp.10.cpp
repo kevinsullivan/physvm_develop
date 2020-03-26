@@ -71,6 +71,14 @@ int main(int argc, char **argv){
 
   float flt2 = 3.0;
   float flt3 = flt2;
+  (3.0 + 3.0);
+  3.0 + (3.0 + 3.0);
+  flt2 + 3.0;
+  //flt3 = flt2 + flt;
+  //flt3 = (flt2 + flt);
+  //flt3 = flt3 * (flt3 * flt3);
+  float flt4 = flt3 * (flt3*flt3);
+
   flt3 = (flt2);
 
   Vec v3 = v2.vec_mul(flt2);

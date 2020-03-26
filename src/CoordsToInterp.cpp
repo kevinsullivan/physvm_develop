@@ -404,6 +404,72 @@ coords::FloatVarExpr *CoordsToInterp::getFloatVarExpr(interp::FloatVarExpr *d) c
     return static_cast<coords::FloatVarExpr *>(coords);
 }
 
+
+void CoordsToInterp::putFloatFloatAddExpr(coords::FloatFloatAddExpr *c, interp::FloatFloatAddExpr *d)
+{
+    coords2interp_FloatExpr[c] = d;
+    interp2coords_FloatExpr[d] = c;
+}
+
+interp::FloatFloatAddExpr *CoordsToInterp::getFloatFloatAddExpr(coords::FloatFloatAddExpr *c) const
+{
+    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
+    interp::FloatExpr *dom = NULL;
+    try {
+        dom = coords2interp_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::FloatFloatAddExpr*>(dom);
+}
+
+coords::FloatFloatAddExpr *CoordsToInterp::getFloatFloatAddExpr(interp::FloatFloatAddExpr *d) const
+{
+    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = interp2coords_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::FloatFloatAddExpr *>(coords);
+}
+
+void CoordsToInterp::putFloatFloatMulExpr(coords::FloatFloatMulExpr *c, interp::FloatFloatMulExpr *d)
+{
+    coords2interp_FloatExpr[c] = d;
+    interp2coords_FloatExpr[d] = c;
+}
+
+interp::FloatFloatMulExpr *CoordsToInterp::getFloatFloatMulExpr(coords::FloatFloatMulExpr *c) const
+{
+    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
+    interp::FloatExpr *dom = NULL;
+    try {
+        dom = coords2interp_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::FloatFloatMulExpr*>(dom);
+}
+
+coords::FloatFloatMulExpr *CoordsToInterp::getFloatFloatMulExpr(interp::FloatFloatMulExpr *d) const
+{
+    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
+    coords::FloatExpr *coords = NULL;
+    try {
+        coords = interp2coords_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::FloatFloatMulExpr *>(coords);
+}
+
+
 // Floatparenexpr
 
 void CoordsToInterp::putFloatParenExpr(coords::FloatParenExpr *c, interp::FloatParenExpr *i) {

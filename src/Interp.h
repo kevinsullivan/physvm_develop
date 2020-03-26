@@ -198,6 +198,33 @@ private:
   interp::Interp *arg_;
 };
 
+class FloatFloatAddExpr : public FloatExpr
+{
+public:
+  FloatFloatAddExpr(coords::FloatFloatAddExpr *, domain::FloatFloatAddExpr *,
+                interp::Interp *lhs, interp::Interp *rhs);
+  const ast::FloatFloatAddExpr *getFloatFloatAddExpr();
+  virtual std::string toString() const;
+
+private:
+  interp::Interp *lhs_;
+  interp::Interp *rhs_;
+};
+
+class FloatFloatMulExpr : public FloatExpr
+{
+public:
+  FloatFloatMulExpr(coords::FloatFloatMulExpr *, domain::FloatFloatMulExpr *,
+                interp::Interp *lhs, interp::Interp *rhs);
+  const ast::FloatFloatMulExpr *getFloatFloatMulExpr();
+  virtual std::string toString() const;
+
+private:
+  interp::Interp *lhs_;
+  interp::Interp *rhs_;
+};
+
+
 class VecScalarMulExpr : public VecExpr
 {
 public:

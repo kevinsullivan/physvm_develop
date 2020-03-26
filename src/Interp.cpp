@@ -97,23 +97,7 @@ std::string FloatExpr::toString() const {
   //LOG(FATAL) << "Error. Call to abstract interp::FloatIdent::toString().\n";
   return "Should not call abstract interp::FloatIdent::toString().";
 }
-/*
-VecWrapper::VecWrapper(coords::VecWrapper* c, domain::VecWrapper* d) : VecExpr(c, d) {
-}
 
-std::string VecWrapper::toString() const {
-  std::string ret = "";
-  return ret;
-}
-
-FloatWrapper::FloatWrapper(coords::FloatWrapper* c, domain::FloatWrapper* d) :FloatExpr(c, d) {
-}
-
-std::string FloatWrapper::toString() const {
-  std::string ret = "";
-  return ret;
-}
-*/
 
 VecVarExpr::VecVarExpr(coords::VecVarExpr* c, domain::VecVarExpr* d) : VecExpr(c, d) {
 }
@@ -179,6 +163,41 @@ std::string VecScalarMulExpr::toString() const {
   return ret;  
 } 
 
+FloatFloatAddExpr::FloatFloatAddExpr(coords::FloatFloatAddExpr* c, domain::FloatFloatAddExpr* d, 
+                             interp::Interp *lhs, interp::Interp *rhs)  
+  : FloatExpr(c, d), lhs_(lhs), rhs_(rhs) {
+}
+
+ 
+std::string FloatFloatAddExpr::toString() const {
+  std::string ret = "";
+  ret += "( peirce.add ";
+  ret += lhs_->toString();
+  ret += " ";
+  ret += rhs_->toString();
+  ret += " : peirce.Float ";
+  ret += expr_->getSpaceContainer()->toString(); 
+  ret += " )";
+  return ret;  
+} 
+
+FloatFloatMulExpr::FloatFloatMulExpr(coords::FloatFloatMulExpr* c, domain::FloatFloatMulExpr* d, 
+                             interp::Interp *lhs, interp::Interp *rhs)  
+  : FloatExpr(c, d), lhs_(lhs), rhs_(rhs) {
+}
+
+ 
+std::string FloatFloatMulExpr::toString() const {
+  std::string ret = "";
+  ret += "( peirce.mul ";
+  ret += lhs_->toString();
+  ret += " ";
+  ret += rhs_->toString();
+  ret += " : peirce.float ";
+  ret += expr_->getSpaceContainer()->toString(); 
+  ret += " )";
+  return ret;  
+} 
 
 VecParenExpr::VecParenExpr
     (coords::VecParenExpr* c, domain::VecParenExpr* d, interp::VecExpr *e) 

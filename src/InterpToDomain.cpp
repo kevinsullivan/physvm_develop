@@ -341,6 +341,72 @@ interp::VecScalarMulExpr *InterpToDomain::getVecScalarMulExpr(domain::VecScalarM
 }
 
 
+void InterpToDomain::putFloatFloatAddExpr(interp::FloatFloatAddExpr *c, domain::FloatFloatAddExpr *d)
+{
+    interp2domain_FloatExpr[c] = d;
+    domain2interp_FloatExpr[d] = c;
+}
+
+domain::FloatFloatAddExpr *InterpToDomain::getFloatFloatAddExpr(interp::FloatFloatAddExpr *c) const
+{
+    std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
+    domain::FloatExpr *dom = NULL;
+    try {
+        dom = interp2domain_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::FloatFloatAddExpr*>(dom);
+}
+
+interp::FloatFloatAddExpr *InterpToDomain::getFloatFloatAddExpr(domain::FloatFloatAddExpr *d) const
+{
+    std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
+    interp::FloatExpr *interp = NULL;
+    try {
+        interp = domain2interp_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::FloatFloatAddExpr *>(interp);
+}
+
+
+void InterpToDomain::putFloatFloatMulExpr(interp::FloatFloatMulExpr *c, domain::FloatFloatMulExpr *d)
+{
+    interp2domain_FloatExpr[c] = d;
+    domain2interp_FloatExpr[d] = c;
+}
+
+domain::FloatFloatMulExpr *InterpToDomain::getFloatFloatMulExpr(interp::FloatFloatMulExpr *c) const
+{
+    std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
+    domain::FloatExpr *dom = NULL;
+    try {
+        dom = interp2domain_FloatExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::FloatFloatMulExpr*>(dom);
+}
+
+interp::FloatFloatMulExpr *InterpToDomain::getFloatFloatMulExpr(domain::FloatFloatMulExpr *d) const
+{
+    std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
+    interp::FloatExpr *interp = NULL;
+    try {
+        interp = domain2interp_FloatExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::FloatFloatMulExpr *>(interp);
+}
+
+
 
 void InterpToDomain::putVecParenExpr(interp::VecParenExpr *c, domain::VecParenExpr *d) {
     interp2domain_VecExpr[c] = d;

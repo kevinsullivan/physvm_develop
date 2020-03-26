@@ -45,6 +45,13 @@ class CoordsToInterp
 	interp::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
 	coords::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* d) const;
 
+	void putFloatFloatAddExpr(coords::FloatFloatAddExpr *n, interp::FloatFloatAddExpr *e);
+	interp::FloatFloatAddExpr *getFloatFloatAddExpr(coords::FloatFloatAddExpr* c) const;
+	coords::FloatFloatAddExpr *getFloatFloatAddExpr(interp::FloatFloatAddExpr* d) const;
+	
+	void putFloatFloatMulExpr(coords::FloatFloatMulExpr *n, interp::FloatFloatMulExpr *e);
+	interp::FloatFloatMulExpr *getFloatFloatMulExpr(coords::FloatFloatMulExpr* c) const;
+	coords::FloatFloatMulExpr *getFloatFloatMulExpr(interp::FloatFloatMulExpr* d) const;
 	
 
 // Ident
