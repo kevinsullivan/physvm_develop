@@ -303,27 +303,6 @@ private:
 
 */
 
-class VecWrapper : public VecExpr {
-public:
-    VecWrapper(Space* s, domain::VecExpr *e) : VecExpr(s), expr_{e} {}
-	VecWrapper(domain::VecExpr *e) : VecExpr(), expr_{e} {}
-		// virtual std::string toString() const;
-	private:
-		const domain::VecExpr* expr_;
-};
-
-class FloatWrapper : public FloatExpr {
-public:
-    FloatWrapper(Space* s, domain::FloatExpr *e) : FloatExpr(s), expr_{e} {}
-	FloatWrapper(domain::FloatExpr *e) : FloatExpr(), expr_{e} {}
-		// virtual std::string toString() const;
-	private:
-		const domain::FloatExpr* expr_;
-};
-
-
-
-
 class VecVarExpr : public VecExpr {
 public:
     VecVarExpr(Space* s) : VecExpr(s) {}
@@ -475,8 +454,26 @@ public:
 private:
 	const domain::VecExpr* expr_; // vec expr from which vector is constructed
 };
+/*
+class VecWrapper : public Vector {
+public:
+    VecWrapper(Space& s, domain::VecExpr *e) : Vector(s, VEC_EXPR), expr_{e} {}
+	VecWrapper(domain::VecExpr *e) : Vector(VEC_EXPR), expr_{e} {}
+		// virtual std::string toString() const;
+	private:
+		const domain::VecExpr* expr_;
+};
 
 
+class FloatWrapper : public Float {
+public:
+    FloatWrapper(Space& s, domain::FloatExpr *e) : Float(s, FLOAT_EXPR), expr_{e} {}
+	FloatWrapper(domain::FloatExpr *e) : Float(FLOAT_EXPR), expr_{e} {}
+		// virtual std::string toString() const;
+	private:
+		const domain::FloatExpr* expr_;
+};
+*/
 // TODO: This is unnecessary, as variable expressions are just expressions
 // and expressions are already taken care of?
 //

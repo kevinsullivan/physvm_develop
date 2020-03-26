@@ -45,6 +45,7 @@ public:
     */
 
     //this is necessary because of the immediate-parent-paradigm
+  /*
     void mkVecWrapperExpr(ast::MaterializeTemporaryExprWrapper *wrapper, ast::VecExpr *expr);
     void mkVecWrapperExpr(ast::CXXBindTemporaryWrapper *wrapper, ast::VecExpr *expr);
     void mkVecWrapperExpr(ast::CXXConstructExprWrapper *wrapper, ast::VecExpr *expr);
@@ -52,7 +53,7 @@ public:
     void mkVecWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::VecExpr *expr);
     void mkFloatWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::FloatExpr *expr);
     void mkFloatWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::FloatExpr *expr);
-
+*/
 
 
     void mkVecIdent(ast::VecIdent *ast);
@@ -80,6 +81,10 @@ public:
     // KEVIN: Added for new horizontal module
     void mkFloatParenExpr(ast::FloatParenExpr *ast, ast::FloatExpr *expr);
 
+    void mkFloatFloatAddExpr(ast::FloatFloatAddExpr *ast, const ast::FloatExpr *lhs, const ast::FloatExpr *rhs);
+    void mkFloatFloarMulExpr(ast::FloatFloatMulExpr *ast, const ast::FloatExpr *lhs, const ast::FloatExpr *rhs);
+    //void mkFloatAssignExpr(ast:: )
+
     void mkFloat_Lit(ast::Float_Lit *ast, float scalar);
     void mkFloat_Expr(ast::Float_Expr *ast, ast::FloatExpr* expr);
     void mkFloat_Var(ast::FloatLitExpr *ast);
@@ -100,7 +105,7 @@ public:
 
     std::string toString_FloatIdents();
     std::string toString_FloatExprs();
-    std::string toString_FloatVectors();
+    std::string toString_Floats();
     std::string toString_FloatDefs();
     
     void setAll_Spaces();

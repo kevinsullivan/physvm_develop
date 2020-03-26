@@ -97,7 +97,7 @@ std::string FloatExpr::toString() const {
   //LOG(FATAL) << "Error. Call to abstract interp::FloatIdent::toString().\n";
   return "Should not call abstract interp::FloatIdent::toString().";
 }
-
+/*
 VecWrapper::VecWrapper(coords::VecWrapper* c, domain::VecWrapper* d) : VecExpr(c, d) {
 }
 
@@ -113,7 +113,7 @@ std::string FloatWrapper::toString() const {
   std::string ret = "";
   return ret;
 }
-
+*/
 
 VecVarExpr::VecVarExpr(coords::VecVarExpr* c, domain::VecVarExpr* d) : VecExpr(c, d) {
 }

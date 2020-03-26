@@ -80,6 +80,19 @@
         "map": "cpp",
         "memory_resource": "cpp",
         "__tree": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "strstream": "cpp",
+        "cfenv": "cpp",
+        "complex": "cpp",
+        "csetjmp": "cpp",
+        "forward_list": "cpp",
+        "random": "cpp",
+        "regex": "cpp",
+        "set": "cpp",
+        "scoped_allocator": "cpp",
+        "shared_mutex": "cpp",
+        "typeindex": "cpp",
+        "valarray": "cpp",
+        "stack": "cpp"
     }
 }

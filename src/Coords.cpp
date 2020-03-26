@@ -45,20 +45,22 @@ std::string Coords::toString() const {
 }
 
 std::string Coords::getSourceLoc() const {
-    //clang::FullSourceLoc FullLocation;
-    //const clang::SourceManager& SrcManager = this->context_->getSourceManager();
+    clang::FullSourceLoc FullLocation;
+    const clang::SourceManager& SrcManager = this->context_->getSourceManager();
     if (ast_type_tag_ == CLANG_AST_STMT)
     {
-      //this->toString();
-      //auto p = clang_stmt_->getSourceRange();
-      //FullLocation = context_->getFullLoc(clang_stmt_->getSourceRange().getEnd());
+      //std::cout<<this->toString()<<std::endl;
+      auto p = clang_stmt_->getSourceRange().getBegin();
+      //clang_stmt_->getSourceRange()->dump(SrcManager);
+     // std::cout<<clang_stmt_->getSourceRange().getBegin()<<std::endl;
+      FullLocation = context_->getFullLoc(clang_stmt_->getSourceRange().getEnd());
     } else {
-      //FullLocation = context_->getFullLoc(clang_decl_->getLocation());
+      FullLocation = context_->getFullLoc(clang_decl_->getLocation());
     }
     std::string retval = "line ";
-    //retval += std::to_string(FullLocation.getFileLoc().getSpellingLineNumber()); 
+    retval += std::to_string(FullLocation.getSpellingLineNumber()); 
     retval +=  ", column ";
-    //retval +=  std::to_string(FullLocation.getFileLoc().getSpellingColumnNumber());
+    retval +=  std::to_string(FullLocation.getSpellingColumnNumber());
     return retval;
 }
 
@@ -140,7 +142,7 @@ public:
   virtual std::string toString() const;
 };
 
-*/
+*//*
 VecWrapper::VecWrapper(const ast::MaterializeTemporaryExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
 
 VecWrapper::VecWrapper(const ast::CXXBindTemporaryWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
@@ -172,7 +174,7 @@ std::string FloatWrapper::toString() const{
     return expr_->toString();//We simply ignore the wrapper
 }
 
-
+*/
 /*
 No such intermediate node in Clang AST.
 Straight to CXXConstructExpr (Vector_Lit).

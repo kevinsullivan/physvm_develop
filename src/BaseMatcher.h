@@ -23,10 +23,15 @@ public:
 
     virtual void start();
     virtual void visit(const clang::Stmt &node);
+
+    clang::Expr* getChildExprStore() const {
+        return this->childExprStore_;
+    }
 protected:
     MatchFinder localFinder_;
     interp::Interpretation* interp_;
     clang::ASTContext* context_;
+    clang::Expr* childExprStore_;
 
 };
 

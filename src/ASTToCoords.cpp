@@ -20,20 +20,7 @@ ASTToCoords::ASTToCoords() {
    this->coords_stmt = new std::unordered_map<coords::Coords *,const clang::Stmt *>();
    this->coords_decl = new std::unordered_map<coords::Coords *,const clang::Decl *>();
 }
-
 /*
-
-coords::VecParenExpr *ASTToCoords::mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c, ast::VecExpr *expr) {
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
-    if (!expr_coords) {
-        //LOG(FATAL) << "ASTToCoords::mkVecParenExpr: Error. No expr coords.\n"; 
-    }
-    coords::VecParenExpr *coord = new coords::VecParenExpr(ast, c, expr_coords); 
-    overrideStmt2Coords(ast, coord); 
-    overrideCoords2Stmt(coord, ast);
-    return coord;  
-}
-*/
 coords::VecWrapper *ASTToCoords::mkVecWrapper(const ast::MaterializeTemporaryExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr){
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
     
@@ -102,7 +89,7 @@ coords::FloatWrapper *ASTToCoords::mkFloatWrapper(const ast::ImplicitCastExprWra
     overrideCoords2Stmt(coord, wrapper);
 
     return coord;
-}
+}*/
 
 coords::VecIdent *ASTToCoords::mkVecIdent(const ast::VecIdent *ast, clang::ASTContext *c) {
     coords::VecIdent *coord = new coords::VecIdent(ast, c);

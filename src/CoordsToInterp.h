@@ -23,11 +23,11 @@ class CoordsToInterp
 
 	interp::VecExpr *getVecExpr(coords::VecExpr* c);
 	coords::VecExpr *getVecExpr(interp::VecExpr* d) const;
-
+/*
 	void putVecWrapper(coords::VecWrapper *n, interp::VecWrapper *e);
 	interp::VecWrapper *getVecWrapper(coords::VecWrapper* c) const;
 	coords::VecWrapper *getVecWrapper(interp::VecWrapper* d) const;
-
+*/
 	void putVecVarExpr(coords::VecVarExpr *n, interp::VecVarExpr *e);
 	interp::VecVarExpr *getVecVarExpr(coords::VecVarExpr* c) const;
 	coords::VecVarExpr *getVecVarExpr(interp::VecVarExpr* d) const;
@@ -45,6 +45,8 @@ class CoordsToInterp
 	interp::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
 	coords::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* d) const;
 
+	
+
 // Ident
 
 	void putFloatIdent(coords::FloatIdent *key, interp::FloatIdent *i);
@@ -55,11 +57,11 @@ class CoordsToInterp
 
 	interp::FloatExpr *getFloatExpr(coords::FloatExpr* c) const;
 	coords::FloatExpr *getFloatExpr(interp::FloatExpr* d) const;
-
+/*
 	void putFloatWrapper(coords::FloatWrapper *n, interp::FloatWrapper *e);
 	interp::FloatWrapper *getFloatWrapper(coords::FloatWrapper* c) const;
 	coords::FloatWrapper *getFloatWrapper(interp::FloatWrapper* d) const;
-	
+*/	
 
 	void putFloatVarExpr(coords::FloatVarExpr *n, interp::FloatVarExpr *e);
 	interp::FloatVarExpr *getFloatVarExpr(coords::FloatVarExpr* c) const;

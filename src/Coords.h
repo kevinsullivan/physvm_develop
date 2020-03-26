@@ -115,7 +115,7 @@ public:
     return (clang_stmt_ == other.clang_stmt_);
   }
 };
-
+/*
 class VecWrapper : public VecExpr {
 public:
   VecWrapper(const ast::MaterializeTemporaryExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr);
@@ -143,7 +143,7 @@ public:
   
   protected:
     coords::FloatExpr *expr_;
-};
+};*/
 class VecVarExpr : public VecExpr {
 public:
   VecVarExpr(const ast::VecVarExpr *d, clang::ASTContext *c);

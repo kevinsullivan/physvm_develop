@@ -675,14 +675,24 @@ int main(int argc, const char **argv)
 
   cout <<"Spaces\n";
   cout <<interp_->toString_Spaces();
-  cout <<"\nIdentifiers\n";
+  cout <<"\nVector Identifiers\n";
   cout <<interp_->toString_Idents(); 
-  cout <<"\nExpressions\n";
+  cout <<"\nVector Expressions\n";
   cout <<interp_->toString_Exprs();
   cout <<"\nVectors\n";
   cout <<interp_->toString_Vectors();
-  cout <<"\nDefinitions\n"; 
+  cout <<"\nVector Definitions\n"; 
   cout <<interp_->toString_Defs();
+  cout << "\n";
+
+  cout <<"Float Identifiers\n";
+  cout <<interp_->toString_FloatIdents();
+  cout <<"\nFloat Expressions\n";
+  cout <<interp_->toString_Exprs();
+  cout <<"\nFloats\n";
+  cout <<interp_->toString_Floats();
+  cout <<"\nFloat Definitions\n";
+  cout <<interp_->toString_FloatDefs();
   cout << "\n";
 
   Checker *checker = new Checker(interp_);

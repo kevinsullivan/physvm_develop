@@ -51,7 +51,7 @@ class ASTToCoords {
 public:
 
     ASTToCoords();
-
+/*
     coords::VecWrapper* mkVecWrapper(const ast::MaterializeTemporaryExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
     coords::VecWrapper* mkVecWrapper(const ast::CXXBindTemporaryWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
     coords::VecWrapper* mkVecWrapper(const ast::CXXConstructExprWrapper *wrapper, clang::ASTContext *c, ast::VecExpr *expr);
@@ -60,7 +60,7 @@ public:
     //coords::FloatWrapper* mkFloatWrapper(const ast::CXXConstructExprWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr);
     coords::FloatWrapper* mkFloatWrapper(const ast::ExprWithCleanupsWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr);
     coords::FloatWrapper* mkFloatWrapper(const ast::ImplicitCastExprWrapper *wrapper, clang::ASTContext *c, ast::FloatExpr *expr);
-
+*/
     coords::VecIdent* mkVecIdent(const ast::VecIdent *ast, clang::ASTContext *c);
     // no VecExpr because we always know exactly what subtype we're creating
     coords::VecVarExpr* mkVecVarExpr(const ast::VecVarExpr *ast, clang::ASTContext *c);
@@ -108,20 +108,12 @@ public:
     // TODO -- Have these routines return more specific subclass objects
     coords::Coords *getStmtCoords(const clang::Stmt *s) {
         auto dl = stmt_coords->find(s);
-        //std::cout<<dl->first<<" "<<dl->second<<std::endl;
-        //for(auto it = stmt_coords->begin(); it != stmt_coords->end();it++){
-        //    std::cout<<it->first<<" "<<it->second<<std::endl;
-        //}
 
         return stmt_coords->find(s)->second;
     }
 
     coords::Coords *getDeclCoords(const clang::Decl *d) {
         auto dl = decl_coords->find(d);
-        //std::cout<<dl->first<<" "<<dl->second<<std::endl;
-        //for(auto it = decl_coords->begin(); it != decl_coords->end();it++){
-        //    std::cout<<it->first<<" "<<it->second<<std::endl;
-        //}
 
         return dl->second;
     }

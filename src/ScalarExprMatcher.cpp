@@ -72,7 +72,8 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
-            interp_->mkFloatParenExpr(parenExpr, innerExpr);
+            interp_->mkFloatParenExpr(parenExpr, exprMatcher.getChildExprStore());
+            this->childExprStore_ = (clang::Expr*)parenExpr;
         }
         else{
             //log error
@@ -99,22 +100,30 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(declRefExpr){
         interp_->mkFloatVarExpr(declRefExpr);
+        this->childExprStore_ = (clang::Expr*)declRefExpr;
     }
     else if(literal){
         interp_->mkFloat_Lit(literal, 0);
+        this->childExprStore_ = (clang::Expr*)literal;
     }
     else if(scalarExprWithCleanups){
         ScalarExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*scalarExprWithCleanups->getSubExpr());
-        interp_->mkFloatWrapperExpr(scalarExprWithCleanups, scalarExprWithCleanups->getSubExpr());
+
+        //interp_->mkFloatWrapperExpr(scalarExprWithCleanups, scalarExprWithCleanups->getSubExpr());
+
+        
+        this->childExprStore_ = exprMatcher.getChildExprStore();
     }
     else if(scalarImplicitCastExpr){//this needs to run after literal expr, not all implicit cast has an expression beneath
 
         ScalarExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*scalarImplicitCastExpr->getSubExpr());
-        interp_->mkFloatWrapperExpr(scalarImplicitCastExpr, scalarImplicitCastExpr->getSubExpr());
+        //interp_->mkFloatWrapperExpr(scalarImplicitCastExpr, scalarImplicitCastExpr->getSubExpr());
+
+        this->childExprStore_ = exprMatcher.getChildExprStore();
     }
     else{
         //this can occur if the compound statement calling this matcher is empty. if that is checked beforehand, then this state cannot occur, and thus, no match is an error.

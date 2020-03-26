@@ -13,7 +13,7 @@ namespace interp
 
 class VecIdent;
 class VecExpr;
-class VecWrapper;
+//class VecWrapper;
 class VecVarExpr;
 class VecVecAddExpr;
 class Vector;
@@ -24,7 +24,7 @@ class Vector_Def;
 
 class FloatIdent;
 class FloatExpr;
-class FloatWrapper;
+//class FloatWrapper;
 class FloatVarExpr;
 class VecScalarMulExpr;
 
@@ -145,7 +145,7 @@ public:
   virtual std::string toString() const;
 };
 
-
+/*
 class VecWrapper : public VecExpr
 {
 public:
@@ -163,7 +163,7 @@ public:
   const coords::FloatWrapper *getFloatWrapperCoords() const;
   virtual std::string toString() const;
 };
-
+*/
 
 class VecVarExpr : public VecExpr
 {

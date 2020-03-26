@@ -30,10 +30,10 @@ void StatementProductionMatcher::search(){
                 .bind("ScalarVarDecl")))
                 .bind("ScalarDeclStatement");
     StatementMatcher vectorDecl =
-       declStmt(has(varDecl(anyOf(
+       declStmt(has(varDecl(allOf(hasType(asString("class Vec")),anyOf(
            has(expr().bind("VectorDeclRV")),
            has(exprWithCleanups().bind("VectorDeclRV"))
-           )).bind("VectorVarDecl"))).bind("VectorDeclStatement");
+           ))).bind("VectorVarDecl"))).bind("VectorDeclStatement");
            //cxxConstructExpr(allOf(hasType(asString("class Vec")),has(expr().bind("VectorDeclRV")))))).bind("VectorVarDecl"))).bind("VectorDeclStatement");
     StatementMatcher floatExpr = 
         expr(hasType(asString("float"))).bind("ScalarExprStatement");
@@ -81,7 +81,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*scalarDeclRV);
-            this->interp_->mkFloat_Def(scalarDecl, scalarVarDecl, scalarDeclRV);
+            this->interp_->mkFloat_Def(scalarDecl, scalarVarDecl, exprMatcher.getChildExprStore());
         }
         else{
             //log error
@@ -94,7 +94,10 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*vectorDeclRV);
-            this->interp_->mkVector_Def(vectorDecl, vectorVarDecl, vectorDeclRV);
+            std::cout<<"matched vector decl"<<std::endl;
+            vectorDecl->dump();
+            vectorDeclRV->dump();
+            this->interp_->mkVector_Def(vectorDecl, vectorVarDecl, exprMatcher.getChildExprStore());
 
         }
         else{

@@ -161,12 +161,12 @@ coords::VecLitExpr *CoordsToDomain::getLitInterp(domain::VecLitExpr d) const {
     return d->getCoords();
 }
 */
-
+/*
 
 void CoordsToDomain::putVecWrapper(coords::VecWrapper *c, domain::VecWrapper *d)
 {
-    coords2dom_VecExpr[c] = d;
-    dom2coords_VecExpr[d] = c;
+    //coords2dom_VecExpr[c] = d;
+    //dom2coords_VecExpr[d] = c;
 //    coord2dom_VecExpr.insert(std::make_pair(*c, d));
 }
 
@@ -175,7 +175,7 @@ domain::VecWrapper *CoordsToDomain::getVecWrapper(coords::VecWrapper *c) const
     std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
     domain::VecExpr *dom = NULL;
     try {
-        dom = coords2dom_VecExpr.at(c);
+        dom = coords2dom_Vector.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
@@ -230,7 +230,7 @@ coords::FloatWrapper *CoordsToDomain::getFloatWrapper(domain::FloatWrapper *d) c
     }
     return static_cast<coords::FloatWrapper *>(coords);
 }
-
+*/
 
 
 // var

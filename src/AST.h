@@ -11,12 +11,6 @@ namespace ast {
 // Scalar
 using Scalar = float;
 
-// Wrapper
-using MaterializeTemporaryExprWrapper = const clang::MaterializeTemporaryExpr;
-using CXXBindTemporaryWrapper = const clang::CXXBindTemporaryExpr;
-using ExprWithCleanupsWrapper = const clang::ExprWithCleanups;
-using ImplicitCastExprWrapper = const clang::ImplicitCastExpr;
-using CXXConstructExprWrapper = const clang::CXXConstructExpr;
 
 // Ident
 using VecIdent = const clang::VarDecl;
@@ -33,7 +27,15 @@ using FloatExpr = const clang::Expr;
 using FloatLitExpr = const clang::CXXConstructExpr;
 using FloatVarExpr = const clang::DeclRefExpr;
 
+
+using FloatFloatAddExpr = const clang::BinaryOperator;
+using FloatFloatMulExpr = const clang::BinaryOperator;
+
 using VecScalarMulExpr = const clang::CXXMemberCallExpr;
+
+using FloatAssignExpr = const clang::CXXConstructExpr;
+using VectorAssignExpr = const clang::CXXConstructExpr;
+
 
 // KEVIN: Add for VecParenExpr module
 using VecParenExpr = const clang::ParenExpr;
@@ -50,6 +52,9 @@ using Float = const clang::Expr;
 using Float_Lit = const clang::Expr;
 using Float_Var = const clang::Expr;
 using Float_Expr = const clang::Expr;
+
+using FloatFloatAddExpr = const clang::BinaryOperator;
+using FloatFloatMulExpr = const clang::BinaryOperator;
 
 
 // Def

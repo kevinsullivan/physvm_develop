@@ -48,7 +48,7 @@ class CoordsToDomain
 /*	void putVecLitExpr(coords::VecLitExpr n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(coords::VecLitExpr c) const;
 	coords::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;*/
-
+/*
 	void putVecWrapper(coords::VecWrapper *n, domain::VecWrapper *e);
 	domain::VecWrapper *getVecWrapper(coords::VecWrapper *c) const;
 	coords::VecWrapper *getVecWrapper(domain::VecWrapper *d) const;
@@ -56,7 +56,7 @@ class CoordsToDomain
 	void putFloatWrapper(coords::FloatWrapper *n, domain::FloatWrapper *e);
 	domain::FloatWrapper *getFloatWrapper(coords::FloatWrapper *c) const;
 	coords::FloatWrapper *getFloatWrapper(domain::FloatWrapper *d) const;
-
+*/
 	void PutVecVarExpr(coords::VecVarExpr *n, domain::VecVarExpr *e);
 	domain::VecVarExpr *getVecVarExpr(coords::VecVarExpr* c) const;
 	coords::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;

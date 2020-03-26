@@ -77,6 +77,7 @@ coords::VecExpr *CoordsToInterp::getVecExpr(interp::VecExpr *d) const
 }
 
 // var
+/*
 void CoordsToInterp::putVecWrapper(coords::VecWrapper *c, interp::VecWrapper *d)
 {
     std::string cstr = c->toString();
@@ -115,7 +116,7 @@ coords::VecWrapper *CoordsToInterp::getVecWrapper(interp::VecWrapper *d) const
         coords = NULL;
     }
     return static_cast<coords::VecWrapper *>(coords);
-}
+}*/
 
 
 void CoordsToInterp::putVecVarExpr(coords::VecVarExpr *c, interp::VecVarExpr *d)
@@ -319,7 +320,7 @@ coords::FloatExpr *CoordsToInterp::getFloatExpr(interp::FloatExpr *d) const
     }
     return coords;
 }
-
+/*
 void CoordsToInterp::putFloatWrapper(coords::FloatWrapper *c, interp::FloatWrapper *d)
 {
     std::string cstr = c->toString();
@@ -359,7 +360,7 @@ coords::FloatWrapper *CoordsToInterp::getFloatWrapper(interp::FloatWrapper *d) c
     }
     return static_cast<coords::FloatWrapper *>(coords);
 }
-
+*/
 
 // var
 

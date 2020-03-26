@@ -61,7 +61,7 @@ void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) 
 void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
     coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
-*/
+*//*
 void Interpretation::mkVecWrapperExpr(ast::MaterializeTemporaryExprWrapper *wrapper, ast::VecExpr *inner){
   coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
   coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
@@ -135,7 +135,7 @@ void Interpretation::mkFloatWrapperExpr(ast::CXXConstructExprWrapper *wrapper, a
   coords2interp_->putFloatWrapper(coords, interp);
   interp2domain_->putFloatWrapper(interp, dom);
 }
-*/
+
 
 void Interpretation::mkFloatWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::FloatExpr *inner){
   coords::FloatWrapper *coords = ast2coords_->mkFloatWrapper(wrapper, context_, inner);
@@ -160,7 +160,7 @@ void Interpretation::mkFloatWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, a
   coords2interp_->putFloatWrapper(coords, interp);
   interp2domain_->putFloatWrapper(interp, dom);
 
-}
+}*/
 
 /******
 * Ident
@@ -586,7 +586,7 @@ std::string Interpretation::toString_FloatExprs() {
   return retval;
 }
 
-std::string Interpretation::toString_FloatVectors() {
+std::string Interpretation::toString_Floats() {
   std::string retval = "";
   std::vector<domain::Float*> &id = domain_->getFloats();
   for (std::vector<domain::Float *>::iterator it = id.begin(); it != id.end(); ++it) {
@@ -718,12 +718,13 @@ void Interpretation::mkVarTable(){
     this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVecIdent(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVecIdent(*it));
     //this->index2dom_[idx++]=
   }
+  std::cout<<idx<<std::endl;
   for(auto it = vecExprs.begin(); it != vecExprs.end();it++)
   {
     auto q = this->coords2dom_->getVecExpr(this->coords2dom_->getVecExpr(*it));
     this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVecExpr(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVecExpr(*it));
-
   }
+  std::cout<<idx<<std::endl;
   for(auto it = vecs.begin(); it != vecs.end(); it++)
   {
 
@@ -731,7 +732,9 @@ void Interpretation::mkVarTable(){
 
     this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVector(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVector(*it));
 
-  }/*
+  }
+  std::cout<<idx<<std::endl;
+  /*
   for(auto it = vecDefs.begin(); it != vecDefs.end(); it++)
   {
     this->index2coords_[idx++]=static_cast<coords::Coords*>(this->coords2dom_->getVector_Def(*it));

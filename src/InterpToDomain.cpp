@@ -137,7 +137,7 @@ interp::FloatExpr *InterpToDomain::getFloatExpr(domain::FloatExpr *d) const
     }
     return interp;
 }
-
+/*
 void InterpToDomain::putVecWrapper(interp::VecWrapper *c, domain::VecWrapper *d)
 {
     interp2domain_VecExpr[c] = d;
@@ -150,7 +150,7 @@ domain::VecWrapper *InterpToDomain::getVecWrapper(interp::VecWrapper *c) const
     std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
     domain::VecExpr *dom = NULL;
     try {
-        dom = interp2domain_VecExpr.at(c);
+        dom = interp2domain_Vector.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
@@ -163,7 +163,7 @@ interp::VecWrapper *InterpToDomain::getVecWrapper(domain::VecWrapper *d) const
     std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
     interp::VecExpr *interp = NULL;
     try {
-        interp = domain2interp_VecExpr.at(d);
+        interp = domain2interp_Vector.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
@@ -203,7 +203,7 @@ interp::FloatWrapper *InterpToDomain::getFloatWrapper(domain::FloatWrapper *d) c
     }
     return static_cast<interp::FloatWrapper *>(interp);
 }
-
+*/
 
 // var
 

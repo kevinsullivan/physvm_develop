@@ -51,6 +51,7 @@ void generateMath(aFile* f, interp::Interpretation* interp) {
     math += "import vec\n\n";
     math += interp->toString_Spaces();
     math += interp->toString_Defs();
+    math += interp->toString_FloatDefs();
     //LOG(DEBUG) << "Checker::generateMath generated this: \n"
     //           << math << "\n";
     fputs(math.c_str(), f->file);
