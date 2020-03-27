@@ -82,7 +82,7 @@ std::string FloatIdent::toString() const {
 //  ret += "( ";
   ret += coords_->toString();
   ret += " : peirce.scalar ";
-  ret += ident_->getSpaceContainer()->toString();
+  ret += float_ident_->getSpaceContainer()->toString();
 //  ret += " )";
   return ret;
 }
@@ -128,7 +128,7 @@ std::string FloatVarExpr::toString() const {
   std::string ret = "";
   ret += "( ";
   ret += coords_->toString();
-  ret += " : peirce.float ";
+  ret += " : peirce.scalar ";
   ret += float_expr_->getSpaceContainer()->toString(); 
   ret += " )";
   return ret;
@@ -184,8 +184,8 @@ std::string FloatFloatAddExpr::toString() const {
   ret += lhs_->toString();
   ret += " ";
   ret += rhs_->toString();
-  ret += " : peirce.Float ";
-  ret += expr_->getSpaceContainer()->toString(); 
+  ret += " : peirce.scalar ";
+  ret += float_expr_->getSpaceContainer()->toString(); 
   ret += " )";
   return ret;  
 } 
@@ -202,8 +202,8 @@ std::string FloatFloatMulExpr::toString() const {
   ret += lhs_->toString();
   ret += " ";
   ret += rhs_->toString();
-  ret += " : peirce.float ";
-  ret += expr_->getSpaceContainer()->toString(); 
+  ret += " : peirce.scalar ";
+  ret += float_expr_->getSpaceContainer()->toString(); 
   ret += " )";
   return ret;  
 } 
@@ -239,7 +239,7 @@ std::string FloatParenExpr::toString() const {
   ret += " ) : peirce.scalar ";
 
   // TODO: Abstract superclass data members
-  ret += expr_->getSpaceContainer()->toString(); 
+  ret += float_expr_->getSpaceContainer()->toString(); 
 
   ret += " )";
   return ret;  
@@ -370,7 +370,7 @@ std::string Float_Def::toString() const {
   return ret;
 }
 
-Vector_Assign::Vector_Assign(coords::Vector_Assign* c, domain::Vector_Assign* d, interp::VecVarExpr *id, interp::Vector *vec) 
+Vector_Assign::Vector_Assign(coords::Vector_Assign* c, domain::Vector_Assign* d, interp::VecVarExpr *id, interp::VecExpr *vec) 
   : Interp(c,d), id_(id), vec_(vec) { 
 }
 std::string Vector_Assign::toString() const {
@@ -388,7 +388,7 @@ std::string Vector_Assign::toString() const {
   return ret;
 }
 
-Float_Assign::Float_Assign(coords::Float_Assign* c, domain::Float_Assign* d, interp::FloatVarExpr *id, interp::Float *flt) 
+Float_Assign::Float_Assign(coords::Float_Assign* c, domain::Float_Assign* d, interp::FloatVarExpr *id, interp::FloatExpr *flt) 
   : Interp(c,d), id_(id), flt_(flt) { 
 }
 std::string Float_Assign::toString() const {
@@ -396,7 +396,7 @@ std::string Float_Assign::toString() const {
   ret += id_->toString();
   ret += " := ";
   try{
-    if(flt_)
+    if(this->flt_)
       ret += flt_->toString(); 
   }
   catch(std::exception ex)

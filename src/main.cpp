@@ -683,17 +683,20 @@ int main(int argc, const char **argv)
   cout <<interp_->toString_Vectors();
   cout <<"\nVector Definitions\n"; 
   cout <<interp_->toString_Defs();
-  cout << "\n";
+  cout << "\nVector Assignments\n";
+  cout <<interp_->toString_Assigns();
 
   cout <<"Float Identifiers\n";
   cout <<interp_->toString_FloatIdents();
   cout <<"\nFloat Expressions\n";
-  cout <<interp_->toString_Exprs();
+  cout <<interp_->toString_FloatExprs();
   cout <<"\nFloats\n";
   cout <<interp_->toString_Floats();
   cout <<"\nFloat Definitions\n";
   cout <<interp_->toString_FloatDefs();
-  cout << "\n";
+  cout << "\nFloat Assignments\n";
+  cout <<interp_->toString_FloatAssigns();
+
 
   Checker *checker = new Checker(interp_);
   checker->Check();

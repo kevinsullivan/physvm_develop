@@ -354,23 +354,23 @@ private:
 class Vector_Assign : public Interp
 {
 public:
-  Vector_Assign(coords::Vector_Assign *, domain::Vector_Assign *, interp::VecVarExpr *id, interp::Vector *vec);
+  Vector_Assign(coords::Vector_Assign *, domain::Vector_Assign *, interp::VecVarExpr *id, interp::VecExpr *ve);
   virtual std::string toString() const;
 
 private:
   interp::VecVarExpr *id_;
-  interp::Vector *vec_;
+  interp::VecExpr *vec_;
 };
 
 class Float_Assign : public Interp
 {
 public:
-  Float_Assign(coords::Float_Assign *, domain::Float_Assign *, interp::FloatVarExpr *id, interp::Float *flt);
+  Float_Assign(coords::Float_Assign *, domain::Float_Assign *, interp::FloatVarExpr *id, interp::FloatExpr *flt);
   virtual std::string toString() const;
 
 private:
   interp::FloatVarExpr *id_;
-  interp::Float *flt_;
+  interp::FloatExpr *flt_;
 };
 
 } // namespace interp

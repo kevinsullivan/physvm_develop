@@ -22,10 +22,8 @@ void ScalarExprMatcher::search(){
         implicitCastExpr().bind("ImplicitCastExprDiscard");
 
 
-
-    //nice and valid without pointers!
     StatementMatcher scalarParenExpr =
-        parenExpr(allOf(hasType(asString("float")),has(expr().bind("ScalarInnerExpr")))).bind("ScalarParenExpr");
+        parenExpr(allOf(hasType(realFloatingPointType()),has(expr().bind("ScalarInnerExpr")))).bind("ScalarParenExpr");
     StatementMatcher scalarAddExpr =
         binaryOperator(allOf(hasOperatorName("+"),
             hasLHS(expr().bind("ScalarAddLHS")),
@@ -37,13 +35,13 @@ void ScalarExprMatcher::search(){
             hasRHS(expr().bind("ScalarMulRHS"))
         )).bind("ScalarMulExpr");
     StatementMatcher scalarVar = 
-        declRefExpr(anyOf(hasType(asString("float")), hasType(asString("double")))).bind("ScalarDeclRefExpr");
+        declRefExpr(hasType(realFloatingPointType())).bind("ScalarDeclRefExpr");
     StatementMatcher scalarLiteral =
         anyOf(
             floatLiteral().bind("ScalarLiteralExpr"),
-            implicitCastExpr(has(floatLiteral().bind("ScalarLiteralExpr"))),
-            integerLiteral().bind("ScalarLiteralExpr"),
-            implicitCastExpr(has(integerLiteral().bind("ScalarLiteralExpr")))
+            //implicitCastExpr(has(floatLiteral().bind("ScalarLiteralExpr"))),
+            integerLiteral().bind("ScalarLiteralExpr")//,
+           // implicitCastExpr(has(integerLiteral().bind("ScalarLiteralExpr")))
         );
 
 
@@ -89,6 +87,9 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     else if(addExpr or addLHS or addRHS){
         if(addExpr and addLHS and addRHS){
             //NOT IMPLEMENTED
+            //addExpr->dump();
+            //addLHS->dump();
+            //addRHS->dump();
             ScalarExprMatcher lhsMatcher{this->context_, this->interp_};
             lhsMatcher.search();
             lhsMatcher.visit(*addLHS);
@@ -96,6 +97,10 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             ScalarExprMatcher rhsMatcher{this->context_, this->interp_};
             rhsMatcher.search();
             rhsMatcher.visit(*addRHS);
+
+            //std::cout<<"add debug..."<<std::endl;
+            //lhsMatcher.getChildExprStore()->dump();
+            //rhsMatcher.getChildExprStore()->dump();
 
             interp_->mkFloatFloatAddExpr(addExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)addExpr;

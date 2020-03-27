@@ -511,7 +511,8 @@ void Interpretation::mkVector_Assign(ast::Vector_Assign *assign_ast,
       domain_->mkVector_Assign(vec_varexpr, vec); 
     coords2dom_->putVector_Assign(assign_coords, dom_vec_assign);
     interp::VecVarExpr *var_interp = coords2interp_->getVecVarExpr(var_coords);
-    interp::Vector *vec_interp = coords2interp_->getVector(vec_coords);
+    interp::VecExpr *vec_interp = coords2interp_->getVecExpr(vec_coords);
+    //std::cout<<vec_interp->toString()<<std::endl;
     interp::Vector_Assign *interp = new interp::Vector_Assign(assign_coords, dom_vec_assign, var_interp, vec_interp);
     coords2interp_->putVector_Assign(assign_coords, interp);
     interp2domain_->putVector_Assign(interp, dom_vec_assign);
@@ -566,7 +567,7 @@ void Interpretation::mkFloat_Assign(ast::Float_Assign *assign_ast,
       domain_->mkFloat_Assign(float_varexpr, Float); 
     coords2dom_->putFloat_Assign(assign_coords, dom_float_assign);
     interp::FloatVarExpr *id_interp = coords2interp_->getFloatVarExpr(id_coords);
-    interp::Float *float_interp = coords2interp_->getFloat(float_coords);
+    interp::FloatExpr *float_interp = coords2interp_->getFloatExpr(float_coords);
     interp::Float_Assign *interp = new interp::Float_Assign(assign_coords, dom_float_assign, id_interp, float_interp);
     coords2interp_->putFloat_Assign(assign_coords, interp);
     interp2domain_->putFloat_Assign(interp, dom_float_assign);
@@ -672,6 +673,17 @@ std::string Interpretation::toString_Defs() {
   return retval;
 }
 
+std::string Interpretation::toString_Assigns() {
+  std::string retval = "";
+  std::vector<domain::Vector_Assign*> &id = domain_->getVectorAssigns();
+  for (std::vector<domain::Vector_Assign *>::iterator it = id.begin(); it != id.end(); ++it) {
+      coords::Vector_Assign* coords = coords2dom_->getVector_Assign(*it);
+      interp::Vector_Assign *interp = coords2interp_->getVector_Assign(coords);
+      retval = retval.append(interp->toString()).append("\n");
+  }
+  return retval;
+}
+
 std::string Interpretation::toString_FloatIdents() {
     std::string retval = "";
     std::vector<domain::FloatIdent*> &id = domain_->getFloatIdents();
@@ -718,6 +730,17 @@ std::string Interpretation::toString_FloatDefs() {
   for (std::vector<domain::Float_Def *>::iterator it = id.begin(); it != id.end(); ++it) {
       coords::Float_Def* coords = coords2dom_->getFloat_Def(*it);
       interp::Float_Def *interp = coords2interp_->getFloat_Def(coords);
+      retval = retval.append(interp->toString()).append("\n");
+  }
+  return retval;
+}
+
+std::string Interpretation::toString_FloatAssigns() {
+  std::string retval = "";
+  std::vector<domain::Float_Assign*> &id = domain_->getFloatAssigns();
+  for (std::vector<domain::Float_Assign *>::iterator it = id.begin(); it != id.end(); ++it) {
+      coords::Float_Assign* coords = coords2dom_->getFloat_Assign(*it);
+      interp::Float_Assign *interp = coords2interp_->getFloat_Assign(coords);
       retval = retval.append(interp->toString()).append("\n");
   }
   return retval;
@@ -828,13 +851,13 @@ void Interpretation::mkVarTable(){
     this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVecIdent(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVecIdent(*it));
     //this->index2dom_[idx++]=
   }
-  std::cout<<idx<<std::endl;
+ // std::cout<<idx<<std::endl;
   for(auto it = vecExprs.begin(); it != vecExprs.end();it++)
   {
     auto q = this->coords2dom_->getVecExpr(this->coords2dom_->getVecExpr(*it));
     this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVecExpr(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVecExpr(*it));
   }
-  std::cout<<idx<<std::endl;
+ // std::cout<<idx<<std::endl;
   for(auto it = vecs.begin(); it != vecs.end(); it++)
   {
 
@@ -843,7 +866,7 @@ void Interpretation::mkVarTable(){
     this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVector(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVector(*it));
 
   }
-  std::cout<<idx<<std::endl;
+  //std::cout<<idx<<std::endl;
   /*
   for(auto it = vecDefs.begin(); it != vecDefs.end(); it++)
   {
@@ -900,27 +923,27 @@ void Interpretation::printVarTable(){
       //std::cout<<"Index:"<<i<<", Physical Variable:"<<this->index2coords_.at(i)->toString()<<", Physical Type:"<<dom_vd->getSpaceContainer()->toString()<<std::endl;
     }
     else if(dom_v){
-      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_v->getSpaceContainer()->toString()<<std::endl;
+      std::cout<<"Index:"<<i<<", Vector: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_v->getSpaceContainer()->toString()<<std::endl;
 
     }
     else if(dom_vi){
-      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_vi->getSpaceContainer()->toString()<<std::endl;
+      std::cout<<"Index:"<<i<<", Vec Ident: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_vi->getSpaceContainer()->toString()<<std::endl;
 
     }
     else if(dom_ve){
-      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_ve->getSpaceContainer()->toString()<<std::endl;
+      std::cout<<"Index:"<<i<<", Vec Expr: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_ve->getSpaceContainer()->toString()<<std::endl;
 
     }
     else if(dom_f){
-      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_f->getSpaceContainer()->toString()<<std::endl;
+      std::cout<<"Index:"<<i<<", Float: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_f->getSpaceContainer()->toString()<<std::endl;
 
     }
     else if(dom_fi){
-      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_fi->getSpaceContainer()->toString()<<std::endl;
+      std::cout<<"Index:"<<i<<", Float Ident: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_fi->getSpaceContainer()->toString()<<std::endl;
 
     }
     else if(dom_fe){
-      std::cout<<"Index:"<<i<<", Physical Variable: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_fe->getSpaceContainer()->toString()<<std::endl;
+      std::cout<<"Index:"<<i<<", Float Expr: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_fe->getSpaceContainer()->toString()<<std::endl;
 
     }
   }
@@ -953,15 +976,16 @@ void Interpretation::updateVarTable(){
         this->printVarTable();
       }
       else{
+
         auto v = this->index2coords_.find(choice)->second;
 
-        auto cvi = (coords::VecIdent*)v;
-        auto cvve = (coords::VecVarExpr*)v;
-        auto cvpr = (coords::VecParenExpr*)v;
-        auto cvvae = (coords::VecVecAddExpr*)v;
-        auto cvsme = (coords::VecScalarMulExpr*)v;
-        auto cvl = (coords::Vector_Lit*)v;
-        auto cve = (coords::Vector_Expr*)v;
+        auto cvi = dynamic_cast<coords::VecIdent*>(v);
+        auto cvve = dynamic_cast<coords::VecVarExpr*>(v);
+        auto cvpr = dynamic_cast<coords::VecParenExpr*>(v);
+        auto cvvae = dynamic_cast<coords::VecVecAddExpr*>(v);
+        auto cvsme = dynamic_cast<coords::VecScalarMulExpr*>(v);
+        auto cvl = dynamic_cast<coords::Vector_Lit*>(v);
+        auto cve = dynamic_cast<coords::Vector_Expr*>(v);
 
 
         auto dom_v = this->coords2dom_->getVector((coords::Vector*)v);
@@ -1002,13 +1026,13 @@ void Interpretation::updateVarTable(){
         else{
 
         }
-        auto csi = (coords::FloatIdent*)v;
-        auto csvve = (coords::FloatVarExpr*)v;
-        auto cspe = (coords::FloatParenExpr*)v;
-        auto cssae = (coords::FloatFloatAddExpr*)v;
-        auto cssme = (coords::FloatFloatMulExpr*)v;
-        auto csl = (coords::Float_Lit*)v;
-        auto cse = (coords::Float_Expr*)v;
+        auto csi = dynamic_cast<coords::FloatIdent*>(v);
+        auto csvve = dynamic_cast<coords::FloatVarExpr*>(v);
+        auto cspe = dynamic_cast<coords::FloatParenExpr*>(v);
+        auto cssae = dynamic_cast<coords::FloatFloatAddExpr*>(v);
+        auto cssme = dynamic_cast<coords::FloatFloatMulExpr*>(v);
+        auto csl = dynamic_cast<coords::Float_Lit*>(v);
+        auto cse = dynamic_cast<coords::Float_Expr*>(v);
 
         auto dom_f = this->coords2dom_->getFloat((coords::Float*)v);
         auto dom_fi = this->coords2dom_->getFloatIdent((coords::FloatIdent*)v);
@@ -1052,14 +1076,14 @@ void Interpretation::updateVarTable(){
         }
 
 
-        if(dom_v){
-          dom_v->setSpace(space);
+        if(dom_f){
+          dom_f->setSpace(space);
         }
-        else if(dom_vi){
-          dom_vi->setSpace(space);
+        else if(dom_fi){
+          dom_fi->setSpace(space);
         }
-        else if(dom_ve){
-          dom_ve->setSpace(space);
+        else if(dom_fe){
+          dom_fe->setSpace(space);
         }
 
         

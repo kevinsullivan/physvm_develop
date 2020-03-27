@@ -30,7 +30,7 @@ void StatementProductionMatcher::search(){
 
     StatementMatcher scalarDecl =
         declStmt(has(varDecl(
-            allOf(hasType(asString("float")),anyOf(has(expr().bind("ScalarDeclRV")), has(binaryOperator().bind("ScalarDeclRV")))))
+            allOf(hasType(realFloatingPointType()),anyOf(has(expr().bind("ScalarDeclRV")), has(binaryOperator().bind("ScalarDeclRV")))))
                 .bind("ScalarVarDecl")))
                 .bind("ScalarDeclStatement");
     StatementMatcher vectorDecl =
@@ -40,12 +40,12 @@ void StatementProductionMatcher::search(){
            ))).bind("VectorVarDecl"))).bind("VectorDeclStatement");
            //cxxConstructExpr(allOf(hasType(asString("class Vec")),has(expr().bind("VectorDeclRV")))))).bind("VectorVarDecl"))).bind("VectorDeclStatement");
     StatementMatcher floatExpr = 
-        expr(hasType(asString("float"))).bind("ScalarExprStatement");
+        expr(hasType(realFloatingPointType())).bind("ScalarExprStatement");
     StatementMatcher vectorExpr = 
         expr(hasType(asString("class Vec"))).bind("VectorExprStatement");
     StatementMatcher scalarAssign = 
         binaryOperator(allOf(
-            hasType(asString("float")),
+            hasType(realFloatingPointType()),
             hasOperatorName("="),
             hasLHS(expr().bind("ScalarAssignLHS")),
             hasRHS(expr().bind("ScalarAssignRHS"))
@@ -54,8 +54,8 @@ void StatementProductionMatcher::search(){
         cxxOperatorCallExpr(allOf(
             hasType(asString("class Vec")),
             hasOverloadedOperatorName("="),
-            hasArgument(0, expr(asType(asString("class Vec"))).bind("VectorAssignLHS")), 
-            hasArgument(1, expr(asType(asString("class Vec"))).bind("VectorAssignRHS"))
+            hasArgument(0, expr(hasType(asString("class Vec"))).bind("VectorAssignLHS")), 
+            hasArgument(1, expr(hasType(asString("class Vec"))).bind("VectorAssignRHS"))
         )).bind("VectorAssign");
 
     localFinder_.addMatcher(vectorExprWithCleanups, this);
@@ -97,7 +97,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*scalarDeclRV);
-            exprMatcher.getChildExprStore()->dump();
+            //exprMatcher.getChildExprStore()->dump();
             this->interp_->mkFloat_Def(scalarDecl, scalarVarDecl, exprMatcher.getChildExprStore());
         }
         else{
@@ -161,14 +161,14 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher rhsMatcher{this->context_, this->interp_};
             rhsMatcher.search();
             rhsMatcher.visit(*vectorAssignRHS);
-
+            /*
             std::cout<<"lhs"<<std::endl;
             vectorAssignLHS->dump();
             lhsMatcher.getChildExprStore()->dump();
             std::cout<<"rhs"<<std::endl;
             vectorAssignRHS->dump();
             rhsMatcher.getChildExprStore()->dump();
-
+            */
             interp_->mkVector_Assign(vectorAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
 
            //this->childExprStore_ = vectorAssign;

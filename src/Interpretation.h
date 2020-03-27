@@ -92,11 +92,13 @@ public:
     std::string toString_Exprs();
     std::string toString_Vectors();
     std::string toString_Defs();
+    std::string toString_Assigns();
 
     std::string toString_FloatIdents();
     std::string toString_FloatExprs();
     std::string toString_Floats();
     std::string toString_FloatDefs();
+    std::string toString_FloatAssigns();
     
     void setAll_Spaces();
 

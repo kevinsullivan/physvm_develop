@@ -75,6 +75,18 @@ void VecExpr::setSpace(Space* space) {
         this->spaceContainer_ = new domain::SpaceContainer();
     this->spaceContainer_->setSpace(space);
 }
+void FloatIdent::setSpace(Space* space) {
+    if(!this->spaceContainer_)
+        this->spaceContainer_ = new domain::SpaceContainer();
+    this->spaceContainer_->setSpace(space);
+}
+
+void FloatExpr::setSpace(Space* space) {
+    if(!this->spaceContainer_)
+        this->spaceContainer_ = new domain::SpaceContainer();
+    this->spaceContainer_->setSpace(space);
+}
+
 
 /****
  * Get
@@ -226,6 +238,13 @@ void Vector::setSpace(Space* space){
         this->spaceContainer_ = new domain::SpaceContainer();
     this->spaceContainer_->setSpace(space);
 }
+void Float::setSpace(Space* space){
+
+    if(!this->spaceContainer_)
+        this->spaceContainer_ = new domain::SpaceContainer();
+    this->spaceContainer_->setSpace(space);
+}
+
 
 Vector_Lit* Domain::mkVector_Lit(Space* space, float x, float y, float z) {
     Vector_Lit* vec = new domain::Vector_Lit(*space, x, y, z); 
