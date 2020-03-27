@@ -269,15 +269,14 @@ Vector_Def *Domain::mkVector_Def(domain::VecIdent* i, domain::Vector* v)
 }
 
 
-/*
+Vector_Assign *Domain::mkVector_Assign(domain::VecVarExpr* i, domain::Vector* v)
+{
+    //LOG(DEBUG) <<"Domain::mkVector_Assign ";
+    Vector_Assign *bd = new Vector_Assign(i, v);  
+    assigns.push_back(bd); 
+    return bd;
+}
 
-	FloatIdent* mkFloatIdent(Space* s); 
-	FloatIdent* mkFloatIdent();
-
-	FloatExpr* mkFloatExpr(Space* s);
-	FloatExpr* mkFloatExpr();
-
-*/
 
 FloatIdent* Domain::mkFloatIdent(Space* s){
     domain::FloatIdent* flt = new domain::FloatIdent(*s);
@@ -376,6 +375,15 @@ Float_Def *Domain::mkFloat_Def(domain::FloatIdent* i, domain::Float* v)
     //LOG(DEBUG) <<"Domain::mkVector_Def ";
     Float_Def *bd = new Float_Def(i, v);  
     float_defs.push_back(bd); 
+    return bd;
+}
+
+
+Float_Assign *Domain::mkFloat_Assign(domain::FloatVarExpr* i, domain::Float* v)
+{
+    //LOG(DEBUG) <<"Domain::mkVector_Assign ";
+    Float_Assign *bd = new Float_Assign(i, v);  
+    float_assigns.push_back(bd); 
     return bd;
 }
 

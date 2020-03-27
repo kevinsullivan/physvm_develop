@@ -670,6 +670,68 @@ coords::Float_Def *CoordsToDomain::getFloat_Def(domain::Float_Def *d) const
     return static_cast<coords::Float_Def *>(coords);
 }
 
+void CoordsToDomain::putVector_Assign(coords::Vector_Assign *c, domain::Vector_Assign *d)
+{
+    coords2dom_Vector_Assign[c] = d;
+    dom2coords_Vector_Assign[d] = c;
+}
+
+domain::Vector_Assign *CoordsToDomain::getVector_Assign(coords::Vector_Assign *c) const
+{
+    std::unordered_map<coords::Vector_Assign*, domain::Vector_Assign*>::iterator it;
+    domain::Vector_Assign *dom = NULL;
+    try {
+        dom = coords2dom_Vector_Assign.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Vector_Assign*>(dom);
+}
+
+coords::Vector_Assign *CoordsToDomain::getVector_Assign(domain::Vector_Assign *d) const
+{
+    std::unordered_map<domain::Vector*, coords::Vector*>::iterator it;
+    coords::Vector_Assign *coords = NULL;
+    try {
+        coords = dom2coords_Vector_Assign.at(d);
+    } catch (std::out_of_range &e) {
+      coords = NULL;
+    }
+    return static_cast<coords::Vector_Assign *>(coords);
+}
+
+void CoordsToDomain::putFloat_Assign(coords::Float_Assign *c, domain::Float_Assign *d)
+{
+    coords2dom_Float_Assign[c] = d;
+    dom2coords_Float_Assign[d] = c;
+}
+
+domain::Float_Assign *CoordsToDomain::getFloat_Assign(coords::Float_Assign *c) const
+{
+    std::unordered_map<coords::Float_Assign*, domain::Float_Assign*>::iterator it;
+    domain::Float_Assign *dom = NULL;
+    try {
+        dom = coords2dom_Float_Assign.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Float_Assign*>(dom);
+}
+
+coords::Float_Assign *CoordsToDomain::getFloat_Assign(domain::Float_Assign *d) const
+{
+    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
+    coords::Float_Assign *coords = NULL;
+    try {
+        coords = dom2coords_Float_Assign.at(d);
+    } catch (std::out_of_range &e) {
+      coords = NULL;
+    }
+    return static_cast<coords::Float_Assign *>(coords);
+}
+
 /*void CoordsToDomain::dump() const
 {
     LOG(DEBUG) <<"CoordsToDomain::dump(). STUB.\n";

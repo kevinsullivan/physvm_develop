@@ -58,9 +58,14 @@ using FloatFloatMulExpr = const clang::BinaryOperator;
 
 
 // Def
-using Vector_Def  = const clang::DeclStmt;
+using Vector_Def = const clang::DeclStmt;
 
 using Float_Def = const clang::DeclStmt;
+
+using Vector_Assign = const clang::CXXOperatorCallExpr;
+
+using Float_Assign = const clang::BinaryOperator;
+
 } // namespace
 
 #endif

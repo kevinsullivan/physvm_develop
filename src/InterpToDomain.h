@@ -90,6 +90,10 @@ class InterpToDomain
 	domain::Vector_Def *getVector_Def(interp::Vector_Def* c) const;
 	interp::Vector_Def *getVector_Def(domain::Vector_Def* d) const;
 
+	void putVector_Assign(interp::Vector_Assign *var_wrapper, domain::Vector_Assign *b);
+	domain::Vector_Assign *getVector_Assign(interp::Vector_Assign* c) const;
+	interp::Vector_Assign *getVector_Assign(domain::Vector_Assign* d) const;
+
 	void putFloat_Lit(interp::Float* ast, domain::Float_Lit *v);
 	domain::Float_Lit *getFloat_Lit(interp::Float_Lit* c) const;
 	interp::Float_Lit *getFloat_Lit(domain::Float_Lit* d) const;
@@ -105,6 +109,12 @@ class InterpToDomain
 	domain::Float_Def* getFloat_Def(interp::Float_Def* c) const;
 	interp::Float_Def* getFloat_Def(domain::Float_Def* d) const;
 
+	void putFloat_Assign(interp::Float_Assign *var_wrapper, domain::Float_Assign *b);
+	domain::Float_Assign* getFloat_Assign(interp::Float_Assign* c) const;
+	interp::Float_Assign* getFloat_Assign(domain::Float_Assign* d) const;
+
+	
+
 	void dump() const;
 
   private:
@@ -119,21 +129,25 @@ class InterpToDomain
 	std::unordered_map <interp::VecExpr*, 	domain::VecExpr*	> 	interp2domain_VecExpr;
 	std::unordered_map <interp::Vector*, 	domain::Vector*		> 	interp2domain_Vector;
 	std::unordered_map <interp::Vector_Def*,domain::Vector_Def*	> 	interp2domain_Vector_Def;
+	std::unordered_map <interp::Vector_Assign*,domain::Vector_Assign*> 	interp2domain_Vector_Assign;
 
 	std::unordered_map <interp::FloatIdent*,domain::FloatIdent* >	interp2domain_FloatIdent;
 	std::unordered_map <interp::FloatExpr*, domain::FloatExpr*	>	interp2domain_FloatExpr;
 	std::unordered_map <interp::Float*, domain::Float*			>	interp2domain_Float;
 	std::unordered_map <interp::Float_Def*, domain::Float_Def*	>	interp2domain_Float_Def;
+	std::unordered_map <interp::Float_Assign*, domain::Float_Assign*>	interp2domain_Float_Assign;
 
 	std::unordered_map<domain::VecIdent*, 	interp::VecIdent*	> 	domain2interp_VecIdent;
 	std::unordered_map<domain::VecExpr*, 	interp::VecExpr*	> 	domain2interp_VecExpr;
 	std::unordered_map<domain::Vector*, 	interp::Vector*		> 	domain2interp_Vector;
 	std::unordered_map<domain::Vector_Def*, interp::Vector_Def*	> 	domain2interp_Vector_Def;
+	std::unordered_map<domain::Vector_Assign*, interp::Vector_Assign*> 	domain2interp_Vector_Assign;
 
 	std::unordered_map<domain::FloatIdent*, interp::FloatIdent*	> 	domain2interp_FloatIdent;
 	std::unordered_map<domain::FloatExpr*, 	interp::FloatExpr*	> 	domain2interp_FloatExpr;
 	std::unordered_map<domain::Float*, 		interp::Float*		> 	domain2interp_Float;
 	std::unordered_map<domain::Float_Def*, 	interp::Float_Def*	> 	domain2interp_Float_Def;
+	std::unordered_map<domain::Float_Assign*, 	interp::Float_Assign*> 	domain2interp_Float_Assign;
 };
 
 } // namespace

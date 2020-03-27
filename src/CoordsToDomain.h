@@ -48,15 +48,7 @@ class CoordsToDomain
 /*	void putVecLitExpr(coords::VecLitExpr n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(coords::VecLitExpr c) const;
 	coords::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;*/
-/*
-	void putVecWrapper(coords::VecWrapper *n, domain::VecWrapper *e);
-	domain::VecWrapper *getVecWrapper(coords::VecWrapper *c) const;
-	coords::VecWrapper *getVecWrapper(domain::VecWrapper *d) const;
 
-	void putFloatWrapper(coords::FloatWrapper *n, domain::FloatWrapper *e);
-	domain::FloatWrapper *getFloatWrapper(coords::FloatWrapper *c) const;
-	coords::FloatWrapper *getFloatWrapper(domain::FloatWrapper *d) const;
-*/
 	void PutVecVarExpr(coords::VecVarExpr *n, domain::VecVarExpr *e);
 	domain::VecVarExpr *getVecVarExpr(coords::VecVarExpr* c) const;
 	coords::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;
@@ -125,6 +117,15 @@ class CoordsToDomain
 	domain::Float_Def *getFloat_Def(coords::Float_Def* c) const;
 	coords::Float_Def *getFloat_Def(domain::Float_Def* d) const;
 
+	void putVector_Assign(coords::Vector_Assign *vardecl_wrapper, domain::Vector_Assign *b);
+	domain::Vector_Assign *getVector_Assign(coords::Vector_Assign* c) const;
+	coords::Vector_Assign *getVector_Assign(domain::Vector_Assign* d) const;
+
+	void putFloat_Assign(coords::Float_Assign *vardecl_wrapper, domain::Float_Assign *b);
+	domain::Float_Assign *getFloat_Assign(coords::Float_Assign* c) const;
+	coords::Float_Assign *getFloat_Assign(domain::Float_Assign* d) const;
+
+	
 	void dump() const;
 
   private:
@@ -145,21 +146,25 @@ class CoordsToDomain
 	std::unordered_map <coords::VecExpr*, 	domain::VecExpr*	> 	coords2dom_VecExpr;
 	std::unordered_map <coords::Vector*, 	domain::Vector*		> 	coords2dom_Vector;
 	std::unordered_map <coords::Vector_Def*,domain::Vector_Def*	> 	coords2dom_Vector_Def;
+	std::unordered_map <coords::Vector_Assign*,domain::Vector_Assign*> 	coords2dom_Vector_Assign;
 
 	std::unordered_map <coords::FloatIdent*,domain::FloatIdent* > 	coords2dom_FloatIdent;
 	std::unordered_map <coords::FloatExpr*, domain::FloatExpr*	> 	coords2dom_FloatExpr;
 	std::unordered_map <coords::Float*, 	domain::Float*		> 	coords2dom_Float;
 	std::unordered_map <coords::Float_Def*, domain::Float_Def*	> 	coords2dom_Float_Def;
+	std::unordered_map <coords::Float_Assign*, domain::Float_Assign*> 	coords2dom_Float_Assign;
 
 	std::unordered_map<domain::VecIdent*, 	coords::VecIdent*	> 	dom2coords_VecIdent;
 	std::unordered_map<domain::VecExpr*, 	coords::VecExpr*	> 	dom2coords_VecExpr;
 	std::unordered_map<domain::Vector*, 	coords::Vector*		> 	dom2coords_Vector;
 	std::unordered_map<domain::Vector_Def*, coords::Vector_Def*	> 	dom2coords_Vector_Def;
+	std::unordered_map<domain::Vector_Assign*, coords::Vector_Assign*> 	dom2coords_Vector_Assign;
 
 	std::unordered_map<domain::FloatIdent*, coords::FloatIdent*	> 	dom2coords_FloatIdent;
 	std::unordered_map<domain::FloatExpr*, 	coords::FloatExpr*	> 	dom2coords_FloatExpr;
 	std::unordered_map<domain::Float*, 		coords::Float*		> 		dom2coords_Float;
 	std::unordered_map<domain::Float_Def*, 	coords::Float_Def*	> 	dom2coords_Float_Def;
+	std::unordered_map<domain::Float_Assign*, 	coords::Float_Assign*> 	dom2coords_Float_Assign;
 };
 
 } // namespace

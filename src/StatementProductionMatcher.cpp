@@ -24,6 +24,10 @@ STMT := VEC_VAR = EXPR | SCALAR_VAR = SCALAR_EXPR  | VEC_EXPR | SCALAR_EXPR | DE
 
 
 void StatementProductionMatcher::search(){
+    
+    StatementMatcher vectorExprWithCleanups = 
+        exprWithCleanups(has(expr().bind("UsefulExpr"))).bind("ExprWithCleanupsDiscard");
+
     StatementMatcher scalarDecl =
         declStmt(has(varDecl(
             allOf(hasType(asString("float")),anyOf(has(expr().bind("ScalarDeclRV")), has(binaryOperator().bind("ScalarDeclRV")))))
@@ -39,15 +43,22 @@ void StatementProductionMatcher::search(){
         expr(hasType(asString("float"))).bind("ScalarExprStatement");
     StatementMatcher vectorExpr = 
         expr(hasType(asString("class Vec"))).bind("VectorExprStatement");
-    StatementMatcher scalarAssign =
+    StatementMatcher scalarAssign = 
         binaryOperator(allOf(
+            hasType(asString("float")),
             hasOperatorName("="),
-            has(declRefExpr(hasType(asString("float"))).bind("ScalarAssignLV")), 
-            hasRHS(expr().bind("ScalarAssignRV"))
-        )).bind("ScalarAssignStatement");
+            hasLHS(expr().bind("ScalarAssignLHS")),
+            hasRHS(expr().bind("ScalarAssignRHS"))
+        )).bind("ScalarAssign");
     StatementMatcher vectorAssign = 
-        cxxOperatorCallExpr(allOf(hasOverloadedOperatorName("="),
-            has(declRefExpr(hasType(asString("class Vec"))).bind("VectorAssignLV")), has(expr().bind("VectorAssignRV")))).bind("VectorAssignmentStatement");
+        cxxOperatorCallExpr(allOf(
+            hasType(asString("class Vec")),
+            hasOverloadedOperatorName("="),
+            hasArgument(0, expr(asType(asString("class Vec"))).bind("VectorAssignLHS")), 
+            hasArgument(1, expr(asType(asString("class Vec"))).bind("VectorAssignRHS"))
+        )).bind("VectorAssign");
+
+    localFinder_.addMatcher(vectorExprWithCleanups, this);
 
     localFinder_.addMatcher(scalarDecl, this);
     localFinder_.addMatcher(vectorDecl, this);
@@ -67,12 +78,17 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     const auto vectorDeclRV = Result.Nodes.getNodeAs<clang::Expr>("VectorDeclRV");
     const auto floatExpr = Result.Nodes.getNodeAs<clang::Expr>("ScalarExprStatement");
     const auto vecExpr = Result.Nodes.getNodeAs<clang::Expr>("VectorExprStatement");
-    const auto scalarAssign = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignStatement");
-    const auto scalarAssignLV = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignLV");
-    const auto scalarAssignRV = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignRV");
-    const auto vectorAssign = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignmentStatement");
-    const auto vectorAssignLV = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignLV");
-    const auto vectorAssignRV = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignRV");
+
+    
+    const auto scalarAssign = Result.Nodes.getNodeAs<clang::BinaryOperator>("ScalarAssign");
+    const auto scalarAssignLHS = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignLHS");
+    const auto scalarAssignRHS = Result.Nodes.getNodeAs<clang::Expr>("ScalarAssignRHS");
+
+    const auto vectorAssign = Result.Nodes.getNodeAs<clang::CXXOperatorCallExpr>("VectorAssign");
+    const auto vectorAssignLHS = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignLHS");
+    const auto vectorAssignRHS = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignRHS");
+
+    const auto exprWithCleanupsDiscard = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
 
 
     if(scalarDecl or scalarVarDecl or scalarDeclRV){
@@ -103,29 +119,59 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
         }
     }
     else if(floatExpr){
-            ScalarExprMatcher exprMatcher{this->context_, this->interp_};
-            exprMatcher.search();
-            exprMatcher.visit(*floatExpr);
+        ScalarExprMatcher exprMatcher{this->context_, this->interp_};
+        exprMatcher.search();
+        exprMatcher.visit(*floatExpr);
 
     }
     else if(vecExpr){
-            VectorExprMatcher exprMatcher{this->context_, this->interp_};
-            exprMatcher.search();
-            exprMatcher.visit(*vecExpr);
-
+        VectorExprMatcher exprMatcher{this->context_, this->interp_};
+        exprMatcher.search();
+        exprMatcher.visit(*vecExpr);
 
     }
-    else if(scalarAssign or scalarAssignLV or scalarAssignRV){
-        if(scalarAssign and scalarAssignLV and scalarAssignRV){
-            //NOT IMPLEMENTED IN BACKEND
+    else if(exprWithCleanupsDiscard){
+        StatementProductionMatcher innerMatcher{this->context_, this->interp_};
+        innerMatcher.search();
+        innerMatcher.visit(*exprWithCleanupsDiscard->getSubExpr());
+
+    }
+    else if(scalarAssign or scalarAssignLHS or scalarAssignRHS){
+        if(scalarAssign and scalarAssignLHS and scalarAssignRHS){
+            ScalarExprMatcher lhsMatcher{this->context_, this->interp_};
+            lhsMatcher.search();
+            lhsMatcher.visit(*scalarAssignLHS);
+            ScalarExprMatcher rhsMatcher{this->context_, this->interp_};
+            rhsMatcher.search();
+            rhsMatcher.visit(*scalarAssignRHS);
+
+            interp_->mkFloat_Assign(scalarAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+
+            this->childExprStore_ = (clang::Expr*)scalarAssign;
         }
         else{
             //log error
         }
     }
-    else if(vectorAssign or vectorAssignLV or vectorAssignRV){
-        if(vectorAssign and vectorAssignLV and vectorAssignRV){
-            //NOT IMPLEMENTED IN BACKEND
+    else if(vectorAssign or vectorAssignLHS or vectorAssignRHS){
+        if(vectorAssign and vectorAssignLHS and vectorAssignRHS){
+            VectorExprMatcher lhsMatcher{this->context_, this->interp_};
+            lhsMatcher.search();
+            lhsMatcher.visit(*vectorAssignLHS);
+            VectorExprMatcher rhsMatcher{this->context_, this->interp_};
+            rhsMatcher.search();
+            rhsMatcher.visit(*vectorAssignRHS);
+
+            std::cout<<"lhs"<<std::endl;
+            vectorAssignLHS->dump();
+            lhsMatcher.getChildExprStore()->dump();
+            std::cout<<"rhs"<<std::endl;
+            vectorAssignRHS->dump();
+            rhsMatcher.getChildExprStore()->dump();
+
+            interp_->mkVector_Assign(vectorAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+
+           //this->childExprStore_ = vectorAssign;
         }
         else{
             //log error

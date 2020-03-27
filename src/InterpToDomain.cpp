@@ -137,73 +137,6 @@ interp::FloatExpr *InterpToDomain::getFloatExpr(domain::FloatExpr *d) const
     }
     return interp;
 }
-/*
-void InterpToDomain::putVecWrapper(interp::VecWrapper *c, domain::VecWrapper *d)
-{
-    interp2domain_VecExpr[c] = d;
-    domain2interp_VecExpr[d] = c;
-//    coord2domain_VecExpr.insert(std::make_pair(*c, d));
-}
-
-domain::VecWrapper *InterpToDomain::getVecWrapper(interp::VecWrapper *c) const
-{
-    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
-    domain::VecExpr *dom = NULL;
-    try {
-        dom = interp2domain_Vector.at(c);
-    }
-    catch (std::out_of_range &e) {
-        dom = NULL;
-    }
-    return static_cast<domain::VecWrapper*>(dom);
-}
-
-interp::VecWrapper *InterpToDomain::getVecWrapper(domain::VecWrapper *d) const
-{
-    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
-    interp::VecExpr *interp = NULL;
-    try {
-        interp = domain2interp_Vector.at(d);
-    }
-    catch (std::out_of_range &e) {
-        interp = NULL;
-    }
-    return static_cast<interp::VecWrapper *>(interp);
-}
-
-void InterpToDomain::putFloatWrapper(interp::FloatWrapper *c, domain::FloatWrapper *d)
-{
-    interp2domain_FloatExpr[c] = d;
-    domain2interp_FloatExpr[d] = c;
-//    coord2domain_VecExpr.insert(std::make_pair(*c, d));
-}
-
-domain::FloatWrapper *InterpToDomain::getFloatWrapper(interp::FloatWrapper *c) const
-{
-    std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
-    try {
-        dom = interp2domain_FloatExpr.at(c);
-    }
-    catch (std::out_of_range &e) {
-        dom = NULL;
-    }
-    return static_cast<domain::FloatWrapper*>(dom);
-}
-
-interp::FloatWrapper *InterpToDomain::getFloatWrapper(domain::FloatWrapper *d) const
-{
-    std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *interp = NULL;
-    try {
-        interp = domain2interp_FloatExpr.at(d);
-    }
-    catch (std::out_of_range &e) {
-        interp = NULL;
-    }
-    return static_cast<interp::FloatWrapper *>(interp);
-}
-*/
 
 // var
 
@@ -711,4 +644,68 @@ interp::Float_Def *InterpToDomain::getFloat_Def(domain::Float_Def *d) const
       interp = NULL;
     }
     return static_cast<interp::Float_Def *>(interp);
+}
+
+
+void InterpToDomain::putVector_Assign(interp::Vector_Assign *c, domain::Vector_Assign *d)
+{
+    interp2domain_Vector_Assign[c] = d;
+    domain2interp_Vector_Assign[d] = c;
+}
+
+domain::Vector_Assign *InterpToDomain::getVector_Assign(interp::Vector_Assign *c) const
+{
+    std::unordered_map<interp::Vector_Assign*, domain::Vector_Assign*>::iterator it;
+    domain::Vector_Assign *dom = NULL;
+    try {
+        dom = interp2domain_Vector_Assign.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Vector_Assign*>(dom);
+}
+
+interp::Vector_Assign *InterpToDomain::getVector_Assign(domain::Vector_Assign *d) const
+{
+    std::unordered_map<domain::Vector*, interp::Vector*>::iterator it;
+    interp::Vector_Assign *interp = NULL;
+    try {
+        interp = domain2interp_Vector_Assign.at(d);
+    } catch (std::out_of_range &e) {
+      interp = NULL;
+    }
+    return static_cast<interp::Vector_Assign *>(interp);
+}
+
+
+void InterpToDomain::putFloat_Assign(interp::Float_Assign *c, domain::Float_Assign *d)
+{
+    interp2domain_Float_Assign[c] = d;
+    domain2interp_Float_Assign[d] = c;
+}
+
+domain::Float_Assign *InterpToDomain::getFloat_Assign(interp::Float_Assign *c) const
+{
+    std::unordered_map<interp::Float_Assign*, domain::Float_Assign*>::iterator it;
+    domain::Float_Assign *dom = NULL;
+    try {
+        dom = interp2domain_Float_Assign.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Float_Assign*>(dom);
+}
+
+interp::Float_Assign *InterpToDomain::getFloat_Assign(domain::Float_Assign *d) const
+{
+    std::unordered_map<domain::Float*, interp::Float*>::iterator it;
+    interp::Float_Assign *interp = NULL;
+    try {
+        interp = domain2interp_Float_Assign.at(d);
+    } catch (std::out_of_range &e) {
+      interp = NULL;
+    }
+    return static_cast<interp::Float_Assign *>(interp);
 }

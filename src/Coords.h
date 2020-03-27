@@ -342,6 +342,35 @@ private:
   FloatExpr *expr_;
 };
 
+class Vector_Assign : public Coords {
+public:
+  Vector_Assign(const ast::Vector_Assign *Assign, clang::ASTContext *c, coords::VecVarExpr *id,
+             coords::VecExpr *expr);
+  coords::VecVarExpr *getVarExpr() const;
+  coords::VecExpr *getExpr() const;
+  virtual std::string toString() const;
+  bool operator==(const Vector_Assign &other) const {
+    return (clang_decl_ == other.clang_decl_);
+  }
+private:
+  VecVarExpr *id_;
+  VecExpr *expr_;
+};
+
+class Float_Assign : public Coords {
+public:
+  Float_Assign(const ast::Float_Assign *Assign, clang::ASTContext *c, coords::FloatVarExpr *id,
+             coords::FloatExpr *expr);
+  coords::FloatVarExpr *getVarExpr() const;
+  coords::FloatExpr *getExpr() const;
+  virtual std::string toString() const;
+  bool operator==(const Float_Assign &other) const {
+    return (clang_decl_ == other.clang_decl_);
+  }
+private:
+  FloatVarExpr *id_;
+  FloatExpr *expr_;
+};
 
 } // namespace coords
 

@@ -58,6 +58,7 @@ public:
     void mkVector_Expr(ast::Vector_Expr *ast, ast::VecExpr* expr);
     void mkVector_Var(ast::VecLitExpr *ast);
     void mkVector_Def(ast::Vector_Def *ast, ast::VecIdent *id, ast::VecExpr *exp);
+    void mkVector_Assign(ast::Vector_Assign *ast, ast::VecVarExpr *id, ast::VecExpr *exp);
     
     void mkFloatIdent(ast::FloatIdent *ast);
     void mkFloatVarExpr(ast::FloatVarExpr *ast);
@@ -77,6 +78,7 @@ public:
     void mkFloat_Expr(ast::Float_Expr *ast, ast::FloatExpr* expr);
     void mkFloat_Var(ast::FloatLitExpr *ast);
     void mkFloat_Def(ast::Float_Def *ast, ast::FloatIdent *id, ast::FloatExpr *exp);
+    void mkFloat_Assign(ast::Float_Assign *Ast, ast::FloatVarExpr *id, ast::FloatExpr *exp);
     
     // Precondition: coords2domain_ is defined for ast
     domain::VecExpr *getVecExpr(ast::VecExpr *ast);

@@ -22,6 +22,11 @@ Interp::Interp(coords::Vector_Def *c, domain::Vector_Def *d)
   : coords_(c), type_(dom_vector_def_type), def_(d) {
 }
 
+Interp::Interp(coords::Vector_Assign *c, domain::Vector_Assign *d) 
+  : coords_(c), type_(dom_vector_assign_type), assign_(d) {
+}
+
+
 Interp::Interp(coords::FloatIdent* c, domain::FloatIdent *d) 
   : coords_(c), type_(dom_floatIdent_type), float_ident_(d) {
 }
@@ -36,6 +41,10 @@ Interp::Interp(coords::Float *c, domain::Float *d)
 
 Interp::Interp(coords::Float_Def *c, domain::Float_Def *d) 
   : coords_(c), type_(dom_float_def_type), float_def_(d) {
+}
+
+Interp::Interp(coords::Float_Assign *c, domain::Float_Assign *d) 
+  : coords_(c), type_(dom_float_assign_type), float_assign_(d) {
 }
 
 /**********
@@ -361,4 +370,39 @@ std::string Float_Def::toString() const {
   return ret;
 }
 
+Vector_Assign::Vector_Assign(coords::Vector_Assign* c, domain::Vector_Assign* d, interp::VecVarExpr *id, interp::Vector *vec) 
+  : Interp(c,d), id_(id), vec_(vec) { 
+}
+std::string Vector_Assign::toString() const {
+  std::string ret = "def ";
+  ret += id_->toString();
+  ret += " := ";
+  try{
+    if(vec_)
+      ret += vec_->toString(); 
+  }
+  catch(std::exception ex)
+  {
+
+  }
+  return ret;
+}
+
+Float_Assign::Float_Assign(coords::Float_Assign* c, domain::Float_Assign* d, interp::FloatVarExpr *id, interp::Float *flt) 
+  : Interp(c,d), id_(id), flt_(flt) { 
+}
+std::string Float_Assign::toString() const {
+  std::string ret = "def ";
+  ret += id_->toString();
+  ret += " := ";
+  try{
+    if(flt_)
+      ret += flt_->toString(); 
+  }
+  catch(std::exception ex)
+  {
+
+  }
+  return ret;
+}
 } // namespace coords

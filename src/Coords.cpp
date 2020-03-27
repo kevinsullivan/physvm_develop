@@ -120,61 +120,8 @@ std::string FloatExpr::toString() const {
     //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
     return NULL; 
 }
-/*
-
-class VecWrapper : public VecExpr {
-public:
-  VecWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c);
-  VecWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c);
-
-  const ast::VecExpr *getVecWrapper() const;
-
-  virtual std::string toString() const;
-};
-
-class FloatWrapper : public VecExpr {
-public:
-  FloatWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c);
-  FloatWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c);
-
-  const ast::VecExpr *getFloatWrapper() const;
-
-  virtual std::string toString() const;
-};
-
-*//*
-VecWrapper::VecWrapper(const ast::MaterializeTemporaryExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
-
-VecWrapper::VecWrapper(const ast::CXXBindTemporaryWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
-
-VecWrapper::VecWrapper(const ast::CXXConstructExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
-
-VecWrapper::VecWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
-
-VecWrapper::VecWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::VecExpr *expr) : VecExpr(d, c), expr_(expr) {}
-
-const ast::VecExpr *VecWrapper::getVecWrapper() const {
-    return static_cast<const clang::Expr*>(this->clang_stmt_);
-};
-
-std::string VecWrapper::toString() const {
-    return expr_->toString();//We simply ignore the wrapper
-};
 
 
-FloatWrapper::FloatWrapper(const ast::ExprWithCleanupsWrapper *d, clang::ASTContext *c, coords::FloatExpr *expr) : FloatExpr(d, c), expr_(expr) {}
-
-FloatWrapper::FloatWrapper(const ast::ImplicitCastExprWrapper *d, clang::ASTContext *c, coords::FloatExpr *expr) : FloatExpr(d, c), expr_(expr) {}
-
-const ast::VecExpr *FloatWrapper::getFloatWrapper() const{
-    return static_cast<const clang::Expr*>(this->clang_stmt_);
-}
-
-std::string FloatWrapper::toString() const{
-    return expr_->toString();//We simply ignore the wrapper
-}
-
-*/
 /*
 No such intermediate node in Clang AST.
 Straight to CXXConstructExpr (Vector_Lit).
@@ -436,4 +383,48 @@ std::string Float_Def::toString() const {
     return retval;
 }
 
+/****
+* Assign
+****/
+Vector_Assign::Vector_Assign(const clang::CXXOperatorCallExpr *ast, clang::ASTContext *c, coords::VecVarExpr *id, coords::VecExpr *expr)
+      : Coords(ast, c), id_(id), expr_(expr) {
+}
+
+coords::VecVarExpr *Vector_Assign::getVarExpr() const {
+    return id_;
+}
+
+coords::VecExpr *Vector_Assign::getExpr() const {
+    return expr_;
+}
+
+std::string Vector_Assign::toString() const { 
+    std::string retval = "assign ";
+    retval += id_->toString();
+    retval += " := ";
+    if(expr_)
+        retval += expr_->toString();
+    return retval;
+}
+
+Float_Assign::Float_Assign(const clang::BinaryOperator *ast, clang::ASTContext *c, coords::FloatVarExpr *id, coords::FloatExpr *expr)
+      : Coords(ast, c), id_(id), expr_(expr) {
+}
+
+coords::FloatVarExpr *Float_Assign::getVarExpr() const {
+    return id_;
+}
+
+coords::FloatExpr *Float_Assign::getExpr() const {
+    return expr_;
+}
+
+std::string Float_Assign::toString() const { 
+    std::string retval = "assign ";
+    retval += id_->toString();
+    retval += " := ";
+    if(expr_)
+        retval += expr_->toString();
+    return retval;
+}
 } // namespace codecoords

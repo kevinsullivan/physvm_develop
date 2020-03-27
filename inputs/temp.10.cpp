@@ -67,6 +67,9 @@ int main(int argc, char **argv){
   float flt = 2.0;
   Vec v2 = v1;
 
+  flt = 3.0;
+  v2 = v1;
+
   (v2.vec_add(v1));
 
   float flt2 = 3.0;
@@ -87,11 +90,19 @@ int main(int argc, char **argv){
 
   Vec v4 = (v3.vec_add(v2.vec_mul(flt)));
 
-  v4 = (v4);
-  (Vec(0,0,0));
+  v4 = (v4.vec_add(v4).vec_mul(flt3));
+
+  v4 = Vec(0.0, 0.0, 0.0);
+  
+  //(flt2 == 3.0 ? v3 : v4) = (Vec(0, 0, 0));
+  /*(Vec(0,0,0));
 
   Vec(0,0,0);
   //(Vec(0,0,0).vec_add(v2));
-
+  flt = 3.0 + 3.0;
+  flt2 = 3.0 + flt2;
+  flt3 = flt2 + flt;
+  flt3 = (flt2 + flt);
+  flt3 = flt3 * (flt3 * flt3);*/
   return 0;
 }

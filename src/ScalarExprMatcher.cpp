@@ -41,8 +41,12 @@ void ScalarExprMatcher::search(){
     StatementMatcher scalarLiteral =
         anyOf(
             floatLiteral().bind("ScalarLiteralExpr"),
-            implicitCastExpr(has(floatLiteral().bind("ScalarLiteralExpr")))
+            implicitCastExpr(has(floatLiteral().bind("ScalarLiteralExpr"))),
+            integerLiteral().bind("ScalarLiteralExpr"),
+            implicitCastExpr(has(integerLiteral().bind("ScalarLiteralExpr")))
         );
+
+
     localFinder_.addMatcher(scalarExprWithCleanups, this);
     localFinder_.addMatcher(scalarImplicitCastExpr, this);
 
@@ -64,6 +68,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     const auto mulRHS = Result.Nodes.getNodeAs<clang::Expr>("ScalarMulRHS");
     const auto declRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("ScalarDeclRefExpr");
     const auto literal = Result.Nodes.getNodeAs<clang::Expr>("ScalarLiteralExpr");
+
 
     const auto scalarExprWithCleanups = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
     const auto scalarImplicitCastExpr = Result.Nodes.getNodeAs<clang::ImplicitCastExpr>("ImplicitCastExprDiscard");

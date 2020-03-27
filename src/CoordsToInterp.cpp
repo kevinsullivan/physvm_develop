@@ -626,6 +626,36 @@ coords::Vector_Def *CoordsToInterp::getVector_Def(interp::Vector_Def *d) const
     return static_cast<coords::Vector_Def *>(coords);
 }
 
+void CoordsToInterp::putVector_Assign(coords::Vector_Assign *c, interp::Vector_Assign *d)
+{
+    coords2interp_Vector_Assign[c] = d;
+    interp2coords_Vector_Assign[d] = c;
+}
+
+interp::Vector_Assign *CoordsToInterp::getVector_Assign(coords::Vector_Assign *c) const
+{
+    std::unordered_map<coords::Vector_Assign*, interp::Vector_Assign*>::iterator it;
+    interp::Vector_Assign *dom = NULL;
+    try {
+        dom = coords2interp_Vector_Assign.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::Vector_Assign*>(dom);
+}
+
+coords::Vector_Assign *CoordsToInterp::getVector_Assign(interp::Vector_Assign *d) const
+{
+    std::unordered_map<interp::Vector*, coords::Vector*>::iterator it;
+    coords::Vector_Assign *coords = NULL;
+    try {
+        coords = interp2coords_Vector_Assign.at(d);
+    } catch (std::out_of_range &e) {
+      coords = NULL;
+    }
+    return static_cast<coords::Vector_Assign *>(coords);
+}
 
 coords::Float *CoordsToInterp::getFloat(interp::Float* v) {
     std::unordered_map<interp::Float*, coords::Float*>::iterator it;
@@ -747,4 +777,35 @@ coords::Float_Def *CoordsToInterp::getFloat_Def(interp::Float_Def *d) const
       coords = NULL;
     }
     return static_cast<coords::Float_Def *>(coords);
+}
+
+void CoordsToInterp::putFloat_Assign(coords::Float_Assign *c, interp::Float_Assign *d)
+{
+    coords2interp_Float_Assign[c] = d;
+    interp2coords_Float_Assign[d] = c;
+}
+
+interp::Float_Assign *CoordsToInterp::getFloat_Assign(coords::Float_Assign *c) const
+{
+    std::unordered_map<coords::Float_Assign*, interp::Float_Assign*>::iterator it;
+    interp::Float_Assign *dom = NULL;
+    try {
+        dom = coords2interp_Float_Assign.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::Float_Assign*>(dom);
+}
+
+coords::Float_Assign *CoordsToInterp::getFloat_Assign(interp::Float_Assign *d) const
+{
+    std::unordered_map<interp::Float*, coords::Float*>::iterator it;
+    coords::Float_Assign *coords = NULL;
+    try {
+        coords = interp2coords_Float_Assign.at(d);
+    } catch (std::out_of_range &e) {
+      coords = NULL;
+    }
+    return static_cast<coords::Float_Assign *>(coords);
 }

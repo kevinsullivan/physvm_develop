@@ -491,6 +491,32 @@ void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,
     interp2domain_->putVector_Def(interp, dom_vec_def);
 }
 
+void Interpretation::mkVector_Assign(ast::Vector_Assign *assign_ast,  
+                                  ast::VecVarExpr *id_ast, 
+                                  ast::VecExpr *expr_ast)
+{
+    coords::VecVarExpr *var_coords = static_cast<coords::VecVarExpr *>
+      (ast2coords_->getStmtCoords(id_ast));
+    coords::Vector *vec_coords = static_cast<coords::Vector *>
+      (ast2coords_->getStmtCoords(expr_ast));
+    coords::Vector_Assign *assign_coords = ast2coords_->mkVector_Assign(assign_ast, context_, var_coords, vec_coords);
+    domain::VecVarExpr *vec_varexpr = coords2dom_->getVecVarExpr(var_coords);
+    /*
+    Here there is some subtlety. We don't know if what was left in our
+    interpretation by previous work was a Vector_Lit or a Vector_Expr.
+    So we check first for a Vector_Expr
+    */
+    domain::Vector *vec = coords2dom_->getVector(vec_coords);
+    domain::Vector_Assign* dom_vec_assign = 
+      domain_->mkVector_Assign(vec_varexpr, vec); 
+    coords2dom_->putVector_Assign(assign_coords, dom_vec_assign);
+    interp::VecVarExpr *var_interp = coords2interp_->getVecVarExpr(var_coords);
+    interp::Vector *vec_interp = coords2interp_->getVector(vec_coords);
+    interp::Vector_Assign *interp = new interp::Vector_Assign(assign_coords, dom_vec_assign, var_interp, vec_interp);
+    coords2interp_->putVector_Assign(assign_coords, interp);
+    interp2domain_->putVector_Assign(interp, dom_vec_assign);
+}
+
 
 void Interpretation::mkFloat_Def(ast::Float_Def *def_ast,  
                                   ast::FloatIdent *id_ast, 
@@ -518,6 +544,34 @@ void Interpretation::mkFloat_Def(ast::Float_Def *def_ast,
     interp2domain_->putFloat_Def(interp, dom_flt_def);
 }
 
+
+
+void Interpretation::mkFloat_Assign(ast::Float_Assign *assign_ast,  
+                                  ast::FloatVarExpr *id_ast, 
+                                  ast::FloatExpr *expr_ast)
+{
+    coords::FloatVarExpr *id_coords = static_cast<coords::FloatVarExpr *>
+      (ast2coords_->getStmtCoords(id_ast));
+    coords::Float *float_coords = static_cast<coords::Float *>
+      (ast2coords_->getStmtCoords(expr_ast));
+    coords::Float_Assign *assign_coords = ast2coords_->mkFloat_Assign(assign_ast, context_, id_coords, float_coords);
+    domain::FloatVarExpr *float_varexpr = coords2dom_->getFloatVarExpr(id_coords);
+    /*
+    Here there is some subtlety. We don't know if what was left in our
+    interpretation by previous work was a Float_Lit or a Float_Expr.
+    So we check first for a Float_Expr
+    */
+    domain::Float *Float = coords2dom_->getFloat(float_coords);
+    domain::Float_Assign* dom_float_assign = 
+      domain_->mkFloat_Assign(float_varexpr, Float); 
+    coords2dom_->putFloat_Assign(assign_coords, dom_float_assign);
+    interp::FloatVarExpr *id_interp = coords2interp_->getFloatVarExpr(id_coords);
+    interp::Float *float_interp = coords2interp_->getFloat(float_coords);
+    interp::Float_Assign *interp = new interp::Float_Assign(assign_coords, dom_float_assign, id_interp, float_interp);
+    coords2interp_->putFloat_Assign(assign_coords, interp);
+    interp2domain_->putFloat_Assign(interp, dom_float_assign);
+}
+
 // private
 // Precondition: coords2domain_ is defined for exp
 //
@@ -542,24 +596,6 @@ domain::FloatExpr* Interpretation::getFloatExpr(ast::FloatExpr* ast) {
     }
     return dom;
 }
-/*
-    void mkFloatIdent(ast::FloatIdent *ast);
-    void mkFloatVarExpr(ast::FloatVarExpr *ast);
-
-    // TODO: remove the following two const constraints
-    void mkVecScalarMulExpr(ast::VecScalarMulExpr *ast, const ast::FloatExpr *mem, 
-                         const ast::FloatExpr *arg);
-
-    // KEVIN: Added for new horizontal module
-    void mkFloatParenExpr(ast::FloatParenExpr *ast, ast::FloatExpr *expr);
-
-    void mkFloat_Lit(ast::Float_Lit *ast, float scalar);
-    void mkFloat_Expr(ast::Float_Expr *ast, ast::FloatExpr* expr);
-    void mkFloat_Var(ast::FloatLitExpr *ast);
-    void mkFloat_Def(ast::Float_Def *ast, ast::FloatIdent *id, ast::FloatExpr *exp);
-
-*/
-
 
 /******
  * 

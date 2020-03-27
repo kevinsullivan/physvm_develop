@@ -193,6 +193,23 @@ coords::Float_Def *ASTToCoords::mkFloat_Def(
     return coord;
 }
 
+coords::Vector_Assign *ASTToCoords::mkVector_Assign(
+        const ast::Vector_Assign *ast, clang::ASTContext *c, coords::VecVarExpr *var_coords, coords::VecExpr *vec_coords) {
+    coords::Vector_Assign *coord = new coords::Vector_Assign(ast, c, var_coords, vec_coords);
+    overrideStmt2Coords(ast,coord);
+    overrideCoords2Stmt(coord, ast);
+    return coord;
+}
+
+
+coords::Float_Assign *ASTToCoords::mkFloat_Assign(
+        const ast::Float_Assign *ast, clang::ASTContext *c, coords::FloatVarExpr *var_coords, coords::FloatExpr *flt_coords) {
+    coords::Float_Assign *coord = new coords::Float_Assign(ast, c, var_coords, flt_coords);
+    overrideStmt2Coords(ast,coord);
+    overrideCoords2Stmt(coord, ast);
+    return coord;
+}
+
 
 
 //using namespace std;

@@ -87,6 +87,10 @@ public:
                                              coords::VecIdent *id, 
                                              coords::VecExpr *vec);
 
+    coords::Vector_Assign* mkVector_Assign(const ast::Vector_Assign *ast, clang::ASTContext *c,
+                                             coords::VecVarExpr *var, 
+                                             coords::VecExpr *vec);
+
     coords::FloatIdent* mkFloatIdent(const ast::FloatIdent *ast, clang::ASTContext *c);
     // no VecExpr because we always know exactly what subtype we're creating
     coords::FloatVarExpr* mkFloatVarExpr(const ast::FloatVarExpr *ast, clang::ASTContext *c);
@@ -104,7 +108,10 @@ public:
     coords::Float_Def* mkFloat_Def(const ast::Float_Def *ast, clang::ASTContext *c,
                                              coords::FloatIdent *id, 
                                              coords::FloatExpr *flt);
-
+    
+    coords::Float_Assign* mkFloat_Assign(const ast::Float_Assign *ast, clang::ASTContext *c,
+                                             coords::FloatVarExpr *var, 
+                                             coords::FloatExpr *flt);
 
     // TODO -- Have these routines return more specific subclass objects
     coords::Coords *getStmtCoords(const clang::Stmt *s) {

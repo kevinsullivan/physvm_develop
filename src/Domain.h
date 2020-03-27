@@ -55,12 +55,14 @@ class Vector_Lit;
 class Vector_Expr;
 class Vector_Var;
 class Vector_Def;
+class Vector_Assign;
 
 class Float;
 class Float_Lit;
 class Float_Expr;
 class Float_Var;
 class Float_Def;
+class Float_Assign;
 
 class FloatFloatAddExpr;
 class FloatFloatMulExpr;
@@ -172,6 +174,12 @@ public:
 	Float_Def* mkFloat_Def(domain::FloatIdent* identifier, domain::Float* vec);
 	std::vector<Float_Def*> &getFloatDefs() { return float_defs; }
 
+	Vector_Assign* mkVector_Assign(/*ast::Vector_Assign* vardecl,*/ domain::VecVarExpr* identifier, domain::Vector* vec);
+	std::vector<Vector_Assign*> &getVectorAssigns() { return assigns; }
+
+
+	Float_Assign* mkFloat_Assign(domain::FloatVarExpr* identifier, domain::Float* vec);
+	std::vector<Float_Assign*> &getFloatAssigns() { return float_assigns; }
 // Client -- Separated from Domain
 //	bool isConsistent();
 private:
@@ -182,8 +190,10 @@ private:
 	std::vector<FloatExpr*> float_exprs;
 	std::vector<Vector*> vectors;
 	std::vector<Vector_Def*> defs;
+	std::vector<Vector_Assign*> assigns;
 	std::vector<Float*> floats;
 	std::vector<Float_Def*> float_defs;
+	std::vector<Float_Assign*> float_assigns;
 };
 	
 /*
@@ -295,21 +305,6 @@ public:
 		Space* space_;
 		SpaceContainer* spaceContainer_;
 };
-
-/*
-
-class VecParenExpr : public VecExpr  {
-public:
-		VecParenExpr(Space *s, domain::VecExpr *e) : domain::VecExpr(s), expr_(e) {}
-		VecParenExpr(domain::VecExpr *e) : domain::VecExpr(), expr_(e) {}
-		const domain::VecExpr* getVecExpr() const { return expr_; }
-		//std::string toString() const; 
-private:
-		const domain::VecExpr* expr_; // vec expr from which vector is constructed
-};
-
-
-*/
 
 class VecVarExpr : public VecExpr {
 public:
@@ -568,6 +563,31 @@ public:
 	// std::string toString() const;
 private:
 	const FloatIdent* id_;
+	const Float* flt_;
+};
+
+class Vector_Assign  {
+public:
+	Vector_Assign(domain::VecVarExpr* id, domain::Vector* vec): 
+			id_(id), vec_(vec) {}
+	const domain::Vector* getVector() const { return vec_; }
+	const domain::VecVarExpr* getVarExpr() { return id_; }
+	// std::string toString() const;
+private:
+	const VecVarExpr* id_;
+	const Vector* vec_;
+};
+
+
+class Float_Assign  {
+public:
+	Float_Assign(domain::FloatVarExpr* id, domain::Float* flt): 
+			id_(id), flt_(flt) {}
+	const domain::Float* getFloat() const { return flt_; }
+	const domain::FloatVarExpr* getVarExpr() { return id_; }
+	// std::string toString() const;
+private:
+	const FloatVarExpr* id_;
 	const Float* flt_;
 };
 

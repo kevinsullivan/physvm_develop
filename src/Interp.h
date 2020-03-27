@@ -21,6 +21,7 @@ class Vector_Lit;
 class Vector_Var;
 class Vector_Expr;
 class Vector_Def;
+class Vector_Assign;
 
 class FloatIdent;
 class FloatExpr;
@@ -33,6 +34,7 @@ class Float_Lit;
 class Float_Var;
 class Float_Expr;
 class Float_Def;
+class Float_Assign;
 
 
 class VecParenExpr;
@@ -44,10 +46,12 @@ enum domType
   dom_vecExpr_type,
   dom_vector_type,
   dom_vector_def_type,
+  dom_vector_assign_type,
   dom_floatIdent_type,
   dom_floatExpr_type,
   dom_float_type,
-  dom_float_def_type
+  dom_float_def_type,
+  dom_float_assign_type
 };
 
 class Interp
@@ -57,11 +61,13 @@ public:
   Interp(coords::VecExpr *c, domain::VecExpr *d);
   Interp(coords::Vector *c, domain::Vector *d);
   Interp(coords::Vector_Def *c, domain::Vector_Def *d);
+  Interp(coords::Vector_Assign *c, domain::Vector_Assign *d);
 
   Interp(coords::FloatIdent *c, domain::FloatIdent *d);
   Interp(coords::FloatExpr *c, domain::FloatExpr *d);
   Interp(coords::Float *c, domain::Float *d);
   Interp(coords::Float_Def *c, domain::Float_Def *d);
+  Interp(coords::Float_Assign *c, domain::Float_Assign *d);
   virtual std::string toString() const;
 
 protected:
@@ -72,11 +78,13 @@ protected:
   domain::VecExpr *expr_;
   domain::Vector *vector_;
   domain::Vector_Def *def_;
+  domain::Vector_Assign *assign_;
 
   domain::FloatIdent *float_ident_;
   domain::FloatExpr *float_expr_;
   domain::Float *float_;
   domain::Float_Def *float_def_;
+  domain::Float_Assign *float_assign_;
 };
 
 /*************************************************************
@@ -145,25 +153,6 @@ public:
   virtual std::string toString() const;
 };
 
-/*
-class VecWrapper : public VecExpr
-{
-public:
-  VecWrapper(coords::VecWrapper *, domain::VecWrapper *);
-  const ast::VecExpr *getVecWrapper() const;
-  const coords::VecWrapper *getVecWrapperCoords() const;
-  virtual std::string toString() const;
-};
-
-class FloatWrapper : public FloatExpr
-{
-public:
-  FloatWrapper(coords::FloatWrapper *, domain::FloatWrapper *);
-  const ast::FloatExpr *getFloatWrapper() const;
-  const coords::FloatWrapper *getFloatWrapperCoords() const;
-  virtual std::string toString() const;
-};
-*/
 
 class VecVarExpr : public VecExpr
 {
@@ -359,6 +348,28 @@ public:
 
 private:
   interp::FloatIdent *id_;
+  interp::Float *flt_;
+};
+
+class Vector_Assign : public Interp
+{
+public:
+  Vector_Assign(coords::Vector_Assign *, domain::Vector_Assign *, interp::VecVarExpr *id, interp::Vector *vec);
+  virtual std::string toString() const;
+
+private:
+  interp::VecVarExpr *id_;
+  interp::Vector *vec_;
+};
+
+class Float_Assign : public Interp
+{
+public:
+  Float_Assign(coords::Float_Assign *, domain::Float_Assign *, interp::FloatVarExpr *id, interp::Float *flt);
+  virtual std::string toString() const;
+
+private:
+  interp::FloatVarExpr *id_;
   interp::Float *flt_;
 };
 

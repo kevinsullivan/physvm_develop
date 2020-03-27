@@ -98,6 +98,12 @@ class CoordsToInterp
 	interp::Vector_Def *getVector_Def(coords::Vector_Def* c) const;
 	coords::Vector_Def *getVector_Def(interp::Vector_Def* d) const;
 
+// Assign
+
+	void putVector_Assign(coords::Vector_Assign *varassn_wrapper, interp::Vector_Assign *b);
+	interp::Vector_Assign *getVector_Assign(coords::Vector_Assign* c) const;
+	coords::Vector_Assign *getVector_Assign(interp::Vector_Assign* d) const;
+
 // Float
 
 	void putFloat_Lit(coords::Float *ast, interp::Float_Lit *v);
@@ -117,6 +123,12 @@ class CoordsToInterp
 	interp::Float_Def *getFloat_Def(coords::Float_Def* c) const;
 	coords::Float_Def *getFloat_Def(interp::Float_Def* d) const;
 
+// Assign
+
+	void putFloat_Assign(coords::Float_Assign *varassn_wrapper, interp::Float_Assign *b);
+	interp::Float_Assign *getFloat_Assign(coords::Float_Assign* c) const;
+	coords::Float_Assign *getFloat_Assign(interp::Float_Assign* d) const;
+
 	void dump() const;
 
   private:
@@ -135,23 +147,27 @@ class CoordsToInterp
 	std::unordered_map <coords::VecExpr*, 	interp::VecExpr*	> 	coords2interp_VecExpr;
 	std::unordered_map <coords::Vector*, 	interp::Vector*		> 	coords2interp_Vector;
 	std::unordered_map <coords::Vector_Def*,interp::Vector_Def*	> 	coords2interp_Vector_Def;
+	std::unordered_map <coords::Vector_Assign*,interp::Vector_Assign*> 	coords2interp_Vector_Assign;
 
 
 	std::unordered_map<interp::VecIdent*, 	coords::VecIdent*	> 	interp2coords_VecIdent;
 	std::unordered_map<interp::VecExpr*, 	coords::VecExpr*	> 	interp2coords_VecExpr;
 	std::unordered_map<interp::Vector*, 	coords::Vector*		> 	interp2coords_Vector;
 	std::unordered_map<interp::Vector_Def*, coords::Vector_Def*	> 	interp2coords_Vector_Def;
+	std::unordered_map<interp::Vector_Assign*, coords::Vector_Assign*> 	interp2coords_Vector_Assign;
 
 	std::unordered_map <coords::FloatIdent*,interp::FloatIdent* > 	coords2interp_FloatIdent;
 	std::unordered_map <coords::FloatExpr*, interp::FloatExpr*	> 	coords2interp_FloatExpr;
 	std::unordered_map <coords::Float*, 	interp::Float*		> 	coords2interp_Float;
 	std::unordered_map <coords::Float_Def*, interp::Float_Def*	> 	coords2interp_Float_Def;
+	std::unordered_map <coords::Float_Assign*, interp::Float_Assign*> 	coords2interp_Float_Assign;
 
 
 	std::unordered_map<interp::FloatIdent*, coords::FloatIdent*	> 	interp2coords_FloatIdent;
 	std::unordered_map<interp::FloatExpr*, 	coords::FloatExpr*	> 	interp2coords_FloatExpr;
 	std::unordered_map<interp::Float*, 		coords::Float*		> 	interp2coords_Float;
 	std::unordered_map<interp::Float_Def*, 	coords::Float_Def*	> 	interp2coords_Float_Def;
+	std::unordered_map<interp::Float_Assign*, 	coords::Float_Assign*> 	interp2coords_Float_Assign;
 };
 
 } // namespace
