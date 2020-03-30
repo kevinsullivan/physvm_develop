@@ -29,12 +29,14 @@ docker container stop peirce_docker
 ## Gitlab Setup
 
 1. Ensure you have an account with and access to https://gitlab.cs.virginia.edu/
-2. Obtain developer access to the "Peirce Docker Builder" and "Peirce" repositories if you don't already.
+2. Obtain developer access to the "Peirce Docker Builder", "Peirce", and "phys" repositories if you don't already.
 3. Clone both repositories locally
 4. In your local Peirce repository directory, type the following to download dependencies
 ```shell
 git submodule update --init --recursive
 ```
+This step may fail if you do not have access to any submodules, (for example, phys, which is another GitLab project).
+
 
 ## VSCode Setup
 
