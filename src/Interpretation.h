@@ -106,6 +106,12 @@ public:
     void printVarTable();
     void updateVarTable();
 
+    void buildTypedDeclList();
+    
+    bool needsConstraint(clang::VarDecl* var);
+    //bool needsConstraint(ast::VecIdent* var);
+    //bool needsConstraint(ast::FloatIdent* var);
+
 // TODO: Make private
     domain::Domain *domain_;
     oracle::Oracle *oracle_;
@@ -117,6 +123,9 @@ public:
 
     std::unordered_map<int, coords::Coords*> index2coords_;
     std::unordered_map<int, void*> index2dom_;
+
+    std::vector<ast::VecIdent*> unconstrained_vecs;
+    std::vector<ast::FloatIdent*> unconstrained_floats;
 }; 
 
 } // namespaceT

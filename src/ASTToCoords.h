@@ -126,6 +126,14 @@ public:
         return dl->second;
     }
 
+    /*
+    !!!! I NEED THESE BADLY. MOVING TO PUBLIC !!!!
+    */
+    std::unordered_map<const clang::Stmt *, coords::Coords *> *stmt_coords;
+    std::unordered_map<const clang::Decl *, coords::Coords *> *decl_coords;
+    std::unordered_map<coords::Coords *,const clang::Stmt *> *coords_stmt;
+    std::unordered_map<coords::Coords *,const clang::Decl *> *coords_decl;
+
   private:
     void overrideStmt2Coords(const clang::Stmt *s, coords::Coords *c);
     void overrideDecl2Coords(const clang::Decl*, coords::Coords *c);
@@ -137,10 +145,6 @@ public:
     std::unordered_map<coords::Coords *,const clang::Stmt *> coords_stmt;
     std::unordered_map<coords::Coords *,const clang::Decl *> coords_decl;
     */
-    std::unordered_map<const clang::Stmt *, coords::Coords *> *stmt_coords;
-    std::unordered_map<const clang::Decl *, coords::Coords *> *decl_coords;
-    std::unordered_map<coords::Coords *,const clang::Stmt *> *coords_stmt;
-    std::unordered_map<coords::Coords *,const clang::Decl *> *coords_decl;
     
 };
 

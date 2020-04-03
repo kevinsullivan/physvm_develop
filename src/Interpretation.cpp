@@ -1026,6 +1026,9 @@ void Interpretation::updateVarTable(){
         else{
 
         }
+
+
+
         auto csi = dynamic_cast<coords::FloatIdent*>(v);
         auto csvve = dynamic_cast<coords::FloatVarExpr*>(v);
         auto cspe = dynamic_cast<coords::FloatParenExpr*>(v);
@@ -1074,6 +1077,15 @@ void Interpretation::updateVarTable(){
         else{
 
         }
+        if(dom_v){
+          dom_v->setSpace(space);
+        }
+        else if(dom_vi){
+          dom_vi->setSpace(space);
+        }
+        else if(dom_ve){
+          dom_ve->setSpace(space);
+        }
 
 
         if(dom_f){
@@ -1107,3 +1119,87 @@ void Interpretation::updateVarTable(){
 
 }
 
+void Interpretation::buildTypedDeclList()
+{ 
+  auto spaces = domain_->getSpaces();
+  auto vec_idents = domain_->getVecIdents();
+  auto float_idents = domain_->getFloatIdents();
+  std::list<domain::VecExpr*> vec_vars;
+  std::list<domain::FloatExpr*> float_vars;
+  std::copy_if (vec_vars.begin(), vec_vars.end(), std::back_inserter(vec_vars), [=](domain::VecExpr* ve){return dynamic_cast<domain::VecVarExpr*>(ve) != nullptr;} );
+  std::copy_if (float_vars.begin(), float_vars.end(), std::back_inserter(float_vars), [=](domain::FloatExpr* fe){return dynamic_cast<domain::FloatVarExpr*>(fe) != nullptr;});
+
+  std::vector<ast::VecIdent*> vec_with_space;
+  std::vector<ast::FloatIdent*> float_with_space;
+
+  for(auto var = vec_vars.begin(); var != vec_vars.end(); var++)
+  {
+    auto ast_ident = static_cast<ast::VecIdent*>(static_cast<ast::VecVarExpr*>(ast2coords_->coords_stmt->at(coords2dom_->getVecExpr(*var)))->getDecl());
+
+    bool 
+      has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*var)->getSpaceContainer()->toString(); }) != spaces.end(),
+      already_labeled = std::find(vec_with_space.begin(), vec_with_space.end(), ast_ident) != vec_with_space.end();
+
+    if(has_space and !already_labeled)
+      vec_with_space.push_back(ast_ident);
+
+  }
+
+  for(auto ident = vec_idents.begin(); ident != vec_idents.end(); ident++)
+  {
+    auto ast_ident = static_cast<ast::VecIdent*>(ast2coords_->coords_decl->at(coords2dom_->getVecIdent(*ident)));
+
+    bool 
+      has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*ident)->getSpaceContainer()->toString(); }) != spaces.end(),
+      already_labeled = std::find(vec_with_space.begin(), vec_with_space.end(), ast_ident) != vec_with_space.end();
+
+    if(!has_space and !already_labeled)
+      this->unconstrained_vecs.push_back(ast_ident);
+   // if 
+  }
+
+  for(auto var = float_vars.begin(); var != float_vars.end(); var++)
+  {
+    auto ast_ident = static_cast<ast::FloatIdent*>(static_cast<ast::FloatVarExpr*>(ast2coords_->coords_stmt->at(coords2dom_->getFloatExpr(*var)))->getDecl());
+
+    bool 
+      has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*var)->getSpaceContainer()->toString(); }) != spaces.end(),
+      already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != vec_with_space.end();
+
+    if(has_space and !already_labeled)
+      float_with_space.push_back(ast_ident);
+
+  }
+
+  for(auto ident = float_idents.begin(); ident != float_idents.end(); ident++)
+  {
+    auto ast_ident = static_cast<ast::FloatIdent*>(ast2coords_->coords_decl->at(coords2dom_->getFloatIdent(*ident)));
+
+    bool 
+      has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*ident)->getSpaceContainer()->toString(); }) != spaces.end(),
+      already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != vec_with_space.end();
+
+    if(!has_space and !already_labeled)
+      this->unconstrained_floats.push_back(ast_ident);
+   // if 
+  }
+}
+
+bool Interpretation::needsConstraint(clang::VarDecl* var)
+{
+  
+  return 
+    std::find(this->unconstrained_vecs.begin(), this->unconstrained_vecs.end(), var) != this->unconstrained_vecs.end()
+    or
+    std::find(this->unconstrained_floats.begin(), this->unconstrained_floats.end(), var) != this->unconstrained_floats.end();
+}
+/*
+bool Interpretation::needsConstraint(ast::VecIdent* ident)
+{
+  return std::find(this->unconstrained_vecs.begin(), this->unconstrained_vecs.end(), ident) != this->unconstrained_vecs.end();
+}
+
+bool Interpretation::needsConstraint(ast::FloatIdent* ident)
+{
+  return std::find(this->unconstrained_floats.begin(), this->unconstrained_floats.end(), ident) != this->unconstrained_floats.end();
+}*/

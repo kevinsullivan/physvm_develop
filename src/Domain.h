@@ -269,6 +269,7 @@ private:
 class VecExpr  {
 public:
     VecExpr(Space* s) : space_(s) {}
+	virtual ~VecExpr(){}
 		VecExpr() { this->spaceContainer_ = new SpaceContainer(); }
     Space* getSpace() const { return space_; };
 		SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
@@ -296,6 +297,7 @@ private:
 class FloatExpr {
 public:
 	FloatExpr(Space* s) : space_(s) {}
+	virtual ~FloatExpr(){}
 	FloatExpr() { this->spaceContainer_ = new SpaceContainer(); }
 	Space* getSpace() const { return space_; };
 	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
@@ -310,6 +312,7 @@ class VecVarExpr : public VecExpr {
 public:
     VecVarExpr(Space* s) : VecExpr(s) {}
 		VecVarExpr() : VecExpr() {}
+	virtual ~VecVarExpr(){}
 		// virtual std::string toString() const;
 	private:
 };
@@ -318,6 +321,7 @@ class FloatVarExpr : public FloatExpr {
 public:
     FloatVarExpr(Space* s) : FloatExpr(s) {}
 		FloatVarExpr() : FloatExpr() {}
+	virtual ~FloatVarExpr(){}
 		// virtual std::string toString() const;
 	private:
 };
@@ -329,6 +333,7 @@ public:
 			domain::VecExpr(s), arg_(arg), mem_(mem) {	}
 	 VecVecAddExpr(domain::VecExpr *mem, domain::VecExpr *arg) :
 	 		domain::VecExpr(), arg_(arg), mem_(mem) { }
+	virtual ~VecVecAddExpr(){}
 	domain::VecExpr *getMemberVecExpr();
 	domain::VecExpr *getArgVecExpr();
 	// virtual std::string toString() const;
@@ -346,6 +351,8 @@ public:
 	VecScalarMulExpr(
 		domain::VecExpr *vec, domain::FloatExpr *flt) :
 			domain::VecExpr(), vec_(vec), flt_(flt) {	}
+	
+	virtual ~VecScalarMulExpr(){}
 	private:
 		domain::VecExpr* vec_;
 		domain::FloatExpr* flt_;
@@ -360,6 +367,8 @@ public:
 			domain::FloatExpr(s), lhs_(lhs), rhs_(rhs) {	}
 	 FloatFloatAddExpr(domain::FloatExpr *lhs, domain::FloatExpr *rhs) :
 	 		domain::FloatExpr(), lhs_(lhs), rhs_(rhs) { }
+	
+	virtual ~FloatFloatAddExpr(){}
 	domain::FloatExpr *getLHSFloatExpr();
 	domain::FloatExpr *getRHSFloatExpr();
 	// virtual std::string toString() const;
@@ -376,6 +385,8 @@ public:
 			domain::FloatExpr(s), lhs_(lhs), rhs_(rhs) {	}
 	FloatFloatMulExpr(domain::FloatExpr *lhs, domain::FloatExpr *rhs) :
 	 		domain::FloatExpr(), lhs_(lhs), rhs_(rhs) { }
+	
+	virtual ~FloatFloatMulExpr(){}
 	domain::FloatExpr *getLHSFloatExpr();
 	domain::FloatExpr *getRHSFloatExpr();
 	// virtual std::string toString() const;
@@ -389,6 +400,8 @@ class FloatParenExpr : public FloatExpr  {
 public:
 		FloatParenExpr(Space *s, domain::FloatExpr *e) : domain::FloatExpr(s), expr_(e) {}
 		FloatParenExpr(domain::FloatExpr *e) : domain::FloatExpr(), expr_(e) {}
+		
+		virtual ~FloatParenExpr(){}
 		const domain::FloatExpr* getFloatExpr() const { return expr_; }
 		//std::string toString() const; 
 private:
@@ -400,6 +413,8 @@ class VecParenExpr : public VecExpr  {
 public:
 		VecParenExpr(Space *s, domain::VecExpr *e) : domain::VecExpr(s), expr_(e) {}
 		VecParenExpr(domain::VecExpr *e) : domain::VecExpr(), expr_(e) {}
+		
+		virtual ~VecParenExpr(){}
 		const domain::VecExpr* getVecExpr() const { return expr_; }
 		//std::string toString() const; 
 private:

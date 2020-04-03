@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/Frontend/CompilerInstance.h"
@@ -10,6 +11,8 @@
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/raw_ostream.h"
+
+#include "llvm/Support/Casting.h"
 
 
 #include "Interpretation.h"
@@ -41,6 +44,10 @@ using namespace clang::ast_matchers;
 using namespace clang::driver;
 using namespace clang::tooling;
 
+interp::Interpretation* interp_;
+clang::ASTContext *context_;
+MainMatcher *programMatcher_;
+Rewriter* constraintWriter;
 
 /*
 Architectural decision: Main parser should deal in AST nodes only,
@@ -48,13 +55,70 @@ and call interpretation module to handle all other work. Do not use
 coords, interp, domain objects.
 */
 
+/**************************************
+ * 
+ * ***********************************/
+
+class RewriteASTVisitor : public RecursiveASTVisitor<RewriteASTVisitor>
+{
+public:
+  void AddConstraint(Stmt* stmt)
+  {
+    constraintWriter->InsertText(stmt->getSourceRange().getBegin(), "/*Hello World!*/");
+  }
+  void AddConstraint(Decl* stmt)
+  {
+    constraintWriter->InsertText(stmt->getSourceRange().getBegin(), "/*Hello World!*/");
+  }
+
+  bool VisitDecl(Decl* decl)
+  {
+    if(isa<VarDecl>(decl))
+    {
+      auto vd = cast<VarDecl>(decl);
+     // auto type = vd->getType().getAsString();
+      if(interp_->needsConstraint(vd))
+      {
+        AddConstraint(decl);
+      }
+    }
+  }
+
+  bool VisitStmt(Stmt* stmt)
+  {
+    if(isa<DeclRefExpr>(stmt))
+    {
+      if(auto vd = dyn_cast<VarDecl>(dyn_cast<DeclRefExpr>(stmt)->getDecl()))
+      {
+        if(interp_->needsConstraint(vd))
+        {
+          AddConstraint(stmt);
+        }
+      }
+    }
+  }
+};
+
+
+/**************************************
+ * 
+ * ***********************************/
+
+class RewriteASTConsumer : public ASTConsumer
+{
+public:
+  void HandleTranslationUnit(ASTContext &context) override 
+  {
+    RewriteASTVisitor visitor;
+    visitor.TraverseDecl(context.getTranslationUnitDecl());
+  }
+private:
+  RewriteASTVisitor visitor;
+};
+
 /***************************************
 Data structure instantiated by this tool
 ****************************************/
-
-interp::Interpretation* interp_;
-clang::ASTContext *context_;
-MainMatcher *programMatcher_;
 
 class MyASTConsumer : public ASTConsumer
 {
@@ -74,7 +138,7 @@ public:
 class MyFrontendAction : public ASTFrontendAction
 {
 public:
-  MyFrontendAction() {}
+  MyFrontendAction() : constraintWriterMode{false} {}
   void EndSourceFileAction() override
   {
     //bool consistent = interp_.isConsistent();
@@ -84,11 +148,26 @@ public:
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
     //LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
-    context_ = &CI.getASTContext();
-    interp_->setASTContext(context_);
-    programMatcher_ = new MainMatcher(context_, interp_);
-    return llvm::make_unique<MyASTConsumer>(); 
+    if(!constraintWriterMode)
+    {
+      context_ = &CI.getASTContext();
+      interp_->setASTContext(context_);
+      programMatcher_ = new MainMatcher(context_, interp_);
+      return llvm::make_unique<MyASTConsumer>(); 
+    }
+    else{
+      constraintWriter = new Rewriter();
+      constraintWriter->setSourceMgr(CI.getASTContext().getSourceManager(), CI.getLangOpts());
+      return llvm::make_unique<RewriteASTConsumer>();
+    }
   }
+
+  void EnableConstraintWriter(){
+    this->constraintWriterMode = true;
+  }
+
+private:
+  bool constraintWriterMode;
 };
 
 /*****
@@ -120,8 +199,12 @@ int main(int argc, const char **argv)
   //interp_->addSpace("_");
   interp_->addSpace("time");
   interp_->addSpace("geom");
+
+  auto myAction = new MyFrontendAction();//unique_ptr<MyFrontendAction>{new MyFrontendAction()};
   
-  Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
+  tooling::runToolOnCode(myAction, argv[1]);
+
+  //Tool.run(new FrontendActionFactory<MyFrontendAction>().get());
   //interp_->setAll_Spaces();
   interp_->mkVarTable();
   interp_->printVarTable();
@@ -155,4 +238,11 @@ int main(int argc, const char **argv)
 
   Checker *checker = new Checker(interp_);
   checker->Check();
+
+  //get a list of variable declarations that have either been directly assigned a type, or have had a DeclRefExpr had a type assigned to them
+  interp_->buildTypedDeclList();
+  //go back through the AST
+  myAction->EnableConstraintWriter();
+  
+  tooling::runToolOnCode(myAction, argv[1]);
 }
