@@ -116,7 +116,7 @@ public:
       auto mf_id = this->ctxt_->getSourceManager().getMainFileID();
       auto newSourceLoc = this->ctxt_->getSourceManager().translateLineCol(mf_id, 1, 1);
      
-      constraintWriter->InsertText(newSourceLoc, "\ninclude <g3log/g3log.hpp>\ninclude <g3log/logworker.hpp>\n");
+      constraintWriter->InsertText(newSourceLoc, "\n#include <g3log/g3log.hpp>\n#include <g3log/logworker.hpp>\n");
       
   }
 
@@ -351,10 +351,10 @@ int main(int argc, const char **argv)
 //Not only does Tool.run change/lose state on entry, but also on exit
  
   Checker *checker = new Checker(interp_);
+  checker->Check();
   
   interp_->buildTypedDeclList();
   rewriteMode = true;
   Tool.run(toolAction.get());
   
-  checker->Check();
 }
