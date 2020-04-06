@@ -125,7 +125,9 @@ public:
     std::unordered_map<int, void*> index2dom_;
 
     std::vector<ast::VecIdent*> unconstrained_vecs;
+    std::vector<std::string> unconstrained_vec_names;
     std::vector<ast::FloatIdent*> unconstrained_floats;
+    std::vector<std::string> unconstrained_float_names;
 }; 
 
 } // namespaceT

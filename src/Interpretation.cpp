@@ -37,132 +37,6 @@ Interpretation::Interpretation() {
 }
 
 /******
- * Wrapper
-******/
-
-/*
-void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
-    coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
-    //LOG(DEBUG) << 
-    //  "Interpretation::mkVecParenExpr. ast=" << 
-    //  std::hex << ast << ", " << coords->toString() << 
-    //  "expr = " << expr_coords->toString() << "\n";
-    //domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
-    domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
-    domain::VecParenExpr *dom = domain_->mkVecParenExpr(dom_expr);
-    coords2dom_->PutVecParenExpr(coords, dom);
-    interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
-    interp::VecParenExpr *interp = new interp::VecParenExpr(coords, dom, expr_interp);
-    coords2interp_->putVecParenExpr(coords, interp);  
-    interp2domain_->putVecParenExpr(interp,dom);
-} 
- 
-void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
-    coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
-*//*
-void Interpretation::mkVecWrapperExpr(ast::MaterializeTemporaryExprWrapper *wrapper, ast::VecExpr *inner){
-  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
-  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
-
-  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
-  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
-  coords2dom_->putVecWrapper(coords, dom);
-  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
-  coords2interp_->putVecWrapper(coords, interp);
-  interp2domain_->putVecWrapper(interp, dom);
-}
-
-void Interpretation::mkVecWrapperExpr(ast::CXXBindTemporaryWrapper *wrapper, ast::VecExpr *inner){
-  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
-  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
-
-  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
-  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
-  coords2dom_->putVecWrapper(coords, dom);
-  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
-  coords2interp_->putVecWrapper(coords, interp);
-  interp2domain_->putVecWrapper(interp, dom);
-}
-
-
-
-void Interpretation::mkVecWrapperExpr(ast::CXXConstructExprWrapper *wrapper, ast::VecExpr *inner){
-  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
-  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
-
-  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
-  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
-  coords2dom_->putVecWrapper(coords, dom);
-  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
-  coords2interp_->putVecWrapper(coords, interp);
-  interp2domain_->putVecWrapper(interp, dom);
-}
-
-void Interpretation::mkVecWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::VecExpr *inner){
-  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
-  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
-
-  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
-  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
-  coords2dom_->putVecWrapper(coords, dom);
-  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
-  coords2interp_->putVecWrapper(coords, interp);
-  interp2domain_->putVecWrapper(interp, dom);
-}
-void Interpretation::mkVecWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::VecExpr *inner){
-  coords::VecWrapper *coords = ast2coords_->mkVecWrapper(wrapper, context_, inner);
-  coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(inner));
-
-  domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
-  domain::VecWrapper *dom = domain_->mkVecWrapper(dom_expr);
-  coords2dom_->putVecWrapper(coords, dom);
-  interp::VecWrapper *interp = new interp::VecWrapper(coords, dom);
-  coords2interp_->putVecWrapper(coords, interp);
-  interp2domain_->putVecWrapper(interp, dom);
-
-}
-/*
-void Interpretation::mkFloatWrapperExpr(ast::CXXConstructExprWrapper *wrapper, ast::FloatExpr *inner){
-  coords::FloatWrapper *coords = ast2coords_->mkFloatWrapper(wrapper, context_, inner);
-  coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(inner));
-
-  domain::FloatExpr *dom_expr = coords2dom_->getFloatExpr(expr_coords);
-  domain::FloatWrapper *dom = domain_->mkFloatWrapper(dom_expr);
-  coords2dom_->putFloatWrapper(coords, dom);
-  interp::FloatWrapper *interp = new interp::FloatWrapper(coords, dom);
-  coords2interp_->putFloatWrapper(coords, interp);
-  interp2domain_->putFloatWrapper(interp, dom);
-}
-
-
-void Interpretation::mkFloatWrapperExpr(ast::ExprWithCleanupsWrapper *wrapper, ast::FloatExpr *inner){
-  coords::FloatWrapper *coords = ast2coords_->mkFloatWrapper(wrapper, context_, inner);
-  coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(inner));
-
-  domain::FloatExpr *dom_expr = coords2dom_->getFloatExpr(expr_coords);
-  domain::FloatWrapper *dom = domain_->mkFloatWrapper(dom_expr);
-  coords2dom_->putFloatWrapper(coords, dom);
-  interp::FloatWrapper *interp = new interp::FloatWrapper(coords, dom);
-  coords2interp_->putFloatWrapper(coords, interp);
-  interp2domain_->putFloatWrapper(interp, dom);
-}
-
-void Interpretation::mkFloatWrapperExpr(ast::ImplicitCastExprWrapper *wrapper, ast::FloatExpr *inner){
-  coords::FloatWrapper *coords = ast2coords_->mkFloatWrapper(wrapper, context_, inner);
-  coords::FloatExpr *expr_coords = static_cast<coords::FloatExpr *>(ast2coords_->getStmtCoords(inner));
-
-  domain::FloatExpr *dom_expr = coords2dom_->getFloatExpr(expr_coords);
-  domain::FloatWrapper *dom = domain_->mkFloatWrapper(dom_expr);
-  coords2dom_->putFloatWrapper(coords, dom);
-  interp::FloatWrapper *interp = new interp::FloatWrapper(coords, dom);
-  coords2interp_->putFloatWrapper(coords, interp);
-  interp2domain_->putFloatWrapper(interp, dom);
-
-}*/
-
-/******
 * Ident
 ******/
 
@@ -1124,10 +998,12 @@ void Interpretation::buildTypedDeclList()
   auto spaces = domain_->getSpaces();
   auto vec_idents = domain_->getVecIdents();
   auto float_idents = domain_->getFloatIdents();
+  auto vec_exprs = domain_->getVecExprs();
+  auto float_exprs = domain_->getFloatExprs();
   std::list<domain::VecExpr*> vec_vars;
   std::list<domain::FloatExpr*> float_vars;
-  std::copy_if (vec_vars.begin(), vec_vars.end(), std::back_inserter(vec_vars), [=](domain::VecExpr* ve){return dynamic_cast<domain::VecVarExpr*>(ve) != nullptr;} );
-  std::copy_if (float_vars.begin(), float_vars.end(), std::back_inserter(float_vars), [=](domain::FloatExpr* fe){return dynamic_cast<domain::FloatVarExpr*>(fe) != nullptr;});
+  std::copy_if (vec_exprs.begin(), vec_exprs.end(), std::back_inserter(vec_vars), [=](domain::VecExpr* ve){return dynamic_cast<domain::VecVarExpr*>(ve) != nullptr;} );
+  std::copy_if (float_exprs.begin(), float_exprs.end(), std::back_inserter(float_vars), [=](domain::FloatExpr* fe){return dynamic_cast<domain::FloatVarExpr*>(fe) != nullptr;});
 
   std::vector<ast::VecIdent*> vec_with_space;
   std::vector<ast::FloatIdent*> float_with_space;
@@ -1139,6 +1015,9 @@ void Interpretation::buildTypedDeclList()
     bool 
       has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*var)->getSpaceContainer()->toString(); }) != spaces.end(),
       already_labeled = std::find(vec_with_space.begin(), vec_with_space.end(), ast_ident) != vec_with_space.end();
+
+    //std::cout<<"has"<<std::to_string(has_space)<<"alr"<<std::to_string(already_labeled)<<std::endl;
+    //ast_ident->dump();
 
     if(has_space and !already_labeled)
       vec_with_space.push_back(ast_ident);
@@ -1153,6 +1032,9 @@ void Interpretation::buildTypedDeclList()
       has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*ident)->getSpaceContainer()->toString(); }) != spaces.end(),
       already_labeled = std::find(vec_with_space.begin(), vec_with_space.end(), ast_ident) != vec_with_space.end();
 
+    //std::cout<<"has"<<std::to_string(has_space)<<"alr"<<std::to_string(already_labeled)<<std::endl;
+    //ast_ident->dump();
+
     if(!has_space and !already_labeled)
       this->unconstrained_vecs.push_back(ast_ident);
    // if 
@@ -1164,7 +1046,10 @@ void Interpretation::buildTypedDeclList()
 
     bool 
       has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*var)->getSpaceContainer()->toString(); }) != spaces.end(),
-      already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != vec_with_space.end();
+      already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != float_with_space.end();
+
+    //std::cout<<"has"<<std::to_string(has_space)<<"alr"<<std::to_string(already_labeled)<<std::endl;
+    //ast_ident->dump();
 
     if(has_space and !already_labeled)
       float_with_space.push_back(ast_ident);
@@ -1177,21 +1062,63 @@ void Interpretation::buildTypedDeclList()
 
     bool 
       has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*ident)->getSpaceContainer()->toString(); }) != spaces.end(),
-      already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != vec_with_space.end();
+      already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != float_with_space.end();
+
+    //std::cout<<"has"<<std::to_string(has_space)<<"alr"<<std::to_string(already_labeled)<<std::endl;
+    //ast_ident->dump();
 
     if(!has_space and !already_labeled)
       this->unconstrained_floats.push_back(ast_ident);
    // if 
   }
+
+  for(auto it = this->unconstrained_vecs.begin(); it != this->unconstrained_vecs.end();it++)
+  {
+    //std::cout<<"has"<<std::to_string((int)*it)<<"alr"<<std::endl;
+    //(*it)->dump();
+    std::cout<<"has"<<(*it)->getNameAsString()<<"alr"<<std::endl;
+    unconstrained_vec_names.push_back((*it)->getNameAsString());
+  }
+
+  for(auto it = this->unconstrained_floats.end(); it != this->unconstrained_floats.end(); it++)
+  {
+    //std::cout<<"has"<<std::to_string((int)*it)<<"alr"<<std::endl;
+    //(*it)->dump();
+    std::cout<<"has"<<(*it)->getLocation().printToString(this->context_->getSourceManager())<<"alr"<<std::endl;
+    unconstrained_float_names.push_back((*it)->getNameAsString());
+  }
+
 }
 
 bool Interpretation::needsConstraint(clang::VarDecl* var)
 {
+  auto locStr = var->getNameAsString();//var->getLocation().printToString(this->context_->getSourceManager());
+
+  std::cout<<"has"<<locStr<<"alr"<<std::endl;
+    
+  bool 
+    is_vec = 
+      std::find_if(this->unconstrained_vec_names.begin(), this->unconstrained_vec_names.end(), [=](std::string vec){ return vec == locStr;}) != this->unconstrained_vec_names.end(),
+    is_float =     
+      std::find_if(this->unconstrained_float_names.begin(), this->unconstrained_float_names.end(), [=](std::string flt){ return flt == locStr;}) != this->unconstrained_float_names.end();
+
+
+
+  if(is_vec)
+    std::cout<<"IS VEC"<<std::endl;
+  else if(is_float)
+    std::cout<<"IS FLOAT"<<std::endl;
+  else
+  {
+    std::cout<<"NEITHER"<<std::endl;
+    var->dump();
+  }
   
+
   return 
-    std::find(this->unconstrained_vecs.begin(), this->unconstrained_vecs.end(), var) != this->unconstrained_vecs.end()
-    or
-    std::find(this->unconstrained_floats.begin(), this->unconstrained_floats.end(), var) != this->unconstrained_floats.end();
+    is_vec 
+    or 
+    is_float;
 }
 /*
 bool Interpretation::needsConstraint(ast::VecIdent* ident)

@@ -66,36 +66,56 @@ public:
   {
     constraintWriter->InsertText(stmt->getSourceRange().getBegin(), "/*Hello World!*/");
   }
-  void AddConstraint(Decl* stmt)
+  void AddConstraint(VarDecl* decl)
   {
-    constraintWriter->InsertText(stmt->getSourceRange().getBegin(), "/*Hello World!*/");
+    constraintWriter->InsertText(decl->getLocation(), "/*Hello World!*/");
   }
 
   bool VisitDecl(Decl* decl)
   {
-    if(isa<VarDecl>(decl))
+    auto tud = dyn_cast<TranslationUnitDecl>(decl);
+
+    //std::cout<<"ISAVARDECL?"<<std::to_string(isa<VarDecl>(decl))<<"?"<<std::endl;
+    //auto vd = dyn_cast<VarDecl>(decl);
+    //std::cout<<"EQUAL TO NUP!!!"<<to_string(vd == nullptr)<<"HELLO??"<<std::endl;
+    if(auto vd = dyn_cast<VarDecl>(decl))
     {
-      auto vd = cast<VarDecl>(decl);
+     // std::cout<<"DUMPING DECL"<<std::endl;
+     // decl->dump();
+     // if(tud)
+     //   tud->dump();
+     // auto vd = cast<VarDecl>(decl);
      // auto type = vd->getType().getAsString();
-      if(interp_->needsConstraint(vd))
+      bool needsConstraint = interp_->needsConstraint(vd);
+      std::cout<<"NEEDS?"<<to_string(needsConstraint)<<"NEEDS?"<<std::endl;
+      if(needsConstraint)
       {
-        AddConstraint(decl);
+        AddConstraint(vd);
       }
     }
+
+    return true;
   }
 
   bool VisitStmt(Stmt* stmt)
   {
-    if(isa<DeclRefExpr>(stmt))
+    if(isa<DeclRefExpr>(stmt) and stmt)
     {
+      //std::cout<<"DUMPING STMT"<<std::endl;
+      //stmt->dump();
+
       if(auto vd = dyn_cast<VarDecl>(dyn_cast<DeclRefExpr>(stmt)->getDecl()))
       {
+        //vd->dump();
+
         if(interp_->needsConstraint(vd))
         {
           AddConstraint(stmt);
         }
       }
     }
+
+    return true;
   }
 };
 
@@ -104,6 +124,8 @@ public:
  * 
  * ***********************************/
 
+bool rewriteMode = false;
+
 class RewriteASTConsumer : public ASTConsumer
 {
 public:
@@ -111,6 +133,13 @@ public:
   {
     RewriteASTVisitor visitor;
     visitor.TraverseDecl(context.getTranslationUnitDecl());
+
+    auto mf_id = context.getSourceManager().getMainFileID();
+
+    auto *rewriter = constraintWriter->getRewriteBufferFor(mf_id);//returns null if no modification to source
+
+    if(rewriter)
+      llvm::outs() << string(rewriter->begin(), rewriter->end());
   }
 private:
   RewriteASTVisitor visitor;
@@ -148,7 +177,7 @@ public:
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
     //LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
-    if(!constraintWriterMode)
+    if(!rewriteMode)
     {
       context_ = &CI.getASTContext();
       interp_->setASTContext(context_);
@@ -169,6 +198,7 @@ public:
 private:
   bool constraintWriterMode;
 };
+
 
 /*****
 * Main
@@ -200,11 +230,13 @@ int main(int argc, const char **argv)
   interp_->addSpace("time");
   interp_->addSpace("geom");
 
-  auto myAction = new MyFrontendAction();//unique_ptr<MyFrontendAction>{new MyFrontendAction()};
+  //auto myAction = new MyFrontendAction();//unique_ptr<MyFrontendAction>{new MyFrontendAction()};
   
-  tooling::runToolOnCode(myAction, argv[1]);
-
-  //Tool.run(new FrontendActionFactory<MyFrontendAction>().get());
+  //tooling::runToolOnCode(myAction, argv[1]);
+  auto toolAction = newFrontendActionFactory<MyFrontendAction>()  ;
+  //rewriteMode = true;
+  //Tool.run(toolAction.get());
+  Tool.run(toolAction.get() );
   //interp_->setAll_Spaces();
   interp_->mkVarTable();
   interp_->printVarTable();
@@ -236,13 +268,25 @@ int main(int argc, const char **argv)
   cout <<interp_->toString_FloatAssigns();
 
 
-  Checker *checker = new Checker(interp_);
-  checker->Check();
 
   //get a list of variable declarations that have either been directly assigned a type, or have had a DeclRefExpr had a type assigned to them
-  interp_->buildTypedDeclList();
   //go back through the AST
-  myAction->EnableConstraintWriter();
+  //myAction->EnableConstraintWriter();
+  //interp_->buildTypedDeclList();
+  //rewriteMode = true;
+  //Tool.run(toolAction.get());
+
+
+//THE ORDER YOU RUN THE CHECKER AND THE REWRITE-PASS MATTERS. 
+//Not only does Tool.run change/lose state on entry, but also on exit
+ 
+ // Checker *checker = new Checker(interp_);
   
-  tooling::runToolOnCode(myAction, argv[1]);
+  interp_->buildTypedDeclList();
+  rewriteMode = true;
+  Tool.run(toolAction.get());
+  
+  Checker *checker = new Checker(interp_);
+  
+  //checker->Check();
 }
