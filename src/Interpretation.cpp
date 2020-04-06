@@ -1016,9 +1016,6 @@ void Interpretation::buildTypedDeclList()
       has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*var)->getSpaceContainer()->toString(); }) != spaces.end(),
       already_labeled = std::find(vec_with_space.begin(), vec_with_space.end(), ast_ident) != vec_with_space.end();
 
-    //std::cout<<"has"<<std::to_string(has_space)<<"alr"<<std::to_string(already_labeled)<<std::endl;
-    //ast_ident->dump();
-
     if(has_space and !already_labeled)
       vec_with_space.push_back(ast_ident);
 
@@ -1032,13 +1029,11 @@ void Interpretation::buildTypedDeclList()
       has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*ident)->getSpaceContainer()->toString(); }) != spaces.end(),
       already_labeled = std::find(vec_with_space.begin(), vec_with_space.end(), ast_ident) != vec_with_space.end();
 
-    //std::cout<<"has"<<std::to_string(has_space)<<"alr"<<std::to_string(already_labeled)<<std::endl;
-    //ast_ident->dump();
 
     if(!has_space and !already_labeled)
       this->unconstrained_vecs.push_back(ast_ident);
-   // if 
   }
+
 
   for(auto var = float_vars.begin(); var != float_vars.end(); var++)
   {
@@ -1048,8 +1043,6 @@ void Interpretation::buildTypedDeclList()
       has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*var)->getSpaceContainer()->toString(); }) != spaces.end(),
       already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != float_with_space.end();
 
-    //std::cout<<"has"<<std::to_string(has_space)<<"alr"<<std::to_string(already_labeled)<<std::endl;
-    //ast_ident->dump();
 
     if(has_space and !already_labeled)
       float_with_space.push_back(ast_ident);
@@ -1064,27 +1057,19 @@ void Interpretation::buildTypedDeclList()
       has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*ident)->getSpaceContainer()->toString(); }) != spaces.end(),
       already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != float_with_space.end();
 
-    //std::cout<<"has"<<std::to_string(has_space)<<"alr"<<std::to_string(already_labeled)<<std::endl;
-    //ast_ident->dump();
-
-    if(!has_space and !already_labeled)
+    if(!has_space and !already_labeled){
       this->unconstrained_floats.push_back(ast_ident);
+    }
    // if 
   }
 
   for(auto it = this->unconstrained_vecs.begin(); it != this->unconstrained_vecs.end();it++)
   {
-    //std::cout<<"has"<<std::to_string((int)*it)<<"alr"<<std::endl;
-    //(*it)->dump();
-    std::cout<<"has"<<(*it)->getNameAsString()<<"alr"<<std::endl;
     unconstrained_vec_names.push_back((*it)->getNameAsString());
   }
 
-  for(auto it = this->unconstrained_floats.end(); it != this->unconstrained_floats.end(); it++)
+  for(auto it = this->unconstrained_floats.begin(); it != this->unconstrained_floats.end(); it++)
   {
-    //std::cout<<"has"<<std::to_string((int)*it)<<"alr"<<std::endl;
-    //(*it)->dump();
-    std::cout<<"has"<<(*it)->getLocation().printToString(this->context_->getSourceManager())<<"alr"<<std::endl;
     unconstrained_float_names.push_back((*it)->getNameAsString());
   }
 
@@ -1093,8 +1078,6 @@ void Interpretation::buildTypedDeclList()
 bool Interpretation::needsConstraint(clang::VarDecl* var)
 {
   auto locStr = var->getNameAsString();//var->getLocation().printToString(this->context_->getSourceManager());
-
-  std::cout<<"has"<<locStr<<"alr"<<std::endl;
     
   bool 
     is_vec = 
@@ -1102,17 +1085,6 @@ bool Interpretation::needsConstraint(clang::VarDecl* var)
     is_float =     
       std::find_if(this->unconstrained_float_names.begin(), this->unconstrained_float_names.end(), [=](std::string flt){ return flt == locStr;}) != this->unconstrained_float_names.end();
 
-
-
-  if(is_vec)
-    std::cout<<"IS VEC"<<std::endl;
-  else if(is_float)
-    std::cout<<"IS FLOAT"<<std::endl;
-  else
-  {
-    std::cout<<"NEITHER"<<std::endl;
-    var->dump();
-  }
   
 
   return 
@@ -1120,13 +1092,3 @@ bool Interpretation::needsConstraint(clang::VarDecl* var)
     or 
     is_float;
 }
-/*
-bool Interpretation::needsConstraint(ast::VecIdent* ident)
-{
-  return std::find(this->unconstrained_vecs.begin(), this->unconstrained_vecs.end(), ident) != this->unconstrained_vecs.end();
-}
-
-bool Interpretation::needsConstraint(ast::FloatIdent* ident)
-{
-  return std::find(this->unconstrained_floats.begin(), this->unconstrained_floats.end(), ident) != this->unconstrained_floats.end();
-}*/

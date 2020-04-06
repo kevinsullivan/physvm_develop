@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 
 #include "clang/AST/RecursiveASTVisitor.h"
@@ -62,32 +63,75 @@ coords, interp, domain objects.
 class RewriteASTVisitor : public RecursiveASTVisitor<RewriteASTVisitor>
 {
 public:
-  void AddConstraint(Stmt* stmt)
+  RewriteASTVisitor(ASTContext& ctxt) : RecursiveASTVisitor<RewriteASTVisitor>(), ctxt_{&ctxt} {}
+
+
+  void AddConstraint(Stmt* stmt, VarDecl* decl)
   {
-    constraintWriter->InsertText(stmt->getSourceRange().getBegin(), "/*Hello World!*/");
+    if(stmt){
+      auto fullLoc = this->ctxt_->getFullLoc(stmt->getSourceRange().getBegin());
+      auto fullLocEnd = this->ctxt_->getFullLoc(stmt->getSourceRange().getEnd());
+      auto newSourceLoc = this->ctxt_->getSourceManager().translateFileLineCol(fullLoc.getFileEntry(), fullLocEnd.getSpellingLineNumber() + 1, fullLoc.getSpellingColumnNumber());
+      auto logStr = "\"Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: " + decl->getNameAsString() + ") with value : \" +  std::to_string(" + decl->getNameAsString() + ")";
+
+      constraintWriter->InsertText(newSourceLoc, "\nLOG(INFO) << " + logStr + ");\n");
+    }
+    else{
+      //log
+    }
   }
   void AddConstraint(VarDecl* decl)
   {
-    constraintWriter->InsertText(decl->getLocation(), "/*Hello World!*/");
+    if(decl){
+      auto declStmt = const_cast<Stmt*>(this->ctxt_->getParents(*decl)[0].get<Stmt>());
+      AddConstraint(declStmt, decl);
+    }
+    else{
+      //log
+    }
+  }
+
+  void AddLoggingHeader(Stmt* stmt)
+  {
+    if(stmt){
+      std::string initLogStr = "using namespace g3;";
+      initLogStr +=  "auto worker = g3::LogWorker::createLogWorker();";
+      initLogStr += "std::string logFile = \"Peirce.log\";std::string logDir = \".\";";
+      initLogStr += "auto defaultHandler = worker->addDefaultLogger(logFile, logDir);";
+      initLogStr += "g3::initializeLogging(worker.get());";
+      auto fullLoc = this->ctxt_->getFullLoc(stmt->getSourceRange().getBegin());
+      auto newSourceLoc = this->ctxt_->getSourceManager().translateFileLineCol(fullLoc.getFileEntry(), fullLoc.getSpellingLineNumber() + 1, fullLoc.getSpellingColumnNumber());
+     
+      constraintWriter->InsertText(newSourceLoc, "\n" + initLogStr +"\n");
+      
+    }
+    else{
+      //log
+    }
+  }
+
+  void AddLoggingInclude(Decl* decl)
+  {
+      auto fullLoc = this->ctxt_->getFullLoc(decl->getSourceRange().getBegin());
+      auto mf_id = this->ctxt_->getSourceManager().getMainFileID();
+      auto newSourceLoc = this->ctxt_->getSourceManager().translateLineCol(mf_id, 1, 1);
+     
+      constraintWriter->InsertText(newSourceLoc, "\ninclude <g3log/g3log.hpp>\ninclude <g3log/logworker.hpp>\n");
+      
   }
 
   bool VisitDecl(Decl* decl)
   {
-    auto tud = dyn_cast<TranslationUnitDecl>(decl);
 
-    //std::cout<<"ISAVARDECL?"<<std::to_string(isa<VarDecl>(decl))<<"?"<<std::endl;
-    //auto vd = dyn_cast<VarDecl>(decl);
-    //std::cout<<"EQUAL TO NUP!!!"<<to_string(vd == nullptr)<<"HELLO??"<<std::endl;
+    if(decl and isa<TranslationUnitDecl>(decl))
+    {
+      AddLoggingInclude(decl);
+    }
+
     if(auto vd = dyn_cast<VarDecl>(decl))
     {
-     // std::cout<<"DUMPING DECL"<<std::endl;
-     // decl->dump();
-     // if(tud)
-     //   tud->dump();
-     // auto vd = cast<VarDecl>(decl);
-     // auto type = vd->getType().getAsString();
+
       bool needsConstraint = interp_->needsConstraint(vd);
-      std::cout<<"NEEDS?"<<to_string(needsConstraint)<<"NEEDS?"<<std::endl;
       if(needsConstraint)
       {
         AddConstraint(vd);
@@ -99,24 +143,49 @@ public:
 
   bool VisitStmt(Stmt* stmt)
   {
-    if(isa<DeclRefExpr>(stmt) and stmt)
+
+
+    if(stmt and isa<CompoundStmt>(stmt))
     {
-      //std::cout<<"DUMPING STMT"<<std::endl;
-      //stmt->dump();
+      
+      auto parentDecl = this->ctxt_->getParents(*stmt)[0].get<FunctionDecl>();
+
+      if(parentDecl and parentDecl->isMain())
+      {
+        AddLoggingHeader(stmt);
+      }
+    }
+
+    if(stmt and isa<DeclRefExpr>(stmt))
+    {
 
       if(auto vd = dyn_cast<VarDecl>(dyn_cast<DeclRefExpr>(stmt)->getDecl()))
       {
-        //vd->dump();
 
         if(interp_->needsConstraint(vd))
         {
-          AddConstraint(stmt);
+          auto parents = this->ctxt_->getParents(*stmt);
+          Stmt* current = stmt;
+          const CompoundStmt* cmpd = nullptr;
+          while(!(cmpd = parents[0].get<CompoundStmt>())){
+            current = const_cast<Stmt*>(parents[0].get<Stmt>());
+            if(current){
+              parents = this->ctxt_->getParents(*current);
+            }
+            else{
+              parents = this->ctxt_->getParents(*const_cast<Decl*>(parents[0].get<Decl>()));
+            }
+          }
+          AddConstraint(current, vd);
         }
       }
     }
 
     return true;
   }
+private:
+  ASTContext* ctxt_;
+
 };
 
 
@@ -131,18 +200,32 @@ class RewriteASTConsumer : public ASTConsumer
 public:
   void HandleTranslationUnit(ASTContext &context) override 
   {
-    RewriteASTVisitor visitor;
+    RewriteASTVisitor visitor{context};
     visitor.TraverseDecl(context.getTranslationUnitDecl());
 
     auto mf_id = context.getSourceManager().getMainFileID();
+    auto entry = context.getFullLoc(context.getSourceManager().getLocForStartOfFile(mf_id)).getFileEntry();
+
+
 
     auto *rewriter = constraintWriter->getRewriteBufferFor(mf_id);//returns null if no modification to source
 
-    if(rewriter)
-      llvm::outs() << string(rewriter->begin(), rewriter->end());
+    if(rewriter){
+      //llvm::outs() << string(rewriter->begin(), rewriter->end());
+      std::cout<<"Writing file..."<<entry->getName().str()<<std::endl;
+      std::ofstream logcode;
+      auto entryName = entry->getName().str();
+      auto split = entryName.find_last_of('/');
+      auto fname = entryName.substr(0, split+1) + "log_" + entryName.substr(split+1);
+      logcode.open (fname, std::ofstream::out);
+      logcode << string(rewriter->begin(), rewriter->end());
+      logcode.close();
+      std::cout<<"Done writing file "<<fname<<std::endl;
+
+    }
+
+
   }
-private:
-  RewriteASTVisitor visitor;
 };
 
 /***************************************
@@ -230,14 +313,10 @@ int main(int argc, const char **argv)
   interp_->addSpace("time");
   interp_->addSpace("geom");
 
-  //auto myAction = new MyFrontendAction();//unique_ptr<MyFrontendAction>{new MyFrontendAction()};
-  
-  //tooling::runToolOnCode(myAction, argv[1]);
   auto toolAction = newFrontendActionFactory<MyFrontendAction>()  ;
-  //rewriteMode = true;
-  //Tool.run(toolAction.get());
+
   Tool.run(toolAction.get() );
-  //interp_->setAll_Spaces();
+
   interp_->mkVarTable();
   interp_->printVarTable();
   interp_->updateVarTable();
@@ -268,25 +347,14 @@ int main(int argc, const char **argv)
   cout <<interp_->toString_FloatAssigns();
 
 
-
-  //get a list of variable declarations that have either been directly assigned a type, or have had a DeclRefExpr had a type assigned to them
-  //go back through the AST
-  //myAction->EnableConstraintWriter();
-  //interp_->buildTypedDeclList();
-  //rewriteMode = true;
-  //Tool.run(toolAction.get());
-
-
 //THE ORDER YOU RUN THE CHECKER AND THE REWRITE-PASS MATTERS. 
 //Not only does Tool.run change/lose state on entry, but also on exit
  
- // Checker *checker = new Checker(interp_);
+  Checker *checker = new Checker(interp_);
   
   interp_->buildTypedDeclList();
   rewriteMode = true;
   Tool.run(toolAction.get());
   
-  Checker *checker = new Checker(interp_);
-  
-  //checker->Check();
+  checker->Check();
 }

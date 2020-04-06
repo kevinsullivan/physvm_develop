@@ -60,6 +60,14 @@ int main(int argc, char **argv){
   Vec v3 = v2.vec_mul(flt2);
   Vec v4 = (v3.vec_add(v2.vec_mul(flt)));
   v4 = (v4.vec_add(v4).vec_mul(flt3));
+
+  if(true)
+  {
+    flt3 = 2;
+  }
+  if(true)
+    flt3 = 4.0;
+
   //v4 = Vec(0.0, 0.0, 0.0);
   return 0;
 }
