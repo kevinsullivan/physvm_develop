@@ -1,4 +1,3 @@
-#pragma once
 
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
@@ -9,16 +8,14 @@
 
 
 /*
-
 SCALAR_EXPR := (SCALAR_EXPR) | SCALAR_EXPR + SCALAR_EXPR | SCALAR_EXPR * SCALAR_EXPR | SCALAR_VAR | SCALAR_LITERAL
-
 */
 
 void ScalarExprMatcher::search(){
     //this matcher has no meaning, unlike other productions, and is simply a hack to strip off the pesky ExprWithCleanups wrapper.
     StatementMatcher scalarExprWithCleanups = 
         exprWithCleanups(has(expr().bind("UsefulExpr"))).bind("ExprWithCleanupsDiscard");
-    StatementMatcher scalarImplicitCastExpr = 
+    StatementMatcher scalarImplicitCastExpr = //also removing fluff
         implicitCastExpr().bind("ImplicitCastExprDiscard");
 
 
@@ -39,9 +36,7 @@ void ScalarExprMatcher::search(){
     StatementMatcher scalarLiteral =
         anyOf(
             floatLiteral().bind("ScalarLiteralExpr"),
-            //implicitCastExpr(has(floatLiteral().bind("ScalarLiteralExpr"))),
-            integerLiteral().bind("ScalarLiteralExpr")//,
-           // implicitCastExpr(has(integerLiteral().bind("ScalarLiteralExpr")))
+            integerLiteral().bind("ScalarLiteralExpr")
         );
 
 
@@ -77,8 +72,8 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
-            interp_->mkFloatParenExpr(parenExpr, exprMatcher.getChildExprStore());
-            this->childExprStore_ = (clang::Expr*)parenExpr;
+            interp_->mkScalarParenExpr(parenExpr, exprMatcher.getChildExprStore());
+            this->childExprStore_ = const_cast<clang::Expr*>((const clang::Expr*)parenExpr);
         }
         else{
             //log error
@@ -86,10 +81,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(addExpr or addLHS or addRHS){
         if(addExpr and addLHS and addRHS){
-            //NOT IMPLEMENTED
-            //addExpr->dump();
-            //addLHS->dump();
-            //addRHS->dump();
+
             ScalarExprMatcher lhsMatcher{this->context_, this->interp_};
             lhsMatcher.search();
             lhsMatcher.visit(*addLHS);
@@ -98,13 +90,8 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.search();
             rhsMatcher.visit(*addRHS);
 
-            //std::cout<<"add debug..."<<std::endl;
-            //lhsMatcher.getChildExprStore()->dump();
-            //rhsMatcher.getChildExprStore()->dump();
-
-            interp_->mkFloatFloatAddExpr(addExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
-            this->childExprStore_ = (clang::Expr*)addExpr;
-            //interp_->mkFloat
+            interp_->mkScalarScalarAddExpr(addExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+            this->childExprStore_ = const_cast<clang::Expr*>((const clang::Expr*)addExpr);
         }
         else{
             //log error
@@ -112,7 +99,6 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(mulExpr or mulLHS or mulRHS){
         if(mulExpr and mulLHS and mulRHS){
-            //NOT IMPLEMENTED
             ScalarExprMatcher lhsMatcher{this->context_, this->interp_};
             lhsMatcher.search();
             lhsMatcher.visit(*mulLHS);
@@ -121,20 +107,20 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.search();
             rhsMatcher.visit(*mulRHS);
 
-            interp_->mkFloatFloatMulExpr(mulExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
-            this->childExprStore_ = (clang::Expr*)mulExpr;
+            interp_->mkScalarScalarMulExpr(mulExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+            this->childExprStore_ = const_cast<clang::Expr*>((const clang::Expr*)mulExpr);
         }
         else{
             //log error
         }
     }
     else if(declRefExpr){
-        interp_->mkFloatVarExpr(declRefExpr);
+        interp_->mkScalarVarExpr(declRefExpr);
         this->childExprStore_ = (clang::Expr*)declRefExpr;
     }
     else if(literal){
-        interp_->mkFloat_Lit(literal, 0);
-        this->childExprStore_ = (clang::Expr*)literal;
+        interp_->mkScalar_Lit(literal, 0);
+        this->childExprStore_ =  const_cast<clang::Expr*>((const clang::Expr*)literal);
     }
     else if(scalarExprWithCleanups){
         ScalarExprMatcher exprMatcher{this->context_, this->interp_};

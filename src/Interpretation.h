@@ -10,7 +10,7 @@
 #include "Oracle.h"
 #include "CoordsToInterp.h"
 #include "InterpToDomain.h"
-//#include <g3log/g3log.hpp> 
+#include <g3log/g3log.hpp> 
 
 
 #include <unordered_map>
@@ -60,30 +60,29 @@ public:
     void mkVector_Def(ast::Vector_Def *ast, ast::VecIdent *id, ast::VecExpr *exp);
     void mkVector_Assign(ast::Vector_Assign *ast, ast::VecVarExpr *id, ast::VecExpr *exp);
     
-    void mkFloatIdent(ast::FloatIdent *ast);
-    void mkFloatVarExpr(ast::FloatVarExpr *ast);
+    void mkScalarIdent(ast::ScalarIdent *ast);
+    void mkScalarVarExpr(ast::ScalarVarExpr *ast);
 
     // TODO: remove the following two const constraints
-    void mkVecScalarMulExpr(ast::VecScalarMulExpr *ast, const ast::FloatExpr *mem, 
-                         const ast::FloatExpr *arg);
+    void mkVecScalarMulExpr(ast::VecScalarMulExpr *ast, const ast::ScalarExpr *mem, 
+                         const ast::ScalarExpr *arg);
 
     // KEVIN: Added for new horizontal module
-    void mkFloatParenExpr(ast::FloatParenExpr *ast, ast::FloatExpr *expr);
+    void mkScalarParenExpr(ast::ScalarParenExpr *ast, ast::ScalarExpr *expr);
 
-    void mkFloatFloatAddExpr(ast::FloatFloatAddExpr *ast, const ast::FloatExpr *lhs, const ast::FloatExpr *rhs);
-    void mkFloatFloatMulExpr(ast::FloatFloatMulExpr *ast, const ast::FloatExpr *lhs, const ast::FloatExpr *rhs);
-    //void mkFloatAssignExpr(ast:: )
+    void mkScalarScalarAddExpr(ast::ScalarScalarAddExpr *ast, const ast::ScalarExpr *lhs, const ast::ScalarExpr *rhs);
+    void mkScalarScalarMulExpr(ast::ScalarScalarMulExpr *ast, const ast::ScalarExpr *lhs, const ast::ScalarExpr *rhs);
 
-    void mkFloat_Lit(ast::Float_Lit *ast, float scalar);
-    void mkFloat_Expr(ast::Float_Expr *ast, ast::FloatExpr* expr);
-    void mkFloat_Var(ast::FloatLitExpr *ast);
-    void mkFloat_Def(ast::Float_Def *ast, ast::FloatIdent *id, ast::FloatExpr *exp);
-    void mkFloat_Assign(ast::Float_Assign *Ast, ast::FloatVarExpr *id, ast::FloatExpr *exp);
+    void mkScalar_Lit(ast::Scalar_Lit *ast, float scalar);
+    void mkScalar_Expr(ast::Scalar_Expr *ast, ast::ScalarExpr* expr);
+    void mkScalar_Var(ast::ScalarLitExpr *ast);
+    void mkScalar_Def(ast::Scalar_Def *ast, ast::ScalarIdent *id, ast::ScalarExpr *exp);
+    void mkScalar_Assign(ast::Scalar_Assign *Ast, ast::ScalarVarExpr *id, ast::ScalarExpr *exp);
     
     // Precondition: coords2domain_ is defined for ast
     domain::VecExpr *getVecExpr(ast::VecExpr *ast);
 
-    domain::FloatExpr *getFloatExpr(ast::FloatExpr *ast);
+    domain::ScalarExpr *getScalarExpr(ast::ScalarExpr *ast);
 
     // TODO: Factor this out into client
     std::string toString_Spaces();
@@ -94,23 +93,30 @@ public:
     std::string toString_Defs();
     std::string toString_Assigns();
 
-    std::string toString_FloatIdents();
-    std::string toString_FloatExprs();
-    std::string toString_Floats();
-    std::string toString_FloatDefs();
-    std::string toString_FloatAssigns();
+    std::string toString_ScalarIdents();
+    std::string toString_ScalarExprs();
+    std::string toString_Scalars();
+    std::string toString_ScalarDefs();
+    std::string toString_ScalarAssigns();
     
     void setAll_Spaces();
 
-    void mkVarTable();
-    void printVarTable();
-    void updateVarTable();
+    void mkVarTable();//make a printable, indexed table of variables that can have their types assigned by a user or oracle
+    void printVarTable();//print the indexed variable table for the user
+    void updateVarTable();//while loop where user can select a variable by index and provide a physical type for that variable
 
+    /*
+    * Builds a list of variables that have a type either assigned or inferred.
+    * Used for runtime constraint generation/logging 
+    */
     void buildTypedDeclList();
     
+    
+    /*
+    used for generating dynamic constraints.
+    given a variable, determine whether or not it does not have a type available (if so, a constraint must be registered)
+    */
     bool needsConstraint(clang::VarDecl* var);
-    //bool needsConstraint(ast::VecIdent* var);
-    //bool needsConstraint(ast::FloatIdent* var);
 
 // TODO: Make private
     domain::Domain *domain_;
@@ -124,9 +130,11 @@ public:
     std::unordered_map<int, coords::Coords*> index2coords_;
     std::unordered_map<int, void*> index2dom_;
 
+    //populated after initial pass of AST
+    //list of scalars/vecs that do not have any assigned or inferred type
     std::vector<ast::VecIdent*> unconstrained_vecs;
     std::vector<std::string> unconstrained_vec_names;
-    std::vector<ast::FloatIdent*> unconstrained_floats;
+    std::vector<ast::ScalarIdent*> unconstrained_floats;
     std::vector<std::string> unconstrained_float_names;
 }; 
 

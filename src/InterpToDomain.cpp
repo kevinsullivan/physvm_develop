@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-//#include <g3log/g3log.hpp>
+#include <g3log/g3log.hpp>
 
 using namespace interp2domain;
 
@@ -12,8 +12,6 @@ void InterpToDomain::putVecIdent(interp::VecIdent *c, domain::VecIdent *d)
 {
     interp2domain_VecIdent[c] = d;
     domain2interp_VecIdent[d] = c;
-    //    interp2domain_VecIdent.insert(std::make_pair(c, d));
-    //    domain2interp_VecIdent.insert(std::make_pair(d, c));
 }
 
 // TODO: Decide whether or not these maps can be partial on queried keys
@@ -45,23 +43,21 @@ interp::VecIdent *InterpToDomain::getVecIdent(domain::VecIdent *d) const
     return interp;
 }
 
-void InterpToDomain::putFloatIdent(interp::FloatIdent *c, domain::FloatIdent *d)
+void InterpToDomain::putScalarIdent(interp::ScalarIdent *c, domain::ScalarIdent *d)
 {
-    interp2domain_FloatIdent[c] = d;
-    domain2interp_FloatIdent[d] = c;
-    //    interp2domain_VecIdent.insert(std::make_pair(c, d));
-    //    domain2interp_VecIdent.insert(std::make_pair(d, c));
+    interp2domain_ScalarIdent[c] = d;
+    domain2interp_ScalarIdent[d] = c;
 }
 
 // TODO: Decide whether or not these maps can be partial on queried keys
 // As defined here, yes, and asking for a missing key returns NULL
 //
-domain::FloatIdent *InterpToDomain::getFloatIdent(interp::FloatIdent *c) const
+domain::ScalarIdent *InterpToDomain::getScalarIdent(interp::ScalarIdent *c) const
 {
-    std::unordered_map<interp::FloatIdent*, domain::FloatIdent*>::iterator it;
-    domain::FloatIdent *dom = NULL;
+    std::unordered_map<interp::ScalarIdent*, domain::ScalarIdent*>::iterator it;
+    domain::ScalarIdent *dom = NULL;
     try {
-        dom = interp2domain_FloatIdent.at(c);
+        dom = interp2domain_ScalarIdent.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
@@ -69,12 +65,12 @@ domain::FloatIdent *InterpToDomain::getFloatIdent(interp::FloatIdent *c) const
     return dom;
 }
 
-interp::FloatIdent *InterpToDomain::getFloatIdent(domain::FloatIdent *d) const
+interp::ScalarIdent *InterpToDomain::getScalarIdent(domain::ScalarIdent *d) const
 {
-    std::unordered_map<domain::FloatIdent*, interp::FloatIdent*>::iterator it;
-    interp::FloatIdent *interp = NULL;
+    std::unordered_map<domain::ScalarIdent*, interp::ScalarIdent*>::iterator it;
+    interp::ScalarIdent *interp = NULL;
     try {
-        interp = domain2interp_FloatIdent.at(d);
+        interp = domain2interp_ScalarIdent.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
@@ -112,12 +108,12 @@ interp::VecExpr *InterpToDomain::getVecExpr(domain::VecExpr *d) const
     return interp;
 }
 
-domain::FloatExpr *InterpToDomain::getFloatExpr(interp::FloatExpr *c) const
+domain::ScalarExpr *InterpToDomain::getScalarExpr(interp::ScalarExpr *c) const
 {
-    std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = interp2domain_FloatExpr.at(c);
+        dom = interp2domain_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
@@ -125,12 +121,12 @@ domain::FloatExpr *InterpToDomain::getFloatExpr(interp::FloatExpr *c) const
     return dom;
 }
 
-interp::FloatExpr *InterpToDomain::getFloatExpr(domain::FloatExpr *d) const
+interp::ScalarExpr *InterpToDomain::getScalarExpr(domain::ScalarExpr *d) const
 {
-    std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *interp = NULL;
+    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *interp = NULL;
     try {
-        interp = domain2interp_FloatExpr.at(d);
+        interp = domain2interp_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
@@ -144,7 +140,6 @@ void InterpToDomain::putVecVarExpr(interp::VecVarExpr *c, domain::VecVarExpr *d)
 {
     interp2domain_VecExpr[c] = d;
     domain2interp_VecExpr[d] = c;
-//    coord2domain_VecExpr.insert(std::make_pair(*c, d));
 }
 
 domain::VecVarExpr *InterpToDomain::getVecVarExpr(interp::VecVarExpr *c) const
@@ -173,37 +168,36 @@ interp::VecVarExpr *InterpToDomain::getVecVarExpr(domain::VecVarExpr *d) const
     return static_cast<interp::VecVarExpr *>(interp);
 }
 
-void InterpToDomain::putFloatVarExpr(interp::FloatVarExpr *c, domain::FloatVarExpr *d)
+void InterpToDomain::putScalarVarExpr(interp::ScalarVarExpr *c, domain::ScalarVarExpr *d)
 {
-    interp2domain_FloatExpr[c] = d;
-    domain2interp_FloatExpr[d] = c;
-//    coord2domain_VecExpr.insert(std::make_pair(*c, d));
+    interp2domain_ScalarExpr[c] = d;
+    domain2interp_ScalarExpr[d] = c;
 }
 
-domain::FloatVarExpr *InterpToDomain::getFloatVarExpr(interp::FloatVarExpr *c) const
+domain::ScalarVarExpr *InterpToDomain::getScalarVarExpr(interp::ScalarVarExpr *c) const
 {
-    std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = interp2domain_FloatExpr.at(c);
+        dom = interp2domain_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::FloatVarExpr*>(dom);
+    return static_cast<domain::ScalarVarExpr*>(dom);
 }
 
-interp::FloatVarExpr *InterpToDomain::getFloatVarExpr(domain::FloatVarExpr *d) const
+interp::ScalarVarExpr *InterpToDomain::getScalarVarExpr(domain::ScalarVarExpr *d) const
 {
-    std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *interp = NULL;
+    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *interp = NULL;
     try {
-        interp = domain2interp_FloatExpr.at(d);
+        interp = domain2interp_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::FloatVarExpr *>(interp);
+    return static_cast<interp::ScalarVarExpr *>(interp);
 }
 
 
@@ -274,69 +268,69 @@ interp::VecScalarMulExpr *InterpToDomain::getVecScalarMulExpr(domain::VecScalarM
 }
 
 
-void InterpToDomain::putFloatFloatAddExpr(interp::FloatFloatAddExpr *c, domain::FloatFloatAddExpr *d)
+void InterpToDomain::putScalarScalarAddExpr(interp::ScalarScalarAddExpr *c, domain::ScalarScalarAddExpr *d)
 {
-    interp2domain_FloatExpr[c] = d;
-    domain2interp_FloatExpr[d] = c;
+    interp2domain_ScalarExpr[c] = d;
+    domain2interp_ScalarExpr[d] = c;
 }
 
-domain::FloatFloatAddExpr *InterpToDomain::getFloatFloatAddExpr(interp::FloatFloatAddExpr *c) const
+domain::ScalarScalarAddExpr *InterpToDomain::getScalarScalarAddExpr(interp::ScalarScalarAddExpr *c) const
 {
-    std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = interp2domain_FloatExpr.at(c);
+        dom = interp2domain_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::FloatFloatAddExpr*>(dom);
+    return static_cast<domain::ScalarScalarAddExpr*>(dom);
 }
 
-interp::FloatFloatAddExpr *InterpToDomain::getFloatFloatAddExpr(domain::FloatFloatAddExpr *d) const
+interp::ScalarScalarAddExpr *InterpToDomain::getScalarScalarAddExpr(domain::ScalarScalarAddExpr *d) const
 {
-    std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *interp = NULL;
+    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *interp = NULL;
     try {
-        interp = domain2interp_FloatExpr.at(d);
+        interp = domain2interp_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::FloatFloatAddExpr *>(interp);
+    return static_cast<interp::ScalarScalarAddExpr *>(interp);
 }
 
 
-void InterpToDomain::putFloatFloatMulExpr(interp::FloatFloatMulExpr *c, domain::FloatFloatMulExpr *d)
+void InterpToDomain::putScalarScalarMulExpr(interp::ScalarScalarMulExpr *c, domain::ScalarScalarMulExpr *d)
 {
-    interp2domain_FloatExpr[c] = d;
-    domain2interp_FloatExpr[d] = c;
+    interp2domain_ScalarExpr[c] = d;
+    domain2interp_ScalarExpr[d] = c;
 }
 
-domain::FloatFloatMulExpr *InterpToDomain::getFloatFloatMulExpr(interp::FloatFloatMulExpr *c) const
+domain::ScalarScalarMulExpr *InterpToDomain::getScalarScalarMulExpr(interp::ScalarScalarMulExpr *c) const
 {
-    std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = interp2domain_FloatExpr.at(c);
+        dom = interp2domain_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::FloatFloatMulExpr*>(dom);
+    return static_cast<domain::ScalarScalarMulExpr*>(dom);
 }
 
-interp::FloatFloatMulExpr *InterpToDomain::getFloatFloatMulExpr(domain::FloatFloatMulExpr *d) const
+interp::ScalarScalarMulExpr *InterpToDomain::getScalarScalarMulExpr(domain::ScalarScalarMulExpr *d) const
 {
-    std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *interp = NULL;
+    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *interp = NULL;
     try {
-        interp = domain2interp_FloatExpr.at(d);
+        interp = domain2interp_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::FloatFloatMulExpr *>(interp);
+    return static_cast<interp::ScalarScalarMulExpr *>(interp);
 }
 
 
@@ -372,34 +366,34 @@ interp::VecParenExpr *InterpToDomain::getVecParenExpr(domain::VecParenExpr* d) c
 }
 
 
-void InterpToDomain::putFloatParenExpr(interp::FloatParenExpr *c, domain::FloatParenExpr *d) {
-    interp2domain_FloatExpr[c] = d;
-    domain2interp_FloatExpr[d] = c;
+void InterpToDomain::putScalarParenExpr(interp::ScalarParenExpr *c, domain::ScalarParenExpr *d) {
+    interp2domain_ScalarExpr[c] = d;
+    domain2interp_ScalarExpr[d] = c;
 
 }
 
-domain::FloatParenExpr *InterpToDomain::getFloatParenExpr(interp::FloatParenExpr* c) const {
-    std::unordered_map<interp::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+domain::ScalarParenExpr *InterpToDomain::getScalarParenExpr(interp::ScalarParenExpr* c) const {
+    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = interp2domain_FloatExpr.at(c);
+        dom = interp2domain_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::FloatParenExpr*>(dom);
+    return static_cast<domain::ScalarParenExpr*>(dom);
 }
 
-interp::FloatParenExpr *InterpToDomain::getFloatParenExpr(domain::FloatParenExpr* d) const {
-    std::unordered_map<domain::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *interp = NULL;
+interp::ScalarParenExpr *InterpToDomain::getScalarParenExpr(domain::ScalarParenExpr* d) const {
+    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *interp = NULL;
     try {
-        interp = domain2interp_FloatExpr.at(d);
+        interp = domain2interp_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::FloatParenExpr *>(interp);
+    return static_cast<interp::ScalarParenExpr *>(interp);
 }
 
 
@@ -429,28 +423,28 @@ domain::Vector *InterpToDomain::getVector(interp::Vector* v) {
     return static_cast<domain::Vector *>(domvec);
 }
 
-interp::Float *InterpToDomain::getFloat(domain::Float* v) {
-    std::unordered_map<domain::Float*, interp::Float*>::iterator it;
-    interp::Float *interp = NULL;
+interp::Scalar *InterpToDomain::getScalar(domain::Scalar* v) {
+    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
+    interp::Scalar *interp = NULL;
     try {
-        interp = domain2interp_Float.at(v);
+        interp = domain2interp_Scalar.at(v);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Float *>(interp);
+    return static_cast<interp::Scalar *>(interp);
 }
 
-domain::Float *InterpToDomain::getFloat(interp::Float* v) {
-    std::unordered_map<interp::Float*, domain::Float*>::iterator it;
-    domain::Float *domflt = NULL;
+domain::Scalar *InterpToDomain::getScalar(interp::Scalar* v) {
+    std::unordered_map<interp::Scalar*, domain::Scalar*>::iterator it;
+    domain::Scalar *domflt = NULL;
     try {
-        domflt = interp2domain_Float.at(v);
+        domflt = interp2domain_Scalar.at(v);
     }
     catch (std::out_of_range &e) {
         domflt = NULL;
     }
-    return static_cast<domain::Float *>(domflt);
+    return static_cast<domain::Scalar *>(domflt);
 }
 
 void InterpToDomain::putVector_Lit(interp::Vector *c, domain::Vector_Lit *d)
@@ -485,36 +479,36 @@ interp::Vector_Lit *InterpToDomain::getVector_Lit(domain::Vector_Lit *d) const
     return static_cast<interp::Vector_Lit *>(interp);
 }
 
-void InterpToDomain::putFloat_Lit(interp::Float *c, domain::Float_Lit *d)
+void InterpToDomain::putScalar_Lit(interp::Scalar *c, domain::Scalar_Lit *d)
 {
-    interp2domain_Float[c] = d;
-    domain2interp_Float[d] = c;
+    interp2domain_Scalar[c] = d;
+    domain2interp_Scalar[d] = c;
 }
 
-domain::Float_Lit *InterpToDomain::getFloat_Lit(interp::Float_Lit *c) const
+domain::Scalar_Lit *InterpToDomain::getScalar_Lit(interp::Scalar_Lit *c) const
 {
-    std::unordered_map<interp::Float_Lit*, domain::Float_Lit*>::iterator it;
-    domain::Float *dom = NULL;
+    std::unordered_map<interp::Scalar_Lit*, domain::Scalar_Lit*>::iterator it;
+    domain::Scalar *dom = NULL;
     try {
-        dom = interp2domain_Float.at(c);
+        dom = interp2domain_Scalar.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Float_Lit*>(dom);
+    return static_cast<domain::Scalar_Lit*>(dom);
 }
 
-interp::Float_Lit *InterpToDomain::getFloat_Lit(domain::Float_Lit *d) const
+interp::Scalar_Lit *InterpToDomain::getScalar_Lit(domain::Scalar_Lit *d) const
 {
-    std::unordered_map<domain::Float*, interp::Float*>::iterator it;
-    interp::Float *interp = NULL;
+    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
+    interp::Scalar *interp = NULL;
     try {
-        interp = domain2interp_Float.at(d);
+        interp = domain2interp_Scalar.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Float_Lit *>(interp);
+    return static_cast<interp::Scalar_Lit *>(interp);
 }
 
 void InterpToDomain::putVector_Expr(interp::Vector *c, domain::Vector_Expr *d)
@@ -549,36 +543,36 @@ interp::Vector_Expr *InterpToDomain::getVector_Expr(domain::Vector_Expr *d) cons
     return static_cast<interp::Vector_Expr *>(interp);
 }
 
-void InterpToDomain::putFloat_Expr(interp::Float *c, domain::Float_Expr *d)
+void InterpToDomain::putScalar_Expr(interp::Scalar *c, domain::Scalar_Expr *d)
 {
-    interp2domain_Float[c] = d;
-    domain2interp_Float[d] = c;
+    interp2domain_Scalar[c] = d;
+    domain2interp_Scalar[d] = c;
 }
 
-domain::Float_Expr *InterpToDomain::getFloat_Expr(interp::Float_Expr *c) const
+domain::Scalar_Expr *InterpToDomain::getScalar_Expr(interp::Scalar_Expr *c) const
 {
-    std::unordered_map<interp::Float_Expr*, domain::Float_Expr*>::iterator it;
-    domain::Float *dom = NULL;
+    std::unordered_map<interp::Scalar_Expr*, domain::Scalar_Expr*>::iterator it;
+    domain::Scalar *dom = NULL;
     try {
-        dom = interp2domain_Float.at(c);
+        dom = interp2domain_Scalar.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Float_Expr*>(dom);
+    return static_cast<domain::Scalar_Expr*>(dom);
 }
 
-interp::Float_Expr *InterpToDomain::getFloat_Expr(domain::Float_Expr *d) const
+interp::Scalar_Expr *InterpToDomain::getScalar_Expr(domain::Scalar_Expr *d) const
 {
-    std::unordered_map<domain::Float*, interp::Float*>::iterator it;
-    interp::Float *interp = NULL;
+    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
+    interp::Scalar *interp = NULL;
     try {
-        interp = domain2interp_Float.at(d);
+        interp = domain2interp_Scalar.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Float_Expr *>(interp);
+    return static_cast<interp::Scalar_Expr *>(interp);
 }
 
 // Def
@@ -615,35 +609,35 @@ interp::Vector_Def *InterpToDomain::getVector_Def(domain::Vector_Def *d) const
 }
 
 
-void InterpToDomain::putFloat_Def(interp::Float_Def *c, domain::Float_Def *d)
+void InterpToDomain::putScalar_Def(interp::Scalar_Def *c, domain::Scalar_Def *d)
 {
-    interp2domain_Float_Def[c] = d;
-    domain2interp_Float_Def[d] = c;
+    interp2domain_Scalar_Def[c] = d;
+    domain2interp_Scalar_Def[d] = c;
 }
 
-domain::Float_Def *InterpToDomain::getFloat_Def(interp::Float_Def *c) const
+domain::Scalar_Def *InterpToDomain::getScalar_Def(interp::Scalar_Def *c) const
 {
-    std::unordered_map<interp::Float_Def*, domain::Float_Def*>::iterator it;
-    domain::Float_Def *dom = NULL;
+    std::unordered_map<interp::Scalar_Def*, domain::Scalar_Def*>::iterator it;
+    domain::Scalar_Def *dom = NULL;
     try {
-        dom = interp2domain_Float_Def.at(c);
+        dom = interp2domain_Scalar_Def.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Float_Def*>(dom);
+    return static_cast<domain::Scalar_Def*>(dom);
 }
 
-interp::Float_Def *InterpToDomain::getFloat_Def(domain::Float_Def *d) const
+interp::Scalar_Def *InterpToDomain::getScalar_Def(domain::Scalar_Def *d) const
 {
-    std::unordered_map<domain::Float*, interp::Float*>::iterator it;
-    interp::Float_Def *interp = NULL;
+    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
+    interp::Scalar_Def *interp = NULL;
     try {
-        interp = domain2interp_Float_Def.at(d);
+        interp = domain2interp_Scalar_Def.at(d);
     } catch (std::out_of_range &e) {
       interp = NULL;
     }
-    return static_cast<interp::Float_Def *>(interp);
+    return static_cast<interp::Scalar_Def *>(interp);
 }
 
 
@@ -679,33 +673,33 @@ interp::Vector_Assign *InterpToDomain::getVector_Assign(domain::Vector_Assign *d
 }
 
 
-void InterpToDomain::putFloat_Assign(interp::Float_Assign *c, domain::Float_Assign *d)
+void InterpToDomain::putScalar_Assign(interp::Scalar_Assign *c, domain::Scalar_Assign *d)
 {
-    interp2domain_Float_Assign[c] = d;
-    domain2interp_Float_Assign[d] = c;
+    interp2domain_Scalar_Assign[c] = d;
+    domain2interp_Scalar_Assign[d] = c;
 }
 
-domain::Float_Assign *InterpToDomain::getFloat_Assign(interp::Float_Assign *c) const
+domain::Scalar_Assign *InterpToDomain::getScalar_Assign(interp::Scalar_Assign *c) const
 {
-    std::unordered_map<interp::Float_Assign*, domain::Float_Assign*>::iterator it;
-    domain::Float_Assign *dom = NULL;
+    std::unordered_map<interp::Scalar_Assign*, domain::Scalar_Assign*>::iterator it;
+    domain::Scalar_Assign *dom = NULL;
     try {
-        dom = interp2domain_Float_Assign.at(c);
+        dom = interp2domain_Scalar_Assign.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Float_Assign*>(dom);
+    return static_cast<domain::Scalar_Assign*>(dom);
 }
 
-interp::Float_Assign *InterpToDomain::getFloat_Assign(domain::Float_Assign *d) const
+interp::Scalar_Assign *InterpToDomain::getScalar_Assign(domain::Scalar_Assign *d) const
 {
-    std::unordered_map<domain::Float*, interp::Float*>::iterator it;
-    interp::Float_Assign *interp = NULL;
+    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
+    interp::Scalar_Assign *interp = NULL;
     try {
-        interp = domain2interp_Float_Assign.at(d);
+        interp = domain2interp_Scalar_Assign.at(d);
     } catch (std::out_of_range &e) {
       interp = NULL;
     }
-    return static_cast<interp::Float_Assign *>(interp);
+    return static_cast<interp::Scalar_Assign *>(interp);
 }

@@ -8,7 +8,7 @@
 
 #include "Domain.h"
 
-//#include <g3log/g3log.hpp>
+#include <g3log/g3log.hpp>
 
 #ifndef leanInferenceWildcard
 #define leanInferenceWildcard "_"
@@ -75,13 +75,13 @@ void VecExpr::setSpace(Space* space) {
         this->spaceContainer_ = new domain::SpaceContainer();
     this->spaceContainer_->setSpace(space);
 }
-void FloatIdent::setSpace(Space* space) {
+void ScalarIdent::setSpace(Space* space) {
     if(!this->spaceContainer_)
         this->spaceContainer_ = new domain::SpaceContainer();
     this->spaceContainer_->setSpace(space);
 }
 
-void FloatExpr::setSpace(Space* space) {
+void ScalarExpr::setSpace(Space* space) {
     if(!this->spaceContainer_)
         this->spaceContainer_ = new domain::SpaceContainer();
     this->spaceContainer_->setSpace(space);
@@ -111,16 +111,16 @@ domain::VecVarExpr* Domain::mkVecVarExpr()
     return var;
 }
 
-domain::FloatVarExpr *Domain::mkFloatVarExpr(Space *s)
+domain::ScalarVarExpr *Domain::mkScalarVarExpr(Space *s)
 {
-    domain::FloatVarExpr *var = new domain::FloatVarExpr(s);
+    domain::ScalarVarExpr *var = new domain::ScalarVarExpr(s);
     float_exprs.push_back(var);
     return var;
 }
 
-domain::FloatVarExpr* Domain::mkFloatVarExpr()
+domain::ScalarVarExpr* Domain::mkScalarVarExpr()
 {
-    domain::FloatVarExpr *var = new domain::FloatVarExpr();
+    domain::ScalarVarExpr *var = new domain::ScalarVarExpr();
     float_exprs.push_back(var);
     return var;
 }
@@ -151,66 +151,66 @@ domain::VecExpr *VecVecAddExpr::getArgVecExpr()
 
 
 
-domain::FloatFloatAddExpr *Domain::mkFloatFloatAddExpr(Space *s, domain::FloatExpr *lhs, domain::FloatExpr *rhs)
+domain::ScalarScalarAddExpr *Domain::mkScalarScalarAddExpr(Space *s, domain::ScalarExpr *lhs, domain::ScalarExpr *rhs)
 {
-    domain::FloatFloatAddExpr *be = new domain::FloatFloatAddExpr(s, lhs, rhs);
+    domain::ScalarScalarAddExpr *be = new domain::ScalarScalarAddExpr(s, lhs, rhs);
     float_exprs.push_back(be);
     return be;
 }
 
-domain::FloatFloatAddExpr* Domain::mkFloatFloatAddExpr(domain::FloatExpr* lhs, domain::FloatExpr* rhs)
+domain::ScalarScalarAddExpr* Domain::mkScalarScalarAddExpr(domain::ScalarExpr* lhs, domain::ScalarExpr* rhs)
 {
-    domain::FloatFloatAddExpr *b = new domain::FloatFloatAddExpr(lhs, rhs);
+    domain::ScalarScalarAddExpr *b = new domain::ScalarScalarAddExpr(lhs, rhs);
     float_exprs.push_back(b);
     return b;
 }
 
-domain::FloatExpr *FloatFloatAddExpr::getLHSFloatExpr()
+domain::ScalarExpr *ScalarScalarAddExpr::getLHSScalarExpr()
 {
     return lhs_;
 }
 
-domain::FloatExpr *FloatFloatAddExpr::getRHSFloatExpr()
+domain::ScalarExpr *ScalarScalarAddExpr::getRHSScalarExpr()
 {
     return rhs_;
 }
 
-domain::FloatFloatMulExpr *Domain::mkFloatFloatMulExpr(Space *s, domain::FloatExpr *lhs, domain::FloatExpr *rhs)
+domain::ScalarScalarMulExpr *Domain::mkScalarScalarMulExpr(Space *s, domain::ScalarExpr *lhs, domain::ScalarExpr *rhs)
 {
-    domain::FloatFloatMulExpr *be = new domain::FloatFloatMulExpr(s, lhs, rhs);
+    domain::ScalarScalarMulExpr *be = new domain::ScalarScalarMulExpr(s, lhs, rhs);
     float_exprs.push_back(be);
     return be;
 }
 
-domain::FloatFloatMulExpr* Domain::mkFloatFloatMulExpr(domain::FloatExpr* lhs, domain::FloatExpr* rhs)
+domain::ScalarScalarMulExpr* Domain::mkScalarScalarMulExpr(domain::ScalarExpr* lhs, domain::ScalarExpr* rhs)
 {
-    domain::FloatFloatMulExpr *b = new domain::FloatFloatMulExpr(lhs, rhs);
+    domain::ScalarScalarMulExpr *b = new domain::ScalarScalarMulExpr(lhs, rhs);
     float_exprs.push_back(b);
     return b;
 }
 
-domain::FloatExpr *FloatFloatMulExpr::getLHSFloatExpr()
+domain::ScalarExpr *ScalarScalarMulExpr::getLHSScalarExpr()
 {
     return lhs_;
 }
 
-domain::FloatExpr *FloatFloatMulExpr::getRHSFloatExpr()
+domain::ScalarExpr *ScalarScalarMulExpr::getRHSScalarExpr()
 {
     return rhs_;
 }
 
 
 // KEVIN: Added for VecParen module, has to stay in Domain.h
-domain::FloatParenExpr *Domain::mkFloatParenExpr(Space *s, domain::FloatExpr *expr)
+domain::ScalarParenExpr *Domain::mkScalarParenExpr(Space *s, domain::ScalarExpr *expr)
 {
-		domain::FloatParenExpr *var = new domain::FloatParenExpr(s, expr);
+		domain::ScalarParenExpr *var = new domain::ScalarParenExpr(s, expr);
 		float_exprs.push_back(var);
 		return var;
 }
 
-domain::FloatParenExpr* Domain::mkFloatParenExpr(domain::FloatExpr* expr)
+domain::ScalarParenExpr* Domain::mkScalarParenExpr(domain::ScalarExpr* expr)
 {
-    domain::FloatParenExpr* var = new domain::FloatParenExpr(expr);
+    domain::ScalarParenExpr* var = new domain::ScalarParenExpr(expr);
     float_exprs.push_back(var);
     return var;
 }
@@ -238,7 +238,7 @@ void Vector::setSpace(Space* space){
         this->spaceContainer_ = new domain::SpaceContainer();
     this->spaceContainer_->setSpace(space);
 }
-void Float::setSpace(Space* space){
+void Scalar::setSpace(Space* space){
 
     if(!this->spaceContainer_)
         this->spaceContainer_ = new domain::SpaceContainer();
@@ -281,7 +281,7 @@ Vector_Expr* Domain::mkVector_Expr(domain::VecExpr* exp){
 // 
 Vector_Def *Domain::mkVector_Def(domain::VecIdent* i, domain::Vector* v)
 {
-    //LOG(DEBUG) <<"Domain::mkVector_Def ";
+    LOG(DBUG) <<"Domain::mkVector_Def ";
     Vector_Def *bd = new Vector_Def(i, v);  
     defs.push_back(bd); 
     return bd;
@@ -290,93 +290,83 @@ Vector_Def *Domain::mkVector_Def(domain::VecIdent* i, domain::Vector* v)
 
 Vector_Assign *Domain::mkVector_Assign(domain::VecVarExpr* i, domain::Vector* v)
 {
-    //LOG(DEBUG) <<"Domain::mkVector_Assign ";
+    LOG(DBUG) <<"Domain::mkVector_Assign ";
     Vector_Assign *bd = new Vector_Assign(i, v);  
     assigns.push_back(bd); 
     return bd;
 }
 
 
-FloatIdent* Domain::mkFloatIdent(Space* s){
-    domain::FloatIdent* flt = new domain::FloatIdent(*s);
+ScalarIdent* Domain::mkScalarIdent(Space* s){
+    domain::ScalarIdent* flt = new domain::ScalarIdent(*s);
     float_idents.push_back(flt);
     return flt;
 }
 
-FloatIdent* Domain::mkFloatIdent(){
-    domain::FloatIdent* flt = new domain::FloatIdent();
+ScalarIdent* Domain::mkScalarIdent(){
+    domain::ScalarIdent* flt = new domain::ScalarIdent();
     float_idents.push_back(flt);
     return flt;
 }
 
-FloatExpr* Domain::mkFloatExpr(Space* s){
-    domain::FloatExpr* flt = new domain::FloatExpr(s);
+ScalarExpr* Domain::mkScalarExpr(Space* s){
+    domain::ScalarExpr* flt = new domain::ScalarExpr(s);
     float_exprs.push_back(flt);
     return flt;
 }
 
-FloatExpr* Domain::mkFloatExpr(){
-    domain::FloatExpr* flt = new domain::FloatExpr();
+ScalarExpr* Domain::mkScalarExpr(){
+    domain::ScalarExpr* flt = new domain::ScalarExpr();
     float_exprs.push_back(flt);
     return flt;
 }
 
 
-/*  
-	VecScalarMulExpr* mkScalarMulExpr(Space* s, domain::FloatExpr* flt_, domain::VecExpr* vec_);
-	VecScalarMulExpr* mkScalarMulExpr(domain::Float_Expr* flt_, domain::VecExpr* vec_);
-*/
 
-VecScalarMulExpr* Domain::mkVecScalarMulExpr(Space* s, domain::VecExpr *vec, domain::FloatExpr *flt){
+VecScalarMulExpr* Domain::mkVecScalarMulExpr(Space* s, domain::VecExpr *vec, domain::ScalarExpr *flt){
     domain::VecScalarMulExpr* expr = new domain::VecScalarMulExpr(s, vec, flt);
     exprs.push_back(expr);
     return expr;
 }
 
-VecScalarMulExpr* Domain::mkVecScalarMulExpr(domain::VecExpr *vec, domain::FloatExpr *flt){
+VecScalarMulExpr* Domain::mkVecScalarMulExpr(domain::VecExpr *vec, domain::ScalarExpr *flt){
     auto expr = new domain::VecScalarMulExpr(vec, flt);
     exprs.push_back(expr);
     return expr;
 }
 
+domain::VecExpr *VecScalarMulExpr::getVecExpr()
+{
+    return vec_;
+}
 
-/*
+domain::ScalarExpr *VecScalarMulExpr::getScalarExpr()
+{
+    return flt_;
+}
 
-	Float_Lit* mkFloat_Lit(Space* space, float scalar);
-	Float_Lit* mkFloat_Lit(float scalar);
 
-	Float* mkFloat_Var(Space* s);
-	Float* mkFloat_Var();
 
-	Float_Expr* mkFloat_Expr(Space* space, domain::FloatExpr *vec);
-	Float_Expr* mkFloat_Expr(domain::FloatExpr *vec);
-    
-	std::vector<FloatIdent*> float_idents;
-	std::vector<FloatExpr*> float_exprs;
-	std::vector<Float*> floats;
-	std::vector<Float_Def*> float_defs;
-*/
-
-Float_Lit* Domain::mkFloat_Lit(Space* space, float scalar){
-    auto flt = new domain::Float_Lit(*space, scalar);
+Scalar_Lit* Domain::mkScalar_Lit(Space* space, float scalar){
+    auto flt = new domain::Scalar_Lit(*space, scalar);
     floats.push_back(flt);
     return flt;
 }
 
-Float_Lit* Domain::mkFloat_Lit(float scalar){
-    auto flt = new domain::Float_Lit(scalar);
+Scalar_Lit* Domain::mkScalar_Lit(float scalar){
+    auto flt = new domain::Scalar_Lit(scalar);
     floats.push_back(flt);
     return flt;
 }
 
-Float_Expr* Domain::mkFloat_Expr(Space* s, domain::FloatExpr* exp) {
-    Float_Expr* flt = new domain::Float_Expr(*s, exp);
+Scalar_Expr* Domain::mkScalar_Expr(Space* s, domain::ScalarExpr* exp) {
+    Scalar_Expr* flt = new domain::Scalar_Expr(*s, exp);
     floats.push_back(flt);
     return flt;
 }
 
-Float_Expr* Domain::mkFloat_Expr(domain::FloatExpr* exp){
-    Float_Expr* flt = new domain::Float_Expr(exp);
+Scalar_Expr* Domain::mkScalar_Expr(domain::ScalarExpr* exp){
+    Scalar_Expr* flt = new domain::Scalar_Expr(exp);
     floats.push_back(flt);
     return flt;
 }
@@ -387,21 +377,19 @@ Float_Expr* Domain::mkFloat_Expr(domain::FloatExpr* exp){
 *****/
 
 
-// TODO: Should be binding to Vector, not Expr
-// 
-Float_Def *Domain::mkFloat_Def(domain::FloatIdent* i, domain::Float* v)
+Scalar_Def *Domain::mkScalar_Def(domain::ScalarIdent* i, domain::Scalar* v)
 {
-    //LOG(DEBUG) <<"Domain::mkVector_Def ";
-    Float_Def *bd = new Float_Def(i, v);  
+    LOG(DBUG) <<"Domain::mkVector_Def ";
+    Scalar_Def *bd = new Scalar_Def(i, v);  
     float_defs.push_back(bd); 
     return bd;
 }
 
 
-Float_Assign *Domain::mkFloat_Assign(domain::FloatVarExpr* i, domain::Float* v)
+Scalar_Assign *Domain::mkScalar_Assign(domain::ScalarVarExpr* i, domain::Scalar* v)
 {
-    //LOG(DEBUG) <<"Domain::mkVector_Assign ";
-    Float_Assign *bd = new Float_Assign(i, v);  
+    LOG(DBUG) <<"Domain::mkVector_Assign ";
+    Scalar_Assign *bd = new Scalar_Assign(i, v);  
     float_assigns.push_back(bd); 
     return bd;
 }

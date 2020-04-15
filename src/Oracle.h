@@ -21,18 +21,18 @@ public:
 	virtual domain::Space& getSpaceForVector_Expr(coords::VecExpr *expr_coords) = 0; 
 	virtual domain::Space& getSpaceForVector_Lit(coords::Vector_Lit *coords) = 0;
 	
-	virtual domain::Space &getSpaceForFloatIdent(coords::FloatIdent *v) = 0;
-	virtual domain::Space& getSpaceForFloatVarExpr(coords::FloatExpr *coords) = 0;
-	virtual domain::Space &getSpaceForMulExpression(coords::VecExpr *vec, coords::FloatExpr *flt) = 0;
+	virtual domain::Space &getSpaceForScalarIdent(coords::ScalarIdent *v) = 0;
+	virtual domain::Space& getSpaceForScalarVarExpr(coords::ScalarExpr *coords) = 0;
+	virtual domain::Space &getSpaceForMulExpression(coords::VecExpr *vec, coords::ScalarExpr *flt) = 0;
 
 	// KEVIN: Added for VecParenExpr module
-	virtual domain::Space &getSpaceForFloatParenExpr(coords::FloatExpr *expr_coords) = 0;
+	virtual domain::Space &getSpaceForScalarParenExpr(coords::ScalarExpr *expr_coords) = 0;
 	
-	virtual domain::Space& getSpaceForFloat_Expr(coords::FloatExpr *expr_coords) = 0; 
-	virtual domain::Space& getSpaceForFloat_Lit(coords::Float_Lit *coords) = 0;
+	virtual domain::Space& getSpaceForScalar_Expr(coords::ScalarExpr *expr_coords) = 0; 
+	virtual domain::Space& getSpaceForScalar_Lit(coords::Scalar_Lit *coords) = 0;
 
-	virtual domain::Space& getSpaceForFloatAddExpression(coords::FloatExpr *lhs, coords::FloatExpr *rhs) = 0;
-	virtual domain::Space& getSpaceForFloatMulExpression(coords::FloatExpr *lhs, coords::FloatExpr *rhs) = 0;
+	virtual domain::Space& getSpaceForScalarAddExpression(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) = 0;
+	virtual domain::Space& getSpaceForScalarMulExpression(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) = 0;
 
 };
 

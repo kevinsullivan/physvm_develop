@@ -1,8 +1,9 @@
 /*
-#ifndef bm
-#define bm
-#include "BaseMatcher.h"
-#endif
+See BaseMatcher.h for method details
+matches all "Scalar Expressions"
+*/
+/*
+SCALAR_EXPR := (SCALAR_EXPR) | SCALAR_EXPR + SCALAR_EXPR | SCALAR_EXPR * SCALAR_EXPR | SCALAR_VAR | SCALAR_LITERAL
 */
 
 #ifndef scalarm

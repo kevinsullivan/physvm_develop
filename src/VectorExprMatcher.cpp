@@ -1,4 +1,3 @@
-#pragma once
 
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
@@ -7,11 +6,6 @@
 #include "ScalarExprMatcher.h"
 
 /*
-    virtual void Traverse() = 0;
-    virtual void BuildRepresentation() = 0;
-    virtual StatementMatcher GetStatementMatcher() = 0;
-    virtual void run(const MatchFinder::MatchResult &Result) = 0;
-
     VEC_EXPR := (VEC_EXPR) | VEC_EXPR + VEC_EXPR | VEC_EXPR * SCALAR_EXPR | VEC_VAR | VEC_LITERAL
 
 */

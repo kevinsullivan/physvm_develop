@@ -45,39 +45,39 @@ class CoordsToInterp
 	interp::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
 	coords::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* d) const;
 
-	void putFloatFloatAddExpr(coords::FloatFloatAddExpr *n, interp::FloatFloatAddExpr *e);
-	interp::FloatFloatAddExpr *getFloatFloatAddExpr(coords::FloatFloatAddExpr* c) const;
-	coords::FloatFloatAddExpr *getFloatFloatAddExpr(interp::FloatFloatAddExpr* d) const;
+	void putScalarScalarAddExpr(coords::ScalarScalarAddExpr *n, interp::ScalarScalarAddExpr *e);
+	interp::ScalarScalarAddExpr *getScalarScalarAddExpr(coords::ScalarScalarAddExpr* c) const;
+	coords::ScalarScalarAddExpr *getScalarScalarAddExpr(interp::ScalarScalarAddExpr* d) const;
 	
-	void putFloatFloatMulExpr(coords::FloatFloatMulExpr *n, interp::FloatFloatMulExpr *e);
-	interp::FloatFloatMulExpr *getFloatFloatMulExpr(coords::FloatFloatMulExpr* c) const;
-	coords::FloatFloatMulExpr *getFloatFloatMulExpr(interp::FloatFloatMulExpr* d) const;
+	void putScalarScalarMulExpr(coords::ScalarScalarMulExpr *n, interp::ScalarScalarMulExpr *e);
+	interp::ScalarScalarMulExpr *getScalarScalarMulExpr(coords::ScalarScalarMulExpr* c) const;
+	coords::ScalarScalarMulExpr *getScalarScalarMulExpr(interp::ScalarScalarMulExpr* d) const;
 	
 
 // Ident
 
-	void putFloatIdent(coords::FloatIdent *key, interp::FloatIdent *i);
-	interp::FloatIdent *getFloatIdent(coords::FloatIdent *c) const;
-	coords::FloatIdent *getFloatIdent(interp::FloatIdent *d) const;
+	void putScalarIdent(coords::ScalarIdent *key, interp::ScalarIdent *i);
+	interp::ScalarIdent *getScalarIdent(coords::ScalarIdent *c) const;
+	coords::ScalarIdent *getScalarIdent(interp::ScalarIdent *d) const;
 
 // Expr
 
-	interp::FloatExpr *getFloatExpr(coords::FloatExpr* c) const;
-	coords::FloatExpr *getFloatExpr(interp::FloatExpr* d) const;
+	interp::ScalarExpr *getScalarExpr(coords::ScalarExpr* c) const;
+	coords::ScalarExpr *getScalarExpr(interp::ScalarExpr* d) const;
 /*
-	void putFloatWrapper(coords::FloatWrapper *n, interp::FloatWrapper *e);
-	interp::FloatWrapper *getFloatWrapper(coords::FloatWrapper* c) const;
-	coords::FloatWrapper *getFloatWrapper(interp::FloatWrapper* d) const;
+	void putScalarWrapper(coords::ScalarWrapper *n, interp::ScalarWrapper *e);
+	interp::ScalarWrapper *getScalarWrapper(coords::ScalarWrapper* c) const;
+	coords::ScalarWrapper *getScalarWrapper(interp::ScalarWrapper* d) const;
 */	
 
-	void putFloatVarExpr(coords::FloatVarExpr *n, interp::FloatVarExpr *e);
-	interp::FloatVarExpr *getFloatVarExpr(coords::FloatVarExpr* c) const;
-	coords::FloatVarExpr *getFloatVarExpr(interp::FloatVarExpr* d) const;
+	void putScalarVarExpr(coords::ScalarVarExpr *n, interp::ScalarVarExpr *e);
+	interp::ScalarVarExpr *getScalarVarExpr(coords::ScalarVarExpr* c) const;
+	coords::ScalarVarExpr *getScalarVarExpr(interp::ScalarVarExpr* d) const;
 	
-	// KEVIN: This stuff here for FloatParenExpr module
-	void putFloatParenExpr(coords::FloatParenExpr *ast, interp::FloatParenExpr *expr);
-	interp::FloatParenExpr *getFloatParenExpr(coords::FloatParenExpr* c) const;
-	coords::FloatParenExpr *getFloatParenExpr(interp::FloatParenExpr* d) const;
+	// KEVIN: This stuff here for ScalarParenExpr module
+	void putScalarParenExpr(coords::ScalarParenExpr *ast, interp::ScalarParenExpr *expr);
+	interp::ScalarParenExpr *getScalarParenExpr(coords::ScalarParenExpr* c) const;
+	coords::ScalarParenExpr *getScalarParenExpr(interp::ScalarParenExpr* d) const;
 
 // Vector
 
@@ -104,30 +104,30 @@ class CoordsToInterp
 	interp::Vector_Assign *getVector_Assign(coords::Vector_Assign* c) const;
 	coords::Vector_Assign *getVector_Assign(interp::Vector_Assign* d) const;
 
-// Float
+// Scalar
 
-	void putFloat_Lit(coords::Float *ast, interp::Float_Lit *v);
-	interp::Float_Lit *getFloat_Lit(coords::Float_Lit* c) const;
-	coords::Float_Lit *getFloat_Lit(interp::Float_Lit* d) const;
+	void putScalar_Lit(coords::Scalar *ast, interp::Scalar_Lit *v);
+	interp::Scalar_Lit *getScalar_Lit(coords::Scalar_Lit* c) const;
+	coords::Scalar_Lit *getScalar_Lit(interp::Scalar_Lit* d) const;
 
-	void putFloat_Expr(coords::Float *ast, interp::Float_Expr *v);
-	interp::Float_Expr *getFloat_Expr(coords::Float_Expr* c) const;
-	coords::Float_Expr *getFloat_Expr(interp::Float_Expr* d) const;
+	void putScalar_Expr(coords::Scalar *ast, interp::Scalar_Expr *v);
+	interp::Scalar_Expr *getScalar_Expr(coords::Scalar_Expr* c) const;
+	coords::Scalar_Expr *getScalar_Expr(interp::Scalar_Expr* d) const;
 
-	coords::Float *getFloat(interp::Float* v);
-	interp::Float *getFloat(coords::Float* v);
+	coords::Scalar *getScalar(interp::Scalar* v);
+	interp::Scalar *getScalar(coords::Scalar* v);
 
 // Def
 
-	void putFloat_Def(coords::Float_Def *vardecl_wrapper, interp::Float_Def *b);
-	interp::Float_Def *getFloat_Def(coords::Float_Def* c) const;
-	coords::Float_Def *getFloat_Def(interp::Float_Def* d) const;
+	void putScalar_Def(coords::Scalar_Def *vardecl_wrapper, interp::Scalar_Def *b);
+	interp::Scalar_Def *getScalar_Def(coords::Scalar_Def* c) const;
+	coords::Scalar_Def *getScalar_Def(interp::Scalar_Def* d) const;
 
 // Assign
 
-	void putFloat_Assign(coords::Float_Assign *varassn_wrapper, interp::Float_Assign *b);
-	interp::Float_Assign *getFloat_Assign(coords::Float_Assign* c) const;
-	coords::Float_Assign *getFloat_Assign(interp::Float_Assign* d) const;
+	void putScalar_Assign(coords::Scalar_Assign *varassn_wrapper, interp::Scalar_Assign *b);
+	interp::Scalar_Assign *getScalar_Assign(coords::Scalar_Assign* c) const;
+	coords::Scalar_Assign *getScalar_Assign(interp::Scalar_Assign* d) const;
 
 	void dump() const;
 
@@ -156,18 +156,18 @@ class CoordsToInterp
 	std::unordered_map<interp::Vector_Def*, coords::Vector_Def*	> 	interp2coords_Vector_Def;
 	std::unordered_map<interp::Vector_Assign*, coords::Vector_Assign*> 	interp2coords_Vector_Assign;
 
-	std::unordered_map <coords::FloatIdent*,interp::FloatIdent* > 	coords2interp_FloatIdent;
-	std::unordered_map <coords::FloatExpr*, interp::FloatExpr*	> 	coords2interp_FloatExpr;
-	std::unordered_map <coords::Float*, 	interp::Float*		> 	coords2interp_Float;
-	std::unordered_map <coords::Float_Def*, interp::Float_Def*	> 	coords2interp_Float_Def;
-	std::unordered_map <coords::Float_Assign*, interp::Float_Assign*> 	coords2interp_Float_Assign;
+	std::unordered_map <coords::ScalarIdent*,interp::ScalarIdent* > 	coords2interp_ScalarIdent;
+	std::unordered_map <coords::ScalarExpr*, interp::ScalarExpr*	> 	coords2interp_ScalarExpr;
+	std::unordered_map <coords::Scalar*, 	interp::Scalar*		> 	coords2interp_Scalar;
+	std::unordered_map <coords::Scalar_Def*, interp::Scalar_Def*	> 	coords2interp_Scalar_Def;
+	std::unordered_map <coords::Scalar_Assign*, interp::Scalar_Assign*> 	coords2interp_Scalar_Assign;
 
 
-	std::unordered_map<interp::FloatIdent*, coords::FloatIdent*	> 	interp2coords_FloatIdent;
-	std::unordered_map<interp::FloatExpr*, 	coords::FloatExpr*	> 	interp2coords_FloatExpr;
-	std::unordered_map<interp::Float*, 		coords::Float*		> 	interp2coords_Float;
-	std::unordered_map<interp::Float_Def*, 	coords::Float_Def*	> 	interp2coords_Float_Def;
-	std::unordered_map<interp::Float_Assign*, 	coords::Float_Assign*> 	interp2coords_Float_Assign;
+	std::unordered_map<interp::ScalarIdent*, coords::ScalarIdent*	> 	interp2coords_ScalarIdent;
+	std::unordered_map<interp::ScalarExpr*, 	coords::ScalarExpr*	> 	interp2coords_ScalarExpr;
+	std::unordered_map<interp::Scalar*, 		coords::Scalar*		> 	interp2coords_Scalar;
+	std::unordered_map<interp::Scalar_Def*, 	coords::Scalar_Def*	> 	interp2coords_Scalar_Def;
+	std::unordered_map<interp::Scalar_Assign*, 	coords::Scalar_Assign*> 	interp2coords_Scalar_Assign;
 };
 
 } // namespace

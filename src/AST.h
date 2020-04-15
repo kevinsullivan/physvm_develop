@@ -9,12 +9,12 @@
 
 namespace ast {
 // Scalar
-using Scalar = float;
+using ScalarValue = double;
 
 
 // Ident
 using VecIdent = const clang::VarDecl;
-using FloatIdent = const clang::VarDecl;
+using ScalarIdent = const clang::VarDecl;
 
 // Expr
 using VecExpr = const clang::Expr;
@@ -23,24 +23,24 @@ using VecVarExpr = const clang::DeclRefExpr;
 using VecVecAddExpr = const clang::CXXMemberCallExpr;
 
 
-using FloatExpr = const clang::Expr;
-using FloatLitExpr = const clang::CXXConstructExpr;
-using FloatVarExpr = const clang::DeclRefExpr;
+using ScalarExpr = const clang::Expr;
+using ScalarLitExpr = const clang::CXXConstructExpr;
+using ScalarVarExpr = const clang::DeclRefExpr;
 
 
-using FloatFloatAddExpr = const clang::BinaryOperator;
-using FloatFloatMulExpr = const clang::BinaryOperator;
+using ScalarScalarAddExpr = const clang::BinaryOperator;
+using ScalarScalarMulExpr = const clang::BinaryOperator;
 
 using VecScalarMulExpr = const clang::CXXMemberCallExpr;
 
-using FloatAssignExpr = const clang::CXXConstructExpr;
+using ScalarAssignExpr = const clang::CXXConstructExpr;
 using VectorAssignExpr = const clang::CXXConstructExpr;
 
 
 // KEVIN: Add for VecParenExpr module
 using VecParenExpr = const clang::ParenExpr;
 
-using FloatParenExpr = const clang::ParenExpr;
+using ScalarParenExpr = const clang::ParenExpr;
 
 // Value
 using Vector = const clang::CXXConstructExpr;
@@ -48,23 +48,23 @@ using Vector_Lit = const clang::CXXConstructExpr;
 using Vector_Var = const clang::CXXConstructExpr;
 using Vector_Expr = const clang::CXXConstructExpr; // A Clang Stmt!
 
-using Float = const clang::Expr;
-using Float_Lit = const clang::Expr;
-using Float_Var = const clang::Expr;
-using Float_Expr = const clang::Expr;
+using Scalar = const clang::Expr;
+using Scalar_Lit = const clang::Expr;
+using Scalar_Var = const clang::Expr;
+using Scalar_Expr = const clang::Expr;
 
-using FloatFloatAddExpr = const clang::BinaryOperator;
-using FloatFloatMulExpr = const clang::BinaryOperator;
+using ScalarScalarAddExpr = const clang::BinaryOperator;
+using ScalarScalarMulExpr = const clang::BinaryOperator;
 
 
 // Def
 using Vector_Def = const clang::DeclStmt;
 
-using Float_Def = const clang::DeclStmt;
+using Scalar_Def = const clang::DeclStmt;
 
 using Vector_Assign = const clang::CXXOperatorCallExpr;
 
-using Float_Assign = const clang::BinaryOperator;
+using Scalar_Assign = const clang::BinaryOperator;
 
 } // namespace
 

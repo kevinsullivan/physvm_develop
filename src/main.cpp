@@ -35,8 +35,8 @@ namespace std
 }
 
 #include <memory>
-//#include <g3log/g3log.hpp>
-//#include <g3log/logworker.hpp>
+#include <g3log/g3log.hpp>
+#include <g3log/logworker.hpp>
 
 using namespace std;
 using namespace llvm;
@@ -49,6 +49,8 @@ interp::Interpretation* interp_;
 clang::ASTContext *context_;
 MainMatcher *programMatcher_;
 Rewriter* constraintWriter;
+bool rewriteMode;
+
 
 /*
 Architectural decision: Main parser should deal in AST nodes only,
@@ -57,7 +59,10 @@ coords, interp, domain objects.
 */
 
 /**************************************
- * 
+ * This implments a portion of the "RecursiveASTVisitor" interface of Clang
+ * It is used to recursively search an AST during the FrontendAction and determine where the program needs to add constraints.
+ * This will get instantiated after the AST is initially parsed and types are added/inferred
+ * Specifically, we're adding in constraints/logging code where we don't have any assigned type
  * ***********************************/
 
 class RewriteASTVisitor : public RecursiveASTVisitor<RewriteASTVisitor>
@@ -74,7 +79,7 @@ public:
       auto newSourceLoc = this->ctxt_->getSourceManager().translateFileLineCol(fullLoc.getFileEntry(), fullLocEnd.getSpellingLineNumber() + 1, fullLoc.getSpellingColumnNumber());
       auto logStr = "\"Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: " + decl->getNameAsString() + ") with value : \" +  std::to_string(" + decl->getNameAsString() + ")";
 
-      constraintWriter->InsertText(newSourceLoc, "\nLOG(INFO) << " + logStr + ");\n");
+      constraintWriter->InsertText(newSourceLoc, "\nLOG(INFO) << " + logStr + ";\n");
     }
     else{
       //log
@@ -91,6 +96,7 @@ public:
     }
   }
 
+  //instantiate g3 in the main method
   void AddLoggingHeader(Stmt* stmt)
   {
     if(stmt){
@@ -110,16 +116,19 @@ public:
     }
   }
 
+  //add a header to the top of the .cpp file to include all the necessary logging headers
   void AddLoggingInclude(Decl* decl)
   {
-      auto fullLoc = this->ctxt_->getFullLoc(decl->getSourceRange().getBegin());
       auto mf_id = this->ctxt_->getSourceManager().getMainFileID();
       auto newSourceLoc = this->ctxt_->getSourceManager().translateLineCol(mf_id, 1, 1);
      
-      constraintWriter->InsertText(newSourceLoc, "\n#include <g3log/g3log.hpp>\n#include <g3log/logworker.hpp>\n");
+      constraintWriter->InsertText(newSourceLoc, "\n#include <g3log/g3log.hpp>\n#include <g3log/logworker.hpp>\n#include <string>\n");
       
   }
 
+  //overridden callback from bass class
+  //this method will trigger everytime the traversal hits a declaraction
+  //we check if the decl needs a constraint, if so, insert it
   bool VisitDecl(Decl* decl)
   {
 
@@ -141,6 +150,9 @@ public:
     return true;
   }
 
+  //another overridden callback
+  //this will primarily check to see if the current AST node is a DeclRefExpr...if so, get it's corresponding declaraction
+  //if that declaration needs a constraint, add some logging to the DeclRefExpr
   bool VisitStmt(Stmt* stmt)
   {
 
@@ -190,16 +202,17 @@ private:
 
 
 /**************************************
- * 
+ * This will get initialized by the Frontend Action Tool IF the tool is set to "Rewrite Mode"
+ * Rewrite mode should be set after the AST is parsed and types have been applied by the oracle and/or inferred
+ * This is essentially the entry point for the RecursiveASTVisitor, which crawls through the AST and adds constraints.
  * ***********************************/
-
-bool rewriteMode = false;
 
 class RewriteASTConsumer : public ASTConsumer
 {
 public:
   void HandleTranslationUnit(ASTContext &context) override 
   {
+    //this begins with a recursive traversal of the AST, 
     RewriteASTVisitor visitor{context};
     visitor.TraverseDecl(context.getTranslationUnitDecl());
 
@@ -207,7 +220,8 @@ public:
     auto entry = context.getFullLoc(context.getSourceManager().getLocForStartOfFile(mf_id)).getFileEntry();
 
 
-
+    //clang will buffer all inserted text during the AST traversal.
+    //this "rewrite buffer" will only exist if a constraint was added
     auto *rewriter = constraintWriter->getRewriteBufferFor(mf_id);//returns null if no modification to source
 
     if(rewriter){
@@ -229,7 +243,8 @@ public:
 };
 
 /***************************************
-Data structure instantiated by this tool
+This will get instantiated by the Frontend Action Tool. It contains the entry point for the first pass through the program via the FrontendAction.
+This will initiate a traversal of the AST which will build the virtual AST representation (Coords, Domain, Interp)
 ****************************************/
 
 class MyASTConsumer : public ASTConsumer
@@ -259,7 +274,7 @@ public:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
-    //LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
+    LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
     if(!rewriteMode)
     {
       context_ = &CI.getASTContext();
@@ -300,12 +315,12 @@ int main(int argc, const char **argv)
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  //using namespace g3;
+  using namespace g3;
   std::string logFile = "Peirce.log";
   std::string logDir = ".";
-  //auto worker = LogWorker::createLogWorker();
-  //auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
-  //g3::initializeLogging(worker.get());
+  auto worker = LogWorker::createLogWorker();
+  auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
+  g3::initializeLogging(worker.get());
 
   interp_ = new interp::Interpretation();   // default oracle
   
@@ -313,12 +328,17 @@ int main(int argc, const char **argv)
   interp_->addSpace("time");
   interp_->addSpace("geom");
 
+
+  //creates a "ToolAction" unique pointer object
   auto toolAction = newFrontendActionFactory<MyFrontendAction>()  ;
 
   Tool.run(toolAction.get() );
 
+  //maps the parsed AST into indices for printing and editing for the user
   interp_->mkVarTable();
+  //prints all variables that can be assigned
   interp_->printVarTable();
+  //enters a while loop allowing user to select variables to edit or exit and perform inference
   interp_->updateVarTable();
 
 
@@ -335,25 +355,28 @@ int main(int argc, const char **argv)
   cout << "\nVector Assignments\n";
   cout <<interp_->toString_Assigns();
 
-  cout <<"Float Identifiers\n";
-  cout <<interp_->toString_FloatIdents();
-  cout <<"\nFloat Expressions\n";
-  cout <<interp_->toString_FloatExprs();
-  cout <<"\nFloats\n";
-  cout <<interp_->toString_Floats();
-  cout <<"\nFloat Definitions\n";
-  cout <<interp_->toString_FloatDefs();
-  cout << "\nFloat Assignments\n";
-  cout <<interp_->toString_FloatAssigns();
+  cout <<"Scalar Identifiers\n";
+  cout <<interp_->toString_ScalarIdents();
+  cout <<"\nScalar Expressions\n";
+  cout <<interp_->toString_ScalarExprs();
+  cout <<"\nScalars\n";
+  cout <<interp_->toString_Scalars();
+  cout <<"\nScalar Definitions\n";
+  cout <<interp_->toString_ScalarDefs();
+  cout << "\nScalar Assignments\n";
+  cout <<interp_->toString_ScalarAssigns();
 
 
 //THE ORDER YOU RUN THE CHECKER AND THE REWRITE-PASS MATTERS. 
 //Not only does Tool.run change/lose state on entry, but also on exit
  
+ //this runs the lean type inference
   Checker *checker = new Checker(interp_);
   checker->Check();
   
+  //Determines which variables can have a type assigned to them. If no type is assigned, we need to log/build constraints for these at runtime
   interp_->buildTypedDeclList();
+  //Re-run the tool, this time, build all the runtime constraints and logging.
   rewriteMode = true;
   Tool.run(toolAction.get());
   

@@ -1,6 +1,7 @@
 
 #include <g3log/g3log.hpp>
 #include <g3log/logworker.hpp>
+#include <string>
 
 class Vec {
 public:
@@ -50,82 +51,98 @@ using namespace g3;auto worker = g3::LogWorker::createLogWorker();std::string lo
 
   Vec v1(0,0,0);
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v1) with value : " +  std::to_string(v1));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v1) with value : " +  std::to_string(v1);
 float flt = 2.0;
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt);
 flt + flt;
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt);
 Vec v2 = v1;
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v1) with value : " +  std::to_string(v1));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v1) with value : " +  std::to_string(v1);
 //flt = 3.0;
   v2 = v1;
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v1) with value : " +  std::to_string(v1));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v1) with value : " +  std::to_string(v1);
 (v2.vec_add(v1));
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v1) with value : " +  std::to_string(v1));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v1) with value : " +  std::to_string(v1);
 float flt2 = 3.0;
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2);
 float flt3 = flt2;
  /
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt3) with value : " +  std::to_string(flt3);
+
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2);
 / (3.0 + 3.0);
   flt2 + (flt + flt);
  /
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt);
 / flt2 + 3.0;
   float flt4 = flt3 * (flt3*flt3);
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt4) with value : " +  std::to_string(flt4));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt4) with value : " +  std::to_string(flt4);
+
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt3) with value : " +  std::to_string(flt3);
+
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt3) with value : " +  std::to_string(flt3);
+
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt3) with value : " +  std::to_string(flt3);
 flt3 = (flt2);
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt3) with value : " +  std::to_string(flt3);
+
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2);
 Vec v3 = v2.vec_mul(flt2);
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v3) with value : " +  std::to_string(v3));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v3) with value : " +  std::to_string(v3);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt2) with value : " +  std::to_string(flt2);
 Vec v4 = (v3.vec_add(v2.vec_mul(flt)));
   
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v4) with value : " +  std::to_string(v4));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v4) with value : " +  std::to_string(v4);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v3) with value : " +  std::to_string(v3));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v3) with value : " +  std::to_string(v3);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v2) with value : " +  std::to_string(v2);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt) with value : " +  std::to_string(flt);
 v4 = (v4.vec_add(v4).vec_mul(flt3));
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v4) with value : " +  std::to_string(v4));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v4) with value : " +  std::to_string(v4);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v4) with value : " +  std::to_string(v4));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v4) with value : " +  std::to_string(v4);
 
-LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v4) with value : " +  std::to_string(v4));
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: v4) with value : " +  std::to_string(v4);
+
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt3) with value : " +  std::to_string(flt3);
 
   if(true)
   {
     flt3 = 2;
   }
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt3) with value : " +  std::to_string(flt3);
+
   if(true)
     flt3 = 4.0;
+
+LOG(INFO) << "Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: flt3) with value : " +  std::to_string(flt3);
 
   //v4 = Vec(0.0, 0.0, 0.0);
   return 0;

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-//#include <g3log/g3log.hpp>
+#include <g3log/g3log.hpp>
 
 
 using namespace coords2interp;
@@ -13,8 +13,6 @@ void CoordsToInterp::putVecIdent(coords::VecIdent *c, interp::VecIdent *d)
 {
     coords2interp_VecIdent[c] = d;
     interp2coords_VecIdent[d] = c;
-    //    coords2interp_VecIdent.insert(std::make_pair(c, d));
-    //    interp2coords_VecIdent.insert(std::make_pair(d, c));
 }
 
 // TODO: Decide whether or not these maps can be partial on queried keys
@@ -76,61 +74,19 @@ coords::VecExpr *CoordsToInterp::getVecExpr(interp::VecExpr *d) const
     return coords;
 }
 
-// var
-/*
-void CoordsToInterp::putVecWrapper(coords::VecWrapper *c, interp::VecWrapper *d)
-{
-    std::string cstr = c->toString();
-    std::string dstr = d->toString();
-    //LOG(DEBUG) << "CoordsToInterp::putVecWrapper c " << cstr << "\n";
-    //LOG(DEBUG) << "CoordsToInterp::putVecWrapper d " << dstr << "\n";
-    coords2interp_VecExpr[c] = d;
-    interp2coords_VecExpr[d] = c;
-
-    interp::VecWrapper *foo = getVecWrapper(c);
-    std::string s = foo->toString();
-    //LOG(DEBUG) << "Debug " << s << "\n";
-}
-
-interp::VecWrapper *CoordsToInterp::getVecWrapper(coords::VecWrapper *c) const
-{
-    std::unordered_map<coords::VecExpr*, interp::VecExpr*>::iterator it;
-    interp::VecExpr *dom = NULL;
-    try {
-        dom = coords2interp_VecExpr.at(c);
-    }
-    catch (std::out_of_range &e) {
-        dom = NULL;
-    }
-    return static_cast<interp::VecWrapper*>(dom);
-}
-
-coords::VecWrapper *CoordsToInterp::getVecWrapper(interp::VecWrapper *d) const
-{
-    std::unordered_map<interp::VecExpr*, coords::VecExpr*>::iterator it;
-    coords::VecExpr *coords = NULL;
-    try {
-        coords = interp2coords_VecExpr.at(d);
-    }
-    catch (std::out_of_range &e) {
-        coords = NULL;
-    }
-    return static_cast<coords::VecWrapper *>(coords);
-}*/
-
 
 void CoordsToInterp::putVecVarExpr(coords::VecVarExpr *c, interp::VecVarExpr *d)
 {
     std::string cstr = c->toString();
     std::string dstr = d->toString();
-    //LOG(DEBUG) << "CoordsToInterp::putVecVarExpr c " << cstr << "\n";
-    //LOG(DEBUG) << "CoordsToInterp::putVecVarExpr d " << dstr << "\n";
+    LOG(DBUG) << "CoordsToInterp::putVecVarExpr c " << cstr << "\n";
+    LOG(DBUG) << "CoordsToInterp::putVecVarExpr d " << dstr << "\n";
     coords2interp_VecExpr[c] = d;
     interp2coords_VecExpr[d] = c;
 
     interp::VecVarExpr *foo = getVecVarExpr(c);
     std::string s = foo->toString();
-    //LOG(DEBUG) << "Debug " << s << "\n";
+    LOG(DBUG) << "Debug " << s << "\n";
 }
 
 interp::VecVarExpr *CoordsToInterp::getVecVarExpr(coords::VecVarExpr *c) const
@@ -257,20 +213,18 @@ coords::VecScalarMulExpr *CoordsToInterp::getVecScalarMulExpr(interp::VecScalarM
 }
 
 
-void CoordsToInterp::putFloatIdent(coords::FloatIdent *c, interp::FloatIdent *d)
+void CoordsToInterp::putScalarIdent(coords::ScalarIdent *c, interp::ScalarIdent *d)
 {
-    coords2interp_FloatIdent[c] = d;
-    interp2coords_FloatIdent[d] = c;
-    //    coords2interp_VecIdent.insert(std::make_pair(c, d));
-    //    interp2coords_VecIdent.insert(std::make_pair(d, c));
+    coords2interp_ScalarIdent[c] = d;
+    interp2coords_ScalarIdent[d] = c;
 }
 
-interp::FloatIdent *CoordsToInterp::getFloatIdent(coords::FloatIdent *c) const
+interp::ScalarIdent *CoordsToInterp::getScalarIdent(coords::ScalarIdent *c) const
 {
-    std::unordered_map<coords::FloatIdent*, interp::FloatIdent*>::iterator it;
-    interp::FloatIdent *dom = NULL;
+    std::unordered_map<coords::ScalarIdent*, interp::ScalarIdent*>::iterator it;
+    interp::ScalarIdent *dom = NULL;
     try {
-        dom = coords2interp_FloatIdent.at(c);
+        dom = coords2interp_ScalarIdent.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
@@ -278,12 +232,12 @@ interp::FloatIdent *CoordsToInterp::getFloatIdent(coords::FloatIdent *c) const
     return dom;
 }
 
-coords::FloatIdent *CoordsToInterp::getFloatIdent(interp::FloatIdent *d) const
+coords::ScalarIdent *CoordsToInterp::getScalarIdent(interp::ScalarIdent *d) const
 {
-    std::unordered_map<interp::FloatIdent*, coords::FloatIdent*>::iterator it;
-    coords::FloatIdent *coords = NULL;
+    std::unordered_map<interp::ScalarIdent*, coords::ScalarIdent*>::iterator it;
+    coords::ScalarIdent *coords = NULL;
     try {
-        coords = interp2coords_FloatIdent.at(d);
+        coords = interp2coords_ScalarIdent.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
@@ -295,12 +249,12 @@ coords::FloatIdent *CoordsToInterp::getFloatIdent(interp::FloatIdent *d) const
 
 // base
 
-interp::FloatExpr *CoordsToInterp::getFloatExpr(coords::FloatExpr *c) const
+interp::ScalarExpr *CoordsToInterp::getScalarExpr(coords::ScalarExpr *c) const
 {
-    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *dom = NULL;
+    std::unordered_map<coords::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *dom = NULL;
     try {
-        dom = coords2interp_FloatExpr.at(c);
+        dom = coords2interp_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
@@ -308,197 +262,156 @@ interp::FloatExpr *CoordsToInterp::getFloatExpr(coords::FloatExpr *c) const
     return dom;
 }
 
-coords::FloatExpr *CoordsToInterp::getFloatExpr(interp::FloatExpr *d) const
+coords::ScalarExpr *CoordsToInterp::getScalarExpr(interp::ScalarExpr *d) const
 {
-    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<interp::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = interp2coords_FloatExpr.at(d);
+        coords = interp2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
     return coords;
 }
-/*
-void CoordsToInterp::putFloatWrapper(coords::FloatWrapper *c, interp::FloatWrapper *d)
-{
-    std::string cstr = c->toString();
-    std::string dstr = d->toString();
-    //LOG(DEBUG) << "CoordsToInterp::putFloatWrapper c " << cstr << "\n";
-    //LOG(DEBUG) << "CoordsToInterp::putFloatWrapper d " << dstr << "\n";
-    coords2interp_FloatExpr[c] = d;
-    interp2coords_FloatExpr[d] = c;
-
-    interp::FloatWrapper *foo = getFloatWrapper(c);
-    std::string s = foo->toString();
-    //LOG(DEBUG) << "Debug " << s << "\n";
-}
-
-interp::FloatWrapper *CoordsToInterp::getFloatWrapper(coords::FloatWrapper *c) const
-{
-    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *dom = NULL;
-    try {
-        dom = coords2interp_FloatExpr.at(c);
-    }
-    catch (std::out_of_range &e) {
-        dom = NULL;
-    }
-    return static_cast<interp::FloatWrapper*>(dom);
-}
-
-coords::FloatWrapper *CoordsToInterp::getFloatWrapper(interp::FloatWrapper *d) const
-{
-    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
-    try {
-        coords = interp2coords_FloatExpr.at(d);
-    }
-    catch (std::out_of_range &e) {
-        coords = NULL;
-    }
-    return static_cast<coords::FloatWrapper *>(coords);
-}
-*/
 
 // var
 
-void CoordsToInterp::putFloatVarExpr(coords::FloatVarExpr *c, interp::FloatVarExpr *d)
+void CoordsToInterp::putScalarVarExpr(coords::ScalarVarExpr *c, interp::ScalarVarExpr *d)
 {
     std::string cstr = c->toString();
     std::string dstr = d->toString();
-    //LOG(DEBUG) << "CoordsToInterp::putFloatVarExpr c " << cstr << "\n";
-    //LOG(DEBUG) << "CoordsToInterp::putFloatVarExpr d " << dstr << "\n";
-    coords2interp_FloatExpr[c] = d;
-    interp2coords_FloatExpr[d] = c;
+    LOG(DBUG) << "CoordsToInterp::putScalarVarExpr c " << cstr << "\n";
+    LOG(DBUG) << "CoordsToInterp::putScalarVarExpr d " << dstr << "\n";
+    coords2interp_ScalarExpr[c] = d;
+    interp2coords_ScalarExpr[d] = c;
 
-    interp::FloatVarExpr *foo = getFloatVarExpr(c);
+    interp::ScalarVarExpr *foo = getScalarVarExpr(c);
     std::string s = foo->toString();
-    //LOG(DEBUG) << "Debug " << s << "\n";
+    LOG(DBUG) << "Debug " << s << "\n";
 }
 
-interp::FloatVarExpr *CoordsToInterp::getFloatVarExpr(coords::FloatVarExpr *c) const
+interp::ScalarVarExpr *CoordsToInterp::getScalarVarExpr(coords::ScalarVarExpr *c) const
 {
-    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *dom = NULL;
+    std::unordered_map<coords::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *dom = NULL;
     try {
-        dom = coords2interp_FloatExpr.at(c);
+        dom = coords2interp_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<interp::FloatVarExpr*>(dom);
+    return static_cast<interp::ScalarVarExpr*>(dom);
 }
 
-coords::FloatVarExpr *CoordsToInterp::getFloatVarExpr(interp::FloatVarExpr *d) const
+coords::ScalarVarExpr *CoordsToInterp::getScalarVarExpr(interp::ScalarVarExpr *d) const
 {
-    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<interp::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = interp2coords_FloatExpr.at(d);
+        coords = interp2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::FloatVarExpr *>(coords);
+    return static_cast<coords::ScalarVarExpr *>(coords);
 }
 
 
-void CoordsToInterp::putFloatFloatAddExpr(coords::FloatFloatAddExpr *c, interp::FloatFloatAddExpr *d)
+void CoordsToInterp::putScalarScalarAddExpr(coords::ScalarScalarAddExpr *c, interp::ScalarScalarAddExpr *d)
 {
-    coords2interp_FloatExpr[c] = d;
-    interp2coords_FloatExpr[d] = c;
+    coords2interp_ScalarExpr[c] = d;
+    interp2coords_ScalarExpr[d] = c;
 }
 
-interp::FloatFloatAddExpr *CoordsToInterp::getFloatFloatAddExpr(coords::FloatFloatAddExpr *c) const
+interp::ScalarScalarAddExpr *CoordsToInterp::getScalarScalarAddExpr(coords::ScalarScalarAddExpr *c) const
 {
-    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *dom = NULL;
+    std::unordered_map<coords::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *dom = NULL;
     try {
-        dom = coords2interp_FloatExpr.at(c);
+        dom = coords2interp_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<interp::FloatFloatAddExpr*>(dom);
+    return static_cast<interp::ScalarScalarAddExpr*>(dom);
 }
 
-coords::FloatFloatAddExpr *CoordsToInterp::getFloatFloatAddExpr(interp::FloatFloatAddExpr *d) const
+coords::ScalarScalarAddExpr *CoordsToInterp::getScalarScalarAddExpr(interp::ScalarScalarAddExpr *d) const
 {
-    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<interp::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = interp2coords_FloatExpr.at(d);
+        coords = interp2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::FloatFloatAddExpr *>(coords);
+    return static_cast<coords::ScalarScalarAddExpr *>(coords);
 }
 
-void CoordsToInterp::putFloatFloatMulExpr(coords::FloatFloatMulExpr *c, interp::FloatFloatMulExpr *d)
+void CoordsToInterp::putScalarScalarMulExpr(coords::ScalarScalarMulExpr *c, interp::ScalarScalarMulExpr *d)
 {
-    coords2interp_FloatExpr[c] = d;
-    interp2coords_FloatExpr[d] = c;
+    coords2interp_ScalarExpr[c] = d;
+    interp2coords_ScalarExpr[d] = c;
 }
 
-interp::FloatFloatMulExpr *CoordsToInterp::getFloatFloatMulExpr(coords::FloatFloatMulExpr *c) const
+interp::ScalarScalarMulExpr *CoordsToInterp::getScalarScalarMulExpr(coords::ScalarScalarMulExpr *c) const
 {
-    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *dom = NULL;
+    std::unordered_map<coords::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *dom = NULL;
     try {
-        dom = coords2interp_FloatExpr.at(c);
+        dom = coords2interp_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<interp::FloatFloatMulExpr*>(dom);
+    return static_cast<interp::ScalarScalarMulExpr*>(dom);
 }
 
-coords::FloatFloatMulExpr *CoordsToInterp::getFloatFloatMulExpr(interp::FloatFloatMulExpr *d) const
+coords::ScalarScalarMulExpr *CoordsToInterp::getScalarScalarMulExpr(interp::ScalarScalarMulExpr *d) const
 {
-    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<interp::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = interp2coords_FloatExpr.at(d);
+        coords = interp2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::FloatFloatMulExpr *>(coords);
+    return static_cast<coords::ScalarScalarMulExpr *>(coords);
 }
 
 
-// Floatparenexpr
+// Scalarparenexpr
 
-void CoordsToInterp::putFloatParenExpr(coords::FloatParenExpr *c, interp::FloatParenExpr *i) {
-    coords2interp_FloatExpr[c] = i;
-    interp2coords_FloatExpr[i] = c;
+void CoordsToInterp::putScalarParenExpr(coords::ScalarParenExpr *c, interp::ScalarParenExpr *i) {
+    coords2interp_ScalarExpr[c] = i;
+    interp2coords_ScalarExpr[i] = c;
 }
 
-interp::FloatParenExpr *CoordsToInterp::getFloatParenExpr(coords::FloatParenExpr* c) const {
-    std::unordered_map<coords::FloatExpr*, interp::FloatExpr*>::iterator it;
-    interp::FloatExpr *dom = NULL;
+interp::ScalarParenExpr *CoordsToInterp::getScalarParenExpr(coords::ScalarParenExpr* c) const {
+    std::unordered_map<coords::ScalarExpr*, interp::ScalarExpr*>::iterator it;
+    interp::ScalarExpr *dom = NULL;
     try {
-        dom = coords2interp_FloatExpr.at(c);
+        dom = coords2interp_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<interp::FloatParenExpr*>(dom);
+    return static_cast<interp::ScalarParenExpr*>(dom);
 }
 // TODO: A few template functions should take care of most of this file
-coords::FloatParenExpr *CoordsToInterp::getFloatParenExpr(interp::FloatParenExpr* d) const {
-    std::unordered_map<interp::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+coords::ScalarParenExpr *CoordsToInterp::getScalarParenExpr(interp::ScalarParenExpr* d) const {
+    std::unordered_map<interp::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = interp2coords_FloatExpr.at(d);
+        coords = interp2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::FloatParenExpr *>(coords);
+    return static_cast<coords::ScalarParenExpr *>(coords);
 }
 
 
@@ -657,155 +570,155 @@ coords::Vector_Assign *CoordsToInterp::getVector_Assign(interp::Vector_Assign *d
     return static_cast<coords::Vector_Assign *>(coords);
 }
 
-coords::Float *CoordsToInterp::getFloat(interp::Float* v) {
-    std::unordered_map<interp::Float*, coords::Float*>::iterator it;
-    coords::Float *coords = NULL;
+coords::Scalar *CoordsToInterp::getScalar(interp::Scalar* v) {
+    std::unordered_map<interp::Scalar*, coords::Scalar*>::iterator it;
+    coords::Scalar *coords = NULL;
     try {
-        coords = interp2coords_Float.at(v);
+        coords = interp2coords_Scalar.at(v);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::Float *>(coords);
+    return static_cast<coords::Scalar *>(coords);
 }
 
-interp::Float *CoordsToInterp::getFloat(coords::Float* v) {
-    std::unordered_map<coords::Float*, interp::Float*>::iterator it;
-    interp::Float *domvec = NULL;
+interp::Scalar *CoordsToInterp::getScalar(coords::Scalar* v) {
+    std::unordered_map<coords::Scalar*, interp::Scalar*>::iterator it;
+    interp::Scalar *domvec = NULL;
     try {
-        domvec = coords2interp_Float.at(v);
+        domvec = coords2interp_Scalar.at(v);
     }
     catch (std::out_of_range &e) {
         domvec = NULL;
     }
-    return static_cast<interp::Float *>(domvec);
+    return static_cast<interp::Scalar *>(domvec);
 }
 
 
-void CoordsToInterp::putFloat_Lit(coords::Float *c, interp::Float_Lit *d)
+void CoordsToInterp::putScalar_Lit(coords::Scalar *c, interp::Scalar_Lit *d)
 {
-    coords2interp_Float[c] = d;
-    interp2coords_Float[d] = c;
+    coords2interp_Scalar[c] = d;
+    interp2coords_Scalar[d] = c;
 }
 
-interp::Float_Lit *CoordsToInterp::getFloat_Lit(coords::Float_Lit *c) const
+interp::Scalar_Lit *CoordsToInterp::getScalar_Lit(coords::Scalar_Lit *c) const
 {
-    std::unordered_map<coords::Float_Lit*, interp::Float_Lit*>::iterator it;
-    interp::Float *dom = NULL;
+    std::unordered_map<coords::Scalar_Lit*, interp::Scalar_Lit*>::iterator it;
+    interp::Scalar *dom = NULL;
     try {
-        dom = coords2interp_Float.at(c);
+        dom = coords2interp_Scalar.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<interp::Float_Lit*>(dom);
+    return static_cast<interp::Scalar_Lit*>(dom);
 }
 
-coords::Float_Lit *CoordsToInterp::getFloat_Lit(interp::Float_Lit *d) const
+coords::Scalar_Lit *CoordsToInterp::getScalar_Lit(interp::Scalar_Lit *d) const
 {
-    std::unordered_map<interp::Float*, coords::Float*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<interp::Scalar*, coords::Scalar*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = interp2coords_Float.at(d);
+        coords = interp2coords_Scalar.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::Float_Lit *>(coords);
+    return static_cast<coords::Scalar_Lit *>(coords);
 }
 
-void CoordsToInterp::putFloat_Expr(coords::Float *c, interp::Float_Expr *d)
+void CoordsToInterp::putScalar_Expr(coords::Scalar *c, interp::Scalar_Expr *d)
 {
-    coords2interp_Float[c] = d;
-    interp2coords_Float[d] = c;
+    coords2interp_Scalar[c] = d;
+    interp2coords_Scalar[d] = c;
 }
 
-interp::Float_Expr *CoordsToInterp::getFloat_Expr(coords::Float_Expr *c) const
+interp::Scalar_Expr *CoordsToInterp::getScalar_Expr(coords::Scalar_Expr *c) const
 {
-    std::unordered_map<coords::Float_Expr*, interp::Float_Expr*>::iterator it;
-    interp::Float *dom = NULL;
+    std::unordered_map<coords::Scalar_Expr*, interp::Scalar_Expr*>::iterator it;
+    interp::Scalar *dom = NULL;
     try {
-        dom = coords2interp_Float.at(c);
+        dom = coords2interp_Scalar.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<interp::Float_Expr*>(dom);
+    return static_cast<interp::Scalar_Expr*>(dom);
 }
 
-coords::Float_Expr *CoordsToInterp::getFloat_Expr(interp::Float_Expr *d) const
+coords::Scalar_Expr *CoordsToInterp::getScalar_Expr(interp::Scalar_Expr *d) const
 {
-    std::unordered_map<interp::Float*, coords::Float*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<interp::Scalar*, coords::Scalar*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = interp2coords_Float.at(d);
+        coords = interp2coords_Scalar.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::Float_Expr *>(coords);
+    return static_cast<coords::Scalar_Expr *>(coords);
 }
 
 // Def
 
-void CoordsToInterp::putFloat_Def(coords::Float_Def *c, interp::Float_Def *d)
+void CoordsToInterp::putScalar_Def(coords::Scalar_Def *c, interp::Scalar_Def *d)
 {
-    coords2interp_Float_Def[c] = d;
-    interp2coords_Float_Def[d] = c;
+    coords2interp_Scalar_Def[c] = d;
+    interp2coords_Scalar_Def[d] = c;
 }
 
-interp::Float_Def *CoordsToInterp::getFloat_Def(coords::Float_Def *c) const
+interp::Scalar_Def *CoordsToInterp::getScalar_Def(coords::Scalar_Def *c) const
 {
-    std::unordered_map<coords::Float_Def*, interp::Float_Def*>::iterator it;
-    interp::Float_Def *dom = NULL;
+    std::unordered_map<coords::Scalar_Def*, interp::Scalar_Def*>::iterator it;
+    interp::Scalar_Def *dom = NULL;
     try {
-        dom = coords2interp_Float_Def.at(c);
+        dom = coords2interp_Scalar_Def.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<interp::Float_Def*>(dom);
+    return static_cast<interp::Scalar_Def*>(dom);
 }
 
-coords::Float_Def *CoordsToInterp::getFloat_Def(interp::Float_Def *d) const
+coords::Scalar_Def *CoordsToInterp::getScalar_Def(interp::Scalar_Def *d) const
 {
-    std::unordered_map<interp::Float*, coords::Float*>::iterator it;
-    coords::Float_Def *coords = NULL;
+    std::unordered_map<interp::Scalar*, coords::Scalar*>::iterator it;
+    coords::Scalar_Def *coords = NULL;
     try {
-        coords = interp2coords_Float_Def.at(d);
+        coords = interp2coords_Scalar_Def.at(d);
     } catch (std::out_of_range &e) {
       coords = NULL;
     }
-    return static_cast<coords::Float_Def *>(coords);
+    return static_cast<coords::Scalar_Def *>(coords);
 }
 
-void CoordsToInterp::putFloat_Assign(coords::Float_Assign *c, interp::Float_Assign *d)
+void CoordsToInterp::putScalar_Assign(coords::Scalar_Assign *c, interp::Scalar_Assign *d)
 {
-    coords2interp_Float_Assign[c] = d;
-    interp2coords_Float_Assign[d] = c;
+    coords2interp_Scalar_Assign[c] = d;
+    interp2coords_Scalar_Assign[d] = c;
 }
 
-interp::Float_Assign *CoordsToInterp::getFloat_Assign(coords::Float_Assign *c) const
+interp::Scalar_Assign *CoordsToInterp::getScalar_Assign(coords::Scalar_Assign *c) const
 {
-    std::unordered_map<coords::Float_Assign*, interp::Float_Assign*>::iterator it;
-    interp::Float_Assign *dom = NULL;
+    std::unordered_map<coords::Scalar_Assign*, interp::Scalar_Assign*>::iterator it;
+    interp::Scalar_Assign *dom = NULL;
     try {
-        dom = coords2interp_Float_Assign.at(c);
+        dom = coords2interp_Scalar_Assign.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<interp::Float_Assign*>(dom);
+    return static_cast<interp::Scalar_Assign*>(dom);
 }
 
-coords::Float_Assign *CoordsToInterp::getFloat_Assign(interp::Float_Assign *d) const
+coords::Scalar_Assign *CoordsToInterp::getScalar_Assign(interp::Scalar_Assign *d) const
 {
-    std::unordered_map<interp::Float*, coords::Float*>::iterator it;
-    coords::Float_Assign *coords = NULL;
+    std::unordered_map<interp::Scalar*, coords::Scalar*>::iterator it;
+    coords::Scalar_Assign *coords = NULL;
     try {
-        coords = interp2coords_Float_Assign.at(d);
+        coords = interp2coords_Scalar_Assign.at(d);
     } catch (std::out_of_range &e) {
       coords = NULL;
     }
-    return static_cast<coords::Float_Assign *>(coords);
+    return static_cast<coords::Scalar_Assign *>(coords);
 }

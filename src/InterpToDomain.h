@@ -21,17 +21,17 @@ class InterpToDomain
 	domain::VecIdent *getVecIdent(interp::VecIdent *c) const;
 	interp::VecIdent *getVecIdent(domain::VecIdent *d) const;
 
-	void putFloatIdent(interp::FloatIdent *key, domain::FloatIdent *i);
-	domain::FloatIdent *getFloatIdent(interp::FloatIdent *c) const;
-	interp::FloatIdent *getFloatIdent(domain::FloatIdent *d) const;
+	void putScalarIdent(interp::ScalarIdent *key, domain::ScalarIdent *i);
+	domain::ScalarIdent *getScalarIdent(interp::ScalarIdent *c) const;
+	interp::ScalarIdent *getScalarIdent(domain::ScalarIdent *d) const;
 
 // Expr
 
 	domain::VecExpr *getVecExpr(interp::VecExpr* c) const;
 	interp::VecExpr *getVecExpr(domain::VecExpr* d) const;
 
-	domain::FloatExpr *getFloatExpr(interp::FloatExpr* c) const;
-	interp::FloatExpr *getFloatExpr(domain::FloatExpr* d) const;
+	domain::ScalarExpr *getScalarExpr(interp::ScalarExpr* c) const;
+	interp::ScalarExpr *getScalarExpr(domain::ScalarExpr* d) const;
 
 /*	void putVecLitExpr(interp::VecLitExpr n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(interp::VecLitExpr c) const;
@@ -41,9 +41,9 @@ class InterpToDomain
 	domain::VecVarExpr *getVecVarExpr(interp::VecVarExpr* c) const;
 	interp::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;
 
-	void putFloatVarExpr(interp::FloatVarExpr *n, domain::FloatVarExpr *e);
-	domain::FloatVarExpr *getFloatVarExpr(interp::FloatVarExpr* c) const;
-	interp::FloatVarExpr *getFloatVarExpr(domain::FloatVarExpr* d) const;
+	void putScalarVarExpr(interp::ScalarVarExpr *n, domain::ScalarVarExpr *e);
+	domain::ScalarVarExpr *getScalarVarExpr(interp::ScalarVarExpr* c) const;
+	interp::ScalarVarExpr *getScalarVarExpr(domain::ScalarVarExpr* d) const;
 
 	void putVecVecAddExpr(interp::VecVecAddExpr *n, domain::VecVecAddExpr *e);
 	domain::VecVecAddExpr *getVecVecAddExpr(interp::VecVecAddExpr* c) const;
@@ -53,13 +53,13 @@ class InterpToDomain
 	domain::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* n) const;
 	interp::VecScalarMulExpr *getVecScalarMulExpr(domain::VecScalarMulExpr* e) const;
 
-	void putFloatFloatAddExpr(interp::FloatFloatAddExpr *n, domain::FloatFloatAddExpr *e);
-	domain::FloatFloatAddExpr *getFloatFloatAddExpr(interp::FloatFloatAddExpr* c) const;
-	interp::FloatFloatAddExpr *getFloatFloatAddExpr(domain::FloatFloatAddExpr* d) const;
+	void putScalarScalarAddExpr(interp::ScalarScalarAddExpr *n, domain::ScalarScalarAddExpr *e);
+	domain::ScalarScalarAddExpr *getScalarScalarAddExpr(interp::ScalarScalarAddExpr* c) const;
+	interp::ScalarScalarAddExpr *getScalarScalarAddExpr(domain::ScalarScalarAddExpr* d) const;
 
-	void putFloatFloatMulExpr(interp::FloatFloatMulExpr *n, domain::FloatFloatMulExpr *e);
-	domain::FloatFloatMulExpr *getFloatFloatMulExpr(interp::FloatFloatMulExpr* c) const;
-	interp::FloatFloatMulExpr *getFloatFloatMulExpr(domain::FloatFloatMulExpr* d) const;
+	void putScalarScalarMulExpr(interp::ScalarScalarMulExpr *n, domain::ScalarScalarMulExpr *e);
+	domain::ScalarScalarMulExpr *getScalarScalarMulExpr(interp::ScalarScalarMulExpr* c) const;
+	interp::ScalarScalarMulExpr *getScalarScalarMulExpr(domain::ScalarScalarMulExpr* d) const;
 
 
 	// KEVIN: Added for VecParenExpr horizontal module
@@ -67,9 +67,9 @@ class InterpToDomain
 	domain::VecParenExpr *getVecParenExpr(interp::VecParenExpr* c) const;
 	interp::VecParenExpr *getVecParenExpr(domain::VecParenExpr* d) const;
 
-	void putFloatParenExpr(interp::FloatParenExpr *n, domain::FloatParenExpr *e);
-	domain::FloatParenExpr *getFloatParenExpr(interp::FloatParenExpr* c) const;
-	interp::FloatParenExpr *getFloatParenExpr(domain::FloatParenExpr* d) const;
+	void putScalarParenExpr(interp::ScalarParenExpr *n, domain::ScalarParenExpr *e);
+	domain::ScalarParenExpr *getScalarParenExpr(interp::ScalarParenExpr* c) const;
+	interp::ScalarParenExpr *getScalarParenExpr(domain::ScalarParenExpr* d) const;
 
 // Vector
 
@@ -94,24 +94,24 @@ class InterpToDomain
 	domain::Vector_Assign *getVector_Assign(interp::Vector_Assign* c) const;
 	interp::Vector_Assign *getVector_Assign(domain::Vector_Assign* d) const;
 
-	void putFloat_Lit(interp::Float* ast, domain::Float_Lit *v);
-	domain::Float_Lit *getFloat_Lit(interp::Float_Lit* c) const;
-	interp::Float_Lit *getFloat_Lit(domain::Float_Lit* d) const;
+	void putScalar_Lit(interp::Scalar* ast, domain::Scalar_Lit *v);
+	domain::Scalar_Lit *getScalar_Lit(interp::Scalar_Lit* c) const;
+	interp::Scalar_Lit *getScalar_Lit(domain::Scalar_Lit* d) const;
 
-	void putFloat_Expr(interp::Float *ast, domain::Float_Expr *v);
-	domain::Float_Expr *getFloat_Expr(interp::Float_Expr* c) const;
-	interp::Float_Expr *getFloat_Expr(domain::Float_Expr* d) const;
+	void putScalar_Expr(interp::Scalar *ast, domain::Scalar_Expr *v);
+	domain::Scalar_Expr *getScalar_Expr(interp::Scalar_Expr* c) const;
+	interp::Scalar_Expr *getScalar_Expr(domain::Scalar_Expr* d) const;
 
-	interp::Float* getFloat(domain::Float* v);
-	domain::Float* getFloat(interp::Float* v);
+	interp::Scalar* getScalar(domain::Scalar* v);
+	domain::Scalar* getScalar(interp::Scalar* v);
 
-	void putFloat_Def(interp::Float_Def *vardecl_wrapper, domain::Float_Def *b);
-	domain::Float_Def* getFloat_Def(interp::Float_Def* c) const;
-	interp::Float_Def* getFloat_Def(domain::Float_Def* d) const;
+	void putScalar_Def(interp::Scalar_Def *vardecl_wrapper, domain::Scalar_Def *b);
+	domain::Scalar_Def* getScalar_Def(interp::Scalar_Def* c) const;
+	interp::Scalar_Def* getScalar_Def(domain::Scalar_Def* d) const;
 
-	void putFloat_Assign(interp::Float_Assign *var_wrapper, domain::Float_Assign *b);
-	domain::Float_Assign* getFloat_Assign(interp::Float_Assign* c) const;
-	interp::Float_Assign* getFloat_Assign(domain::Float_Assign* d) const;
+	void putScalar_Assign(interp::Scalar_Assign *var_wrapper, domain::Scalar_Assign *b);
+	domain::Scalar_Assign* getScalar_Assign(interp::Scalar_Assign* c) const;
+	interp::Scalar_Assign* getScalar_Assign(domain::Scalar_Assign* d) const;
 
 	
 
@@ -131,11 +131,11 @@ class InterpToDomain
 	std::unordered_map <interp::Vector_Def*,domain::Vector_Def*	> 	interp2domain_Vector_Def;
 	std::unordered_map <interp::Vector_Assign*,domain::Vector_Assign*> 	interp2domain_Vector_Assign;
 
-	std::unordered_map <interp::FloatIdent*,domain::FloatIdent* >	interp2domain_FloatIdent;
-	std::unordered_map <interp::FloatExpr*, domain::FloatExpr*	>	interp2domain_FloatExpr;
-	std::unordered_map <interp::Float*, domain::Float*			>	interp2domain_Float;
-	std::unordered_map <interp::Float_Def*, domain::Float_Def*	>	interp2domain_Float_Def;
-	std::unordered_map <interp::Float_Assign*, domain::Float_Assign*>	interp2domain_Float_Assign;
+	std::unordered_map <interp::ScalarIdent*,domain::ScalarIdent* >	interp2domain_ScalarIdent;
+	std::unordered_map <interp::ScalarExpr*, domain::ScalarExpr*	>	interp2domain_ScalarExpr;
+	std::unordered_map <interp::Scalar*, domain::Scalar*			>	interp2domain_Scalar;
+	std::unordered_map <interp::Scalar_Def*, domain::Scalar_Def*	>	interp2domain_Scalar_Def;
+	std::unordered_map <interp::Scalar_Assign*, domain::Scalar_Assign*>	interp2domain_Scalar_Assign;
 
 	std::unordered_map<domain::VecIdent*, 	interp::VecIdent*	> 	domain2interp_VecIdent;
 	std::unordered_map<domain::VecExpr*, 	interp::VecExpr*	> 	domain2interp_VecExpr;
@@ -143,11 +143,11 @@ class InterpToDomain
 	std::unordered_map<domain::Vector_Def*, interp::Vector_Def*	> 	domain2interp_Vector_Def;
 	std::unordered_map<domain::Vector_Assign*, interp::Vector_Assign*> 	domain2interp_Vector_Assign;
 
-	std::unordered_map<domain::FloatIdent*, interp::FloatIdent*	> 	domain2interp_FloatIdent;
-	std::unordered_map<domain::FloatExpr*, 	interp::FloatExpr*	> 	domain2interp_FloatExpr;
-	std::unordered_map<domain::Float*, 		interp::Float*		> 	domain2interp_Float;
-	std::unordered_map<domain::Float_Def*, 	interp::Float_Def*	> 	domain2interp_Float_Def;
-	std::unordered_map<domain::Float_Assign*, 	interp::Float_Assign*> 	domain2interp_Float_Assign;
+	std::unordered_map<domain::ScalarIdent*, interp::ScalarIdent*	> 	domain2interp_ScalarIdent;
+	std::unordered_map<domain::ScalarExpr*, 	interp::ScalarExpr*	> 	domain2interp_ScalarExpr;
+	std::unordered_map<domain::Scalar*, 		interp::Scalar*		> 	domain2interp_Scalar;
+	std::unordered_map<domain::Scalar_Def*, 	interp::Scalar_Def*	> 	domain2interp_Scalar_Def;
+	std::unordered_map<domain::Scalar_Assign*, 	interp::Scalar_Assign*> 	domain2interp_Scalar_Assign;
 };
 
 } // namespace

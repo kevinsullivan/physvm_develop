@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-//#include <g3log/g3log.hpp>
+#include <g3log/g3log.hpp>
 
 
 
@@ -17,10 +17,10 @@ void CoordsToDomain::putVecIdent(coords::VecIdent *c, domain::VecIdent *d)
     dom2coords_VecIdent[d] = c;
 }
 
-void CoordsToDomain::putFloatIdent(coords::FloatIdent *c, domain::FloatIdent *d)
+void CoordsToDomain::putScalarIdent(coords::ScalarIdent *c, domain::ScalarIdent *d)
 {
-    coords2dom_FloatIdent[c] = d;
-    dom2coords_FloatIdent[d] = c;
+    coords2dom_ScalarIdent[c] = d;
+    dom2coords_ScalarIdent[d] = c;
 }
 
 // TODO: Decide whether or not these maps can be partial on queried keys
@@ -52,12 +52,12 @@ coords::VecIdent *CoordsToDomain::getVecIdent(domain::VecIdent *d) const
     return coords;
 }
 
-domain::FloatIdent *CoordsToDomain::getFloatIdent(coords::FloatIdent *c) const
+domain::ScalarIdent *CoordsToDomain::getScalarIdent(coords::ScalarIdent *c) const
 {
-    std::unordered_map<coords::FloatIdent*, domain::FloatIdent*>::iterator it;
-    domain::FloatIdent *dom = NULL;
+    std::unordered_map<coords::ScalarIdent*, domain::ScalarIdent*>::iterator it;
+    domain::ScalarIdent *dom = NULL;
     try {
-        dom = coords2dom_FloatIdent.at(c);
+        dom = coords2dom_ScalarIdent.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
@@ -65,12 +65,12 @@ domain::FloatIdent *CoordsToDomain::getFloatIdent(coords::FloatIdent *c) const
     return dom;
 }
 
-coords::FloatIdent *CoordsToDomain::getFloatIdent(domain::FloatIdent *d) const
+coords::ScalarIdent *CoordsToDomain::getScalarIdent(domain::ScalarIdent *d) const
 {
-    std::unordered_map<domain::FloatIdent*, coords::FloatIdent*>::iterator it;
-    coords::FloatIdent *coords = NULL;
+    std::unordered_map<domain::ScalarIdent*, coords::ScalarIdent*>::iterator it;
+    coords::ScalarIdent *coords = NULL;
     try {
-        coords = dom2coords_FloatIdent.at(d);
+        coords = dom2coords_ScalarIdent.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
@@ -78,10 +78,10 @@ coords::FloatIdent *CoordsToDomain::getFloatIdent(domain::FloatIdent *d) const
     return coords;
 }
 /*
-void CoordsToDomain::PutFloatExpr(coords::FloatExpr *c, domain::FloatExpr *d)
+void CoordsToDomain::PutScalarExpr(coords::ScalarExpr *c, domain::ScalarExpr *d)
 {
-    coords2dom_FloatExpr[c] = d;
-    dom2coords_FloatExpr[d] = c;
+    coords2dom_ScalarExpr[c] = d;
+    dom2coords_ScalarExpr[d] = c;
     //    coords2dom_VecIdent.insert(std::make_pair(c, d));
     //    dom2coords_VecIdent.insert(std::make_pair(d, c));
 }
@@ -90,12 +90,12 @@ void CoordsToDomain::PutFloatExpr(coords::FloatExpr *c, domain::FloatExpr *d)
 // TODO: Decide whether or not these maps can be partial on queried keys
 // As defined here, yes, and asking for a missing key returns NULL
 //
-domain::FloatExpr *CoordsToDomain::getFloatExpr(coords::FloatExpr *c) const
+domain::ScalarExpr *CoordsToDomain::getScalarExpr(coords::ScalarExpr *c) const
 {
-    std::unordered_map<coords::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+    std::unordered_map<coords::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = coords2dom_FloatExpr.at(c);
+        dom = coords2dom_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
@@ -103,12 +103,12 @@ domain::FloatExpr *CoordsToDomain::getFloatExpr(coords::FloatExpr *c) const
     return dom;
 }
 
-coords::FloatExpr *CoordsToDomain::getFloatExpr(domain::FloatExpr *d) const
+coords::ScalarExpr *CoordsToDomain::getScalarExpr(domain::ScalarExpr *d) const
 {
-    std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<domain::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = dom2coords_FloatExpr.at(d);
+        coords = dom2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
@@ -168,7 +168,6 @@ void CoordsToDomain::PutVecVarExpr(coords::VecVarExpr *c, domain::VecVarExpr *d)
 {
     coords2dom_VecExpr[c] = d;
     dom2coords_VecExpr[d] = c;
-//    coord2dom_VecExpr.insert(std::make_pair(*c, d));
 }
 
 domain::VecVarExpr *CoordsToDomain::getVecVarExpr(coords::VecVarExpr *c) const
@@ -197,37 +196,36 @@ coords::VecVarExpr *CoordsToDomain::getVecVarExpr(domain::VecVarExpr *d) const
     return static_cast<coords::VecVarExpr *>(coords);
 }
 
-void CoordsToDomain::PutFloatVarExpr(coords::FloatVarExpr *c, domain::FloatVarExpr *d)
+void CoordsToDomain::PutScalarVarExpr(coords::ScalarVarExpr *c, domain::ScalarVarExpr *d)
 {
-    coords2dom_FloatExpr[c] = d;
-    dom2coords_FloatExpr[d] = c;
-//    coord2dom_FloatExpr.insert(std::make_pair(*c, d));
+    coords2dom_ScalarExpr[c] = d;
+    dom2coords_ScalarExpr[d] = c;
 }
 
-domain::FloatVarExpr *CoordsToDomain::getFloatVarExpr(coords::FloatVarExpr *c) const
+domain::ScalarVarExpr *CoordsToDomain::getScalarVarExpr(coords::ScalarVarExpr *c) const
 {
-    std::unordered_map<coords::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+    std::unordered_map<coords::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = coords2dom_FloatExpr.at(c);
+        dom = coords2dom_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::FloatVarExpr*>(dom);
+    return static_cast<domain::ScalarVarExpr*>(dom);
 }
 
-coords::FloatVarExpr *CoordsToDomain::getFloatVarExpr(domain::FloatVarExpr *d) const
+coords::ScalarVarExpr *CoordsToDomain::getScalarVarExpr(domain::ScalarVarExpr *d) const
 {
-    std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<domain::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = dom2coords_FloatExpr.at(d);
+        coords = dom2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::FloatVarExpr *>(coords);
+    return static_cast<coords::ScalarVarExpr *>(coords);
 }
 
 // vecvecadd
@@ -270,73 +268,72 @@ void CoordsToDomain::PutVecScalarMulExpr(coords::VecScalarMulExpr *c, domain::Ve
     dom2coords_VecExpr[d] = c;
 }
 
-void CoordsToDomain::PutFloatFloatAddExpr(coords::FloatFloatAddExpr *c, domain::FloatFloatAddExpr *d)
+void CoordsToDomain::PutScalarScalarAddExpr(coords::ScalarScalarAddExpr *c, domain::ScalarScalarAddExpr *d)
 {
-    coords2dom_FloatExpr[c] = d;
-    dom2coords_FloatExpr[d] = c;
+    coords2dom_ScalarExpr[c] = d;
+    dom2coords_ScalarExpr[d] = c;
 }
 
-domain::FloatFloatAddExpr *CoordsToDomain::getFloatFloatAddExpr(coords::FloatFloatAddExpr *c) const
+domain::ScalarScalarAddExpr *CoordsToDomain::getScalarScalarAddExpr(coords::ScalarScalarAddExpr *c) const
 {
-    std::unordered_map<coords::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+    std::unordered_map<coords::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = coords2dom_FloatExpr.at(c);
+        dom = coords2dom_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::FloatFloatAddExpr*>(dom);
+    return static_cast<domain::ScalarScalarAddExpr*>(dom);
 }
 
-coords::FloatFloatAddExpr *CoordsToDomain::getFloatFloatAddExpr(domain::FloatFloatAddExpr *d) const
+coords::ScalarScalarAddExpr *CoordsToDomain::getScalarScalarAddExpr(domain::ScalarScalarAddExpr *d) const
 {
-    std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<domain::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = dom2coords_FloatExpr.at(d);
+        coords = dom2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::FloatFloatAddExpr *>(coords);
+    return static_cast<coords::ScalarScalarAddExpr *>(coords);
 }
 
 
-void CoordsToDomain::PutFloatFloatMulExpr(coords::FloatFloatMulExpr *c, domain::FloatFloatMulExpr *d)
+void CoordsToDomain::PutScalarScalarMulExpr(coords::ScalarScalarMulExpr *c, domain::ScalarScalarMulExpr *d)
 {
-    coords2dom_FloatExpr[c] = d;
-    dom2coords_FloatExpr[d] = c;
+    coords2dom_ScalarExpr[c] = d;
+    dom2coords_ScalarExpr[d] = c;
 }
 
-domain::FloatFloatMulExpr *CoordsToDomain::getFloatFloatMulExpr(coords::FloatFloatMulExpr *c) const
+domain::ScalarScalarMulExpr *CoordsToDomain::getScalarScalarMulExpr(coords::ScalarScalarMulExpr *c) const
 {
-    std::unordered_map<coords::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+    std::unordered_map<coords::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = coords2dom_FloatExpr.at(c);
+        dom = coords2dom_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::FloatFloatMulExpr*>(dom);
+    return static_cast<domain::ScalarScalarMulExpr*>(dom);
 }
 
-coords::FloatFloatMulExpr *CoordsToDomain::getFloatFloatMulExpr(domain::FloatFloatMulExpr *d) const
+coords::ScalarScalarMulExpr *CoordsToDomain::getScalarScalarMulExpr(domain::ScalarScalarMulExpr *d) const
 {
-    std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<domain::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = dom2coords_FloatExpr.at(d);
+        coords = dom2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::FloatFloatMulExpr *>(coords);
+    return static_cast<coords::ScalarScalarMulExpr *>(coords);
 }
 
 
-//coords::VecScalarMulExpr *getVecSCalarMulExpr(domain::VecScalarMulExpr* d) const;
 coords::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(domain::VecScalarMulExpr *d) const
 {
     std::unordered_map<domain::VecExpr*, coords::VecExpr*>::iterator it;
@@ -351,7 +348,6 @@ coords::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(domain::VecScalarM
 }
 
 
-//domain::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
 domain::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(coords::VecScalarMulExpr *c) const
 {
     std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
@@ -395,33 +391,33 @@ coords::VecParenExpr *CoordsToDomain::getParenExpr(domain::VecParenExpr* d) cons
 }
 
 
-void CoordsToDomain::PutFloatParenExpr(coords::FloatParenExpr *c, domain::FloatParenExpr *d) {
-    coords2dom_FloatExpr[c] = d;
-    dom2coords_FloatExpr[d] = c;
+void CoordsToDomain::PutScalarParenExpr(coords::ScalarParenExpr *c, domain::ScalarParenExpr *d) {
+    coords2dom_ScalarExpr[c] = d;
+    dom2coords_ScalarExpr[d] = c;
 }
 
-domain::FloatParenExpr *CoordsToDomain::getParenExpr(coords::FloatParenExpr* c) const {
-    std::unordered_map<coords::FloatExpr*, domain::FloatExpr*>::iterator it;
-    domain::FloatExpr *dom = NULL;
+domain::ScalarParenExpr *CoordsToDomain::getParenExpr(coords::ScalarParenExpr* c) const {
+    std::unordered_map<coords::ScalarExpr*, domain::ScalarExpr*>::iterator it;
+    domain::ScalarExpr *dom = NULL;
     try {
-        dom = coords2dom_FloatExpr.at(c);
+        dom = coords2dom_ScalarExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::FloatParenExpr*>(dom);
+    return static_cast<domain::ScalarParenExpr*>(dom);
 }
 
-coords::FloatParenExpr *CoordsToDomain::getParenExpr(domain::FloatParenExpr* d) const {
-    std::unordered_map<domain::FloatExpr*, coords::FloatExpr*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+coords::ScalarParenExpr *CoordsToDomain::getParenExpr(domain::ScalarParenExpr* d) const {
+    std::unordered_map<domain::ScalarExpr*, coords::ScalarExpr*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = dom2coords_FloatExpr.at(d);
+        coords = dom2coords_ScalarExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::FloatParenExpr *>(coords);
+    return static_cast<coords::ScalarParenExpr *>(coords);
 }
 
 
@@ -452,28 +448,28 @@ domain::Vector *CoordsToDomain::getVector(coords::Vector* v) {
     return static_cast<domain::Vector *>(domvec);
 }
 
-coords::Float *CoordsToDomain::getFloat(domain::Float* v) {
-    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
-    coords::Float *coords = NULL;
+coords::Scalar *CoordsToDomain::getScalar(domain::Scalar* v) {
+    std::unordered_map<domain::Scalar*, coords::Scalar*>::iterator it;
+    coords::Scalar *coords = NULL;
     try {
-        coords = dom2coords_Float.at(v);
+        coords = dom2coords_Scalar.at(v);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::Float *>(coords);
+    return static_cast<coords::Scalar *>(coords);
 }
 
-domain::Float *CoordsToDomain::getFloat(coords::Float* v) {
-    std::unordered_map<coords::Float*, domain::Float*>::iterator it;
-    domain::Float *domvec = NULL;
+domain::Scalar *CoordsToDomain::getScalar(coords::Scalar* v) {
+    std::unordered_map<coords::Scalar*, domain::Scalar*>::iterator it;
+    domain::Scalar *domvec = NULL;
     try {
-        domvec = coords2dom_Float.at(v);
+        domvec = coords2dom_Scalar.at(v);
     }
     catch (std::out_of_range &e) {
         domvec = NULL;
     }
-    return static_cast<domain::Float *>(domvec);
+    return static_cast<domain::Scalar *>(domvec);
 }
 
 
@@ -510,36 +506,36 @@ coords::Vector_Lit *CoordsToDomain::getVector_Lit(domain::Vector_Lit *d) const
     return static_cast<coords::Vector_Lit *>(coords);
 }
 
-void CoordsToDomain::putFloat_Lit(coords::Float *c, domain::Float_Lit *d)
+void CoordsToDomain::putScalar_Lit(coords::Scalar *c, domain::Scalar_Lit *d)
 {
-    coords2dom_Float[c] = d;
-    dom2coords_Float[d] = c;
+    coords2dom_Scalar[c] = d;
+    dom2coords_Scalar[d] = c;
 }
 
-domain::Float_Lit *CoordsToDomain::getFloat_Lit(coords::Float_Lit *c) const
+domain::Scalar_Lit *CoordsToDomain::getScalar_Lit(coords::Scalar_Lit *c) const
 {
-    std::unordered_map<coords::Float_Lit*, domain::Float_Lit*>::iterator it;
-    domain::Float *dom = NULL;
+    std::unordered_map<coords::Scalar_Lit*, domain::Scalar_Lit*>::iterator it;
+    domain::Scalar *dom = NULL;
     try {
-        dom = coords2dom_Float.at(c);
+        dom = coords2dom_Scalar.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Float_Lit*>(dom);
+    return static_cast<domain::Scalar_Lit*>(dom);
 }
 
-coords::Float_Lit *CoordsToDomain::getFloat_Lit(domain::Float_Lit *d) const
+coords::Scalar_Lit *CoordsToDomain::getScalar_Lit(domain::Scalar_Lit *d) const
 {
-    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<domain::Scalar*, coords::Scalar*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = dom2coords_Float.at(d);
+        coords = dom2coords_Scalar.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::Float_Lit *>(coords);
+    return static_cast<coords::Scalar_Lit *>(coords);
 }
 
 void CoordsToDomain::putVector_Expr(coords::Vector *c, domain::Vector_Expr *d)
@@ -575,36 +571,36 @@ coords::Vector_Expr *CoordsToDomain::getVector_Expr(domain::Vector_Expr *d) cons
 }
 
 
-void CoordsToDomain::putFloat_Expr(coords::Float *c, domain::Float_Expr *d)
+void CoordsToDomain::putScalar_Expr(coords::Scalar *c, domain::Scalar_Expr *d)
 {
-    coords2dom_Float[c] = d;
-    dom2coords_Float[d] = c;
+    coords2dom_Scalar[c] = d;
+    dom2coords_Scalar[d] = c;
 }
 
-domain::Float_Expr *CoordsToDomain::getFloat_Expr(coords::Float_Expr *c) const
+domain::Scalar_Expr *CoordsToDomain::getScalar_Expr(coords::Scalar_Expr *c) const
 {
-    std::unordered_map<coords::Float_Expr*, domain::Float_Expr*>::iterator it;
-    domain::Float *dom = NULL;
+    std::unordered_map<coords::Scalar_Expr*, domain::Scalar_Expr*>::iterator it;
+    domain::Scalar *dom = NULL;
     try {
-        dom = coords2dom_Float.at(c);
+        dom = coords2dom_Scalar.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Float_Expr*>(dom);
+    return static_cast<domain::Scalar_Expr*>(dom);
 }
 
-coords::Float_Expr *CoordsToDomain::getFloat_Expr(domain::Float_Expr *d) const
+coords::Scalar_Expr *CoordsToDomain::getScalar_Expr(domain::Scalar_Expr *d) const
 {
-    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
-    coords::FloatExpr *coords = NULL;
+    std::unordered_map<domain::Scalar*, coords::Scalar*>::iterator it;
+    coords::ScalarExpr *coords = NULL;
     try {
-        coords = dom2coords_Float.at(d);
+        coords = dom2coords_Scalar.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
     }
-    return static_cast<coords::Float_Expr *>(coords);
+    return static_cast<coords::Scalar_Expr *>(coords);
 }
 // Def
 
@@ -639,35 +635,35 @@ coords::Vector_Def *CoordsToDomain::getVector_Def(domain::Vector_Def *d) const
     return static_cast<coords::Vector_Def *>(coords);
 }
 
-void CoordsToDomain::putFloat_Def(coords::Float_Def *c, domain::Float_Def *d)
+void CoordsToDomain::putScalar_Def(coords::Scalar_Def *c, domain::Scalar_Def *d)
 {
-    coords2dom_Float_Def[c] = d;
-    dom2coords_Float_Def[d] = c;
+    coords2dom_Scalar_Def[c] = d;
+    dom2coords_Scalar_Def[d] = c;
 }
 
-domain::Float_Def *CoordsToDomain::getFloat_Def(coords::Float_Def *c) const
+domain::Scalar_Def *CoordsToDomain::getScalar_Def(coords::Scalar_Def *c) const
 {
-    std::unordered_map<coords::Float_Def*, domain::Float_Def*>::iterator it;
-    domain::Float_Def *dom = NULL;
+    std::unordered_map<coords::Scalar_Def*, domain::Scalar_Def*>::iterator it;
+    domain::Scalar_Def *dom = NULL;
     try {
-        dom = coords2dom_Float_Def.at(c);
+        dom = coords2dom_Scalar_Def.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Float_Def*>(dom);
+    return static_cast<domain::Scalar_Def*>(dom);
 }
 
-coords::Float_Def *CoordsToDomain::getFloat_Def(domain::Float_Def *d) const
+coords::Scalar_Def *CoordsToDomain::getScalar_Def(domain::Scalar_Def *d) const
 {
-    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
-    coords::Float_Def *coords = NULL;
+    std::unordered_map<domain::Scalar*, coords::Scalar*>::iterator it;
+    coords::Scalar_Def *coords = NULL;
     try {
-        coords = dom2coords_Float_Def.at(d);
+        coords = dom2coords_Scalar_Def.at(d);
     } catch (std::out_of_range &e) {
       coords = NULL;
     }
-    return static_cast<coords::Float_Def *>(coords);
+    return static_cast<coords::Scalar_Def *>(coords);
 }
 
 void CoordsToDomain::putVector_Assign(coords::Vector_Assign *c, domain::Vector_Assign *d)
@@ -701,47 +697,47 @@ coords::Vector_Assign *CoordsToDomain::getVector_Assign(domain::Vector_Assign *d
     return static_cast<coords::Vector_Assign *>(coords);
 }
 
-void CoordsToDomain::putFloat_Assign(coords::Float_Assign *c, domain::Float_Assign *d)
+void CoordsToDomain::putScalar_Assign(coords::Scalar_Assign *c, domain::Scalar_Assign *d)
 {
-    coords2dom_Float_Assign[c] = d;
-    dom2coords_Float_Assign[d] = c;
+    coords2dom_Scalar_Assign[c] = d;
+    dom2coords_Scalar_Assign[d] = c;
 }
 
-domain::Float_Assign *CoordsToDomain::getFloat_Assign(coords::Float_Assign *c) const
+domain::Scalar_Assign *CoordsToDomain::getScalar_Assign(coords::Scalar_Assign *c) const
 {
-    std::unordered_map<coords::Float_Assign*, domain::Float_Assign*>::iterator it;
-    domain::Float_Assign *dom = NULL;
+    std::unordered_map<coords::Scalar_Assign*, domain::Scalar_Assign*>::iterator it;
+    domain::Scalar_Assign *dom = NULL;
     try {
-        dom = coords2dom_Float_Assign.at(c);
+        dom = coords2dom_Scalar_Assign.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Float_Assign*>(dom);
+    return static_cast<domain::Scalar_Assign*>(dom);
 }
 
-coords::Float_Assign *CoordsToDomain::getFloat_Assign(domain::Float_Assign *d) const
+coords::Scalar_Assign *CoordsToDomain::getScalar_Assign(domain::Scalar_Assign *d) const
 {
-    std::unordered_map<domain::Float*, coords::Float*>::iterator it;
-    coords::Float_Assign *coords = NULL;
+    std::unordered_map<domain::Scalar*, coords::Scalar*>::iterator it;
+    coords::Scalar_Assign *coords = NULL;
     try {
-        coords = dom2coords_Float_Assign.at(d);
+        coords = dom2coords_Scalar_Assign.at(d);
     } catch (std::out_of_range &e) {
       coords = NULL;
     }
-    return static_cast<coords::Float_Assign *>(coords);
+    return static_cast<coords::Scalar_Assign *>(coords);
 }
 
 /*void CoordsToDomain::dump() const
 {
-    LOG(DEBUG) <<"CoordsToDomain::dump(). STUB.\n";
+    LOG(DBUG) <<"CoordsToDomain::dump(). STUB.\n";
 
     for (auto it = coord2dom_VecExpr.begin(); it != coord2dom_VecExpr.end(); ++it)
     {
-        //std::LOG(DEBUG) <<std::hex << &it->first << " : " << std::hex << it.second << "\n";
-        LOG(DEBUG) <<"CoordsToDomain::dump(). STUB.\n";
+        //std::LOG(DBUG) <<std::hex << &it->first << " : " << std::hex << it.second << "\n";
+        LOG(DBUG) <<"CoordsToDomain::dump(). STUB.\n";
     }
-    LOG(DEBUG) <<std::endl;
+    LOG(DBUG) <<std::endl;
 
 }
 */
