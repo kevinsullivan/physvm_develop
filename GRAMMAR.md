@@ -6,12 +6,19 @@ The following is a supported BNF grammar for parsing C++ programs into our virtu
 Any *Matcher.h represents a grammar production commensurate with different cases that Peirce is capable of recognizing and parsing.
 
 STMT := VEC_VAR = EXPR | SCALAR_VAR = SCALAR_EXPR  | VEC_EXPR | SCALAR_EXPR | DECL VEC_VAR = VEC_EXPR | DECL SCALAR_VAR = SCALAR_EXPR
+
 VEC_EXPR := (VEC_EXPR) | VEC_EXPR + VEC_EXPR | VEC_EXPR * SCALAR_EXPR | VEC_VAR | VEC_LITERAL
+
 SCALAR_EXPR := (SCALAR_EXPR) | SCALAR_EXPR + SCALAR_EXPR | SCALAR_EXPR * SCALAR_EXPR | SCALAR_VAR | SCALAR_LITERAL
+
 ...
+
 SCALAR_VAR := IDENT
+
 VEC_VAR := IDENT
+
 SCALAR_LITERAL := Floating point value
+
 VEC_LITERAL := Vector rvalue
 
 ### Domain-Lean Parsing Grammar
