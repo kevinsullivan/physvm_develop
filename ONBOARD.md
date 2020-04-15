@@ -7,17 +7,17 @@ This document contains an abbreviated set of steps to be followed to pepare your
 1. Download Docker for your respective platform and ensure daemon is running
 2. Issue the following command with appropriate substitutions
 ```shell
-docker login gitlab.cs.virginia.edu:5099 -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKER_PASSWORD_HERE%"
+docker login docker.io -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKER_PASSWORD_HERE%"
 ```
 3. Next in a terminal window: 
 ```shell
-docker pull gitlab.cs.virginia.edu:5099/physicalsemantics/peirce
+docker pull andrewe8/peirce_docker
 ```
 A several GB file download will ensue. Image name subject to change. (If you skip this step, the image will be pulled by the next command.)
 
 4. Test image:
 ```shell
-docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash
+docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce andrewe8/peirce_docker /bin/bash
 ```
 5. This can be shut off with : 
 ```shell
@@ -28,7 +28,7 @@ docker container stop peirce_docker
 
 ## Gitlab Setup
 
-1. Ensure you have an account with and access to https://gitlab.cs.virginia.edu/
+1. Ensure you have an account with and access to https://gitlab.cs.virginia.edu/ (NOTE : NOW USING Github!)
 2. Obtain developer access to the "Peirce Docker Builder", "Peirce", and "phys" repositories if you don't already.
 3. Clone both repositories locally
 4. In your local Peirce repository directory, type the following to download dependencies
@@ -49,7 +49,7 @@ This step may fail if you do not have access to any submodules, (for example, ph
 
 1. In a terminal start the docker image for the build environment. On Windows (10 Pro), use a Windows CMD window, not Git Bash. 
 ```shell
-docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_DIRECTORY_GOES_HERE%:/peirce gitlab.cs.virginia.edu:5099/physicalsemantics/peirce:latest /bin/bash"
+docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_DIRECTORY_GOES_HERE%:/peirce andrewe8/peirce_docker /bin/bash"
 ```
 3. In VSCode: Use the Command Palette (Ctrl + Shift + P)
 3. Type in "attach" to trigger auto-complete -> Select ~ "Remote-Contaiers - Attach to Running Container"
