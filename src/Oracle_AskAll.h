@@ -83,7 +83,7 @@ public:
 	}
 	
 
-	domain::Space& getSpaceForFloatIdent(coords::FloatIdent* v) {
+	domain::Space& getSpaceForScalarIdent(coords::ScalarIdent* v) {
 		std::string query = "Space for float identifier, ";
 		query += v->toString();
 		query += " at ";
@@ -93,7 +93,7 @@ public:
 		return getSpace();
 	}
 
-	domain::Space& getSpaceForFloatVarExpr(coords::FloatExpr *var)  {
+	domain::Space& getSpaceForScalarVarExpr(coords::ScalarExpr *var)  {
 		std::string query = "Space for float variable expression, ";
 		query += var->toString();
 		query += " at ";
@@ -104,7 +104,7 @@ public:
 	}
 
 
-	domain::Space& getSpaceForMulExpression(coords::VecExpr *vec, coords::FloatExpr *flt)
+	domain::Space& getSpaceForMulExpression(coords::VecExpr *vec, coords::ScalarExpr *flt)
 	{
 		std::string query = "";
 		query += "Space for float scalar times vector expression, mul ";
@@ -118,7 +118,7 @@ public:
 		return getSpace();
 	}
 
-		domain::Space& getSpaceForFloatAddExpression(coords::FloatExpr *lhs, coords::FloatExpr *rhs)
+		domain::Space& getSpaceForScalarAddExpression(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs)
 	{
 		std::string query = "";
 		query += "Space for float expression, add ";
@@ -131,7 +131,7 @@ public:
 		std::cout << query;
 		return getSpace();
 	}
-		domain::Space& getSpaceForFloatMulExpression(coords::FloatExpr *lhs, coords::FloatExpr *rhs)
+		domain::Space& getSpaceForScalarMulExpression(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs)
 	{
 		std::string query = "";
 		query += "Space for float expression, mul ";
@@ -146,7 +146,7 @@ public:
 	}
 
 
-	domain::Space& getSpaceForFloatParenExpr(coords::FloatExpr *expr) {
+	domain::Space& getSpaceForScalarParenExpr(coords::ScalarExpr *expr) {
 		std::string query = "Space for float parenthesized expression, ";
 		query += expr->toString();  
 		query += " at ";
@@ -157,7 +157,7 @@ public:
 	}
 
 
-	domain::Space& getSpaceForFloat_Expr(coords::FloatExpr *expr) {
+	domain::Space& getSpaceForScalar_Expr(coords::ScalarExpr *expr) {
 		std::string query = "Space for float constructed from expression, \n";
 		query += expr->toString();  
 		query += " at ";
@@ -169,7 +169,7 @@ public:
 
 
 
-	domain::Space& getSpaceForFloat_Lit(coords::Float_Lit *lit) {
+	domain::Space& getSpaceForScalar_Lit(coords::Scalar_Lit *lit) {
 		std::string query = "Space for float constructed from literal, ";
 		query += lit->toString();
 		query += " at ";

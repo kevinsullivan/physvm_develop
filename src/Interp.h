@@ -13,7 +13,7 @@ namespace interp
 
 class VecIdent;
 class VecExpr;
-//class VecWrapper;
+
 class VecVarExpr;
 class VecVecAddExpr;
 class Vector;
@@ -23,22 +23,22 @@ class Vector_Expr;
 class Vector_Def;
 class Vector_Assign;
 
-class FloatIdent;
-class FloatExpr;
-//class FloatWrapper;
-class FloatVarExpr;
+class ScalarIdent;
+class ScalarExpr;
+
+class ScalarVarExpr;
 class VecScalarMulExpr;
 
-class Float;
-class Float_Lit;
-class Float_Var;
-class Float_Expr;
-class Float_Def;
-class Float_Assign;
+class Scalar;
+class Scalar_Lit;
+class Scalar_Var;
+class Scalar_Expr;
+class Scalar_Def;
+class Scalar_Assign;
 
 
 class VecParenExpr;
-class FloatParenExpr;
+class ScalarParenExpr;
 
 enum domType
 {
@@ -63,11 +63,11 @@ public:
   Interp(coords::Vector_Def *c, domain::Vector_Def *d);
   Interp(coords::Vector_Assign *c, domain::Vector_Assign *d);
 
-  Interp(coords::FloatIdent *c, domain::FloatIdent *d);
-  Interp(coords::FloatExpr *c, domain::FloatExpr *d);
-  Interp(coords::Float *c, domain::Float *d);
-  Interp(coords::Float_Def *c, domain::Float_Def *d);
-  Interp(coords::Float_Assign *c, domain::Float_Assign *d);
+  Interp(coords::ScalarIdent *c, domain::ScalarIdent *d);
+  Interp(coords::ScalarExpr *c, domain::ScalarExpr *d);
+  Interp(coords::Scalar *c, domain::Scalar *d);
+  Interp(coords::Scalar_Def *c, domain::Scalar_Def *d);
+  Interp(coords::Scalar_Assign *c, domain::Scalar_Assign *d);
   virtual std::string toString() const;
 
 protected:
@@ -80,11 +80,11 @@ protected:
   domain::Vector_Def *def_;
   domain::Vector_Assign *assign_;
 
-  domain::FloatIdent *float_ident_;
-  domain::FloatExpr *float_expr_;
-  domain::Float *float_;
-  domain::Float_Def *float_def_;
-  domain::Float_Assign *float_assign_;
+  domain::ScalarIdent *float_ident_;
+  domain::ScalarExpr *float_expr_;
+  domain::Scalar *float_;
+  domain::Scalar_Def *float_def_;
+  domain::Scalar_Assign *float_assign_;
 };
 
 /*************************************************************
@@ -111,13 +111,13 @@ class VecIdent : public Interp
   }
 };
 
-class FloatIdent : public Interp
+class ScalarIdent : public Interp
 {
   public:
-  FloatIdent(coords::FloatIdent *c, domain::FloatIdent *d);
+  ScalarIdent(coords::ScalarIdent *c, domain::ScalarIdent *d);
   const clang::VarDecl *getVarDecl() const;
   virtual std::string toString() const;
-  bool operator==(const FloatIdent &other) const
+  bool operator==(const ScalarIdent &other) const
   {
     return (ident_ == other.ident_);
   }
@@ -141,12 +141,12 @@ public:
   virtual std::string toString() const;
 };
 
-class FloatExpr : public Interp
+class ScalarExpr : public Interp
 {
 public:
-  FloatExpr(coords::FloatExpr *, domain::FloatExpr *);
-  const ast::FloatExpr *getExpr();
-  bool operator==(const FloatExpr &other) const
+  ScalarExpr(coords::ScalarExpr *, domain::ScalarExpr *);
+  const ast::ScalarExpr *getExpr();
+  bool operator==(const ScalarExpr &other) const
   {
     return (expr_ == other.expr_);
   }
@@ -163,12 +163,12 @@ public:
   virtual std::string toString() const;
 };
 
-class FloatVarExpr : public FloatExpr
+class ScalarVarExpr : public ScalarExpr
 {
 public:
-  FloatVarExpr(coords::FloatVarExpr *, domain::FloatVarExpr *);
-  const ast::FloatVarExpr *getFloatVarExpr() const;
-  const coords::FloatVarExpr *getFloatVarCoords() const;
+  ScalarVarExpr(coords::ScalarVarExpr *, domain::ScalarVarExpr *);
+  const ast::ScalarVarExpr *getScalarVarExpr() const;
+  const coords::ScalarVarExpr *getScalarVarCoords() const;
   virtual std::string toString() const;
 };
 
@@ -187,12 +187,12 @@ private:
   interp::Interp *arg_;
 };
 
-class FloatFloatAddExpr : public FloatExpr
+class ScalarScalarAddExpr : public ScalarExpr
 {
 public:
-  FloatFloatAddExpr(coords::FloatFloatAddExpr *, domain::FloatFloatAddExpr *,
+  ScalarScalarAddExpr(coords::ScalarScalarAddExpr *, domain::ScalarScalarAddExpr *,
                 interp::Interp *lhs, interp::Interp *rhs);
-  const ast::FloatFloatAddExpr *getFloatFloatAddExpr();
+  const ast::ScalarScalarAddExpr *getScalarScalarAddExpr();
   virtual std::string toString() const;
 
 private:
@@ -200,12 +200,12 @@ private:
   interp::Interp *rhs_;
 };
 
-class FloatFloatMulExpr : public FloatExpr
+class ScalarScalarMulExpr : public ScalarExpr
 {
 public:
-  FloatFloatMulExpr(coords::FloatFloatMulExpr *, domain::FloatFloatMulExpr *,
+  ScalarScalarMulExpr(coords::ScalarScalarMulExpr *, domain::ScalarScalarMulExpr *,
                 interp::Interp *lhs, interp::Interp *rhs);
-  const ast::FloatFloatMulExpr *getFloatFloatMulExpr();
+  const ast::ScalarScalarMulExpr *getScalarScalarMulExpr();
   virtual std::string toString() const;
 
 private:
@@ -238,15 +238,15 @@ private:
   interp::VecExpr *paren_expr_;
 };
 
-class FloatParenExpr : public FloatExpr
+class ScalarParenExpr : public ScalarExpr
 {
 public:
-  FloatParenExpr(coords::FloatParenExpr *, domain::FloatParenExpr *, interp::FloatExpr *expr_);
+  ScalarParenExpr(coords::ScalarParenExpr *, domain::ScalarParenExpr *, interp::ScalarExpr *expr_);
   virtual std::string toString() const;
-  interp::FloatExpr *getVector_Expr() const { return paren_expr_; }
+  interp::ScalarExpr *getVector_Expr() const { return paren_expr_; }
 
 private:
-  interp::FloatExpr *paren_expr_;
+  interp::ScalarExpr *paren_expr_;
 };
 
 /*
@@ -261,12 +261,12 @@ public:
   virtual std::string toString() const;
 };
 
-class Float : public Interp
+class Scalar : public Interp
 {
 public:
-  Float(coords::Float *, domain::Float *); // tag?
-  const ast::Float *getFloat() const;
-  coords::FloatCtorType getFloatType();
+  Scalar(coords::Scalar *, domain::Scalar *); // tag?
+  const ast::Scalar *getScalar() const;
+  coords::ScalarCtorType getScalarType();
   virtual std::string toString() const;
 };
 
@@ -278,10 +278,10 @@ public:
   virtual std::string toString() const;
 };
 
-class Float_Lit : public Float
+class Scalar_Lit : public Scalar
 {
 public:
-  Float_Lit(coords::Float_Lit *, domain::Float_Lit *);
+  Scalar_Lit(coords::Scalar_Lit *, domain::Scalar_Lit *);
   virtual std::string toString() const;
 };
 
@@ -294,12 +294,12 @@ public:
   //VecVarExpr *getVecVarExpr() const;
 };
 
-class Float_Var : public Float
+class Scalar_Var : public Scalar
 {
 public:
-  Float_Var(coords::Float_Var *, domain::Float_Var *);
+  Scalar_Var(coords::Scalar_Var *, domain::Scalar_Var *);
   virtual std::string toString() const;
-  //VecVarExpr *getVecVarExpr() const;
+
 };
 
 // change name to VecVecAddExpr? Or generalize from that a bit.
@@ -314,15 +314,15 @@ private:
   interp::VecExpr *expr_interp_;
 };
 
-class Float_Expr : public Float
+class Scalar_Expr : public Scalar
 {
 public:
-  Float_Expr(coords::Float_Expr *, domain::Float_Expr *, interp::FloatExpr *expr_interp);
+  Scalar_Expr(coords::Scalar_Expr *, domain::Scalar_Expr *, interp::ScalarExpr *expr_interp);
   virtual std::string toString() const;
-  interp::FloatExpr *getFloat_Expr() const { return expr_interp_; }
+  interp::ScalarExpr *getScalar_Expr() const { return expr_interp_; }
 
 private:
-  interp::FloatExpr *expr_interp_;
+  interp::ScalarExpr *expr_interp_;
 };
 
 /****
@@ -340,15 +340,15 @@ private:
   interp::Vector *vec_;
 };
 
-class Float_Def : public Interp
+class Scalar_Def : public Interp
 {
 public:
-  Float_Def(coords::Float_Def *, domain::Float_Def *, interp::FloatIdent *id, interp::Float *flt);
+  Scalar_Def(coords::Scalar_Def *, domain::Scalar_Def *, interp::ScalarIdent *id, interp::Scalar *flt);
   virtual std::string toString() const;
 
 private:
-  interp::FloatIdent *id_;
-  interp::Float *flt_;
+  interp::ScalarIdent *id_;
+  interp::Scalar *flt_;
 };
 
 class Vector_Assign : public Interp
@@ -362,15 +362,15 @@ private:
   interp::VecExpr *vec_;
 };
 
-class Float_Assign : public Interp
+class Scalar_Assign : public Interp
 {
 public:
-  Float_Assign(coords::Float_Assign *, domain::Float_Assign *, interp::FloatVarExpr *id, interp::FloatExpr *flt);
+  Scalar_Assign(coords::Scalar_Assign *, domain::Scalar_Assign *, interp::ScalarVarExpr *id, interp::ScalarExpr *flt);
   virtual std::string toString() const;
 
 private:
-  interp::FloatVarExpr *id_;
-  interp::FloatExpr *flt_;
+  interp::ScalarVarExpr *id_;
+  interp::ScalarExpr *flt_;
 };
 
 } // namespace interp

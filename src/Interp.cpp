@@ -1,8 +1,8 @@
 #include "Interp.h"
 
-//#include <g3log/g3log.hpp>
+#include <g3log/g3log.hpp>
 
-//using namespace g3; 
+using namespace g3; 
 
 namespace interp {
 
@@ -27,23 +27,23 @@ Interp::Interp(coords::Vector_Assign *c, domain::Vector_Assign *d)
 }
 
 
-Interp::Interp(coords::FloatIdent* c, domain::FloatIdent *d) 
+Interp::Interp(coords::ScalarIdent* c, domain::ScalarIdent *d) 
   : coords_(c), type_(dom_floatIdent_type), float_ident_(d) {
 }
 
-Interp::Interp(coords::FloatExpr *c, domain::FloatExpr *d) 
+Interp::Interp(coords::ScalarExpr *c, domain::ScalarExpr *d) 
   : coords_(c), type_(dom_floatExpr_type), float_expr_(d)  {
 }
 
-Interp::Interp(coords::Float *c, domain::Float *d)
+Interp::Interp(coords::Scalar *c, domain::Scalar *d)
   : coords_(c), type_(dom_float_type), float_(d) {
 }
 
-Interp::Interp(coords::Float_Def *c, domain::Float_Def *d) 
+Interp::Interp(coords::Scalar_Def *c, domain::Scalar_Def *d) 
   : coords_(c), type_(dom_float_def_type), float_def_(d) {
 }
 
-Interp::Interp(coords::Float_Assign *c, domain::Float_Assign *d) 
+Interp::Interp(coords::Scalar_Assign *c, domain::Scalar_Assign *d) 
   : coords_(c), type_(dom_float_assign_type), float_assign_(d) {
 }
 
@@ -53,7 +53,7 @@ Interp::Interp(coords::Float_Assign *c, domain::Float_Assign *d)
 
 
 std::string Interp::toString() const {
-  //LOG(FATAL) << "Interp::toString: Error. Should not be called. Abstract.\n";
+  LOG(FATAL) << "Interp::toString: Error. Should not be called. Abstract.\n";
   return "";
 }
 
@@ -74,10 +74,10 @@ std::string VecIdent::toString() const {
   return ret;
 }
 
-FloatIdent::FloatIdent(coords::FloatIdent* c, domain::FloatIdent* d) : Interp(c,d) {
+ScalarIdent::ScalarIdent(coords::ScalarIdent* c, domain::ScalarIdent* d) : Interp(c,d) {
 }
 
-std::string FloatIdent::toString() const {
+std::string ScalarIdent::toString() const {
   std::string ret = "";
 //  ret += "( ";
   ret += coords_->toString();
@@ -95,16 +95,16 @@ VecExpr::VecExpr(coords::VecExpr* c, domain::VecExpr* d)  : Interp(c, d)  {
 }
 
 std::string VecExpr::toString() const {
-  //LOG(FATAL) << "Error. Call to abstract interp::VecIdent::toString().\n";
+  LOG(FATAL) << "Error. Call to abstract interp::VecIdent::toString().\n";
   return "Should not call abstract interp::VecExpr::toString().";
 }
 
-FloatExpr::FloatExpr(coords::FloatExpr* c, domain::FloatExpr* d)  : Interp(c, d)  {
+ScalarExpr::ScalarExpr(coords::ScalarExpr* c, domain::ScalarExpr* d)  : Interp(c, d)  {
 }
 
-std::string FloatExpr::toString() const {
-  //LOG(FATAL) << "Error. Call to abstract interp::FloatIdent::toString().\n";
-  return "Should not call abstract interp::FloatIdent::toString().";
+std::string ScalarExpr::toString() const {
+  LOG(FATAL) << "Error. Call to abstract interp::ScalarIdent::toString().\n";
+  return "Should not call abstract interp::ScalarIdent::toString().";
 }
 
 
@@ -121,10 +121,10 @@ std::string VecVarExpr::toString() const {
   return ret;
 }
 
-FloatVarExpr::FloatVarExpr(coords::FloatVarExpr* c, domain::FloatVarExpr* d) :FloatExpr(c, d) {
+ScalarVarExpr::ScalarVarExpr(coords::ScalarVarExpr* c, domain::ScalarVarExpr* d) :ScalarExpr(c, d) {
 }
 
-std::string FloatVarExpr::toString() const {
+std::string ScalarVarExpr::toString() const {
   std::string ret = "";
   ret += "( ";
   ret += coords_->toString();
@@ -172,13 +172,13 @@ std::string VecScalarMulExpr::toString() const {
   return ret;  
 } 
 
-FloatFloatAddExpr::FloatFloatAddExpr(coords::FloatFloatAddExpr* c, domain::FloatFloatAddExpr* d, 
+ScalarScalarAddExpr::ScalarScalarAddExpr(coords::ScalarScalarAddExpr* c, domain::ScalarScalarAddExpr* d, 
                              interp::Interp *lhs, interp::Interp *rhs)  
-  : FloatExpr(c, d), lhs_(lhs), rhs_(rhs) {
+  : ScalarExpr(c, d), lhs_(lhs), rhs_(rhs) {
 }
 
  
-std::string FloatFloatAddExpr::toString() const {
+std::string ScalarScalarAddExpr::toString() const {
   std::string ret = "";
   ret += "( peirce.add ";
   ret += lhs_->toString();
@@ -190,13 +190,13 @@ std::string FloatFloatAddExpr::toString() const {
   return ret;  
 } 
 
-FloatFloatMulExpr::FloatFloatMulExpr(coords::FloatFloatMulExpr* c, domain::FloatFloatMulExpr* d, 
+ScalarScalarMulExpr::ScalarScalarMulExpr(coords::ScalarScalarMulExpr* c, domain::ScalarScalarMulExpr* d, 
                              interp::Interp *lhs, interp::Interp *rhs)  
-  : FloatExpr(c, d), lhs_(lhs), rhs_(rhs) {
+  : ScalarExpr(c, d), lhs_(lhs), rhs_(rhs) {
 }
 
  
-std::string FloatFloatMulExpr::toString() const {
+std::string ScalarScalarMulExpr::toString() const {
   std::string ret = "";
   ret += "( peirce.mul ";
   ret += lhs_->toString();
@@ -227,12 +227,12 @@ std::string VecParenExpr::toString() const {
 } 
 
 
-FloatParenExpr::FloatParenExpr
-    (coords::FloatParenExpr* c, domain::FloatParenExpr* d, interp::FloatExpr *e) 
-    : FloatExpr(c, d), paren_expr_(e) {
+ScalarParenExpr::ScalarParenExpr
+    (coords::ScalarParenExpr* c, domain::ScalarParenExpr* d, interp::ScalarExpr *e) 
+    : ScalarExpr(c, d), paren_expr_(e) {
 }
 
-std::string FloatParenExpr::toString() const {
+std::string ScalarParenExpr::toString() const {
   std::string ret = "";
   ret += "( ( ";
   ret += paren_expr_->toString();
@@ -255,15 +255,15 @@ std::string FloatParenExpr::toString() const {
 Vector::Vector(coords::Vector* c, domain::Vector* d) : Interp(c, d) {}
 
 std::string Vector::toString() const {
-  //LOG(INFO) << "Interp::Vector::toString().\n";
+  LOG(INFO) << "Interp::Vector::toString().\n";
   return "A_Vector";
 }
  
-Float::Float(coords::Float* c, domain::Float* d) : Interp(c, d) {}
+Scalar::Scalar(coords::Scalar* c, domain::Scalar* d) : Interp(c, d) {}
 
-std::string Float::toString() const {
-  //LOG(INFO) << "Interp::Vector::toString().\n";
-  return "A_Float";
+std::string Scalar::toString() const {
+  LOG(INFO) << "Interp::Vector::toString().\n";
+  return "A_Scalar";
 }
 
 Vector_Lit::Vector_Lit(coords::Vector_Lit* c, domain::Vector_Lit* d) : Vector(c,d) {
@@ -279,10 +279,10 @@ std::string Vector_Lit::toString() const {
   return ret;
 }
 
-Float_Lit::Float_Lit(coords::Float_Lit* c, domain::Float_Lit* d) : Float(c,d) {
+Scalar_Lit::Scalar_Lit(coords::Scalar_Lit* c, domain::Scalar_Lit* d) : Scalar(c,d) {
 }
 
-std::string Float_Lit::toString() const {
+std::string Scalar_Lit::toString() const {
   std::string ret = "";
   ret += "( peirce.vec.mkScalar ";
   ret += float_->getSpaceContainer()->toString();
@@ -297,16 +297,16 @@ Vector_Var::Vector_Var(coords::Vector_Var* c, domain::Vector_Var* d) : Vector(c,
 }
 
 std::string Vector_Var::toString() const {
-  //LOG(FATAL) << "interp::Vector_Var::toString. Error. Not implemented.\n";
+  LOG(FATAL) << "interp::Vector_Var::toString. Error. Not implemented.\n";
   return "";
 }
 
-Float_Var::Float_Var(coords::Float_Var* c, domain::Float_Var* d) : Float(c,d) {
+Scalar_Var::Scalar_Var(coords::Scalar_Var* c, domain::Scalar_Var* d) : Scalar(c,d) {
 
 }
 
-std::string Float_Var::toString() const {
-  //LOG(FATAL) << "interp::Vector_Var::toString. Error. Not implemented.\n";
+std::string Scalar_Var::toString() const {
+  LOG(FATAL) << "interp::Vector_Var::toString. Error. Not implemented.\n";
   return "";
 }
 
@@ -320,13 +320,13 @@ std::string Vector_Expr::toString() const {
 }
 
 
-Float_Expr::Float_Expr(coords::Float_Expr *c, domain::Float_Expr* d, interp::FloatExpr *expr_interp) 
-  : Float(c,d), expr_interp_(expr_interp) {
+Scalar_Expr::Scalar_Expr(coords::Scalar_Expr *c, domain::Scalar_Expr* d, interp::ScalarExpr *expr_interp) 
+  : Scalar(c,d), expr_interp_(expr_interp) {
 
 }
 
-std::string Float_Expr::toString() const {
-  return getFloat_Expr()->toString(); 
+std::string Scalar_Expr::toString() const {
+  return getScalar_Expr()->toString(); 
 }
 
 
@@ -352,10 +352,10 @@ std::string Vector_Def::toString() const {
   return ret;
 }
 
-Float_Def::Float_Def(coords::Float_Def* c, domain::Float_Def* d, interp::FloatIdent *id, interp::Float *flt) 
+Scalar_Def::Scalar_Def(coords::Scalar_Def* c, domain::Scalar_Def* d, interp::ScalarIdent *id, interp::Scalar *flt) 
   : Interp(c,d), id_(id), flt_(flt) { 
 }
-std::string Float_Def::toString() const {
+std::string Scalar_Def::toString() const {
   std::string ret = "def ";
   ret += id_->toString();
   ret += " := ";
@@ -388,10 +388,10 @@ std::string Vector_Assign::toString() const {
   return ret;
 }
 
-Float_Assign::Float_Assign(coords::Float_Assign* c, domain::Float_Assign* d, interp::FloatVarExpr *id, interp::FloatExpr *flt) 
+Scalar_Assign::Scalar_Assign(coords::Scalar_Assign* c, domain::Scalar_Assign* d, interp::ScalarVarExpr *id, interp::ScalarExpr *flt) 
   : Interp(c,d), id_(id), flt_(flt) { 
 }
-std::string Float_Assign::toString() const {
+std::string Scalar_Assign::toString() const {
   std::string ret = "def ";
   ret += id_->toString();
   ret += " := ";

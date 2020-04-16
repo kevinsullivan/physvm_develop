@@ -13,12 +13,6 @@
 
 #include "ASTToCoords.h"
 /*
-    virtual void Traverse() = 0;
-    virtual void BuildRepresentation() = 0;
-    virtual StatementMatcher GetStatementMatcher() = 0;
-    virtual void run(const MatchFinder::MatchResult &Result) = 0;
-
-    
 STMT := VEC_VAR = EXPR | SCALAR_VAR = SCALAR_EXPR  | VEC_EXPR | SCALAR_EXPR | DECL VEC_VAR = VEC_EXPR | DECL SCALAR_VAR = SCALAR_EXPR
 */
 
@@ -26,7 +20,7 @@ STMT := VEC_VAR = EXPR | SCALAR_VAR = SCALAR_EXPR  | VEC_EXPR | SCALAR_EXPR | DE
 void StatementProductionMatcher::search(){
     
     StatementMatcher vectorExprWithCleanups = 
-        exprWithCleanups(has(expr().bind("UsefulExpr"))).bind("ExprWithCleanupsDiscard");
+        exprWithCleanups(has(expr().bind("UsefulExpr"))).bind("ExprWithCleanupsDiscard");//fluff node to discard
 
     StatementMatcher scalarDecl =
         declStmt(has(varDecl(
@@ -38,7 +32,6 @@ void StatementProductionMatcher::search(){
            has(expr().bind("VectorDeclRV")),
            has(exprWithCleanups().bind("VectorDeclRV"))
            ))).bind("VectorVarDecl"))).bind("VectorDeclStatement");
-           //cxxConstructExpr(allOf(hasType(asString("class Vec")),has(expr().bind("VectorDeclRV")))))).bind("VectorVarDecl"))).bind("VectorDeclStatement");
     StatementMatcher floatExpr = 
         expr(hasType(realFloatingPointType())).bind("ScalarExprStatement");
     StatementMatcher vectorExpr = 
@@ -91,20 +84,19 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     const auto exprWithCleanupsDiscard = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
 
 
-    if(scalarDecl or scalarVarDecl or scalarDeclRV){
+    if(scalarDecl or scalarVarDecl or scalarDeclRV){//matches Scalar variable declaration
         if(scalarDecl and scalarVarDecl and scalarDeclRV){
-            this->interp_->mkFloatIdent(scalarVarDecl);
+            this->interp_->mkScalarIdent(scalarVarDecl);
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*scalarDeclRV);
-            //exprMatcher.getChildExprStore()->dump();
-            this->interp_->mkFloat_Def(scalarDecl, scalarVarDecl, exprMatcher.getChildExprStore());
+            this->interp_->mkScalar_Def(scalarDecl, scalarVarDecl, exprMatcher.getChildExprStore());
         }
         else{
             //log error
         }
     }
-    else if(vectorDecl or vectorVarDecl or vectorDeclRV){
+    else if(vectorDecl or vectorVarDecl or vectorDeclRV){//matches Vector variable declaration
         if(vectorDecl and vectorVarDecl and vectorDeclRV){
 
             this->interp_->mkVecIdent(vectorVarDecl);
@@ -118,25 +110,25 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             //log error
         }
     }
-    else if(floatExpr){
+    else if(floatExpr){//matches Scalar expressions
         ScalarExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*floatExpr);
 
     }
-    else if(vecExpr){
+    else if(vecExpr){//matches Vector expressions
         VectorExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
         exprMatcher.visit(*vecExpr);
 
     }
-    else if(exprWithCleanupsDiscard){
+    else if(exprWithCleanupsDiscard){//matches fluff node to discard
         StatementProductionMatcher innerMatcher{this->context_, this->interp_};
         innerMatcher.search();
         innerMatcher.visit(*exprWithCleanupsDiscard->getSubExpr());
 
     }
-    else if(scalarAssign or scalarAssignLHS or scalarAssignRHS){
+    else if(scalarAssign or scalarAssignLHS or scalarAssignRHS){//matches Scalar variable assignment
         if(scalarAssign and scalarAssignLHS and scalarAssignRHS){
             ScalarExprMatcher lhsMatcher{this->context_, this->interp_};
             lhsMatcher.search();
@@ -145,15 +137,16 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.search();
             rhsMatcher.visit(*scalarAssignRHS);
 
-            interp_->mkFloat_Assign(scalarAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+            interp_->mkScalar_Assign(scalarAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
 
-            this->childExprStore_ = (clang::Expr*)scalarAssign;
+            //we don't set this property in statements
+            //this->childExprStore_ = (clang::Expr*)scalarAssign;
         }
         else{
             //log error
         }
     }
-    else if(vectorAssign or vectorAssignLHS or vectorAssignRHS){
+    else if(vectorAssign or vectorAssignLHS or vectorAssignRHS){//matches Vector variable assignment
         if(vectorAssign and vectorAssignLHS and vectorAssignRHS){
             VectorExprMatcher lhsMatcher{this->context_, this->interp_};
             lhsMatcher.search();
@@ -161,17 +154,10 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher rhsMatcher{this->context_, this->interp_};
             rhsMatcher.search();
             rhsMatcher.visit(*vectorAssignRHS);
-            /*
-            std::cout<<"lhs"<<std::endl;
-            vectorAssignLHS->dump();
-            lhsMatcher.getChildExprStore()->dump();
-            std::cout<<"rhs"<<std::endl;
-            vectorAssignRHS->dump();
-            rhsMatcher.getChildExprStore()->dump();
-            */
+
             interp_->mkVector_Assign(vectorAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
 
-           //this->childExprStore_ = vectorAssign;
+           //this->childExprStore_ = (clang::Expr*)vectorAssign;
         }
         else{
             //log error

@@ -52,6 +52,9 @@ public:
 
     ASTToCoords();
 
+    void setASTState(coords::Coords *coords, clang::Stmt* stmt, clang::ASTContext *c);
+    void setASTState(coords::Coords *coords, clang::Decl* decl, clang::ASTContext *c);
+
     coords::VecIdent* mkVecIdent(const ast::VecIdent *ast, clang::ASTContext *c);
     // no VecExpr because we always know exactly what subtype we're creating
     coords::VecVarExpr* mkVecVarExpr(const ast::VecVarExpr *ast, clang::ASTContext *c);
@@ -61,16 +64,16 @@ public:
                                              coords::VecExpr *arg);
 
     coords::VecScalarMulExpr* mkVecScalarMulExpr(const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
-                                             coords::FloatExpr *flt, coords::VecExpr *vec);
+                                             coords::ScalarExpr *flt, coords::VecExpr *vec);
 
 
-    coords::FloatFloatAddExpr* mkFloatFloatAddExpr(const ast::FloatFloatAddExpr *ast, clang::ASTContext *c, 
-                                             coords::FloatExpr *lhs, 
-                                             coords::FloatExpr *rhs);
+    coords::ScalarScalarAddExpr* mkScalarScalarAddExpr(const ast::ScalarScalarAddExpr *ast, clang::ASTContext *c, 
+                                             coords::ScalarExpr *lhs, 
+                                             coords::ScalarExpr *rhs);
 
-    coords::FloatFloatMulExpr* mkFloatFloatMulExpr(const ast::FloatFloatMulExpr *ast, clang::ASTContext *c, 
-                                             coords::FloatExpr *lhs, 
-                                             coords::FloatExpr *rhs);
+    coords::ScalarScalarMulExpr* mkScalarScalarMulExpr(const ast::ScalarScalarMulExpr *ast, clang::ASTContext *c, 
+                                             coords::ScalarExpr *lhs, 
+                                             coords::ScalarExpr *rhs);
 
 
     // KEVIN: Added for new horizontal vector paren expr module
@@ -78,7 +81,7 @@ public:
                                                 ast::VecExpr *expr);
 
     coords::Vector_Lit *mkVector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c,
-                                                ast::Scalar x, ast::Scalar y, ast::Scalar z);
+                                                ast::ScalarValue x, ast::ScalarValue y, ast::ScalarValue z);
     coords::Vector_Var* mkVector_Var(const ast::Vector_Var *ast, clang::ASTContext *c,
                                                 coords::VecVarExpr *var);
     coords::Vector_Expr* mkVector_Expr(const ast::Vector_Expr *ctor_ast, clang::ASTContext *c,
@@ -91,40 +94,44 @@ public:
                                              coords::VecVarExpr *var, 
                                              coords::VecExpr *vec);
 
-    coords::FloatIdent* mkFloatIdent(const ast::FloatIdent *ast, clang::ASTContext *c);
+    coords::ScalarIdent* mkScalarIdent(const ast::ScalarIdent *ast, clang::ASTContext *c);
     // no VecExpr because we always know exactly what subtype we're creating
-    coords::FloatVarExpr* mkFloatVarExpr(const ast::FloatVarExpr *ast, clang::ASTContext *c);
+    coords::ScalarVarExpr* mkScalarVarExpr(const ast::ScalarVarExpr *ast, clang::ASTContext *c);
 
     // KEVIN: Added for new horizontal vector paren expr module
-    coords::FloatParenExpr *mkFloatParenExpr(ast::FloatParenExpr *ast, clang::ASTContext *c,
-                                                ast::FloatExpr *expr);
+    coords::ScalarParenExpr *mkScalarParenExpr(ast::ScalarParenExpr *ast, clang::ASTContext *c,
+                                                ast::ScalarExpr *expr);
 
-    coords::Float_Lit *mkFloat_Lit(const ast::Float_Lit *ast, clang::ASTContext *c,
-                                                ast::Scalar scalar);
-    coords::Float_Var* mkFloat_Var(const ast::Float_Var *ast, clang::ASTContext *c,
-                                                coords::FloatVarExpr *var);
-    coords::Float_Expr* mkFloat_Expr(const ast::Float_Expr *ctor_ast, clang::ASTContext *c,
-                                             ast::FloatExpr *expr_ast);
-    coords::Float_Def* mkFloat_Def(const ast::Float_Def *ast, clang::ASTContext *c,
-                                             coords::FloatIdent *id, 
-                                             coords::FloatExpr *flt);
+    coords::Scalar_Lit *mkScalar_Lit(const ast::Scalar_Lit *ast, clang::ASTContext *c,
+                                                ast::ScalarValue scalar);
+    coords::Scalar_Var* mkScalar_Var(const ast::Scalar_Var *ast, clang::ASTContext *c,
+                                                coords::ScalarVarExpr *var);
+    coords::Scalar_Expr* mkScalar_Expr(const ast::Scalar_Expr *ctor_ast, clang::ASTContext *c,
+                                             ast::ScalarExpr *expr_ast);
+    coords::Scalar_Def* mkScalar_Def(const ast::Scalar_Def *ast, clang::ASTContext *c,
+                                             coords::ScalarIdent *id, 
+                                             coords::ScalarExpr *flt);
     
-    coords::Float_Assign* mkFloat_Assign(const ast::Float_Assign *ast, clang::ASTContext *c,
-                                             coords::FloatVarExpr *var, 
-                                             coords::FloatExpr *flt);
+    coords::Scalar_Assign* mkScalar_Assign(const ast::Scalar_Assign *ast, clang::ASTContext *c,
+                                             coords::ScalarVarExpr *var, 
+                                             coords::ScalarExpr *flt);
 
     // TODO -- Have these routines return more specific subclass objects
     coords::Coords *getStmtCoords(const clang::Stmt *s) {
-        auto dl = stmt_coords->find(s);
-
         return stmt_coords->find(s)->second;
     }
 
     coords::Coords *getDeclCoords(const clang::Decl *d) {
-        auto dl = decl_coords->find(d);
-
-        return dl->second;
+        return decl_coords->find(d)->second;
     }
+
+    /*
+    !!!! I NEED THESE BADLY. MOVING TO PUBLIC !!!!
+    */
+    std::unordered_map<const clang::Stmt *, coords::Coords *> *stmt_coords;
+    std::unordered_map<const clang::Decl *, coords::Coords *> *decl_coords;
+    std::unordered_map<coords::Coords *,const clang::Stmt *> *coords_stmt;
+    std::unordered_map<coords::Coords *,const clang::Decl *> *coords_decl;
 
   private:
     void overrideStmt2Coords(const clang::Stmt *s, coords::Coords *c);
@@ -137,10 +144,6 @@ public:
     std::unordered_map<coords::Coords *,const clang::Stmt *> coords_stmt;
     std::unordered_map<coords::Coords *,const clang::Decl *> coords_decl;
     */
-    std::unordered_map<const clang::Stmt *, coords::Coords *> *stmt_coords;
-    std::unordered_map<const clang::Decl *, coords::Coords *> *decl_coords;
-    std::unordered_map<coords::Coords *,const clang::Stmt *> *coords_stmt;
-    std::unordered_map<coords::Coords *,const clang::Decl *> *coords_decl;
     
 };
 

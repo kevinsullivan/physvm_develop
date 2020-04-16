@@ -5,6 +5,7 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include <cstddef>
 #include <iostream> // for cheap logging only
+#include <string>
 
 #include "AST.h"
 
@@ -37,26 +38,63 @@ namespace coords {
 // clang::Decl but we include it here to 
 // establish a path togeneralizability
 //
-enum ast_type { CLANG_AST_STMT, CLANG_AST_DECL }; 
+//enum ast_type { CLANG_AST_STMT, CLANG_AST_DECL }; 
+
+struct ASTState {
+public:
+  ASTState(
+    std::string file_id,
+    std::string file_name,
+    std::string file_path,
+    std::string name,
+    int begin_line_no,
+    int begin_col_no,
+    int end_line_no,
+    int end_col_no
+  );
+
+  std::string file_id_;
+  std::string file_name_;
+  std::string file_path_;
+
+  std::string name_; //only used for Decl. possibly subclass this, or else this property is unused elsewhere
+
+  int begin_line_no_;
+  int begin_col_no_;
+  int end_line_no_;
+  int end_col_no_;
+
+  bool operator==(const ASTState& other) const {
+    return 
+      file_id_ == other.file_id_ and
+      file_name_ == other.file_name_ and
+      file_path_ == other.file_path_ and
+      begin_line_no_ == other.begin_line_no_ and
+      begin_col_no_ == other.begin_col_no_ and
+      end_line_no_ == other.end_line_no_ and
+      end_col_no_ == other.end_col_no_;
+  }
+};
 
 class Coords {
 public:
-  Coords(const clang::Stmt *stmt, clang::ASTContext *context);
-  Coords(const clang::Decl *decl, clang::ASTContext *context);
+  Coords();
 
-  bool astIsClangDecl() { return (ast_type_tag_ == CLANG_AST_DECL); }
-  bool astIsClangStmt() { return (ast_type_tag_ == CLANG_AST_STMT); }
+//  bool astIsClangDecl() { return (ast_type_tag_ == CLANG_AST_DECL); }
+//  bool astIsClangStmt() { return (ast_type_tag_ == CLANG_AST_STMT); }
 
-  const clang::Stmt *getClangStmt() const;
-  const clang::Decl *getClangDecl() const;
+//  const clang::Stmt *getClangStmt() const;
+//  const clang::Decl *getClangDecl() const;
 
   virtual bool operator==(const Coords &other) const;
   virtual std::string toString() const;
   virtual std::string getSourceLoc() const;
+
+  ASTState* state_; //maybe  change this to a constructor argument
 protected:
-  ast_type ast_type_tag_;
-  const clang::Stmt *clang_stmt_;
-  const clang::Decl *clang_decl_;
+//  ast_type ast_type_tag_;
+//  const clang::Stmt *clang_stmt_;
+//  const clang::Decl *clang_decl_;
   clang::ASTContext *context_;
 };
 
@@ -70,21 +108,19 @@ protected:
 
 class VecIdent : public Coords {
 public:
-  VecIdent(const ast::VecIdent *ast, clang::ASTContext *c);
-  const clang::VarDecl *getVarDecl() const;
+  VecIdent();
   virtual std::string toString() const;
   bool operator==(const VecIdent &other) const {
-    return (clang_decl_ == other.clang_decl_);
+    return this->state_ == other.state_;
   }
 };
 
-class FloatIdent : public Coords {
+class ScalarIdent : public Coords {
 public:
-  FloatIdent(const ast::VecIdent *ast, clang::ASTContext *c);
-  const clang::VarDecl *getVarDecl() const;
+  ScalarIdent();
   virtual std::string toString() const;
-  bool operator==(const FloatIdent &other) const {
-    return (clang_decl_ == other.clang_decl_);
+  bool operator==(const ScalarIdent &other) const {
+    return this->state_ == other.state_;
   }
 };
 
@@ -98,43 +134,38 @@ public:
 // Abstract
 class VecExpr : public Coords {
 public:
-  VecExpr(const ast::VecExpr *e, clang::ASTContext *c);
-  const ast::VecExpr *getExpr();
+  VecExpr();
   virtual std::string toString() const;
   bool operator==(const VecExpr &other) const {
-    return (clang_stmt_ == other.clang_stmt_);
+    return this->state_ == other.state_;
   }
 };
 
-class FloatExpr : public Coords {
+class ScalarExpr : public Coords {
 public:
-  FloatExpr(const ast::FloatExpr *e, clang::ASTContext *c);
-  const ast::FloatExpr *getExpr();
+  ScalarExpr();
   virtual std::string toString() const;
-  bool operator==(const FloatExpr &other) const {
-    return (clang_stmt_ == other.clang_stmt_);
+  bool operator==(const ScalarExpr &other) const {
+    return this->state_ == other.state_;
   }
 };
 
 class VecVarExpr : public VecExpr {
 public:
-  VecVarExpr(const ast::VecVarExpr *d, clang::ASTContext *c);
-  const ast::VecVarExpr *getVecVarExpr() const;
+  VecVarExpr();
   virtual std::string toString() const;
 };
 
-class FloatVarExpr : public FloatExpr {
+class ScalarVarExpr : public ScalarExpr {
 public:
-  FloatVarExpr(const ast::FloatVarExpr *d, clang::ASTContext *c);
-  const ast::FloatVarExpr *getFloatVarExpr() const;
+  ScalarVarExpr();
   virtual std::string toString() const;
 };
 
 // TODO: add accessors for left and right
 class VecVecAddExpr : public VecExpr {
 public:
-  VecVecAddExpr(const ast::VecVecAddExpr *mce, clang::ASTContext *c, coords::VecExpr *mem, coords::VecExpr *arg);
-  const ast::VecVecAddExpr *getVecVecAddExpr();
+  VecVecAddExpr(coords::VecExpr *mem, coords::VecExpr *arg);
   virtual std::string toString() const;
   coords::Coords* getLeft() const { return mem_; }
   coords::Coords* getRight() const { return arg_; }
@@ -146,8 +177,7 @@ private:
 
 class VecScalarMulExpr : public VecExpr {
 public:
-  VecScalarMulExpr(const ast::VecScalarMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *flt, coords::VecExpr *vec);
-  const ast::VecScalarMulExpr *getVecScalarMulExpr();
+  VecScalarMulExpr(coords::ScalarExpr *flt, coords::VecExpr *vec);
   virtual std::string toString() const;
   coords::Coords* getLeft() const { return flt_; }
   coords::Coords* getRight() const { return vec_; }
@@ -157,10 +187,9 @@ private:
   coords::Coords *vec_;
 };
 
-class FloatFloatAddExpr : public FloatExpr {
+class ScalarScalarAddExpr : public ScalarExpr {
 public:
-  FloatFloatAddExpr(const ast::FloatFloatAddExpr *mce, clang::ASTContext *c, coords::FloatExpr *lhs, coords::FloatExpr *rhs);
-  const ast::FloatFloatAddExpr *getFloatFloatAddExpr();
+  ScalarScalarAddExpr(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs);
   virtual std::string toString() const;
   coords::Coords* getLeft() const { return lhs_; }
   coords::Coords* getRight() const { return rhs_; }
@@ -170,10 +199,9 @@ private:
   coords::Coords *rhs_;
 };
 
-class FloatFloatMulExpr : public FloatExpr {
+class ScalarScalarMulExpr : public ScalarExpr {
 public:
-  FloatFloatMulExpr(const ast::FloatFloatMulExpr *mce, clang::ASTContext *c, coords::FloatExpr *lhs, coords::FloatExpr *rhs);
-  const ast::FloatFloatMulExpr *getFloatFloatMulExpr();
+  ScalarScalarMulExpr(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs);
   virtual std::string toString() const;
   coords::Coords* getLeft() const { return lhs_; }
   coords::Coords* getRight() const { return rhs_; }
@@ -191,26 +219,34 @@ private:
 // Should hold coordinates of child expression
 class VecParenExpr : public VecExpr {
   public:
-  VecParenExpr(const ast::VecParenExpr *vec, clang::ASTContext *c, coords::VecExpr *expr);
-  const coords::VecExpr *getVecExpr() const; 
+  VecParenExpr(coords::VecExpr *expr);
   virtual std::string toString() const;
+
+  coords::VecExpr* getExpr() const {
+    return this->expr_;
+  };
+
   bool operator==(const VecParenExpr &other) const {
-      return (clang_stmt_ == other.clang_stmt_);
+    return this->state_ == other.state_;
   }
   protected:
     coords::VecExpr *expr_;
 };
 
-class FloatParenExpr : public FloatExpr {
+class ScalarParenExpr : public ScalarExpr {
   public:
-  FloatParenExpr(const ast::FloatParenExpr *flt, clang::ASTContext *c, coords::FloatExpr *expr);
-  const coords::FloatExpr *getFloatExpr() const; 
+  ScalarParenExpr(coords::ScalarExpr *expr);
   virtual std::string toString() const;
-  bool operator==(const FloatParenExpr &other) const {
-      return (clang_stmt_ == other.clang_stmt_);
+
+  coords::ScalarExpr* getExpr() const {
+    return this->expr_;
+  };
+
+  bool operator==(const ScalarParenExpr &other) const {
+    return this->state_ == other.state_;
   }
   protected:
-    coords::FloatExpr *expr_;
+    coords::ScalarExpr *expr_;
 };
 
 
@@ -219,58 +255,50 @@ class FloatParenExpr : public FloatExpr {
 ********/
 
 enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
-enum FloatCtorType { FLOAT_CTOR_LIT, FLOAT_CTOR_EXPR, FLOAT_CTOR_VAR };
+enum ScalarCtorType { FLOAT_CTOR_LIT, FLOAT_CTOR_EXPR, FLOAT_CTOR_VAR };
 
 // Superclass. Abstract
 class Vector : public VecExpr {
 public:
-  Vector(const ast::Vector *vec, clang::ASTContext *c, coords::VectorCtorType tag);
-  const ast::Vector *getVector() const;
+  Vector(coords::VectorCtorType tag);
   VectorCtorType getVectorType();
   virtual std::string toString() const;
   bool operator==(const Vector &other) const {
-    return (clang_stmt_ == other.clang_stmt_);
+    return this->state_ == other.state_;
   }
 protected:
   const VectorCtorType tag_;
 };
 
-class Float : public FloatExpr {
+class Scalar : public ScalarExpr {
 public:
-  Float(const ast::Float *vec, clang::ASTContext *c, coords::FloatCtorType tag);
-  const ast::Float *getFloat() const;
-  FloatCtorType getFloatType();
+  Scalar(coords::ScalarCtorType tag);
+  ScalarCtorType getScalarType();
   virtual std::string toString() const;
-  bool operator==(const Float &other) const {
-    return (clang_stmt_ == other.clang_stmt_);
+  bool operator==(const Scalar &other) const {
+    return this->state_ == other.state_;
   }
 protected:
-  const FloatCtorType tag_;
+  const ScalarCtorType tag_;
 };
 
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
 public:
-  Vector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c, ast::Scalar x, ast::Scalar y, ast::Scalar z);
+  Vector_Lit();
   virtual std::string toString() const;
-private:
-  ast::Scalar x_;
-  ast::Scalar y_;
-  ast::Scalar z_;
 };
 
-class Float_Lit : public Float {
+class Scalar_Lit : public Scalar {
 public:
-  Float_Lit(const ast::Float_Lit *ast, clang::ASTContext *c, ast::Scalar scalar);
+  Scalar_Lit();
   virtual std::string toString() const;
-private:
-  ast::Scalar scalar_;
 };
 
 
 class Vector_Var : public Vector {
 public:
-  Vector_Var(const ast::Vector_Var *ast, clang::ASTContext *c, coords::VecVarExpr *expr);
+  Vector_Var(coords::VecVarExpr *expr);
   virtual std::string toString() const;
   VecVarExpr *getVecVarExpr();
 private:
@@ -278,20 +306,20 @@ private:
 };
 
 
-class Float_Var : public Float {
+class Scalar_Var : public Scalar {
 public:
-  Float_Var(const ast::Float_Var *ast, clang::ASTContext *c, coords::FloatVarExpr *expr);
+  Scalar_Var(coords::ScalarVarExpr *expr);
   virtual std::string toString() const;
-  FloatVarExpr *getFloatVarExpr();
+  ScalarVarExpr *getScalarVarExpr();
 private:
-  FloatVarExpr *expr_;
+  ScalarVarExpr *expr_;
 };
 
 
 // TODO: change name to VecVecAddExpr?
 class Vector_Expr : public Vector {
 public:
-  Vector_Expr(const ast::Vector_Expr *ast, clang::ASTContext *c, coords::VecExpr *expr);
+  Vector_Expr(coords::VecExpr *expr);
   virtual std::string toString() const;
   Vector_Expr *getVector_Expr();
 private:
@@ -299,13 +327,13 @@ private:
 };
 
 
-class Float_Expr : public Float {
+class Scalar_Expr : public Scalar {
 public:
-  Float_Expr(const ast::Float_Expr *ast, clang::ASTContext *c, coords::FloatExpr *expr);
+  Scalar_Expr(coords::ScalarExpr *expr);
   virtual std::string toString() const;
-  Float_Expr *getFloat_Expr();
+  Scalar_Expr *getScalar_Expr();
 private:
-  FloatExpr *expr_;
+  ScalarExpr *expr_;
 };
 
 /****
@@ -314,62 +342,62 @@ private:
 
 class Vector_Def : public Coords {
 public:
-  Vector_Def(const ast::Vector_Def *def, clang::ASTContext *c, coords::VecIdent *id,
+  Vector_Def(coords::VecIdent *id,
              coords::VecExpr *expr);
   coords::VecIdent *getIdent() const;
   coords::VecExpr *getExpr() const;
   virtual std::string toString() const;
   bool operator==(const Vector_Def &other) const {
-    return (clang_decl_ == other.clang_decl_);
+    return this->state_ == other.state_;
   }
 private:
   VecIdent *id_;
   VecExpr *expr_;
 };
 
-class Float_Def : public Coords {
+class Scalar_Def : public Coords {
 public:
-  Float_Def(const ast::Float_Def *def, clang::ASTContext *c, coords::FloatIdent *id,
-             coords::FloatExpr *expr);
-  coords::FloatIdent *getIdent() const;
-  coords::FloatExpr *getExpr() const;
+  Scalar_Def(coords::ScalarIdent *id,
+             coords::ScalarExpr *expr);
+  coords::ScalarIdent *getIdent() const;
+  coords::ScalarExpr *getExpr() const;
   virtual std::string toString() const;
-  bool operator==(const Float_Def &other) const {
-    return (clang_decl_ == other.clang_decl_);
+  bool operator==(const Scalar_Def &other) const {
+    return this->state_ == other.state_;
   }
 private:
-  FloatIdent *id_;
-  FloatExpr *expr_;
+  ScalarIdent *id_;
+  ScalarExpr *expr_;
 };
 
 class Vector_Assign : public Coords {
 public:
-  Vector_Assign(const ast::Vector_Assign *Assign, clang::ASTContext *c, coords::VecVarExpr *id,
+  Vector_Assign(coords::VecVarExpr *id,
              coords::VecExpr *expr);
   coords::VecVarExpr *getVarExpr() const;
   coords::VecExpr *getExpr() const;
   virtual std::string toString() const;
   bool operator==(const Vector_Assign &other) const {
-    return (clang_decl_ == other.clang_decl_);
+    return this->state_ == other.state_;
   }
 private:
   VecVarExpr *id_;
   VecExpr *expr_;
 };
 
-class Float_Assign : public Coords {
+class Scalar_Assign : public Coords {
 public:
-  Float_Assign(const ast::Float_Assign *Assign, clang::ASTContext *c, coords::FloatVarExpr *id,
-             coords::FloatExpr *expr);
-  coords::FloatVarExpr *getVarExpr() const;
-  coords::FloatExpr *getExpr() const;
+  Scalar_Assign(coords::ScalarVarExpr *id,
+             coords::ScalarExpr *expr);
+  coords::ScalarVarExpr *getVarExpr() const;
+  coords::ScalarExpr *getExpr() const;
   virtual std::string toString() const;
-  bool operator==(const Float_Assign &other) const {
-    return (clang_decl_ == other.clang_decl_);
+  bool operator==(const Scalar_Assign &other) const {
+    return this->state_ == other.state_;
   }
 private:
-  FloatVarExpr *id_;
-  FloatExpr *expr_;
+  ScalarVarExpr *id_;
+  ScalarExpr *expr_;
 };
 
 } // namespace coords
