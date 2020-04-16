@@ -1,6 +1,8 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 
+#include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/Frontend/CompilerInstance.h"
@@ -11,10 +13,14 @@
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/raw_ostream.h"
 
+#include "llvm/Support/Casting.h"
+
 
 #include "Interpretation.h"
 #include "Checker.h"
 
+#include "MainMatcher.h"
+//#include "ASTParse/VectorExprMatcher.h"
 
 /*
 Hack to get g3log working. Should be in std in c++14 and later libraries.
@@ -29,8 +35,8 @@ namespace std
 }
 
 #include <memory>
-//#include <g3log/g3log.hpp>
-//#include <g3log/logworker.hpp>
+#include <g3log/g3log.hpp>
+#include <g3log/logworker.hpp>
 
 using namespace std;
 using namespace llvm;
@@ -39,6 +45,12 @@ using namespace clang::ast_matchers;
 using namespace clang::driver;
 using namespace clang::tooling;
 
+interp::Interpretation* interp_;
+clang::ASTContext *context_;
+MainMatcher *programMatcher_;
+Rewriter* constraintWriter;
+bool rewriteMode;
+
 
 /*
 Architectural decision: Main parser should deal in AST nodes only,
@@ -46,368 +58,204 @@ and call interpretation module to handle all other work. Do not use
 coords, interp, domain objects.
 */
 
+/**************************************
+ * This implments a portion of the "RecursiveASTVisitor" interface of Clang
+ * It is used to recursively search an AST during the FrontendAction and determine where the program needs to add constraints.
+ * This will get instantiated after the AST is initially parsed and types are added/inferred
+ * Specifically, we're adding in constraints/logging code where we don't have any assigned type
+ * ***********************************/
+
+class RewriteASTVisitor : public RecursiveASTVisitor<RewriteASTVisitor>
+{
+public:
+  RewriteASTVisitor(ASTContext& ctxt) : RecursiveASTVisitor<RewriteASTVisitor>(), ctxt_{&ctxt} {}
+
+
+  void AddConstraint(Stmt* stmt, VarDecl* decl)
+  {
+    if(stmt){
+      auto fullLoc = this->ctxt_->getFullLoc(stmt->getSourceRange().getBegin());
+      auto fullLocEnd = this->ctxt_->getFullLoc(stmt->getSourceRange().getEnd());
+      auto newSourceLoc = this->ctxt_->getSourceManager().translateFileLineCol(fullLoc.getFileEntry(), fullLocEnd.getSpellingLineNumber() + 1, fullLoc.getSpellingColumnNumber());
+      auto logStr = "\"Detected reference or declaraction of physical variable without type provided ( IDENTIFIER: " + decl->getNameAsString() + ") with value : \" +  std::to_string(" + decl->getNameAsString() + ")";
+
+      constraintWriter->InsertText(newSourceLoc, "\nLOG(INFO) << " + logStr + ";\n");
+    }
+    else{
+      //log
+    }
+  }
+  void AddConstraint(VarDecl* decl)
+  {
+    if(decl){
+      auto declStmt = const_cast<Stmt*>(this->ctxt_->getParents(*decl)[0].get<Stmt>());
+      AddConstraint(declStmt, decl);
+    }
+    else{
+      //log
+    }
+  }
+
+  //instantiate g3 in the main method
+  void AddLoggingHeader(Stmt* stmt)
+  {
+    if(stmt){
+      std::string initLogStr = "using namespace g3;";
+      initLogStr +=  "auto worker = g3::LogWorker::createLogWorker();";
+      initLogStr += "std::string logFile = \"Peirce.log\";std::string logDir = \".\";";
+      initLogStr += "auto defaultHandler = worker->addDefaultLogger(logFile, logDir);";
+      initLogStr += "g3::initializeLogging(worker.get());";
+      auto fullLoc = this->ctxt_->getFullLoc(stmt->getSourceRange().getBegin());
+      auto newSourceLoc = this->ctxt_->getSourceManager().translateFileLineCol(fullLoc.getFileEntry(), fullLoc.getSpellingLineNumber() + 1, fullLoc.getSpellingColumnNumber());
+     
+      constraintWriter->InsertText(newSourceLoc, "\n" + initLogStr +"\n");
+      
+    }
+    else{
+      //log
+    }
+  }
+
+  //add a header to the top of the .cpp file to include all the necessary logging headers
+  void AddLoggingInclude(Decl* decl)
+  {
+      auto mf_id = this->ctxt_->getSourceManager().getMainFileID();
+      auto newSourceLoc = this->ctxt_->getSourceManager().translateLineCol(mf_id, 1, 1);
+     
+      constraintWriter->InsertText(newSourceLoc, "\n#include <g3log/g3log.hpp>\n#include <g3log/logworker.hpp>\n#include <string>\n");
+      
+  }
+
+  //overridden callback from bass class
+  //this method will trigger everytime the traversal hits a declaraction
+  //we check if the decl needs a constraint, if so, insert it
+  bool VisitDecl(Decl* decl)
+  {
+
+    if(decl and isa<TranslationUnitDecl>(decl))
+    {
+      AddLoggingInclude(decl);
+    }
+
+    if(auto vd = dyn_cast<VarDecl>(decl))
+    {
+
+      bool needsConstraint = interp_->needsConstraint(vd);
+      if(needsConstraint)
+      {
+        AddConstraint(vd);
+      }
+    }
+
+    return true;
+  }
+
+  //another overridden callback
+  //this will primarily check to see if the current AST node is a DeclRefExpr...if so, get it's corresponding declaraction
+  //if that declaration needs a constraint, add some logging to the DeclRefExpr
+  bool VisitStmt(Stmt* stmt)
+  {
+
+
+    if(stmt and isa<CompoundStmt>(stmt))
+    {
+      
+      auto parentDecl = this->ctxt_->getParents(*stmt)[0].get<FunctionDecl>();
+
+      if(parentDecl and parentDecl->isMain())
+      {
+        AddLoggingHeader(stmt);
+      }
+    }
+
+    if(stmt and isa<DeclRefExpr>(stmt))
+    {
+
+      if(auto vd = dyn_cast<VarDecl>(dyn_cast<DeclRefExpr>(stmt)->getDecl()))
+      {
+
+        if(interp_->needsConstraint(vd))
+        {
+          auto parents = this->ctxt_->getParents(*stmt);
+          Stmt* current = stmt;
+          const CompoundStmt* cmpd = nullptr;
+          while(!(cmpd = parents[0].get<CompoundStmt>())){
+            current = const_cast<Stmt*>(parents[0].get<Stmt>());
+            if(current){
+              parents = this->ctxt_->getParents(*current);
+            }
+            else{
+              parents = this->ctxt_->getParents(*const_cast<Decl*>(parents[0].get<Decl>()));
+            }
+          }
+          AddConstraint(current, vd);
+        }
+      }
+    }
+
+    return true;
+  }
+private:
+  ASTContext* ctxt_;
+
+};
+
+
+/**************************************
+ * This will get initialized by the Frontend Action Tool IF the tool is set to "Rewrite Mode"
+ * Rewrite mode should be set after the AST is parsed and types have been applied by the oracle and/or inferred
+ * This is essentially the entry point for the RecursiveASTVisitor, which crawls through the AST and adds constraints.
+ * ***********************************/
+
+class RewriteASTConsumer : public ASTConsumer
+{
+public:
+  void HandleTranslationUnit(ASTContext &context) override 
+  {
+    //this begins with a recursive traversal of the AST, 
+    RewriteASTVisitor visitor{context};
+    visitor.TraverseDecl(context.getTranslationUnitDecl());
+
+    auto mf_id = context.getSourceManager().getMainFileID();
+    auto entry = context.getFullLoc(context.getSourceManager().getLocForStartOfFile(mf_id)).getFileEntry();
+
+
+    //clang will buffer all inserted text during the AST traversal.
+    //this "rewrite buffer" will only exist if a constraint was added
+    auto *rewriter = constraintWriter->getRewriteBufferFor(mf_id);//returns null if no modification to source
+
+    if(rewriter){
+      //llvm::outs() << string(rewriter->begin(), rewriter->end());
+      std::cout<<"Writing file..."<<entry->getName().str()<<std::endl;
+      std::ofstream logcode;
+      auto entryName = entry->getName().str();
+      auto split = entryName.find_last_of('/');
+      auto fname = entryName.substr(0, split+1) + "log_" + entryName.substr(split+1);
+      logcode.open (fname, std::ofstream::out);
+      logcode << string(rewriter->begin(), rewriter->end());
+      logcode.close();
+      std::cout<<"Done writing file "<<fname<<std::endl;
+
+    }
+
+
+  }
+};
+
 /***************************************
-Data structure instantiated by this tool
+This will get instantiated by the Frontend Action Tool. It contains the entry point for the first pass through the program via the FrontendAction.
+This will initiate a traversal of the AST which will build the virtual AST representation (Coords, Domain, Interp)
 ****************************************/
-
-interp::Interpretation* interp_;
-clang::ASTContext *context_;
-
-// TODO: Decide whether we should pass context to interpretation.
-// Answer is probably yes. Not currently being done.
-
-// A vector literal is a constructor node applied to scalar args.
-// There is no subordinate expression as there is when the value
-// is given by an expression.
-//
-class HandlerForCXXConstructLitExpr : public MatchFinder::MatchCallback
-{
-public:
-  virtual void run(const MatchFinder::MatchResult &Result)
-  {
-    //LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Start.\n";
-    const clang::CXXConstructExpr *lit_ast = 
-      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLitExpr");
-
-    // TODO: Get actual coordinates from AST
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    
-    interp_->mkVector_Lit(lit_ast, x, y, z);
-    //LOG(DEBUG) <<"main::HandlerForCXXConstructLitExpr::run. Done.\n";
-  }
-};
-
-/*******************************
- * Handle Member Call Expression
- *******************************/
-
-//Forward-reference handlers for member (left) and argument (expressions) of add application
-void handle_member_expr_of_add_call(const clang::Expr *left);
-void handle_arg0_of_add_call(const clang::Expr *right);
-
-void handleMemberCallExpr(const CXXMemberCallExpr *ast)
-{
-  //LOG(DEBUG) <<"main::handleMemberCallExpr: Start, recurse on mem and arg\n";
-  const clang::Expr *mem_ast = ast->getImplicitObjectArgument();
-  const clang::Expr *arg_ast = ast->getArg(0);
-  if (!mem_ast || !arg_ast) {
-    //LOG(FATAL) <<"main::handleMemberCallExpr. Null pointer error.\n";
-    return;
-  }
-  handle_member_expr_of_add_call(mem_ast);
-  handle_arg0_of_add_call(arg_ast);
-  interp_->mkVecVecAddExpr(ast, mem_ast, arg_ast);
-  //LOG(DEBUG) <<"main::handleMemberCallExpr: Done.\n";
-}
-
-/*
-TODO: CONSIDER inlining this code?
-*/
-class HandlerForCXXMemberCallExprRight_DeclRefExpr : public MatchFinder::MatchCallback
-{
-public:
-  virtual void run(const MatchFinder::MatchResult &Result)
-  {
-    const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-    //LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Start. DeclRefExpr = " << std::hex << declRefExpr_ast << "\n";
-    interp_->mkVecVarExpr(declRefExpr_ast);
-    //LOG(DEBUG) <<"main::HandlerForCXXMemberCallExprRight_DeclRefExpr: Done.\n";
-  }
-};
-
-class HandlerForCXXConstructVecVarExpr : public MatchFinder::MatchCallback
-{
-public:
-  virtual void run(const MatchFinder::MatchResult &Result)
-  {
-    const CXXConstructExpr *ctor_ast = 
-      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VecVarExpr4");
-    const auto *declRefExpr_ast = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VecVarExpr2");
-    //LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Start. VecVarExpr = " << std::hex << declRefExpr_ast << "\n";
-    if(ctor_ast and declRefExpr_ast and !(ctor_ast->getNumArgs() == 3)){
-      interp_->mkVecVarExpr(declRefExpr_ast);
-      interp_->mkVector_Expr(ctor_ast, declRefExpr_ast); //????
-    }
-    //LOG(DEBUG) <<"main::HandlerForCXXVecVarExpr: Done.\n";
-  }
-};
-
-
-
-// CXXMemberCallExpr is CXXMemberCallExprLeft + CXXMemberCallExprRight
-class HandlerForCXXAddMemberCall : public MatchFinder::MatchCallback
-{
-public:
-  //  Get left and right children of add expression and handle them by calls to other handlers
-  virtual void run(const MatchFinder::MatchResult &Result)
-  {
-    const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
-    if (memcall == NULL)
-    {
-      //LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
-      return;
-    }
-    handleMemberCallExpr(memcall);
-  }
-};
-
-// AddMemberParenExpr is: "(" some expression ")"
-class HandlerForAddMemberParen : public MatchFinder::MatchCallback
-{
-public:
-  //  Get left and right children of add expression and handle them by calls to other handlers
-  virtual void run(const MatchFinder::MatchResult &Result)
-  {
-    const ParenExpr *memparen = Result.Nodes.getNodeAs<clang::ParenExpr>("ParenExpr");
-    if (memparen == NULL)
-    {
-      //LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
-      return;
-    }
-    const CXXMemberCallExpr *memcall = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
-    if (memcall == NULL)
-    {
-      //LOG(FATAL) <<"main::HandlerForCXXAddMemberCall::run: null memcall\n";
-      return;
-    }
-    handleMemberCallExpr(memcall);
-    interp_->mkVecParenExpr(memparen, memcall);
-  }
-};
-/*
-A Vector object constructed from a member expression
-- Extract member expression on left, value expression on right
-- Recursively handle each to give each an interpretation
-- Finally give top-level node an interpretation
-*/
-class HandlerForCXXConstructAddExpr : public MatchFinder::MatchCallback
-{
-public:
-  virtual void run(const MatchFinder::MatchResult &Result)
-  {
-    const CXXConstructExpr *ctor_ast = 
-      Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorConstructAddExpr");
-    if (ctor_ast == NULL)
-    {
-      //LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No constructor pointer\n";
-      return;
-    }
-    //LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: START. CXXConstructExpr is:\n";
-
-    const CXXMemberCallExpr *vec_vec_add_member_call_ast =
-        Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("MemberCallExpr");
-    if (vec_vec_add_member_call_ast == NULL)
-    {
-      //LOG(FATAL) <<"Error in HandlerForCXXConstructAddExpr::run. No add expression pointer\n";
-      return;
-    }
-    handleMemberCallExpr(vec_vec_add_member_call_ast);
-    //LOG(DEBUG) <<"main::HandlerForCXXConstructAddExpr: Done.\n";
-    interp_->mkVector_Expr(ctor_ast, vec_vec_add_member_call_ast);
-  }
-};
-
-/*
-In a member call, m.f(a), m is a member expression and a is an
-argument expression. Each can take one of seeral forms. Each can
-be either a variable expression or another call expression. Here
-is where we do this case analysis. 
-*/
-class CXXMemberCallExprArg0Matcher
-{
-public:
-  CXXMemberCallExprArg0Matcher()
-  {
-    // case: arg0 is a variable declaration reference expression
-    // action: invoke dre_handler_::run as a match finder action
-    const StatementMatcher DeclRefExprPattern = declRefExpr().bind("DeclRefExpr");
-    CXXMemberCallExprArg0Matcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
-    //
-    // case: arg0 is a cxx member call expression
-    // action: invoke addHandler_::run as a match finder action
-    const StatementMatcher CXXMemberCallExprPattern = cxxMemberCallExpr().bind("MemberCallExpr");
-    CXXMemberCallExprArg0Matcher_.addMatcher(CXXMemberCallExprPattern, &mce_handler_);
-  }
-  void match(const clang::Expr &call_rhs)
-  {
-    //LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match start\n";
-    CXXMemberCallExprArg0Matcher_.match(call_rhs, *context_);
-    //LOG(DEBUG) <<"CXXMemberCallExprArg0Matcher::match finish\n";
-  }
-private:
-  MatchFinder CXXMemberCallExprArg0Matcher_;
-  HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
-  HandlerForCXXAddMemberCall mce_handler_;
-};
-
-
-// Handle the single argument to an add application 
-// TODO: Not handling all possible cases, e.g., literal
-//
-void handle_arg0_of_add_call(const clang::Expr *arg)
-{
-  //LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. START matcher for AST node:\n";
-  CXXMemberCallExprArg0Matcher call_right_arg0_matcher; 
-  call_right_arg0_matcher.match(*arg); 
-  //LOG(DEBUG) <<"domain::VecExpr *handle_arg0_of_add_call. Done.\n";
-}
-
-/*
-Member expression could be variable or function application
-*/
-class CXXMemberCallExprMemberExprMatcher
-{
-public:
-  CXXMemberCallExprMemberExprMatcher()
-  {
-    // Member expression is a variable expression
-    //
-    const StatementMatcher DeclRefExprPattern = declRefExpr().bind("DeclRefExpr");
-    CXXMemberCallExprMemberExprMatcher_.addMatcher(DeclRefExprPattern, &dre_handler_);
-
-    // Member expression is a paren expression with some child expression inside
-    //
-    /* KEVIN: THE PROBLEM IS RIGHT HERE.
-    This is an anti-pattern, in which we pass only the child node of a given AST node
-    to be interpreted. The problem is that an invariant is violated, which is that after
-    handling of the mem and arg ast nodes, the top-level mem node is no interpreted, but
-    only the child member call expr node that we're handing off here to the handler. The
-    solution, I think, will be for higher-level matching to strip the parens so that we
-    never see a parenthesized expression at this level. INVARIANT: We must always create 
-    an interpretation for the AST node we're given, not just for one of its children.
-    */
-    const StatementMatcher ParenCXXMemberCallExprPattern = 
-      parenExpr(hasDescendant(cxxMemberCallExpr().bind("MemberCallExpr"))).bind("ParenExpr");
-    CXXMemberCallExprMemberExprMatcher_.addMatcher(ParenCXXMemberCallExprPattern, &mpe_handler_);
-
-    // Member expression a member call expression
-    // TODO: We don't currently select for add calls, in particular, need to refine predicate
-    //
-    const StatementMatcher CXXMemberCallExprPattern = cxxMemberCallExpr().bind("MemberCallExpr");
-    CXXMemberCallExprMemberExprMatcher_.addMatcher(CXXMemberCallExprPattern, &mce_handler_);
-  }
-  void match(const clang::Expr &call_rhs)
-  {
-    //LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. START matching. AST is:\n";
-    CXXMemberCallExprMemberExprMatcher_.match(call_rhs, *context_);
-    //LOG(DEBUG) <<"main::CXXMemberCallExprMemberExprMatcher. DONE matching.\n";
-  }
-private:
-  MatchFinder CXXMemberCallExprMemberExprMatcher_;
-  HandlerForCXXMemberCallExprRight_DeclRefExpr dre_handler_;
-  HandlerForCXXAddMemberCall mce_handler_;
-  HandlerForAddMemberParen mpe_handler_;
-};
-
-/*
-TODO: Inline? Looks like we can.
-*/
-void handle_member_expr_of_add_call(const clang::Expr *memexpr)
-{
-  //LOG(DEBUG) <<"main::handle_member_expr_of_add_call\n";
-  if (memexpr == NULL)
-  {
-    //LOG(FATAL) <<"main::handle_member_expr_of_add_call: Error.Null argument\n";
-  }
-  CXXMemberCallExprMemberExprMatcher call_expr_mem_expr_matcher;
-  call_expr_mem_expr_matcher.match(*memexpr);
-  //LOG(DEBUG) <<"main::handle_member_expr_of_add_call. Done. \n";
- }
-
-
-/*
-A CXXConstructExpr is used to construct a vector object from
-either a literal or from a vector expression. Here we do this
-case analysis and dispatch accordingly.
-*/
-class CXXConstructExprMatcher
-{
-public:
-  CXXConstructExprMatcher()
-  {
-    const StatementMatcher litMatcher = cxxConstructExpr(argumentCountIs(3))
-      .bind("VectorLitExpr");
-    CXXConstructExprMatcher_.addMatcher(litMatcher, &litHandler_);
-/*
-    const StatementMatcher exprMatcher = declRefExpr().bind("VecVarExpr");
-    CXXConstructExprMatcher_.addMatcher(exprMatcher, &vecVarHandler_); 
-    const StatementMatcher exprMatcher2 = atomicExpr().bind("VecVarExpr");
-    CXXConstructExprMatcher_.addMatcher(exprMatcher, &vecVarHandler_);
-    const StatementMatcher exprMatcher3 = constantExpr().bind("VecVarExpr");
-    CXXConstructExprMatcher_.addMatcher(exprMatcher, &vecVarHandler_);*/
-    
-    const StatementMatcher exprMatcher4 = cxxConstructExpr(hasDescendant(declRefExpr().bind("VecVarExpr2"))).bind("VecVarExpr4");
-    CXXConstructExprMatcher_.addMatcher(exprMatcher4, &vecVarHandler_);
-    
-    /*
-    const StatementMatcher addOpMatcher =
-        cxxConstructExpr(hasDescendant(cxxMemberCallExpr(
-                         hasDescendant(memberExpr(
-                         hasDeclaration(namedDecl(hasName("vec_add"))))))
-          .bind("MemberCallExpr")))
-          .bind("VectorConstructAddExpr");
-    CXXConstructExprMatcher_.addMatcher(addOpMatcher, &addHandler_);*/
-  };
-  void match(const clang::CXXConstructExpr *consdecl)
-  {
-    CXXConstructExprMatcher_.match(*consdecl, *context_);
-  }
-private:
-  MatchFinder CXXConstructExprMatcher_;
-  HandlerForCXXConstructLitExpr litHandler_;
-  HandlerForCXXConstructAddExpr addHandler_;
-  HandlerForCXXConstructVecVarExpr vecVarHandler_;
-};
-
-
-/*
-A vector declaration statement binds a vector-typed
-identifier to a constructed vector object. This method
-is invoked for each such declaration. It first builds
-an interpretation for the identifier, then for the 
-expression, and finally for the binding.
-*/
-
-class VectorDeclStmtHandler : public MatchFinder::MatchCallback
-{
-public:
-  virtual void run(const MatchFinder::MatchResult &Result)
-  {
-    const clang::DeclStmt *declstmt = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
-    const clang::CXXConstructExpr *consdecl = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
-    const clang::VarDecl *vardecl = Result.Nodes.getNodeAs<clang::VarDecl>("VarDecl");
-    //LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: START. AST (dump) is \n"; 
-    interp_->mkVecIdent(vardecl);
-    CXXConstructExprMatcher matcher;
-    matcher.match(consdecl);
-    interp_->mkVector_Def(declstmt, vardecl, consdecl);
-    //LOG(DEBUG) <<"main::VectorDeclStmtHandler::run: Done.\n"; 
-    }
-};
-
-/********************************************
- * Top-level analyzer: Match Vector DeclStmts
- ********************************************/
 
 class MyASTConsumer : public ASTConsumer
 {
 public:
-  MyASTConsumer()
-  {
-    StatementMatcher match_Vector_general_decl =
-        declStmt(hasDescendant(varDecl(hasDescendant(cxxConstructExpr(hasType(asString("class Vec"))).bind("CXXConstructExpr"))).bind("VarDecl"))).bind("VectorDeclStatement");
-    VectorDeclStmtMatcher.addMatcher(match_Vector_general_decl, &HandlerForVectorDeclStmt);
-  }
+  MyASTConsumer(){}
   void HandleTranslationUnit(ASTContext &context) override
   {
-    VectorDeclStmtMatcher.matchAST(context);
+    programMatcher_->search();
+    programMatcher_->start();
   }
-
-private:
-  MatchFinder VectorDeclStmtMatcher;
-  VectorDeclStmtHandler HandlerForVectorDeclStmt;
 };
 
 /*******************************
@@ -417,7 +265,7 @@ private:
 class MyFrontendAction : public ASTFrontendAction
 {
 public:
-  MyFrontendAction() {}
+  MyFrontendAction() : constraintWriterMode{false} {}
   void EndSourceFileAction() override
   {
     //bool consistent = interp_.isConsistent();
@@ -426,12 +274,29 @@ public:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
-    //LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
-    context_ = &CI.getASTContext();
-    interp_->setASTContext(context_);
-    return llvm::make_unique<MyASTConsumer>(); 
+    LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
+    if(!rewriteMode)
+    {
+      context_ = &CI.getASTContext();
+      interp_->setASTContext(context_);
+      programMatcher_ = new MainMatcher(context_, interp_);
+      return llvm::make_unique<MyASTConsumer>(); 
+    }
+    else{
+      constraintWriter = new Rewriter();
+      constraintWriter->setSourceMgr(CI.getASTContext().getSourceManager(), CI.getLangOpts());
+      return llvm::make_unique<RewriteASTConsumer>();
+    }
   }
+
+  void EnableConstraintWriter(){
+    this->constraintWriterMode = true;
+  }
+
+private:
+  bool constraintWriterMode;
 };
+
 
 /*****
 * Main
@@ -450,38 +315,69 @@ int main(int argc, const char **argv)
   CommonOptionsParser op(argc, argv, MyToolCategory);
   ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
-  //using namespace g3;
+  using namespace g3;
   std::string logFile = "Peirce.log";
   std::string logDir = ".";
-  //auto worker = LogWorker::createLogWorker();
-  //auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
-  //g3::initializeLogging(worker.get());
+  auto worker = LogWorker::createLogWorker();
+  auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
+  g3::initializeLogging(worker.get());
 
   interp_ = new interp::Interpretation();   // default oracle
   
   //interp_->addSpace("_");
   interp_->addSpace("time");
   interp_->addSpace("geom");
-  
-  Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
-  //interp_->setAll_Spaces();
+
+
+  //creates a "ToolAction" unique pointer object
+  auto toolAction = newFrontendActionFactory<MyFrontendAction>()  ;
+
+  Tool.run(toolAction.get() );
+
+  //maps the parsed AST into indices for printing and editing for the user
   interp_->mkVarTable();
+  //prints all variables that can be assigned
   interp_->printVarTable();
+  //enters a while loop allowing user to select variables to edit or exit and perform inference
   interp_->updateVarTable();
 
 
   cout <<"Spaces\n";
   cout <<interp_->toString_Spaces();
-  cout <<"\nIdentifiers\n";
+  cout <<"\nVector Identifiers\n";
   cout <<interp_->toString_Idents(); 
-  cout <<"\nExpressions\n";
+  cout <<"\nVector Expressions\n";
   cout <<interp_->toString_Exprs();
   cout <<"\nVectors\n";
   cout <<interp_->toString_Vectors();
-  cout <<"\nDefinitions\n"; 
+  cout <<"\nVector Definitions\n"; 
   cout <<interp_->toString_Defs();
-  cout << "\n";
+  cout << "\nVector Assignments\n";
+  cout <<interp_->toString_Assigns();
 
+  cout <<"Scalar Identifiers\n";
+  cout <<interp_->toString_ScalarIdents();
+  cout <<"\nScalar Expressions\n";
+  cout <<interp_->toString_ScalarExprs();
+  cout <<"\nScalars\n";
+  cout <<interp_->toString_Scalars();
+  cout <<"\nScalar Definitions\n";
+  cout <<interp_->toString_ScalarDefs();
+  cout << "\nScalar Assignments\n";
+  cout <<interp_->toString_ScalarAssigns();
+
+
+//THE ORDER YOU RUN THE CHECKER AND THE REWRITE-PASS MATTERS. 
+//Not only does Tool.run change/lose state on entry, but also on exit
+ 
+ //this runs the lean type inference
   Checker *checker = new Checker(interp_);
   checker->Check();
+  
+  //Determines which variables can have a type assigned to them. If no type is assigned, we need to log/build constraints for these at runtime
+  interp_->buildTypedDeclList();
+  //Re-run the tool, this time, build all the runtime constraints and logging.
+  rewriteMode = true;
+  Tool.run(toolAction.get());
+  
 }

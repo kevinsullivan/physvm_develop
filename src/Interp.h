@@ -1,8 +1,6 @@
 #ifndef INTERP_H
 #define INTERP_H
 
-#include "clang/AST/AST.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
 #include <cstddef>
 #include <iostream> // for cheap logging only
 
@@ -15,6 +13,7 @@ namespace interp
 
 class VecIdent;
 class VecExpr;
+
 class VecVarExpr;
 class VecVecAddExpr;
 class Vector;
@@ -22,13 +21,37 @@ class Vector_Lit;
 class Vector_Var;
 class Vector_Expr;
 class Vector_Def;
+class Vector_Assign;
+
+class ScalarIdent;
+class ScalarExpr;
+
+class ScalarVarExpr;
+class VecScalarMulExpr;
+
+class Scalar;
+class Scalar_Lit;
+class Scalar_Var;
+class Scalar_Expr;
+class Scalar_Def;
+class Scalar_Assign;
+
+
+class VecParenExpr;
+class ScalarParenExpr;
 
 enum domType
 {
   dom_vecIdent_type,
   dom_vecExpr_type,
   dom_vector_type,
-  dom_vector_def_type
+  dom_vector_def_type,
+  dom_vector_assign_type,
+  dom_floatIdent_type,
+  dom_floatExpr_type,
+  dom_float_type,
+  dom_float_def_type,
+  dom_float_assign_type
 };
 
 class Interp
@@ -38,6 +61,13 @@ public:
   Interp(coords::VecExpr *c, domain::VecExpr *d);
   Interp(coords::Vector *c, domain::Vector *d);
   Interp(coords::Vector_Def *c, domain::Vector_Def *d);
+  Interp(coords::Vector_Assign *c, domain::Vector_Assign *d);
+
+  Interp(coords::ScalarIdent *c, domain::ScalarIdent *d);
+  Interp(coords::ScalarExpr *c, domain::ScalarExpr *d);
+  Interp(coords::Scalar *c, domain::Scalar *d);
+  Interp(coords::Scalar_Def *c, domain::Scalar_Def *d);
+  Interp(coords::Scalar_Assign *c, domain::Scalar_Assign *d);
   virtual std::string toString() const;
 
 protected:
@@ -48,6 +78,13 @@ protected:
   domain::VecExpr *expr_;
   domain::Vector *vector_;
   domain::Vector_Def *def_;
+  domain::Vector_Assign *assign_;
+
+  domain::ScalarIdent *float_ident_;
+  domain::ScalarExpr *float_expr_;
+  domain::Scalar *float_;
+  domain::Scalar_Def *float_def_;
+  domain::Scalar_Assign *float_assign_;
 };
 
 /*************************************************************
@@ -74,6 +111,18 @@ class VecIdent : public Interp
   }
 };
 
+class ScalarIdent : public Interp
+{
+  public:
+  ScalarIdent(coords::ScalarIdent *c, domain::ScalarIdent *d);
+  const clang::VarDecl *getVarDecl() const;
+  virtual std::string toString() const;
+  bool operator==(const ScalarIdent &other) const
+  {
+    return (ident_ == other.ident_);
+  }
+};
+
 /*****
  * Expr
  *****/
@@ -92,6 +141,19 @@ public:
   virtual std::string toString() const;
 };
 
+class ScalarExpr : public Interp
+{
+public:
+  ScalarExpr(coords::ScalarExpr *, domain::ScalarExpr *);
+  const ast::ScalarExpr *getExpr();
+  bool operator==(const ScalarExpr &other) const
+  {
+    return (expr_ == other.expr_);
+  }
+  virtual std::string toString() const;
+};
+
+
 class VecVarExpr : public VecExpr
 {
 public:
@@ -100,6 +162,16 @@ public:
   const coords::VecVarExpr *getVecVarCoords() const;
   virtual std::string toString() const;
 };
+
+class ScalarVarExpr : public ScalarExpr
+{
+public:
+  ScalarVarExpr(coords::ScalarVarExpr *, domain::ScalarVarExpr *);
+  const ast::ScalarVarExpr *getScalarVarExpr() const;
+  const coords::ScalarVarExpr *getScalarVarCoords() const;
+  virtual std::string toString() const;
+};
+
 
 // TODO: add accessors for left and right
 class VecVecAddExpr : public VecExpr
@@ -115,6 +187,46 @@ private:
   interp::Interp *arg_;
 };
 
+class ScalarScalarAddExpr : public ScalarExpr
+{
+public:
+  ScalarScalarAddExpr(coords::ScalarScalarAddExpr *, domain::ScalarScalarAddExpr *,
+                interp::Interp *lhs, interp::Interp *rhs);
+  const ast::ScalarScalarAddExpr *getScalarScalarAddExpr();
+  virtual std::string toString() const;
+
+private:
+  interp::Interp *lhs_;
+  interp::Interp *rhs_;
+};
+
+class ScalarScalarMulExpr : public ScalarExpr
+{
+public:
+  ScalarScalarMulExpr(coords::ScalarScalarMulExpr *, domain::ScalarScalarMulExpr *,
+                interp::Interp *lhs, interp::Interp *rhs);
+  const ast::ScalarScalarMulExpr *getScalarScalarMulExpr();
+  virtual std::string toString() const;
+
+private:
+  interp::Interp *lhs_;
+  interp::Interp *rhs_;
+};
+
+
+class VecScalarMulExpr : public VecExpr
+{
+public:
+  VecScalarMulExpr(coords::VecScalarMulExpr *, domain::VecScalarMulExpr *,
+                interp::Interp *vec, interp::Interp *flt);
+  const ast::VecScalarMulExpr *getVecScalarMulExpr();
+  virtual std::string toString() const;
+
+private:
+  interp::Interp *vec_;
+  interp::Interp *flt_;
+};
+
 class VecParenExpr : public VecExpr
 {
 public:
@@ -124,6 +236,17 @@ public:
 
 private:
   interp::VecExpr *paren_expr_;
+};
+
+class ScalarParenExpr : public ScalarExpr
+{
+public:
+  ScalarParenExpr(coords::ScalarParenExpr *, domain::ScalarParenExpr *, interp::ScalarExpr *expr_);
+  virtual std::string toString() const;
+  interp::ScalarExpr *getVector_Expr() const { return paren_expr_; }
+
+private:
+  interp::ScalarExpr *paren_expr_;
 };
 
 /*
@@ -138,6 +261,15 @@ public:
   virtual std::string toString() const;
 };
 
+class Scalar : public Interp
+{
+public:
+  Scalar(coords::Scalar *, domain::Scalar *); // tag?
+  const ast::Scalar *getScalar() const;
+  coords::ScalarCtorType getScalarType();
+  virtual std::string toString() const;
+};
+
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector
 {
@@ -146,12 +278,28 @@ public:
   virtual std::string toString() const;
 };
 
+class Scalar_Lit : public Scalar
+{
+public:
+  Scalar_Lit(coords::Scalar_Lit *, domain::Scalar_Lit *);
+  virtual std::string toString() const;
+};
+
+
 class Vector_Var : public Vector
 {
 public:
   Vector_Var(coords::Vector_Var *, domain::Vector_Var *);
   virtual std::string toString() const;
   //VecVarExpr *getVecVarExpr() const;
+};
+
+class Scalar_Var : public Scalar
+{
+public:
+  Scalar_Var(coords::Scalar_Var *, domain::Scalar_Var *);
+  virtual std::string toString() const;
+
 };
 
 // change name to VecVecAddExpr? Or generalize from that a bit.
@@ -164,6 +312,17 @@ public:
 
 private:
   interp::VecExpr *expr_interp_;
+};
+
+class Scalar_Expr : public Scalar
+{
+public:
+  Scalar_Expr(coords::Scalar_Expr *, domain::Scalar_Expr *, interp::ScalarExpr *expr_interp);
+  virtual std::string toString() const;
+  interp::ScalarExpr *getScalar_Expr() const { return expr_interp_; }
+
+private:
+  interp::ScalarExpr *expr_interp_;
 };
 
 /****
@@ -179,6 +338,39 @@ public:
 private:
   interp::VecIdent *id_;
   interp::Vector *vec_;
+};
+
+class Scalar_Def : public Interp
+{
+public:
+  Scalar_Def(coords::Scalar_Def *, domain::Scalar_Def *, interp::ScalarIdent *id, interp::Scalar *flt);
+  virtual std::string toString() const;
+
+private:
+  interp::ScalarIdent *id_;
+  interp::Scalar *flt_;
+};
+
+class Vector_Assign : public Interp
+{
+public:
+  Vector_Assign(coords::Vector_Assign *, domain::Vector_Assign *, interp::VecVarExpr *id, interp::VecExpr *ve);
+  virtual std::string toString() const;
+
+private:
+  interp::VecVarExpr *id_;
+  interp::VecExpr *vec_;
+};
+
+class Scalar_Assign : public Interp
+{
+public:
+  Scalar_Assign(coords::Scalar_Assign *, domain::Scalar_Assign *, interp::ScalarVarExpr *id, interp::ScalarExpr *flt);
+  virtual std::string toString() const;
+
+private:
+  interp::ScalarVarExpr *id_;
+  interp::ScalarExpr *flt_;
 };
 
 } // namespace interp

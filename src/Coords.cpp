@@ -1,6 +1,6 @@
 #include "Coords.h"
 
-//#include <g3log/g3log.hpp>
+#include <g3log/g3log.hpp>
 
 
 namespace coords {
@@ -19,46 +19,48 @@ expressions and objects.
 // clang::Decl unused by Peirce, here for generalizability
 //
 
-Coords::Coords(const clang::Stmt *stmt, clang::ASTContext *c) : 
-    ast_type_tag_(coords::CLANG_AST_STMT), clang_stmt_(stmt), context_(c)  {
-}
 
-Coords::Coords(const clang::Decl *decl, clang::ASTContext *c) : 
-    ast_type_tag_(coords::CLANG_AST_DECL), clang_decl_(decl), context_(c)  {
-}
+ASTState::ASTState(
+    std::string file_id,
+    std::string file_name,
+    std::string file_path,
+    std::string name,
+    int begin_line_no,
+    int begin_col_no,
+    int end_line_no,
+    int end_col_no
+  ) : file_id_{file_id}, file_name_{file_name}, file_path_{file_path}, name_{name}, begin_line_no_{begin_line_no}, begin_col_no_{begin_col_no}, end_line_no_{end_line_no}, end_col_no_{end_col_no} {}
 
-const clang::Stmt *Coords::getClangStmt() const { return clang_stmt_; }
-const clang::Decl *Coords::getClangDecl() const { return clang_decl_; }
+Coords::Coords(){
+}
 
 bool Coords::operator==(const Coords &other) const {
-    if (ast_type_tag_ == coords::CLANG_AST_STMT) {
-        return (clang_stmt_ == other.clang_stmt_);
-    }
-    else {  // ast_type_tag_ == coords::CLANG_AST_DECL
-        return (clang_decl_ == other.clang_decl_);
-    }
+    return this->state_ == other.state_;
 }
 
 std::string Coords::toString() const {
-    //LOG(FATAL) << "Coords::toString. Error. Should not be called. Abstract.\n";
+    LOG(FATAL) << "Coords::toString. Error. Should not be called. Abstract.\n";
     return NULL;
 }
 
 std::string Coords::getSourceLoc() const {
-    clang::FullSourceLoc FullLocation;
+    /*clang::FullSourceLoc FullLocation;
     if (ast_type_tag_ == CLANG_AST_STMT)
     {
-      //FullLocation = context_->getFullLoc(clang_stmt_->getBeginLoc());
+      FullLocation = context_->getFullLoc(clang_stmt_->getSourceRange().getEnd());
     } else {
-      //FullLocation = context_->getFullLoc(clang_decl_->getBeginLoc());
-
-      //uto p = clang_decl_->getBeginLoc();
-      //auto j = std::to_string(p.getLineNumber()); ;
-    }
-    std::string retval = "line ";
-    //retval += std::to_string(FullLocation.getSpellingLineNumber()); 
+      FullLocation = context_->getFullLoc(clang_decl_->getLocation());
+    }*/
+    //std::cout<<this->toString()<<std::endl;
+    std::string retval = "Begin: line ";
+    retval += std::to_string(this->state_->begin_line_no_); 
     retval +=  ", column ";
-    //retval +=  std::to_string(FullLocation.getSpellingColumnNumber());
+    retval +=  std::to_string(this->state_->begin_col_no_);
+    retval += " End: line ";
+    retval += std::to_string(this->state_->end_line_no_);
+    retval += ", column ";
+    retval += std::to_string(this->state_->end_col_no_);
+
     return retval;
 }
 
@@ -70,31 +72,39 @@ std::string Coords::getSourceLoc() const {
 * Ident
 ******/
 
-VecIdent::VecIdent(const clang::VarDecl *v, clang::ASTContext *c) : Coords(v, c) {}
-
-const clang::VarDecl *VecIdent::getVarDecl() const {
-    return static_cast<const clang::VarDecl*>(clang_decl_);  
-}
+VecIdent::VecIdent() : Coords() {}
 
 std::string VecIdent::toString() const { 
-    return getVarDecl()->getNameAsString(); 
+    return state_->name_;
 }
+
+
+ScalarIdent::ScalarIdent() : Coords() {}
+
+std::string ScalarIdent::toString() const { 
+    return  state_->name_;
+}
+
+
 
 /*****
 * Expr
 *****/
 
-
-VecExpr::VecExpr(const clang::Expr *v, clang::ASTContext *c) : Coords(v, c) {}
-
-const clang::Expr *VecExpr::getExpr() {
-    return static_cast<const clang::Expr*>(clang_stmt_);  
-}
+VecExpr::VecExpr() : Coords() {}
 
 std::string VecExpr::toString() const { 
+    LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
+    return NULL; 
+}
+
+ScalarExpr::ScalarExpr() : Coords() {}
+
+std::string ScalarExpr::toString() const { 
     //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
     return NULL; 
 }
+
 
 /*
 No such intermediate node in Clang AST.
@@ -102,24 +112,23 @@ Straight to CXXConstructExpr (Vector_Lit).
 Included here as stub for possible future use.
 class VecLitExpr : public VecExpr {}
 */
-VecVarExpr::VecVarExpr(const ast::VecVarExpr *d, clang::ASTContext *c) : VecExpr(d, c) {}
-
-const ast::VecVarExpr *VecVarExpr::getVecVarExpr() const {
-    return static_cast<const clang::DeclRefExpr*> (clang_stmt_);  
-}
+VecVarExpr::VecVarExpr() : VecExpr() {}
 
 std::string VecVarExpr::toString() const { 
-    return getVecVarExpr()->getDecl()->getNameAsString(); 
-  }
+    return state_->name_; 
+}
+
+
+ScalarVarExpr::ScalarVarExpr() : ScalarExpr() {}
+
+std::string ScalarVarExpr::toString() const { 
+    return state_->name_; 
+}
 
 
 VecVecAddExpr::VecVecAddExpr(
-    const clang::CXXMemberCallExpr *mce, clang::ASTContext *c, coords::VecExpr *mem, coords::VecExpr *arg) 
-        : VecExpr(mce, c), mem_(mem), arg_(arg) {
-}
-
-const ast::VecVecAddExpr *VecVecAddExpr::getVecVecAddExpr() {
-    return static_cast<const clang::CXXMemberCallExpr*> (clang_stmt_);  
+    coords::VecExpr *mem, coords::VecExpr *arg) 
+        : VecExpr(), mem_(mem), arg_(arg) {
 }
 
 std::string VecVecAddExpr::toString() const {
@@ -127,55 +136,130 @@ std::string VecVecAddExpr::toString() const {
 }
 
 
-VecParenExpr::VecParenExpr(const ast::VecParenExpr *ast, clang::ASTContext *c, coords::VecExpr *expr) 
-        : VecExpr(ast, c), expr_(expr) { 
+
+ // VecScalarMulExpr(const ast::VecScalarMulExpr *mce, clang::ASTContext *c, coords::ScalarExpr *flt, coords::VecExpr *vec);
+ // const ast::VecScalarMulExpr *getVecScalarMulExpr();
+VecScalarMulExpr::VecScalarMulExpr(
+    coords::ScalarExpr *flt, coords::VecExpr *vec) 
+        : VecExpr(), flt_(flt), vec_(vec) {
 }
 
-const coords::VecExpr *VecParenExpr::getVecExpr() const { return expr_;  }
+std::string VecScalarMulExpr::toString() const {
+    return "(mul (" + flt_->toString() + ") (" + vec_->toString() + "))";
+}
+
+
+
+ScalarScalarAddExpr::ScalarScalarAddExpr(
+    coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) 
+        : ScalarExpr(), lhs_(lhs), rhs_(rhs) {
+}
+
+std::string ScalarScalarAddExpr::toString() const {
+    return "(add (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
+}
+
+
+ScalarScalarMulExpr::ScalarScalarMulExpr(
+    coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) 
+        : ScalarExpr(), lhs_(lhs), rhs_(rhs) {
+}
+
+std::string ScalarScalarMulExpr::toString() const {
+    return "(mul (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
+}
+
+
+
+
+
+
+VecParenExpr::VecParenExpr(coords::VecExpr *expr) 
+        : VecExpr(), expr_(expr) { 
+}
 
 std::string VecParenExpr::toString() const {
     return "(" + expr_->toString() + ")";
 }
 
+
+ScalarParenExpr::ScalarParenExpr(coords::ScalarExpr *expr) 
+        : ScalarExpr(), expr_(expr) { 
+}
+
+std::string ScalarParenExpr::toString() const {
+    return "(" + expr_->toString() + ")";
+}
+
+
+
 /*******
 * Values
 *******/
 
-Vector::Vector(const clang::CXXConstructExpr *vec, clang::ASTContext *c, coords::VectorCtorType tag)
-      : VecExpr(vec, c), tag_(tag) {
-}
-  
-const ast::Vector *Vector::getVector() const { 
-    return static_cast<const clang::CXXConstructExpr*>(clang_stmt_); 
+Vector::Vector(coords::VectorCtorType tag)
+      : VecExpr(), tag_(tag) {
 }
 
 VectorCtorType Vector::getVectorType() { return tag_; }
 
 std::string Vector::toString() const { 
-    //LOG(FATAL) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
+    LOG(FATAL) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
     return NULL;
 }
 
-Vector_Lit::Vector_Lit(const clang::CXXConstructExpr* ast, clang::ASTContext *c, ast::Scalar x, ast::Scalar y, ast::Scalar z ) 
-    : Vector(ast, c, VEC_CTOR_LIT), x_(x), y_(y), z_(z) {} 
+Scalar::Scalar(coords::ScalarCtorType tag)
+      : ScalarExpr(), tag_(tag) {
+}
+
+ScalarCtorType Scalar::getScalarType() { return tag_; }
+
+std::string Scalar::toString() const { 
+    LOG(FATAL) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
+    return NULL;
+}
+
+
+Vector_Lit::Vector_Lit() 
+    : Vector(VEC_CTOR_LIT) {} 
   
 std::string Vector_Lit::toString() const  {
     std::string retval = "";
-    retval += std::to_string(x_); 
+    retval += "0"; 
     retval.append(" ");
-    retval += std::to_string(y_); 
+    retval += "0"; 
     retval.append(" ");
-    retval += std::to_string(z_);
+    retval += "0";
     //retval = "(" + retval + ")";
     return retval;
 }
 
-Vector_Var::Vector_Var(const clang::CXXConstructExpr* ast, clang::ASTContext *c, coords::VecVarExpr* expr) 
-    : Vector(ast, c, VEC_CTOR_VAR), expr_(expr) { 
+
+Scalar_Lit::Scalar_Lit() 
+    : Scalar(FLOAT_CTOR_LIT){} 
+  
+std::string Scalar_Lit::toString() const  {
+    std::string retval = "";
+    retval += "0"; 
+    //retval = "(" + retval + ")";
+    return retval;
+}
+
+Vector_Var::Vector_Var(coords::VecVarExpr* expr) 
+    : Vector(VEC_CTOR_VAR), expr_(expr) { 
 }
 
 std::string Vector_Var::toString() const { 
-    //LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
+    LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
+    return NULL;
+}
+
+Scalar_Var::Scalar_Var(coords::ScalarVarExpr* expr) 
+    : Scalar(FLOAT_CTOR_VAR), expr_(expr) { 
+}
+
+std::string Scalar_Var::toString() const { 
+    LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
     return NULL;
 }
 
@@ -184,17 +268,27 @@ std::string Vector_Expr::toString() const {
     //std::string("Vector_Expr::toString() STUB.\n"); 
 }
 
-Vector_Expr::Vector_Expr(const clang::CXXConstructExpr *ctor_ast, clang::ASTContext *c, 
+Vector_Expr::Vector_Expr(
                      coords::VecExpr* expr_coords) 
-    : Vector(ctor_ast, c, VEC_CTOR_EXPR), expr_(expr_coords) {
+    : Vector(VEC_CTOR_EXPR), expr_(expr_coords) {
+}
+
+std::string Scalar_Expr::toString() const { 
+    return expr_->toString();
+    //std::string("Vector_Expr::toString() STUB.\n"); 
+}
+
+Scalar_Expr::Scalar_Expr(
+                     coords::ScalarExpr* expr_coords) 
+    : Scalar(FLOAT_CTOR_EXPR), expr_(expr_coords) {
 }
 
 /****
 * Def
 ****/
 
-Vector_Def::Vector_Def(const clang::DeclStmt *ast, clang::ASTContext *c, coords::VecIdent *id, coords::VecExpr *expr)
-      : Coords(ast, c), id_(id), expr_(expr) {
+Vector_Def::Vector_Def(coords::VecIdent *id, coords::VecExpr *expr)
+      : Coords(), id_(id), expr_(expr) {
 }
 
 coords::VecIdent *Vector_Def::getIdent() const {
@@ -215,4 +309,69 @@ std::string Vector_Def::toString() const {
     return retval;
 }
 
+Scalar_Def::Scalar_Def(coords::ScalarIdent *id, coords::ScalarExpr *expr)
+      : Coords(), id_(id), expr_(expr) {
+}
+
+coords::ScalarIdent *Scalar_Def::getIdent() const {
+    return id_;
+}
+
+coords::ScalarExpr *Scalar_Def::getExpr() const {
+    return expr_;
+}
+
+std::string Scalar_Def::toString() const { 
+    std::string retval = "def ";
+    retval += id_->toString();
+    retval += " := ";
+    if(expr_)
+        retval += expr_->toString();
+    return retval;
+}
+
+/****
+* Assign
+****/
+Vector_Assign::Vector_Assign(coords::VecVarExpr *id, coords::VecExpr *expr)
+      : Coords(), id_(id), expr_(expr) {
+}
+
+coords::VecVarExpr *Vector_Assign::getVarExpr() const {
+    return id_;
+}
+
+coords::VecExpr *Vector_Assign::getExpr() const {
+    return expr_;
+}
+
+std::string Vector_Assign::toString() const { 
+    std::string retval = "assign ";
+    retval += id_->toString();
+    retval += " := ";
+    if(expr_)
+        retval += expr_->toString();
+    return retval;
+}
+
+Scalar_Assign::Scalar_Assign(coords::ScalarVarExpr *id, coords::ScalarExpr *expr)
+      : Coords(), id_(id), expr_(expr) {
+}
+
+coords::ScalarVarExpr *Scalar_Assign::getVarExpr() const {
+    return id_;
+}
+
+coords::ScalarExpr *Scalar_Assign::getExpr() const {
+    return expr_;
+}
+
+std::string Scalar_Assign::toString() const { 
+    std::string retval = "assign ";
+    retval += id_->toString();
+    retval += " := ";
+    if(expr_)
+        retval += expr_->toString();
+    return retval;
+}
 } // namespace codecoords

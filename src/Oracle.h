@@ -20,6 +20,20 @@ public:
 	
 	virtual domain::Space& getSpaceForVector_Expr(coords::VecExpr *expr_coords) = 0; 
 	virtual domain::Space& getSpaceForVector_Lit(coords::Vector_Lit *coords) = 0;
+	
+	virtual domain::Space &getSpaceForScalarIdent(coords::ScalarIdent *v) = 0;
+	virtual domain::Space& getSpaceForScalarVarExpr(coords::ScalarExpr *coords) = 0;
+	virtual domain::Space &getSpaceForMulExpression(coords::VecExpr *vec, coords::ScalarExpr *flt) = 0;
+
+	// KEVIN: Added for VecParenExpr module
+	virtual domain::Space &getSpaceForScalarParenExpr(coords::ScalarExpr *expr_coords) = 0;
+	
+	virtual domain::Space& getSpaceForScalar_Expr(coords::ScalarExpr *expr_coords) = 0; 
+	virtual domain::Space& getSpaceForScalar_Lit(coords::Scalar_Lit *coords) = 0;
+
+	virtual domain::Space& getSpaceForScalarAddExpression(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) = 0;
+	virtual domain::Space& getSpaceForScalarMulExpression(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) = 0;
+
 };
 
 } // namespace

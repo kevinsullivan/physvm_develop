@@ -13,10 +13,10 @@
 #include "AST.h"
 #include "Coords.h"
 
-//#include <g3log/g3log.hpp>
+#include <g3log/g3log.hpp>
 
 
-//using namespace std;
+using namespace std;
 
 /*
 - Space
@@ -32,18 +32,41 @@ namespace domain {
 class Space;
 class VecIdent;
 class VecExpr;
+
+class ScalarIdent;
+class ScalarExpr;
 //class VecLitExpr;
 class VecVarExpr;
 class VecVecAddExpr;
 
+class VecScalarMulExpr;
+class ScalarVarExpr;
+
+class VecWrapper;
+class ScalarWrapper;
+
 // KEVIN ADDING FOR HORIZONTAL MODULE
 class VecParenExpr;
+
+class ScalarParenExpr;
 
 class Vector;
 class Vector_Lit;
 class Vector_Expr;
 class Vector_Var;
 class Vector_Def;
+class Vector_Assign;
+
+class Scalar;
+class Scalar_Lit;
+class Scalar_Expr;
+class Scalar_Var;
+class Scalar_Def;
+class Scalar_Assign;
+
+class ScalarScalarAddExpr;
+class ScalarScalarMulExpr;
+
 
 
 
@@ -64,25 +87,51 @@ public:
 	// Exprs
 	std::vector<VecExpr *> &getVecExprs() { return exprs;  }
 
+	ScalarIdent* mkScalarIdent(Space* s);
+	ScalarIdent* mkScalarIdent();
+	std::vector<ScalarIdent*> &getScalarIdents() { return float_idents; }
+
+	ScalarExpr* mkScalarExpr(Space* s);
+	ScalarExpr* mkScalarExpr();
+	std::vector<ScalarExpr *> &getScalarExprs() { return float_exprs; }
+
 	// Create a variable object in the domain 
+
+	VecWrapper* mkVecWrapper(Space* s, domain::VecExpr* expr);
+	VecWrapper* mkVecWrapper(domain::VecExpr* expr);
+
+	ScalarWrapper* mkScalarWrapper(Space* s, domain::ScalarExpr* expr);
+	ScalarWrapper* mkScalarWrapper(domain::ScalarExpr* expr);
 
 	// Details available via externally represented backmappings
 	//
 	VecVarExpr* mkVecVarExpr(Space* s);
 	VecVarExpr* mkVecVarExpr();
 
+	ScalarVarExpr* mkScalarVarExpr(Space* s);
+	ScalarVarExpr* mkScalarVarExpr();
+
 	// Create a vector-vector-add expression, mem-expr.add(arg-expr) object in domain
 	// Precondition: sub-expressions mem-expr and arg-expr are already in domain
 	//
-	VecVecAddExpr* mkVecVecAddExpr(Space* s, domain::VecExpr* , domain::VecExpr* right_);
-	VecVecAddExpr* mkVecVecAddExpr(domain::VecExpr*, domain::VecExpr* right_);
+	VecVecAddExpr* mkVecVecAddExpr(Space* s, domain::VecExpr* left_, domain::VecExpr* right_);
+	VecVecAddExpr* mkVecVecAddExpr(domain::VecExpr* left_, domain::VecExpr* right_);
 
+	VecScalarMulExpr* mkVecScalarMulExpr(Space* s, domain::VecExpr *vec, domain::ScalarExpr *flt);
+	VecScalarMulExpr* mkVecScalarMulExpr(domain::VecExpr *vec, domain::ScalarExpr *flt);
 
+	ScalarScalarAddExpr* mkScalarScalarAddExpr(Space* s, domain::ScalarExpr* left_, domain::ScalarExpr* right_);
+	ScalarScalarAddExpr* mkScalarScalarAddExpr(domain::ScalarExpr* left_, domain::ScalarExpr* right_);
+
+	ScalarScalarMulExpr* mkScalarScalarMulExpr(Space* s, domain::ScalarExpr* left_, domain::ScalarExpr* right_);
+	ScalarScalarMulExpr* mkScalarScalarMulExpr(domain::ScalarExpr* left_, domain::ScalarExpr* right_);
 	// KEVIN: For new VecParenExpr horizontal module
 	//
 	VecParenExpr* mkVecParenExpr(Space *s, domain::VecExpr *);
 	VecParenExpr* mkVecParenExpr(domain::VecExpr*);
 
+	ScalarParenExpr* mkScalarParenExpr(Space *s, domain::ScalarExpr *);
+	ScalarParenExpr* mkScalarParenExpr(domain::ScalarExpr*);
 	// Values
 	std::vector<Vector *> &getVectors() { return vectors;  }
 
@@ -100,6 +149,20 @@ public:
 	//
 	Vector_Expr* mkVector_Expr(Space* space/*, coords::Vector* v*/, domain::VecExpr *vec);
 	Vector_Expr* mkVector_Expr(domain::VecExpr *vec);
+
+	std::vector<Scalar *> &getScalars() { return floats; }
+
+
+	Scalar_Lit* mkScalar_Lit(Space* space, float scalar);
+	Scalar_Lit* mkScalar_Lit(float scalar);
+
+	Scalar* mkScalar_Var(Space* s);
+	Scalar* mkScalar_Var();
+
+	Scalar_Expr* mkScalar_Expr(Space* space, domain::ScalarExpr *vec);
+	Scalar_Expr* mkScalar_Expr(domain::ScalarExpr *vec);
+
+
 // Defs
 
 	// Binding of identifier to contsructed vector
@@ -107,15 +170,30 @@ public:
 	Vector_Def* mkVector_Def(/*ast::Vector_Def* vardecl,*/ domain::VecIdent* identifier, domain::Vector* vec);
 	std::vector<Vector_Def*> &getVectorDefs() { return defs; }
 
+
+	Scalar_Def* mkScalar_Def(domain::ScalarIdent* identifier, domain::Scalar* vec);
+	std::vector<Scalar_Def*> &getScalarDefs() { return float_defs; }
+
+	Vector_Assign* mkVector_Assign(/*ast::Vector_Assign* vardecl,*/ domain::VecVarExpr* identifier, domain::Vector* vec);
+	std::vector<Vector_Assign*> &getVectorAssigns() { return assigns; }
+
+
+	Scalar_Assign* mkScalar_Assign(domain::ScalarVarExpr* identifier, domain::Scalar* vec);
+	std::vector<Scalar_Assign*> &getScalarAssigns() { return float_assigns; }
 // Client -- Separated from Domain
 //	bool isConsistent();
-
 private:
 	std::vector<Space*> spaces;
 	std::vector<VecIdent*> idents;
 	std::vector<VecExpr*> exprs;
+	std::vector<ScalarIdent*> float_idents;
+	std::vector<ScalarExpr*> float_exprs;
 	std::vector<Vector*> vectors;
 	std::vector<Vector_Def*> defs;
+	std::vector<Vector_Assign*> assigns;
+	std::vector<Scalar*> floats;
+	std::vector<Scalar_Def*> float_defs;
+	std::vector<Scalar_Assign*> float_assigns;
 };
 	
 /*
@@ -191,6 +269,7 @@ private:
 class VecExpr  {
 public:
     VecExpr(Space* s) : space_(s) {}
+	virtual ~VecExpr(){}
 		VecExpr() { this->spaceContainer_ = new SpaceContainer(); }
     Space* getSpace() const { return space_; };
 		SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
@@ -201,12 +280,48 @@ public:
 		SpaceContainer* spaceContainer_;
 };
 
+class ScalarIdent {
+public:
+	ScalarIdent(Space& space) : space_(&space) {}
+	ScalarIdent() { this->spaceContainer_ = new SpaceContainer(); }// this->spaceContainer_-> }
+	Space* getSpace() const { return space_; }
+	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
 
+	void setSpace(Space* space);
+	// TODO: Reconsider abstracting away of name
+private:
+	Space* space_;
+	SpaceContainer* spaceContainer_;
+};
+
+class ScalarExpr {
+public:
+	ScalarExpr(Space* s) : space_(s) {}
+	virtual ~ScalarExpr(){}
+	ScalarExpr() { this->spaceContainer_ = new SpaceContainer(); }
+	Space* getSpace() const { return space_; };
+	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
+	void setSpace(Space* s);
+
+	protected:
+		Space* space_;
+		SpaceContainer* spaceContainer_;
+};
 
 class VecVarExpr : public VecExpr {
 public:
     VecVarExpr(Space* s) : VecExpr(s) {}
 		VecVarExpr() : VecExpr() {}
+	virtual ~VecVarExpr(){}
+		// virtual std::string toString() const;
+	private:
+};
+
+class ScalarVarExpr : public ScalarExpr {
+public:
+    ScalarVarExpr(Space* s) : ScalarExpr(s) {}
+		ScalarVarExpr() : ScalarExpr() {}
+	virtual ~ScalarVarExpr(){}
 		// virtual std::string toString() const;
 	private:
 };
@@ -218,6 +333,7 @@ public:
 			domain::VecExpr(s), arg_(arg), mem_(mem) {	}
 	 VecVecAddExpr(domain::VecExpr *mem, domain::VecExpr *arg) :
 	 		domain::VecExpr(), arg_(arg), mem_(mem) { }
+	virtual ~VecVecAddExpr(){}
 	domain::VecExpr *getMemberVecExpr();
 	domain::VecExpr *getArgVecExpr();
 	// virtual std::string toString() const;
@@ -227,11 +343,80 @@ private:
     domain::VecExpr* mem_;
 };
 
+class VecScalarMulExpr : public VecExpr {
+public:
+	VecScalarMulExpr(
+		Space* s, domain::VecExpr *vec, domain::ScalarExpr *flt) :
+			domain::VecExpr(), vec_(vec), flt_(flt) {	}
+	VecScalarMulExpr(
+		domain::VecExpr *vec, domain::ScalarExpr *flt) :
+			domain::VecExpr(), vec_(vec), flt_(flt) {	}
+	domain::VecExpr *getVecExpr();
+	domain::ScalarExpr *getScalarExpr();
+	
+	virtual ~VecScalarMulExpr(){}
+	private:
+		domain::VecExpr* vec_;
+		domain::ScalarExpr* flt_;
+
+};
+
+
+class ScalarScalarAddExpr : public ScalarExpr {
+public:
+   ScalarScalarAddExpr(
+        Space* s, domain::ScalarExpr *lhs, domain::ScalarExpr *rhs) : 
+			domain::ScalarExpr(s), lhs_(lhs), rhs_(rhs) {	}
+	 ScalarScalarAddExpr(domain::ScalarExpr *lhs, domain::ScalarExpr *rhs) :
+	 		domain::ScalarExpr(), lhs_(lhs), rhs_(rhs) { }
+	
+	virtual ~ScalarScalarAddExpr(){}
+	domain::ScalarExpr *getLHSScalarExpr();
+	domain::ScalarExpr *getRHSScalarExpr();
+	// virtual std::string toString() const;
+	// const Space& getScalarScalarAddExprDefaultSpace();
+private:
+    domain::ScalarExpr* lhs_;
+    domain::ScalarExpr* rhs_;
+};
+
+class ScalarScalarMulExpr : public ScalarExpr {
+public:
+   	ScalarScalarMulExpr(
+        Space* s, domain::ScalarExpr *lhs, domain::ScalarExpr *rhs) : 
+			domain::ScalarExpr(s), lhs_(lhs), rhs_(rhs) {	}
+	ScalarScalarMulExpr(domain::ScalarExpr *lhs, domain::ScalarExpr *rhs) :
+	 		domain::ScalarExpr(), lhs_(lhs), rhs_(rhs) { }
+	
+	virtual ~ScalarScalarMulExpr(){}
+	domain::ScalarExpr *getLHSScalarExpr();
+	domain::ScalarExpr *getRHSScalarExpr();
+	// virtual std::string toString() const;
+	// const Space& getScalarScalarAddExprDefaultSpace();
+private:
+    domain::ScalarExpr* lhs_;
+    domain::ScalarExpr* rhs_;
+};
+
+class ScalarParenExpr : public ScalarExpr  {
+public:
+		ScalarParenExpr(Space *s, domain::ScalarExpr *e) : domain::ScalarExpr(s), expr_(e) {}
+		ScalarParenExpr(domain::ScalarExpr *e) : domain::ScalarExpr(), expr_(e) {}
+		
+		virtual ~ScalarParenExpr(){}
+		const domain::ScalarExpr* getScalarExpr() const { return expr_; }
+		//std::string toString() const; 
+private:
+		const domain::ScalarExpr* expr_; // vec expr from which vector is constructed
+};
+
 
 class VecParenExpr : public VecExpr  {
 public:
 		VecParenExpr(Space *s, domain::VecExpr *e) : domain::VecExpr(s), expr_(e) {}
 		VecParenExpr(domain::VecExpr *e) : domain::VecExpr(), expr_(e) {}
+		
+		virtual ~VecParenExpr(){}
 		const domain::VecExpr* getVecExpr() const { return expr_; }
 		//std::string toString() const; 
 private:
@@ -262,6 +447,26 @@ private:
 	const Space* space_; // TODO: INFER?
 	SpaceContainer* spaceContainer_;
 	VecCtorType tag_;
+};
+
+enum ScalarCtorType {FLOAT_EXPR, FLOAT_LIT, /*VEC_VAR,*/ FLOAT_NONE } ; 
+class Scalar{
+public:
+	Scalar(const Space& s, ScalarCtorType tag) :
+		space_(&s), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
+	Scalar(ScalarCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
+
+	bool isLit() { return (tag_ == FLOAT_LIT); } 
+	bool isExpr() { return (tag_ == FLOAT_EXPR); } 
+	//bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
+	const Space* getSpace() {return space_; }
+	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
+	void setSpace(Space* space);
+	// virtual std::string toString() const {
+private:
+	const Space* space_; // TODO: INFER?
+	SpaceContainer* spaceContainer_;
+	ScalarCtorType tag_;
 };
 
 
@@ -308,9 +513,45 @@ private:
 //
 class Vector_Var : public Vector {
 	Vector_Var() : Vector(*new Space(""), VEC_EXPR ) { 
-		//LOG(DEBUG) <<"Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
+		LOG(DBUG) <<"Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
 	}
 };
+
+class Scalar_Lit : public Scalar {
+public:
+	Scalar_Lit(const Space& s, float scalar) :
+		Scalar(s, FLOAT_LIT), scalar_(scalar) {
+	}
+
+	Scalar_Lit(float scalar) : Scalar(FLOAT_LIT), scalar_(scalar){}
+
+	float getScalar() { return scalar_; }
+private:
+  float scalar_;
+};
+
+// Constructed vector value from vector-valued expression
+//
+class Scalar_Expr : public Scalar  {
+public:
+	Scalar_Expr(const Space& s, domain::ScalarExpr* e) :
+		Scalar(s, FLOAT_EXPR), expr_(e) { 
+	}
+
+	Scalar_Expr(domain::ScalarExpr* e) : Scalar(FLOAT_EXPR) {}
+
+	const domain::ScalarExpr* getScalarExpr() const { return expr_; }
+	std::string toString() const;
+private:
+	const domain::ScalarExpr* expr_; // vec expr from which vector is constructed
+};
+
+class Scalar_Var : public Scalar {
+	Scalar_Var() : Scalar(*new Space(""), FLOAT_EXPR ) { 
+		LOG(DBUG) <<"Domain::Scalar_Var::Scalar_-Var: Error. Not implemented.\n";
+	}
+};
+
 
 /*
 Domain representation of binding of identifier to expression.
@@ -328,6 +569,46 @@ private:
 	const VecIdent* id_;
 	const Vector* vec_;
 };
+
+
+class Scalar_Def  {
+public:
+	Scalar_Def(domain::ScalarIdent* id, domain::Scalar* flt): 
+			id_(id), flt_(flt) {}
+	const domain::Scalar* getScalar() const { return flt_; }
+	const domain::ScalarIdent* getIdent() { return id_; }
+	// std::string toString() const;
+private:
+	const ScalarIdent* id_;
+	const Scalar* flt_;
+};
+
+class Vector_Assign  {
+public:
+	Vector_Assign(domain::VecVarExpr* id, domain::Vector* vec): 
+			id_(id), vec_(vec) {}
+	const domain::Vector* getVector() const { return vec_; }
+	const domain::VecVarExpr* getVarExpr() { return id_; }
+	// std::string toString() const;
+private:
+	const VecVarExpr* id_;
+	const Vector* vec_;
+};
+
+
+class Scalar_Assign  {
+public:
+	Scalar_Assign(domain::ScalarVarExpr* id, domain::Scalar* flt): 
+			id_(id), flt_(flt) {}
+	const domain::Scalar* getScalar() const { return flt_; }
+	const domain::ScalarVarExpr* getVarExpr() { return id_; }
+	// std::string toString() const;
+private:
+	const ScalarVarExpr* id_;
+	const Scalar* flt_;
+};
+
+
 
 
 } // end namespace
