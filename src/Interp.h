@@ -343,12 +343,12 @@ private:
 class Scalar_Def : public Interp
 {
 public:
-  Scalar_Def(coords::Scalar_Def *, domain::Scalar_Def *, interp::ScalarIdent *id, interp::Scalar *flt);
+  Scalar_Def(coords::Scalar_Def *, domain::Scalar_Def *, interp::ScalarIdent *id, interp::Interp *flt);
   virtual std::string toString() const;
 
 private:
   interp::ScalarIdent *id_;
-  interp::Scalar *flt_;
+  interp::Interp *flt_;
 };
 
 class Vector_Assign : public Interp

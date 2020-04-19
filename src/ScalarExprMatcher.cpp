@@ -73,7 +73,9 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
             interp_->mkScalarParenExpr(parenExpr, exprMatcher.getChildExprStore());
+            
             this->childExprStore_ = const_cast<clang::Expr*>((const clang::Expr*)parenExpr);
+
         }
         else{
             //log error
@@ -91,6 +93,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.visit(*addRHS);
 
             interp_->mkScalarScalarAddExpr(addExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+            
             this->childExprStore_ = const_cast<clang::Expr*>((const clang::Expr*)addExpr);
         }
         else{
@@ -108,6 +111,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.visit(*mulRHS);
 
             interp_->mkScalarScalarMulExpr(mulExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+          
             this->childExprStore_ = const_cast<clang::Expr*>((const clang::Expr*)mulExpr);
         }
         else{
@@ -116,6 +120,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(declRefExpr){
         interp_->mkScalarVarExpr(declRefExpr);
+        
         this->childExprStore_ = (clang::Expr*)declRefExpr;
     }
     else if(literal){
