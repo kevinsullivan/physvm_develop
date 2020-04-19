@@ -372,16 +372,10 @@ void Interpretation::mkScalar_Def(ast::Scalar_Def *def_ast,
                                   ast::ScalarIdent *id_ast, 
                                   ast::ScalarExpr *expr_ast)
 {
-    def_ast->dump();
-    id_ast->dump();
-    expr_ast->dump();
 
     coords::ScalarIdent *id_coords = static_cast<coords::ScalarIdent *>
       (ast2coords_->getDeclCoords(id_ast));
-
-    std::cout<<"is this nul?"<<std::endl;
-    std::cout<<(ast2coords_->getStmtCoords(expr_ast))->toString()<<std::endl;
-    std::cout<<"is null???"<<std::endl;
+      
     coords::Scalar *flt_coords = (coords::Scalar*)
       (ast2coords_->getStmtCoords(expr_ast));
     coords::Scalar_Def *def_coords = ast2coords_->mkScalar_Def(def_ast, context_, id_coords, flt_coords);

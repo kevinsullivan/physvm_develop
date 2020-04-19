@@ -592,10 +592,6 @@ interp::Scalar *CoordsToInterp::getScalar(coords::Scalar* v) {
         domvec = NULL;
     }
 
-    //for(auto it = coords2interp_Scalar.begin(); it != coords2interp_Scalar.end();it++){
-   //     std::cout<<it->first->toString()<<" "<<it->second->toString()<<std::endl;
-   // }
-    //std::cout<<domvec->toString()<<std::endl;
 
     return static_cast<interp::Scalar *>(domvec);
 }
