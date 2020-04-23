@@ -8,7 +8,7 @@ public:
   Vec& vec_add(Vec& v);
   Vec& operator*(const float& scalar);
   
-  Vec& vec_mul(float& scalar);
+  Vec& vec_mul(float scalar);
   ~Vec(){};
  private:
 	float _x;

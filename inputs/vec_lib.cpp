@@ -17,7 +17,7 @@ Vec& Vec::operator*(const float& scalar){
     set(this->_x * scalar, this->_y *scalar, this->_z * scalar);
     return *this;
 }
-Vec& Vec::vec_mul(float& scalar){
+Vec& Vec::vec_mul(float scalar){
     set(this->_x * scalar, this->_y *scalar, this->_z * scalar);
     return *this;
 }
