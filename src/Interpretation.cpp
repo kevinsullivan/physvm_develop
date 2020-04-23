@@ -146,7 +146,7 @@ void Interpretation::mkVecScalarMulExpr(ast::VecScalarMulExpr *mul_ast, const as
   interp::Interp *flt_interp = coords2interp_->getScalarExpr(flt_coords);  // dyn type's toString not being called
   std::string mi_str = flt_interp->toString();
   interp::Interp *vec_interp = coords2interp_->getVecExpr(vec_coords);
-  interp::VecScalarMulExpr *interp = new interp::VecScalarMulExpr(coords, dom, flt_interp, vec_interp);
+  interp::VecScalarMulExpr *interp = new interp::VecScalarMulExpr(coords, dom, vec_interp, flt_interp);
   coords2interp_->putVecScalarMulExpr(coords, interp); 
   interp2domain_->putVecScalarMulExpr(interp,dom);
 }
@@ -292,20 +292,6 @@ void Interpretation::mkVector_Expr(
     interp2domain_->putVector_Expr(interp, dom_vec);
 }
 
-void Interpretation::mkScalar_Expr(
-      ast::Scalar_Expr *ctor_ast, ast::ScalarExpr* expr_ast/*, clang::ASTContext *c*/) {
-    coords::Scalar_Expr *ctor_coords = ast2coords_->mkScalar_Expr(ctor_ast, context_, expr_ast);
-    coords::ScalarExpr *expr_coords = static_cast<coords::ScalarExpr *>(ast2coords_->getStmtCoords(expr_ast));
-    
-    domain::ScalarExpr *expr_dom = coords2dom_->getScalarExpr(expr_coords);
-    domain::Scalar_Expr *dom_flt = domain_->mkScalar_Expr(expr_dom); 
-    coords2dom_->putScalar_Expr(ctor_coords, dom_flt);
-    interp::ScalarExpr *expr_interp = coords2interp_->getScalarExpr(expr_coords);
-    interp::Scalar_Expr *interp = new interp::Scalar_Expr(ctor_coords, dom_flt, expr_interp);
-    coords2interp_->putScalar_Expr(ctor_coords, interp);
-    interp2domain_->putScalar_Expr(interp, dom_flt);
-}
-
 /****
 * Def
 *****/
@@ -368,14 +354,29 @@ void Interpretation::mkVector_Assign(ast::Vector_Assign *assign_ast,
     interp2domain_->putVector_Assign(interp, dom_vec_assign);
 }
 
+void Interpretation::mkScalar_Expr(
+      ast::Scalar_Expr *ctor_ast, ast::ScalarExpr* expr_ast/*, clang::ASTContext *c*/) {
+    coords::Scalar_Expr *ctor_coords = ast2coords_->mkScalar_Expr(ctor_ast, context_, expr_ast);
+    coords::ScalarExpr *expr_coords = static_cast<coords::ScalarExpr *>(ast2coords_->getStmtCoords(expr_ast));
+    
+    domain::ScalarExpr *expr_dom = coords2dom_->getScalarExpr(expr_coords);
+    domain::Scalar_Expr *dom_flt = domain_->mkScalar_Expr(expr_dom); 
+    coords2dom_->putScalar_Expr(ctor_coords, dom_flt);
+    interp::ScalarExpr *expr_interp = coords2interp_->getScalarExpr(expr_coords);
+    interp::Scalar_Expr *interp = new interp::Scalar_Expr(ctor_coords, dom_flt, expr_interp);
+    coords2interp_->putScalar_Expr(ctor_coords, interp);
+    interp2domain_->putScalar_Expr(interp, dom_flt);
+}
 
 void Interpretation::mkScalar_Def(ast::Scalar_Def *def_ast,  
                                   ast::ScalarIdent *id_ast, 
                                   ast::ScalarExpr *expr_ast)
 {
+
     coords::ScalarIdent *id_coords = static_cast<coords::ScalarIdent *>
       (ast2coords_->getDeclCoords(id_ast));
-    coords::Scalar *flt_coords = static_cast<coords::Scalar *>
+      
+    coords::Scalar *flt_coords = (coords::Scalar*)
       (ast2coords_->getStmtCoords(expr_ast));
     coords::Scalar_Def *def_coords = ast2coords_->mkScalar_Def(def_ast, context_, id_coords, flt_coords);
     domain::ScalarIdent *flt_ident = coords2dom_->getScalarIdent(id_coords);
@@ -389,7 +390,10 @@ void Interpretation::mkScalar_Def(ast::Scalar_Def *def_ast,
       domain_->mkScalar_Def(flt_ident, flt); 
     coords2dom_->putScalar_Def(def_coords, dom_flt_def);
     interp::ScalarIdent *id_interp = coords2interp_->getScalarIdent(id_coords);
-    interp::Scalar *flt_interp = coords2interp_->getScalar(flt_coords);
+    interp::Interp *flt_interp = coords2interp_->getScalar(flt_coords);
+    if(not flt_interp){
+      flt_interp = coords2interp_->getScalarExpr(flt_coords);
+    }
     interp::Scalar_Def *interp = new interp::Scalar_Def(def_coords, dom_flt_def, id_interp, flt_interp);
     coords2interp_->putScalar_Def(def_coords, interp);
     interp2domain_->putScalar_Def(interp, dom_flt_def);

@@ -591,6 +591,8 @@ interp::Scalar *CoordsToInterp::getScalar(coords::Scalar* v) {
     catch (std::out_of_range &e) {
         domvec = NULL;
     }
+
+
     return static_cast<interp::Scalar *>(domvec);
 }
 

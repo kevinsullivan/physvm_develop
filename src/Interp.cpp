@@ -82,7 +82,7 @@ std::string ScalarIdent::toString() const {
 //  ret += "( ";
   ret += coords_->toString();
   ret += " : peirce.scalar ";
-  ret += float_ident_->getSpaceContainer()->toString();
+  //ret += float_ident_->getSpaceContainer()->toString();
 //  ret += " )";
   return ret;
 }
@@ -129,8 +129,8 @@ std::string ScalarVarExpr::toString() const {
   ret += "( ";
   ret += coords_->toString();
   ret += " : peirce.scalar ";
-  ret += float_expr_->getSpaceContainer()->toString(); 
-  ret += " )";
+ // ret += float_expr_->getSpaceContainer()->toString(); 
+  ret += " ) ";//: peirce.scalar ";
   return ret;
 }
 
@@ -144,7 +144,7 @@ VecVecAddExpr::VecVecAddExpr(coords::VecVecAddExpr* c, domain::VecVecAddExpr* d,
  
 std::string VecVecAddExpr::toString() const {
   std::string ret = "";
-  ret += "( peirce.add ";
+  ret += "( peirce.vadd ";
   ret += mem_->toString();
   ret += " ";
   ret += arg_->toString();
@@ -162,10 +162,10 @@ VecScalarMulExpr::VecScalarMulExpr(coords::VecScalarMulExpr* c, domain::VecScala
  
 std::string VecScalarMulExpr::toString() const {
   std::string ret = "";
-  ret += "( peirce.mul ";
-  ret += vec_->toString();
-  ret += " ";
+  ret += "( peirce.vsmul ";
   ret += flt_->toString();
+  ret += " ";
+  ret += vec_->toString();
   ret += " : peirce.vec ";
   ret += expr_->getSpaceContainer()->toString(); 
   ret += " )";
@@ -180,13 +180,13 @@ ScalarScalarAddExpr::ScalarScalarAddExpr(coords::ScalarScalarAddExpr* c, domain:
  
 std::string ScalarScalarAddExpr::toString() const {
   std::string ret = "";
-  ret += "( peirce.add ";
+  ret += "( peirce.sadd ";
   ret += lhs_->toString();
   ret += " ";
   ret += rhs_->toString();
-  ret += " : peirce.scalar ";
-  ret += float_expr_->getSpaceContainer()->toString(); 
-  ret += " )";
+ // ret += " : peirce.scalar ";
+  //ret += float_expr_->getSpaceContainer()->toString(); 
+  ret += " : peirce.scalar ) ";
   return ret;  
 } 
 
@@ -198,13 +198,13 @@ ScalarScalarMulExpr::ScalarScalarMulExpr(coords::ScalarScalarMulExpr* c, domain:
  
 std::string ScalarScalarMulExpr::toString() const {
   std::string ret = "";
-  ret += "( peirce.mul ";
+  ret += "( peirce.smul ";
   ret += lhs_->toString();
   ret += " ";
   ret += rhs_->toString();
-  ret += " : peirce.scalar ";
-  ret += float_expr_->getSpaceContainer()->toString(); 
-  ret += " )";
+  //ret += " : peirce.scalar ";
+ // ret += float_expr_->getSpaceContainer()->toString(); 
+  ret += " : peirce.scalar )";
   return ret;  
 } 
 
@@ -239,7 +239,7 @@ std::string ScalarParenExpr::toString() const {
   ret += " ) : peirce.scalar ";
 
   // TODO: Abstract superclass data members
-  ret += float_expr_->getSpaceContainer()->toString(); 
+ // ret += float_expr_->getSpaceContainer()->toString(); 
 
   ret += " )";
   return ret;  
@@ -284,11 +284,11 @@ Scalar_Lit::Scalar_Lit(coords::Scalar_Lit* c, domain::Scalar_Lit* d) : Scalar(c,
 
 std::string Scalar_Lit::toString() const {
   std::string ret = "";
-  ret += "( peirce.vec.mkScalar ";
-  ret += float_->getSpaceContainer()->toString();
+  ret += "(";
+//  ret += float_->getSpaceContainer()->toString();
   ret += " ";
   ret += static_cast<coords::Vector_Lit *>(coords_)->toString();
-  ret += " )";
+  ret += " : peirce.scalar )";
   return ret;
 }
 
@@ -352,7 +352,7 @@ std::string Vector_Def::toString() const {
   return ret;
 }
 
-Scalar_Def::Scalar_Def(coords::Scalar_Def* c, domain::Scalar_Def* d, interp::ScalarIdent *id, interp::Scalar *flt) 
+Scalar_Def::Scalar_Def(coords::Scalar_Def* c, domain::Scalar_Def* d, interp::ScalarIdent *id, interp::Interp *flt) 
   : Interp(c,d), id_(id), flt_(flt) { 
 }
 std::string Scalar_Def::toString() const {
@@ -374,9 +374,9 @@ Vector_Assign::Vector_Assign(coords::Vector_Assign* c, domain::Vector_Assign* d,
   : Interp(c,d), id_(id), vec_(vec) { 
 }
 std::string Vector_Assign::toString() const {
-  std::string ret = "def ";
+  std::string ret = "#check ";
   ret += id_->toString();
-  ret += " := ";
+  ret += " == ";
   try{
     if(vec_)
       ret += vec_->toString(); 
@@ -392,9 +392,9 @@ Scalar_Assign::Scalar_Assign(coords::Scalar_Assign* c, domain::Scalar_Assign* d,
   : Interp(c,d), id_(id), flt_(flt) { 
 }
 std::string Scalar_Assign::toString() const {
-  std::string ret = "def ";
+  std::string ret = "#check ";
   ret += id_->toString();
-  ret += " := ";
+  ret += " == ";
   try{
     if(this->flt_)
       ret += flt_->toString(); 

@@ -50,8 +50,10 @@ void generateMath(aFile* f, interp::Interpretation* interp) {
     std::string math = "";
     math += "import vec\n\n";
     math += interp->toString_Spaces();
-    math += interp->toString_Defs();
     math += interp->toString_ScalarDefs();
+    math += interp->toString_Defs();
+    math += interp->toString_Assigns();
+    math += interp->toString_ScalarAssigns();
     //LOG(DEBUG) << "Checker::generateMath generated this: \n"
     //           << math << "\n";
     fputs(math.c_str(), f->file);
