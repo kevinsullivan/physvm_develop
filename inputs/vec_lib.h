@@ -5,10 +5,9 @@ public:
   float get_x() const{return _x;}
   float get_y() const{return _y;}
   float get_z() const{return _z;}
-  Vec& vec_add(Vec& v);
-  Vec& operator*(const float& scalar);
-  
-  Vec& vec_mul(float scalar);
+  Vec vec_add(Vec v);
+  Vec operator*(const float& scalar);
+  Vec vec_mul(float scalar);
   ~Vec(){};
  private:
 	float _x;

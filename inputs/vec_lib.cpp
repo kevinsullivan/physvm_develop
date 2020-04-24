@@ -8,16 +8,16 @@ void Vec::set(float x, float y, float z)
 	_y = y; 
 	_z = z;
 }
-Vec& Vec::vec_add(Vec& v)
+Vec Vec::vec_add(Vec v)
 {
-    set(v._x + _x, v._y + _y, v._z + _z);
-    return *this;
+    Vec ov(v._x + _x, v._y + _y, v._z + _z);
+    return ov;
 }
-Vec& Vec::operator*(const float& scalar){
-    set(this->_x * scalar, this->_y *scalar, this->_z * scalar);
-    return *this;
+Vec Vec::operator*(const float& scalar){
+    Vec ov(this->_x * scalar, this->_y *scalar, this->_z * scalar);
+    return ov;
 }
-Vec& Vec::vec_mul(float scalar){
-    set(this->_x * scalar, this->_y *scalar, this->_z * scalar);
-    return *this;
+Vec Vec::vec_mul(float scalar){
+    Vec ov(this->_x * scalar, this->_y *scalar, this->_z * scalar);
+    return ov;
 }

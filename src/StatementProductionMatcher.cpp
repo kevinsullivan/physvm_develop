@@ -13,7 +13,10 @@
 
 #include "ASTToCoords.h"
 /*
-STMT := VEC_VAR = EXPR | SCALAR_VAR = SCALAR_EXPR  | VEC_EXPR | SCALAR_EXPR | DECL VEC_VAR = VEC_EXPR | DECL SCALAR_VAR = SCALAR_EXPR
+STMT := 
+    VEC_VAR = EXPR | SCALAR_VAR = SCALAR_EXPR  | TRANSFORM_EXPR
+    VEC_EXPR | SCALAR_EXPR | TRANSFORM_EXPR
+    DECL VEC_VAR = VEC_EXPR | DECL SCALAR_VAR = SCALAR_EXPR | DECL TRANSFORM_VAR = TRANSFORM_EXPR
 */
 
 
@@ -32,10 +35,18 @@ void StatementProductionMatcher::search(){
            has(expr().bind("VectorDeclRV")),
            has(exprWithCleanups().bind("VectorDeclRV"))
            ))).bind("VectorVarDecl"))).bind("VectorDeclStatement");
+    StatementMatcher transformDecl =
+       declStmt(has(varDecl(allOf(hasType(asString("class Transform")),anyOf(
+           has(expr().bind("TransformDeclRV")),
+           has(exprWithCleanups().bind("TransformDeclRV"))
+           ))).bind("TransformVarDecl"))).bind("TransformDeclStatement");
+
     StatementMatcher floatExpr = 
         expr(hasType(realFloatingPointType())).bind("ScalarExprStatement");
     StatementMatcher vectorExpr = 
         expr(hasType(asString("class Vec"))).bind("VectorExprStatement");
+    StatementMatcher transformExpr =
+        expr(hasType(asString("class Transform"))).find("TransformExprStatement");
     StatementMatcher scalarAssign = 
         binaryOperator(allOf(
             hasType(realFloatingPointType()),
@@ -50,6 +61,13 @@ void StatementProductionMatcher::search(){
             hasArgument(0, expr(hasType(asString("class Vec"))).bind("VectorAssignLHS")), 
             hasArgument(1, expr(hasType(asString("class Vec"))).bind("VectorAssignRHS"))
         )).bind("VectorAssign");
+    StatementMatcher transformAssign = 
+        cxxOperatorCallExpr(allOf(
+            hasType(asString("class Transform")),
+            hasOverloadedOperatorName("="),
+            hasArgument(0, expr(hasType(asString("class Transform"))).bind("TransformAssignLHS")), 
+            hasArgument(1, expr(hasType(asString("class Transform"))).bind("TransformAssignRHS"))
+        )).bind("TransformAssign");
 
     localFinder_.addMatcher(vectorExprWithCleanups, this);
 
@@ -59,6 +77,10 @@ void StatementProductionMatcher::search(){
     localFinder_.addMatcher(vectorExpr, this);
     localFinder_.addMatcher(scalarAssign, this);
     localFinder_.addMatcher(vectorAssign, this);
+    localFinder_.addMatcher(transformExpr, this);
+    localFinder_.addMatcher(transformDecl, this);
+    localFinder_.addMatcher(transformAssign, this);
+
 };
 
 void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
@@ -80,6 +102,15 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     const auto vectorAssign = Result.Nodes.getNodeAs<clang::CXXOperatorCallExpr>("VectorAssign");
     const auto vectorAssignLHS = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignLHS");
     const auto vectorAssignRHS = Result.Nodes.getNodeAs<clang::Expr>("VectorAssignRHS");
+
+    const auto transformExpr = Result.Nodes.getNodeAs<clang::Expr>("TransformExprStatement");
+    const auto transformDecl = Result.Nodes.getNodeAs<clang::DeclStmt>("TransformDeclStatement");
+    const auto transformVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("TransformVarDecl");
+    const auto transformDeclRV = Result.Nodes.getNodeAs<clang::Expr>("TransformDeclRV");
+    const auto transformAssign = Result.Nodes.getNodeAs<clang::BinaryOperator>("TransformAssign");
+    const auto transformAssignLHS = Result.Nodes.getNodeAs<clang::Expr>("TransformAssignLHS");
+    const auto transformAssignRHS = Result.Nodes.getNodeAs<clang::Expr>("TransformAssignRHS");
+
 
     const auto exprWithCleanupsDiscard = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
 
@@ -110,6 +141,18 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             //log error
         }
     }
+    else if(transformDecl or transformVarDecl or transformDeclRV){
+        if(transformDecl and transformVarDecl and transformDeclRV){
+            this->interp_->mkTransformIdent(transformVarDecl);
+            TransformExprMatcher exprMatcher{this->context_, this->interp_};
+            exprMatcher.search();
+            exprMatcher.visit(*transformDeclRV);
+            this->interp_->mkTransform_Def(transformDecl, transformVarDecl, exprMatcher.getChildExprStore());
+        }
+        else{
+            //log error
+        }
+    }
     else if(floatExpr){//matches Scalar expressions
         ScalarExprMatcher exprMatcher{this->context_, this->interp_};
         exprMatcher.search();
@@ -121,6 +164,11 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
         exprMatcher.search();
         exprMatcher.visit(*vecExpr);
 
+    }
+    else if(transformExpr){
+        TransformExprMatcher exprMatcher{this->context_, this->interp_};
+        exprMatcher.search();
+        exprMatcher.visit(*transformExpr);
     }
     else if(exprWithCleanupsDiscard){//matches fluff node to discard
         StatementProductionMatcher innerMatcher{this->context_, this->interp_};
@@ -156,6 +204,23 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.visit(*vectorAssignRHS);
 
             interp_->mkVector_Assign(vectorAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+
+           //this->childExprStore_ = (clang::Expr*)vectorAssign;
+        }
+        else{
+            //log error
+        }
+    }
+    else if(transformAssign or transformAssignLHS or transformAssignRHS){//matches Vector variable assignment
+        if(transformAssign and transformAssignLHS and transformAssignRHS){
+            TransformExprMatcher lhsMatcher{this->context_, this->interp_};
+            lhsMatcher.search();
+            lhsMatcher.visit(*transformAssignLHS);
+            TransformExprMatcher rhsMatcher{this->context_, this->interp_};
+            rhsMatcher.search();
+            rhsMatcher.visit(*transformAssignRHS);
+
+            interp_->mkVector_Assign(transformAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
 
            //this->childExprStore_ = (clang::Expr*)vectorAssign;
         }

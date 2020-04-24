@@ -116,6 +116,19 @@ public:
                                              coords::ScalarVarExpr *var, 
                                              coords::ScalarExpr *flt);
 
+    coords::TransformIdent *mkTransformIdent(const ast::TransformIdent *ast, clang::ASTContext *c);
+    coords::TransformVarExpr *mkTransformVarExpr(const ast::TransformVarExpr *ast, clang::ASTContext *c);
+    coords::TransformParenExpr *mkTransformParenExpr(const ast::TransformParenExpr *ast, ast::TransformExpr *expr, clang::ASTContext *c);
+    coords::TransformTransformComposeExpr *mkTransformTransformComposeExpr(ast::TransformExpr outer, ast::TransformExpr inner, clang::ASTContext *c);
+    coords::TransformVecApplyExpr *mkTransformVecApplyExpr(ast::TransformExpr *texpr, ast::VecExpr vexpr, clang::ASTContext *c);
+    coords::Transform_Lit *mkTransform_Lit(const ast::Transform_Lit *ast, ast::TransformMatrixArgExpr arg, clang::ASTContext *c);
+    coords::Transform_Var *mkTransform_Var(const ast::Transform_Var *ast, const ast::TransformVarExpr *var, clang::ASTContext *c);
+    coords::Transform_Expr *mkTransform_Expr(const ast::Transform_Expr *ast, ast::TransformExpr *expr, clang::ASTContext *c);
+    coords::Transform_Def *mkTransform_Def(const ast::Transform_Def *ast, clang::ASTContext *c, coords::TransformIdent *id, coords::TransformExpr tfm);
+    coords::Transform_Assign *mkTransform_Assign(const ast::Transform_Assign *ast, clang::ASTContext *c, coords::TransformVarExpr *var, coords::TransformExpr *);
+
+
+
     // TODO -- Have these routines return more specific subclass objects
     coords::Coords *getStmtCoords(const clang::Stmt *s) {
         return stmt_coords->find(s)->second;

@@ -6,7 +6,7 @@
 #include "ScalarExprMatcher.h"
 
 /*
-    VEC_EXPR := (VEC_EXPR) | VEC_EXPR + VEC_EXPR | VEC_EXPR * SCALAR_EXPR | VEC_VAR | VEC_LITERAL
+    VEC_EXPR := (VEC_EXPR) | VEC_EXPR + VEC_EXPR | VEC_EXPR * SCALAR_EXPR | VEC_VAR | VEC_LITERAL | APPLY TRANSFORM_EXPR VEC_EXPR
 
 */
 
@@ -38,6 +38,11 @@ void VectorExprMatcher::search(){
             hasType(asString("class Vec")),
             has(memberExpr(allOf(has(expr().bind("VectorMulMember")),member(hasName("vec_mul"))))), 
             hasArgument(0,expr().bind("VectorMulArgument")))).bind("VectorMulExpr");
+    StatementMatcher transformApplyExpr = 
+        cxxMemberCallExpr(allOf(
+            hasType(asString("class Transform")),
+            has(memberExpr(allOf(has(expr().bind("TransformApplyMember")),member(hasName("apply"))))), 
+            hasArgument(0,expr().bind("VecApplyArgument")))).bind("TransformApplyExpr");
     StatementMatcher vectorVar = 
         declRefExpr(hasType(asString("class Vec"))).bind("VectorDeclRefExpr");
     StatementMatcher vectorLiteral = 
@@ -56,6 +61,7 @@ void VectorExprMatcher::search(){
     localFinder_.addMatcher(vectorParenExpr, this);
     localFinder_.addMatcher(vectorAddExpr, this);
     localFinder_.addMatcher(vectorMulExpr, this);
+    localFinder_.addMatcher(transformApplyExpr, this);
     localFinder_.addMatcher(vectorVar, this);
     localFinder_.addMatcher(vectorLiteral, this);
 
@@ -70,6 +76,9 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
     const auto vectorMulExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("VectorMulExpr");
     const auto vectorMulMember = Result.Nodes.getNodeAs<clang::Expr>("VectorMulMember");
     const auto vectorMulArgument = Result.Nodes.getNodeAs<clang::Expr>("VectorMulArgument");
+    const auto transformApplyExpr = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("TransformApplyExpr");
+    const auto transformApplyMember = Result.Nodes.getNodeAs<clang::Expr>("TransformApplyMember");
+    const auto vectorApplyArgument = Result.Nodes.getNodeAs<clang::Expr>("VecApplyArgument");
     const auto vectorDeclRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("VectorDeclRefExpr");
     const auto vectorLiteral = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("VectorLiteralExpr");
 
@@ -124,6 +133,22 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             argMatcher.visit(*vectorMulArgument);
             interp_->mkVecScalarMulExpr(vectorMulExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)vectorMulExpr;
+        }
+        else{
+            //log error
+        }
+    }
+    else if(transformApplyExpr or transformApplyMember or vectorApplyArgument)
+    {
+        if(transformApplyExpr and transformApplyMember and transformApplyArgument){
+            TransformExprMatcher memMatcher{this->context_, this->interp_};
+            memMatcher.search();
+            memMatcher.visit(*transformApplyMember);
+            VectorExprMatcher argMatcher{this->context_, this->interp_};
+            argMatcher.search();
+            argMatcher.visit(*transformApplyArgument);
+            interp_->mkTransformVecApplyExpr(transformApplyExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
+            this->childExprStore_ = (clang::Expr*)transformApplyExpr;
         }
         else{
             //log error

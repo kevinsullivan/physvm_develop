@@ -124,6 +124,15 @@ public:
   }
 };
 
+class TransformIdent : public Coords {
+public:
+  TransformIdent();
+  virtual std::string toString() const;
+  bool operator==(const TransformIdent &other) const {
+    return this->state_ == other.state_;
+  }
+};
+
 
 
 /*****
@@ -150,6 +159,19 @@ public:
   }
 };
 
+class TransformExpr : public Coords {
+public:
+  TransformExpr();
+  virtual std::string toString() const;
+  bool operator==(const TransformExpr &other) const {
+    return this->state_ == other.state_;
+  }
+};
+
+/*
+* VAR EXPR
+*/
+
 class VecVarExpr : public VecExpr {
 public:
   VecVarExpr();
@@ -161,6 +183,16 @@ public:
   ScalarVarExpr();
   virtual std::string toString() const;
 };
+
+class TransformVarExpr : public TransformExpr {
+public:
+  TransformVarExpr();
+  virtual std::string toString() const;
+};
+
+/*
+* OPERATIONS
+*/
 
 // TODO: add accessors for left and right
 class VecVecAddExpr : public VecExpr {
@@ -211,9 +243,33 @@ private:
   coords::Coords *rhs_;
 };
 
+class TransformVecApplyExpr : public VecExpr {
+public:
+  TransformVecApplyExpr(coords::TransformExpr *lhs, coords::VecExpr *rhs);
+  virtual std::string toString() const;
+  coords::Coords* getLeft() const { return lhs_; }
+  coords::Coords* getRight() const { return rhs_; }
+
+private:
+  coords::Coords *lhs_;
+  coords::Coords *rhs_;
+};
+
+class TransformTransformComposeExpr : public TransformExpr {
+public:
+  TransformTransformComposeExpr(coords::TransformExpr *lhs, coords::TransformExpr *rhs);
+  virtual std::string toString() const;
+  coords::Coords* getLeft() const { return lhs_; }
+  coords::Coords* getRight() const { return rhs_; }
+
+private:
+  coords::Coords *lhs_;
+  coords::Coords *rhs_;
+};
+
 
 /*************
-* VecParenExpr
+* PAREN EXPR
 **************/
 
 // Should hold coordinates of child expression
@@ -249,13 +305,30 @@ class ScalarParenExpr : public ScalarExpr {
     coords::ScalarExpr *expr_;
 };
 
+class TransformParenExpr : public TransformExpr {
+  public:
+  TransformParenExpr(coords::TransformExpr *expr);
+  virtual std::string toString() const;
+
+  coords::TransformExpr* getExpr() const {
+    return this->expr_;
+  };
+
+  bool operator==(const TransformParenExpr &other) const {
+    return this->state_ == other.state_;
+  }
+  protected:
+    coords::TransformExpr *expr_;
+};
+
 
 /*******
-* Vector
+* 
 ********/
 
 enum VectorCtorType { VEC_CTOR_LIT, VEC_CTOR_EXPR, VEC_CTOR_VAR };
 enum ScalarCtorType { FLOAT_CTOR_LIT, FLOAT_CTOR_EXPR, FLOAT_CTOR_VAR };
+enum TransformCtorType {TRANSFORM_CTOR_LIT, TRANSFORM_CTOR_EXPR, TRANSFORM_CTOR_VAR};
 
 // Superclass. Abstract
 class Vector : public VecExpr {
@@ -282,6 +355,18 @@ protected:
   const ScalarCtorType tag_;
 };
 
+class Transform : public TransformExpr {
+public:
+  Transform(coords::TransformCtorType tag);
+  TransformCtorType getTransformType();
+  virtual std::string toString() const;
+  bool operator==(const Transform &other) const {
+    return this->state_ == other.state_;
+  }
+protected:
+  const TransformCtorType tag_;
+};
+
 // TODO: methods to get x, y, z
 class Vector_Lit : public Vector {
 public:
@@ -292,6 +377,12 @@ public:
 class Scalar_Lit : public Scalar {
 public:
   Scalar_Lit();
+  virtual std::string toString() const;
+};
+
+class Transform_Lit : public Transform {
+public:
+  Transform_Lit();
   virtual std::string toString() const;
 };
 
@@ -316,6 +407,17 @@ private:
 };
 
 
+class Transform_Var : public Transform {
+public:
+  Transform_Var(coords::TransformVarExpr *expr);
+  virtual std::string toString() const;
+  TransformVarExpr *getTransformVarExpr();
+private:
+  TransformVarExpr *expr_;
+};
+
+
+
 // TODO: change name to VecVecAddExpr?
 class Vector_Expr : public Vector {
 public:
@@ -334,6 +436,16 @@ public:
   Scalar_Expr *getScalar_Expr();
 private:
   ScalarExpr *expr_;
+};
+
+
+class Transform_Expr : public Transform {
+public:
+  Transform_Expr(coords::TransformExpr *expr);
+  virtual std::string toString() const;
+  Transform_Expr *getTransform_Expr();
+private:
+  TransformExpr *expr_;
 };
 
 /****
@@ -370,6 +482,21 @@ private:
   ScalarExpr *expr_;
 };
 
+class Transform_Def : public Coords {
+public:
+  Transform_Def(coords::TransformIdent *id,
+             coords::TransformExpr *expr);
+  coords::TransformIdent *getIdent() const;
+  coords::TransformExpr *getExpr() const;
+  virtual std::string toString() const;
+  bool operator==(const Transform_Def &other) const {
+    return this->state_ == other.state_;
+  }
+private:
+  TransformIdent *id_;
+  TransformExpr *expr_;
+};
+
 class Vector_Assign : public Coords {
 public:
   Vector_Assign(coords::VecVarExpr *id,
@@ -398,6 +525,21 @@ public:
 private:
   ScalarVarExpr *id_;
   ScalarExpr *expr_;
+};
+
+class Transform_Assign : public Coords {
+public:
+  Transform_Assign(coords::TransformVarExpr *id,
+             coords::TransformExpr *expr);
+  coords::TransformVarExpr *getVarExpr() const;
+  coords::TransformExpr *getExpr() const;
+  virtual std::string toString() const;
+  bool operator==(const Transform_Assign &other) const {
+    return this->state_ == other.state_;
+  }
+private:
+  TransformVarExpr *id_;
+  TransformExpr *expr_;
 };
 
 } // namespace coords
