@@ -4,6 +4,7 @@
 
 #include "VectorExprMatcher.h"
 #include "ScalarExprMatcher.h"
+#include "TransformExprMatcher.h"
 
 /*
     VEC_EXPR := (VEC_EXPR) | VEC_EXPR + VEC_EXPR | VEC_EXPR * SCALAR_EXPR | VEC_VAR | VEC_LITERAL | APPLY TRANSFORM_EXPR VEC_EXPR
@@ -140,13 +141,13 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(transformApplyExpr or transformApplyMember or vectorApplyArgument)
     {
-        if(transformApplyExpr and transformApplyMember and transformApplyArgument){
+        if(transformApplyExpr and transformApplyMember and vectorApplyArgument){
             TransformExprMatcher memMatcher{this->context_, this->interp_};
             memMatcher.search();
             memMatcher.visit(*transformApplyMember);
             VectorExprMatcher argMatcher{this->context_, this->interp_};
             argMatcher.search();
-            argMatcher.visit(*transformApplyArgument);
+            argMatcher.visit(*vectorApplyArgument);
             interp_->mkTransformVecApplyExpr(transformApplyExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)transformApplyExpr;
         }

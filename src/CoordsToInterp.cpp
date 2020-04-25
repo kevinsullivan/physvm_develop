@@ -212,6 +212,38 @@ coords::VecScalarMulExpr *CoordsToInterp::getVecScalarMulExpr(interp::VecScalarM
     return static_cast<coords::VecScalarMulExpr *>(coords);
 }
 
+void CoordsToInterp::putTransformVecApplyExpr(coords::TransformVecApplyExpr *c, interp::TransformVecApplyExpr *d)
+{
+    coords2interp_VecExpr[c] = d;
+    interp2coords_VecExpr[d] = c;
+}
+
+interp::TransformVecApplyExpr *CoordsToInterp::getTransformVecApplyExpr(coords::TransformVecApplyExpr *c) const
+{
+    std::unordered_map<coords::VecExpr*, interp::VecExpr*>::iterator it;
+    interp::VecExpr *dom = NULL;
+    try {
+        dom = coords2interp_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::TransformVecApplyExpr*>(dom);
+}
+
+coords::TransformVecApplyExpr *CoordsToInterp::getTransformVecApplyExpr(interp::TransformVecApplyExpr *d) const
+{
+    std::unordered_map<interp::VecExpr*, coords::VecExpr*>::iterator it;
+    coords::VecExpr *coords = NULL;
+    try {
+        coords = interp2coords_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::TransformVecApplyExpr *>(coords);
+}
+
 
 void CoordsToInterp::putScalarIdent(coords::ScalarIdent *c, interp::ScalarIdent *d)
 {
@@ -414,6 +446,175 @@ coords::ScalarParenExpr *CoordsToInterp::getScalarParenExpr(interp::ScalarParenE
     return static_cast<coords::ScalarParenExpr *>(coords);
 }
 
+
+void CoordsToInterp::putTransformIdent(coords::TransformIdent *c, interp::TransformIdent *d)
+{
+    coords2interp_TransformIdent[c] = d;
+    interp2coords_TransformIdent[d] = c;
+}
+
+interp::TransformIdent *CoordsToInterp::getTransformIdent(coords::TransformIdent *c) const
+{
+    std::unordered_map<coords::TransformIdent*, interp::TransformIdent*>::iterator it;
+    interp::TransformIdent *dom = NULL;
+    try {
+        dom = coords2interp_TransformIdent.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+
+coords::TransformIdent *CoordsToInterp::getTransformIdent(interp::TransformIdent *d) const
+{
+    std::unordered_map<interp::TransformIdent*, coords::TransformIdent*>::iterator it;
+    coords::TransformIdent *coords = NULL;
+    try {
+        coords = interp2coords_TransformIdent.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return coords;
+}
+
+// Expr
+
+// base
+
+interp::TransformExpr *CoordsToInterp::getTransformExpr(coords::TransformExpr *c) const
+{
+    std::unordered_map<coords::TransformExpr*, interp::TransformExpr*>::iterator it;
+    interp::TransformExpr *dom = NULL;
+    try {
+        dom = coords2interp_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+
+coords::TransformExpr *CoordsToInterp::getTransformExpr(interp::TransformExpr *d) const
+{
+    std::unordered_map<interp::TransformExpr*, coords::TransformExpr*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = interp2coords_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return coords;
+}
+
+// var
+
+void CoordsToInterp::putTransformVarExpr(coords::TransformVarExpr *c, interp::TransformVarExpr *d)
+{
+    std::string cstr = c->toString();
+    std::string dstr = d->toString();
+    LOG(DBUG) << "CoordsToInterp::putTransformVarExpr c " << cstr << "\n";
+    LOG(DBUG) << "CoordsToInterp::putTransformVarExpr d " << dstr << "\n";
+    coords2interp_TransformExpr[c] = d;
+    interp2coords_TransformExpr[d] = c;
+
+    interp::TransformVarExpr *foo = getTransformVarExpr(c);
+    std::string s = foo->toString();
+    LOG(DBUG) << "Debug " << s << "\n";
+}
+
+interp::TransformVarExpr *CoordsToInterp::getTransformVarExpr(coords::TransformVarExpr *c) const
+{
+    std::unordered_map<coords::TransformExpr*, interp::TransformExpr*>::iterator it;
+    interp::TransformExpr *dom = NULL;
+    try {
+        dom = coords2interp_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::TransformVarExpr*>(dom);
+}
+
+coords::TransformVarExpr *CoordsToInterp::getTransformVarExpr(interp::TransformVarExpr *d) const
+{
+    std::unordered_map<interp::TransformExpr*, coords::TransformExpr*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = interp2coords_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::TransformVarExpr *>(coords);
+}
+
+
+void CoordsToInterp::putTransformTransformComposeExpr(coords::TransformTransformComposeExpr *c, interp::TransformTransformComposeExpr *d)
+{
+    coords2interp_TransformExpr[c] = d;
+    interp2coords_TransformExpr[d] = c;
+}
+
+interp::TransformTransformComposeExpr *CoordsToInterp::getTransformTransformComposeExpr(coords::TransformTransformComposeExpr *c) const
+{
+    std::unordered_map<coords::TransformExpr*, interp::TransformExpr*>::iterator it;
+    interp::TransformExpr *dom = NULL;
+    try {
+        dom = coords2interp_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::TransformTransformComposeExpr*>(dom);
+}
+
+coords::TransformTransformComposeExpr *CoordsToInterp::getTransformTransformComposeExpr(interp::TransformTransformComposeExpr *d) const
+{
+    std::unordered_map<interp::TransformExpr*, coords::TransformExpr*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = interp2coords_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::TransformTransformComposeExpr *>(coords);
+}
+
+
+// Transformparenexpr
+
+void CoordsToInterp::putTransformParenExpr(coords::TransformParenExpr *c, interp::TransformParenExpr *i) {
+    coords2interp_TransformExpr[c] = i;
+    interp2coords_TransformExpr[i] = c;
+}
+
+interp::TransformParenExpr *CoordsToInterp::getTransformParenExpr(coords::TransformParenExpr* c) const {
+    std::unordered_map<coords::TransformExpr*, interp::TransformExpr*>::iterator it;
+    interp::TransformExpr *dom = NULL;
+    try {
+        dom = coords2interp_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::TransformParenExpr*>(dom);
+}
+// TODO: A few template functions should take care of most of this file
+coords::TransformParenExpr *CoordsToInterp::getTransformParenExpr(interp::TransformParenExpr* d) const {
+    std::unordered_map<interp::TransformExpr*, coords::TransformExpr*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = interp2coords_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::TransformParenExpr *>(coords);
+}
 
 // Vector
 
@@ -723,4 +924,160 @@ coords::Scalar_Assign *CoordsToInterp::getScalar_Assign(interp::Scalar_Assign *d
       coords = NULL;
     }
     return static_cast<coords::Scalar_Assign *>(coords);
+}
+
+
+coords::Transform *CoordsToInterp::getTransform(interp::Transform* v) {
+    std::unordered_map<interp::Transform*, coords::Transform*>::iterator it;
+    coords::Transform *coords = NULL;
+    try {
+        coords = interp2coords_Transform.at(v);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Transform *>(coords);
+}
+
+interp::Transform *CoordsToInterp::getTransform(coords::Transform* v) {
+    std::unordered_map<coords::Transform*, interp::Transform*>::iterator it;
+    interp::Transform *domvec = NULL;
+    try {
+        domvec = coords2interp_Transform.at(v);
+    }
+    catch (std::out_of_range &e) {
+        domvec = NULL;
+    }
+
+
+    return static_cast<interp::Transform *>(domvec);
+}
+
+
+void CoordsToInterp::putTransform_Lit(coords::Transform *c, interp::Transform_Lit *d)
+{
+    coords2interp_Transform[c] = d;
+    interp2coords_Transform[d] = c;
+}
+
+interp::Transform_Lit *CoordsToInterp::getTransform_Lit(coords::Transform_Lit *c) const
+{
+    std::unordered_map<coords::Transform_Lit*, interp::Transform_Lit*>::iterator it;
+    interp::Transform *dom = NULL;
+    try {
+        dom = coords2interp_Transform.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::Transform_Lit*>(dom);
+}
+
+coords::Transform_Lit *CoordsToInterp::getTransform_Lit(interp::Transform_Lit *d) const
+{
+    std::unordered_map<interp::Transform*, coords::Transform*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = interp2coords_Transform.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Transform_Lit *>(coords);
+}
+
+void CoordsToInterp::putTransform_Expr(coords::Transform *c, interp::Transform_Expr *d)
+{
+    coords2interp_Transform[c] = d;
+    interp2coords_Transform[d] = c;
+}
+
+interp::Transform_Expr *CoordsToInterp::getTransform_Expr(coords::Transform_Expr *c) const
+{
+    std::unordered_map<coords::Transform_Expr*, interp::Transform_Expr*>::iterator it;
+    interp::Transform *dom = NULL;
+    try {
+        dom = coords2interp_Transform.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::Transform_Expr*>(dom);
+}
+
+coords::Transform_Expr *CoordsToInterp::getTransform_Expr(interp::Transform_Expr *d) const
+{
+    std::unordered_map<interp::Transform*, coords::Transform*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = interp2coords_Transform.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Transform_Expr *>(coords);
+}
+
+// Def
+
+void CoordsToInterp::putTransform_Def(coords::Transform_Def *c, interp::Transform_Def *d)
+{
+    coords2interp_Transform_Def[c] = d;
+    interp2coords_Transform_Def[d] = c;
+}
+
+interp::Transform_Def *CoordsToInterp::getTransform_Def(coords::Transform_Def *c) const
+{
+    std::unordered_map<coords::Transform_Def*, interp::Transform_Def*>::iterator it;
+    interp::Transform_Def *dom = NULL;
+    try {
+        dom = coords2interp_Transform_Def.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::Transform_Def*>(dom);
+}
+
+coords::Transform_Def *CoordsToInterp::getTransform_Def(interp::Transform_Def *d) const
+{
+    std::unordered_map<interp::Transform*, coords::Transform*>::iterator it;
+    coords::Transform_Def *coords = NULL;
+    try {
+        coords = interp2coords_Transform_Def.at(d);
+    } catch (std::out_of_range &e) {
+      coords = NULL;
+    }
+    return static_cast<coords::Transform_Def *>(coords);
+}
+
+void CoordsToInterp::putTransform_Assign(coords::Transform_Assign *c, interp::Transform_Assign *d)
+{
+    coords2interp_Transform_Assign[c] = d;
+    interp2coords_Transform_Assign[d] = c;
+}
+
+interp::Transform_Assign *CoordsToInterp::getTransform_Assign(coords::Transform_Assign *c) const
+{
+    std::unordered_map<coords::Transform_Assign*, interp::Transform_Assign*>::iterator it;
+    interp::Transform_Assign *dom = NULL;
+    try {
+        dom = coords2interp_Transform_Assign.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<interp::Transform_Assign*>(dom);
+}
+
+coords::Transform_Assign *CoordsToInterp::getTransform_Assign(interp::Transform_Assign *d) const
+{
+    std::unordered_map<interp::Transform*, coords::Transform*>::iterator it;
+    coords::Transform_Assign *coords = NULL;
+    try {
+        coords = interp2coords_Transform_Assign.at(d);
+    } catch (std::out_of_range &e) {
+      coords = NULL;
+    }
+    return static_cast<coords::Transform_Assign *>(coords);
 }

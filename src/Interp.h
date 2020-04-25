@@ -115,6 +115,12 @@ protected:
   domain::Scalar *float_;
   domain::Scalar_Def *float_def_;
   domain::Scalar_Assign *float_assign_;
+
+  domain::TransformIdent *transform_ident_;
+  domain::TransformExpr *transform_expr_;
+  domain::Transform *transform_;
+  domain::Transform_Def *transform_def_;
+  domain::Transform_Assign *transform_assign_;
 };
 
 /*************************************************************

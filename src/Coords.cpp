@@ -86,6 +86,13 @@ std::string ScalarIdent::toString() const {
 }
 
 
+TransformIdent::TransformIdent() : Coords() {}
+
+std::string TransformIdent::toString() const { 
+    return  state_->name_;
+}
+
+
 
 /*****
 * Expr
@@ -101,6 +108,13 @@ std::string VecExpr::toString() const {
 ScalarExpr::ScalarExpr() : Coords() {}
 
 std::string ScalarExpr::toString() const { 
+    //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
+    return NULL; 
+}
+
+TransformExpr::TransformExpr() : Coords() {}
+
+std::string TransformExpr::toString() const { 
     //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
     return NULL; 
 }
@@ -125,6 +139,13 @@ std::string ScalarVarExpr::toString() const {
     return state_->name_; 
 }
 
+TransformVarExpr::TransformVarExpr() : TransformExpr() {}
+
+std::string TransformVarExpr::toString() const { 
+    return state_->name_; 
+}
+
+
 
 VecVecAddExpr::VecVecAddExpr(
     coords::VecExpr *mem, coords::VecExpr *arg) 
@@ -148,6 +169,14 @@ std::string VecScalarMulExpr::toString() const {
     return "(mul (" + flt_->toString() + ") (" + vec_->toString() + "))";
 }
 
+TransformVecApplyExpr::TransformVecApplyExpr(
+    coords::TransformExpr *lhs, coords::VecExpr *rhs) 
+        : VecExpr(), lhs_(lhs), rhs_(rhs) {
+}
+
+std::string TransformVecApplyExpr::toString() const {
+    return "(compose (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
+}
 
 
 ScalarScalarAddExpr::ScalarScalarAddExpr(
@@ -168,6 +197,17 @@ ScalarScalarMulExpr::ScalarScalarMulExpr(
 std::string ScalarScalarMulExpr::toString() const {
     return "(mul (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
 }
+
+TransformTransformComposeExpr::TransformTransformComposeExpr(
+    coords::TransformExpr *lhs, coords::TransformExpr *rhs) 
+        : TransformExpr(), lhs_(lhs), rhs_(rhs) {
+}
+
+std::string TransformTransformComposeExpr::toString() const {
+    return "(compose (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
+}
+
+
 
 
 
@@ -190,6 +230,16 @@ ScalarParenExpr::ScalarParenExpr(coords::ScalarExpr *expr)
 std::string ScalarParenExpr::toString() const {
     return "(" + expr_->toString() + ")";
 }
+
+
+TransformParenExpr::TransformParenExpr(coords::TransformExpr *expr) 
+        : TransformExpr(), expr_(expr) { 
+}
+
+std::string TransformParenExpr::toString() const {
+    return "(" + expr_->toString() + ")";
+}
+
 
 
 
@@ -215,9 +265,21 @@ Scalar::Scalar(coords::ScalarCtorType tag)
 ScalarCtorType Scalar::getScalarType() { return tag_; }
 
 std::string Scalar::toString() const { 
-    LOG(FATAL) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
+    LOG(FATAL) << "Coords::Scalar::toPrint: Error. Should not be called. Abstract.\n";
     return NULL;
 }
+
+Transform::Transform(coords::TransformCtorType tag)
+      : TransformExpr(), tag_(tag) {
+}
+
+TransformCtorType Transform::getTransformType() { return tag_; }
+
+std::string Transform::toString() const { 
+    LOG(FATAL) << "Coords::Transform::toPrint: Error. Should not be called. Abstract.\n";
+    return NULL;
+}
+
 
 
 Vector_Lit::Vector_Lit() 
@@ -245,6 +307,16 @@ std::string Scalar_Lit::toString() const  {
     return retval;
 }
 
+Transform_Lit::Transform_Lit() 
+    : Transform(TRANSFORM_CTOR_LIT){} 
+  
+std::string Transform_Lit::toString() const  {
+    std::string retval = "";
+    retval += "3x3 Matrix representation"; 
+    //retval = "(" + retval + ")";
+    return retval;
+}
+
 Vector_Var::Vector_Var(coords::VecVarExpr* expr) 
     : Vector(VEC_CTOR_VAR), expr_(expr) { 
 }
@@ -259,6 +331,15 @@ Scalar_Var::Scalar_Var(coords::ScalarVarExpr* expr)
 }
 
 std::string Scalar_Var::toString() const { 
+    LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
+    return NULL;
+}
+
+Transform_Var::Transform_Var(coords::TransformVarExpr* expr) 
+    : Transform(TRANSFORM_CTOR_VAR), expr_(expr) { 
+}
+
+std::string Transform_Var::toString() const { 
     LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
     return NULL;
 }
@@ -281,6 +362,16 @@ std::string Scalar_Expr::toString() const {
 Scalar_Expr::Scalar_Expr(
                      coords::ScalarExpr* expr_coords) 
     : Scalar(FLOAT_CTOR_EXPR), expr_(expr_coords) {
+}
+
+std::string Transform_Expr::toString() const { 
+    return expr_->toString();
+    //std::string("Vector_Expr::toString() STUB.\n"); 
+}
+
+Transform_Expr::Transform_Expr(
+                     coords::TransformExpr* expr_coords) 
+    : Transform(TRANSFORM_CTOR_EXPR), expr_(expr_coords) {
 }
 
 /****
@@ -322,6 +413,27 @@ coords::ScalarExpr *Scalar_Def::getExpr() const {
 }
 
 std::string Scalar_Def::toString() const { 
+    std::string retval = "def ";
+    retval += id_->toString();
+    retval += " := ";
+    if(expr_)
+        retval += expr_->toString();
+    return retval;
+}
+
+Transform_Def::Transform_Def(coords::TransformIdent *id, coords::TransformExpr *expr)
+      : Coords(), id_(id), expr_(expr) {
+}
+
+coords::TransformIdent *Transform_Def::getIdent() const {
+    return id_;
+}
+
+coords::TransformExpr *Transform_Def::getExpr() const {
+    return expr_;
+}
+
+std::string Transform_Def::toString() const { 
     std::string retval = "def ";
     retval += id_->toString();
     retval += " := ";
@@ -374,4 +486,27 @@ std::string Scalar_Assign::toString() const {
         retval += expr_->toString();
     return retval;
 }
+
+Transform_Assign::Transform_Assign(coords::TransformVarExpr *id, coords::TransformExpr *expr)
+      : Coords(), id_(id), expr_(expr) {
+}
+
+coords::TransformVarExpr *Transform_Assign::getVarExpr() const {
+    return  id_;
+}
+
+coords::TransformExpr *Transform_Assign::getExpr() const {
+    return expr_;
+}
+
+std::string Transform_Assign::toString() const { 
+    std::string retval = "assign ";
+    retval += id_->toString();
+    retval += " := ";
+    if(expr_)
+        retval += expr_->toString();
+    return retval;
+}
+
+
 } // namespace codecoords

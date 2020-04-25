@@ -1,7 +1,7 @@
 
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
-#include <transform>
+#include <vector>
 
 
 #include "TransformExprMatcher.h"
@@ -17,7 +17,7 @@ void TransformExprMatcher::search(){
     StatementMatcher transformImplicitCastExpr = 
         implicitCastExpr().bind("ImplicitCastExprDiscard"); //could also potentially use ignoringImplicit(expr().bind).bind...but need to modify EVERY matcher to handle this, then
     StatementMatcher transformCXXConstructExpr = //could also use isMoveConstructor / isCopyConstructor
-        cxxConstructExpr(allOf(unless(argumentCountIs(3)),has(expr().bind("CXXConstructExprChild")))).bind("CXXConstructExprDiscard");
+        cxxConstructExpr(allOf(unless(argumentCountIs(1)),has(expr().bind("CXXConstructExprChild")))).bind("CXXConstructExprDiscard");
     StatementMatcher transformCXXBindTemporaryExpr =
         cxxBindTemporaryExpr(has(expr().bind("CXXBindTemporaryExprChild"))).bind("CXXBindTemporaryExprDiscard");
     StatementMatcher transformMaterializeTemporaryExpr =
@@ -30,7 +30,7 @@ void TransformExprMatcher::search(){
     StatementMatcher transformLiteral = 
         //anyOf(
         //    cxxConstructExpr(allOf(hasType(asString("class Transform")),hasDeclaration(namedDecl(hasName("void (float, float, float)"))))).bind("TransformLiteralExpr"),
-            cxxConstructExpr(has(expr(hasType(asString("std::vector<double [3]>"))))).bind("TransformLiteralExpr");
+            cxxConstructExpr(has(expr(hasType(asString("std::vector<double [3]>"))).bind("TransformMatrixArg"))).bind("TransformLiteralExpr");
 
         //);
     StatementMatcher transformComposeExpr =
@@ -59,6 +59,7 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
     const auto transformComposeArgument = Result.Nodes.getNodeAs<clang::Expr>("TransformComposeArgument");
     const auto transformDeclRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("TransformDeclRefExpr");
     const auto transformLiteral = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("TransformLiteralExpr");
+    const auto transformLiteralArg = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("TransformMatrixArg");
 
 
     auto transformConstructExpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExprDiscard");
@@ -104,8 +105,8 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
         interp_->mkTransformVarExpr(transformDeclRefExpr);
         this->childExprStore_ = (clang::Expr*)transformDeclRefExpr;
     }
-    else if(transformLiteral){
-        interp_->mkTransform_Lit(transformLiteral, 0, 0, 0);
+    else if(transformLiteral or transformLiteralArg){
+        interp_->mkTransform_Lit(transformLiteral, transformLiteralArg);
         this->childExprStore_ = (clang::Expr*)transformLiteral;
     }
     else if(transformExprWithCleanups){

@@ -78,6 +78,42 @@ interp::ScalarIdent *InterpToDomain::getScalarIdent(domain::ScalarIdent *d) cons
     return interp;
 }
 
+
+void InterpToDomain::putTransformIdent(interp::TransformIdent *c, domain::TransformIdent *d)
+{
+    interp2domain_TransformIdent[c] = d;
+    domain2interp_TransformIdent[d] = c;
+}
+
+// TODO: Decide whether or not these maps can be partial on queried keys
+// As defined here, yes, and asking for a missing key returns NULL
+//
+domain::TransformIdent *InterpToDomain::getTransformIdent(interp::TransformIdent *c) const
+{
+    std::unordered_map<interp::TransformIdent*, domain::TransformIdent*>::iterator it;
+    domain::TransformIdent *dom = NULL;
+    try {
+        dom = interp2domain_TransformIdent.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+
+interp::TransformIdent *InterpToDomain::getTransformIdent(domain::TransformIdent *d) const
+{
+    std::unordered_map<domain::TransformIdent*, interp::TransformIdent*>::iterator it;
+    interp::TransformIdent *interp = NULL;
+    try {
+        interp = domain2interp_TransformIdent.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return interp;
+}
+
 // Expr
 
 // base
@@ -133,6 +169,33 @@ interp::ScalarExpr *InterpToDomain::getScalarExpr(domain::ScalarExpr *d) const
     }
     return interp;
 }
+
+domain::TransformExpr *InterpToDomain::getTransformExpr(interp::TransformExpr *c) const
+{
+    std::unordered_map<interp::TransformExpr*, domain::TransformExpr*>::iterator it;
+    domain::TransformExpr *dom = NULL;
+    try {
+        dom = interp2domain_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+
+interp::TransformExpr *InterpToDomain::getTransformExpr(domain::TransformExpr *d) const
+{
+    std::unordered_map<domain::TransformExpr*, interp::TransformExpr*>::iterator it;
+    interp::TransformExpr *interp = NULL;
+    try {
+        interp = domain2interp_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return interp;
+}
+
 
 // var
 
@@ -201,6 +264,38 @@ interp::ScalarVarExpr *InterpToDomain::getScalarVarExpr(domain::ScalarVarExpr *d
 }
 
 
+void InterpToDomain::putTransformVarExpr(interp::TransformVarExpr *c, domain::TransformVarExpr *d)
+{
+    interp2domain_TransformExpr[c] = d;
+    domain2interp_TransformExpr[d] = c;
+}
+
+domain::TransformVarExpr *InterpToDomain::getTransformVarExpr(interp::TransformVarExpr *c) const
+{
+    std::unordered_map<interp::TransformExpr*, domain::TransformExpr*>::iterator it;
+    domain::TransformExpr *dom = NULL;
+    try {
+        dom = interp2domain_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::TransformVarExpr*>(dom);
+}
+
+interp::TransformVarExpr *InterpToDomain::getTransformVarExpr(domain::TransformVarExpr *d) const
+{
+    std::unordered_map<domain::TransformExpr*, interp::TransformExpr*>::iterator it;
+    interp::TransformExpr *interp = NULL;
+    try {
+        interp = domain2interp_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::TransformVarExpr *>(interp);
+}
+
 // vecvecadd
 
 void InterpToDomain::putVecVecAddExpr(interp::VecVecAddExpr *c, domain::VecVecAddExpr *d)
@@ -265,6 +360,39 @@ interp::VecScalarMulExpr *InterpToDomain::getVecScalarMulExpr(domain::VecScalarM
         interp = NULL;
     }
     return static_cast<interp::VecScalarMulExpr *>(interp);
+}
+
+
+void InterpToDomain::putTransformVecApplyExpr(interp::TransformVecApplyExpr *c, domain::TransformVecApplyExpr *d)
+{
+    interp2domain_VecExpr[c] = d;
+    domain2interp_VecExpr[d] = c;
+}
+
+domain::TransformVecApplyExpr *InterpToDomain::getTransformVecApplyExpr(interp::TransformVecApplyExpr *c) const
+{
+    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = interp2domain_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::TransformVecApplyExpr*>(dom);
+}
+
+interp::TransformVecApplyExpr *InterpToDomain::getTransformVecApplyExpr(domain::TransformVecApplyExpr *d) const
+{
+    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
+    interp::VecExpr *interp = NULL;
+    try {
+        interp = domain2interp_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::TransformVecApplyExpr *>(interp);
 }
 
 
@@ -333,6 +461,37 @@ interp::ScalarScalarMulExpr *InterpToDomain::getScalarScalarMulExpr(domain::Scal
     return static_cast<interp::ScalarScalarMulExpr *>(interp);
 }
 
+void InterpToDomain::putTransformTransformComposeExpr(interp::TransformTransformComposeExpr *c, domain::TransformTransformComposeExpr *d)
+{
+    interp2domain_TransformExpr[c] = d;
+    domain2interp_TransformExpr[d] = c;
+}
+
+domain::TransformTransformComposeExpr *InterpToDomain::getTransformTransformComposeExpr(interp::TransformTransformComposeExpr *c) const
+{
+    std::unordered_map<interp::TransformExpr*, domain::TransformExpr*>::iterator it;
+    domain::TransformExpr *dom = NULL;
+    try {
+        dom = interp2domain_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::TransformTransformComposeExpr*>(dom);
+}
+
+interp::TransformTransformComposeExpr *InterpToDomain::getTransformTransformComposeExpr(domain::TransformTransformComposeExpr *d) const
+{
+    std::unordered_map<domain::TransformExpr*, interp::TransformExpr*>::iterator it;
+    interp::TransformExpr *interp = NULL;
+    try {
+        interp = domain2interp_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::TransformTransformComposeExpr *>(interp);
+}
 
 
 void InterpToDomain::putVecParenExpr(interp::VecParenExpr *c, domain::VecParenExpr *d) {
@@ -397,6 +556,39 @@ interp::ScalarParenExpr *InterpToDomain::getScalarParenExpr(domain::ScalarParenE
 }
 
 
+
+void InterpToDomain::putTransformParenExpr(interp::TransformParenExpr *c, domain::TransformParenExpr *d) {
+    interp2domain_TransformExpr[c] = d;
+    domain2interp_TransformExpr[d] = c;
+
+}
+
+domain::TransformParenExpr *InterpToDomain::getTransformParenExpr(interp::TransformParenExpr* c) const {
+    std::unordered_map<interp::TransformExpr*, domain::TransformExpr*>::iterator it;
+    domain::TransformExpr *dom = NULL;
+    try {
+        dom = interp2domain_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::TransformParenExpr*>(dom);
+}
+
+interp::TransformParenExpr *InterpToDomain::getTransformParenExpr(domain::TransformParenExpr* d) const {
+    std::unordered_map<domain::TransformExpr*, interp::TransformExpr*>::iterator it;
+    interp::TransformExpr *interp = NULL;
+    try {
+        interp = domain2interp_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::TransformParenExpr *>(interp);
+}
+
+
+
 // Vector
 
 interp::Vector *InterpToDomain::getVector(domain::Vector* v) {
@@ -445,6 +637,30 @@ domain::Scalar *InterpToDomain::getScalar(interp::Scalar* v) {
         domflt = NULL;
     }
     return static_cast<domain::Scalar *>(domflt);
+}
+
+interp::Transform *InterpToDomain::getTransform(domain::Transform* v) {
+    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
+    interp::Transform *interp = NULL;
+    try {
+        interp = domain2interp_Transform.at(v);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::Transform *>(interp);
+}
+
+domain::Transform *InterpToDomain::getTransform(interp::Transform* v) {
+    std::unordered_map<interp::Transform*, domain::Transform*>::iterator it;
+    domain::Transform *domflt = NULL;
+    try {
+        domflt = interp2domain_Transform.at(v);
+    }
+    catch (std::out_of_range &e) {
+        domflt = NULL;
+    }
+    return static_cast<domain::Transform *>(domflt);
 }
 
 void InterpToDomain::putVector_Lit(interp::Vector *c, domain::Vector_Lit *d)
@@ -511,6 +727,40 @@ interp::Scalar_Lit *InterpToDomain::getScalar_Lit(domain::Scalar_Lit *d) const
     return static_cast<interp::Scalar_Lit *>(interp);
 }
 
+void InterpToDomain::putTransform_Lit(interp::Transform *c, domain::Transform_Lit *d)
+{
+    interp2domain_Transform[c] = d;
+    domain2interp_Transform[d] = c;
+}
+
+domain::Transform_Lit *InterpToDomain::getTransform_Lit(interp::Transform_Lit *c) const
+{
+    std::unordered_map<interp::Transform_Lit*, domain::Transform_Lit*>::iterator it;
+    domain::Transform *dom = NULL;
+    try {
+        dom = interp2domain_Transform.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Transform_Lit*>(dom);
+}
+
+interp::Transform_Lit *InterpToDomain::getTransform_Lit(domain::Transform_Lit *d) const
+{
+    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
+    interp::Transform *interp = NULL;
+    try {
+        interp = domain2interp_Transform.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::Transform_Lit *>(interp);
+}
+
+
+
 void InterpToDomain::putVector_Expr(interp::Vector *c, domain::Vector_Expr *d)
 {
     interp2domain_Vector[c] = d;
@@ -574,6 +824,40 @@ interp::Scalar_Expr *InterpToDomain::getScalar_Expr(domain::Scalar_Expr *d) cons
     }
     return static_cast<interp::Scalar_Expr *>(interp);
 }
+
+
+void InterpToDomain::putTransform_Expr(interp::Transform *c, domain::Transform_Expr *d)
+{
+    interp2domain_Transform[c] = d;
+    domain2interp_Transform[d] = c;
+}
+
+domain::Transform_Expr *InterpToDomain::getTransform_Expr(interp::Transform_Expr *c) const
+{
+    std::unordered_map<interp::Transform_Expr*, domain::Transform_Expr*>::iterator it;
+    domain::Transform *dom = NULL;
+    try {
+        dom = interp2domain_Transform.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Transform_Expr*>(dom);
+}
+
+interp::Transform_Expr *InterpToDomain::getTransform_Expr(domain::Transform_Expr *d) const
+{
+    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
+    interp::Transform *interp = NULL;
+    try {
+        interp = domain2interp_Transform.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::Transform_Expr *>(interp);
+}
+
 
 // Def
 
@@ -641,6 +925,39 @@ interp::Scalar_Def *InterpToDomain::getScalar_Def(domain::Scalar_Def *d) const
 }
 
 
+void InterpToDomain::putTransform_Def(interp::Transform_Def *c, domain::Transform_Def *d)
+{
+    interp2domain_Transform_Def[c] = d;
+    domain2interp_Transform_Def[d] = c;
+}
+
+domain::Transform_Def *InterpToDomain::getTransform_Def(interp::Transform_Def *c) const
+{
+    std::unordered_map<interp::Transform_Def*, domain::Transform_Def*>::iterator it;
+    domain::Transform_Def *dom = NULL;
+    try {
+        dom = interp2domain_Transform_Def.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Transform_Def*>(dom);
+}
+
+interp::Transform_Def *InterpToDomain::getTransform_Def(domain::Transform_Def *d) const
+{
+    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
+    interp::Transform_Def *interp = NULL;
+    try {
+        interp = domain2interp_Transform_Def.at(d);
+    } catch (std::out_of_range &e) {
+      interp = NULL;
+    }
+    return static_cast<interp::Transform_Def *>(interp);
+}
+
+
+
 void InterpToDomain::putVector_Assign(interp::Vector_Assign *c, domain::Vector_Assign *d)
 {
     interp2domain_Vector_Assign[c] = d;
@@ -702,4 +1019,35 @@ interp::Scalar_Assign *InterpToDomain::getScalar_Assign(domain::Scalar_Assign *d
       interp = NULL;
     }
     return static_cast<interp::Scalar_Assign *>(interp);
+}
+
+void InterpToDomain::putTransform_Assign(interp::Transform_Assign *c, domain::Transform_Assign *d)
+{
+    interp2domain_Transform_Assign[c] = d;
+    domain2interp_Transform_Assign[d] = c;
+}
+
+domain::Transform_Assign *InterpToDomain::getTransform_Assign(interp::Transform_Assign *c) const
+{
+    std::unordered_map<interp::Transform_Assign*, domain::Transform_Assign*>::iterator it;
+    domain::Transform_Assign *dom = NULL;
+    try {
+        dom = interp2domain_Transform_Assign.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Transform_Assign*>(dom);
+}
+
+interp::Transform_Assign *InterpToDomain::getTransform_Assign(domain::Transform_Assign *d) const
+{
+    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
+    interp::Transform_Assign *interp = NULL;
+    try {
+        interp = domain2interp_Transform_Assign.at(d);
+    } catch (std::out_of_range &e) {
+      interp = NULL;
+    }
+    return static_cast<interp::Transform_Assign *>(interp);
 }

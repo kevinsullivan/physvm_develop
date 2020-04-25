@@ -23,6 +23,12 @@ void CoordsToDomain::putScalarIdent(coords::ScalarIdent *c, domain::ScalarIdent 
     dom2coords_ScalarIdent[d] = c;
 }
 
+void CoordsToDomain::putTransformIdent(coords::TransformIdent *c, domain::TransformIdent *d)
+{
+    coords2dom_TransformIdent[c] = d;
+    dom2coords_TransformIdent[d] = c;
+}
+
 // TODO: Decide whether or not these maps can be partial on queried keys
 // As defined here, yes, and asking for a missing key returns NULL
 //
@@ -77,6 +83,32 @@ coords::ScalarIdent *CoordsToDomain::getScalarIdent(domain::ScalarIdent *d) cons
     }
     return coords;
 }
+
+domain::TransformIdent *CoordsToDomain::getTransformIdent(coords::TransformIdent *c) const
+{
+    std::unordered_map<coords::TransformIdent*, domain::TransformIdent*>::iterator it;
+    domain::TransformIdent *dom = NULL;
+    try {
+        dom = coords2dom_TransformIdent.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+
+coords::TransformIdent *CoordsToDomain::getTransformIdent(domain::TransformIdent *d) const
+{
+    std::unordered_map<domain::TransformIdent*, coords::TransformIdent*>::iterator it;
+    coords::TransformIdent *coords = NULL;
+    try {
+        coords = dom2coords_TransformIdent.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return coords;
+}
 /*
 void CoordsToDomain::PutScalarExpr(coords::ScalarExpr *c, domain::ScalarExpr *d)
 {
@@ -109,6 +141,33 @@ coords::ScalarExpr *CoordsToDomain::getScalarExpr(domain::ScalarExpr *d) const
     coords::ScalarExpr *coords = NULL;
     try {
         coords = dom2coords_ScalarExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return coords;
+}
+
+
+domain::TransformExpr *CoordsToDomain::getTransformExpr(coords::TransformExpr *c) const
+{
+    std::unordered_map<coords::TransformExpr*, domain::TransformExpr*>::iterator it;
+    domain::TransformExpr *dom = NULL;
+    try {
+        dom = coords2dom_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+
+coords::TransformExpr *CoordsToDomain::getTransformExpr(domain::TransformExpr *d) const
+{
+    std::unordered_map<domain::TransformExpr*, coords::TransformExpr*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = dom2coords_TransformExpr.at(d);
     }
     catch (std::out_of_range &e) {
         coords = NULL;
@@ -228,6 +287,40 @@ coords::ScalarVarExpr *CoordsToDomain::getScalarVarExpr(domain::ScalarVarExpr *d
     return static_cast<coords::ScalarVarExpr *>(coords);
 }
 
+
+void CoordsToDomain::PutTransformVarExpr(coords::TransformVarExpr *c, domain::TransformVarExpr *d)
+{
+    coords2dom_TransformExpr[c] = d;
+    dom2coords_TransformExpr[d] = c;
+}
+
+domain::TransformVarExpr *CoordsToDomain::getTransformVarExpr(coords::TransformVarExpr *c) const
+{
+    std::unordered_map<coords::TransformExpr*, domain::TransformExpr*>::iterator it;
+    domain::TransformExpr *dom = NULL;
+    try {
+        dom = coords2dom_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::TransformVarExpr*>(dom);
+}
+
+coords::TransformVarExpr *CoordsToDomain::getTransformVarExpr(domain::TransformVarExpr *d) const
+{
+    std::unordered_map<domain::TransformExpr*, coords::TransformExpr*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = dom2coords_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::TransformVarExpr *>(coords);
+}
+
+
 // vecvecadd
 
 void CoordsToDomain::PutVecVecAddExpr(coords::VecVecAddExpr *c, domain::VecVecAddExpr *d)
@@ -267,6 +360,67 @@ void CoordsToDomain::PutVecScalarMulExpr(coords::VecScalarMulExpr *c, domain::Ve
     coords2dom_VecExpr[c] = d;
     dom2coords_VecExpr[d] = c;
 }
+
+coords::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(domain::VecScalarMulExpr *d) const
+{
+    std::unordered_map<domain::VecExpr*, coords::VecExpr*>::iterator it;
+    coords::VecExpr *coords = NULL;
+    try {
+        coords = dom2coords_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::VecScalarMulExpr *>(coords);
+}
+
+
+domain::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(coords::VecScalarMulExpr *c) const
+{
+    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::VecScalarMulExpr*>(dom);
+}
+
+void CoordsToDomain::PutTransformVecApplyExpr(coords::TransformVecApplyExpr *c, domain::TransformVecApplyExpr *d)
+{
+    coords2dom_VecExpr[c] = d;
+    dom2coords_VecExpr[d] = c;
+}
+
+coords::TransformVecApplyExpr *CoordsToDomain::getTransformVecApplyExpr(domain::TransformVecApplyExpr *d) const
+{
+    std::unordered_map<domain::VecExpr*, coords::VecExpr*>::iterator it;
+    coords::VecExpr *coords = NULL;
+    try {
+        coords = dom2coords_VecExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::TransformVecApplyExpr *>(coords);
+}
+
+
+domain::TransformVecApplyExpr *CoordsToDomain::getTransformVecApplyExpr(coords::TransformVecApplyExpr *c) const
+{
+    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
+    domain::VecExpr *dom = NULL;
+    try {
+        dom = coords2dom_VecExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::TransformVecApplyExpr*>(dom);
+}
+
 
 void CoordsToDomain::PutScalarScalarAddExpr(coords::ScalarScalarAddExpr *c, domain::ScalarScalarAddExpr *d)
 {
@@ -334,31 +488,36 @@ coords::ScalarScalarMulExpr *CoordsToDomain::getScalarScalarMulExpr(domain::Scal
 }
 
 
-coords::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(domain::VecScalarMulExpr *d) const
+void CoordsToDomain::PutTransformTransformComposeExpr(coords::TransformTransformComposeExpr *c, domain::TransformTransformComposeExpr *d)
 {
-    std::unordered_map<domain::VecExpr*, coords::VecExpr*>::iterator it;
-    coords::VecExpr *coords = NULL;
-    try {
-        coords = dom2coords_VecExpr.at(d);
-    }
-    catch (std::out_of_range &e) {
-        coords = NULL;
-    }
-    return static_cast<coords::VecScalarMulExpr *>(coords);
+    coords2dom_TransformExpr[c] = d;
+    dom2coords_TransformExpr[d] = c;
 }
 
-
-domain::VecScalarMulExpr *CoordsToDomain::getVecScalarMulExpr(coords::VecScalarMulExpr *c) const
+domain::TransformTransformComposeExpr *CoordsToDomain::getTransformTransformComposeExpr(coords::TransformTransformComposeExpr *c) const
 {
-    std::unordered_map<coords::VecExpr*, domain::VecExpr*>::iterator it;
-    domain::VecExpr *dom = NULL;
+    std::unordered_map<coords::TransformExpr*, domain::TransformExpr*>::iterator it;
+    domain::TransformExpr *dom = NULL;
     try {
-        dom = coords2dom_VecExpr.at(c);
+        dom = coords2dom_TransformExpr.at(c);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::VecScalarMulExpr*>(dom);
+    return static_cast<domain::TransformTransformComposeExpr*>(dom);
+}
+
+coords::TransformTransformComposeExpr *CoordsToDomain::getTransformTransformComposeExpr(domain::TransformTransformComposeExpr *d) const
+{
+    std::unordered_map<domain::TransformExpr*, coords::TransformExpr*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = dom2coords_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::TransformTransformComposeExpr *>(coords);
 }
 
 void CoordsToDomain::PutVecParenExpr(coords::VecParenExpr *c, domain::VecParenExpr *d) {
@@ -421,6 +580,36 @@ coords::ScalarParenExpr *CoordsToDomain::getParenExpr(domain::ScalarParenExpr* d
 }
 
 
+void CoordsToDomain::PutTransformParenExpr(coords::TransformParenExpr *c, domain::TransformParenExpr *d) {
+    coords2dom_TransformExpr[c] = d;
+    dom2coords_TransformExpr[d] = c;
+}
+
+domain::TransformParenExpr *CoordsToDomain::getParenExpr(coords::TransformParenExpr* c) const {
+    std::unordered_map<coords::TransformExpr*, domain::TransformExpr*>::iterator it;
+    domain::TransformExpr *dom = NULL;
+    try {
+        dom = coords2dom_TransformExpr.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::TransformParenExpr*>(dom);
+}
+
+coords::TransformParenExpr *CoordsToDomain::getParenExpr(domain::TransformParenExpr* d) const {
+    std::unordered_map<domain::TransformExpr*, coords::TransformExpr*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = dom2coords_TransformExpr.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::TransformParenExpr *>(coords);
+}
+
+
 
 // Vector
 
@@ -470,6 +659,30 @@ domain::Scalar *CoordsToDomain::getScalar(coords::Scalar* v) {
         domvec = NULL;
     }
     return static_cast<domain::Scalar *>(domvec);
+}
+
+coords::Transform *CoordsToDomain::getTransform(domain::Transform* v) {
+    std::unordered_map<domain::Transform*, coords::Transform*>::iterator it;
+    coords::Transform *coords = NULL;
+    try {
+        coords = dom2coords_Transform.at(v);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Transform *>(coords);
+}
+
+domain::Transform *CoordsToDomain::getTransform(coords::Transform* v) {
+    std::unordered_map<coords::Transform*, domain::Transform*>::iterator it;
+    domain::Transform *domvec = NULL;
+    try {
+        domvec = coords2dom_Transform.at(v);
+    }
+    catch (std::out_of_range &e) {
+        domvec = NULL;
+    }
+    return static_cast<domain::Transform *>(domvec);
 }
 
 
@@ -538,6 +751,38 @@ coords::Scalar_Lit *CoordsToDomain::getScalar_Lit(domain::Scalar_Lit *d) const
     return static_cast<coords::Scalar_Lit *>(coords);
 }
 
+void CoordsToDomain::putTransform_Lit(coords::Transform *c, domain::Transform_Lit *d)
+{
+    coords2dom_Transform[c] = d;
+    dom2coords_Transform[d] = c;
+}
+
+domain::Transform_Lit *CoordsToDomain::getTransform_Lit(coords::Transform_Lit *c) const
+{
+    std::unordered_map<coords::Transform_Lit*, domain::Transform_Lit*>::iterator it;
+    domain::Transform *dom = NULL;
+    try {
+        dom = coords2dom_Transform.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Transform_Lit*>(dom);
+}
+
+coords::Transform_Lit *CoordsToDomain::getTransform_Lit(domain::Transform_Lit *d) const
+{
+    std::unordered_map<domain::Transform*, coords::Transform*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = dom2coords_Transform.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Transform_Lit *>(coords);
+}
+
 void CoordsToDomain::putVector_Expr(coords::Vector *c, domain::Vector_Expr *d)
 {
     coords2dom_Vector[c] = d;
@@ -601,6 +846,39 @@ coords::Scalar_Expr *CoordsToDomain::getScalar_Expr(domain::Scalar_Expr *d) cons
         coords = NULL;
     }
     return static_cast<coords::Scalar_Expr *>(coords);
+}
+
+
+void CoordsToDomain::putTransform_Expr(coords::Transform *c, domain::Transform_Expr *d)
+{
+    coords2dom_Transform[c] = d;
+    dom2coords_Transform[d] = c;
+}
+
+domain::Transform_Expr *CoordsToDomain::getTransform_Expr(coords::Transform_Expr *c) const
+{
+    std::unordered_map<coords::Transform_Expr*, domain::Transform_Expr*>::iterator it;
+    domain::Transform *dom = NULL;
+    try {
+        dom = coords2dom_Transform.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Transform_Expr*>(dom);
+}
+
+coords::Transform_Expr *CoordsToDomain::getTransform_Expr(domain::Transform_Expr *d) const
+{
+    std::unordered_map<domain::Transform*, coords::Transform*>::iterator it;
+    coords::TransformExpr *coords = NULL;
+    try {
+        coords = dom2coords_Transform.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::Transform_Expr *>(coords);
 }
 // Def
 
@@ -666,6 +944,37 @@ coords::Scalar_Def *CoordsToDomain::getScalar_Def(domain::Scalar_Def *d) const
     return static_cast<coords::Scalar_Def *>(coords);
 }
 
+void CoordsToDomain::putTransform_Def(coords::Transform_Def *c, domain::Transform_Def *d)
+{
+    coords2dom_Transform_Def[c] = d;
+    dom2coords_Transform_Def[d] = c;
+}
+
+domain::Transform_Def *CoordsToDomain::getTransform_Def(coords::Transform_Def *c) const
+{
+    std::unordered_map<coords::Transform_Def*, domain::Transform_Def*>::iterator it;
+    domain::Transform_Def *dom = NULL;
+    try {
+        dom = coords2dom_Transform_Def.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Transform_Def*>(dom);
+}
+
+coords::Transform_Def *CoordsToDomain::getTransform_Def(domain::Transform_Def *d) const
+{
+    std::unordered_map<domain::Transform*, coords::Transform*>::iterator it;
+    coords::Transform_Def *coords = NULL;
+    try {
+        coords = dom2coords_Transform_Def.at(d);
+    } catch (std::out_of_range &e) {
+      coords = NULL;
+    }
+    return static_cast<coords::Transform_Def *>(coords);
+}
+
 void CoordsToDomain::putVector_Assign(coords::Vector_Assign *c, domain::Vector_Assign *d)
 {
     coords2dom_Vector_Assign[c] = d;
@@ -728,6 +1037,37 @@ coords::Scalar_Assign *CoordsToDomain::getScalar_Assign(domain::Scalar_Assign *d
     return static_cast<coords::Scalar_Assign *>(coords);
 }
 
+
+void CoordsToDomain::putTransform_Assign(coords::Transform_Assign *c, domain::Transform_Assign *d)
+{
+    coords2dom_Transform_Assign[c] = d;
+    dom2coords_Transform_Assign[d] = c;
+}
+
+domain::Transform_Assign *CoordsToDomain::getTransform_Assign(coords::Transform_Assign *c) const
+{
+    std::unordered_map<coords::Transform_Assign*, domain::Transform_Assign*>::iterator it;
+    domain::Transform_Assign *dom = NULL;
+    try {
+        dom = coords2dom_Transform_Assign.at(c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::Transform_Assign*>(dom);
+}
+
+coords::Transform_Assign *CoordsToDomain::getTransform_Assign(domain::Transform_Assign *d) const
+{
+    std::unordered_map<domain::Transform*, coords::Transform*>::iterator it;
+    coords::Transform_Assign *coords = NULL;
+    try {
+        coords = dom2coords_Transform_Assign.at(d);
+    } catch (std::out_of_range &e) {
+      coords = NULL;
+    }
+    return static_cast<coords::Transform_Assign *>(coords);
+}
 /*void CoordsToDomain::dump() const
 {
     LOG(DBUG) <<"CoordsToDomain::dump(). STUB.\n";

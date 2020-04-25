@@ -5,8 +5,6 @@
 #include "Domain.h"
 #include "Interp.h"
 
-#include "VecParenExpr.h"
-
 #include <unordered_map>
 
 namespace interp2domain {
@@ -25,6 +23,9 @@ class InterpToDomain
 	domain::ScalarIdent *getScalarIdent(interp::ScalarIdent *c) const;
 	interp::ScalarIdent *getScalarIdent(domain::ScalarIdent *d) const;
 
+	void putTransformIdent(interp::TransformIdent *key, domain::TransformIdent *i);
+	domain::TransformIdent *getTransformIdent(interp::TransformIdent *c) const;
+	interp::TransformIdent *getTransformIdent(domain::TransformIdent *d) const;
 // Expr
 
 	domain::VecExpr *getVecExpr(interp::VecExpr* c) const;
@@ -32,6 +33,9 @@ class InterpToDomain
 
 	domain::ScalarExpr *getScalarExpr(interp::ScalarExpr* c) const;
 	interp::ScalarExpr *getScalarExpr(domain::ScalarExpr* d) const;
+
+	domain::TransformExpr *getTransformExpr(interp::TransformExpr* c) const;
+	interp::TransformExpr *getTransformExpr(domain::TransformExpr* d) const;
 
 /*	void putVecLitExpr(interp::VecLitExpr n, domain::VecLitExpr &v);
 	domain::VecLitExpr *getLitInterp(interp::VecLitExpr c) const;
@@ -45,6 +49,10 @@ class InterpToDomain
 	domain::ScalarVarExpr *getScalarVarExpr(interp::ScalarVarExpr* c) const;
 	interp::ScalarVarExpr *getScalarVarExpr(domain::ScalarVarExpr* d) const;
 
+	void putTransformVarExpr(interp::TransformVarExpr *n, domain::TransformVarExpr *e);
+	domain::TransformVarExpr *getTransformVarExpr(interp::TransformVarExpr* c) const;
+	interp::TransformVarExpr *getTransformVarExpr(domain::TransformVarExpr* d) const;
+
 	void putVecVecAddExpr(interp::VecVecAddExpr *n, domain::VecVecAddExpr *e);
 	domain::VecVecAddExpr *getVecVecAddExpr(interp::VecVecAddExpr* c) const;
 	interp::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
@@ -52,6 +60,10 @@ class InterpToDomain
 	void putVecScalarMulExpr(interp::VecScalarMulExpr *n, domain::VecScalarMulExpr* e);
 	domain::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* n) const;
 	interp::VecScalarMulExpr *getVecScalarMulExpr(domain::VecScalarMulExpr* e) const;
+
+	void putTransformVecApplyExpr(interp::TransformVecApplyExpr *n, domain::TransformVecApplyExpr* e);
+	domain::TransformVecApplyExpr *getTransformVecApplyExpr(interp::TransformVecApplyExpr* n) const;
+	interp::TransformVecApplyExpr *getTransformVecApplyExpr(domain::TransformVecApplyExpr* e) const;
 
 	void putScalarScalarAddExpr(interp::ScalarScalarAddExpr *n, domain::ScalarScalarAddExpr *e);
 	domain::ScalarScalarAddExpr *getScalarScalarAddExpr(interp::ScalarScalarAddExpr* c) const;
@@ -61,6 +73,9 @@ class InterpToDomain
 	domain::ScalarScalarMulExpr *getScalarScalarMulExpr(interp::ScalarScalarMulExpr* c) const;
 	interp::ScalarScalarMulExpr *getScalarScalarMulExpr(domain::ScalarScalarMulExpr* d) const;
 
+	void putTransformTransformComposeExpr(interp::TransformTransformComposeExpr *n, domain::TransformTransformComposeExpr *e);
+	domain::TransformTransformComposeExpr *getTransformTransformComposeExpr(interp::TransformTransformComposeExpr* c) const;
+	interp::TransformTransformComposeExpr *getTransformTransformComposeExpr(domain::TransformTransformComposeExpr* d) const;
 
 	// KEVIN: Added for VecParenExpr horizontal module
 	void putVecParenExpr(interp::VecParenExpr *n, domain::VecParenExpr *e);
@@ -70,6 +85,10 @@ class InterpToDomain
 	void putScalarParenExpr(interp::ScalarParenExpr *n, domain::ScalarParenExpr *e);
 	domain::ScalarParenExpr *getScalarParenExpr(interp::ScalarParenExpr* c) const;
 	interp::ScalarParenExpr *getScalarParenExpr(domain::ScalarParenExpr* d) const;
+
+	void putTransformParenExpr(interp::TransformParenExpr *n, domain::TransformParenExpr *e);
+	domain::TransformParenExpr *getTransformParenExpr(interp::TransformParenExpr* c) const;
+	interp::TransformParenExpr *getTransformParenExpr(domain::TransformParenExpr* d) const;
 
 // Vector
 
@@ -113,6 +132,24 @@ class InterpToDomain
 	domain::Scalar_Assign* getScalar_Assign(interp::Scalar_Assign* c) const;
 	interp::Scalar_Assign* getScalar_Assign(domain::Scalar_Assign* d) const;
 
+	void putTransform_Lit(interp::Transform* ast, domain::Transform_Lit *v);
+	domain::Transform_Lit *getTransform_Lit(interp::Transform_Lit* c) const;
+	interp::Transform_Lit *getTransform_Lit(domain::Transform_Lit* d) const;
+
+	void putTransform_Expr(interp::Transform *ast, domain::Transform_Expr *v);
+	domain::Transform_Expr *getTransform_Expr(interp::Transform_Expr* c) const;
+	interp::Transform_Expr *getTransform_Expr(domain::Transform_Expr* d) const;
+
+	interp::Transform* getTransform(domain::Transform* v);
+	domain::Transform* getTransform(interp::Transform* v);
+
+	void putTransform_Def(interp::Transform_Def *vardecl_wrapper, domain::Transform_Def *b);
+	domain::Transform_Def* getTransform_Def(interp::Transform_Def* c) const;
+	interp::Transform_Def* getTransform_Def(domain::Transform_Def* d) const;
+
+	void putTransform_Assign(interp::Transform_Assign *var_wrapper, domain::Transform_Assign *b);
+	domain::Transform_Assign* getTransform_Assign(interp::Transform_Assign* c) const;
+	interp::Transform_Assign* getTransform_Assign(domain::Transform_Assign* d) const;
 	
 
 	void dump() const;
@@ -137,6 +174,12 @@ class InterpToDomain
 	std::unordered_map <interp::Scalar_Def*, domain::Scalar_Def*	>	interp2domain_Scalar_Def;
 	std::unordered_map <interp::Scalar_Assign*, domain::Scalar_Assign*>	interp2domain_Scalar_Assign;
 
+	std::unordered_map <interp::TransformIdent*,domain::TransformIdent* >	interp2domain_TransformIdent;
+	std::unordered_map <interp::TransformExpr*, domain::TransformExpr*	>	interp2domain_TransformExpr;
+	std::unordered_map <interp::Transform*, domain::Transform*			>	interp2domain_Transform;
+	std::unordered_map <interp::Transform_Def*, domain::Transform_Def*	>	interp2domain_Transform_Def;
+	std::unordered_map <interp::Transform_Assign*, domain::Transform_Assign*>	interp2domain_Transform_Assign;
+
 	std::unordered_map<domain::VecIdent*, 	interp::VecIdent*	> 	domain2interp_VecIdent;
 	std::unordered_map<domain::VecExpr*, 	interp::VecExpr*	> 	domain2interp_VecExpr;
 	std::unordered_map<domain::Vector*, 	interp::Vector*		> 	domain2interp_Vector;
@@ -148,6 +191,12 @@ class InterpToDomain
 	std::unordered_map<domain::Scalar*, 		interp::Scalar*		> 	domain2interp_Scalar;
 	std::unordered_map<domain::Scalar_Def*, 	interp::Scalar_Def*	> 	domain2interp_Scalar_Def;
 	std::unordered_map<domain::Scalar_Assign*, 	interp::Scalar_Assign*> 	domain2interp_Scalar_Assign;
+
+	std::unordered_map<domain::TransformIdent*, interp::TransformIdent*	> 	domain2interp_TransformIdent;
+	std::unordered_map<domain::TransformExpr*, 	interp::TransformExpr*	> 	domain2interp_TransformExpr;
+	std::unordered_map<domain::Transform*, 		interp::Transform*		> 	domain2interp_Transform;
+	std::unordered_map<domain::Transform_Def*, 	interp::Transform_Def*	> 	domain2interp_Transform_Def;
+	std::unordered_map<domain::Transform_Assign*, 	interp::Transform_Assign*> 	domain2interp_Transform_Assign;
 };
 
 } // namespace

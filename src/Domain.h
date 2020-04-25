@@ -40,10 +40,10 @@ class VecVarExpr;
 class VecVecAddExpr;
 
 class VecScalarMulExpr;
+class TransformVecApplyExpr;
+
 class ScalarVarExpr;
 
-class VecWrapper;
-class ScalarWrapper;
 
 // KEVIN ADDING FOR HORIZONTAL MODULE
 class VecParenExpr;
@@ -64,10 +64,24 @@ class Scalar_Var;
 class Scalar_Def;
 class Scalar_Assign;
 
+
+class TransformIdent;
+class TransformExpr;
+class TransformVarExpr;
+class TransformParenExpr;
+
+class Transform;
+class Transform_Lit;
+class Transform_Expr;
+class Transform_Var;
+class Transform_Def;
+class Transform_Assign;
+
 class ScalarScalarAddExpr;
 class ScalarScalarMulExpr;
 
 
+class TransformTransformComposeExpr;
 
 
 // Definition for Domain class 
@@ -99,19 +113,7 @@ public:
 	ScalarExpr* mkScalarExpr();
 	std::vector<ScalarExpr *> &getScalarExprs() { return float_exprs; }
 
-	std::vector<TransformExpr *> &getTransformExprs() { return transform_exprs; }
-
-	// Create a variable object in the domain 
-
-	VecWrapper* mkVecWrapper(Space* s, domain::VecExpr* expr);
-	VecWrapper* mkVecWrapper(domain::VecExpr* expr);
-
-	ScalarWrapper* mkScalarWrapper(Space* s, domain::ScalarExpr* expr);
-	ScalarWrapper* mkScalarWrapper(domain::ScalarExpr* expr);
-
-	TransformWrapper* mkTransformWrapper(Space* s, domain::TransformExpr* expr);
-	TransformWrapper* mkTransformWrapper(domain::TransformExpr* expr);
-
+	std::vector<TransformExpr *> &getTransformExprs() { return tfm_exprs; }
 	// Details available via externally represented backmappings
 	//
 	VecVarExpr* mkVecVarExpr(Space* s);
@@ -191,7 +193,10 @@ public:
 		float t11, float t12, float t13,
 		float t21, float t22, float t23,
 		float t31, float t32, float t33);
-	Transform_Lit* mkTransform_Lit(float Transform);
+	Transform_Lit* mkTransform_Lit( 
+		float t11, float t12, float t13,
+		float t21, float t22, float t23,
+		float t31, float t32, float t33);
 
 	Transform* mkTransform_Var(Space* s);
 	Transform* mkTransform_Var();
@@ -212,7 +217,7 @@ public:
 
 
 	Transform_Def* mkTransform_Def(domain::TransformIdent* identifier, domain::Transform* vec);
-	std::vector<Transform_Def*> &getTransformDefs() { return float_defs; }
+	std::vector<Transform_Def*> &getTransformDefs() { return transform_defs; }
 
 
 
@@ -224,7 +229,7 @@ public:
 	std::vector<Scalar_Assign*> &getScalarAssigns() { return float_assigns; }
 
 	Transform_Assign* mkTransform_Assign(domain::TransformVarExpr* identifier, domain::Transform* vec);
-	std::vector<Transform_Assign*> &getTransformAssigns() { return float_assigns; }
+	std::vector<Transform_Assign*> &getTransformAssigns() { return transform_assigns; }
 // Client -- Separated from Domain
 //	bool isConsistent();
 private:
@@ -711,15 +716,31 @@ class Scalar_Var : public Scalar {
 
 class Transform_Lit : public Transform {
 public:
-	Transform_Lit(const Space& s, float Transform) :
-		Transform(s, TFM_LIT), Transform_(Transform) {
+	Transform_Lit(const Space& s,
+		float t11, float t12, float t13,
+		float t21, float t22, float t23,
+		float t31, float t32, float t33) :
+		Transform(s, TFM_LIT),
+		t11_{t11}, t12_{t12}, t13_{t13},
+		t21_{t21}, t22_{t22}, t23_{t23},
+		t31_{t31}, t32_{t32}, t33_{t33} {
 	}
 
-	Transform_Lit(float Transform) : Transform(TFM_LIT), Transform_(Transform){}
-
-	float getTransform() { return Transform_; }
+	Transform_Lit(
+		float t11, float t12, float t13,
+		float t21, float t22, float t23,
+		float t31, float t32, float t33) :
+		Transform(TFM_LIT),
+		t11_{t11}, t12_{t12}, t13_{t13},
+		t21_{t21}, t22_{t22}, t23_{t23},
+		t31_{t31}, t32_{t32}, t33_{t33} {
+	}
+	
+	//float getTransform() { return Transform_; }
 private:
-  float Transform_;
+   float t11_,  t12_,  t13_,
+		 t21_,  t22_,  t23_,
+		 t31_,  t32_,  t33_;
 };
 
 // Constructed vector value from vector-valued expression
@@ -779,8 +800,8 @@ private:
 class Transform_Def  {
 public:
 	Transform_Def(domain::TransformIdent* id, domain::Transform* tfm): 
-			id_(id), flt_(flt) {}
-	const domain::Transform* getTransform() const { return flt_; }
+			id_(id), tfm_(tfm) {}
+	const domain::Transform* getTransform() const { return tfm_; }
 	const domain::TransformIdent* getIdent() { return id_; }
 	// std::string toString() const;
 private:
@@ -816,7 +837,7 @@ private:
 class Transform_Assign  {
 public:
 	Transform_Assign(domain::TransformVarExpr* id, domain::Transform* tfm): 
-			id_(id), flt_(flt) {}
+			id_(id), tfm_(tfm) {}
 	const domain::Transform* getTransform() const { return tfm_; }
 	const domain::TransformVarExpr* getVarExpr() { return id_; }
 	// std::string toString() const;

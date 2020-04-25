@@ -34,6 +34,14 @@ public:
 	virtual domain::Space& getSpaceForScalarAddExpression(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) = 0;
 	virtual domain::Space& getSpaceForScalarMulExpression(coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) = 0;
 
+	virtual domain::Space &getSpaceForTransformIdent(coords::TransformIdent *v) = 0;
+	virtual domain::Space& getSpaceForTransformVarExpr(coords::TransformExpr *coords) = 0;
+	virtual domain::Space &getSpaceForTransformParenExpr(coords::TransformExpr *expr_coords) = 0;
+	virtual domain::Space& getSpaceForTransformApplyExpression(coords::TransformExpr *lhs, coords::VecExpr *rhs) = 0;
+	virtual domain::Space& getSpaceForTransformComposeExpression(coords::TransformExpr *lhs, coords::TransformExpr *rhs) = 0;
+
+	virtual domain::Space& getSpaceForTransform_Expr(coords::TransformExpr *expr_coords) = 0; 
+	virtual domain::Space& getSpaceForTransform_Lit(coords::Transform_Lit *coords) = 0;
 };
 
 } // namespace

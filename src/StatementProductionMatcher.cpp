@@ -8,6 +8,7 @@
 #include "StatementProductionMatcher.h"
 #include "VectorExprMatcher.h"
 #include "ScalarExprMatcher.h"
+#include "TransformExprMatcher.h"
 
 #include <iostream>
 
@@ -46,7 +47,7 @@ void StatementProductionMatcher::search(){
     StatementMatcher vectorExpr = 
         expr(hasType(asString("class Vec"))).bind("VectorExprStatement");
     StatementMatcher transformExpr =
-        expr(hasType(asString("class Transform"))).find("TransformExprStatement");
+        expr(hasType(asString("class Transform"))).bind("TransformExprStatement");
     StatementMatcher scalarAssign = 
         binaryOperator(allOf(
             hasType(realFloatingPointType()),
@@ -107,7 +108,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     const auto transformDecl = Result.Nodes.getNodeAs<clang::DeclStmt>("TransformDeclStatement");
     const auto transformVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("TransformVarDecl");
     const auto transformDeclRV = Result.Nodes.getNodeAs<clang::Expr>("TransformDeclRV");
-    const auto transformAssign = Result.Nodes.getNodeAs<clang::BinaryOperator>("TransformAssign");
+    const auto transformAssign = Result.Nodes.getNodeAs<clang::CXXOperatorCallExpr>("TransformAssign");
     const auto transformAssignLHS = Result.Nodes.getNodeAs<clang::Expr>("TransformAssignLHS");
     const auto transformAssignRHS = Result.Nodes.getNodeAs<clang::Expr>("TransformAssignRHS");
 
@@ -220,7 +221,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.search();
             rhsMatcher.visit(*transformAssignRHS);
 
-            interp_->mkVector_Assign(transformAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+            interp_->mkTransform_Assign(transformAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
 
            //this->childExprStore_ = (clang::Expr*)vectorAssign;
         }

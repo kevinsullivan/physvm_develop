@@ -1,5 +1,5 @@
-#ifndef vectorm
-#define vectorm
+#ifndef transformm
+#define transformm
 #include "BaseMatcher.h"
 #include "Interpretation.h"
 

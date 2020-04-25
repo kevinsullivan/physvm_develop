@@ -23,11 +23,7 @@ class CoordsToInterp
 
 	interp::VecExpr *getVecExpr(coords::VecExpr* c);
 	coords::VecExpr *getVecExpr(interp::VecExpr* d) const;
-/*
-	void putVecWrapper(coords::VecWrapper *n, interp::VecWrapper *e);
-	interp::VecWrapper *getVecWrapper(coords::VecWrapper* c) const;
-	coords::VecWrapper *getVecWrapper(interp::VecWrapper* d) const;
-*/
+
 	void putVecVarExpr(coords::VecVarExpr *n, interp::VecVarExpr *e);
 	interp::VecVarExpr *getVecVarExpr(coords::VecVarExpr* c) const;
 	coords::VecVarExpr *getVecVarExpr(interp::VecVarExpr* d) const;
@@ -45,6 +41,10 @@ class CoordsToInterp
 	interp::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
 	coords::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* d) const;
 
+	void putTransformVecApplyExpr(coords::TransformVecApplyExpr *n, interp::TransformVecApplyExpr *e);
+	interp::TransformVecApplyExpr *getTransformVecApplyExpr(coords::TransformVecApplyExpr* c) const;
+	coords::TransformVecApplyExpr *getTransformVecApplyExpr(interp::TransformVecApplyExpr* d) const;
+
 	void putScalarScalarAddExpr(coords::ScalarScalarAddExpr *n, interp::ScalarScalarAddExpr *e);
 	interp::ScalarScalarAddExpr *getScalarScalarAddExpr(coords::ScalarScalarAddExpr* c) const;
 	coords::ScalarScalarAddExpr *getScalarScalarAddExpr(interp::ScalarScalarAddExpr* d) const;
@@ -53,6 +53,9 @@ class CoordsToInterp
 	interp::ScalarScalarMulExpr *getScalarScalarMulExpr(coords::ScalarScalarMulExpr* c) const;
 	coords::ScalarScalarMulExpr *getScalarScalarMulExpr(interp::ScalarScalarMulExpr* d) const;
 	
+	void putTransformTransformComposeExpr(coords::TransformTransformComposeExpr *n, interp::TransformTransformComposeExpr *e);
+	interp::TransformTransformComposeExpr *getTransformTransformComposeExpr(coords::TransformTransformComposeExpr* c) const;
+	coords::TransformTransformComposeExpr *getTransformTransformComposeExpr(interp::TransformTransformComposeExpr* d) const;
 
 // Ident
 
@@ -64,11 +67,6 @@ class CoordsToInterp
 
 	interp::ScalarExpr *getScalarExpr(coords::ScalarExpr* c) const;
 	coords::ScalarExpr *getScalarExpr(interp::ScalarExpr* d) const;
-/*
-	void putScalarWrapper(coords::ScalarWrapper *n, interp::ScalarWrapper *e);
-	interp::ScalarWrapper *getScalarWrapper(coords::ScalarWrapper* c) const;
-	coords::ScalarWrapper *getScalarWrapper(interp::ScalarWrapper* d) const;
-*/	
 
 	void putScalarVarExpr(coords::ScalarVarExpr *n, interp::ScalarVarExpr *e);
 	interp::ScalarVarExpr *getScalarVarExpr(coords::ScalarVarExpr* c) const;
@@ -78,6 +76,27 @@ class CoordsToInterp
 	void putScalarParenExpr(coords::ScalarParenExpr *ast, interp::ScalarParenExpr *expr);
 	interp::ScalarParenExpr *getScalarParenExpr(coords::ScalarParenExpr* c) const;
 	coords::ScalarParenExpr *getScalarParenExpr(interp::ScalarParenExpr* d) const;
+
+
+// Ident
+
+	void putTransformIdent(coords::TransformIdent *key, interp::TransformIdent *i);
+	interp::TransformIdent *getTransformIdent(coords::TransformIdent *c) const;
+	coords::TransformIdent *getTransformIdent(interp::TransformIdent *d) const;
+
+// Expr
+
+	interp::TransformExpr *getTransformExpr(coords::TransformExpr* c) const;
+	coords::TransformExpr *getTransformExpr(interp::TransformExpr* d) const;
+
+	void putTransformVarExpr(coords::TransformVarExpr *n, interp::TransformVarExpr *e);
+	interp::TransformVarExpr *getTransformVarExpr(coords::TransformVarExpr* c) const;
+	coords::TransformVarExpr *getTransformVarExpr(interp::TransformVarExpr* d) const;
+	
+	// KEVIN: This stuff here for TransformParenExpr module
+	void putTransformParenExpr(coords::TransformParenExpr *ast, interp::TransformParenExpr *expr);
+	interp::TransformParenExpr *getTransformParenExpr(coords::TransformParenExpr* c) const;
+	coords::TransformParenExpr *getTransformParenExpr(interp::TransformParenExpr* d) const;
 
 // Vector
 
@@ -129,6 +148,32 @@ class CoordsToInterp
 	interp::Scalar_Assign *getScalar_Assign(coords::Scalar_Assign* c) const;
 	coords::Scalar_Assign *getScalar_Assign(interp::Scalar_Assign* d) const;
 
+// Transform
+
+	void putTransform_Lit(coords::Transform *ast, interp::Transform_Lit *v);
+	interp::Transform_Lit *getTransform_Lit(coords::Transform_Lit* c) const;
+	coords::Transform_Lit *getTransform_Lit(interp::Transform_Lit* d) const;
+
+	void putTransform_Expr(coords::Transform *ast, interp::Transform_Expr *v);
+	interp::Transform_Expr *getTransform_Expr(coords::Transform_Expr* c) const;
+	coords::Transform_Expr *getTransform_Expr(interp::Transform_Expr* d) const;
+
+	coords::Transform *getTransform(interp::Transform* v);
+	interp::Transform *getTransform(coords::Transform* v);
+
+// Def
+
+	void putTransform_Def(coords::Transform_Def *vardecl_wrapper, interp::Transform_Def *b);
+	interp::Transform_Def *getTransform_Def(coords::Transform_Def* c) const;
+	coords::Transform_Def *getTransform_Def(interp::Transform_Def* d) const;
+
+// Assign
+
+	void putTransform_Assign(coords::Transform_Assign *varassn_wrapper, interp::Transform_Assign *b);
+	interp::Transform_Assign *getTransform_Assign(coords::Transform_Assign* c) const;
+	coords::Transform_Assign *getTransform_Assign(interp::Transform_Assign* d) const;
+
+
 	void dump() const;
 
   private:
@@ -168,6 +213,19 @@ class CoordsToInterp
 	std::unordered_map<interp::Scalar*, 		coords::Scalar*		> 	interp2coords_Scalar;
 	std::unordered_map<interp::Scalar_Def*, 	coords::Scalar_Def*	> 	interp2coords_Scalar_Def;
 	std::unordered_map<interp::Scalar_Assign*, 	coords::Scalar_Assign*> 	interp2coords_Scalar_Assign;
+
+	std::unordered_map <coords::TransformIdent*,interp::TransformIdent* > 	coords2interp_TransformIdent;
+	std::unordered_map <coords::TransformExpr*, interp::TransformExpr*	> 	coords2interp_TransformExpr;
+	std::unordered_map <coords::Transform*, 	interp::Transform*		> 	coords2interp_Transform;
+	std::unordered_map <coords::Transform_Def*, interp::Transform_Def*	> 	coords2interp_Transform_Def;
+	std::unordered_map <coords::Transform_Assign*, interp::Transform_Assign*> 	coords2interp_Transform_Assign;
+
+
+	std::unordered_map<interp::TransformIdent*, coords::TransformIdent*	> 	interp2coords_TransformIdent;
+	std::unordered_map<interp::TransformExpr*, 	coords::TransformExpr*	> 	interp2coords_TransformExpr;
+	std::unordered_map<interp::Transform*, 		coords::Transform*		> 	interp2coords_Transform;
+	std::unordered_map<interp::Transform_Def*, 	coords::Transform_Def*	> 	interp2coords_Transform_Def;
+	std::unordered_map<interp::Transform_Assign*, 	coords::Transform_Assign*> 	interp2coords_Transform_Assign;
 };
 
 } // namespace

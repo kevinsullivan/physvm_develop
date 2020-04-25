@@ -9,9 +9,6 @@
 
 #include <iostream>
 
-// KEVIN: For VecParenExpr module
-#include "VecParenExpr.h"
-
 /*
 This relational class maps Clang AST nodes to code coordinates
 in our ontology. We want a single base type for all coordinates. 
@@ -119,12 +116,12 @@ public:
     coords::TransformIdent *mkTransformIdent(const ast::TransformIdent *ast, clang::ASTContext *c);
     coords::TransformVarExpr *mkTransformVarExpr(const ast::TransformVarExpr *ast, clang::ASTContext *c);
     coords::TransformParenExpr *mkTransformParenExpr(const ast::TransformParenExpr *ast, ast::TransformExpr *expr, clang::ASTContext *c);
-    coords::TransformTransformComposeExpr *mkTransformTransformComposeExpr(ast::TransformExpr outer, ast::TransformExpr inner, clang::ASTContext *c);
-    coords::TransformVecApplyExpr *mkTransformVecApplyExpr(ast::TransformExpr *texpr, ast::VecExpr vexpr, clang::ASTContext *c);
-    coords::Transform_Lit *mkTransform_Lit(const ast::Transform_Lit *ast, ast::TransformMatrixArgExpr arg, clang::ASTContext *c);
-    coords::Transform_Var *mkTransform_Var(const ast::Transform_Var *ast, const ast::TransformVarExpr *var, clang::ASTContext *c);
+    coords::TransformTransformComposeExpr *mkTransformTransformComposeExpr(ast::TransformTransformComposeExpr *ast, coords::TransformExpr *outer, coords::TransformExpr *inner, clang::ASTContext *c);
+    coords::TransformVecApplyExpr *mkTransformVecApplyExpr(ast::TransformVecApplyExpr *ast, coords::TransformExpr *texpr, coords::VecExpr *vexpr, clang::ASTContext *c);
+    coords::Transform_Lit *mkTransform_Lit(const ast::Transform_Lit *ast, ast::TransformMatrixArgExpr *arg, clang::ASTContext *c);
+    coords::Transform_Var *mkTransform_Var(const ast::Transform_Var *ast, coords::TransformVarExpr *var, clang::ASTContext *c);
     coords::Transform_Expr *mkTransform_Expr(const ast::Transform_Expr *ast, ast::TransformExpr *expr, clang::ASTContext *c);
-    coords::Transform_Def *mkTransform_Def(const ast::Transform_Def *ast, clang::ASTContext *c, coords::TransformIdent *id, coords::TransformExpr tfm);
+    coords::Transform_Def *mkTransform_Def(const ast::Transform_Def *ast, clang::ASTContext *c, coords::TransformIdent *id, coords::TransformExpr *tfm);
     coords::Transform_Assign *mkTransform_Assign(const ast::Transform_Assign *ast, clang::ASTContext *c, coords::TransformVarExpr *var, coords::TransformExpr *);
 
 

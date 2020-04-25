@@ -83,10 +83,10 @@ public:
     void mkTransformVarExpr(ast::TransformVarExpr *ast);
 
     // TODO: remove the following two const constraints
-    void mkTransformVecApplyExpr(ast::TransformVecApplyExpr *ast, const ast::TransformExpr *mem, 
-                         const ast::VecExpr *arg);
-    void mkTransformTransformComposeExpr(ast::TransformTransformComposeExpr *ast, const ast::TransformExpr *mem, 
-                         const ast::TransformExpr *arg);
+    void mkTransformVecApplyExpr(ast::TransformVecApplyExpr *ast, const ast::TransformExpr *tfm, 
+                         const ast::VecExpr *vec);
+    void mkTransformTransformComposeExpr(ast::TransformTransformComposeExpr *ast, const ast::TransformExpr *tfm, 
+                         const ast::TransformExpr *vec);
 
     // KEVIN: Added for new horizontal module
     void mkTransformParenExpr(ast::TransformParenExpr *ast, ast::TransformExpr *expr);
@@ -95,7 +95,7 @@ public:
     void mkTransform_Expr(ast::Transform_Expr *ast, ast::TransformExpr* expr);
     void mkTransform_Var(ast::TransformLitExpr *ast);
     void mkTransform_Def(ast::Transform_Def *ast, ast::TransformIdent *id, ast::TransformExpr *exp);
-    void mkTransform_Assign(ast::Transform_Assign *Ast, ast::TransformVarExpr *id, ast::TransformExpr *exp);
+    void mkTransform_Assign(ast::Transform_Assign *ast, ast::TransformVarExpr *id, ast::TransformExpr *exp);
     // Precondition: coords2domain_ is defined for ast
 
 
@@ -161,7 +161,7 @@ public:
     std::vector<std::string> unconstrained_vec_names;
     std::vector<ast::ScalarIdent*> unconstrained_floats;
     std::vector<std::string> unconstrained_float_names;
-    std::vector<std::TransformIdent*> unconstrained_transforms;
+    std::vector<ast::TransformIdent*> unconstrained_transforms;
     std::vector<std::string> unconstrained_transform_names;
 }; 
 
