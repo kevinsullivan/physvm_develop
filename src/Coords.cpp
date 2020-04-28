@@ -175,7 +175,7 @@ TransformVecApplyExpr::TransformVecApplyExpr(
 }
 
 std::string TransformVecApplyExpr::toString() const {
-    return "(compose (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
+    return "(apply (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
 }
 
 
@@ -307,12 +307,16 @@ std::string Scalar_Lit::toString() const  {
     return retval;
 }
 
-Transform_Lit::Transform_Lit() 
-    : Transform(TRANSFORM_CTOR_LIT){} 
+Transform_Lit::Transform_Lit(coords::VecExpr* arg1, coords::VecExpr* arg2, coords::VecExpr* arg3) 
+    : Transform(TRANSFORM_CTOR_LIT), arg1_{arg1}, arg2_{arg2}, arg3_{arg3} {} 
   
 std::string Transform_Lit::toString() const  {
     std::string retval = "";
-    retval += "3x3 Matrix representation"; 
+    retval += "(" + arg1_->toString() + ')';
+    retval += " "; 
+    retval += "(" + arg2_->toString() + ')';
+    retval += " "; 
+    retval += "(" + arg3_->toString() + ')';
     //retval = "(" + retval + ")";
     return retval;
 }

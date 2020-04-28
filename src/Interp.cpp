@@ -115,7 +115,7 @@ std::string TransformIdent::toString() const {
 //  ret += "( ";
   ret += coords_->toString();
   ret += " : peirce.transform ";
-  //ret += float_ident_->getSpaceContainer()->toString();
+  ret += transform_ident_->getSpaceContainer()->toString();
 //  ret += " )";
   return ret;
 }
@@ -183,8 +183,8 @@ std::string TransformVarExpr::toString() const {
   std::string ret = "";
   ret += "( ";
   ret += coords_->toString();
-  ret += " : peirce.Transform ";
- // ret += float_expr_->getSpaceContainer()->toString(); 
+  ret += " : peirce.transform ";
+  ret += transform_expr_->getSpaceContainer()->toString(); 
   ret += " ) ";//: peirce.Transform ";
   return ret;
 }
@@ -290,13 +290,12 @@ TransformTransformComposeExpr::TransformTransformComposeExpr(coords::TransformTr
  
 std::string TransformTransformComposeExpr::toString() const {
   std::string ret = "";
-  ret += "( peirce.smul ";
+  ret += "( peirce.tcompose ";
   ret += outer_->toString();
   ret += " ";
   ret += inner_->toString();
-  //ret += " : peirce.scalar ";
- // ret += float_expr_->getSpaceContainer()->toString(); 
-  ret += " : peirce.scalar )";
+  ret += " : peirce.transform ";
+  ret += transform_expr_->getSpaceContainer()->toString(); 
   return ret;  
 } 
 
@@ -351,7 +350,7 @@ std::string TransformParenExpr::toString() const {
   ret += " ) : peirce.transform ";
 
   // TODO: Abstract superclass data members
- // ret += float_expr_->getSpaceContainer()->toString(); 
+  ret += transform_expr_->getSpaceContainer()->toString(); 
 
   ret += " )";
   return ret;  
@@ -411,16 +410,21 @@ std::string Scalar_Lit::toString() const {
   return ret;
 }
 
-Transform_Lit::Transform_Lit(coords::Transform_Lit* c, domain::Transform_Lit* d) : Transform(c,d) {
+Transform_Lit::Transform_Lit(coords::Transform_Lit* c, domain::Transform_Lit* d, interp::Interp * arg1, interp::Interp * arg2, interp::Interp * arg3) : Transform(c,d),
+arg1_{arg1}, arg2_{arg2}, arg3_{arg3} {
 }
 
 std::string Transform_Lit::toString() const {
   std::string ret = "";
-  ret += "(";
+  ret += "( peirce.transform.mkTransform ";
   ret += transform_->getSpaceContainer()->toString();
   ret += " ";
-  ret += static_cast<coords::Transform_Lit *>(coords_)->toString();
-  ret += " : peirce.transform )";
+  ret += arg1_->toString();
+  ret += " ";
+  ret += arg2_->toString();
+  ret += " ";
+  ret += arg3_->toString();
+  ret += " )";
   return ret;
 }
 
@@ -453,7 +457,7 @@ std::string Transform_Var::toString() const {
 }
 
 
-Vector_Expr::Vector_Expr(coords::Vector_Expr *c, domain::Vector_Expr* d, interp::VecExpr *expr_interp) 
+Vector_Expr::Vector_Expr(coords::Vector_Expr *c, domain::Vector_Expr* d, interp::Interp *expr_interp) 
   : Vector(c,d), expr_interp_(expr_interp) {
 
 }
@@ -487,7 +491,7 @@ std::string Transform_Expr::toString() const {
  * Def
  ****/
 
-Vector_Def::Vector_Def(coords::Vector_Def* c, domain::Vector_Def* d, interp::VecIdent *id, interp::Vector *vec) 
+Vector_Def::Vector_Def(coords::Vector_Def* c, domain::Vector_Def* d, interp::VecIdent *id, interp::Interp *vec) 
   : Interp(c,d), id_(id), vec_(vec) { 
 }
 std::string Vector_Def::toString() const {

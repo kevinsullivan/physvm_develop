@@ -1,30 +1,20 @@
-#include <vector>
 #include "transform.h"
 #include "vec.h"
 
-Transform::Transform(std::vector<double[3]> matrix_3x3){
-        if(matrix_3x3.size() != 3){
-            throw "This class only accepts a 3x3 matrix";
-        }
-        
-        double *transform = new double[9];
-        transform[0] = matrix_3x3[0][0];
-        transform[1] = matrix_3x3[0][1];
-        transform[2] = matrix_3x3[0][2];
-        transform[3] = matrix_3x3[1][0];
-        transform[4] = matrix_3x3[1][1];
-        transform[5] = matrix_3x3[1][2];
-        transform[6] = matrix_3x3[2][0];
-        transform[7] = matrix_3x3[2][1];
-        transform[8] = matrix_3x3[2][2];
+Transform::Transform(){
+    transform_ = new double[9];
+}
 
-        this->transform_ = transform;
+Transform::Transform(Vec row1, Vec row2, Vec row3) : Transform() {
+    this->set_row(0, row1);
+    this->set_row(1, row2);
+    this->set_row(2, row3);
 }
 
 Transform Transform::compose(Transform inner){
     double* new_transform_ = new double[9];
     double* vector_temp_ = new double[3];
-    double* inner_transform_ = inner.get_transform();
+    auto inner_transform_ = inner.get_transform();
 
     for(auto i = 0; i<3; i++){
         vector_temp_[0] = inner_transform_[0 + i];
@@ -36,6 +26,7 @@ Transform Transform::compose(Transform inner){
         new_transform_[6 + i] = vector_temp_[2];
     }
 
+    delete[] vector_temp_;
     return Transform(new_transform_);
 }
 
@@ -54,3 +45,13 @@ double* Transform::apply(double input[3]){
     output[2] = input[0] * this->transform_[6] + input[1] * this->transform_[7] + input[2] * this->transform_[8];
     return output;
 };
+
+void Transform::set_row(int row, Vec row_vec){
+    this->transform_[row*3] = row_vec.get_x();
+    this->transform_[row*3 + 1] = row_vec.get_y();
+    this->transform_[row*3 + 2] = row_vec.get_z();
+}
+
+Vec Transform::get_row(int row){
+    return Vec(this->transform_[row*3], this->transform_[row*3 + 1], this->transform_[row*3 + 2]);
+}

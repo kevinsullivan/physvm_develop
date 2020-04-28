@@ -31,7 +31,6 @@ using ScalarVarExpr = const clang::DeclRefExpr;
 using TransformExpr = const clang::Expr;
 using TransformLitExpr = const clang::CXXConstructExpr;
 using TransformVarExpr = const clang::DeclRefExpr;
-using TransformMatrixArgExpr = const clang::CXXConstructExpr;
 
 
 using ScalarScalarAddExpr = const clang::BinaryOperator;

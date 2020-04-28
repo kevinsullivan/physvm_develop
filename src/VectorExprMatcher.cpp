@@ -41,7 +41,7 @@ void VectorExprMatcher::search(){
             hasArgument(0,expr().bind("VectorMulArgument")))).bind("VectorMulExpr");
     StatementMatcher transformApplyExpr = 
         cxxMemberCallExpr(allOf(
-            hasType(asString("class Transform")),
+            hasType(asString("class Vec")),
             has(memberExpr(allOf(has(expr().bind("TransformApplyMember")),member(hasName("apply"))))), 
             hasArgument(0,expr().bind("VecApplyArgument")))).bind("TransformApplyExpr");
     StatementMatcher vectorVar = 
@@ -94,6 +94,8 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
 
     //std::cout<<"matching vector"<<std:
 
+
+
     if(parenExpr or innerExpr){
         if(parenExpr and innerExpr){
 
@@ -117,6 +119,7 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher argMatcher{this->context_, this->interp_};
             argMatcher.search();
             argMatcher.visit(*vectorAddArgument);
+
             interp_->mkVecVecAddExpr(vectorAddExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)vectorAddExpr;
         }
@@ -182,12 +185,12 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
     else if(vectorConstructExpr or vectorConstructExprChild){
         if(vectorConstructExpr and vectorConstructExprChild){
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
+            vectorConstructExpr->dump();
             exprMatcher.search();
             exprMatcher.visit(*vectorConstructExprChild);
             
-            this->childExprStore_ = (clang::Expr*)vectorConstructExpr;//exprMatcher.getChildExprStore();
+            this->childExprStore_ = (clang::Expr*)exprMatcher.getChildExprStore();
             interp_->mkVector_Expr(vectorConstructExpr, exprMatcher.getChildExprStore());
-            //interp_->mkVecWrapperExpr(vectorConstructExpr, vectorConstructExprChild);
         }
         else{
             //log error
@@ -199,7 +202,7 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.search();
             exprMatcher.visit(*vectorBindTemporaryExprChild);
 
-            this->childExprStore_ = exprMatcher.getChildExprStore();
+            this->childExprStore_ = (clang::Expr*)exprMatcher.getChildExprStore();
             //no longer doing this!
             //interp_->mkVecWrapperExpr(vectorBindTemporaryExpr, vectorBindTemporaryExprChild);
 

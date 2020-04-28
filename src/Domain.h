@@ -30,6 +30,7 @@ namespace domain {
 
 
 class Space;
+class MapSpace;
 class VecIdent;
 class VecExpr;
 
@@ -102,7 +103,7 @@ public:
 	ScalarIdent* mkScalarIdent();
 	std::vector<ScalarIdent*> &getScalarIdents() { return float_idents; }
 
-	TransformIdent* mkTransformIdent(Space* s);
+	TransformIdent* mkTransformIdent(MapSpace* s);
 	TransformIdent* mkTransformIdent();
 	std::vector<TransformIdent*> &getTransformIdents() { return tfm_idents; }
 
@@ -122,7 +123,7 @@ public:
 	ScalarVarExpr* mkScalarVarExpr(Space* s);
 	ScalarVarExpr* mkScalarVarExpr();
 
-	TransformVarExpr* mkTransformVarExpr(Space* s);
+	TransformVarExpr* mkTransformVarExpr(MapSpace* s);
 	TransformVarExpr* mkTransformVarExpr();
 
 	// Create a vector-vector-add expression, mem-expr.add(arg-expr) object in domain
@@ -143,7 +144,7 @@ public:
 	TransformVecApplyExpr* mkTransformVecApplyExpr(Space* s, domain::TransformExpr* left_, domain::VecExpr* right_);
 	TransformVecApplyExpr* mkTransformVecApplyExpr(domain::TransformExpr* left_, domain::VecExpr* right_);
 
-	TransformTransformComposeExpr* mkTransformTransformComposeExpr(Space* s, domain::TransformExpr* left_, domain::TransformExpr* right_);
+	TransformTransformComposeExpr* mkTransformTransformComposeExpr(MapSpace* s, domain::TransformExpr* left_, domain::TransformExpr* right_);
 	TransformTransformComposeExpr* mkTransformTransformComposeExpr(domain::TransformExpr* left_, domain::TransformExpr* right_);
 
 
@@ -155,7 +156,7 @@ public:
 	ScalarParenExpr* mkScalarParenExpr(Space *s, domain::ScalarExpr *);
 	ScalarParenExpr* mkScalarParenExpr(domain::ScalarExpr*);
 
-	TransformParenExpr* mkTransformParenExpr(Space* s, domain::TransformExpr *);
+	TransformParenExpr* mkTransformParenExpr(MapSpace* s, domain::TransformExpr *);
 	TransformParenExpr* mkTransformParenExpr(domain::TransformExpr*);
 
 	// Values
@@ -189,19 +190,19 @@ public:
 	Scalar_Expr* mkScalar_Expr(domain::ScalarExpr *vec);
 
 
-	Transform_Lit* mkTransform_Lit(Space* space, 
-		float t11, float t12, float t13,
-		float t21, float t22, float t23,
-		float t31, float t32, float t33);
+	Transform_Lit* mkTransform_Lit(MapSpace* space, 
+		domain::VecExpr* arg1, 
+		domain::VecExpr* arg2,
+		domain::VecExpr* arg3);
 	Transform_Lit* mkTransform_Lit( 
-		float t11, float t12, float t13,
-		float t21, float t22, float t23,
-		float t31, float t32, float t33);
+		domain::VecExpr* arg1, 
+		domain::VecExpr* arg2,
+		domain::VecExpr* arg3);
 
-	Transform* mkTransform_Var(Space* s);
+	Transform* mkTransform_Var(MapSpace* s);
 	Transform* mkTransform_Var();
 
-	Transform_Expr* mkTransform_Expr(Space* space, domain::TransformExpr *vec);
+	Transform_Expr* mkTransform_Expr(MapSpace* space, domain::TransformExpr *vec);
 	Transform_Expr* mkTransform_Expr(domain::TransformExpr *vec);
 
 // Defs
@@ -262,41 +263,96 @@ public:
 	std::string toString() const {
 		return getName(); 
 	}
+
   private:
 	std::string name_;
 };
 
+class MapSpace {
+public:
+	MapSpace() {}
+	MapSpace(std::string domain_name, std::string codomain_name) : domain_{Space(domain_name)}, codomain_{Space(codomain_name)} {}
+	MapSpace(domain::Space domain, domain::Space codomain) : domain_{domain}, codomain_{codomain} {}
+	std::string getName() const;
+	std::string toString() const {
+		return getName(); 
+	}
+	domain::Space domain_;
+	domain::Space codomain_;
+};
+
 union SpaceContainer{
-		SpaceContainer() { setDefault(); }//this->inferenceSymbol = leanInferenceWildcard; }
-		~SpaceContainer(){
-			space = nullptr;
-			inferenceSymbol = nullptr;
-		}
+	SpaceContainer() { setDefault(); }//this->inferenceSymbol = leanInferenceWildcard; }
+	~SpaceContainer(){
+		delete space;
+		delete inferenceSymbol;
+	}
     domain::Space* space;
     std::string* inferenceSymbol;
 
-		void setDefault(){
-			//this->space = nullptr;
+	void setDefault(){
+		//this->space = nullptr;
+		this->inferenceSymbol = new std::string("_");
+	}
+
+	void setSpace(Space* space){
+		if(space){
+			this->space = space;
+		}
+		else{
 			this->inferenceSymbol = new std::string("_");
 		}
+	}
 
-		void setSpace(Space* space){
-			if(space){
-				this->space = space;
-			}
-			else{
-				this->inferenceSymbol = new std::string("_");
-			}
+	std::string toString(){
+		if (*this->inferenceSymbol == "_"){
+			return *this->inferenceSymbol;
 		}
+		else{
+			return this->space->toString();
+		}
+	}
+};
 
-		std::string toString(){
-			if (*this->inferenceSymbol == "_"){
-				return *this->inferenceSymbol;
-			}
-			else{
-				return this->space->toString();
-			}
+union MapSpaceContainer
+{
+	MapSpaceContainer() { setDefault(); }
+	~MapSpaceContainer(){
+		delete space;
+		//delete inferenceSymbol;
+	}
+
+	domain::MapSpace* space;
+	std::string* inferenceSymbol;
+
+	void setDefault(){
+		this->inferenceSymbol = new std::string(this->getDefault());
+	};
+
+	void setSpace(domain::MapSpace space){
+		if(true){
+    		//std::cout<<"\nprintingyourspace\n"<<space.toString()+"\nprinted\n";
+			this->space = new MapSpace(space.domain_, space.codomain_);
+    		//std::cout<<"\nprintingmyspace\n"<<this->space->toString()+"\nprinted\n";
 		}
+		else{
+			setDefault();
+		}
+	};
+
+	std::string getDefault(){
+		return domain::MapSpace(Space("_"),Space("_")).toString();
+	}
+
+	std::string toString(){
+		if(*(this->inferenceSymbol) == this->getDefault()){
+			return *(this->inferenceSymbol);
+		}
+		else{
+			return this->space->toString();
+		}
+	};
+
 };
 
 
@@ -365,30 +421,31 @@ public:
 
 class TransformIdent {
 public:
-	TransformIdent(Space& space) : space_(&space) {}
-	TransformIdent() { this->spaceContainer_ = new SpaceContainer(); }// this->spaceContainer_-> }
-	Space* getSpace() const { return space_; }
-	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
+	TransformIdent(MapSpace& space) : space_(&space) {}
+	TransformIdent() { this->spaceContainer_ = new MapSpaceContainer(); }// this->spaceContainer_-> }
+	MapSpace* getSpace() const { return space_; }
+	MapSpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
 
-	void setSpace(Space* space);
+	void setSpace(MapSpace space);
 	// TODO: Reconsider abstracting away of name
-private:
-	Space* space_;
-	SpaceContainer* spaceContainer_;
+protected:
+	MapSpace* space_;
+	MapSpaceContainer* spaceContainer_;
 };
 
 class TransformExpr {
 public:
-	TransformExpr(Space* s) : space_(s) {}
+	TransformExpr(MapSpace* s) : space_(s) {}
 	virtual ~TransformExpr(){}
-	TransformExpr() { this->spaceContainer_ = new SpaceContainer(); }
-	Space* getSpace() const { return space_; };
-	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-	void setSpace(Space* s);
+	TransformExpr() { this->spaceContainer_ = new MapSpaceContainer(); }// this->spaceContainer_-> }
+	MapSpace* getSpace() const { return space_; }
+	MapSpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
 
-	protected:
-		Space* space_;
-		SpaceContainer* spaceContainer_;
+	void setSpace(MapSpace space);
+	// TODO: Reconsider abstracting away of name
+protected:
+	MapSpace* space_;
+	MapSpaceContainer* spaceContainer_;
 };
 class VecVarExpr : public VecExpr {
 public:
@@ -410,7 +467,7 @@ public:
 
 class TransformVarExpr : public TransformExpr {
 public:
-    TransformVarExpr(Space* s) : TransformExpr(s) {}
+    TransformVarExpr(MapSpace* s) : TransformExpr(s) {}
 		TransformVarExpr() : TransformExpr() {}
 	virtual ~TransformVarExpr(){}
 		// virtual std::string toString() const;
@@ -512,7 +569,7 @@ private:
 class TransformTransformComposeExpr : public TransformExpr {
 public:
    	TransformTransformComposeExpr(
-        Space* s, domain::TransformExpr *lhs, domain::TransformExpr *rhs) : 
+        MapSpace* s, domain::TransformExpr *lhs, domain::TransformExpr *rhs) : 
 			domain::TransformExpr(s), lhs_(lhs), rhs_(rhs) {	}
 	TransformTransformComposeExpr(domain::TransformExpr *lhs, domain::TransformExpr *rhs) :
 	 		domain::TransformExpr(), lhs_(lhs), rhs_(rhs) { }
@@ -521,7 +578,7 @@ public:
 	domain::TransformExpr *getLHSTransformExpr();
 	domain::TransformExpr *getRHSTransformExpr();
 	// virtual std::string toString() const;
-	// const Space& getScalarScalarAddExprDefaultSpace();
+	// const MapSpace& getScalarScalarAddExprDefaultMapSpace();
 private:
     domain::TransformExpr* lhs_;
     domain::TransformExpr* rhs_;
@@ -554,7 +611,7 @@ private:
 
 class TransformParenExpr : public TransformExpr  {
 public:
-		TransformParenExpr(Space *s, domain::TransformExpr *e) : domain::TransformExpr(s), expr_(e) {}
+		TransformParenExpr(MapSpace *s, domain::TransformExpr *e) : domain::TransformExpr(s), expr_(e) {}
 		TransformParenExpr(domain::TransformExpr *e) : domain::TransformExpr(), expr_(e) {}
 		
 		virtual ~TransformParenExpr(){}
@@ -613,20 +670,20 @@ private:
 enum TransformCtorType {TFM_EXPR, TFM_LIT, TFM_NONE } ; 
 class Transform{
 public:
-	Transform(const Space& s, TransformCtorType tag) :
-		space_(&s), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
-	Transform(TransformCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
+	Transform(const MapSpace& s, TransformCtorType tag) :
+		space_(&s), tag_(tag)  { this->spaceContainer_ = new MapSpaceContainer(); }
+	Transform(TransformCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new MapSpaceContainer(); }
 
 	bool isLit() { return (tag_ == TFM_LIT); } 
 	bool isExpr() { return (tag_ == TFM_EXPR); } 
 	//bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
-	const Space* getSpace() {return space_; }
-	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-	void setSpace(Space* space);
+	const MapSpace* getSpace() {return space_; }
+	MapSpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
+	void setSpace(MapSpace space);
 	// virtual std::string toString() const {
 private:
-	const Space* space_; // TODO: INFER?
-	SpaceContainer* spaceContainer_;
+	const MapSpace* space_; // TODO: INFER?
+	MapSpaceContainer* spaceContainer_;
 	TransformCtorType tag_;
 };
 
@@ -716,38 +773,36 @@ class Scalar_Var : public Scalar {
 
 class Transform_Lit : public Transform {
 public:
-	Transform_Lit(const Space& s,
-		float t11, float t12, float t13,
-		float t21, float t22, float t23,
-		float t31, float t32, float t33) :
+	Transform_Lit(const MapSpace& s,
+		domain::VecExpr* arg1, 
+		domain::VecExpr* arg2,
+		domain::VecExpr* arg3) :
 		Transform(s, TFM_LIT),
-		t11_{t11}, t12_{t12}, t13_{t13},
-		t21_{t21}, t22_{t22}, t23_{t23},
-		t31_{t31}, t32_{t32}, t33_{t33} {
+		arg1_{arg1},
+		arg2_{arg2},
+		arg3_{arg3} {
 	}
 
 	Transform_Lit(
-		float t11, float t12, float t13,
-		float t21, float t22, float t23,
-		float t31, float t32, float t33) :
+		domain::VecExpr* arg1, 
+		domain::VecExpr* arg2,
+		domain::VecExpr* arg3) :
 		Transform(TFM_LIT),
-		t11_{t11}, t12_{t12}, t13_{t13},
-		t21_{t21}, t22_{t22}, t23_{t23},
-		t31_{t31}, t32_{t32}, t33_{t33} {
+		arg1_{arg1},
+		arg2_{arg2},
+		arg3_{arg3} {
 	}
 	
 	//float getTransform() { return Transform_; }
 private:
-   float t11_,  t12_,  t13_,
-		 t21_,  t22_,  t23_,
-		 t31_,  t32_,  t33_;
+   domain::VecExpr *arg1_, *arg2_, *arg3_;
 };
 
 // Constructed vector value from vector-valued expression
 //
 class Transform_Expr : public Transform  {
 public:
-	Transform_Expr(const Space& s, domain::TransformExpr* e) :
+	Transform_Expr(const MapSpace& s, domain::TransformExpr* e) :
 		Transform(s, TFM_EXPR), expr_(e) { 
 	}
 
@@ -760,7 +815,7 @@ private:
 };
 
 class Transform_Var : public Transform {
-	Transform_Var() : Transform(*new Space(""), TFM_EXPR ) { 
+	Transform_Var() : Transform(*new MapSpace("",""), TFM_EXPR ) { 
 		LOG(DBUG) <<"Domain::Transform_Var::Transform_-Var: Error. Not implemented.\n";
 	}
 };

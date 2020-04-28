@@ -42,6 +42,7 @@ aFile* openFile() {
     char * name_cstr = new char [name.length()+1];
     strcpy (name_cstr, name.c_str());
     f->name = name_cstr;
+    std::cout<<"Generating file ... " << name_cstr << "\n";
     f->file = fopen(f->name,"w");
     return f;
 }
@@ -52,8 +53,10 @@ void generateMath(aFile* f, interp::Interpretation* interp) {
     math += interp->toString_Spaces();
     math += interp->toString_ScalarDefs();
     math += interp->toString_Defs();
+    math += interp->toString_TransformDefs();
     math += interp->toString_Assigns();
     math += interp->toString_ScalarAssigns();
+    math += interp->toString_TransformAssigns();
     //LOG(DEBUG) << "Checker::generateMath generated this: \n"
     //           << math << "\n";
     fputs(math.c_str(), f->file);

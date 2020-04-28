@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
-
+#include <utility>
 
 // DONE: Separate clients from Domain
 // #include "Checker.h"
@@ -39,7 +39,9 @@ std::vector<Space*> &Domain::getSpaces()
 // TODO: MOVE THIS STUFF
 std::string Space::getName() const { return name_; }
 
-
+std::string MapSpace::getName() const { 
+    return this->domain_.toString() + " " + this->codomain_.toString(); 
+}
 
 /****
 Ident
@@ -74,7 +76,7 @@ ScalarIdent* Domain::mkScalarIdent(){
 }
 
 
-TransformIdent* Domain::mkTransformIdent(Space* s){
+TransformIdent* Domain::mkTransformIdent(MapSpace* s){
     domain::TransformIdent* flt = new domain::TransformIdent(*s);
     tfm_idents.push_back(flt);
     return flt;
@@ -125,6 +127,17 @@ void ScalarExpr::setSpace(Space* space) {
     this->spaceContainer_->setSpace(space);
 }
 
+void TransformIdent::setSpace(MapSpace space) {
+    if(!this->spaceContainer_)
+        this->spaceContainer_ = new domain::MapSpaceContainer();
+    this->spaceContainer_->setSpace(space);
+}
+
+void TransformExpr::setSpace(MapSpace space) {
+    if(!this->spaceContainer_)
+        this->spaceContainer_ = new domain::MapSpaceContainer();
+    this->spaceContainer_->setSpace(space);
+}
 
 /****
  * Get
@@ -163,7 +176,7 @@ domain::ScalarVarExpr* Domain::mkScalarVarExpr()
     return var;
 }
 
-domain::TransformVarExpr *Domain::mkTransformVarExpr(Space *s)
+domain::TransformVarExpr *Domain::mkTransformVarExpr(MapSpace *s)
 {
     domain::TransformVarExpr *var = new domain::TransformVarExpr(s);
     tfm_exprs.push_back(var);
@@ -342,7 +355,7 @@ domain::VecParenExpr* Domain::mkVecParenExpr(domain::VecExpr* expr)
     return var;
 }
 
-domain::TransformParenExpr *Domain::mkTransformParenExpr(Space *s, domain::TransformExpr *expr)
+domain::TransformParenExpr *Domain::mkTransformParenExpr(MapSpace *s, domain::TransformExpr *expr)
 {
 	domain::TransformParenExpr *var = new domain::TransformParenExpr(s, expr);
 	tfm_exprs.push_back(var);
@@ -370,6 +383,14 @@ void Scalar::setSpace(Space* space){
     if(!this->spaceContainer_)
         this->spaceContainer_ = new domain::SpaceContainer();
     this->spaceContainer_->setSpace(space);
+}
+
+void Transform::setSpace(MapSpace space){
+    //std::cout<<"\nprintingspace\n"<<space.toString()+"\nprinted\n";
+    if(!this->spaceContainer_)
+        this->spaceContainer_ = new domain::MapSpaceContainer();
+    this->spaceContainer_->setSpace(space);
+   // std::cout<<"\nprinting\n"<<spaceContainer_->toString()+"\nprinted\n";
 }
 
 
@@ -474,40 +495,34 @@ Scalar_Assign *Domain::mkScalar_Assign(domain::ScalarVarExpr* i, domain::Scalar*
 
 
 
-Transform_Lit* Domain::mkTransform_Lit(Space* space,
-		float t11, float t12, float t13,
-		float t21, float t22, float t23,
-		float t31, float t32, float t33){
-    auto flt = new domain::Transform_Lit(*space,
-		 t11,  t12,  t13,
-		 t21,  t22,  t23,
-		 t31,  t32,  t33);
-    transforms.push_back(flt);
-    return flt;
+Transform_Lit* Domain::mkTransform_Lit(MapSpace* space,
+		domain::VecExpr* arg1, 
+		domain::VecExpr* arg2,
+		domain::VecExpr* arg3){
+    auto tfm = new domain::Transform_Lit(*space, arg1, arg2, arg3);
+    transforms.push_back(tfm);
+    return tfm;
 }
 
 Transform_Lit* Domain::mkTransform_Lit(
-		float t11, float t12, float t13,
-		float t21, float t22, float t23,
-		float t31, float t32, float t33){
-    auto flt = new domain::Transform_Lit(
-		 t11,  t12,  t13,
-		 t21,  t22,  t23,
-		 t31,  t32,  t33);
-    transforms.push_back(flt);
-    return flt;
+		domain::VecExpr* arg1, 
+		domain::VecExpr* arg2,
+		domain::VecExpr* arg3){
+    auto tfm = new domain::Transform_Lit(arg1, arg2, arg3);
+    transforms.push_back(tfm);
+    return tfm;
 }
 
-Transform_Expr* Domain::mkTransform_Expr(Space* s, domain::TransformExpr* exp) {
-    Transform_Expr* flt = new domain::Transform_Expr(*s, exp);
-    transforms.push_back(flt);
-    return flt;
+Transform_Expr* Domain::mkTransform_Expr(MapSpace* s, domain::TransformExpr* exp) {
+    Transform_Expr* tfm = new domain::Transform_Expr(*s, exp);
+    transforms.push_back(tfm);
+    return tfm;
 }
 
 Transform_Expr* Domain::mkTransform_Expr(domain::TransformExpr* exp){
-    Transform_Expr* flt = new domain::Transform_Expr(exp);
-    transforms.push_back(flt);
-    return flt;
+    Transform_Expr* tfm = new domain::Transform_Expr(exp);
+    transforms.push_back(tfm);
+    return tfm;
 }
 
 

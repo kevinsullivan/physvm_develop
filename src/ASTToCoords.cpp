@@ -272,8 +272,8 @@ coords::Scalar_Lit *ASTToCoords::mkScalar_Lit(const ast::Scalar_Lit *ast, clang:
     return coord;
 }
 
-coords::Transform_Lit *ASTToCoords::mkTransform_Lit(const ast::Transform_Lit *ast, ast::TransformMatrixArgExpr *arg, clang::ASTContext *c) {
-    coords::Transform_Lit *coord = new coords::Transform_Lit(); 
+coords::Transform_Lit *ASTToCoords::mkTransform_Lit(const ast::Transform_Lit *ast, coords::VecExpr* arg1, coords::VecExpr* arg2, coords::VecExpr* arg3, clang::ASTContext *c) {
+    coords::Transform_Lit *coord = new coords::Transform_Lit(arg1, arg2, arg3); 
     if(clang::isa<clang::Stmt>(ast))
         setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
     overrideStmt2Coords(ast,coord); 

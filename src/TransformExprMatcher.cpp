@@ -1,14 +1,15 @@
 
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
-#include <vector>
 
 
 #include "TransformExprMatcher.h"
+#include "VectorExprMatcher.h"
 
 
 /*
-TRANSFORM_EXPR = (TRANSFORM_EXPR) | COMPOSE TRANSFORM_EXPR TRANSFORM_EXPR | TRANSFORM_VAR | TRANSFORM_LITERAL
+    TRANSFORM_EXPR := (TRANSFORM_EXPR) | COMPOSE TRANSFORM_EXPR TRANSFORM_EXPR | TRANSFORM_VAR | TRANSFORM_LITERAL
+    TRANSFORM_LITERAL := VEC_EXPR VEC_EXPR VEC_EXPR
 */
 
 void TransformExprMatcher::search(){
@@ -17,7 +18,7 @@ void TransformExprMatcher::search(){
     StatementMatcher transformImplicitCastExpr = 
         implicitCastExpr().bind("ImplicitCastExprDiscard"); //could also potentially use ignoringImplicit(expr().bind).bind...but need to modify EVERY matcher to handle this, then
     StatementMatcher transformCXXConstructExpr = //could also use isMoveConstructor / isCopyConstructor
-        cxxConstructExpr(allOf(unless(argumentCountIs(1)),has(expr().bind("CXXConstructExprChild")))).bind("CXXConstructExprDiscard");
+        cxxConstructExpr(allOf(unless(argumentCountIs(3)),has(expr().bind("CXXConstructExprChild")))).bind("CXXConstructExprDiscard");
     StatementMatcher transformCXXBindTemporaryExpr =
         cxxBindTemporaryExpr(has(expr().bind("CXXBindTemporaryExprChild"))).bind("CXXBindTemporaryExprDiscard");
     StatementMatcher transformMaterializeTemporaryExpr =
@@ -30,7 +31,12 @@ void TransformExprMatcher::search(){
     StatementMatcher transformLiteral = 
         //anyOf(
         //    cxxConstructExpr(allOf(hasType(asString("class Transform")),hasDeclaration(namedDecl(hasName("void (float, float, float)"))))).bind("TransformLiteralExpr"),
-            cxxConstructExpr(has(expr(hasType(asString("std::vector<double [3]>"))).bind("TransformMatrixArg"))).bind("TransformLiteralExpr");
+            cxxConstructExpr(allOf(
+                hasType(asString("class Transform")),
+                hasArgument(0, expr(hasType(asString("class Vec"))).bind("VecArg1")),
+                hasArgument(1, expr(hasType(asString("class Vec"))).bind("VecArg2")),
+                hasArgument(2, expr(hasType(asString("class Vec"))).bind("VecArg3"))
+            )).bind("TransformLiteralExpr");
 
         //);
     StatementMatcher transformComposeExpr =
@@ -59,7 +65,9 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
     const auto transformComposeArgument = Result.Nodes.getNodeAs<clang::Expr>("TransformComposeArgument");
     const auto transformDeclRefExpr = Result.Nodes.getNodeAs<clang::DeclRefExpr>("TransformDeclRefExpr");
     const auto transformLiteral = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("TransformLiteralExpr");
-    const auto transformLiteralArg = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("TransformMatrixArg");
+    const auto transformLiteralVecArg1 = Result.Nodes.getNodeAs<clang::Expr>("VecArg1");
+    const auto transformLiteralVecArg2 = Result.Nodes.getNodeAs<clang::Expr>("VecArg2");
+    const auto transformLiteralVecArg3 = Result.Nodes.getNodeAs<clang::Expr>("VecArg3");
 
 
     auto transformConstructExpr = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExprDiscard");
@@ -105,8 +113,18 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
         interp_->mkTransformVarExpr(transformDeclRefExpr);
         this->childExprStore_ = (clang::Expr*)transformDeclRefExpr;
     }
-    else if(transformLiteral or transformLiteralArg){
-        interp_->mkTransform_Lit(transformLiteral, transformLiteralArg);
+    else if(transformLiteral or transformLiteralVecArg1 or transformLiteralVecArg2 or transformLiteralVecArg3){
+        VectorExprMatcher exprMatcher1{this->context_, this->interp_};
+        exprMatcher1.search();
+        exprMatcher1.visit(*transformLiteralVecArg1);
+        VectorExprMatcher exprMatcher2{this->context_, this->interp_};
+        exprMatcher2.search();
+        exprMatcher2.visit(*transformLiteralVecArg2);
+        VectorExprMatcher exprMatcher3{this->context_, this->interp_};
+        exprMatcher3.search();
+        exprMatcher3.visit(*transformLiteralVecArg3);
+
+        interp_->mkTransform_Lit(transformLiteral, exprMatcher1.getChildExprStore(), exprMatcher2.getChildExprStore(), exprMatcher3.getChildExprStore());
         this->childExprStore_ = (clang::Expr*)transformLiteral;
     }
     else if(transformExprWithCleanups){
@@ -131,7 +149,8 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.search();
             exprMatcher.visit(*transformConstructExprChild);
             
-            this->childExprStore_ = (clang::Expr*)transformConstructExpr;//exprMatcher.getChildExprStore();
+            this->childExprStore_ = (clang::Expr*)exprMatcher.getChildExprStore();
+
             interp_->mkTransform_Expr(transformConstructExpr, exprMatcher.getChildExprStore());
             //interp_->mkVecWrapperExpr(transformConstructExpr, transformConstructExprChild);
         }

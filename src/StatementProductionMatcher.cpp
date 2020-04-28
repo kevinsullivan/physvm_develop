@@ -90,7 +90,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     const auto scalarVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("ScalarVarDecl");
     const auto scalarDeclRV = Result.Nodes.getNodeAs<clang::Expr>("ScalarDeclRV");
     const auto vectorDecl = Result.Nodes.getNodeAs<clang::DeclStmt>("VectorDeclStatement");
-    const clang::VarDecl* vectorVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("VectorVarDecl");
+    const auto vectorVarDecl = Result.Nodes.getNodeAs<clang::VarDecl>("VectorVarDecl");
     const auto vectorDeclRV = Result.Nodes.getNodeAs<clang::Expr>("VectorDeclRV");
     const auto floatExpr = Result.Nodes.getNodeAs<clang::Expr>("ScalarExprStatement");
     const auto vecExpr = Result.Nodes.getNodeAs<clang::Expr>("VectorExprStatement");
@@ -118,6 +118,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
 
     if(scalarDecl or scalarVarDecl or scalarDeclRV){//matches Scalar variable declaration
         if(scalarDecl and scalarVarDecl and scalarDeclRV){
+           
             this->interp_->mkScalarIdent(scalarVarDecl);
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();

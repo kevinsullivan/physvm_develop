@@ -392,8 +392,12 @@ public:
 class Transform_Lit : public Transform
 {
 public:
-  Transform_Lit(coords::Transform_Lit *, domain::Transform_Lit *);
+  Transform_Lit(coords::Transform_Lit *, domain::Transform_Lit *, interp::Interp *, interp::Interp *, interp::Interp *);
   virtual std::string toString() const;
+private:
+  interp::Interp* arg1_;
+  interp::Interp* arg2_;
+  interp::Interp* arg3_;
 };
 
 
@@ -425,12 +429,12 @@ public:
 class Vector_Expr : public Vector
 {
 public:
-  Vector_Expr(coords::Vector_Expr *, domain::Vector_Expr *, interp::VecExpr *expr_interp);
+  Vector_Expr(coords::Vector_Expr *, domain::Vector_Expr *, interp::Interp *expr_interp);
   virtual std::string toString() const;
-  interp::VecExpr *getVector_Expr() const { return expr_interp_; }
+  interp::Interp *getVector_Expr() const { return expr_interp_; }
 
 private:
-  interp::VecExpr *expr_interp_;
+  interp::Interp *expr_interp_;
 };
 
 class Scalar_Expr : public Scalar
@@ -462,12 +466,12 @@ private:
 class Vector_Def : public Interp
 {
 public:
-  Vector_Def(coords::Vector_Def *, domain::Vector_Def *, interp::VecIdent *id, interp::Vector *vec);
+  Vector_Def(coords::Vector_Def *, domain::Vector_Def *, interp::VecIdent *id, interp::Interp *vec);
   virtual std::string toString() const;
 
 private:
   interp::VecIdent *id_;
-  interp::Vector *vec_;
+  interp::Interp *vec_;
 };
 
 class Scalar_Def : public Interp

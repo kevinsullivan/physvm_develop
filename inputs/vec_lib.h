@@ -1,3 +1,6 @@
+#ifndef vec_lib
+#define vec_lib
+
 class Vec {
 public:
   Vec(float i= 0.0, float j= 0.0, float k = 0.0);
@@ -14,3 +17,5 @@ public:
 	float _y;
 	float _z;
 };
+
+#endif

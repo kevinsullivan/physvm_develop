@@ -12,6 +12,7 @@ public:
 	Oracle_AskAll(domain::Domain* d) : dom_(d) {}; 
 
 	domain::Space &getSpace();
+	domain::MapSpace &getMapSpace();
 
 
 	domain::Space& getSpaceForVecIdent(coords::VecIdent* v) {
@@ -104,24 +105,24 @@ public:
 	}
 
 
-	domain::Space& getSpaceForTransformIdent(coords::TransformIdent* v) {
+	domain::MapSpace& getSpaceForTransformIdent(coords::TransformIdent* v) {
 		std::string query = "Space for transform identifier, ";
 		query += v->toString();
 		query += " at ";
 		query += v->getSourceLoc();
 		query += "? ";
 		std::cout << query;
-		return getSpace();
+		return getMapSpace();
 	}
 
-	domain::Space& getSpaceForTransformVarExpr(coords::TransformExpr *var)  {
+	domain::MapSpace& getSpaceForTransformVarExpr(coords::TransformExpr *var)  {
 		std::string query = "Space for transform variable expression, ";
 		query += var->toString();
 		query += " at ";
 		query += var->getSourceLoc();
 		query += "? ";
 		std::cout << query;
-		return getSpace();
+		return getMapSpace();
 	}
 
 	domain::Space& getSpaceForMulExpression(coords::VecExpr *vec, coords::ScalarExpr *flt)
@@ -215,7 +216,7 @@ public:
 	}
 	
 
-	domain::Space& getSpaceForTransformComposeExpression(coords::TransformExpr *lhs, coords::TransformExpr *rhs)
+	domain::MapSpace& getSpaceForTransformComposeExpression(coords::TransformExpr *lhs, coords::TransformExpr *rhs)
 	{
 		std::string query = "";
 		query += "Space for transform expression, mul ";
@@ -226,40 +227,40 @@ public:
 		query += lhs->getSourceLoc();
 		query += "? ";
 		std::cout << query;
-		return getSpace();
+		return getMapSpace();
 	}
 
-	domain::Space& getSpaceForTransformParenExpr(coords::TransformExpr *expr) {
+	domain::MapSpace& getSpaceForTransformParenExpr(coords::TransformExpr *expr) {
 		std::string query = "Space for transform parenthesized expression, ";
 		query += expr->toString();  
 		query += " at ";
 		query += expr->getSourceLoc();
 		query += "? ";
 		std::cout << query;
-		return getSpace();
+		return getMapSpace();
 	}
 
 
-	domain::Space& getSpaceForTransform_Expr(coords::TransformExpr *expr) {
+	domain::MapSpace& getSpaceForTransform_Expr(coords::TransformExpr *expr) {
 		std::string query = "Space for transform constructed from expression, \n";
 		query += expr->toString();  
 		query += " at ";
 		query += expr->getSourceLoc();
 		query += "? ";
 		std::cout << query;
-		return getSpace();
+		return getMapSpace();
 	}
 
 
 
-	domain::Space& getSpaceForTransform_Lit(coords::Transform_Lit *lit) {
+	domain::MapSpace& getSpaceForTransform_Lit(coords::Transform_Lit *lit) {
 		std::string query = "Space for transform constructed from literal, ";
 		query += lit->toString();
 		query += " at ";
 		query += lit->getSourceLoc();
 		query += "? ";
 		std::cout << query;
-		return getSpace();
+		return getMapSpace();
 	}
 private:
 	domain::Domain* dom_;

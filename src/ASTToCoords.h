@@ -118,7 +118,7 @@ public:
     coords::TransformParenExpr *mkTransformParenExpr(const ast::TransformParenExpr *ast, ast::TransformExpr *expr, clang::ASTContext *c);
     coords::TransformTransformComposeExpr *mkTransformTransformComposeExpr(ast::TransformTransformComposeExpr *ast, coords::TransformExpr *outer, coords::TransformExpr *inner, clang::ASTContext *c);
     coords::TransformVecApplyExpr *mkTransformVecApplyExpr(ast::TransformVecApplyExpr *ast, coords::TransformExpr *texpr, coords::VecExpr *vexpr, clang::ASTContext *c);
-    coords::Transform_Lit *mkTransform_Lit(const ast::Transform_Lit *ast, ast::TransformMatrixArgExpr *arg, clang::ASTContext *c);
+    coords::Transform_Lit *mkTransform_Lit(const ast::Transform_Lit *ast, coords::VecExpr* arg1, coords::VecExpr* arg2, coords::VecExpr* arg3, clang::ASTContext *c);
     coords::Transform_Var *mkTransform_Var(const ast::Transform_Var *ast, coords::TransformVarExpr *var, clang::ASTContext *c);
     coords::Transform_Expr *mkTransform_Expr(const ast::Transform_Expr *ast, ast::TransformExpr *expr, clang::ASTContext *c);
     coords::Transform_Def *mkTransform_Def(const ast::Transform_Def *ast, clang::ASTContext *c, coords::TransformIdent *id, coords::TransformExpr *tfm);

@@ -58,6 +58,11 @@ interp::VecExpr *CoordsToInterp::getVecExpr(coords::VecExpr *c)
     catch (std::out_of_range &e) {
         dom = NULL;
     }
+
+    //for(auto it = coords2interp_VecExpr.begin(); it != coords2interp_VecExpr.end(); it++){
+    //    std::cout<<it->first<< " "<<it->second<<std::endl;
+    //}
+
     return dom;
 }
 

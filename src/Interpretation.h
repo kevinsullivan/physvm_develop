@@ -91,7 +91,7 @@ public:
     // KEVIN: Added for new horizontal module
     void mkTransformParenExpr(ast::TransformParenExpr *ast, ast::TransformExpr *expr);
 
-    void mkTransform_Lit(ast::Transform_Lit *ast, ast::TransformMatrixArgExpr* arg);
+    void mkTransform_Lit(ast::Transform_Lit *ast, ast::VecExpr *vec1, ast::VecExpr *vec2, ast::VecExpr *vec3);
     void mkTransform_Expr(ast::Transform_Expr *ast, ast::TransformExpr* expr);
     void mkTransform_Var(ast::TransformLitExpr *ast);
     void mkTransform_Def(ast::Transform_Def *ast, ast::TransformIdent *id, ast::TransformExpr *exp);

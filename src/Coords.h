@@ -382,8 +382,14 @@ public:
 
 class Transform_Lit : public Transform {
 public:
-  Transform_Lit();
+  Transform_Lit(coords::VecExpr* arg1, coords::VecExpr* arg2, coords::VecExpr* arg3);
   virtual std::string toString() const;
+  coords::VecExpr* getVecArg1() const {return arg1_;};
+  coords::VecExpr* getVecArg2() const {return arg2_;};
+  coords::VecExpr* getVecArg3() const {return arg3_;};
+
+private:
+  coords::VecExpr *arg1_, *arg2_, *arg3_;
 };
 
 
