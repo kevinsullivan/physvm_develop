@@ -25,7 +25,7 @@ SCALAR_LITERAL := Floating point value
 
 VEC_LITERAL := Vector rvalue
 
-TRANSFORM_LITERAL := Transform rvalue
+TRANSFORM_LITERAL := VEC_EXPR VEC_EXPR VEC_EXPR
 
 ### Domain-Lean Parsing Grammar
 
