@@ -21,11 +21,11 @@ VEC_VAR := IDENT
 
 TRANSFORM_VAR := IDENT
 
-SCALAR_LITERAL := Floating point value
+SCALAR_LITERAL := Floating point rvalue
 
-VEC_LITERAL := Vector rvalue
+VEC_LITERAL := SCALAR_EXPR+
 
-TRANSFORM_LITERAL := VEC_EXPR VEC_EXPR VEC_EXPR
+TRANSFORM_LITERAL := VEC_EXPR+
 
 ### Domain-Lean Parsing Grammar
 
