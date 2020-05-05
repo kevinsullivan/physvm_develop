@@ -34,6 +34,8 @@ time stamp
 #Frame this data is associated with
 string frame_id
 
+Note: crappy cohesion
+
 http://docs.ros.org/melodic/api/geometry_msgs/html/msg/TransformStamped.html
 
 # This expresses a transform from coordinate frame header.frame_id
