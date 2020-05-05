@@ -46,3 +46,11 @@ http://docs.ros.org/melodic/api/geometry_msgs/html/msg/TransformStamped.html
 Header header
 string child_frame_id # the frame id of the child frame
 Transform transform
+
+http://docs.ros.org/melodic/api/geometry_msgs/html/msg/Point.html
+
+# This contains the position of a point in free space
+float64 x
+float64 y
+float64 z
+
