@@ -56,3 +56,4 @@ float64 x
 float64 y
 float64 z
 
+Can I write a 20 line ROS program in which a translation transformation is applied to a vector
