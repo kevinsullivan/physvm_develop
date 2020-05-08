@@ -341,6 +341,8 @@ int main(int argc, const char **argv)
   //enters a while loop allowing user to select variables to edit or exit and perform inference
   interp_->updateVarTable();
 
+/*
+  Commented Dr. Sullivan's debugging code - 5/6 - Andrew
 
   cout <<"Spaces\n";
   cout <<interp_->toString_Spaces();
@@ -365,7 +367,7 @@ int main(int argc, const char **argv)
   cout <<interp_->toString_ScalarDefs();
   cout << "\nScalar Assignments\n";
   cout <<interp_->toString_ScalarAssigns();
-
+*/
 
 //THE ORDER YOU RUN THE CHECKER AND THE REWRITE-PASS MATTERS. 
 //Not only does Tool.run change/lose state on entry, but also on exit

@@ -49,7 +49,7 @@ aFile* openFile() {
 
 void generateMath(aFile* f, interp::Interpretation* interp) {
     std::string math = "";
-    math += "import vec\n\n";
+    math += "import PhysL\n\n";
     math += interp->toString_Spaces();
     math += interp->toString_ScalarDefs();
     math += interp->toString_Defs();

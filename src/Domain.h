@@ -331,9 +331,7 @@ union MapSpaceContainer
 
 	void setSpace(domain::MapSpace space){
 		if(true){
-    		//std::cout<<"\nprintingyourspace\n"<<space.toString()+"\nprinted\n";
 			this->space = new MapSpace(space.domain_, space.codomain_);
-    		//std::cout<<"\nprintingmyspace\n"<<this->space->toString()+"\nprinted\n";
 		}
 		else{
 			setDefault();

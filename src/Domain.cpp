@@ -386,11 +386,9 @@ void Scalar::setSpace(Space* space){
 }
 
 void Transform::setSpace(MapSpace space){
-    //std::cout<<"\nprintingspace\n"<<space.toString()+"\nprinted\n";
     if(!this->spaceContainer_)
         this->spaceContainer_ = new domain::MapSpaceContainer();
     this->spaceContainer_->setSpace(space);
-   // std::cout<<"\nprinting\n"<<spaceContainer_->toString()+"\nprinted\n";
 }
 
 

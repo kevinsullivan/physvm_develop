@@ -96,7 +96,7 @@ void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/
 void Interpretation::mkScalarVarExpr(ast::ScalarVarExpr *ast/*, clang::ASTContext *c*/) {
     coords::ScalarVarExpr *coords = ast2coords_->mkScalarVarExpr(ast, context_);
     LOG(DBUG) << "Interpretation::mkScalarVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-    //ast->dump();
+
     //domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
     domain::ScalarVarExpr *dom = domain_->mkScalarVarExpr();
     coords2dom_->PutScalarVarExpr(coords, dom);
@@ -108,7 +108,7 @@ void Interpretation::mkScalarVarExpr(ast::ScalarVarExpr *ast/*, clang::ASTContex
 void Interpretation::mkTransformVarExpr(ast::TransformVarExpr *ast/*, clang::ASTContext *c*/) {
     coords::TransformVarExpr *coords = ast2coords_->mkTransformVarExpr(ast, context_);
     LOG(DBUG) << "Interpretation::mkTransformVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-    //ast->dump();
+
     //domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
     domain::TransformVarExpr *dom = domain_->mkTransformVarExpr();
     coords2dom_->PutTransformVarExpr(coords, dom);
@@ -257,10 +257,16 @@ void Interpretation::mkTransformParenExpr(ast::TransformParenExpr *ast, ast::Tra
 
 
 void Interpretation::mkScalarScalarAddExpr(ast::ScalarScalarAddExpr *ast, const ast::ScalarExpr* lhs, const ast::ScalarExpr *rhs){
-  coords::ScalarExpr *lhs_coords = static_cast<coords::ScalarExpr*>
-                                  (ast2coords_->getStmtCoords(lhs));
-  coords::ScalarExpr *rhs_coords = static_cast<coords::ScalarExpr*>
-                                  (ast2coords_->getStmtCoords(rhs));
+  //coords::ScalarExpr *lhs_coords = static_cast<coords::ScalarExpr*>
+  //                                (ast2coords_->getStmtCoords(lhs));
+  //coords::ScalarExpr *rhs_coords = static_cast<coords::ScalarExpr*>
+  //                                (ast2coords_->getStmtCoords(rhs));
+  
+  coords::Scalar *lhs_coords = (coords::Scalar*)
+      (ast2coords_->getStmtCoords(lhs));
+  coords::Scalar *rhs_coords = (coords::Scalar*)
+      (ast2coords_->getStmtCoords(rhs));
+  
   LOG(DBUG) << "Interpretation::mkScalarScalarAddExpr. ast=" << std::hex << ast << "\n";
 
   coords::ScalarScalarAddExpr *coords = ast2coords_->mkScalarScalarAddExpr(ast, context_, lhs_coords, rhs_coords);
@@ -276,6 +282,9 @@ void Interpretation::mkScalarScalarAddExpr(ast::ScalarScalarAddExpr *ast, const 
   LOG(DBUG) << "Interpretation::mkScalarScalarAddExpr: RHS_Coords: " << rhs_coords->toString() << "\n";
 
   interp::Interp *lhs_interp = coords2interp_->getScalarExpr(lhs_coords);  // dyn type's toString not being called
+  if(not lhs_interp){
+    lhs_interp = coords2interp_->getScalar(lhs_coords);
+  }
   std::string mi_str = lhs_interp->toString();
   interp::Interp *rhs_interp = coords2interp_->getScalarExpr(rhs_coords);
   interp::ScalarScalarAddExpr *interp = new interp::ScalarScalarAddExpr(coords, dom, lhs_interp, rhs_interp);
@@ -414,25 +423,13 @@ void Interpretation::mkVector_Expr(
     coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, context_, expr_ast);
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr_ast));
 
-    std::cout<<expr_coords->toString()<<"\n";
-    
     domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
-    std::cout<<expr_dom<<"\n";
     
     domain::Vector_Expr *dom_vec = domain_->mkVector_Expr(expr_dom); 
     coords2dom_->putVector_Expr(ctor_coords, dom_vec);
     interp::Interp *expr_interp = coords2interp_->getVecExpr(expr_coords);
     if(not expr_interp){
       //expr_interp = coords2interp_->getVector_Lit(expr_coords);
-    }
-    std::cout<<"Making expr interp\n";
-    if(expr_interp){
-      std::cout<<expr_interp->toString()<<"\n";
-    }
-    else{
-      ctor_ast->dump();
-      expr_ast->dump();
-      std::cout<<"warning missing expr interp\n";
     }
     interp::Vector_Expr *interp = new interp::Vector_Expr(ctor_coords, dom_vec, expr_interp);
     coords2interp_->putVector_Expr(ctor_coords, interp);
@@ -472,9 +469,6 @@ void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,
     if(not vec_interp){
       vec_interp = coords2interp_->getVecExpr(vec_coords);
     }
-    std::cout<<"Making def...\n";
-    std::cout<<vec_coords->toString()<<"\n";
-    std::cout<<vec_interp->toString()<<"\n";
 
     interp::Vector_Def *interp = new interp::Vector_Def(def_coords, dom_vec_def, id_interp, vec_interp);
     coords2interp_->putVector_Def(def_coords, interp);
@@ -501,7 +495,10 @@ void Interpretation::mkVector_Assign(ast::Vector_Assign *assign_ast,
       domain_->mkVector_Assign(vec_varexpr, vec); 
     coords2dom_->putVector_Assign(assign_coords, dom_vec_assign);
     interp::VecVarExpr *var_interp = coords2interp_->getVecVarExpr(var_coords);
-    interp::VecExpr *vec_interp = coords2interp_->getVecExpr(vec_coords);
+    interp::Interp *vec_interp = coords2interp_->getVector(vec_coords);
+    if(not vec_interp){
+      vec_interp = coords2interp_->getVecExpr(vec_coords);
+    }
     
     interp::Vector_Assign *interp = new interp::Vector_Assign(assign_coords, dom_vec_assign, var_interp, vec_interp);
     coords2interp_->putVector_Assign(assign_coords, interp);
@@ -575,8 +572,11 @@ void Interpretation::mkScalar_Assign(ast::Scalar_Assign *assign_ast,
       domain_->mkScalar_Assign(float_varexpr, Scalar); 
     coords2dom_->putScalar_Assign(assign_coords, dom_float_assign);
     interp::ScalarVarExpr *id_interp = coords2interp_->getScalarVarExpr(id_coords);
-    interp::ScalarExpr *float_interp = coords2interp_->getScalarExpr(float_coords);
-    interp::Scalar_Assign *interp = new interp::Scalar_Assign(assign_coords, dom_float_assign, id_interp, float_interp);
+    interp::Interp *flt_interp = coords2interp_->getScalar(float_coords);
+    if(not flt_interp){
+      flt_interp = coords2interp_->getScalarExpr(float_coords);
+    }
+    interp::Scalar_Assign *interp = new interp::Scalar_Assign(assign_coords, dom_float_assign, id_interp, flt_interp);
     coords2interp_->putScalar_Assign(assign_coords, interp);
     interp2domain_->putScalar_Assign(interp, dom_float_assign);
 }
@@ -633,24 +633,27 @@ void Interpretation::mkTransform_Assign(ast::Transform_Assign *assign_ast,
 {
     coords::TransformVarExpr *id_coords = static_cast<coords::TransformVarExpr *>
       (ast2coords_->getStmtCoords(id_ast));
-    coords::Transform *float_coords = static_cast<coords::Transform *>
+    coords::Transform *tfm_coords = static_cast<coords::Transform *>
       (ast2coords_->getStmtCoords(expr_ast));
-    coords::Transform_Assign *assign_coords = ast2coords_->mkTransform_Assign(assign_ast, context_, id_coords, float_coords);
-    domain::TransformVarExpr *float_varexpr = coords2dom_->getTransformVarExpr(id_coords);
+    coords::Transform_Assign *assign_coords = ast2coords_->mkTransform_Assign(assign_ast, context_, id_coords, tfm_coords);
+    domain::TransformVarExpr *tfm_varexpr = coords2dom_->getTransformVarExpr(id_coords);
     /*
     Here there is some subtlety. We don't know if what was left in our
     interpretation by previous work was a Transform_Lit or a Transform_Expr.
     So we check first for a Transform_Expr
     */
-    domain::Transform *Transform = coords2dom_->getTransform(float_coords);
-    domain::Transform_Assign* dom_float_assign = 
-      domain_->mkTransform_Assign(float_varexpr, Transform); 
-    coords2dom_->putTransform_Assign(assign_coords, dom_float_assign);
+    domain::Transform *Transform = coords2dom_->getTransform(tfm_coords);
+    domain::Transform_Assign* dom_tfm_assign = 
+      domain_->mkTransform_Assign( tfm_varexpr, Transform); 
+    coords2dom_->putTransform_Assign(assign_coords, dom_tfm_assign);
     interp::TransformVarExpr *id_interp = coords2interp_->getTransformVarExpr(id_coords);
-    interp::TransformExpr *float_interp = coords2interp_->getTransformExpr(float_coords);
-    interp::Transform_Assign *interp = new interp::Transform_Assign(assign_coords, dom_float_assign, id_interp, float_interp);
+    interp::Interp *tfm_interp = coords2interp_->getTransform(tfm_coords);
+    if(not tfm_interp){
+      tfm_interp = coords2interp_->getTransformExpr(tfm_coords);
+    }
+    interp::Transform_Assign *interp = new interp::Transform_Assign(assign_coords, dom_tfm_assign, id_interp, tfm_interp);
     coords2interp_->putTransform_Assign(assign_coords, interp);
-    interp2domain_->putTransform_Assign(interp, dom_float_assign);
+    interp2domain_->putTransform_Assign(interp, dom_tfm_assign);
 }
 
 // private
@@ -692,7 +695,7 @@ std::string Interpretation::toString_Spaces() {
   for (std::vector<domain::Space *>::iterator it = s.begin(); it != s.end(); ++it)
     retval = retval.append("def ")
                  .append((*it)->toString()) 
-                 .append(" : peirce.space := peirce.space.mk ")
+                 .append(" : peirce.vector_space := peirce.vector_space.mk ")
                  .append(std::to_string(index++)) 
                  .append("\n");
   return retval;
@@ -1346,12 +1349,10 @@ void Interpretation::updateVarTable(){
       }
 
     }
-    std::cout<<"\n"<<std::to_string(choice)<<"end\n";
   }
   catch(std::exception& ex){
     std::cout<<ex.what();
   }
-  std::cout<<"\n"<<std::to_string(choice)<<"end\n";
 
 }
 

@@ -9,24 +9,10 @@ float tmp2(float hey){
 int main(int argc, char **argv){
   //3.0 + (3.0 + 3.0);
   Vec v1(0,0,0);
-  //float flt = 2.0;
-  //flt + flt;
+  float flt = 2.0;
+  flt + flt;
   Vec v2 = v1;
-  //Vec vvv = v1.vec_add(v2);
-  //flt = 3.0;
-  //v2 = v1;
-  //(v2.vec_add(v1));
-  //float flt2 = 3.0;
-  //float flt3 = flt2;
- // (3.0 + 3.0);
- // flt2 + (flt + flt);
- // flt2 + 3.0;
- // float flt4 = flt3 * flt3; //(flt3*flt3);
-  //flt3 = (flt2);
-  //Vec v3 = v2.vec_mul(flt2);
-  //Vec v4 = (v3.vec_add(v2.vec_add(v2)));
-  //v4 = (v4.vec_add(v4).vec_mul(flt3));
-
+  v2 = v1;
   Vec r11(1, 0, 0);
   Vec r12(0, 0, 1);
   Vec r13(0, 1, 0);
@@ -34,7 +20,22 @@ int main(int argc, char **argv){
   Transform rotation1(
     r11, r12, r13
   );
-  Vec res1 = rotation1.apply(v1);
+  Vec res1 = v1;
+  res1 = rotation1.apply(v1);
+  Vec vvv = v1.vec_add(v2);
+  flt = 3.0;
+  v2 = v1;
+  (v2.vec_add(v1));
+  float flt2 = 3.0;
+  float flt3 = flt2;
+  (3.0 + 3.0);
+  flt2 + (flt + flt);
+  flt2 + 3.0;
+  float flt4 = flt3 * flt3; //(flt3*flt3);
+  flt3 = (flt2);
+  Vec v3 = v2.vec_mul(flt2);
+  Vec v4 = (v3.vec_add(v2.vec_add(v2)));
+  v4 = (v4.vec_add(v4).vec_mul(flt3));
 
   Vec r21(1, 0, 0);
   Vec r22(0, 0, 1);
@@ -99,14 +100,14 @@ int main(int argc, char **argv){
 
   //rotate_and_scale = Transform(r1, r2, r3);
   rotate_and_scale = cob1;
-  /*
+  
   if(true)
   {
     flt3 = 2;
   }
   if(true)
     flt3 = 4.0;
-*/
+
   //v4 = Vec(0.0, 0.0, 0.0);
   return 0;
 }

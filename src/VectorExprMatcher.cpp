@@ -92,8 +92,6 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
     auto vectorMaterializeTemporaryExpr = Result.Nodes.getNodeAs<clang::MaterializeTemporaryExpr>("MaterializeTemporaryExprDiscard");
     auto vectorMaterializeTemporaryChild = Result.Nodes.getNodeAs<clang::Expr>("MaterializeTemporaryExprChild");
 
-    //std::cout<<"matching vector"<<std:
-
 
 
     if(parenExpr or innerExpr){
@@ -185,7 +183,6 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
     else if(vectorConstructExpr or vectorConstructExprChild){
         if(vectorConstructExpr and vectorConstructExprChild){
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
-            vectorConstructExpr->dump();
             exprMatcher.search();
             exprMatcher.visit(*vectorConstructExprChild);
             

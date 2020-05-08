@@ -100,7 +100,7 @@ public:
 
   virtual std::string toString() const;
 
-protected:
+//protected:
   coords::Coords *coords_;
   domType type_;
   // TODO: make it a union
@@ -499,34 +499,34 @@ private:
 class Vector_Assign : public Interp
 {
 public:
-  Vector_Assign(coords::Vector_Assign *, domain::Vector_Assign *, interp::VecVarExpr *id, interp::VecExpr *ve);
+  Vector_Assign(coords::Vector_Assign *, domain::Vector_Assign *, interp::VecVarExpr *id,  interp::Interp *ve);
   virtual std::string toString() const;
 
 private:
   interp::VecVarExpr *id_;
-  interp::VecExpr *vec_;
+  interp::Interp *vec_;
 };
 
 class Scalar_Assign : public Interp
 {
 public:
-  Scalar_Assign(coords::Scalar_Assign *, domain::Scalar_Assign *, interp::ScalarVarExpr *id, interp::ScalarExpr *flt);
+  Scalar_Assign(coords::Scalar_Assign *, domain::Scalar_Assign *, interp::ScalarVarExpr *id,  interp::Interp *flt);
   virtual std::string toString() const;
 
 private:
   interp::ScalarVarExpr *id_;
-  interp::ScalarExpr *flt_;
+  interp::Interp *flt_;
 };
 
 class Transform_Assign : public Interp
 {
 public:
-  Transform_Assign(coords::Transform_Assign *, domain::Transform_Assign *, interp::TransformVarExpr *id, interp::TransformExpr *tfm);
+  Transform_Assign(coords::Transform_Assign *, domain::Transform_Assign *, interp::TransformVarExpr *id,  interp::Interp *tfm);
   virtual std::string toString() const;
 
 private:
   interp::TransformVarExpr *id_;
-  interp::TransformExpr *tfm_;
+  interp::Interp *tfm_;
 };
 
 } // namespace interp
