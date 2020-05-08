@@ -68,3 +68,12 @@ Unable to check multiple compilation units or external config files of various t
 # Related Work
 
 SLAM paper
+Generalize to different backend targets
+
+every space comes with a standard basis
+every space is associated with a standard basis
+
+document linear independence but don't enforce
+
+transformation - 2 basis + action (existing implementation)
+"make me a vector with
