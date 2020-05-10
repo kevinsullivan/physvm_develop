@@ -104,6 +104,15 @@ coords::ScalarIdent *ASTToCoords::mkScalarIdent(const ast::ScalarIdent *ast, cla
     return coord;
 }
 
+coords::TransformIdent *ASTToCoords::mkTransformIdent(const ast::TransformIdent *ast, clang::ASTContext *c) {
+    coords::TransformIdent *coord = new coords::TransformIdent();
+    if(clang::isa<clang::Decl>(ast))
+        setASTState(coord, const_cast<clang::Decl*>(clang::dyn_cast<clang::Decl>(ast)), c);
+    overrideDecl2Coords(ast,coord);     // Use Clang canonical addresses? 
+    overrideCoords2Decl(coord, ast);     // Use Clang canonical addresses? 
+    return coord;
+}
+
 coords::VecVarExpr *ASTToCoords::mkVecVarExpr(const ast::VecVarExpr *ast, clang::ASTContext *c) {
     coords::VecVarExpr *coord = new coords::VecVarExpr();
     if(clang::isa<clang::Stmt>(ast))
@@ -121,6 +130,16 @@ coords::ScalarVarExpr *ASTToCoords::mkScalarVarExpr(const ast::ScalarVarExpr *as
     overrideCoords2Stmt(coord, ast);   // DeclRefExpr is ako Stmt
     return coord;
 }
+
+coords::TransformVarExpr *ASTToCoords::mkTransformVarExpr(const ast::TransformVarExpr *ast, clang::ASTContext *c) {
+    coords::TransformVarExpr *coord = new coords::TransformVarExpr();
+    if(clang::isa<clang::Stmt>(ast))
+        setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
+    overrideStmt2Coords(ast, coord);   // DeclRefExpr is ako Stmt
+    overrideCoords2Stmt(coord, ast);   // DeclRefExpr is ako Stmt
+    return coord;
+}
+
 
 
 
@@ -142,6 +161,16 @@ coords::VecScalarMulExpr *ASTToCoords::mkVecScalarMulExpr(
        coords::ScalarExpr *flt, coords::VecExpr *vec 
     ){
     coords::VecScalarMulExpr *coord = new coords::VecScalarMulExpr(flt, vec);
+    if(clang::isa<clang::Stmt>(ast))
+        setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
+    overrideStmt2Coords(ast, coord);
+    overrideCoords2Stmt(coord, ast);
+    return coord;
+}
+
+
+coords::TransformVecApplyExpr *ASTToCoords::mkTransformVecApplyExpr(ast::TransformVecApplyExpr *ast, coords::TransformExpr *texpr, coords::VecExpr *vexpr, clang::ASTContext *c){
+    coords::TransformVecApplyExpr *coord = new coords::TransformVecApplyExpr(texpr, vexpr);
     if(clang::isa<clang::Stmt>(ast))
         setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
     overrideStmt2Coords(ast, coord);
@@ -173,6 +202,15 @@ coords::ScalarScalarMulExpr *ASTToCoords::mkScalarScalarMulExpr(
     return coord;
 }
 
+coords::TransformTransformComposeExpr *ASTToCoords::mkTransformTransformComposeExpr(ast::TransformTransformComposeExpr *ast, coords::TransformExpr *outer, coords::TransformExpr *inner, clang::ASTContext *c) {
+    coords::TransformTransformComposeExpr *coord = new coords::TransformTransformComposeExpr(outer,inner);
+    if(clang::isa<clang::Stmt>(ast))
+        setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
+    overrideStmt2Coords(ast,coord);                          // TO DO Canonicalize
+    overrideCoords2Stmt(coord, ast);                          // TO DO Canonicalize
+    return coord;
+}
+
 
 coords::VecParenExpr *ASTToCoords::mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c, ast::VecExpr *expr) {
     coords::VecExpr *expr_coords = static_cast<coords::VecExpr*>(stmt_coords->at(expr));
@@ -191,7 +229,7 @@ coords::VecParenExpr *ASTToCoords::mkVecParenExpr(ast::VecParenExpr *ast, clang:
 coords::ScalarParenExpr *ASTToCoords::mkScalarParenExpr(ast::ScalarParenExpr *ast, clang::ASTContext *c, ast::ScalarExpr *expr) {
     coords::ScalarExpr *expr_coords = static_cast<coords::ScalarExpr*>(stmt_coords->at(expr));
     if (!expr_coords) {
-        LOG(FATAL) << "ASTToCoords::mkVecParenExpr: Error. No expr coords.\n"; 
+        LOG(FATAL) << "ASTToCoords::mkScalarParenExpr: Error. No expr coords.\n"; 
     }
     coords::ScalarParenExpr *coord = new coords::ScalarParenExpr(expr_coords); 
     if(clang::isa<clang::Stmt>(ast))
@@ -199,7 +237,21 @@ coords::ScalarParenExpr *ASTToCoords::mkScalarParenExpr(ast::ScalarParenExpr *as
     overrideStmt2Coords(ast, coord); 
     overrideCoords2Stmt(coord, ast);
     return coord;  
-}    
+} 
+
+
+coords::TransformParenExpr *ASTToCoords::mkTransformParenExpr(ast::TransformParenExpr *ast, ast::TransformExpr *expr, clang::ASTContext *c) {
+    coords::TransformExpr *expr_coords = static_cast<coords::TransformExpr*>(stmt_coords->at(expr));
+    if (!expr_coords) {
+        LOG(FATAL) << "ASTToCoords::mkTransformParenExpr: Error. No expr coords.\n"; 
+    }
+    coords::TransformParenExpr *coord = new coords::TransformParenExpr(expr_coords); 
+    if(clang::isa<clang::Stmt>(ast))
+        setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
+    overrideStmt2Coords(ast, coord); 
+    overrideCoords2Stmt(coord, ast);
+    return coord;  
+}       
 
 
 coords::Vector_Lit *ASTToCoords::mkVector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c, ast::ScalarValue x, ast::ScalarValue y, ast::ScalarValue z) {
@@ -220,6 +272,15 @@ coords::Scalar_Lit *ASTToCoords::mkScalar_Lit(const ast::Scalar_Lit *ast, clang:
     return coord;
 }
 
+coords::Transform_Lit *ASTToCoords::mkTransform_Lit(const ast::Transform_Lit *ast, coords::VecExpr* arg1, coords::VecExpr* arg2, coords::VecExpr* arg3, clang::ASTContext *c) {
+    coords::Transform_Lit *coord = new coords::Transform_Lit(arg1, arg2, arg3); 
+    if(clang::isa<clang::Stmt>(ast))
+        setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
+    overrideStmt2Coords(ast,coord); 
+    overrideCoords2Stmt(coord,ast); 
+    return coord;
+}
+
 coords::Vector_Var *ASTToCoords::mkVector_Var(
         const ast::Vector_Var *ast, clang::ASTContext *c, coords::VecVarExpr *var_coords) {
     coords::Vector_Var *coord = new coords::Vector_Var(var_coords);
@@ -233,6 +294,16 @@ coords::Vector_Var *ASTToCoords::mkVector_Var(
 coords::Scalar_Var *ASTToCoords::mkScalar_Var(
         const ast::Scalar_Var *ast, clang::ASTContext *c, coords::ScalarVarExpr *var_coords) {
     coords::Scalar_Var *coord = new coords::Scalar_Var(var_coords);
+    if(clang::isa<clang::Stmt>(ast))
+        setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
+    overrideStmt2Coords(ast,coord);
+    overrideCoords2Stmt(coord,ast);
+    return coord;
+}
+
+coords::Transform_Var *ASTToCoords::mkTransform_Var(
+        const ast::Transform_Var *ast, coords::TransformVarExpr *var_coords, clang::ASTContext *c) {
+    coords::Transform_Var *coord = new coords::Transform_Var(var_coords);
     if(clang::isa<clang::Stmt>(ast))
         setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
     overrideStmt2Coords(ast,coord);
@@ -267,6 +338,18 @@ coords::Scalar_Expr *ASTToCoords::mkScalar_Expr(
 }
 
 
+coords::Transform_Expr *ASTToCoords::mkTransform_Expr(
+        const ast::Transform_Expr *ctor_ast, const ast::TransformExpr *expr_ast, clang::ASTContext *c) {
+    coords::TransformExpr *expr_coords = static_cast<coords::TransformExpr*>(stmt_coords->at(expr_ast));
+    coords::Transform_Expr *coord = new coords::Transform_Expr(expr_coords);
+    if(clang::isa<clang::Stmt>(ctor_ast))
+        setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ctor_ast)), c);
+    overrideStmt2Coords(ctor_ast,coord);
+    overrideCoords2Stmt(coord,ctor_ast);
+    return coord;    
+}
+
+
 
 coords::Vector_Def *ASTToCoords::mkVector_Def(
         const ast::Vector_Def *ast, clang::ASTContext *c, coords::VecIdent *id_coords, coords::VecExpr *vec_coords) {
@@ -289,6 +372,17 @@ coords::Scalar_Def *ASTToCoords::mkScalar_Def(
     return coord;
 }
 
+
+coords::Transform_Def *ASTToCoords::mkTransform_Def(
+        const ast::Transform_Def *ast, clang::ASTContext *c, coords::TransformIdent *id_coords, coords::TransformExpr *flt_coords) {
+    coords::Transform_Def *coord = new coords::Transform_Def(id_coords, flt_coords);
+    if(clang::isa<clang::Stmt>(ast))
+        setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
+    overrideStmt2Coords(ast,coord);
+    overrideCoords2Stmt(coord, ast);
+    return coord;
+}
+
 coords::Vector_Assign *ASTToCoords::mkVector_Assign(
         const ast::Vector_Assign *ast, clang::ASTContext *c, coords::VecVarExpr *var_coords, coords::VecExpr *vec_coords) {
     coords::Vector_Assign *coord = new coords::Vector_Assign(var_coords, vec_coords);
@@ -303,6 +397,17 @@ coords::Vector_Assign *ASTToCoords::mkVector_Assign(
 coords::Scalar_Assign *ASTToCoords::mkScalar_Assign(
         const ast::Scalar_Assign *ast, clang::ASTContext *c, coords::ScalarVarExpr *var_coords, coords::ScalarExpr *flt_coords) {
     coords::Scalar_Assign *coord = new coords::Scalar_Assign(var_coords, flt_coords);
+    if(clang::isa<clang::Stmt>(ast))
+        setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
+    overrideStmt2Coords(ast,coord);
+    overrideCoords2Stmt(coord, ast);
+    return coord;
+}
+
+
+coords::Transform_Assign *ASTToCoords::mkTransform_Assign(
+        const ast::Transform_Assign *ast, clang::ASTContext *c, coords::TransformVarExpr *var_coords, coords::TransformExpr *flt_coords) {
+    coords::Transform_Assign *coord = new coords::Transform_Assign(var_coords, flt_coords);
     if(clang::isa<clang::Stmt>(ast))
         setASTState(coord, const_cast<clang::Stmt*>(clang::dyn_cast<clang::Stmt>(ast)), c);
     overrideStmt2Coords(ast,coord);

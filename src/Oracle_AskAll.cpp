@@ -24,8 +24,6 @@ domain::Space& Oracle_AskAll::getSpace() {
 	int whichSpace = selectSpace(spaces);
 	if (whichSpace < 0 || whichSpace >= (int)spaces.size())
 	{
-		domain::Space& result = *spaces[whichSpace];
-		return result;
 		domain::Space* resultptr = nullptr;
 		return *resultptr;
 	}
@@ -33,6 +31,42 @@ domain::Space& Oracle_AskAll::getSpace() {
 		domain::Space& result = *spaces[whichSpace];
 		return result;
 	}
+}
+
+domain::MapSpace& Oracle_AskAll::getMapSpace() {
+	std::vector<domain::Space*>& spaces = dom_->getSpaces();
+	if (spaces.size() == 0) {
+		LOG(FATAL) <<"Oracle_AskAll::getSpace:: No abstract spaces available for interpretation. Bye!\n";
+		exit(1);
+	}
+	std::cout<<"\n1. Space of map domain?\n";
+	domain::Space domain;
+	printSpaces(spaces);
+	int whichSpace = selectSpace(spaces);
+	if (whichSpace < 0 || whichSpace >= (int)spaces.size())
+	{
+		domain::MapSpace* resultptr = nullptr;
+		return *resultptr;
+	}
+	else{
+		domain = *spaces[whichSpace];
+	}
+	std::cout<<"2. Space of map codomain?\n";
+	domain::Space codomain;
+	printSpaces(spaces);
+	whichSpace = selectSpace(spaces);
+	if (whichSpace < 0 || whichSpace >= (int)spaces.size())
+	{
+		domain::MapSpace* resultptr = nullptr;
+		return *resultptr;
+	}
+	else{
+		codomain = *spaces[whichSpace];
+	}
+
+	domain::MapSpace mapSpace(domain, codomain);
+
+	return mapSpace;
 }
 
 

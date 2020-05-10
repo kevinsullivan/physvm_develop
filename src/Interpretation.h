@@ -79,7 +79,26 @@ public:
     void mkScalar_Def(ast::Scalar_Def *ast, ast::ScalarIdent *id, ast::ScalarExpr *exp);
     void mkScalar_Assign(ast::Scalar_Assign *Ast, ast::ScalarVarExpr *id, ast::ScalarExpr *exp);
     
+    void mkTransformIdent(ast::TransformIdent *ast);
+    void mkTransformVarExpr(ast::TransformVarExpr *ast);
+
+    // TODO: remove the following two const constraints
+    void mkTransformVecApplyExpr(ast::TransformVecApplyExpr *ast, const ast::TransformExpr *tfm, 
+                         const ast::VecExpr *vec);
+    void mkTransformTransformComposeExpr(ast::TransformTransformComposeExpr *ast, const ast::TransformExpr *tfm, 
+                         const ast::TransformExpr *vec);
+
+    // KEVIN: Added for new horizontal module
+    void mkTransformParenExpr(ast::TransformParenExpr *ast, ast::TransformExpr *expr);
+
+    void mkTransform_Lit(ast::Transform_Lit *ast, ast::VecExpr *vec1, ast::VecExpr *vec2, ast::VecExpr *vec3);
+    void mkTransform_Expr(ast::Transform_Expr *ast, ast::TransformExpr* expr);
+    void mkTransform_Var(ast::TransformLitExpr *ast);
+    void mkTransform_Def(ast::Transform_Def *ast, ast::TransformIdent *id, ast::TransformExpr *exp);
+    void mkTransform_Assign(ast::Transform_Assign *ast, ast::TransformVarExpr *id, ast::TransformExpr *exp);
     // Precondition: coords2domain_ is defined for ast
+
+
     domain::VecExpr *getVecExpr(ast::VecExpr *ast);
 
     domain::ScalarExpr *getScalarExpr(ast::ScalarExpr *ast);
@@ -98,6 +117,12 @@ public:
     std::string toString_Scalars();
     std::string toString_ScalarDefs();
     std::string toString_ScalarAssigns();
+
+    std::string toString_TransformIdents();
+    std::string toString_TransformExprs();
+    std::string toString_Transforms();
+    std::string toString_TransformDefs();
+    std::string toString_TransformAssigns();
     
     void setAll_Spaces();
 
@@ -136,6 +161,8 @@ public:
     std::vector<std::string> unconstrained_vec_names;
     std::vector<ast::ScalarIdent*> unconstrained_floats;
     std::vector<std::string> unconstrained_float_names;
+    std::vector<ast::TransformIdent*> unconstrained_transforms;
+    std::vector<std::string> unconstrained_transform_names;
 }; 
 
 } // namespaceT
