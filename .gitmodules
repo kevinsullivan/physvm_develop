@@ -4,3 +4,6 @@
 [submodule "deps/phys"]
 	path = deps/phys
 	url = https://github.com/kevinsullivan/phys.git
+[submodule "deps/PeirceDocker"]
+	path = deps/PeirceDocker
+	url = https://github.com/drewjel/PeirceDocker.git
