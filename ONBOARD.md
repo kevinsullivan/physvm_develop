@@ -49,7 +49,7 @@ This step may fail if you do not have access to any submodules, (for example, ph
 
 1. In a terminal start the docker image for the build environment. On Windows (10 Pro), use a Windows CMD window, not Git Bash. 
 ```shell
-docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_DIRECTORY_GOES_HERE%:/peirce andrewe8/peirce_docker /bin/bash"
+docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_DIRECTORY_GOES_HERE%:/peirce andrewe8/peirce_docker /bin/bash
 ```
 3. In VSCode: Use the Command Palette (Ctrl + Shift + P)
 3. Type in "attach" to trigger auto-complete -> Select ~ "Remote-Containers - Attach to Running Container"
