@@ -3,9 +3,8 @@ build/
 .d
 .o
 *.*~
-*.log
+* .log
 .vscode
 .DS_Store
 peirce
 *.tar.gz
-deps/
