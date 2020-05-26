@@ -4,12 +4,13 @@ This document contains an abbreviated set of steps to be followed to pepare your
 
 ## Docker Setup
 
-1. Download Docker for your respective platform and ensure daemon is running
-2. Issue the following command with appropriate substitutions
+1. Download Docker for your respective platform (https://www.docker.com/products/docker-desktop) and ensure daemon is running. Make an account with Docker and get permission from the owner of the docker to pull the current image (owner as of 5/26/2020 is Andrew Elsey).
+2. Issue the following command in a terminal window:
 ```shell
-docker login docker.io -u %MY_DOCKER_LOGIN_HERE% -p "%MY_DOCKER_PASSWORD_HERE%"
+docker login
 ```
-3. Next in a terminal window: 
+The terminal will prompt you for a username and password, you should supply these.
+3. Next, issue the following command after ensuring you have permission to access the docker: 
 ```shell
 docker pull andrewe8/peirce_docker
 ```
@@ -19,23 +20,27 @@ A several GB file download will ensue. Image name subject to change. (If you ski
 ```shell
 docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v %YOUR_PEIRCE_MOUNT_OR_OTHER_DIRECTORY_GOES_HERE%:/peirce andrewe8/peirce_docker /bin/bash
 ```
-5. This can be shut off with : 
+Make sure to replace the substring starting and ending with the percentage signs above with your peirce mount directory. 
+5. This can be shut off with the following command in a new terminal window: 
 ```shell
 docker container stop peirce_docker
 ```
-
+or the following command in the same terminal window:
+```shell
+exit
+```
 #### NOTE: It is important that you mount your local directory to /peirce . The path variables use locations within /peirce
 
-## GitLab (Now Github!) Setup
+## Github Setup
 
-1. Ensure you have an account with and access to https://gitlab.cs.virginia.edu/ (NOTE : NOW USING Github!)
-2. Obtain developer access to the "Peirce Docker Builder", "Peirce", and "phys" repositories if you don't already.
-3. Clone both repositories locally
+1. Ensure you have an account with Github.
+2. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, and https://github.com/drewjel/PeirceDocker.
+3. Clone both repositories locally.
 4. In your local Peirce repository directory, type the following to download dependencies
 ```shell
 git submodule update --init --recursive
 ```
-This step may fail if you do not have access to any submodules, (for example, phys, which is another GitLab (Github) project).
+This step may fail if you do not have access to any submodules, (for example, phys, which is another Github project).
 
 
 ## VSCode Setup
@@ -43,7 +48,7 @@ This step may fail if you do not have access to any submodules, (for example, ph
 1. Download VSCode
 2. You'll need to open a "workspace folder" - select the "peirce" directory, namely, the folder where you cloned your Peirce repository into
 3. You should receive a prompt to "Install the Recommended Extensions". Click yes.
-4. Should that not appear, please navigate to the extensions tab, click the "...", and filter to "recommended extensions". Download all in that list (4 at the time of writing this)
+4. Should that not appear, please navigate to the extensions tab, click the "...", and filter to "recommended extensions". Download all in that list (13 at the time of writing this)
 
 ## Running Peirce in VSCode
 
@@ -57,17 +62,14 @@ docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --nam
 5. There should be an "open folder" option that will open a dialog, from which you should navigate to "/peirce" (This will be the same as your local peirce repository directory if you performed Step 1 correctly).
 6. Go to your Extensions
 7. VSCode does not have all of your extensions installed by default within the container context. After you are attached to the container, you will likely receive an installation prompt as you did in section VSCode Setup, Step 4. If not, proceed to your extensions tab, filter to "installed", click on all recommended extensions, including C/C++ and Clang Command Adapter, and, for all, click on "Install in Container". This will likely require you to click "Reload", afterwards
-8. You'll (theoretically) be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
+8. You'll now be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
 
 
-## Development Workflow (NOTE : Steps 5-8 are not operational following GitLab outage)
+## Development Workflow
 
 1. Instructions do not vary much between developing on the "Peirce Docker Builder" or "Peirce" project.
 2. All work must be done on a "feature branch", thus, create a branch titled "feature/%MY_DESCRIPTIVE_FEATURE-SPECIFIC_BRANCH_NAME%"
 3. Switch to that branch for development.
 4. Perform development,rigorously test changes, ensure no issues in building
 5. Push your changes. 
-6. This should trigger a build on GitLab (GitHub). Navigate to "CI/CD" and check the jobs tab. One should coincide with your push time.
-7. If your build succeeds, this should trigger a built image to get pushed to DockerHub with the Docker Project, or, for Peirce, it will upload the built binary as an "artifact" to be downloaded as an attachment to the job itself
-8. If it fails, please check the job output to see what triggered the failure. If it was not your fault, contact the Runner administrator (Andrew)
-9. When everything is ready, submit a merge request to merge your changes back into the master branch
+6. Once you've confirmed that everything works as intended, and you've finished developing on the branch, you can issue a merge request with master.
