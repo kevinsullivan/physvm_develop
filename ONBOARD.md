@@ -64,6 +64,11 @@ docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --nam
 7. VSCode does not have all of your extensions installed by default within the container context. After you are attached to the container, you will likely receive an installation prompt as you did in section VSCode Setup, Step 4. If not, proceed to your extensions tab, filter to "installed", click on all recommended extensions, including C/C++ and Clang Command Adapter, and, for all, click on "Install in Container". This will likely require you to click "Reload", afterwards
 8. You'll now be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
 
+## Running Mathlib within the container
+1. Once you're in the container in vscode, open up a terminal window within VSCode (Terminal -> New Terminal). 
+2. cd into the peirce/deps/phys directory, and switch into the affine branch (THIS WILL CHANGE TO MASTER BRANCH IN FUTURE). Use git checkout affine.
+3. Run leanpkg configure, and after that finishes, run leanpkg build. This should take a significant amount of time, and will possibly output some errors. Ignore these, and let it run to completion. After this finishes running, you should have a working Mathlib inside of the container. 
+
 
 ## Development Workflow
 
