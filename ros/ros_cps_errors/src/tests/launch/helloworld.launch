@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="helloworld" type="helloworld" name="helloworld" output="screen"></node>
+  <node pkg="get_vector" type="get_vector" name="get_vector"/>
+  <node pkg="tf_publisher" type="tf_publisher" name="tf_publisher" />
+</launch>
