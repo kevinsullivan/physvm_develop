@@ -1,6 +1,6 @@
 # Onboarding Overview
 
-This document contains an abbreviated set of steps to be followed to pepare your local machine for Peirce development and to afterwards develop.
+This document contains an abbreviated set of steps to be followed to pepare your local machine for Peirce development.
 
 ## Docker Setup
 
