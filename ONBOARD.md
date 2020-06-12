@@ -39,11 +39,7 @@ exit
 ```shell
 git clone --recursive https://github.com/kevinsullivan/Peirce.git
 ```
-4. In your local Peirce repository directory, type the following to download dependencies
-```shell
-git submodule update --init --recursive
-```
-This step may fail if you do not have access to any submodules, (for example, phys, which is another Github project).
+This step may fail if you do not have access to the submodules, (for example, phys, which is another Github project).
 
 
 ## VSCode Setup
