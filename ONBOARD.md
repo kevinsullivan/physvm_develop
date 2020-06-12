@@ -33,9 +33,17 @@ exit
 
 ## Github Setup
 
-1. Ensure you have an account with Github.
-2. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, and https://github.com/drewjel/PeirceDocker.
-3. Clone both repositories locally.
+1. Configure git on your local machine.
+a. If you're development computer runs Windows, configure git to convert LF line endings to CRLF (which is what Windows uses) when you check out code. 
+```shell
+git config --global core.autocrlf true
+```
+b. If you're development computer runs OSX or Linux, configure git any CRLFs that might have crept in to LFs on commit.
+```shell
+git config --global core.autocrlf input
+```
+2. Ensure you have an account with Github.
+3. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, and https://github.com/drewjel/PeirceDocker.
 4. In your local Peirce repository directory, type the following to download dependencies
 ```shell
 git submodule update --init --recursive
