@@ -35,7 +35,10 @@ exit
 
 1. Ensure you have an account with Github.
 2. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, and https://github.com/drewjel/PeirceDocker.
-3. Clone both repositories locally.
+3. Clone https://github.com/kevinsullivan/Peirce repositories with the --recursive flag to clone the git submodules.
+```shell
+git clone --recursive https://github.com/kevinsullivan/Peirce.git
+```
 4. In your local Peirce repository directory, type the following to download dependencies
 ```shell
 git submodule update --init --recursive
