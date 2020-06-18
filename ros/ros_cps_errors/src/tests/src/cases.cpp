@@ -13,6 +13,14 @@ int main(int argc, char **argv){
     ros::init(argc, argv, "cases");
     ros::NodeHandle node;
 
+    //Dr Sullivan comment:
+    /*
+    Annotate this entire piece of code to assume that we are working in geometric space.
+    Let the space be called s3d = (p3d, v3d)
+    Let f3d be the standard frame on s3d
+    f3d = (std_p, std_v_0, std_v_1, std_v_2)
+
+    */
     geometry_msgs::Vector3Stamped two_vec_s;
     two_vec_s.vector.x = 2;
     two_vec_s.vector.y = 2;
