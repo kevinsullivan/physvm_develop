@@ -200,6 +200,11 @@ void vecCallback(const geometry_msgs::Vector3ConstPtr& data){
                 new_vec.y = vecs[0].y + vecs[2].y;
                 new_vec.z = vecs[0].z + vecs[2].z;
 
+                tf::Vector3 tfone, tftwo, tfthree;
+                tf::vector3MsgToTF(vecs[0], tfone);
+                tf::vector3MsgToTF(vecs[2], tftwo);
+                tfthree = tfone + tftwo;
+
                 
                 ROS_DEBUG("Performing addition with UNSTAMPED vectors initialized in frames three and three");
                 new_vec.x = vecs[2].x - vecs[2].x;
@@ -259,6 +264,7 @@ void vecStampedCallback(const geometry_msgs::Vector3StampedConstPtr& data){
                 new_vec.vector.x = vecs_s[0].vector.x - vecs_s[1].vector.x;
                 new_vec.vector.y = vecs_s[0].vector.y - vecs_s[1].vector.y;
                 new_vec.vector.z = vecs_s[0].vector.z - vecs_s[1].vector.z;
+
                // new_vec = vecs_s[]
                 ROS_ERROR("Performing multiplication with STAMPED geometry_msg vectors in frames one and two");
                 new_vec.vector.x = vecs_s[0].vector.x * vecs_s[1].vector.x;

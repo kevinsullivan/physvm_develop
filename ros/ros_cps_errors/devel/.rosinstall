@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /peirce/rostest/ros_cps_errors/devel/setup.sh
+    local-name: /peirce/ros/ros_cps_errors/devel/setup.sh

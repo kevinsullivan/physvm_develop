@@ -48,5 +48,40 @@ int main(int argc, char **argv){
     tf2::doTransform(two_vec_s, new_vec, t3s_one_two);//result : {length, R^3, vector (not point), frame one} ! ERROR: frame new_vec <> result of transform
 
     ROS_ERROR("ARG FRAME : %s, TRANSFORM FRAME : %s -> %s, OUT FRAME %s", two_vec_s.header.frame_id.c_str(), t3s_one_two.header.frame_id.c_str(), t3s_one_two.child_frame_id.c_str(), new_vec.header.frame_id.c_str());
+
+    //TIME EXAMPLE, 6/19/20:
+    geometry_msgs::PointStamped startpt, endpt;
+    ros::Time starttm, endtm;
+
+    startpt.point.x = 10; startpt.point.y = 10; startpt.point.z = 10; 
+    startpt.header.frame_id = "standard";
+    starttm = ros::Time::now() - ros::Duration(10);
+
+    endpt.point.x = 20; endpt.point.y = -2; endpt.point.z = 12;
+    endpt.header.frame_id = "standard";
+    endtm = ros::Time::now();
+
+    tf2::Vector3 travelled(
+        endpt.point.x - startpt.point.x,
+        endpt.point.y - startpt.point.y,
+        endpt.point.z - startpt.point.z
+    );
+
+    tf2::Vector3 velocity = travelled/(endtm - starttm).toSec();
+
+    geometry_msgs::Vector3 gd, gv;
+    gd = tf2::toMsg(travelled);
+    gv = tf2::toMsg(velocity);
+
+    ROS_INFO("Start:");
+    ROS_INFO_STREAM(startpt);
+    ROS_INFO("End");
+    ROS_INFO_STREAM(endpt);
+    ROS_INFO("Coordinate-wise distance travelled:");
+    ROS_INFO_STREAM(gd);
+    ROS_INFO("Velocity over 5 seconds:");
+    ROS_INFO_STREAM(gv);
+
     
+
 }
