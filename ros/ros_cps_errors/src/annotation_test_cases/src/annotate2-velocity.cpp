@@ -80,7 +80,7 @@ int main(int argc, char **argv){
     // alternatively, before the preceding line we could've "defined" "world_frame" as s3.std_frame
     // then we could annotate the following point as having coordinates relative to "world_frame"
     // 
-    tf2::Stamped<tf::Point> 
+    tf::Stamped<tf::Point> 
         tf_start_point(tf::Point(10, 10, 10), ros::Time::now() + ros::Duration(-10), "world"), 
         tf_end_point(tf::Point(20, -2, 12), ros::Time::now(), "world");
     ros::Time start_time_point = ros::Time::now() + ros::Duration(-10), end_time_point = ros::Time::now();
@@ -97,16 +97,8 @@ int main(int argc, char **argv){
         end_point;// = tf2::toMsg(tf_end_point); // No reliable way to convert from 
     //tf2::convert(tf_start_point, start_point);
     //tf2::convert(tf_end_point, end_point);
-    start_point.point.x = 10;
-    start_point.point.y = 10;
-    start_point.point.z = 10;
-    start_point.header.frame_id = "world";
-    start_point.header.stamp = tf_start_point.stamp_;
-    end_point.point.x = 20;
-    end_point.point.y = -2;
-    end_point.point.z = 12;
-    end_point.header.stamp = tf_end_point.stamp_;
-
+    tf::pointStampedTFToMsg(tf_start_point, start_point);
+    tf::pointStampedTFToMsg(tf_end_point, end_point);
     //Calculate the coordinate-wise vector displacement by the robot over the time horizon of its movement
     //@@ As both tf_end_point and tf_start_point are points, we conclude that tf_displacement is a Vector, indeed in the euclidean 3d-geometry space
     //although tf_displacement is coordinate-free, we annotate and infer that it is again in the world frame
