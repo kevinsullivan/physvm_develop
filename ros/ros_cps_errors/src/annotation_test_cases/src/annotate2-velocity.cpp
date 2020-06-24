@@ -92,11 +92,11 @@ int main(int argc, char **argv){
         Note 3: Charlie advocates a coding style closer to the math, using point + vector rather than point - (-vector)
         */
 
+       //Define a geometry_msgs version of the points to be used for eays printing
     geometry_msgs::PointStamped 
-        start_point,// = tf2::toMsg(tf_start_point), //THIS DOESN'T WORK
-        end_point;// = tf2::toMsg(tf_end_point); // No reliable way to convert from 
-    //tf2::convert(tf_start_point, start_point);
-    //tf2::convert(tf_end_point, end_point);
+        start_point,
+        end_point;
+    //Perform a conversion from the tf data type to the geometry_msg data type to be printed later
     tf::pointStampedTFToMsg(tf_start_point, start_point);
     tf::pointStampedTFToMsg(tf_end_point, end_point);
     //Calculate the coordinate-wise vector displacement by the robot over the time horizon of its movement
