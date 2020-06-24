@@ -7,6 +7,7 @@ This mini-project contains a compile-able and runnable ROS project which demonst
 
 cd /peirce/ros/ros_cps_errors
 sh compile.sh 
+source devel/setup.bash
 
 ## To Run
 
@@ -28,6 +29,3 @@ The program will continuously dump output to the console. Valid physical operati
 If you want to run the annotation program, please do the compile step. Then, in the same directory
 
 sh run_annotation_program.sh
-
-The output should be something like : 
-[ERROR] [1592520705.333526422]: ARG FRAME : two, TRANSFORM FRAME : one -> two, OUT FRAME one

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.0)
-project(helloworld)
+project(physical_inconsistencies)
 
 find_package(catkin REQUIRED COMPONENTS
   cmake_modules
@@ -22,8 +22,8 @@ include_directories(
   include ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(helloworld src/helloworld.cpp)
-target_link_libraries(helloworld ${catkin_LIBRARIES})
+add_executable(main src/physical_inconsistencies_main.cpp)
+target_link_libraries(main ${catkin_LIBRARIES})
 
 add_executable(get_vector src/get_vector.cpp)
 target_link_libraries(get_vector ${catkin_LIBRARIES})
@@ -45,7 +45,3 @@ target_link_libraries(urdf_handler ${catkin_LIBRARIES})
 
 add_executable(cases src/cases.cpp)
 target_link_libraries(cases ${catkin_LIBRARIES})
-
-## add_dependencies(helloworld )
-
-##include_directories(include ${catkin_INCLUDE_DIRS})

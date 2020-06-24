@@ -9,6 +9,17 @@
 
 
 
+/*
+Please look at this: http://wiki.ros.org/tf/Tutorials/Adding%20a%20frame%20(C++)
+*/
+
+/*
+This file provides two examples: 
+- (1) we can apply a transform from A to B to a vector not in A
+- (2) we can use ROS point and time constructs to compute velocities
+*/
+
+
 int main(int argc, char **argv){
     ros::init(argc, argv, "cases");
     ros::NodeHandle node;
@@ -30,6 +41,7 @@ int main(int argc, char **argv){
     */
 
     two_vec_s.header.frame_id = "two";
+
 
      //same as in tf_publisher.cpp file
     tf::Quaternion qone;
@@ -57,9 +69,16 @@ int main(int argc, char **argv){
     startpt.header.frame_id = "standard";
     starttm = ros::Time::now() - ros::Duration(10);
 
+    //tf2::buffer();
+    //buffer.lookupTransform(from, to, rostime)
+
     endpt.point.x = 20; endpt.point.y = -2; endpt.point.z = 12;
     endpt.header.frame_id = "standard";
     endtm = ros::Time::now();
+
+    /*
+    It appears that there's 
+    */
 
     tf2::Vector3 travelled(
         endpt.point.x - startpt.point.x,

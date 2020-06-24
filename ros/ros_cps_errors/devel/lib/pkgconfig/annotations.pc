@@ -1,0 +1,8 @@
+prefix=/peirce/ros/ros_cps_errors/devel
+
+Name: annotations
+Description: Description of annotations
+Version: 1.1.1
+Cflags: -I/peirce/ros/ros_cps_errors/src/annotation_test_cases/include
+Libs: -L${prefix}/lib 
+Requires: 

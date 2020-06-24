@@ -1,2 +1,2 @@
 source devel/setup.bash
-roslaunch helloworld helloworld.launch
+roslaunch physical_inconsistencies physical_inconsistencies.launch

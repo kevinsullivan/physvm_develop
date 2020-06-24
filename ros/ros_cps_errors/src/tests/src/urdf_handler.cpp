@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     
     KDL::Tree my_tree;
     try{
-        if(kdl_parser::treeFromFile("/peirce/rostest/ros_cps_errors/src/tests/urdf/test.urdf", my_tree))
+        if(kdl_parser::treeFromFile("/peirce/ros/ros_cps_errors/src/tests/urdf/test.urdf", my_tree))
         {
             robot_state_publisher::RobotStatePublisher rsp = robot_state_publisher::RobotStatePublisher(my_tree);
 
