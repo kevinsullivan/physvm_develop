@@ -1,8 +1,0 @@
-prefix=/peirce/ros/ros_cps_errors/devel
-
-Name: helloworld
-Description: Description of helloworld
-Version: 1.1.1
-Cflags: -I/peirce/ros/ros_cps_errors/src/tests/include
-Libs: -L${prefix}/lib 
-Requires: 

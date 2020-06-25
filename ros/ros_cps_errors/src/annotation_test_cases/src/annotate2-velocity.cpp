@@ -80,12 +80,46 @@ int main(int argc, char **argv){
     // alternatively, before the preceding line we could've "defined" "world_frame" as s3.std_frame
     // then we could annotate the following point as having coordinates relative to "world_frame"
     // 
+    /*
+    A robot starts at position tf_start_point at time now-10, and ends up at tf_end_point at time now.
+    Our goal is compute the average velocity of the robot between now-10 and now.
+    */
+   /*
     tf::Stamped<tf::Point> 
         tf_start_point(tf::Point(10, 10, 10), ros::Time::now() + ros::Duration(-10), "world"), 
-        tf_end_point(tf::Point(20, -2, 12), ros::Time::now(), "world");
+        tf_end_point(tf::Point(20, -2, 12), ros::Time::now(), "world");*/
+    tf::Point
+        tf_start_point = tf::Point(10, 10, 10),
+        tf_end_point = tf::Point(20, -2, 12);
+
     ros::Time start_time_point = ros::Time::now() + ros::Duration(-10), end_time_point = ros::Time::now();
 
-        /*
+    /*
+    Sebastian: we can infer type of result of application of transform. Kevin: can probably already do this statically.
+    
+    <-- Pseudo ROS -->
+
+    point p1;   // intended interp: world
+    point p2;   // intended interp: world
+    
+    if (p1 == p2)  // statically would be ok 
+        ...  
+    transform t (world, f2);    // note that world and f2 are given explicitly as args to transform constructor
+                                
+    p1 = t(p1); // here can can infer p1 should be coordinatized in f2 frame 
+    
+    if (p1 == p2)  // FLAG, type error in terms of frame (unless world and f2 are the same)
+
+    transform t2 (read-from-launch-file, thus dynamically defined)
+
+    p2 = t2(p2);
+
+    if (p1 == p2) // I do not know if this is ok - need to check at runtime
+                  For it to be correct, p2 must be framed in f2
+    */ 
+
+
+    /*
         Let's fix ROS practice in preceding code regarding use of timestamps
         Note 1: Implicit in Stamped objects is a notion of a "frame as a function of time"
         Note 2: Real (wall) vs simulated time
@@ -93,12 +127,12 @@ int main(int argc, char **argv){
         */
 
        //Define a geometry_msgs version of the points to be used for eays printing
-    geometry_msgs::PointStamped 
+    geometry_msgs::Point 
         start_point,
         end_point;
     //Perform a conversion from the tf data type to the geometry_msg data type to be printed later
-    tf::pointStampedTFToMsg(tf_start_point, start_point);
-    tf::pointStampedTFToMsg(tf_end_point, end_point);
+    tf::pointTFToMsg(tf_start_point, start_point);
+    tf::pointTFToMsg(tf_end_point, end_point);
     //Calculate the coordinate-wise vector displacement by the robot over the time horizon of its movement
     //@@ As both tf_end_point and tf_start_point are points, we conclude that tf_displacement is a Vector, indeed in the euclidean 3d-geometry space
     //although tf_displacement is coordinate-free, we annotate and infer that it is again in the world frame
