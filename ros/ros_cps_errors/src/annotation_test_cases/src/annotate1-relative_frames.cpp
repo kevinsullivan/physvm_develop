@@ -44,15 +44,31 @@ int main(int argc, char **argv){
     ros::NodeHandle node;                   // provides ROS utility functions
     //Allow debug messages to show up in console
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
+    /*
+    @@
+    We're working a 3D Euclidean space, let's call it s3. (Global.)
+    Note: s3 comes with a standard frame, let's call it s3.std_frame.
+    */
+    //@@EuclideanGeometry geometry(dimensions=3);
+    //@@Interpret ROS.worldFrame -> geometry.stdFrame=(origin="ScottStadium",frame(chirality=right, unit="m", x="north", y="east", z="up"));
+    //@@ClassicalTime time(origin=UTC-origin (1970-01-01T00:00:00Z ISO 8601), unit=second) // minutes are not constant duration in UTC!
+
+
+    ROS_INFO("Calling initROS (commented out for now");
+    //initROS(); 
+   // there is a 3D Euclidean world space (implicit in ROS, we make it explicit as "s3").
+   // there is a standard frame, the "world frame", on this world space, NED, conventions, standards, ... 
+   // we also have a concept of time, including ??? standard frame origin/ephemeric + seconds as a unit?
 
 
     /* MAP AND RELATIVE FRAME CONVERSION EXAMPLE */
 
     // from map server node get map as specified in blank_map.yaml
     // association of "static_map" to map given in launch/annotations.launch
+    //We need to make a request to a ROS service that may not be turned on yet, so we wait until it is
     ros::service::waitForService("/static_map");
 
-    // Get an API client for talking to talking to the map server
+    // Get an API client for talking to the map server
     ros::ServiceClient cl = node.serviceClient<nav_msgs::GetMap>("/static_map");
 
     // Create query to be sent to map service to get interface to get nav occupancy grid
@@ -65,6 +81,16 @@ int main(int argc, char **argv){
         // From response get world map (occupancy grid) and frame (pose) for this map
         nav_msgs::OccupancyGrid world_map = gm.response.map;
         //nav_msgs::MapMetaData 
+        //@@Here we have a tuple of a quaternion and a point expressed in the 3d euclidean world space, s3
+        //Both are presented in terms of the world frame, s3.std_frame
+        //The point is expressed in units and dimensions meters
+        //The quaternion (and quaternions in general) could be annotated as a member of the quaternion group with real scalars, 
+        //a set of 3 angles, or as a matrix
+        //The quaternions units and dimensions may be expressed in radians?
+        /*
+        @@Interpret world_map.info.origin as POSE in geometry whose coordinates are ((0, 0, 0),(0, 0, 0, 1)) relative to geometry.stdFrame
+        @@Interpret map_pose as POSE in geometry whose coordinates are ((0, 0, 0),(0, 0, 0, 1)) relative to geometry.stdFrame
+        */
         geometry_msgs::Pose map_pose = world_map.info.origin;
         //&&Peirce.createWorld()
 
@@ -78,16 +104,16 @@ int main(int argc, char **argv){
 
        /*
        Note: nowhere do we actually instantiate a 3D Euclidean space, nor do we have a
-       name for this space. Rather, we just get ourselves an affine for it (map_pose).
-       Hypothesis: the occupancy grid indicates what's on the floor of a 3-d space, so
-       basically where the robot can't go.
+       name for this space. Rather, we just get ourselves an affine frame for it (map_pose).
+
+
        Let's have a look at map_pose on the console.
        */
       
         ROS_INFO("Map Pose : ");
         ROS_INFO_STREAM(map_pose);
-       
         /*
+        This should look like: 
         [ INFO] [1592857108.938780400]: Map Pose : 
         [ INFO] [1592857108.940042900]: position: 
         x: 0
@@ -103,33 +129,32 @@ int main(int argc, char **argv){
 
         We need help resolving the 2-d occupancy map vs. 3-d Euclidean space in which the
         robot seems to be operating based on the result of the following experiment.
+
+        6/25/20 - This was resolved. map_server should be projected onto R3 via (x, y) -> (x, y, (-inf, inf)). 
+        This is not the case for all 2D maps (see https://github.com/ANYbotics/grid_map) 
         */
-
-
-        /*
-        UN-NEEDED FOR THIS EXAMPLE.
-        geometry_msgs::TransformStamped map_pose_as_transform;
-
-        map_pose_as_transform.transform.rotation = map_pose.orientation;
-        map_pose_as_transform.transform.translation.x = map_pose.position.x;
-        map_pose_as_transform.transform.translation.y = map_pose.position.y;
-        map_pose_as_transform.transform.translation.z = map_pose.position.z;
-        map_pose_as_transform.header = world_map.header;
-        */
-
-
 
         /*
         Here, we assume we have the robot's pose from the perspective of the map (world) frame
-        Normally, this would be coming in from a sensor, but we define it arbitrarily here.
+        Normally, this would be coming in from a sensor/some localization library, but we define it arbitrarily here.
         */
+        /*
+        @@Again, as before, we have a pose in s3 expressed in terms of the world frame, s3.std_frame
+        This pose is composed of a quaternion and a point, each expressed in terms of s3.std_frame
+
+        @@
+        */
+        
         geometry_msgs::PoseStamped robot_pose_in_map;
         robot_pose_in_map.header.stamp = ros::Time::now();
         robot_pose_in_map.header.frame_id = world_map.header.frame_id;
+        //@@To each of the coordinates of the pose's point, we assign a coordinate in s3.std_frame, with units and dimensions in meters 
         robot_pose_in_map.pose.position.x = 1;
         robot_pose_in_map.pose.position.y = 1;
         robot_pose_in_map.pose.position.z = 1;
+        
         tf::Quaternion map_to_robot_rotation;
+        //@@The quaternion is expressed in terms of 3 angular values in the Euclidean space s3, with units and dimensions in radians
         map_to_robot_rotation.setRPY(-1.5, 0, 1.5);
         map_to_robot_rotation.normalize();
         tf::quaternionTFToMsg(map_to_robot_rotation, robot_pose_in_map.pose.orientation);
@@ -137,23 +162,48 @@ int main(int argc, char **argv){
         
         /*
         Here, we assume we have the robot's left leg from the perspective of the map (world) frame
-        Normally, this would be coming in from a sensor, but we define it arbitrarily here.
+        Normally, this would be coming in from a sensor/some localization library, but we define it arbitrarily here.
         */
+       /*
+        @@Again, as before, we have a pose in s3 expressed in terms of the world frame, s3.std_frame
+        This pose is composed of a quaternion and a point, each expressed in terms of s3.std_frame
+        */
+        
         geometry_msgs::PoseStamped left_leg_pose_in_map;
         left_leg_pose_in_map.header.stamp = ros::Time::now();
         left_leg_pose_in_map.header.frame_id = world_map.header.frame_id;
+        //@@To each of the coordinates of the pose's point, we assign a coordinate in s3.std_frame, with units and dimensions in meters 
         left_leg_pose_in_map.pose.position.x = 2;
         left_leg_pose_in_map.pose.position.y = 2;
         left_leg_pose_in_map.pose.position.z = 2;
         tf::Quaternion map_to_left_leg_rotation;
+        //@@The quaternion is expressed in terms of 3 angular values in the Euclidean space s3, with units and dimensions in radians
         map_to_left_leg_rotation.setRPY(-1.5, -1.5, 0);
         map_to_left_leg_rotation.normalize();
         tf::quaternionTFToMsg(map_to_left_leg_rotation, left_leg_pose_in_map.pose.orientation);
 
         /*
-        TF does not allow us to store a Pose, so we generally need to "stuff" a Pose into a Transform in order to manipulate it in TF
-        This is acceptable here, however, as we are interesting in using the robot's pose to create a Map Frame -> Robot Frame transform
+        To transform from the map frame to the robot frame, we create a simple change of basis transformation 
+        using the robot's pose with respect to the map frame
         */
+        //@@We define a Transform that is intended to take objects from s3.std_frame to s3.base_link,
+        /*Which is a newly instantiated frame.
+        The transform is a translation followed by a rotation. The translation and rotation are defined using the coordinates
+        of the robot's pose in the map frame. 
+        The dimensions and units of this transform carry points and vectors from meters into meters and take angles from radians into radians
+        */
+       /*
+       a :  transform * robots_pose = (pos:(0, 0, 0),orient:(0,0,0,1)) 
+       b:  robots_pose^-1 * robots_pose
+       */
+      /*
+         @@Interpret ROS.robotbaselink -> geometry.stdFrame=(origin="ScottStadium",frame(chirality=right, unit="m", x="north", y="east", z="up"));
+    
+        GENERAL THOUGHT: tf::Transform what does it do?   
+                tf::transform: frame_o x frame_t
+
+      */
+
         tf::StampedTransform tf_map_to_robot_transform(
             tf::Transform(
                     tf::Quaternion(
@@ -169,14 +219,20 @@ int main(int argc, char **argv){
                     )
                 ).inverse(),
             robot_pose_in_map.header.stamp,
-            robot_pose_in_map.header.frame_id,
+            robot_pose_in_map.header
+        );.frame_id,
             "robot_base_link"
-        );
 
         /*
         We prefer to convert the TF transform back into the native geometry_msgs type here, which facilitates easier printing to console,
-        of importance in this toy example
+        of importance in this example
         */
+       /*
+        @@This is nothing more than an assignment operation from tf_map_to_robot_transform, so we are propagating
+        tf_map_to_robot_transform's annotations onto map_to_robot_transform. Thus,
+        it is a transform from s3.std_frame to s3.base_link, defined relative to the pose of the robot, 
+        and dimensions and units of this transform carry points and vectors from meters into meters and take angles from radians into radians
+       */
         geometry_msgs::TransformStamped map_to_robot_transform;
 
         tf::transformStampedTFToMsg(tf_map_to_robot_transform, map_to_robot_transform);
@@ -184,16 +240,32 @@ int main(int argc, char **argv){
         /*
         Convert the robot's pose into the robot frame, which then maps to the origin, by definition of the transform
         */
-        geometry_msgs::PoseStamped robot_origin_in_robot_frame;
 
+        geometry_msgs::PoseStamped robot_origin_in_robot_frame;
+        /*
+        @@We store the result of map_to_robot_transform(robot_pose_in_map) into robot_origin_in_robot_frame.
+        The input, robot_pose_in_map, honors the input specificatoin of map_to_robot_transform, so the transformation application is physically meaningful
+        This implies that robot_origin_in_robot_frame is in s3.base_link, and that its orientation is in radians (if the quaternion is represented that way)
+        and that its position is in meters
+        */
         tf2::doTransform(robot_pose_in_map, robot_origin_in_robot_frame, map_to_robot_transform);
 
         ROS_INFO("Assertion : map->robot transform carries the robot pose to the 0 of the child frame");
         ROS_INFO_STREAM(robot_pose_in_map);
         ROS_INFO_STREAM(robot_origin_in_robot_frame);
+        /*
+         robot_origin_in_robot_frame:
+        position 0, 0, 0
+        orientation 0, 0, 0, 1
+        */
 
         /*
         Next, we determine the left leg from the perspective of the robot
+        */
+        /*
+        @@Exactly as in the prior transformation result, we check the result of left_leg_pose_in_robot = map_to_robot_transform(left_leg_pose_in_map)
+        which, again, is physically meaningful. 
+        The result puts the pose's position in s3.base_link expressed in meters, and its orientation is in (possibly) radians
         */
         geometry_msgs::PoseStamped left_leg_pose_in_robot;
         tf2::doTransform(left_leg_pose_in_map, left_leg_pose_in_robot, map_to_robot_transform);
@@ -203,6 +275,12 @@ int main(int argc, char **argv){
 
         /*
         After that, we can use that perspective to determine the Robot Frame -> Left Leg Frame Transform, similar to before
+        We need to use the robot's left leg in terms of the robot's base link, instead of the map frame
+        */
+        /*
+        @@Here we use a pose, left_leg_pose_in_robot, 
+        expressed in terms of s3.base_link to define a transform to a new frame, s3.left_leg, which is defined in terms of the pose
+        The transform has dimensions and units of this transform carry points and vectors from meters into meters and take angles from radians into radians
         */
         tf::StampedTransform tf_robot_to_left_leg_transform(
             tf::Transform(
@@ -227,9 +305,18 @@ int main(int argc, char **argv){
         Again, we prefer to work in native geometry_msgs here
         */
         geometry_msgs::TransformStamped robot_to_left_leg_transform;// = tf_map_to_robot_transform.toMsg();
-
+        /*
+        @@This is a simple assignment of the transform defined in tf_robot_to_left_leg_transform to robot_to_left_leg_transform
+        Thus, robot_to_left_leg_transform now represents a transform from s3.robot_base to s3.left_leg, and 
+        the dimensions and units of this transform carry points and vectors from meters into meters and take angles from radians into radians
+        */
         tf::transformStampedTFToMsg(tf_robot_to_left_leg_transform, robot_to_left_leg_transform);
 
+        /*
+        @@We define a transform in terms of the inverse of tf_robot_to_left_leg_transform. Thus, tf_left_leg_to_robot_transform
+        must transform from s3.left_leg to s3.robot_base. 
+        Again, the dimensions and units of this transform carry points and vectors from meters into meters and take angles from radians into radians
+        */
         tf::StampedTransform tf_left_leg_to_robot_transform(
             tf_robot_to_left_leg_transform.inverse(),
             left_leg_pose_in_robot.header.stamp,
@@ -238,15 +325,26 @@ int main(int argc, char **argv){
         );
 
         geometry_msgs::TransformStamped left_leg_to_robot_transform;
-
+        //
+        /*
+        @@This is a simple assignment of the inverse transform defined in tf_left_leg_to_robot_transform to left_leg_to_robot_transform
+        Thus, left_leg_to_robot_transform now represents a transform from s3.left_leg to s3.robot_base, and 
+        the dimensions and units of this transform carry points and vectors from meters into meters and take angles from radians into radians
+        */
         tf::transformStampedTFToMsg(tf_left_leg_to_robot_transform, left_leg_to_robot_transform);
 
         /*
-        As before, the left leg should map to the origin in the left leg frame
+        The left leg in presented in the robot frame should get mapped to the origin in the left leg frame using our transform
         We verify that using an assertion
         */
         geometry_msgs::PoseStamped left_leg_origin_in_left_leg_frame;
 
+        /*
+        @@We store the result of robot_to_left_leg_transform(left_leg_pose_in_robot) into left_leg_origin_in_left_leg_frame.
+        The input, left_leg_pose_in_robot, honors the input specificatoin of robot_to_left_leg_transform, so the transformation application is physically meaningful
+        This implies that left_leg_origin_in_left_leg_frame is in s3.left_leg, and that its orientation is in radians (if the quaternion is represented that way)
+        and that its position is in meters
+        */
         tf2::doTransform(left_leg_pose_in_robot, left_leg_origin_in_left_leg_frame, robot_to_left_leg_transform);
 
         ROS_INFO("Assertion : robot->left leg transform carries the left leg pose to the 0 of the child frame");
@@ -258,13 +356,24 @@ int main(int argc, char **argv){
             Next, to use the frames that we've established, we'll take a point that is defined and expressed in the perspective of the left leg,
             and we'll determine its value from the perspective of the robot's base link
         */
+        /*
+        Here we define an arbitrary point, point_in_left_leg, in s3, which is presented in s3.robot_left_leg
+        It has dimensions and units in meters
+        */
         geometry_msgs::PointStamped point_in_left_leg, point_in_robot;
         point_in_left_leg.header.frame_id = "robot_left_leg";
         point_in_left_leg.header.stamp = ros::Time::now();
+        //@@We assign a coordinate of the coordinate space s3, which are each expressed in meters
         point_in_left_leg.point.x = 4;
         point_in_left_leg.point.y = 8;
         point_in_left_leg.point.z = 12;
 
+        /*
+        @@We store the result of left_leg_to_robot_transform(point_in_left_leg) into point_in_robot.
+        The input, point_in_left_leg, honors the input specification of left_leg_to_robot_transform, so the transformation application is physically meaningful
+        This implies that point_in_robot is in s3.robot_base, and that its orientation is in radians (if the quaternion is represented that way)
+        and that its position is in meters
+        */
         tf2::doTransform(point_in_left_leg, point_in_robot, left_leg_to_robot_transform);
 
         ROS_INFO("Point in Robot Left Leg : ");
