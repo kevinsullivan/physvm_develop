@@ -117,18 +117,28 @@ int main(int argc, char **argv){
 
 
     /*
-    @@Interpret tf_start_point as POINT in geometry whose coordinates are 10,10,10 relative to geometry.stdFrame
-    @@Interpret tf_end_point as POINT in geometry whose coordinates are 20,-2,12 relative to geometry.stdFrame
+    @@Define AffinePoint tf_start_point' in geometry with coordinates (10, 10, 10) relative to geometry.stdFrame
+    @@Define AffinePoint tf_end_point' in geometry with coordinates (20, -2, 12) relative to geometry.stdFrame
+
+    @@Interpret tf_start_point as POINT in geometry whose coordinates are (10,10,10) relative to geometry.stdFrame
+    @@Interpret tf_end_point as POINT in geometry whose coordinates are (20,-2,12) relative to geometry.stdFrame
     */
 
     ros::Time start_time_point = ros::Time::now() + ros::Duration(-10), end_time_point = ros::Time::now();
    /*fix
-    @@Interpret ros::Duration(-10) as VECTOR in time whose coordinates are -10 relative to time.UTC-origin
-    @@Interpret ros::Time::now() as POINT in time whose coordinates are time.UNK1 relative to time.UTC-origin 
-    @@Interpret ros::Time::now() + ros::Duration(-10) as POINT in time whose coordinates are time.UNK1 - 10 relative to time.UTC-origin
-    @@Interpret start_time_point as POINT in time whose coordinates are time.UNK1 - 10 relative to time.UTC-origin
-    @@Interpret ros::Time::now() as POINT in time whose coordinates are time.UNK2 relative to time.UTC-origin 
-    @@Interpret end_time_point as POINT in time whose coordinates are time.UNK2 relative to time.UTC-origin
+    @@Define AffineVector time.VEC.ANON1 in time with coordinates (-10) relative to time.UTC-origin
+    @@Define AffinePoint time.POINT.UNK1 in time with coordinates (UNK) relative to time.UTC-origin
+    @@Define AffinePoint time.POINT.UNK2 in time with coordinates (time.POINT.UNK1 + time.VEC.ANON1) relative to time.UTC-origin 
+    @@Define AffinePoint start_time_point' in time with coordinates time.POINT.UNK2 relative to time.UTC-origin
+    @@Define AffinePoint time.POINT.UNK3 in time with coordinates (UNK) relative to time.UTC-origin
+    @@Define AffinePoint end_time_point' in time with coordinates time.POINT.UNK3 relative to time.UTC-origin
+
+    @@Interpret ros::Duration(-10) as time.VEC.ANON1
+    @@Interpret ros::Time::now() as time.POINT.UNK1
+    @@Interpret ros::Time::now() + ros::Duration(-10) as time.POINT.UNK2
+    @@Interpret start_time_point as start_time_point'
+    @@Interpret ros::Time::now() as time.POINT.UNK3
+    @@Interpret end_time_point as end_time_point'
     */
 
     /*
@@ -168,8 +178,11 @@ int main(int argc, char **argv){
         start_point,
         end_point;
     /*
-    @@Interpret tf_start_point as POINT in geometry whose coordinates are geometry.UNK1 relative to geometry.stdFrame
-    @@Interpret tf_end_point as POINT in geometry whose coordinates are geometry.UNK2 relative to geometry.stdFrame
+    @@Define AffinePoint geometry.VEC.UNK1 in geometry with coordinates (UNK, UNK, UNK) relative to geometry.std_frame
+    @@Define AffinePoint geometry.VEC.UNK2 in geometry with coordinates (UNK, UNK, UNK) relative to geometry.std_frame
+
+    @@Interpret start_point as geometry.VEC.UNK1
+    @@Interpret end_point as geometry.VEC.UNK2
     */
 
     //Perform a conversion from the tf data type to the geometry_msg data type to be printed later
@@ -177,10 +190,8 @@ int main(int argc, char **argv){
     tf::pointTFToMsg(tf_end_point, end_point);
 
     /*
-    @@Interpret tf_start_point as POINT in geometry whose coordinates are 10,10,10 relative to geometry.stdFrame
-    @@Interpret tf_end_point as POINT in geometry whose coordinates are 20,-2,12 relative to geometry.stdFrame
-    @@Interpret start_point as POINT in geometry whose coordinates are 10,10,10 relative to geometry.stdFrame
-    @@Interpret end_point as POINT in geometry whose coordinates are 20,-2,12 relative to geometry.stdFrame
+    @@Interpret start_point as tf_start_point'
+    @@Interpret end_point as tf_end_point'
     */
 
     //Calculate the coordinate-wise vector displacement by the robot over the time horizon of its movement
@@ -188,10 +199,12 @@ int main(int argc, char **argv){
     //although tf_displacement is coordinate-free, we annotate and infer that it is again in the world frame
     tf::Vector3 tf_displacement = tf_end_point - tf_start_point;
     /*
-    @@Interpret tf_end_point as POINT in geometry whose coordinates are 10,10,10 relative to geometry.stdFrame
-    @@Interpret tf_start_point as POINT in geometry whose coordinates are 20,-2,12 relative to geometry.stdFrame
-    @@Interpret tf_end_point - tf_start_point as VECTOR in geometry whose coordinates are -10,12,-2 relative to geometry.stdFrame
-    @@Interpret tf_displacement as VECTOR in geometry whose coordinates are -10,12,-2 relative to geometry.stdFrame
+    @@Define AffineVector geometry.VEC.ANON1 in geometry with coordinates (-10, 12, -2) relative to geometry.stdFrame
+    @@Define AffineVector tf_displacement' in geometry with coordinates geometry.VEC.ANON1 relative to geometry.stdFrame
+
+
+    @@Interpret tf_end_point - tf_start_point as geometry.VEC.ANON1
+    @@Interpret tf_displacement as tf_displacement'
 
     */
 
@@ -204,13 +217,15 @@ int main(int argc, char **argv){
     //and , as a result, produces a vector. This vector inherits the space, units, and dimensions  of its arguments: namely, the 1d-time space with dimensions and units of seconds^1
     tf::Vector3 tf_average_displacement_per_second = tf_displacement/(end_time_point - start_time_point).toSec();
     /*
-    @@Interpret tf_displacement as VECTOR in geometry whose coordinates are -10,12,-2 relative to geometry.stdFrame
-    @@Interpret start_time_point as POINT in time whose coordinates are time.UNK1 - 10 relative to time.UTC-origin
-    @@Interpret end_time_point as POINT in time whose coordinates are time.UNK2 relative to time.UTC-origin
-    @@Interpret (end_time_point - start_time_point) as VECTOR in time whose coordinates are time.UNK2 - time.UNK1 - 10 relative to time.UTC-origin
-    @@Interpret (end_time_point - start_time_point).toSec() as SCALAR in geometry whose coordinates are geometry.SCALAR1
-    @@Interpret tf_displacement/(end_time_point - start_time_point).toSec() as VECTOR in geometry whose coordinates are geometry.UNK3 relative to geometry.stdFrame
-    @@Interpret tf_average_displacement_per_second as VECTOR in geometry whose coordinates are geometry.UNK3 relative to geometry.stdFrame
+    @@Define AffineVector time.VEC.ANON2 in time with coordinates end_time_point' - start_time_point' relative to time.UTC-origin
+    @@Define AffineScalar geometry.SCALAR.ANON1 in geometry with coordinates (UNK)
+    @@Define AffineVector geometry.VEC.ANON2 in geometry with coordinates geometry.SCALAR.ANON1 * tf_displacement' relative to geometry.stdFrame
+    @@Define AffineVector tf_average_displacement_per_second' in geometry with coordinates geometry.VEC.ANON2 relative to geometry.stdFrame
+
+    @@Interpret (end_time_point - start_time_point) as time.VEC.ANON2
+    @@Interpret (end_time_point - start_time_point).toSec() as geometry.SCALAR.ANON1
+    @@Interpret tf_displacement/(end_time_point - start_time_point).toSec() as geometry.VEC.ANON2
+    @@Interpret tf_average_displacement_per_second as tf_average_displacement_per_second'
     */
 
     //We defined two vectors, displacement and velocity, which will store the exact same values as tf_displacement and tf_velocity.
@@ -220,18 +235,20 @@ int main(int argc, char **argv){
         displacement, //= //tf2::toMsg(tf2_displacement),
         average_displacement_per_second; //= //tf2::toMsg(tf2_velocity);
     /*
-    @@Interpret tf_start_point as POINT in geometry whose coordinates are geometry.UNK4 relative to geometry.stdFrame
-    @@Interpret tf_end_point as POINT in geometry whose coordinates are geometry.UNK5 relative to geometry.stdFrame
+    @@Define AffineVector geometry.VEC.UNK3 in geometry with coordinates (UNK, UNK, UNK) relative to geometry.stdFrame
+    @@Define AffineVector geometry.VEC.UNK4 in geometry with coordinates (UNK, UNK, UNK) relative to geometry.stdFrame
+
+
+    @@Interpret displacement as geometry.VEC.UNK3
+    @@Interpret average_displacement_per_second as geometry.VEC.UNK4
     */
     //These two commands are simply type conversions, so that we can take advantage of ROS's excellent formatting of geometry_msgs when printing 
     tf::vector3TFToMsg(tf_displacement, displacement);
     tf::vector3TFToMsg(tf_average_displacement_per_second, average_displacement_per_second);
     /*
-    @@Interpret tf_displacement as VECTOR in geometry whose coordinates are -10,12,-2 relative to geometry.stdFrame
-    @@Interpret tf_average_displacement_per_second as VECTOR in geometry whose coordinates are geometry.UNK3 relative to geometry.stdFrame
-    @@Interpret displacement as VECTOR in geometry whose coordinates are -10,12,-2 relative to geometry.stdFrame
-    @@Interpret average_displacement_per_second as VECTOR in geometry whose coordinates are geometry.UNK3 relative to geometry.stdFrame
-    
+    @@Interpret displacement as tf_displacement'
+    @@Interpret average_displacement_per_second as tf_average_displacement_per_second'
+
     
     */
     
@@ -261,19 +278,30 @@ int main(int argc, char **argv){
 
     I think sqrt can be well defined here or we can remove it?
 
-    @@Interpret displacement.x as SCALAR in geometry whose coordinates are -10 
-    @@Interpret displacement.x as SCALAR in geometry whose coordinates are -10 
-    @@Interpret displacement.x*displacement.x as SCALAR in geometry whose coordinates are -20
-    @@Interpret displacement.y as SCALAR in geometry whose coordinates are 12
-    @@Interpret displacement.y as SCALAR in geometry whose coordinates are 12
-    @@Interpret displacement.y*displacement.y as SCALAR in geometry whose coordinates are 24
-    @@Interpret displacement.z as SCALAR in geometry whose coordinates are -2
-    @@Interpret displacement.z as SCALAR in geometry whose coordinates are -2
-    @@Interpret displacement.z*displacement.z as SCALAR in geometry whose coordinates are -4
-    @@Interpret displacement.y*displacement.y+displacement.z*displacement.z as SCALAR in geometry whose coordinates are 148
-    @@Interpret displacement.x*displacement.x+displacement.y*displacement.y+displacement.z*displacement.z whose coordinates are 248
-    @@Interpret sqrt(displacement.x*displacement.x+displacement.y*displacement.y+displacement.z*displacement.z) as SCALAR in geometry whose coordinates are ~15.74
-    @@Interpret absolute_distance as SCALAR in geometry whose coordinates are ~15.74
+    @@Define AffineScalar displacement.x' in geometry with coordinates -10
+    @@Define AffineScalar geometry.SCALAR.ANON2 in geometry with coordinates displacement.x'*displacement.x'
+    @@Define AffineScalar displacement.y' in geometry with coordinates 12
+    @@Define AffineScalar geometry.SCALAR.ANON3 in geometry with coordinates displacement.y'*displacement.y'
+    @@Define AffineScalar displacement.z' in geometry with coordinates -2
+    @@Define AffineScalar geometry.SCALAR.ANON4 in geometry with coordinates displacement.z'*displacement.z'
+    @@Define AffineScalar geometry.SCALAR.ANON5 in geometry with coordinates geometry.SCALAR.ANON3 + geometry.SCALAR.ANON4
+    @@Define AffineScalar geometry.SCALAR.ANON6 in geometry with coordinates geometry.SCALAR.ANON2 + geometry.SCALAR.ANON5
+    @@Define AffineScalar geometry.SCALAR.ANON7 in geometry with coordinates sqrt(geometry.SCALAR.ANON6)
+    @@Define AffineScalar absolute_distance' in geometry with coordinates geometry.SCALAR.ANON7
+
+    @@Interpret displacement.x as displacement.x'
+    @@Interpret displacement.x as displacement.x'
+    @@Interpret displacement.x*displacement.x as geometry.SCALAR.ANON2
+    @@Interpret displacement.y as  displacement.y'
+    @@Interpret displacement.y as  displacement.y'
+    @@Interpret displacement.y*displacement.y as geometry.SCALAR.ANON3
+    @@Interpret displacement.z as displacement.z'
+    @@Interpret displacement.z as displacement.z'
+    @@Interpret displacement.z*displacement.z as geometry.SCALAR.ANON4
+    @@Interpret displacement.y*displacement.y+displacement.z*displacement.z as geometry.SCALAR.ANON5
+    @@Interpret displacement.x*displacement.x+displacement.y*displacement.y+displacement.z*displacement.z as geometry.SCALAR.ANON6
+    @@Interpret sqrt(displacement.x*displacement.x+displacement.y*displacement.y+displacement.z*displacement.z) as geometry.SCALAR.ANON7
+    @@Interpret absolute_distance as absolute_distance'
     
 
     */
@@ -293,20 +321,31 @@ int main(int argc, char **argv){
         average_displacement_per_second.y * average_displacement_per_second.y + 
         average_displacement_per_second.z * average_displacement_per_second.z);
     /*
-    @@Interpret average_displacement_per_second.x as SCALAR in geometry whose coordinates are geometry.SCALAR2
-    @@Interpret average_displacement_per_second.x as SCALAR in geometry whose coordinates are geometry.SCALAR2
-    @@Interpret average_displacement_per_second.x*average_displacement_per_second.x as SCALAR in geometry whose coordinates are geometry.SCALAR2*geometry.SCALAR2
-    @@Interpret average_displacement_per_second.y as SCALAR in geometry whose coordinates are geometry.SCALAR3
-    @@Interpret average_displacement_per_second.y as SCALAR in geometry whose coordinates are geometry.SCALAR3
-    @@Interpret average_displacement_per_second.y*average_displacement_per_second.y as SCALAR in geometry whose coordinates are geometry.SCALAR3*geometry.SCALAR3
-    @@Interpret average_displacement_per_second.z as SCALAR in geometry whose coordinates are geometry.SCALAR4
-    @@Interpret average_displacement_per_second.z as SCALAR in geometry whose coordinates are geometry.SCALAR4
-    @@Interpret average_displacement_per_second.z*average_displacement_per_second.z as SCALAR in geometry whose coordinates are geometry.SCALAR4*geometry.SCALAR4
-    @@Interpret average_displacement_per_second.y*average_displacement_per_second.y+average_displacement_per_second.z*average_displacement_per_second.z as SCALAR in geometry whose coordinates are geometry.SCALAR3*geometry.SCALAR3 + geometry.SCALAR4*geometry.SCALAR4
-    @@Interpret average_displacement_per_second.x*average_displacement_per_second.x+average_displacement_per_second.y*average_displacement_per_second.y+average_displacement_per_second.z*average_displacement_per_second.z whose coordinates are geometry.SCALAR2*geometry.SCALAR2 + geometry.SCALAR3*geometry.SCALAR3 + geometry.SCALAR4*geometry.SCALAR4
-    @@Interpret sqrt(average_displacement_per_second.x*average_displacement_per_second.x+average_displacement_per_second.y*average_displacement_per_second.y+average_displacement_per_second.z*average_displacement_per_second.z) as SCALAR in geometry whose coordinates are sqrt(geometry.SCALAR2*geometry.SCALAR2 + geometry.SCALAR3*geometry.SCALAR3 + geometry.SCALAR4*geometry.SCALAR4)
-    @@Interpret absolute_distance as SCALAR in geometry whose coordinates are sqrt(geometry.SCALAR2*geometry.SCALAR2 + geometry.SCALAR3*geometry.SCALAR3 + geometry.SCALAR4*geometry.SCALAR4)
     
+    @@Define AffineScalar geometry.SCALAR.UNK1 in geometry with coordinates UNK
+    @@Define AffineScalar geometry.SCALAR.ANON8 in geometry with coordinates geometry.SCALAR.UNK1*geometry.SCALAR.UNK1
+    @@Define AffineScalar geometry.SCALAR.UNK2 in geometry with coordinates UNK
+    @@Define AffineScalar geometry.SCALAR.ANON9 in geometry with coordinates geometry.SCALAR.UNK2*geometry.SCALAR.UNK2
+    @@Define AffineScalar geometry.SCALAR.UNK3 in geometry with coordinates UNK
+    @@Define AffineScalar geometry.SCALAR.ANON10 in geometry with coordinates geometry.SCALAR.UNK3*geometry.SCALAR.UNK3
+    @@Define AffineScalar geometry.SCALAR.ANON11 in geometry with coordinates geometry.SCALAR.ANON9 + geometry.SCALAR.ANON10
+    @@Define AffineScalar geometry.SCALAR.ANON12 in geometry with coordinates geometry.SCALAR.ANON8 + geometry.SCALAR.ANON11
+    @@Define AffineScalar geometry.SCALAR.ANON13 in geometry with coordinates sqrt(geometry.SCALAR.ANON12)
+    @@Define AffineScalar absolute_velocity' in geometry with coordinates geometry.SCALAR.ANON13
+
+    @@Interpret average_displacement_per_second.x as geometry.SCALAR.UNK1
+    @@Interpret average_displacement_per_second.x as geometry.SCALAR.UNK1
+    @@Interpret average_displacement_per_second.x*average_displacement_per_second.x as geometry.SCALAR.ANON8
+    @@Interpret average_displacement_per_second.y as  geometry.SCALAR.UNK2
+    @@Interpret average_displacement_per_second.y as  geometry.SCALAR.UNK2
+    @@Interpret average_displacement_per_second.y*average_displacement_per_second.y as geometry.SCALAR.ANON9
+    @@Interpret average_displacement_per_second.z as geometry.SCALAR.UNK3
+    @@Interpret average_displacement_per_second.z as geometry.SCALAR.UNK3
+    @@Interpret average_displacement_per_second.z*average_displacement_per_second.z as geometry.SCALAR.ANON10
+    @@Interpret average_displacement_per_second.y*average_displacement_per_second.y+average_displacement_per_second.z*average_displacement_per_second.z as geometry.SCALAR.ANON11
+    @@Interpret average_displacement_per_second.x*average_displacement_per_second.x+average_displacement_per_second.y*average_displacement_per_second.y+average_displacement_per_second.z*average_displacement_per_second.z as geometry.SCALAR.ANON12
+    @@Interpret sqrt(average_displacement_per_second.x*average_displacement_per_second.x+average_displacement_per_second.y*average_displacement_per_second.y+average_displacement_per_second.z*average_displacement_per_second.z) as geometry.SCALAR.ANON13
+    @@Interpret absolute_velocity as absolute_velocity'
     */
 
 
