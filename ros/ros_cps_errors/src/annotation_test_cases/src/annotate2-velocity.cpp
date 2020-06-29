@@ -55,6 +55,23 @@ int main(int argc, char **argv){
     By explicating them at the top of this file
 
     @@EuclideanGeometry geometry(dimensions=3);
+
+    abbreviation geometry_3.vec := aff_vec real 3
+    abbreviation geometry_3.pt := aff_pt real 3
+
+    geometry_3.vec
+    geometry_3.pt
+
+    def test_pt : aff_pt real 3 := <[1.1, -2.4, 3], sorry, sorry>
+    //def test_pt.loc : string := "Scott Stadium"
+    
+    def frame := (origin = test_pt, origin_name = "Scott Stadium" )
+    frame.origin = test_pt
+    frame.origin.loc //HUH!?
+    
+
+    NOTE: for computation, real -> rat
+
     @@Interpret ROS.worldFrame -> geometry.stdFrame=(origin="ScottStadium",frame(chirality=right, unit="m", x="north", y="east", z="up"));
     @@ClassicalTime time(origin=UTC-origin (1970-01-01T00:00:00Z ISO 8601), unit=second) // minutes are not constant duration in UTC!
     // there are many other time standards, e.g., mean solar time, with UTC closely tracking MST but not equal to it
