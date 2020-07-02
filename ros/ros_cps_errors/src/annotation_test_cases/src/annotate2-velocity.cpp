@@ -322,7 +322,7 @@ int main(int argc, char **argv){
     @@Scalar+Units scalar_ ... whats going on here exactly with respect to frames?
     tfScalar scalar = (end_time_point - start_time_point).toSec();
     @@Interpret scalar -> scalar_
-    @@GeometricVector tf_average_displacement_per_second_(geom3, <computed>, geom3.stdFrame)
+    @@VelocityVector tf_average_displacement_per_second_(vel, <computed>, geom3.stdFrame)
     tf::Vector3 tf_average_displacement_per_second = tf_displacement/scalar;
     @@Interpret tf_average_displacement_per_second -> tf_average_displacement_per_second_
     /*
@@ -341,7 +341,7 @@ int main(int argc, char **argv){
     //@@As we will simply store the results of tf_displacement and tf_velocity into these two vectors, they will have the exact same annotations. Namely,
     //displacement and velocity both represent vectors in the 3d geometric space, with the "world" as the coordinate frame, with units and dimensions of meters^3
     @@GeometricVector displacement_(geom3, <computed>, geom3.stdFrame)
-    @@GeometricVector average_displacement_per_second_(vel, <computed>, geom3.stdFrame)
+    @@VelocityVector average_displacement_per_second_(vel, <computed>, geom3.stdFrame)
     geometry_msgs::Vector3 
         displacement, //= //tf2::toMsg(tf2_displacement),
         average_displacement_per_second; //= //tf2::toMsg(tf2_velocity);

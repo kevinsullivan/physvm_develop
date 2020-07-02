@@ -12,6 +12,11 @@
 
 
 /*
+!!!!!!!!!!!!!!!!!!!!!!!
+Andrew note 7/1/20: Merged velocity code migrated into relative frame begins on line 500 
+!!!!!!!!!!!!!!!!!!!!!!!
+
+
 This example creates a simple static model in which a single robot
 inhabits a 3-d "map" space; where the map space has a standard frame, 
  "map"; where the robot's base link has a frame, "robot_base_link",
@@ -59,7 +64,7 @@ int main(int argc, char **argv){
     @@ClassicalVelocity vel<"worldVelocities">      // a space (a vector space)
 
     @@AffineFrame world_frame_(geom3d, <origin=<0,0,0>,orientation=<x="north", y="east", z="up">>, geom3.stdFrame);
-    @@AffineFrame base_link_frame_(geom3d, <origin=<computed>,orientation=<x="north",y="east",z="up">>, world_frame_, "map")
+    @@AffineFrame base_link_frame_(geom3d, <origin=<computed>,orientation=<x="north",y="east",z="up">>, world_frame_)
     @@AffineFrame left_leg_frame_(geom3d, <origin=<computed>,orientation=<x="north",y="east",z="up">>, base_link_frame_)
 
     @@Interpret ROS.worldFrame -> world_frame_
@@ -542,13 +547,13 @@ int main(int argc, char **argv){
         @@Scalar+Units scalar_ ... whats going on here exactly with respect to frames?
         tfScalar scalar = (end_time_point - start_time_point).toSec();
         @@Interpret scalar -> scalar_
-        @@GeometricVector tf_average_displacement_per_second_in_robot_(geom3, <computed>, "robot_base_link")
+        @@VelocityVector tf_average_displacement_per_second_in_robot_(vel, <computed>, "robot_base_link")
         tf::Vector3 tf_average_displacement_per_second_in_robot = tf_displacement_in_robot/scalar;
         @@Interpret tf_average_displacement_per_second_in_robot -> tf_average_displacement_per_second_in_robot_
         
         
         @@GeometricVector displacement_in_robot_(geom3, <computed>, "robot_base_link")
-        @@GeometricVector average_displacement_per_second_in_robot_(geom3, <computed>, "robot_base_link")
+        @@VelocityVector average_displacement_per_second_in_robot_(vel, <computed>, "robot_base_link")
         geometry_msgs::Vector3 
             displacement_in_robot, //= //tf2::toMsg(tf2_displacement),
             average_displacement_per_second_in_robot; //= //tf2::toMsg(tf2_velocity);
