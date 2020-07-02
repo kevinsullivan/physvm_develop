@@ -56,10 +56,10 @@ int main(int argc, char **argv){
 
     @@EuclideanGeometry geom3d<3,"worldGeometry">;  // a space (affine space)
     @@ClassicalTime time<"worldTime">;              // a space (affine space)
-    //@@ClassicalVelocity vel<"worldVelocities">      // a space (a vector space)
+    @@ClassicalVelocity vel<"worldVelocities">      // a space (a vector space)
 
     @@AffineFrame world_frame_(geom3d, <origin=<0,0,0>,orientation=<x="north", y="east", z="up">>, geom3.stdFrame);
-    @@AffineFrame base_link_frame_(geom3d, <origin=<computed>,orientation=<x="north",y="east",z="up">>, world_frame_)
+    @@AffineFrame base_link_frame_(geom3d, <origin=<computed>,orientation=<x="north",y="east",z="up">>, world_frame_, "map")
     @@AffineFrame left_leg_frame_(geom3d, <origin=<computed>,orientation=<x="north",y="east",z="up">>, base_link_frame_)
 
     @@Interpret ROS.worldFrame -> world_frame_
@@ -490,6 +490,104 @@ int main(int argc, char **argv){
 
         ROS_INFO("Point in Robot Base Link : ");
         ROS_INFO_STREAM(point_in_robot);
+
+        /*BEGIN VELOCITY EXAMPLE NOW IN RELATIVE FRAME EXAMPLE*/
+
+        @@GeometricPoint tf_start_point_in_robot_(geom3, [10.0,10.0,10.0], base_link_frame_)
+        @@GeometricPoint tf_end_point_in_left_leg_(geom3, [20.0,-2.0,12.0], left_leg_frame_)
+        tf::Stamped<tf::Point>
+            tf_start_point_in_robot(tf::Point(10, 10, 10), ros::Time::now(), "robot_base_link")
+            tf_end_point_in_left_leg(tf::Point(20, -2, 12), ros::Time::now(), "robot_left_leg");
+        @@Interpret tf_start_point_in_robot -> tf_start_point_in_robot_
+        @@Interpret tf_end_point_in_left_leg -> tf_end_point_in_left_leg_
+
+    
+        @@TimePoint start_time_point_(time, <computed>, time.stdFrame);
+        @@TimePoint end_time_point_(time, <computed>, time.stdFrame);
+        ros::Time 
+            start_time_point = ros::Time::now() + ros::Duration(-10), 
+            end_time_point = ros::Time::now();
+        @@Interpret start_time_point -> start_time_point_
+        @@Interpret end_time_point -> end_time_point_
+
+
+/*
+        @@GeometricPoint start_point_in_robot_(geom3, [0, 0, 0], base_link_frame_)
+        @@GeometricPoint end_point_in_left_leg_(geom3, [0, 0, 0], left_leg_frame_)
+        geometry_msgs::Point 
+            start_point_in_robot,
+            end_point_in_left_leg;
+        @@Interpret start_point_in_robot -> start_point_in_robot_
+        @@Interpret end_point_in_left_leg -> end_point_in_left_leg_
+        
+        tf::pointTFToMsg(tf_start_point_in_robot_, start_point_in_left_leg_);
+        tf::pointTFToMsg(tf_end_point_in_left_left_, end_point_in_left_leg_);
+        @@Interpret start_point_in_robot -> tf_start_point_in_robot_
+        @@Interpret end_point_in_left_leg -> tf_end_point_in_left_left_
+       */
+        @@GeometricPoint end_point_in_robot_uns_(geom3, <computed>, "robot_base_link")
+        tf::Point end_point_in_robot_uns = tf_left_leg_to_robot_transform * tf_end_point_in_left_leg;
+        @@Interpret end_point_in_robot_uns -> end_point_in_robot_uns_
+
+        @@GeometricPoint tf_displacement_in_robot_(geom3, <computed>, "robot_base_link")
+        tf::Stamped<tf::Point> end_point_in_robot(end_point_in_left_leg_uns, ros::Time::now(), "robot_left_leg");
+        @@Interpret end_point_in_robot -> end_point_in_robot_
+
+        @@GeometricVector tf_displacement_in_robot_(geom3, <computed>, "robot_base_link")
+        tf::Vector3 tf_displacement_in_robot = tf_end_point_in_robot - tf_start_point_in_robot;
+        @@Interpret tf_displacement_in_robot -> tf_displacement_in_robot_
+        
+
+        
+        @@Scalar+Units scalar_ ... whats going on here exactly with respect to frames?
+        tfScalar scalar = (end_time_point - start_time_point).toSec();
+        @@Interpret scalar -> scalar_
+        @@GeometricVector tf_average_displacement_per_second_in_robot_(geom3, <computed>, "robot_base_link")
+        tf::Vector3 tf_average_displacement_per_second_in_robot = tf_displacement_in_robot/scalar;
+        @@Interpret tf_average_displacement_per_second_in_robot -> tf_average_displacement_per_second_in_robot_
+        
+        
+        @@GeometricVector displacement_in_robot_(geom3, <computed>, "robot_base_link")
+        @@GeometricVector average_displacement_per_second_in_robot_(geom3, <computed>, "robot_base_link")
+        geometry_msgs::Vector3 
+            displacement_in_robot, //= //tf2::toMsg(tf2_displacement),
+            average_displacement_per_second_in_robot; //= //tf2::toMsg(tf2_velocity);
+        @@Interpret displacement_in_robot -> displacement_in_robot_
+        @@Interpret average_displacement_per_second_in_robot -> average_displacement_per_second_in_robot_
+        
+
+        tf::vector3TFToMsg(tf_displacement_in_robot, displacement_in_robot);
+        tf::vector3TFToMsg(tf_average_displacement_per_second_in_robot, average_displacement_per_second_in_robot);
+        @@Interpret displacement_in_robot -> tf_displacement_in_robot_
+        @@Interpret average_displacement_per_second_in_robot -> tf_average_displacement_per_second_in_robot_
+        
+
+        //Print off the start point, end point, displacement vector, and average_displacement_per_second vector
+        ROS_INFO("Start Point : ");
+        ROS_INFO_STREAM(start_point_in_robot);
+        ROS_INFO("End Point : ");
+        ROS_INFO_STREAM(end_point_in_robot);
+        ROS_INFO("Coordinate-wise Distance displacement : ");
+        ROS_INFO_STREAM(displacement_in_robot);
+        ROS_INFO("Coordinate-wise Velocity : ");
+        ROS_INFO_STREAM(average_displacement_per_second_in_robot);
+
+        
+        @@Scalar absolute_distance_in_robot_(<computed>)
+        tf2Scalar absolute_distance_in_robot = std::sqrt(displacement_in_robot.x * displacement_in_robot.x + displacement_in_robot.y * displacement_in_robot.y + displacement_in_robot.z * displacement_in_robot.z);
+        @@Interpret absolute_distance_in_robot -> absolute_distance_in_robot_
+
+        @@Scalar absolute_velocity_in_robot_(<computed>)
+        tf2Scalar absolute_velocity_in_robot = std::sqrt(
+            average_displacement_per_second_in_robot.x * average_displacement_per_second_in_robot.x + 
+            average_displacement_per_second_in_robot.y * average_displacement_per_second_in_robot.y + 
+            average_displacement_per_second_in_robot.z * average_displacement_per_second_in_robot.z);
+        @@Interpret absolute_velocity_in_robot -> absolute_velocity_in_robot_
+
+        ROS_INFO("Total Distance in meters : %f", absolute_distance_in_robot);
+
+        //print off the absolute velocity of the 
+        ROS_INFO("Velocity in meters/second : %f", absolute_velocity_in_robot);
     }
     else{
         ROS_DEBUG("Failed to call service!");
