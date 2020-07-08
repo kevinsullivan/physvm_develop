@@ -73,15 +73,15 @@ int main(int argc, char **argv)
         if(i%3 == 0)
         {
             trans_s_pub.publish(t3s_one_two);
-            trans_pub.publish(t3s_one_two);
+            trans_pub.publish(t3_one_two);
         }
         else if(i++%3 == 1){
             trans_s_pub.publish(t3s_two_one);
-            trans_pub.publish(t3s_two_one);
+            trans_pub.publish(t3_two_one);
         }
         else{
             trans_s_pub.publish(t3s_one_three);
-            trans_pub.publish(t3s_one_three);
+            trans_pub.publish(t3_one_three);
         }
     }
 }

@@ -16,7 +16,7 @@ int main(int argc, char **argv){
   Vec r11(1, 0, 0);
   Vec r12(0, 0, 1);
   Vec r13(0, 1, 0);
-
+/*
   Transform rotation1(
     r11, r12, r13
   );
@@ -109,5 +109,5 @@ int main(int argc, char **argv){
     flt3 = 4.0;
 
   //v4 = Vec(0.0, 0.0, 0.0);
-  return 0;
+  return 0;*/
 }
