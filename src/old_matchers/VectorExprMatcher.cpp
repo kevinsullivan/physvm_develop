@@ -100,7 +100,7 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
-            interp_->mkVecParenExpr(parenExpr, exprMatcher.getChildExprStore());
+           // interp_->mkVecParenExpr(parenExpr, exprMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)parenExpr;
             
         }
@@ -118,7 +118,7 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             argMatcher.search();
             argMatcher.visit(*vectorAddArgument);
 
-            interp_->mkVecVecAddExpr(vectorAddExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
+            //interp_->mkVecVecAddExpr(vectorAddExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)vectorAddExpr;
         }
         else{
@@ -133,7 +133,7 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             ScalarExprMatcher argMatcher{this->context_, this->interp_};
             argMatcher.search();
             argMatcher.visit(*vectorMulArgument);
-            interp_->mkVecScalarMulExpr(vectorMulExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
+           // interp_->mkVecScalarMulExpr(vectorMulExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)vectorMulExpr;
         }
         else{
@@ -149,7 +149,7 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             VectorExprMatcher argMatcher{this->context_, this->interp_};
             argMatcher.search();
             argMatcher.visit(*vectorApplyArgument);
-            interp_->mkTransformVecApplyExpr(transformApplyExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
+            //interp_->mkTransformVecApplyExpr(transformApplyExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)transformApplyExpr;
         }
         else{
@@ -157,11 +157,11 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
         }
     }
     else if(vectorDeclRefExpr){
-        interp_->mkVecVarExpr(vectorDeclRefExpr);
+        //interp_->mkVecVarExpr(vectorDeclRefExpr);
         this->childExprStore_ = (clang::Expr*)vectorDeclRefExpr;
     }
     else if(vectorLiteral){
-        interp_->mkVector_Lit(vectorLiteral, 0, 0, 0);
+       // interp_->mkVector_Lit(vectorLiteral, 0, 0, 0);
         this->childExprStore_ = (clang::Expr*)vectorLiteral;
     }
     else if(vectorExprWithCleanups){
@@ -187,7 +187,7 @@ void VectorExprMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.visit(*vectorConstructExprChild);
             
             this->childExprStore_ = (clang::Expr*)exprMatcher.getChildExprStore();
-            interp_->mkVector_Expr(vectorConstructExpr, exprMatcher.getChildExprStore());
+           // interp_->mkVector_Expr(vectorConstructExpr, exprMatcher.getChildExprStore());
         }
         else{
             //log error

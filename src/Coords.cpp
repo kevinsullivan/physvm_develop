@@ -1,3 +1,4 @@
+
 #include "Coords.h"
 
 #include <g3log/g3log.hpp>
@@ -28,11 +29,11 @@ ASTState::ASTState(
     int begin_line_no,
     int begin_col_no,
     int end_line_no,
-    int end_col_no
-  ) : file_id_{file_id}, file_name_{file_name}, file_path_{file_path}, name_{name}, begin_line_no_{begin_line_no}, begin_col_no_{begin_col_no}, end_line_no_{end_line_no}, end_col_no_{end_col_no} {}
+    int end_col_no) 
+    : file_id_{file_id}, file_name_{file_name}, file_path_{file_path}, name_{name}, begin_line_no_{begin_line_no}, begin_col_no_{begin_col_no}, end_line_no_{end_line_no}, end_col_no_{end_col_no} {}
 
-Coords::Coords(){
-}
+//Coords::Coords(){
+//}
 
 bool Coords::operator==(const Coords &other) const {
     return this->state_ == other.state_;
@@ -53,7 +54,7 @@ std::string Coords::getSourceLoc() const {
     }*/
     //std::cout<<this->toString()<<std::endl;
     std::string retval = "Begin: line ";
-    retval += std::to_string(this->state_->begin_line_no_); 
+    retval += std::to_string(this->state_->begin_line_no_);
     retval +=  ", column ";
     retval +=  std::to_string(this->state_->begin_col_no_);
     retval += " End: line ";
@@ -68,449 +69,336 @@ std::string Coords::getSourceLoc() const {
 * Coordinate subclasses, for type checking, override behaviors
 *************************************************************/
 
-/******
-* Ident
-******/
 
-VecIdent::VecIdent() : Coords() {}
+COMPOUND_STMT::COMPOUND_STMT(std::vector<STMT*> operands) :STMT() {
+    for(auto& op : operands){
+        this->operands_.push_back(op);
+    }
 
-std::string VecIdent::toString() const { 
-    return state_->name_;
-}
+};
+std::string COMPOUND_STMT::toString() const{ return "Not implemented";;}
 
 
-ScalarIdent::ScalarIdent() : Coords() {}
+IFTHEN_EXPR_STMT::IFTHEN_EXPR_STMT(coords::EXPR *operand_1,coords::STMT *operand_2) : 
+		IFCOND(),operand1(operand_1),operand2(operand_2){}
+coords::EXPR* IFTHEN_EXPR_STMT::getOperand1() { return this->operand1;}
+coords::STMT* IFTHEN_EXPR_STMT::getOperand2() { return this->operand2;}
+std::string IFTHEN_EXPR_STMT::toString() const{ return "Not implemented";;}
 
-std::string ScalarIdent::toString() const { 
-    return  state_->name_;
-}
 
+IFTHENELSEIF_EXPR_STMT_IFCOND::IFTHENELSEIF_EXPR_STMT_IFCOND(coords::EXPR *operand_1,coords::STMT *operand_2,coords::IFCOND *operand_3) : 
+		IFCOND(),operand1(operand_1),operand2(operand_2),operand3(operand_3){}
+coords::EXPR* IFTHENELSEIF_EXPR_STMT_IFCOND::getOperand1() { return this->operand1;}
+coords::STMT* IFTHENELSEIF_EXPR_STMT_IFCOND::getOperand2() { return this->operand2;}
+coords::IFCOND* IFTHENELSEIF_EXPR_STMT_IFCOND::getOperand3() { return this->operand3;}
+std::string IFTHENELSEIF_EXPR_STMT_IFCOND::toString() const{ return "Not implemented";;}
 
-TransformIdent::TransformIdent() : Coords() {}
 
-std::string TransformIdent::toString() const { 
-    return  state_->name_;
-}
+IFTHENELSE_EXPR_STMT_STMT::IFTHENELSE_EXPR_STMT_STMT(coords::EXPR *operand_1,coords::STMT *operand_2,coords::STMT *operand_3) : 
+		IFCOND(),operand1(operand_1),operand2(operand_2),operand3(operand_3){}
+coords::EXPR* IFTHENELSE_EXPR_STMT_STMT::getOperand1() { return this->operand1;}
+coords::STMT* IFTHENELSE_EXPR_STMT_STMT::getOperand2() { return this->operand2;}
+coords::STMT* IFTHENELSE_EXPR_STMT_STMT::getOperand3() { return this->operand3;}
+std::string IFTHENELSE_EXPR_STMT_STMT::toString() const{ return "Not implemented";;}
 
 
+ASSIGN_REAL1_VAR_REAL1_EXPR::ASSIGN_REAL1_VAR_REAL1_EXPR(coords::REAL1_VAR_IDENT *operand_1,coords::REAL1_EXPR *operand_2) : 
+		ASSIGNMENT(),operand1(operand_1),operand2(operand_2){}
+coords::REAL1_VAR_IDENT* ASSIGN_REAL1_VAR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* ASSIGN_REAL1_VAR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string ASSIGN_REAL1_VAR_REAL1_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-/*****
-* Expr
-*****/
 
-VecExpr::VecExpr() : Coords() {}
+ASSIGN_REAL3_VAR_REAL3_EXPR::ASSIGN_REAL3_VAR_REAL3_EXPR(coords::REAL3_VAR_IDENT *operand_1,coords::REAL3_EXPR *operand_2) : 
+		ASSIGNMENT(),operand1(operand_1),operand2(operand_2){}
+coords::REAL3_VAR_IDENT* ASSIGN_REAL3_VAR_REAL3_EXPR::getOperand1() { return this->operand1;}
+coords::REAL3_EXPR* ASSIGN_REAL3_VAR_REAL3_EXPR::getOperand2() { return this->operand2;}
+std::string ASSIGN_REAL3_VAR_REAL3_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string VecExpr::toString() const { 
-    LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
-    return NULL; 
-}
 
-ScalarExpr::ScalarExpr() : Coords() {}
+ASSIGN_REAL4_VAR_REAL4_EXPR::ASSIGN_REAL4_VAR_REAL4_EXPR(coords::REAL4_VAR_IDENT *operand_1,coords::REAL4_EXPR *operand_2) : 
+		ASSIGNMENT(),operand1(operand_1),operand2(operand_2){}
+coords::REAL4_VAR_IDENT* ASSIGN_REAL4_VAR_REAL4_EXPR::getOperand1() { return this->operand1;}
+coords::REAL4_EXPR* ASSIGN_REAL4_VAR_REAL4_EXPR::getOperand2() { return this->operand2;}
+std::string ASSIGN_REAL4_VAR_REAL4_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string ScalarExpr::toString() const { 
-    //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
-    return NULL; 
-}
 
-TransformExpr::TransformExpr() : Coords() {}
+ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(coords::REALMATRIX_VAR_IDENT *operand_1,coords::REALMATRIX_EXPR *operand_2) : 
+		ASSIGNMENT(),operand1(operand_1),operand2(operand_2){}
+coords::REALMATRIX_VAR_IDENT* ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR::getOperand1() { return this->operand1;}
+coords::REALMATRIX_EXPR* ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR::getOperand2() { return this->operand2;}
+std::string ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string TransformExpr::toString() const { 
-    //LOG(FATAL) << "Coords::VecExpr::toString. Error. Should not be called. Abstract.\n"; 
-    return NULL; 
-}
 
+DECL_REAL1_VAR_REAL1_EXPR::DECL_REAL1_VAR_REAL1_EXPR(coords::REAL1_VAR_IDENT *operand_1,coords::REAL1_EXPR *operand_2) : 
+		DECLARE(),operand1(operand_1),operand2(operand_2){}
+coords::REAL1_VAR_IDENT* DECL_REAL1_VAR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* DECL_REAL1_VAR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string DECL_REAL1_VAR_REAL1_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-/*
-No such intermediate node in Clang AST.
-Straight to CXXConstructExpr (Vector_Lit).
-Included here as stub for possible future use.
-class VecLitExpr : public VecExpr {}
-*/
-VecVarExpr::VecVarExpr() : VecExpr() {}
 
-std::string VecVarExpr::toString() const { 
-    return state_->name_; 
-}
+DECL_REAL3_VAR_REAL3_EXPR::DECL_REAL3_VAR_REAL3_EXPR(coords::REAL3_VAR_IDENT *operand_1,coords::REAL3_EXPR *operand_2) : 
+		DECLARE(),operand1(operand_1),operand2(operand_2){}
+coords::REAL3_VAR_IDENT* DECL_REAL3_VAR_REAL3_EXPR::getOperand1() { return this->operand1;}
+coords::REAL3_EXPR* DECL_REAL3_VAR_REAL3_EXPR::getOperand2() { return this->operand2;}
+std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
-ScalarVarExpr::ScalarVarExpr() : ScalarExpr() {}
+DECL_REAL4_VAR_REAL4_EXPR::DECL_REAL4_VAR_REAL4_EXPR(coords::REAL4_VAR_IDENT *operand_1,coords::REAL4_EXPR *operand_2) : 
+		DECLARE(),operand1(operand_1),operand2(operand_2){}
+coords::REAL4_VAR_IDENT* DECL_REAL4_VAR_REAL4_EXPR::getOperand1() { return this->operand1;}
+coords::REAL4_EXPR* DECL_REAL4_VAR_REAL4_EXPR::getOperand2() { return this->operand2;}
+std::string DECL_REAL4_VAR_REAL4_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string ScalarVarExpr::toString() const { 
-    return state_->name_; 
-}
 
-TransformVarExpr::TransformVarExpr() : TransformExpr() {}
+DECL_REALMATRIX_VAR_REALMATRIX_EXPR::DECL_REALMATRIX_VAR_REALMATRIX_EXPR(coords::REALMATRIX_VAR_IDENT *operand_1,coords::REALMATRIX_EXPR *operand_2) : 
+		DECLARE(),operand1(operand_1),operand2(operand_2){}
+coords::REALMATRIX_VAR_IDENT* DECL_REALMATRIX_VAR_REALMATRIX_EXPR::getOperand1() { return this->operand1;}
+coords::REALMATRIX_EXPR* DECL_REALMATRIX_VAR_REALMATRIX_EXPR::getOperand2() { return this->operand2;}
+std::string DECL_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string TransformVarExpr::toString() const { 
-    return state_->name_; 
-}
 
+DECL_REAL1_VAR::DECL_REAL1_VAR(coords::REAL1_VAR_IDENT *operand_1) : 
+		DECLARE(),operand1(operand_1){}
+coords::REAL1_VAR_IDENT* DECL_REAL1_VAR::getOperand1() { return this->operand1;}
+std::string DECL_REAL1_VAR::toString() const{ return "Not implemented";;}
 
 
-VecVecAddExpr::VecVecAddExpr(
-    coords::VecExpr *mem, coords::VecExpr *arg) 
-        : VecExpr(), mem_(mem), arg_(arg) {
-}
+DECL_REAL3_VAR::DECL_REAL3_VAR(coords::REAL3_VAR_IDENT *operand_1) : 
+		DECLARE(),operand1(operand_1){}
+coords::REAL3_VAR_IDENT* DECL_REAL3_VAR::getOperand1() { return this->operand1;}
+std::string DECL_REAL3_VAR::toString() const{ return "Not implemented";;}
 
-std::string VecVecAddExpr::toString() const {
-    return "(add (" + mem_->toString() + ") (" + arg_->toString() + "))";
-}
 
+DECL_REAL4_VAR::DECL_REAL4_VAR(coords::REAL4_VAR_IDENT *operand_1) : 
+		DECLARE(),operand1(operand_1){}
+coords::REAL4_VAR_IDENT* DECL_REAL4_VAR::getOperand1() { return this->operand1;}
+std::string DECL_REAL4_VAR::toString() const{ return "Not implemented";;}
 
 
- // VecScalarMulExpr(const ast::VecScalarMulExpr *mce, clang::ASTContext *c, coords::ScalarExpr *flt, coords::VecExpr *vec);
- // const ast::VecScalarMulExpr *getVecScalarMulExpr();
-VecScalarMulExpr::VecScalarMulExpr(
-    coords::ScalarExpr *flt, coords::VecExpr *vec) 
-        : VecExpr(), flt_(flt), vec_(vec) {
-}
+DECL_REALMATRIX_VAR::DECL_REALMATRIX_VAR(coords::REALMATRIX_VAR_IDENT *operand_1) : 
+		DECLARE(),operand1(operand_1){}
+coords::REALMATRIX_VAR_IDENT* DECL_REALMATRIX_VAR::getOperand1() { return this->operand1;}
+std::string DECL_REALMATRIX_VAR::toString() const{ return "Not implemented";;}
 
-std::string VecScalarMulExpr::toString() const {
-    return "(mul (" + flt_->toString() + ") (" + vec_->toString() + "))";
-}
 
-TransformVecApplyExpr::TransformVecApplyExpr(
-    coords::TransformExpr *lhs, coords::VecExpr *rhs) 
-        : VecExpr(), lhs_(lhs), rhs_(rhs) {
-}
+PAREN_REAL1_EXPR::PAREN_REAL1_EXPR(coords::REAL1_EXPR *operand_1) : 
+		REAL1_EXPR(),operand1(operand_1){}
+coords::REAL1_EXPR* PAREN_REAL1_EXPR::getOperand1() { return this->operand1;}
+std::string PAREN_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string TransformVecApplyExpr::toString() const {
-    return "(apply (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
-}
 
+INV_REAL1_EXPR::INV_REAL1_EXPR(coords::REAL1_EXPR *operand_1) : 
+		REAL1_EXPR(),operand1(operand_1){}
+coords::REAL1_EXPR* INV_REAL1_EXPR::getOperand1() { return this->operand1;}
+std::string INV_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-ScalarScalarAddExpr::ScalarScalarAddExpr(
-    coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) 
-        : ScalarExpr(), lhs_(lhs), rhs_(rhs) {
-}
 
-std::string ScalarScalarAddExpr::toString() const {
-    return "(add (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
-}
+NEG_REAL1_EXPR::NEG_REAL1_EXPR(coords::REAL1_EXPR *operand_1) : 
+		REAL1_EXPR(),operand1(operand_1){}
+coords::REAL1_EXPR* NEG_REAL1_EXPR::getOperand1() { return this->operand1;}
+std::string NEG_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
-ScalarScalarMulExpr::ScalarScalarMulExpr(
-    coords::ScalarExpr *lhs, coords::ScalarExpr *rhs) 
-        : ScalarExpr(), lhs_(lhs), rhs_(rhs) {
-}
+ADD_REAL1_EXPR_REAL1_EXPR::ADD_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL1_EXPR *operand_2) : 
+		REAL1_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL1_EXPR* ADD_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* ADD_REAL1_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string ScalarScalarMulExpr::toString() const {
-    return "(mul (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
-}
 
-TransformTransformComposeExpr::TransformTransformComposeExpr(
-    coords::TransformExpr *lhs, coords::TransformExpr *rhs) 
-        : TransformExpr(), lhs_(lhs), rhs_(rhs) {
-}
+SUB_REAL1_EXPR_REAL1_EXPR::SUB_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL1_EXPR *operand_2) : 
+		REAL1_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL1_EXPR* SUB_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* SUB_REAL1_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string TransformTransformComposeExpr::toString() const {
-    return "(compose (" + lhs_->toString() + ") (" + rhs_->toString() + "))";
-}
 
+MUL_REAL1_EXPR_REAL1_EXPR::MUL_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL1_EXPR *operand_2) : 
+		REAL1_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL1_EXPR* MUL_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* MUL_REAL1_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
+DIV_REAL1_EXPR_REAL1_EXPR::DIV_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL1_EXPR *operand_2) : 
+		REAL1_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL1_EXPR* DIV_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* DIV_REAL1_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
+REF_REAL1_VAR::REF_REAL1_VAR(coords::REAL1_VAR_IDENT *operand_1) : 
+		REAL1_EXPR(),operand1(operand_1){}
+coords::REAL1_VAR_IDENT* REF_REAL1_VAR::getOperand1() { return this->operand1;}
+std::string REF_REAL1_VAR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
+PAREN_REAL3_EXPR::PAREN_REAL3_EXPR(coords::REAL3_EXPR *operand_1) : 
+		REAL3_EXPR(),operand1(operand_1){}
+coords::REAL3_EXPR* PAREN_REAL3_EXPR::getOperand1() { return this->operand1;}
+std::string PAREN_REAL3_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-VecParenExpr::VecParenExpr(coords::VecExpr *expr) 
-        : VecExpr(), expr_(expr) { 
-}
 
-std::string VecParenExpr::toString() const {
-    return "(" + expr_->toString() + ")";
-}
+ADD_REAL3_EXPR_REAL3_EXPR::ADD_REAL3_EXPR_REAL3_EXPR(coords::REAL3_EXPR *operand_1,coords::REAL3_EXPR *operand_2) : 
+		REAL3_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL3_EXPR* ADD_REAL3_EXPR_REAL3_EXPR::getOperand1() { return this->operand1;}
+coords::REAL3_EXPR* ADD_REAL3_EXPR_REAL3_EXPR::getOperand2() { return this->operand2;}
+std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
-ScalarParenExpr::ScalarParenExpr(coords::ScalarExpr *expr) 
-        : ScalarExpr(), expr_(expr) { 
-}
+SUB_REAL3_EXPR_REAL3_EXPR::SUB_REAL3_EXPR_REAL3_EXPR(coords::REAL3_EXPR *operand_1,coords::REAL3_EXPR *operand_2) : 
+		REAL3_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL3_EXPR* SUB_REAL3_EXPR_REAL3_EXPR::getOperand1() { return this->operand1;}
+coords::REAL3_EXPR* SUB_REAL3_EXPR_REAL3_EXPR::getOperand2() { return this->operand2;}
+std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string ScalarParenExpr::toString() const {
-    return "(" + expr_->toString() + ")";
-}
 
+INV_REAL3_EXPR::INV_REAL3_EXPR(coords::REAL3_EXPR *operand_1) : 
+		REAL3_EXPR(),operand1(operand_1){}
+coords::REAL3_EXPR* INV_REAL3_EXPR::getOperand1() { return this->operand1;}
+std::string INV_REAL3_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-TransformParenExpr::TransformParenExpr(coords::TransformExpr *expr) 
-        : TransformExpr(), expr_(expr) { 
-}
 
-std::string TransformParenExpr::toString() const {
-    return "(" + expr_->toString() + ")";
-}
+NEG_REAL3_EXPR::NEG_REAL3_EXPR(coords::REAL3_EXPR *operand_1) : 
+		REAL3_EXPR(),operand1(operand_1){}
+coords::REAL3_EXPR* NEG_REAL3_EXPR::getOperand1() { return this->operand1;}
+std::string NEG_REAL3_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
+MUL_REAL3_EXPR_REAL1_EXPR::MUL_REAL3_EXPR_REAL1_EXPR(coords::REAL3_EXPR *operand_1,coords::REAL1_EXPR *operand_2) : 
+		REAL3_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL3_EXPR* MUL_REAL3_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* MUL_REAL3_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
-/*******
-* Values
-*******/
+MUL_REALMATRIX_EXPR_REAL3_EXPR::MUL_REALMATRIX_EXPR_REAL3_EXPR(coords::REALMATRIX_EXPR *operand_1,coords::REAL3_EXPR *operand_2) : 
+		REAL3_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REALMATRIX_EXPR* MUL_REALMATRIX_EXPR_REAL3_EXPR::getOperand1() { return this->operand1;}
+coords::REAL3_EXPR* MUL_REALMATRIX_EXPR_REAL3_EXPR::getOperand2() { return this->operand2;}
+std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-Vector::Vector(coords::VectorCtorType tag)
-      : VecExpr(), tag_(tag) {
-}
 
-VectorCtorType Vector::getVectorType() { return tag_; }
+DIV_REAL3_EXPR_REAL1_EXPR::DIV_REAL3_EXPR_REAL1_EXPR(coords::REAL3_EXPR *operand_1,coords::REAL1_EXPR *operand_2) : 
+		REAL3_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL3_EXPR* DIV_REAL3_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* DIV_REAL3_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string Vector::toString() const { 
-    LOG(FATAL) << "Coords::Vector::toPrint: Error. Should not be called. Abstract.\n";
-    return NULL;
-}
 
-Scalar::Scalar(coords::ScalarCtorType tag)
-      : ScalarExpr(), tag_(tag) {
-}
+REF_REAL3_VAR::REF_REAL3_VAR(coords::REAL3_VAR_IDENT *operand_1) : 
+		REAL3_EXPR(),operand1(operand_1){}
+coords::REAL3_VAR_IDENT* REF_REAL3_VAR::getOperand1() { return this->operand1;}
+std::string REF_REAL3_VAR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-ScalarCtorType Scalar::getScalarType() { return tag_; }
 
-std::string Scalar::toString() const { 
-    LOG(FATAL) << "Coords::Scalar::toPrint: Error. Should not be called. Abstract.\n";
-    return NULL;
-}
+PAREN_REAL4_EXPR::PAREN_REAL4_EXPR(coords::REAL4_EXPR *operand_1) : 
+		REAL4_EXPR(),operand1(operand_1){}
+coords::REAL4_EXPR* PAREN_REAL4_EXPR::getOperand1() { return this->operand1;}
+std::string PAREN_REAL4_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-Transform::Transform(coords::TransformCtorType tag)
-      : TransformExpr(), tag_(tag) {
-}
 
-TransformCtorType Transform::getTransformType() { return tag_; }
+ADD_REAL4_EXPR_REAL4_EXPR::ADD_REAL4_EXPR_REAL4_EXPR(coords::REAL4_EXPR *operand_1,coords::REAL4_EXPR *operand_2) : 
+		REAL4_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL4_EXPR* ADD_REAL4_EXPR_REAL4_EXPR::getOperand1() { return this->operand1;}
+coords::REAL4_EXPR* ADD_REAL4_EXPR_REAL4_EXPR::getOperand2() { return this->operand2;}
+std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string Transform::toString() const { 
-    LOG(FATAL) << "Coords::Transform::toPrint: Error. Should not be called. Abstract.\n";
-    return NULL;
-}
 
+MUL_REAL4_EXPR_REAL1_EXPR::MUL_REAL4_EXPR_REAL1_EXPR(coords::REAL4_EXPR *operand_1,coords::REAL1_EXPR *operand_2) : 
+		REAL4_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REAL4_EXPR* MUL_REAL4_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* MUL_REAL4_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
-Vector_Lit::Vector_Lit() 
-    : Vector(VEC_CTOR_LIT) {} 
-  
-std::string Vector_Lit::toString() const  {
-    std::string retval = "";
-    retval += "0"; 
-    retval.append(" ");
-    retval += "0"; 
-    retval.append(" ");
-    retval += "0";
-    //retval = "(" + retval + ")";
-    return retval;
-}
+REF_REAL4_VAR::REF_REAL4_VAR(coords::REAL4_VAR_IDENT *operand_1) : 
+		REAL4_EXPR(),operand1(operand_1){}
+coords::REAL4_VAR_IDENT* REF_REAL4_VAR::getOperand1() { return this->operand1;}
+std::string REF_REAL4_VAR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
-Scalar_Lit::Scalar_Lit() 
-    : Scalar(FLOAT_CTOR_LIT){} 
-  
-std::string Scalar_Lit::toString() const  {
-    std::string retval = "";
-    retval += "0"; 
-    //retval = "(" + retval + ")";
-    return retval;
-}
+PAREN_REALMATRIX_EXPR::PAREN_REALMATRIX_EXPR(coords::REALMATRIX_EXPR *operand_1) : 
+		REALMATRIX_EXPR(),operand1(operand_1){}
+coords::REALMATRIX_EXPR* PAREN_REALMATRIX_EXPR::getOperand1() { return this->operand1;}
+std::string PAREN_REALMATRIX_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-Transform_Lit::Transform_Lit(coords::VecExpr* arg1, coords::VecExpr* arg2, coords::VecExpr* arg3) 
-    : Transform(TRANSFORM_CTOR_LIT), arg1_{arg1}, arg2_{arg2}, arg3_{arg3} {} 
-  
-std::string Transform_Lit::toString() const  {
-    std::string retval = "";
-    retval += "(" + arg1_->toString() + ')';
-    retval += " "; 
-    retval += "(" + arg2_->toString() + ')';
-    retval += " "; 
-    retval += "(" + arg3_->toString() + ')';
-    //retval = "(" + retval + ")";
-    return retval;
-}
 
-Vector_Var::Vector_Var(coords::VecVarExpr* expr) 
-    : Vector(VEC_CTOR_VAR), expr_(expr) { 
-}
+MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR(coords::REALMATRIX_EXPR *operand_1,coords::REALMATRIX_EXPR *operand_2) : 
+		REALMATRIX_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REALMATRIX_EXPR* MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::getOperand1() { return this->operand1;}
+coords::REALMATRIX_EXPR* MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::getOperand2() { return this->operand2;}
+std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string Vector_Var::toString() const { 
-    LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
-    return NULL;
-}
 
-Scalar_Var::Scalar_Var(coords::ScalarVarExpr* expr) 
-    : Scalar(FLOAT_CTOR_VAR), expr_(expr) { 
-}
+REF_EXPR_REALMATRIX_VAR::REF_EXPR_REALMATRIX_VAR(coords::REALMATRIX_VAR_IDENT *operand_1) : 
+		REALMATRIX_EXPR(),operand1(operand_1){}
+coords::REALMATRIX_VAR_IDENT* REF_EXPR_REALMATRIX_VAR::getOperand1() { return this->operand1;}
+std::string REF_EXPR_REALMATRIX_VAR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string Scalar_Var::toString() const { 
-    LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
-    return NULL;
-}
 
-Transform_Var::Transform_Var(coords::TransformVarExpr* expr) 
-    : Transform(TRANSFORM_CTOR_VAR), expr_(expr) { 
-}
+std::string REAL1_VAR_IDENT::toString() const{ return std::string("") + state_->name_;}
+std::string REAL3_VAR_IDENT::toString() const{ return std::string("") + state_->name_;}
+std::string REAL4_VAR_IDENT::toString() const{ return std::string("") + state_->name_;}
+std::string REALMATRIX_VAR_IDENT::toString() const{ return std::string("") + state_->name_;}
+REAL1_LITERAL1::REAL1_LITERAL1(double value_1) : 
+		REAL1_LITERAL(){}
+std::string REAL1_LITERAL1::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
-std::string Transform_Var::toString() const { 
-    LOG(FATAL) << ("Vector_Var::toString() NOT YET IMPLEMENTED!\n"); 
-    return NULL;
-}
 
-std::string Vector_Expr::toString() const { 
-    return expr_->toString();
-    //std::string("Vector_Expr::toString() STUB.\n"); 
-}
-
-Vector_Expr::Vector_Expr(
-                     coords::VecExpr* expr_coords) 
-    : Vector(VEC_CTOR_EXPR), expr_(expr_coords) {
-}
-
-std::string Scalar_Expr::toString() const { 
-    return expr_->toString();
-    //std::string("Vector_Expr::toString() STUB.\n"); 
-}
-
-Scalar_Expr::Scalar_Expr(
-                     coords::ScalarExpr* expr_coords) 
-    : Scalar(FLOAT_CTOR_EXPR), expr_(expr_coords) {
-}
-
-std::string Transform_Expr::toString() const { 
-    return expr_->toString();
-    //std::string("Vector_Expr::toString() STUB.\n"); 
-}
-
-Transform_Expr::Transform_Expr(
-                     coords::TransformExpr* expr_coords) 
-    : Transform(TRANSFORM_CTOR_EXPR), expr_(expr_coords) {
-}
-
-/****
-* Def
-****/
-
-Vector_Def::Vector_Def(coords::VecIdent *id, coords::VecExpr *expr)
-      : Coords(), id_(id), expr_(expr) {
-}
-
-coords::VecIdent *Vector_Def::getIdent() const {
-    return id_;
-}
-
-coords::VecExpr *Vector_Def::getExpr() const {
-    return expr_;
-}
-
-// The coup d'grace.
-std::string Vector_Def::toString() const { 
-    std::string retval = "def ";
-    retval += id_->toString();
-    retval += " := ";
-    if(expr_)
-        retval += expr_->toString();
-    return retval;
-}
-
-Scalar_Def::Scalar_Def(coords::ScalarIdent *id, coords::ScalarExpr *expr)
-      : Coords(), id_(id), expr_(expr) {
-}
-
-coords::ScalarIdent *Scalar_Def::getIdent() const {
-    return id_;
-}
-
-coords::ScalarExpr *Scalar_Def::getExpr() const {
-    return expr_;
-}
-
-std::string Scalar_Def::toString() const { 
-    std::string retval = "def ";
-    retval += id_->toString();
-    retval += " := ";
-    if(expr_)
-        retval += expr_->toString();
-    return retval;
-}
-
-Transform_Def::Transform_Def(coords::TransformIdent *id, coords::TransformExpr *expr)
-      : Coords(), id_(id), expr_(expr) {
-}
-
-coords::TransformIdent *Transform_Def::getIdent() const {
-    return id_;
-}
-
-coords::TransformExpr *Transform_Def::getExpr() const {
-    return expr_;
-}
-
-std::string Transform_Def::toString() const { 
-    std::string retval = "def ";
-    retval += id_->toString();
-    retval += " := ";
-    if(expr_)
-        retval += expr_->toString();
-    return retval;
-}
-
-/****
-* Assign
-****/
-Vector_Assign::Vector_Assign(coords::VecVarExpr *id, coords::VecExpr *expr)
-      : Coords(), id_(id), expr_(expr) {
-}
-
-coords::VecVarExpr *Vector_Assign::getVarExpr() const {
-    return id_;
-}
-
-coords::VecExpr *Vector_Assign::getExpr() const {
-    return expr_;
-}
-
-std::string Vector_Assign::toString() const { 
-    std::string retval = "assign ";
-    retval += id_->toString();
-    retval += " := ";
-    if(expr_)
-        retval += expr_->toString();
-    return retval;
-}
-
-Scalar_Assign::Scalar_Assign(coords::ScalarVarExpr *id, coords::ScalarExpr *expr)
-      : Coords(), id_(id), expr_(expr) {
-}
-
-coords::ScalarVarExpr *Scalar_Assign::getVarExpr() const {
-    return id_;
-}
-
-coords::ScalarExpr *Scalar_Assign::getExpr() const {
-    return expr_;
-}
-
-std::string Scalar_Assign::toString() const { 
-    std::string retval = "assign ";
-    retval += id_->toString();
-    retval += " := ";
-    if(expr_)
-        retval += expr_->toString();
-    return retval;
-}
-
-Transform_Assign::Transform_Assign(coords::TransformVarExpr *id, coords::TransformExpr *expr)
-      : Coords(), id_(id), expr_(expr) {
-}
-
-coords::TransformVarExpr *Transform_Assign::getVarExpr() const {
-    return  id_;
-}
-
-coords::TransformExpr *Transform_Assign::getExpr() const {
-    return expr_;
-}
-
-std::string Transform_Assign::toString() const { 
-    std::string retval = "assign ";
-    retval += id_->toString();
-    retval += " := ";
-    if(expr_)
-        retval += expr_->toString();
-    return retval;
-}
+REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL1_EXPR *operand_2,coords::REAL1_EXPR *operand_3) : 
+		REAL3_LITERAL(),operand1(operand_1),operand2(operand_2),operand3(operand_3){}
+coords::REAL1_EXPR* REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+coords::REAL1_EXPR* REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand3() { return this->operand3;}
+std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+REAL3_LITERAL3::REAL3_LITERAL3(double value_1,double value_2,double value_3) : 
+		REAL3_LITERAL(){}
+std::string REAL3_LITERAL3::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL1_EXPR *operand_2,coords::REAL1_EXPR *operand_3,coords::REAL1_EXPR *operand_4) : 
+		REAL4_LITERAL(),operand1(operand_1),operand2(operand_2),operand3(operand_3),operand4(operand_4){}
+coords::REAL1_EXPR* REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+coords::REAL1_EXPR* REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand3() { return this->operand3;}
+coords::REAL1_EXPR* REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand4() { return this->operand4;}
+std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+REAL4_LITERAL4::REAL4_LITERAL4(double value_1,double value_2,double value_3,double value_4) : 
+		REAL4_LITERAL(){}
+std::string REAL4_LITERAL4::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(coords::REAL3_EXPR *operand_1,coords::REAL3_EXPR *operand_2,coords::REAL3_EXPR *operand_3) : 
+		REALMATRIX_LITERAL(),operand1(operand_1),operand2(operand_2),operand3(operand_3){}
+coords::REAL3_EXPR* REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::getOperand1() { return this->operand1;}
+coords::REAL3_EXPR* REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::getOperand2() { return this->operand2;}
+coords::REAL3_EXPR* REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::getOperand3() { return this->operand3;}
+std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL1_EXPR *operand_2,coords::REAL1_EXPR *operand_3,coords::REAL1_EXPR *operand_4,coords::REAL1_EXPR *operand_5,coords::REAL1_EXPR *operand_6,coords::REAL1_EXPR *operand_7,coords::REAL1_EXPR *operand_8,coords::REAL1_EXPR *operand_9) : 
+		REALMATRIX_LITERAL(),operand1(operand_1),operand2(operand_2),operand3(operand_3),operand4(operand_4),operand5(operand_5),operand6(operand_6),operand7(operand_7),operand8(operand_8),operand9(operand_9){}
+coords::REAL1_EXPR* REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+coords::REAL1_EXPR* REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand3() { return this->operand3;}
+coords::REAL1_EXPR* REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand4() { return this->operand4;}
+coords::REAL1_EXPR* REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand5() { return this->operand5;}
+coords::REAL1_EXPR* REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand6() { return this->operand6;}
+coords::REAL1_EXPR* REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand7() { return this->operand7;}
+coords::REAL1_EXPR* REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand8() { return this->operand8;}
+coords::REAL1_EXPR* REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand9() { return this->operand9;}
+std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+REALMATRIX_LITERAL9::REALMATRIX_LITERAL9(double value_1,double value_2,double value_3,double value_4,double value_5,double value_6,double value_7,double value_8,double value_9) : 
+		REALMATRIX_LITERAL(){}
+std::string REALMATRIX_LITERAL9::toString() const{ return std::string("")+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
 } // namespace codecoords

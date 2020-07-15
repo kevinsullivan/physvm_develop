@@ -1,3 +1,4 @@
+
 #ifndef ASTTOCOORDS_H
 #define ASTTOCOORDS_H
 
@@ -44,87 +45,119 @@ not use a generic putter. So here there are no superclass mkVecExpr or
 Vector mk oprations. 
 */
 
-class ASTToCoords {
+class ASTToCoords
+{
 public:
 
     ASTToCoords();
 
-    void setASTState(coords::Coords *coords, clang::Stmt* stmt, clang::ASTContext *c);
-    void setASTState(coords::Coords *coords, clang::Decl* decl, clang::ASTContext *c);
-
-    coords::VecIdent* mkVecIdent(const ast::VecIdent *ast, clang::ASTContext *c);
-    // no VecExpr because we always know exactly what subtype we're creating
-    coords::VecVarExpr* mkVecVarExpr(const ast::VecVarExpr *ast, clang::ASTContext *c);
-
-    coords::VecVecAddExpr* mkVecVecAddExpr(const ast::VecVecAddExpr *ast, clang::ASTContext *c, 
-                                             coords::VecExpr *mem, 
-                                             coords::VecExpr *arg);
-
-    coords::VecScalarMulExpr* mkVecScalarMulExpr(const ast::VecScalarMulExpr *ast, clang::ASTContext *c,
-                                             coords::ScalarExpr *flt, coords::VecExpr *vec);
+    void setASTState(coords::Coords* coords, clang::Stmt* stmt, clang::ASTContext* c);
+    void setASTState(coords::Coords* coords, clang::Decl* decl, clang::ASTContext* c);
 
 
-    coords::ScalarScalarAddExpr* mkScalarScalarAddExpr(const ast::ScalarScalarAddExpr *ast, clang::ASTContext *c, 
-                                             coords::ScalarExpr *lhs, 
-                                             coords::ScalarExpr *rhs);
+	coords::COMPOUND_STMT* mkCOMPOUND_STMT(const ast::COMPOUND_STMT* ast, clang::ASTContext* c, std::vector<coords::STMT*> operands );
 
-    coords::ScalarScalarMulExpr* mkScalarScalarMulExpr(const ast::ScalarScalarMulExpr *ast, clang::ASTContext *c, 
-                                             coords::ScalarExpr *lhs, 
-                                             coords::ScalarExpr *rhs);
+	coords::IFTHEN_EXPR_STMT* mkIFTHEN_EXPR_STMT(const ast::IFTHEN_EXPR_STMT* ast, clang::ASTContext* c,coords::EXPR* operand1,coords::STMT* operand2);
 
+	coords::IFTHENELSEIF_EXPR_STMT_IFCOND* mkIFTHENELSEIF_EXPR_STMT_IFCOND(const ast::IFTHENELSEIF_EXPR_STMT_IFCOND* ast, clang::ASTContext* c,coords::EXPR* operand1,coords::STMT* operand2,coords::IFCOND* operand3);
 
-    // KEVIN: Added for new horizontal vector paren expr module
-    coords::VecParenExpr *mkVecParenExpr(ast::VecParenExpr *ast, clang::ASTContext *c,
-                                                ast::VecExpr *expr);
+	coords::IFTHENELSE_EXPR_STMT_STMT* mkIFTHENELSE_EXPR_STMT_STMT(const ast::IFTHENELSE_EXPR_STMT_STMT* ast, clang::ASTContext* c,coords::EXPR* operand1,coords::STMT* operand2,coords::STMT* operand3);
 
-    coords::Vector_Lit *mkVector_Lit(const ast::Vector_Lit *ast, clang::ASTContext *c,
-                                                ast::ScalarValue x, ast::ScalarValue y, ast::ScalarValue z);
-    coords::Vector_Var* mkVector_Var(const ast::Vector_Var *ast, clang::ASTContext *c,
-                                                coords::VecVarExpr *var);
-    coords::Vector_Expr* mkVector_Expr(const ast::Vector_Expr *ctor_ast, clang::ASTContext *c,
-                                             ast::VecExpr *expr_ast);
-    coords::Vector_Def* mkVector_Def(const ast::Vector_Def *ast, clang::ASTContext *c,
-                                             coords::VecIdent *id, 
-                                             coords::VecExpr *vec);
+	coords::ASSIGN_REAL1_VAR_REAL1_EXPR* mkASSIGN_REAL1_VAR_REAL1_EXPR(const ast::ASSIGN_REAL1_VAR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_VAR_IDENT* operand1,coords::REAL1_EXPR* operand2);
 
-    coords::Vector_Assign* mkVector_Assign(const ast::Vector_Assign *ast, clang::ASTContext *c,
-                                             coords::VecVarExpr *var, 
-                                             coords::VecExpr *vec);
+	coords::ASSIGN_REAL3_VAR_REAL3_EXPR* mkASSIGN_REAL3_VAR_REAL3_EXPR(const ast::ASSIGN_REAL3_VAR_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_VAR_IDENT* operand1,coords::REAL3_EXPR* operand2);
 
-    coords::ScalarIdent* mkScalarIdent(const ast::ScalarIdent *ast, clang::ASTContext *c);
-    // no VecExpr because we always know exactly what subtype we're creating
-    coords::ScalarVarExpr* mkScalarVarExpr(const ast::ScalarVarExpr *ast, clang::ASTContext *c);
+	coords::ASSIGN_REAL4_VAR_REAL4_EXPR* mkASSIGN_REAL4_VAR_REAL4_EXPR(const ast::ASSIGN_REAL4_VAR_REAL4_EXPR* ast, clang::ASTContext* c,coords::REAL4_VAR_IDENT* operand1,coords::REAL4_EXPR* operand2);
 
-    // KEVIN: Added for new horizontal vector paren expr module
-    coords::ScalarParenExpr *mkScalarParenExpr(ast::ScalarParenExpr *ast, clang::ASTContext *c,
-                                                ast::ScalarExpr *expr);
+	coords::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* mkASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(const ast::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* ast, clang::ASTContext* c,coords::REALMATRIX_VAR_IDENT* operand1,coords::REALMATRIX_EXPR* operand2);
 
-    coords::Scalar_Lit *mkScalar_Lit(const ast::Scalar_Lit *ast, clang::ASTContext *c,
-                                                ast::ScalarValue scalar);
-    coords::Scalar_Var* mkScalar_Var(const ast::Scalar_Var *ast, clang::ASTContext *c,
-                                                coords::ScalarVarExpr *var);
-    coords::Scalar_Expr* mkScalar_Expr(const ast::Scalar_Expr *ctor_ast, clang::ASTContext *c,
-                                             ast::ScalarExpr *expr_ast);
-    coords::Scalar_Def* mkScalar_Def(const ast::Scalar_Def *ast, clang::ASTContext *c,
-                                             coords::ScalarIdent *id, 
-                                             coords::ScalarExpr *flt);
-    
-    coords::Scalar_Assign* mkScalar_Assign(const ast::Scalar_Assign *ast, clang::ASTContext *c,
-                                             coords::ScalarVarExpr *var, 
-                                             coords::ScalarExpr *flt);
+	coords::DECL_REAL1_VAR_REAL1_EXPR* mkDECL_REAL1_VAR_REAL1_EXPR(const ast::DECL_REAL1_VAR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_VAR_IDENT* operand1,coords::REAL1_EXPR* operand2);
 
-    coords::TransformIdent *mkTransformIdent(const ast::TransformIdent *ast, clang::ASTContext *c);
-    coords::TransformVarExpr *mkTransformVarExpr(const ast::TransformVarExpr *ast, clang::ASTContext *c);
-    coords::TransformParenExpr *mkTransformParenExpr(const ast::TransformParenExpr *ast, ast::TransformExpr *expr, clang::ASTContext *c);
-    coords::TransformTransformComposeExpr *mkTransformTransformComposeExpr(ast::TransformTransformComposeExpr *ast, coords::TransformExpr *outer, coords::TransformExpr *inner, clang::ASTContext *c);
-    coords::TransformVecApplyExpr *mkTransformVecApplyExpr(ast::TransformVecApplyExpr *ast, coords::TransformExpr *texpr, coords::VecExpr *vexpr, clang::ASTContext *c);
-    coords::Transform_Lit *mkTransform_Lit(const ast::Transform_Lit *ast, coords::VecExpr* arg1, coords::VecExpr* arg2, coords::VecExpr* arg3, clang::ASTContext *c);
-    coords::Transform_Var *mkTransform_Var(const ast::Transform_Var *ast, coords::TransformVarExpr *var, clang::ASTContext *c);
-    coords::Transform_Expr *mkTransform_Expr(const ast::Transform_Expr *ast, ast::TransformExpr *expr, clang::ASTContext *c);
-    coords::Transform_Def *mkTransform_Def(const ast::Transform_Def *ast, clang::ASTContext *c, coords::TransformIdent *id, coords::TransformExpr *tfm);
-    coords::Transform_Assign *mkTransform_Assign(const ast::Transform_Assign *ast, clang::ASTContext *c, coords::TransformVarExpr *var, coords::TransformExpr *);
+	coords::DECL_REAL3_VAR_REAL3_EXPR* mkDECL_REAL3_VAR_REAL3_EXPR(const ast::DECL_REAL3_VAR_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_VAR_IDENT* operand1,coords::REAL3_EXPR* operand2);
 
+	coords::DECL_REAL4_VAR_REAL4_EXPR* mkDECL_REAL4_VAR_REAL4_EXPR(const ast::DECL_REAL4_VAR_REAL4_EXPR* ast, clang::ASTContext* c,coords::REAL4_VAR_IDENT* operand1,coords::REAL4_EXPR* operand2);
 
+	coords::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* mkDECL_REALMATRIX_VAR_REALMATRIX_EXPR(const ast::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* ast, clang::ASTContext* c,coords::REALMATRIX_VAR_IDENT* operand1,coords::REALMATRIX_EXPR* operand2);
+
+	coords::DECL_REAL1_VAR* mkDECL_REAL1_VAR(const ast::DECL_REAL1_VAR* ast, clang::ASTContext* c,coords::REAL1_VAR_IDENT* operand1);
+
+	coords::DECL_REAL3_VAR* mkDECL_REAL3_VAR(const ast::DECL_REAL3_VAR* ast, clang::ASTContext* c,coords::REAL3_VAR_IDENT* operand1);
+
+	coords::DECL_REAL4_VAR* mkDECL_REAL4_VAR(const ast::DECL_REAL4_VAR* ast, clang::ASTContext* c,coords::REAL4_VAR_IDENT* operand1);
+
+	coords::DECL_REALMATRIX_VAR* mkDECL_REALMATRIX_VAR(const ast::DECL_REALMATRIX_VAR* ast, clang::ASTContext* c,coords::REALMATRIX_VAR_IDENT* operand1);
+
+	coords::PAREN_REAL1_EXPR* mkPAREN_REAL1_EXPR(const ast::PAREN_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1);
+
+	coords::INV_REAL1_EXPR* mkINV_REAL1_EXPR(const ast::INV_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1);
+
+	coords::NEG_REAL1_EXPR* mkNEG_REAL1_EXPR(const ast::NEG_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1);
+
+	coords::ADD_REAL1_EXPR_REAL1_EXPR* mkADD_REAL1_EXPR_REAL1_EXPR(const ast::ADD_REAL1_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1,coords::REAL1_EXPR* operand2);
+
+	coords::SUB_REAL1_EXPR_REAL1_EXPR* mkSUB_REAL1_EXPR_REAL1_EXPR(const ast::SUB_REAL1_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1,coords::REAL1_EXPR* operand2);
+
+	coords::MUL_REAL1_EXPR_REAL1_EXPR* mkMUL_REAL1_EXPR_REAL1_EXPR(const ast::MUL_REAL1_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1,coords::REAL1_EXPR* operand2);
+
+	coords::DIV_REAL1_EXPR_REAL1_EXPR* mkDIV_REAL1_EXPR_REAL1_EXPR(const ast::DIV_REAL1_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1,coords::REAL1_EXPR* operand2);
+
+	coords::REF_REAL1_VAR* mkREF_REAL1_VAR(const ast::REF_REAL1_VAR* ast, clang::ASTContext* c,coords::REAL1_VAR_IDENT* operand1);
+
+	coords::PAREN_REAL3_EXPR* mkPAREN_REAL3_EXPR(const ast::PAREN_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_EXPR* operand1);
+
+	coords::ADD_REAL3_EXPR_REAL3_EXPR* mkADD_REAL3_EXPR_REAL3_EXPR(const ast::ADD_REAL3_EXPR_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_EXPR* operand1,coords::REAL3_EXPR* operand2);
+
+	coords::SUB_REAL3_EXPR_REAL3_EXPR* mkSUB_REAL3_EXPR_REAL3_EXPR(const ast::SUB_REAL3_EXPR_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_EXPR* operand1,coords::REAL3_EXPR* operand2);
+
+	coords::INV_REAL3_EXPR* mkINV_REAL3_EXPR(const ast::INV_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_EXPR* operand1);
+
+	coords::NEG_REAL3_EXPR* mkNEG_REAL3_EXPR(const ast::NEG_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_EXPR* operand1);
+
+	coords::MUL_REAL3_EXPR_REAL1_EXPR* mkMUL_REAL3_EXPR_REAL1_EXPR(const ast::MUL_REAL3_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL3_EXPR* operand1,coords::REAL1_EXPR* operand2);
+
+	coords::MUL_REALMATRIX_EXPR_REAL3_EXPR* mkMUL_REALMATRIX_EXPR_REAL3_EXPR(const ast::MUL_REALMATRIX_EXPR_REAL3_EXPR* ast, clang::ASTContext* c,coords::REALMATRIX_EXPR* operand1,coords::REAL3_EXPR* operand2);
+
+	coords::DIV_REAL3_EXPR_REAL1_EXPR* mkDIV_REAL3_EXPR_REAL1_EXPR(const ast::DIV_REAL3_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL3_EXPR* operand1,coords::REAL1_EXPR* operand2);
+
+	coords::REF_REAL3_VAR* mkREF_REAL3_VAR(const ast::REF_REAL3_VAR* ast, clang::ASTContext* c,coords::REAL3_VAR_IDENT* operand1);
+
+	coords::PAREN_REAL4_EXPR* mkPAREN_REAL4_EXPR(const ast::PAREN_REAL4_EXPR* ast, clang::ASTContext* c,coords::REAL4_EXPR* operand1);
+
+	coords::ADD_REAL4_EXPR_REAL4_EXPR* mkADD_REAL4_EXPR_REAL4_EXPR(const ast::ADD_REAL4_EXPR_REAL4_EXPR* ast, clang::ASTContext* c,coords::REAL4_EXPR* operand1,coords::REAL4_EXPR* operand2);
+
+	coords::MUL_REAL4_EXPR_REAL1_EXPR* mkMUL_REAL4_EXPR_REAL1_EXPR(const ast::MUL_REAL4_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL4_EXPR* operand1,coords::REAL1_EXPR* operand2);
+
+	coords::REF_REAL4_VAR* mkREF_REAL4_VAR(const ast::REF_REAL4_VAR* ast, clang::ASTContext* c,coords::REAL4_VAR_IDENT* operand1);
+
+	coords::PAREN_REALMATRIX_EXPR* mkPAREN_REALMATRIX_EXPR(const ast::PAREN_REALMATRIX_EXPR* ast, clang::ASTContext* c,coords::REALMATRIX_EXPR* operand1);
+
+	coords::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* mkMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(const ast::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* ast, clang::ASTContext* c,coords::REALMATRIX_EXPR* operand1,coords::REALMATRIX_EXPR* operand2);
+
+	coords::REF_EXPR_REALMATRIX_VAR* mkREF_EXPR_REALMATRIX_VAR(const ast::REF_EXPR_REALMATRIX_VAR* ast, clang::ASTContext* c,coords::REALMATRIX_VAR_IDENT* operand1);
+
+	coords::REAL1_VAR_IDENT* mkREAL1_VAR_IDENT(const ast::REAL1_VAR_IDENT* ast, clang::ASTContext* c);
+
+	coords::REAL3_VAR_IDENT* mkREAL3_VAR_IDENT(const ast::REAL3_VAR_IDENT* ast, clang::ASTContext* c);
+
+	coords::REAL4_VAR_IDENT* mkREAL4_VAR_IDENT(const ast::REAL4_VAR_IDENT* ast, clang::ASTContext* c);
+
+	coords::REALMATRIX_VAR_IDENT* mkREALMATRIX_VAR_IDENT(const ast::REALMATRIX_VAR_IDENT* ast, clang::ASTContext* c);
+
+	coords::REAL1_LITERAL1* mkREAL1_LITERAL1(const ast::REAL1_LITERAL1* ast, clang::ASTContext* c,double value1);
+
+	coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* mkREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1,coords::REAL1_EXPR* operand2,coords::REAL1_EXPR* operand3);
+
+	coords::REAL3_LITERAL3* mkREAL3_LITERAL3(const ast::REAL3_LITERAL3* ast, clang::ASTContext* c,double value1,double value2,double value3);
+
+	coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* mkREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1,coords::REAL1_EXPR* operand2,coords::REAL1_EXPR* operand3,coords::REAL1_EXPR* operand4);
+
+	coords::REAL4_LITERAL4* mkREAL4_LITERAL4(const ast::REAL4_LITERAL4* ast, clang::ASTContext* c,double value1,double value2,double value3,double value4);
+
+	coords::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* mkREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(const ast::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_EXPR* operand1,coords::REAL3_EXPR* operand2,coords::REAL3_EXPR* operand3);
+
+	coords::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* mkREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1,coords::REAL1_EXPR* operand2,coords::REAL1_EXPR* operand3,coords::REAL1_EXPR* operand4,coords::REAL1_EXPR* operand5,coords::REAL1_EXPR* operand6,coords::REAL1_EXPR* operand7,coords::REAL1_EXPR* operand8,coords::REAL1_EXPR* operand9);
+
+	coords::REALMATRIX_LITERAL9* mkREALMATRIX_LITERAL9(const ast::REALMATRIX_LITERAL9* ast, clang::ASTContext* c,double value1,double value2,double value3,double value4,double value5,double value6,double value7,double value8,double value9);
 
     // TODO -- Have these routines return more specific subclass objects
     coords::Coords *getStmtCoords(const clang::Stmt *s) {
@@ -135,6 +168,17 @@ public:
         return decl_coords->find(d)->second;
     }
 
+
+	bool existsStmtCoords(const clang::Stmt* s) {
+		return stmt_coords->find(s) != stmt_coords->end();
+	}
+
+	bool existsDeclCoords(const clang::Decl *d) {
+		return decl_coords->find(d) != decl_coords->end();
+	}
+
+
+
     /*
     !!!! I NEED THESE BADLY. MOVING TO PUBLIC !!!!
     */
@@ -143,7 +187,7 @@ public:
     std::unordered_map<coords::Coords *,const clang::Stmt *> *coords_stmt;
     std::unordered_map<coords::Coords *,const clang::Decl *> *coords_decl;
 
-  private:
+ private:
     void overrideStmt2Coords(const clang::Stmt *s, coords::Coords *c);
     void overrideDecl2Coords(const clang::Decl*, coords::Coords *c);
     void overrideCoords2Stmt(coords::Coords *c, const clang::Stmt *s);
@@ -157,6 +201,9 @@ public:
     
 };
 
+
 } // namespace
 
 #endif
+
+

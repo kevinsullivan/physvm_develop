@@ -6,17 +6,19 @@ Lean-specific consistency-checking functionality
 #include <string.h>
 #include <unistd.h>
 #include <iostream>
+#include <string>
 #include "Checker.h"
 #include "Domain.h"
 
 //#include <g3log/g3log.hpp>
-
+/*
 struct aFile {
     FILE* file;
     const char* name;
 };
-
+*/
 aFile* openFile();
+aFile* openFile(std::string);
 void generateMath(aFile* f, interp::Interpretation* i);
 bool checkMath(aFile*);
 void cleanup(aFile*);
@@ -28,6 +30,21 @@ bool Checker::Check() {
     bool status = checkMath(f);
     cleanup(f);
     return status;
+}
+
+std::string myfile = "/peirce/deps/phys/src/orig/PeirceOutput.lean";
+
+bool Checker::CheckPoll(){
+    
+    aFile* f = openFile(myfile);
+    generateMath(f, interp_); 
+    bool status = true;//checkMath(f);
+    cleanup(f);
+    return status;
+}
+
+bool Checker::Setup(){
+    //this->to_check_ = openFile();
 }
 
 /************************
@@ -46,17 +63,28 @@ aFile* openFile() {
     f->file = fopen(f->name,"w");
     return f;
 }
+aFile* openFile(std::string fname) {
+    aFile* f = new aFile;
+    std::string name = fname;
+    char * name_cstr = new char [name.length()+1];
+    strcpy (name_cstr, name.c_str());
+    f->name = name_cstr;
+    std::cout<<"Generating file ... " << name_cstr << "\n";
+    f->file = fopen(f->name,"w");
+    return f;
+}
 
 void generateMath(aFile* f, interp::Interpretation* interp) {
     std::string math = "";
-    math += "import PhysL\n\n";
+    math += "import .physlang\n\n";
     math += interp->toString_Spaces();
-    math += interp->toString_ScalarDefs();
-    math += interp->toString_Defs();
-    math += interp->toString_TransformDefs();
-    math += interp->toString_Assigns();
-    math += interp->toString_ScalarAssigns();
-    math += interp->toString_TransformAssigns();
+    math += interp->toString_STMTs();
+    //math += interp->toString_ScalarDefs();
+    //math += interp->toString_Defs();
+    //math += interp->toString_TransformDefs();
+    //math += interp->toString_Assigns();
+    //math += interp->toString_ScalarAssigns();
+    //math += interp->toString_TransformAssigns();
     //LOG(DEBUG) << "Checker::generateMath generated this: \n"
     //           << math << "\n";
     fputs(math.c_str(), f->file);

@@ -1,3 +1,4 @@
+
 #include "InterpToDomain.h"
 
 #include <iostream>
@@ -6,36 +7,24 @@
 
 using namespace interp2domain;
 
-// Ident
-
-void InterpToDomain::putVecIdent(interp::VecIdent *c, domain::VecIdent *d)
-{
-    interp2domain_VecIdent[c] = d;
-    domain2interp_VecIdent[d] = c;
+	void InterpToDomain::putSpace(interp::Space* key, domain::Space* val){
+    interp2dom_Spaces[key] = val;
+    dom2interp_Spaces[val] = key;
 }
-
-// TODO: Decide whether or not these maps can be partial on queried keys
-// As defined here, yes, and asking for a missing key returns NULL
-//
-domain::VecIdent *InterpToDomain::getVecIdent(interp::VecIdent *c) const
-{
-    std::unordered_map<interp::VecIdent*, domain::VecIdent*>::iterator it;
-    domain::VecIdent *dom = NULL;
+	domain::Space* InterpToDomain::getSpace(interp::Space* i) const{
+    domain::Space* dom = NULL;
     try {
-        dom = interp2domain_VecIdent.at(c);
+        dom = interp2dom_Spaces.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
     return dom;
 }
-
-interp::VecIdent *InterpToDomain::getVecIdent(domain::VecIdent *d) const
-{
-    std::unordered_map<domain::VecIdent*, interp::VecIdent*>::iterator it;
-    interp::VecIdent *interp = NULL;
+	interp::Space* InterpToDomain::getSpace(domain::Space* d) const{
+    interp::Space *interp = NULL;
     try {
-        interp = domain2interp_VecIdent.at(d);
+        interp = dom2interp_Spaces.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
@@ -43,1011 +32,2017 @@ interp::VecIdent *InterpToDomain::getVecIdent(domain::VecIdent *d) const
     return interp;
 }
 
-void InterpToDomain::putScalarIdent(interp::ScalarIdent *c, domain::ScalarIdent *d)
-{
-    interp2domain_ScalarIdent[c] = d;
-    domain2interp_ScalarIdent[d] = c;
-}
+interp::STMT *InterpToDomain::getSTMT(domain::DomainObject *d) const
+    {
+        interp::STMT *interp = NULL;
+        try {
+            interp = dom2interp_STMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::STMT*)interp;
+    }
+domain::DomainObject *InterpToDomain::getSTMT(interp::STMT *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
 
-// TODO: Decide whether or not these maps can be partial on queried keys
-// As defined here, yes, and asking for a missing key returns NULL
-//
-domain::ScalarIdent *InterpToDomain::getScalarIdent(interp::ScalarIdent *c) const
+void InterpToDomain::putCOMPOUND_STMT(interp::COMPOUND_STMT* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::ScalarIdent*, domain::ScalarIdent*>::iterator it;
-    domain::ScalarIdent *dom = NULL;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseCOMPOUND_STMT(interp::COMPOUND_STMT* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getCOMPOUND_STMT(interp::COMPOUND_STMT* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_ScalarIdent.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return dom;
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::ScalarIdent *InterpToDomain::getScalarIdent(domain::ScalarIdent *d) const
+interp::COMPOUND_STMT* InterpToDomain::getCOMPOUND_STMT(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::ScalarIdent*, interp::ScalarIdent*>::iterator it;
-    interp::ScalarIdent *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_ScalarIdent.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return interp;
+    return static_cast<interp::COMPOUND_STMT*>(interp);
 }
 
+interp::IFCOND *InterpToDomain::getIFCOND(domain::DomainObject *d) const
+    {
+        interp::STMT *interp = NULL;
+        try {
+            interp = dom2interp_STMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::IFCOND*)interp;
+    }
+domain::DomainObject *InterpToDomain::getIFCOND(interp::IFCOND *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
 
-void InterpToDomain::putTransformIdent(interp::TransformIdent *c, domain::TransformIdent *d)
+void InterpToDomain::putIFTHEN_EXPR_STMT(interp::IFTHEN_EXPR_STMT* i, domain::DomainObject* d)
 {
-    interp2domain_TransformIdent[c] = d;
-    domain2interp_TransformIdent[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-// TODO: Decide whether or not these maps can be partial on queried keys
-// As defined here, yes, and asking for a missing key returns NULL
-//
-domain::TransformIdent *InterpToDomain::getTransformIdent(interp::TransformIdent *c) const
+void InterpToDomain::eraseIFTHEN_EXPR_STMT(interp::IFTHEN_EXPR_STMT* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::TransformIdent*, domain::TransformIdent*>::iterator it;
-    domain::TransformIdent *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getIFTHEN_EXPR_STMT(interp::IFTHEN_EXPR_STMT* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_TransformIdent.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return dom;
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::TransformIdent *InterpToDomain::getTransformIdent(domain::TransformIdent *d) const
+interp::IFTHEN_EXPR_STMT* InterpToDomain::getIFTHEN_EXPR_STMT(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::TransformIdent*, interp::TransformIdent*>::iterator it;
-    interp::TransformIdent *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_TransformIdent.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return interp;
+    return static_cast<interp::IFTHEN_EXPR_STMT*>(interp);
 }
 
-// Expr
-
-// base
-
-domain::VecExpr *InterpToDomain::getVecExpr(interp::VecExpr *c) const
+void InterpToDomain::putIFTHENELSEIF_EXPR_STMT_IFCOND(interp::IFTHENELSEIF_EXPR_STMT_IFCOND* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
-    domain::VecExpr *dom = NULL;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseIFTHENELSEIF_EXPR_STMT_IFCOND(interp::IFTHENELSEIF_EXPR_STMT_IFCOND* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getIFTHENELSEIF_EXPR_STMT_IFCOND(interp::IFTHENELSEIF_EXPR_STMT_IFCOND* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_VecExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return dom;
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::VecExpr *InterpToDomain::getVecExpr(domain::VecExpr *d) const
+interp::IFTHENELSEIF_EXPR_STMT_IFCOND* InterpToDomain::getIFTHENELSEIF_EXPR_STMT_IFCOND(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
-    interp::VecExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_VecExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return interp;
+    return static_cast<interp::IFTHENELSEIF_EXPR_STMT_IFCOND*>(interp);
 }
 
-domain::ScalarExpr *InterpToDomain::getScalarExpr(interp::ScalarExpr *c) const
+void InterpToDomain::putIFTHENELSE_EXPR_STMT_STMT(interp::IFTHENELSE_EXPR_STMT_STMT* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
-    domain::ScalarExpr *dom = NULL;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseIFTHENELSE_EXPR_STMT_STMT(interp::IFTHENELSE_EXPR_STMT_STMT* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getIFTHENELSE_EXPR_STMT_STMT(interp::IFTHENELSE_EXPR_STMT_STMT* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_ScalarExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return dom;
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::ScalarExpr *InterpToDomain::getScalarExpr(domain::ScalarExpr *d) const
+interp::IFTHENELSE_EXPR_STMT_STMT* InterpToDomain::getIFTHENELSE_EXPR_STMT_STMT(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
-    interp::ScalarExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_ScalarExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return interp;
+    return static_cast<interp::IFTHENELSE_EXPR_STMT_STMT*>(interp);
 }
 
-domain::TransformExpr *InterpToDomain::getTransformExpr(interp::TransformExpr *c) const
+interp::EXPR *InterpToDomain::getEXPR(domain::DomainObject *d) const
+    {
+        interp::STMT *interp = NULL;
+        try {
+            interp = dom2interp_STMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::EXPR*)interp;
+    }
+domain::DomainObject *InterpToDomain::getEXPR(interp::EXPR *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+interp::ASSIGNMENT *InterpToDomain::getASSIGNMENT(domain::DomainObject *d) const
+    {
+        interp::STMT *interp = NULL;
+        try {
+            interp = dom2interp_STMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::ASSIGNMENT*)interp;
+    }
+domain::DomainObject *InterpToDomain::getASSIGNMENT(interp::ASSIGNMENT *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putASSIGN_REAL1_VAR_REAL1_EXPR(interp::ASSIGN_REAL1_VAR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::TransformExpr*, domain::TransformExpr*>::iterator it;
-    domain::TransformExpr *dom = NULL;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseASSIGN_REAL1_VAR_REAL1_EXPR(interp::ASSIGN_REAL1_VAR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getASSIGN_REAL1_VAR_REAL1_EXPR(interp::ASSIGN_REAL1_VAR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_TransformExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return dom;
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::TransformExpr *InterpToDomain::getTransformExpr(domain::TransformExpr *d) const
+interp::ASSIGN_REAL1_VAR_REAL1_EXPR* InterpToDomain::getASSIGN_REAL1_VAR_REAL1_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::TransformExpr*, interp::TransformExpr*>::iterator it;
-    interp::TransformExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_TransformExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return interp;
+    return static_cast<interp::ASSIGN_REAL1_VAR_REAL1_EXPR*>(interp);
 }
 
-
-// var
-
-void InterpToDomain::putVecVarExpr(interp::VecVarExpr *c, domain::VecVarExpr *d)
+void InterpToDomain::putASSIGN_REAL3_VAR_REAL3_EXPR(interp::ASSIGN_REAL3_VAR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_VecExpr[c] = d;
-    domain2interp_VecExpr[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::VecVarExpr *InterpToDomain::getVecVarExpr(interp::VecVarExpr *c) const
+void InterpToDomain::eraseASSIGN_REAL3_VAR_REAL3_EXPR(interp::ASSIGN_REAL3_VAR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
-    domain::VecExpr *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getASSIGN_REAL3_VAR_REAL3_EXPR(interp::ASSIGN_REAL3_VAR_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_VecExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::VecVarExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::VecVarExpr *InterpToDomain::getVecVarExpr(domain::VecVarExpr *d) const
+interp::ASSIGN_REAL3_VAR_REAL3_EXPR* InterpToDomain::getASSIGN_REAL3_VAR_REAL3_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
-    interp::VecExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_VecExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::VecVarExpr *>(interp);
+    return static_cast<interp::ASSIGN_REAL3_VAR_REAL3_EXPR*>(interp);
 }
 
-void InterpToDomain::putScalarVarExpr(interp::ScalarVarExpr *c, domain::ScalarVarExpr *d)
+void InterpToDomain::putASSIGN_REAL4_VAR_REAL4_EXPR(interp::ASSIGN_REAL4_VAR_REAL4_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_ScalarExpr[c] = d;
-    domain2interp_ScalarExpr[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::ScalarVarExpr *InterpToDomain::getScalarVarExpr(interp::ScalarVarExpr *c) const
+void InterpToDomain::eraseASSIGN_REAL4_VAR_REAL4_EXPR(interp::ASSIGN_REAL4_VAR_REAL4_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
-    domain::ScalarExpr *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getASSIGN_REAL4_VAR_REAL4_EXPR(interp::ASSIGN_REAL4_VAR_REAL4_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_ScalarExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::ScalarVarExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::ScalarVarExpr *InterpToDomain::getScalarVarExpr(domain::ScalarVarExpr *d) const
+interp::ASSIGN_REAL4_VAR_REAL4_EXPR* InterpToDomain::getASSIGN_REAL4_VAR_REAL4_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
-    interp::ScalarExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_ScalarExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::ScalarVarExpr *>(interp);
+    return static_cast<interp::ASSIGN_REAL4_VAR_REAL4_EXPR*>(interp);
 }
 
-
-void InterpToDomain::putTransformVarExpr(interp::TransformVarExpr *c, domain::TransformVarExpr *d)
+void InterpToDomain::putASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_TransformExpr[c] = d;
-    domain2interp_TransformExpr[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::TransformVarExpr *InterpToDomain::getTransformVarExpr(interp::TransformVarExpr *c) const
+void InterpToDomain::eraseASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::TransformExpr*, domain::TransformExpr*>::iterator it;
-    domain::TransformExpr *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_TransformExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::TransformVarExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::TransformVarExpr *InterpToDomain::getTransformVarExpr(domain::TransformVarExpr *d) const
+interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* InterpToDomain::getASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::TransformExpr*, interp::TransformExpr*>::iterator it;
-    interp::TransformExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_TransformExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::TransformVarExpr *>(interp);
+    return static_cast<interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR*>(interp);
 }
 
-// vecvecadd
+interp::DECLARE *InterpToDomain::getDECLARE(domain::DomainObject *d) const
+    {
+        interp::STMT *interp = NULL;
+        try {
+            interp = dom2interp_STMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::DECLARE*)interp;
+    }
+domain::DomainObject *InterpToDomain::getDECLARE(interp::DECLARE *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
 
-void InterpToDomain::putVecVecAddExpr(interp::VecVecAddExpr *c, domain::VecVecAddExpr *d)
+void InterpToDomain::putDECL_REAL1_VAR_REAL1_EXPR(interp::DECL_REAL1_VAR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_VecExpr[c] = d;
-    domain2interp_VecExpr[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::VecVecAddExpr *InterpToDomain::getVecVecAddExpr(interp::VecVecAddExpr *c) const
+void InterpToDomain::eraseDECL_REAL1_VAR_REAL1_EXPR(interp::DECL_REAL1_VAR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
-    domain::VecExpr *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REAL1_VAR_REAL1_EXPR(interp::DECL_REAL1_VAR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_VecExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::VecVecAddExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::VecVecAddExpr *InterpToDomain::getVecVecAddExpr(domain::VecVecAddExpr *d) const
+interp::DECL_REAL1_VAR_REAL1_EXPR* InterpToDomain::getDECL_REAL1_VAR_REAL1_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
-    interp::VecExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_VecExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::VecVecAddExpr *>(interp);
+    return static_cast<interp::DECL_REAL1_VAR_REAL1_EXPR*>(interp);
 }
 
-void InterpToDomain::putVecScalarMulExpr(interp::VecScalarMulExpr *c, domain::VecScalarMulExpr *d)
+void InterpToDomain::putDECL_REAL3_VAR_REAL3_EXPR(interp::DECL_REAL3_VAR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_VecExpr[c] = d;
-    domain2interp_VecExpr[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::VecScalarMulExpr *InterpToDomain::getVecScalarMulExpr(interp::VecScalarMulExpr *c) const
+void InterpToDomain::eraseDECL_REAL3_VAR_REAL3_EXPR(interp::DECL_REAL3_VAR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
-    domain::VecExpr *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REAL3_VAR_REAL3_EXPR(interp::DECL_REAL3_VAR_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_VecExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::VecScalarMulExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::VecScalarMulExpr *InterpToDomain::getVecScalarMulExpr(domain::VecScalarMulExpr *d) const
+interp::DECL_REAL3_VAR_REAL3_EXPR* InterpToDomain::getDECL_REAL3_VAR_REAL3_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
-    interp::VecExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_VecExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::VecScalarMulExpr *>(interp);
+    return static_cast<interp::DECL_REAL3_VAR_REAL3_EXPR*>(interp);
 }
 
-
-void InterpToDomain::putTransformVecApplyExpr(interp::TransformVecApplyExpr *c, domain::TransformVecApplyExpr *d)
+void InterpToDomain::putDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_VecExpr[c] = d;
-    domain2interp_VecExpr[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::TransformVecApplyExpr *InterpToDomain::getTransformVecApplyExpr(interp::TransformVecApplyExpr *c) const
+void InterpToDomain::eraseDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
-    domain::VecExpr *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_VecExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::TransformVecApplyExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::TransformVecApplyExpr *InterpToDomain::getTransformVecApplyExpr(domain::TransformVecApplyExpr *d) const
+interp::DECL_REAL4_VAR_REAL4_EXPR* InterpToDomain::getDECL_REAL4_VAR_REAL4_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
-    interp::VecExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_VecExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::TransformVecApplyExpr *>(interp);
+    return static_cast<interp::DECL_REAL4_VAR_REAL4_EXPR*>(interp);
 }
 
-
-void InterpToDomain::putScalarScalarAddExpr(interp::ScalarScalarAddExpr *c, domain::ScalarScalarAddExpr *d)
+void InterpToDomain::putDECL_REALMATRIX_VAR_REALMATRIX_EXPR(interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_ScalarExpr[c] = d;
-    domain2interp_ScalarExpr[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::ScalarScalarAddExpr *InterpToDomain::getScalarScalarAddExpr(interp::ScalarScalarAddExpr *c) const
+void InterpToDomain::eraseDECL_REALMATRIX_VAR_REALMATRIX_EXPR(interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
-    domain::ScalarExpr *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REALMATRIX_VAR_REALMATRIX_EXPR(interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_ScalarExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::ScalarScalarAddExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::ScalarScalarAddExpr *InterpToDomain::getScalarScalarAddExpr(domain::ScalarScalarAddExpr *d) const
+interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* InterpToDomain::getDECL_REALMATRIX_VAR_REALMATRIX_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
-    interp::ScalarExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_ScalarExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::ScalarScalarAddExpr *>(interp);
+    return static_cast<interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR*>(interp);
 }
 
-
-void InterpToDomain::putScalarScalarMulExpr(interp::ScalarScalarMulExpr *c, domain::ScalarScalarMulExpr *d)
+void InterpToDomain::putDECL_REAL1_VAR(interp::DECL_REAL1_VAR* i, domain::DomainObject* d)
 {
-    interp2domain_ScalarExpr[c] = d;
-    domain2interp_ScalarExpr[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::ScalarScalarMulExpr *InterpToDomain::getScalarScalarMulExpr(interp::ScalarScalarMulExpr *c) const
+void InterpToDomain::eraseDECL_REAL1_VAR(interp::DECL_REAL1_VAR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
-    domain::ScalarExpr *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REAL1_VAR(interp::DECL_REAL1_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_ScalarExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::ScalarScalarMulExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::ScalarScalarMulExpr *InterpToDomain::getScalarScalarMulExpr(domain::ScalarScalarMulExpr *d) const
+interp::DECL_REAL1_VAR* InterpToDomain::getDECL_REAL1_VAR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
-    interp::ScalarExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_ScalarExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::ScalarScalarMulExpr *>(interp);
+    return static_cast<interp::DECL_REAL1_VAR*>(interp);
 }
 
-void InterpToDomain::putTransformTransformComposeExpr(interp::TransformTransformComposeExpr *c, domain::TransformTransformComposeExpr *d)
+void InterpToDomain::putDECL_REAL3_VAR(interp::DECL_REAL3_VAR* i, domain::DomainObject* d)
 {
-    interp2domain_TransformExpr[c] = d;
-    domain2interp_TransformExpr[d] = c;
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::TransformTransformComposeExpr *InterpToDomain::getTransformTransformComposeExpr(interp::TransformTransformComposeExpr *c) const
+void InterpToDomain::eraseDECL_REAL3_VAR(interp::DECL_REAL3_VAR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::TransformExpr*, domain::TransformExpr*>::iterator it;
-    domain::TransformExpr *dom = NULL;
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REAL3_VAR(interp::DECL_REAL3_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_TransformExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::TransformTransformComposeExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::TransformTransformComposeExpr *InterpToDomain::getTransformTransformComposeExpr(domain::TransformTransformComposeExpr *d) const
+interp::DECL_REAL3_VAR* InterpToDomain::getDECL_REAL3_VAR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::TransformExpr*, interp::TransformExpr*>::iterator it;
-    interp::TransformExpr *interp = NULL;
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_TransformExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::TransformTransformComposeExpr *>(interp);
+    return static_cast<interp::DECL_REAL3_VAR*>(interp);
 }
 
-
-void InterpToDomain::putVecParenExpr(interp::VecParenExpr *c, domain::VecParenExpr *d) {
-    interp2domain_VecExpr[c] = d;
-    domain2interp_VecExpr[d] = c;
-
+void InterpToDomain::putDECL_REAL4_VAR(interp::DECL_REAL4_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::VecParenExpr *InterpToDomain::getVecParenExpr(interp::VecParenExpr* c) const {
-    std::unordered_map<interp::VecExpr*, domain::VecExpr*>::iterator it;
-    domain::VecExpr *dom = NULL;
+void InterpToDomain::eraseDECL_REAL4_VAR(interp::DECL_REAL4_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REAL4_VAR(interp::DECL_REAL4_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_VecExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::VecParenExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::VecParenExpr *InterpToDomain::getVecParenExpr(domain::VecParenExpr* d) const {
-    std::unordered_map<domain::VecExpr*, interp::VecExpr*>::iterator it;
-    interp::VecExpr *interp = NULL;
+interp::DECL_REAL4_VAR* InterpToDomain::getDECL_REAL4_VAR(domain::DomainObject* d) const
+{
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_VecExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::VecParenExpr *>(interp);
+    return static_cast<interp::DECL_REAL4_VAR*>(interp);
 }
 
-
-void InterpToDomain::putScalarParenExpr(interp::ScalarParenExpr *c, domain::ScalarParenExpr *d) {
-    interp2domain_ScalarExpr[c] = d;
-    domain2interp_ScalarExpr[d] = c;
-
+void InterpToDomain::putDECL_REALMATRIX_VAR(interp::DECL_REALMATRIX_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
 }
-
-domain::ScalarParenExpr *InterpToDomain::getScalarParenExpr(interp::ScalarParenExpr* c) const {
-    std::unordered_map<interp::ScalarExpr*, domain::ScalarExpr*>::iterator it;
-    domain::ScalarExpr *dom = NULL;
+void InterpToDomain::eraseDECL_REALMATRIX_VAR(interp::DECL_REALMATRIX_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REALMATRIX_VAR(interp::DECL_REALMATRIX_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_ScalarExpr.at(c);
+        dom = interp2dom_STMT.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::ScalarParenExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::ScalarParenExpr *InterpToDomain::getScalarParenExpr(domain::ScalarParenExpr* d) const {
-    std::unordered_map<domain::ScalarExpr*, interp::ScalarExpr*>::iterator it;
-    interp::ScalarExpr *interp = NULL;
+interp::DECL_REALMATRIX_VAR* InterpToDomain::getDECL_REALMATRIX_VAR(domain::DomainObject* d) const
+{
+    interp::STMT *interp = NULL;
     try {
-        interp = domain2interp_ScalarExpr.at(d);
+        interp = dom2interp_STMT.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::ScalarParenExpr *>(interp);
+    return static_cast<interp::DECL_REALMATRIX_VAR*>(interp);
 }
 
+interp::REAL1_EXPR *InterpToDomain::getREAL1_EXPR(domain::DomainObject *d) const
+    {
+        interp::REAL1_EXPR *interp = NULL;
+        try {
+            interp = dom2interp_REAL1_EXPR.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REAL1_EXPR*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREAL1_EXPR(interp::REAL1_EXPR *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_REAL1_EXPR.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
 
-
-void InterpToDomain::putTransformParenExpr(interp::TransformParenExpr *c, domain::TransformParenExpr *d) {
-    interp2domain_TransformExpr[c] = d;
-    domain2interp_TransformExpr[d] = c;
-
+void InterpToDomain::putPAREN_REAL1_EXPR(interp::PAREN_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR[i] = d;
+    dom2interp_REAL1_EXPR[d] = i;
 }
-
-domain::TransformParenExpr *InterpToDomain::getTransformParenExpr(interp::TransformParenExpr* c) const {
-    std::unordered_map<interp::TransformExpr*, domain::TransformExpr*>::iterator it;
-    domain::TransformExpr *dom = NULL;
+void InterpToDomain::erasePAREN_REAL1_EXPR(interp::PAREN_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR.erase(i);
+    dom2interp_REAL1_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getPAREN_REAL1_EXPR(interp::PAREN_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_TransformExpr.at(c);
+        dom = interp2dom_REAL1_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::TransformParenExpr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::TransformParenExpr *InterpToDomain::getTransformParenExpr(domain::TransformParenExpr* d) const {
-    std::unordered_map<domain::TransformExpr*, interp::TransformExpr*>::iterator it;
-    interp::TransformExpr *interp = NULL;
+interp::PAREN_REAL1_EXPR* InterpToDomain::getPAREN_REAL1_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL1_EXPR *interp = NULL;
     try {
-        interp = domain2interp_TransformExpr.at(d);
+        interp = dom2interp_REAL1_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::TransformParenExpr *>(interp);
+    return static_cast<interp::PAREN_REAL1_EXPR*>(interp);
 }
 
-
-
-// Vector
-
-interp::Vector *InterpToDomain::getVector(domain::Vector* v) {
-    std::unordered_map<domain::Vector*, interp::Vector*>::iterator it;
-    interp::Vector *interp = NULL;
+void InterpToDomain::putINV_REAL1_EXPR(interp::INV_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR[i] = d;
+    dom2interp_REAL1_EXPR[d] = i;
+}
+void InterpToDomain::eraseINV_REAL1_EXPR(interp::INV_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR.erase(i);
+    dom2interp_REAL1_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getINV_REAL1_EXPR(interp::INV_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        interp = domain2interp_Vector.at(v);
+        dom = interp2dom_REAL1_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::INV_REAL1_EXPR* InterpToDomain::getINV_REAL1_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL1_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL1_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Vector *>(interp);
+    return static_cast<interp::INV_REAL1_EXPR*>(interp);
 }
 
-domain::Vector *InterpToDomain::getVector(interp::Vector* v) {
-    std::unordered_map<interp::Vector*, domain::Vector*>::iterator it;
-    domain::Vector *domvec = NULL;
+void InterpToDomain::putNEG_REAL1_EXPR(interp::NEG_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR[i] = d;
+    dom2interp_REAL1_EXPR[d] = i;
+}
+void InterpToDomain::eraseNEG_REAL1_EXPR(interp::NEG_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR.erase(i);
+    dom2interp_REAL1_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getNEG_REAL1_EXPR(interp::NEG_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        domvec = interp2domain_Vector.at(v);
+        dom = interp2dom_REAL1_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
-        domvec = NULL;
+        dom = NULL;
     }
-    return static_cast<domain::Vector *>(domvec);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Scalar *InterpToDomain::getScalar(domain::Scalar* v) {
-    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
-    interp::Scalar *interp = NULL;
+interp::NEG_REAL1_EXPR* InterpToDomain::getNEG_REAL1_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL1_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Scalar.at(v);
+        interp = dom2interp_REAL1_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Scalar *>(interp);
+    return static_cast<interp::NEG_REAL1_EXPR*>(interp);
 }
 
-domain::Scalar *InterpToDomain::getScalar(interp::Scalar* v) {
-    std::unordered_map<interp::Scalar*, domain::Scalar*>::iterator it;
-    domain::Scalar *domflt = NULL;
+void InterpToDomain::putADD_REAL1_EXPR_REAL1_EXPR(interp::ADD_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR[i] = d;
+    dom2interp_REAL1_EXPR[d] = i;
+}
+void InterpToDomain::eraseADD_REAL1_EXPR_REAL1_EXPR(interp::ADD_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR.erase(i);
+    dom2interp_REAL1_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getADD_REAL1_EXPR_REAL1_EXPR(interp::ADD_REAL1_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        domflt = interp2domain_Scalar.at(v);
+        dom = interp2dom_REAL1_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
-        domflt = NULL;
+        dom = NULL;
     }
-    return static_cast<domain::Scalar *>(domflt);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Transform *InterpToDomain::getTransform(domain::Transform* v) {
-    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
-    interp::Transform *interp = NULL;
+interp::ADD_REAL1_EXPR_REAL1_EXPR* InterpToDomain::getADD_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL1_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Transform.at(v);
+        interp = dom2interp_REAL1_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Transform *>(interp);
+    return static_cast<interp::ADD_REAL1_EXPR_REAL1_EXPR*>(interp);
 }
 
-domain::Transform *InterpToDomain::getTransform(interp::Transform* v) {
-    std::unordered_map<interp::Transform*, domain::Transform*>::iterator it;
-    domain::Transform *domflt = NULL;
-    try {
-        domflt = interp2domain_Transform.at(v);
-    }
-    catch (std::out_of_range &e) {
-        domflt = NULL;
-    }
-    return static_cast<domain::Transform *>(domflt);
-}
-
-void InterpToDomain::putVector_Lit(interp::Vector *c, domain::Vector_Lit *d)
+void InterpToDomain::putSUB_REAL1_EXPR_REAL1_EXPR(interp::SUB_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Vector[c] = d;
-    domain2interp_Vector[d] = c;
+    interp2dom_REAL1_EXPR[i] = d;
+    dom2interp_REAL1_EXPR[d] = i;
 }
-
-domain::Vector_Lit *InterpToDomain::getVector_Lit(interp::Vector_Lit *c) const
+void InterpToDomain::eraseSUB_REAL1_EXPR_REAL1_EXPR(interp::SUB_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Vector_Lit*, domain::Vector_Lit*>::iterator it;
-    domain::Vector *dom = NULL;
+    interp2dom_REAL1_EXPR.erase(i);
+    dom2interp_REAL1_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getSUB_REAL1_EXPR_REAL1_EXPR(interp::SUB_REAL1_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Vector.at(c);
+        dom = interp2dom_REAL1_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Vector_Lit*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Vector_Lit *InterpToDomain::getVector_Lit(domain::Vector_Lit *d) const
+interp::SUB_REAL1_EXPR_REAL1_EXPR* InterpToDomain::getSUB_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Vector*, interp::Vector*>::iterator it;
-    interp::Vector *interp = NULL;
+    interp::REAL1_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Vector.at(d);
+        interp = dom2interp_REAL1_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Vector_Lit *>(interp);
+    return static_cast<interp::SUB_REAL1_EXPR_REAL1_EXPR*>(interp);
 }
 
-void InterpToDomain::putScalar_Lit(interp::Scalar *c, domain::Scalar_Lit *d)
+void InterpToDomain::putMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Scalar[c] = d;
-    domain2interp_Scalar[d] = c;
+    interp2dom_REAL1_EXPR[i] = d;
+    dom2interp_REAL1_EXPR[d] = i;
 }
-
-domain::Scalar_Lit *InterpToDomain::getScalar_Lit(interp::Scalar_Lit *c) const
+void InterpToDomain::eraseMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Scalar_Lit*, domain::Scalar_Lit*>::iterator it;
-    domain::Scalar *dom = NULL;
+    interp2dom_REAL1_EXPR.erase(i);
+    dom2interp_REAL1_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Scalar.at(c);
+        dom = interp2dom_REAL1_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Scalar_Lit*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Scalar_Lit *InterpToDomain::getScalar_Lit(domain::Scalar_Lit *d) const
+interp::MUL_REAL1_EXPR_REAL1_EXPR* InterpToDomain::getMUL_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
-    interp::Scalar *interp = NULL;
+    interp::REAL1_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Scalar.at(d);
+        interp = dom2interp_REAL1_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Scalar_Lit *>(interp);
+    return static_cast<interp::MUL_REAL1_EXPR_REAL1_EXPR*>(interp);
 }
 
-void InterpToDomain::putTransform_Lit(interp::Transform *c, domain::Transform_Lit *d)
+void InterpToDomain::putDIV_REAL1_EXPR_REAL1_EXPR(interp::DIV_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Transform[c] = d;
-    domain2interp_Transform[d] = c;
+    interp2dom_REAL1_EXPR[i] = d;
+    dom2interp_REAL1_EXPR[d] = i;
 }
-
-domain::Transform_Lit *InterpToDomain::getTransform_Lit(interp::Transform_Lit *c) const
+void InterpToDomain::eraseDIV_REAL1_EXPR_REAL1_EXPR(interp::DIV_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Transform_Lit*, domain::Transform_Lit*>::iterator it;
-    domain::Transform *dom = NULL;
+    interp2dom_REAL1_EXPR.erase(i);
+    dom2interp_REAL1_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDIV_REAL1_EXPR_REAL1_EXPR(interp::DIV_REAL1_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Transform.at(c);
+        dom = interp2dom_REAL1_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Transform_Lit*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Transform_Lit *InterpToDomain::getTransform_Lit(domain::Transform_Lit *d) const
+interp::DIV_REAL1_EXPR_REAL1_EXPR* InterpToDomain::getDIV_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
-    interp::Transform *interp = NULL;
+    interp::REAL1_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Transform.at(d);
+        interp = dom2interp_REAL1_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Transform_Lit *>(interp);
+    return static_cast<interp::DIV_REAL1_EXPR_REAL1_EXPR*>(interp);
 }
 
-
-
-void InterpToDomain::putVector_Expr(interp::Vector *c, domain::Vector_Expr *d)
+void InterpToDomain::putREF_REAL1_VAR(interp::REF_REAL1_VAR* i, domain::DomainObject* d)
 {
-    interp2domain_Vector[c] = d;
-    domain2interp_Vector[d] = c;
+    interp2dom_REAL1_EXPR[i] = d;
+    dom2interp_REAL1_EXPR[d] = i;
 }
-
-domain::Vector_Expr *InterpToDomain::getVector_Expr(interp::Vector_Expr *c) const
+void InterpToDomain::eraseREF_REAL1_VAR(interp::REF_REAL1_VAR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Vector_Expr*, domain::Vector_Expr*>::iterator it;
-    domain::Vector *dom = NULL;
+    interp2dom_REAL1_EXPR.erase(i);
+    dom2interp_REAL1_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREF_REAL1_VAR(interp::REF_REAL1_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Vector.at(c);
+        dom = interp2dom_REAL1_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Vector_Expr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Vector_Expr *InterpToDomain::getVector_Expr(domain::Vector_Expr *d) const
+interp::REF_REAL1_VAR* InterpToDomain::getREF_REAL1_VAR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Vector*, interp::Vector*>::iterator it;
-    interp::Vector *interp = NULL;
+    interp::REAL1_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Vector.at(d);
+        interp = dom2interp_REAL1_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Vector_Expr *>(interp);
+    return static_cast<interp::REF_REAL1_VAR*>(interp);
 }
 
-void InterpToDomain::putScalar_Expr(interp::Scalar *c, domain::Scalar_Expr *d)
-{
-    interp2domain_Scalar[c] = d;
-    domain2interp_Scalar[d] = c;
-}
+interp::REAL3_EXPR *InterpToDomain::getREAL3_EXPR(domain::DomainObject *d) const
+    {
+        interp::REAL3_EXPR *interp = NULL;
+        try {
+            interp = dom2interp_REAL3_EXPR.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REAL3_EXPR*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREAL3_EXPR(interp::REAL3_EXPR *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_REAL3_EXPR.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
 
-domain::Scalar_Expr *InterpToDomain::getScalar_Expr(interp::Scalar_Expr *c) const
+void InterpToDomain::putPAREN_REAL3_EXPR(interp::PAREN_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Scalar_Expr*, domain::Scalar_Expr*>::iterator it;
-    domain::Scalar *dom = NULL;
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
+}
+void InterpToDomain::erasePAREN_REAL3_EXPR(interp::PAREN_REAL3_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getPAREN_REAL3_EXPR(interp::PAREN_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Scalar.at(c);
+        dom = interp2dom_REAL3_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Scalar_Expr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Scalar_Expr *InterpToDomain::getScalar_Expr(domain::Scalar_Expr *d) const
+interp::PAREN_REAL3_EXPR* InterpToDomain::getPAREN_REAL3_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
-    interp::Scalar *interp = NULL;
+    interp::REAL3_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Scalar.at(d);
+        interp = dom2interp_REAL3_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Scalar_Expr *>(interp);
+    return static_cast<interp::PAREN_REAL3_EXPR*>(interp);
 }
 
-
-void InterpToDomain::putTransform_Expr(interp::Transform *c, domain::Transform_Expr *d)
+void InterpToDomain::putADD_REAL3_EXPR_REAL3_EXPR(interp::ADD_REAL3_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Transform[c] = d;
-    domain2interp_Transform[d] = c;
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
 }
-
-domain::Transform_Expr *InterpToDomain::getTransform_Expr(interp::Transform_Expr *c) const
+void InterpToDomain::eraseADD_REAL3_EXPR_REAL3_EXPR(interp::ADD_REAL3_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Transform_Expr*, domain::Transform_Expr*>::iterator it;
-    domain::Transform *dom = NULL;
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getADD_REAL3_EXPR_REAL3_EXPR(interp::ADD_REAL3_EXPR_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Transform.at(c);
+        dom = interp2dom_REAL3_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Transform_Expr*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Transform_Expr *InterpToDomain::getTransform_Expr(domain::Transform_Expr *d) const
+interp::ADD_REAL3_EXPR_REAL3_EXPR* InterpToDomain::getADD_REAL3_EXPR_REAL3_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
-    interp::Transform *interp = NULL;
+    interp::REAL3_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Transform.at(d);
+        interp = dom2interp_REAL3_EXPR.at(d);
     }
     catch (std::out_of_range &e) {
         interp = NULL;
     }
-    return static_cast<interp::Transform_Expr *>(interp);
+    return static_cast<interp::ADD_REAL3_EXPR_REAL3_EXPR*>(interp);
 }
 
-
-// Def
-
-void InterpToDomain::putVector_Def(interp::Vector_Def *c, domain::Vector_Def *d)
+void InterpToDomain::putSUB_REAL3_EXPR_REAL3_EXPR(interp::SUB_REAL3_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Vector_Def[c] = d;
-    domain2interp_Vector_Def[d] = c;
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
 }
-
-domain::Vector_Def *InterpToDomain::getVector_Def(interp::Vector_Def *c) const
+void InterpToDomain::eraseSUB_REAL3_EXPR_REAL3_EXPR(interp::SUB_REAL3_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Vector_Def*, domain::Vector_Def*>::iterator it;
-    domain::Vector_Def *dom = NULL;
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getSUB_REAL3_EXPR_REAL3_EXPR(interp::SUB_REAL3_EXPR_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Vector_Def.at(c);
+        dom = interp2dom_REAL3_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Vector_Def*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Vector_Def *InterpToDomain::getVector_Def(domain::Vector_Def *d) const
+interp::SUB_REAL3_EXPR_REAL3_EXPR* InterpToDomain::getSUB_REAL3_EXPR_REAL3_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Vector*, interp::Vector*>::iterator it;
-    interp::Vector_Def *interp = NULL;
+    interp::REAL3_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Vector_Def.at(d);
-    } catch (std::out_of_range &e) {
-      interp = NULL;
+        interp = dom2interp_REAL3_EXPR.at(d);
     }
-    return static_cast<interp::Vector_Def *>(interp);
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::SUB_REAL3_EXPR_REAL3_EXPR*>(interp);
 }
 
-
-void InterpToDomain::putScalar_Def(interp::Scalar_Def *c, domain::Scalar_Def *d)
+void InterpToDomain::putINV_REAL3_EXPR(interp::INV_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Scalar_Def[c] = d;
-    domain2interp_Scalar_Def[d] = c;
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
 }
-
-domain::Scalar_Def *InterpToDomain::getScalar_Def(interp::Scalar_Def *c) const
+void InterpToDomain::eraseINV_REAL3_EXPR(interp::INV_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Scalar_Def*, domain::Scalar_Def*>::iterator it;
-    domain::Scalar_Def *dom = NULL;
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getINV_REAL3_EXPR(interp::INV_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Scalar_Def.at(c);
+        dom = interp2dom_REAL3_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Scalar_Def*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Scalar_Def *InterpToDomain::getScalar_Def(domain::Scalar_Def *d) const
+interp::INV_REAL3_EXPR* InterpToDomain::getINV_REAL3_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
-    interp::Scalar_Def *interp = NULL;
+    interp::REAL3_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Scalar_Def.at(d);
-    } catch (std::out_of_range &e) {
-      interp = NULL;
+        interp = dom2interp_REAL3_EXPR.at(d);
     }
-    return static_cast<interp::Scalar_Def *>(interp);
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::INV_REAL3_EXPR*>(interp);
 }
 
-
-void InterpToDomain::putTransform_Def(interp::Transform_Def *c, domain::Transform_Def *d)
+void InterpToDomain::putNEG_REAL3_EXPR(interp::NEG_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Transform_Def[c] = d;
-    domain2interp_Transform_Def[d] = c;
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
 }
-
-domain::Transform_Def *InterpToDomain::getTransform_Def(interp::Transform_Def *c) const
+void InterpToDomain::eraseNEG_REAL3_EXPR(interp::NEG_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Transform_Def*, domain::Transform_Def*>::iterator it;
-    domain::Transform_Def *dom = NULL;
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getNEG_REAL3_EXPR(interp::NEG_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Transform_Def.at(c);
+        dom = interp2dom_REAL3_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Transform_Def*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Transform_Def *InterpToDomain::getTransform_Def(domain::Transform_Def *d) const
+interp::NEG_REAL3_EXPR* InterpToDomain::getNEG_REAL3_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
-    interp::Transform_Def *interp = NULL;
+    interp::REAL3_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Transform_Def.at(d);
-    } catch (std::out_of_range &e) {
-      interp = NULL;
+        interp = dom2interp_REAL3_EXPR.at(d);
     }
-    return static_cast<interp::Transform_Def *>(interp);
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::NEG_REAL3_EXPR*>(interp);
 }
 
-
-
-void InterpToDomain::putVector_Assign(interp::Vector_Assign *c, domain::Vector_Assign *d)
+void InterpToDomain::putMUL_REAL3_EXPR_REAL1_EXPR(interp::MUL_REAL3_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Vector_Assign[c] = d;
-    domain2interp_Vector_Assign[d] = c;
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
 }
-
-domain::Vector_Assign *InterpToDomain::getVector_Assign(interp::Vector_Assign *c) const
+void InterpToDomain::eraseMUL_REAL3_EXPR_REAL1_EXPR(interp::MUL_REAL3_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Vector_Assign*, domain::Vector_Assign*>::iterator it;
-    domain::Vector_Assign *dom = NULL;
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getMUL_REAL3_EXPR_REAL1_EXPR(interp::MUL_REAL3_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Vector_Assign.at(c);
+        dom = interp2dom_REAL3_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Vector_Assign*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Vector_Assign *InterpToDomain::getVector_Assign(domain::Vector_Assign *d) const
+interp::MUL_REAL3_EXPR_REAL1_EXPR* InterpToDomain::getMUL_REAL3_EXPR_REAL1_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Vector*, interp::Vector*>::iterator it;
-    interp::Vector_Assign *interp = NULL;
+    interp::REAL3_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Vector_Assign.at(d);
-    } catch (std::out_of_range &e) {
-      interp = NULL;
+        interp = dom2interp_REAL3_EXPR.at(d);
     }
-    return static_cast<interp::Vector_Assign *>(interp);
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::MUL_REAL3_EXPR_REAL1_EXPR*>(interp);
 }
 
-
-void InterpToDomain::putScalar_Assign(interp::Scalar_Assign *c, domain::Scalar_Assign *d)
+void InterpToDomain::putMUL_REALMATRIX_EXPR_REAL3_EXPR(interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Scalar_Assign[c] = d;
-    domain2interp_Scalar_Assign[d] = c;
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
 }
-
-domain::Scalar_Assign *InterpToDomain::getScalar_Assign(interp::Scalar_Assign *c) const
+void InterpToDomain::eraseMUL_REALMATRIX_EXPR_REAL3_EXPR(interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Scalar_Assign*, domain::Scalar_Assign*>::iterator it;
-    domain::Scalar_Assign *dom = NULL;
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getMUL_REALMATRIX_EXPR_REAL3_EXPR(interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Scalar_Assign.at(c);
+        dom = interp2dom_REAL3_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Scalar_Assign*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
 }
-
-interp::Scalar_Assign *InterpToDomain::getScalar_Assign(domain::Scalar_Assign *d) const
+interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* InterpToDomain::getMUL_REALMATRIX_EXPR_REAL3_EXPR(domain::DomainObject* d) const
 {
-    std::unordered_map<domain::Scalar*, interp::Scalar*>::iterator it;
-    interp::Scalar_Assign *interp = NULL;
+    interp::REAL3_EXPR *interp = NULL;
     try {
-        interp = domain2interp_Scalar_Assign.at(d);
-    } catch (std::out_of_range &e) {
-      interp = NULL;
+        interp = dom2interp_REAL3_EXPR.at(d);
     }
-    return static_cast<interp::Scalar_Assign *>(interp);
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::MUL_REALMATRIX_EXPR_REAL3_EXPR*>(interp);
 }
 
-void InterpToDomain::putTransform_Assign(interp::Transform_Assign *c, domain::Transform_Assign *d)
+void InterpToDomain::putDIV_REAL3_EXPR_REAL1_EXPR(interp::DIV_REAL3_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    interp2domain_Transform_Assign[c] = d;
-    domain2interp_Transform_Assign[d] = c;
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
 }
-
-domain::Transform_Assign *InterpToDomain::getTransform_Assign(interp::Transform_Assign *c) const
+void InterpToDomain::eraseDIV_REAL3_EXPR_REAL1_EXPR(interp::DIV_REAL3_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
 {
-    std::unordered_map<interp::Transform_Assign*, domain::Transform_Assign*>::iterator it;
-    domain::Transform_Assign *dom = NULL;
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDIV_REAL3_EXPR_REAL1_EXPR(interp::DIV_REAL3_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        dom = interp2domain_Transform_Assign.at(c);
+        dom = interp2dom_REAL3_EXPR.at(i);
     }
     catch (std::out_of_range &e) {
         dom = NULL;
     }
-    return static_cast<domain::Transform_Assign*>(dom);
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::DIV_REAL3_EXPR_REAL1_EXPR* InterpToDomain::getDIV_REAL3_EXPR_REAL1_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL3_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL3_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::DIV_REAL3_EXPR_REAL1_EXPR*>(interp);
 }
 
-interp::Transform_Assign *InterpToDomain::getTransform_Assign(domain::Transform_Assign *d) const
+void InterpToDomain::putREF_REAL3_VAR(interp::REF_REAL3_VAR* i, domain::DomainObject* d)
 {
-    std::unordered_map<domain::Transform*, interp::Transform*>::iterator it;
-    interp::Transform_Assign *interp = NULL;
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
+}
+void InterpToDomain::eraseREF_REAL3_VAR(interp::REF_REAL3_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREF_REAL3_VAR(interp::REF_REAL3_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
     try {
-        interp = domain2interp_Transform_Assign.at(d);
-    } catch (std::out_of_range &e) {
-      interp = NULL;
+        dom = interp2dom_REAL3_EXPR.at(i);
     }
-    return static_cast<interp::Transform_Assign *>(interp);
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REF_REAL3_VAR* InterpToDomain::getREF_REAL3_VAR(domain::DomainObject* d) const
+{
+    interp::REAL3_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL3_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REF_REAL3_VAR*>(interp);
+}
+
+interp::REAL4_EXPR *InterpToDomain::getREAL4_EXPR(domain::DomainObject *d) const
+    {
+        interp::REAL4_EXPR *interp = NULL;
+        try {
+            interp = dom2interp_REAL4_EXPR.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REAL4_EXPR*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREAL4_EXPR(interp::REAL4_EXPR *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_REAL4_EXPR.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putPAREN_REAL4_EXPR(interp::PAREN_REAL4_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR[i] = d;
+    dom2interp_REAL4_EXPR[d] = i;
+}
+void InterpToDomain::erasePAREN_REAL4_EXPR(interp::PAREN_REAL4_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR.erase(i);
+    dom2interp_REAL4_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getPAREN_REAL4_EXPR(interp::PAREN_REAL4_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL4_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::PAREN_REAL4_EXPR* InterpToDomain::getPAREN_REAL4_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL4_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL4_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::PAREN_REAL4_EXPR*>(interp);
+}
+
+void InterpToDomain::putADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR[i] = d;
+    dom2interp_REAL4_EXPR[d] = i;
+}
+void InterpToDomain::eraseADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR.erase(i);
+    dom2interp_REAL4_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL4_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::ADD_REAL4_EXPR_REAL4_EXPR* InterpToDomain::getADD_REAL4_EXPR_REAL4_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL4_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL4_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::ADD_REAL4_EXPR_REAL4_EXPR*>(interp);
+}
+
+void InterpToDomain::putMUL_REAL4_EXPR_REAL1_EXPR(interp::MUL_REAL4_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR[i] = d;
+    dom2interp_REAL4_EXPR[d] = i;
+}
+void InterpToDomain::eraseMUL_REAL4_EXPR_REAL1_EXPR(interp::MUL_REAL4_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR.erase(i);
+    dom2interp_REAL4_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getMUL_REAL4_EXPR_REAL1_EXPR(interp::MUL_REAL4_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL4_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::MUL_REAL4_EXPR_REAL1_EXPR* InterpToDomain::getMUL_REAL4_EXPR_REAL1_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL4_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL4_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::MUL_REAL4_EXPR_REAL1_EXPR*>(interp);
+}
+
+void InterpToDomain::putREF_REAL4_VAR(interp::REF_REAL4_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR[i] = d;
+    dom2interp_REAL4_EXPR[d] = i;
+}
+void InterpToDomain::eraseREF_REAL4_VAR(interp::REF_REAL4_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR.erase(i);
+    dom2interp_REAL4_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREF_REAL4_VAR(interp::REF_REAL4_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL4_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REF_REAL4_VAR* InterpToDomain::getREF_REAL4_VAR(domain::DomainObject* d) const
+{
+    interp::REAL4_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL4_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REF_REAL4_VAR*>(interp);
+}
+
+interp::REALMATRIX_EXPR *InterpToDomain::getREALMATRIX_EXPR(domain::DomainObject *d) const
+    {
+        interp::REALMATRIX_EXPR *interp = NULL;
+        try {
+            interp = dom2interp_REALMATRIX_EXPR.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REALMATRIX_EXPR*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREALMATRIX_EXPR(interp::REALMATRIX_EXPR *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_REALMATRIX_EXPR.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putPAREN_REALMATRIX_EXPR(interp::PAREN_REALMATRIX_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR[i] = d;
+    dom2interp_REALMATRIX_EXPR[d] = i;
+}
+void InterpToDomain::erasePAREN_REALMATRIX_EXPR(interp::PAREN_REALMATRIX_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR.erase(i);
+    dom2interp_REALMATRIX_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getPAREN_REALMATRIX_EXPR(interp::PAREN_REALMATRIX_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REALMATRIX_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::PAREN_REALMATRIX_EXPR* InterpToDomain::getPAREN_REALMATRIX_EXPR(domain::DomainObject* d) const
+{
+    interp::REALMATRIX_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REALMATRIX_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::PAREN_REALMATRIX_EXPR*>(interp);
+}
+
+void InterpToDomain::putMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR[i] = d;
+    dom2interp_REALMATRIX_EXPR[d] = i;
+}
+void InterpToDomain::eraseMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR.erase(i);
+    dom2interp_REALMATRIX_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REALMATRIX_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* InterpToDomain::getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(domain::DomainObject* d) const
+{
+    interp::REALMATRIX_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REALMATRIX_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR*>(interp);
+}
+
+void InterpToDomain::putREF_EXPR_REALMATRIX_VAR(interp::REF_EXPR_REALMATRIX_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR[i] = d;
+    dom2interp_REALMATRIX_EXPR[d] = i;
+}
+void InterpToDomain::eraseREF_EXPR_REALMATRIX_VAR(interp::REF_EXPR_REALMATRIX_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR.erase(i);
+    dom2interp_REALMATRIX_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREF_EXPR_REALMATRIX_VAR(interp::REF_EXPR_REALMATRIX_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REALMATRIX_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REF_EXPR_REALMATRIX_VAR* InterpToDomain::getREF_EXPR_REALMATRIX_VAR(domain::DomainObject* d) const
+{
+    interp::REALMATRIX_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REALMATRIX_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REF_EXPR_REALMATRIX_VAR*>(interp);
+}
+
+void InterpToDomain::putREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_VAR_IDENT[i] = d;
+    dom2interp_REAL1_VAR_IDENT[d] = i;
+}
+void InterpToDomain::eraseREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_VAR_IDENT.erase(i);
+    dom2interp_REAL1_VAR_IDENT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL1_VAR_IDENT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REAL1_VAR_IDENT* InterpToDomain::getREAL1_VAR_IDENT(domain::DomainObject* d) const
+{
+    interp::REAL1_VAR_IDENT *interp = NULL;
+    try {
+        interp = dom2interp_REAL1_VAR_IDENT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REAL1_VAR_IDENT*>(interp);
+}
+
+void InterpToDomain::putREAL3_VAR_IDENT(interp::REAL3_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REAL3_VAR_IDENT[i] = d;
+    dom2interp_REAL3_VAR_IDENT[d] = i;
+}
+void InterpToDomain::eraseREAL3_VAR_IDENT(interp::REAL3_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REAL3_VAR_IDENT.erase(i);
+    dom2interp_REAL3_VAR_IDENT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREAL3_VAR_IDENT(interp::REAL3_VAR_IDENT* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL3_VAR_IDENT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REAL3_VAR_IDENT* InterpToDomain::getREAL3_VAR_IDENT(domain::DomainObject* d) const
+{
+    interp::REAL3_VAR_IDENT *interp = NULL;
+    try {
+        interp = dom2interp_REAL3_VAR_IDENT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REAL3_VAR_IDENT*>(interp);
+}
+
+void InterpToDomain::putREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_VAR_IDENT[i] = d;
+    dom2interp_REAL4_VAR_IDENT[d] = i;
+}
+void InterpToDomain::eraseREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_VAR_IDENT.erase(i);
+    dom2interp_REAL4_VAR_IDENT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL4_VAR_IDENT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REAL4_VAR_IDENT* InterpToDomain::getREAL4_VAR_IDENT(domain::DomainObject* d) const
+{
+    interp::REAL4_VAR_IDENT *interp = NULL;
+    try {
+        interp = dom2interp_REAL4_VAR_IDENT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REAL4_VAR_IDENT*>(interp);
+}
+
+void InterpToDomain::putREALMATRIX_VAR_IDENT(interp::REALMATRIX_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_VAR_IDENT[i] = d;
+    dom2interp_REALMATRIX_VAR_IDENT[d] = i;
+}
+void InterpToDomain::eraseREALMATRIX_VAR_IDENT(interp::REALMATRIX_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_VAR_IDENT.erase(i);
+    dom2interp_REALMATRIX_VAR_IDENT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREALMATRIX_VAR_IDENT(interp::REALMATRIX_VAR_IDENT* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REALMATRIX_VAR_IDENT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REALMATRIX_VAR_IDENT* InterpToDomain::getREALMATRIX_VAR_IDENT(domain::DomainObject* d) const
+{
+    interp::REALMATRIX_VAR_IDENT *interp = NULL;
+    try {
+        interp = dom2interp_REALMATRIX_VAR_IDENT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REALMATRIX_VAR_IDENT*>(interp);
+}
+
+interp::REAL1_LITERAL *InterpToDomain::getREAL1_LITERAL(domain::DomainObject *d) const
+    {
+        interp::REAL1_EXPR *interp = NULL;
+        try {
+            interp = dom2interp_REAL1_EXPR.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REAL1_LITERAL*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREAL1_LITERAL(interp::REAL1_LITERAL *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_REAL1_EXPR.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putREAL1_LITERAL1(interp::REAL1_LITERAL1* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR[i] = d;
+    dom2interp_REAL1_EXPR[d] = i;
+}
+void InterpToDomain::eraseREAL1_LITERAL1(interp::REAL1_LITERAL1* i, domain::DomainObject* d)
+{
+    interp2dom_REAL1_EXPR.erase(i);
+    dom2interp_REAL1_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREAL1_LITERAL1(interp::REAL1_LITERAL1* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL1_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REAL1_LITERAL1* InterpToDomain::getREAL1_LITERAL1(domain::DomainObject* d) const
+{
+    interp::REAL1_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL1_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REAL1_LITERAL1*>(interp);
+}
+
+interp::REAL3_LITERAL *InterpToDomain::getREAL3_LITERAL(domain::DomainObject *d) const
+    {
+        interp::REAL3_EXPR *interp = NULL;
+        try {
+            interp = dom2interp_REAL3_EXPR.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REAL3_LITERAL*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREAL3_LITERAL(interp::REAL3_LITERAL *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_REAL3_EXPR.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
+}
+void InterpToDomain::eraseREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL3_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* InterpToDomain::getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL3_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL3_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(interp);
+}
+
+void InterpToDomain::putREAL3_LITERAL3(interp::REAL3_LITERAL3* i, domain::DomainObject* d)
+{
+    interp2dom_REAL3_EXPR[i] = d;
+    dom2interp_REAL3_EXPR[d] = i;
+}
+void InterpToDomain::eraseREAL3_LITERAL3(interp::REAL3_LITERAL3* i, domain::DomainObject* d)
+{
+    interp2dom_REAL3_EXPR.erase(i);
+    dom2interp_REAL3_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREAL3_LITERAL3(interp::REAL3_LITERAL3* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL3_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REAL3_LITERAL3* InterpToDomain::getREAL3_LITERAL3(domain::DomainObject* d) const
+{
+    interp::REAL3_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL3_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REAL3_LITERAL3*>(interp);
+}
+
+interp::REAL4_LITERAL *InterpToDomain::getREAL4_LITERAL(domain::DomainObject *d) const
+    {
+        interp::REAL4_EXPR *interp = NULL;
+        try {
+            interp = dom2interp_REAL4_EXPR.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REAL4_LITERAL*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREAL4_LITERAL(interp::REAL4_LITERAL *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_REAL4_EXPR.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR[i] = d;
+    dom2interp_REAL4_EXPR[d] = i;
+}
+void InterpToDomain::eraseREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR.erase(i);
+    dom2interp_REAL4_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL4_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* InterpToDomain::getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const
+{
+    interp::REAL4_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL4_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(interp);
+}
+
+void InterpToDomain::putREAL4_LITERAL4(interp::REAL4_LITERAL4* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR[i] = d;
+    dom2interp_REAL4_EXPR[d] = i;
+}
+void InterpToDomain::eraseREAL4_LITERAL4(interp::REAL4_LITERAL4* i, domain::DomainObject* d)
+{
+    interp2dom_REAL4_EXPR.erase(i);
+    dom2interp_REAL4_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREAL4_LITERAL4(interp::REAL4_LITERAL4* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REAL4_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REAL4_LITERAL4* InterpToDomain::getREAL4_LITERAL4(domain::DomainObject* d) const
+{
+    interp::REAL4_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REAL4_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REAL4_LITERAL4*>(interp);
+}
+
+interp::REALMATRIX_LITERAL *InterpToDomain::getREALMATRIX_LITERAL(domain::DomainObject *d) const
+    {
+        interp::REALMATRIX_EXPR *interp = NULL;
+        try {
+            interp = dom2interp_REALMATRIX_EXPR.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REALMATRIX_LITERAL*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREALMATRIX_LITERAL(interp::REALMATRIX_LITERAL *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_REALMATRIX_EXPR.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR[i] = d;
+    dom2interp_REALMATRIX_EXPR[d] = i;
+}
+void InterpToDomain::eraseREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR.erase(i);
+    dom2interp_REALMATRIX_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REALMATRIX_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* InterpToDomain::getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(domain::DomainObject* d) const
+{
+    interp::REALMATRIX_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REALMATRIX_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR*>(interp);
+}
+
+void InterpToDomain::putREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR[i] = d;
+    dom2interp_REALMATRIX_EXPR[d] = i;
+}
+void InterpToDomain::eraseREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR.erase(i);
+    dom2interp_REALMATRIX_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REALMATRIX_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* InterpToDomain::getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const
+{
+    interp::REALMATRIX_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REALMATRIX_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(interp);
+}
+
+void InterpToDomain::putREALMATRIX_LITERAL9(interp::REALMATRIX_LITERAL9* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR[i] = d;
+    dom2interp_REALMATRIX_EXPR[d] = i;
+}
+void InterpToDomain::eraseREALMATRIX_LITERAL9(interp::REALMATRIX_LITERAL9* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX_EXPR.erase(i);
+    dom2interp_REALMATRIX_EXPR.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREALMATRIX_LITERAL9(interp::REALMATRIX_LITERAL9* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REALMATRIX_EXPR.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REALMATRIX_LITERAL9* InterpToDomain::getREALMATRIX_LITERAL9(domain::DomainObject* d) const
+{
+    interp::REALMATRIX_EXPR *interp = NULL;
+    try {
+        interp = dom2interp_REALMATRIX_EXPR.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REALMATRIX_LITERAL9*>(interp);
 }

@@ -17,9 +17,9 @@
 
 
 #include "Interpretation.h"
-#include "Checker.h"
+//#include "Checker.h"
 
-#include "MainMatcher.h"
+#include "ros_matchers/ROSFunctionMatcher.h"
 //#include "ASTParse/VectorExprMatcher.h"
 
 /*
@@ -47,7 +47,7 @@ using namespace clang::tooling;
 
 interp::Interpretation* interp_;
 clang::ASTContext *context_;
-MainMatcher *programMatcher_;
+ROSFunctionMatcher *programMatcher_;
 Rewriter* constraintWriter;
 bool rewriteMode;
 
@@ -140,7 +140,7 @@ public:
     if(auto vd = dyn_cast<VarDecl>(decl))
     {
 
-      bool needsConstraint = interp_->needsConstraint(vd);
+      bool needsConstraint =false;// interp_->needsConstraint(vd);
       if(needsConstraint)
       {
         AddConstraint(vd);
@@ -174,7 +174,7 @@ public:
       if(auto vd = dyn_cast<VarDecl>(dyn_cast<DeclRefExpr>(stmt)->getDecl()))
       {
 
-        if(interp_->needsConstraint(vd))
+        if(false)//interp_->needsConstraint(vd))
         {
           auto parents = this->ctxt_->getParents(*stmt);
           Stmt* current = stmt;
@@ -279,7 +279,7 @@ public:
     {
       context_ = &CI.getASTContext();
       interp_->setASTContext(context_);
-      programMatcher_ = new MainMatcher(context_, interp_);
+      programMatcher_ = new ROSFunctionMatcher(context_, interp_);
       return llvm::make_unique<MyASTConsumer>(); 
     }
     else{
@@ -325,8 +325,9 @@ int main(int argc, const char **argv)
   interp_ = new interp::Interpretation();   // default oracle
   
   //interp_->addSpace("_");
-  interp_->addSpace("time");
-  interp_->addSpace("geom");
+  //interp_->addSpace("time");
+  //interp_->addSpace("geom");
+  interp_->buildDefaultSpaces();
 
 
   //creates a "ToolAction" unique pointer object
@@ -373,13 +374,13 @@ int main(int argc, const char **argv)
 //Not only does Tool.run change/lose state on entry, but also on exit
  
  //this runs the lean type inference
-  Checker *checker = new Checker(interp_);
-  checker->Check();
+  //Checker *checker = new Checker(interp_);
+  //checker->Check();
   
   //Determines which variables can have a type assigned to them. If no type is assigned, we need to log/build constraints for these at runtime
-  interp_->buildTypedDeclList();
+  //interp_->buildTypedDeclList();
   //Re-run the tool, this time, build all the runtime constraints and logging.
-  rewriteMode = true;
-  Tool.run(toolAction.get());
+  //rewriteMode = true;
+  //Tool.run(toolAction.get());
   
 }

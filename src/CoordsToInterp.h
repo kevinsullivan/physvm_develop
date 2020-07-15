@@ -1,231 +1,318 @@
 #ifndef COORDSTOINTERP_H
 #define COORDSTOINTERP_H
 
-#include <iostream>
-#include "Coords.h"
-#include "Interp.h"
+# include <iostream>
+# include "Coords.h"
+# include "Interp.h"
 
-#include <unordered_map>
+# include <unordered_map>
 
-namespace coords2interp {
+namespace coords2interp{
 
 class CoordsToInterp
 {
-  public:
-
-// Ident
-
-	void putVecIdent(coords::VecIdent *key, interp::VecIdent *i);
-	interp::VecIdent *getVecIdent(coords::VecIdent *c) const;
-	coords::VecIdent *getVecIdent(interp::VecIdent *d) const;
-
-// Expr
-
-	interp::VecExpr *getVecExpr(coords::VecExpr* c);
-	coords::VecExpr *getVecExpr(interp::VecExpr* d) const;
-
-	void putVecVarExpr(coords::VecVarExpr *n, interp::VecVarExpr *e);
-	interp::VecVarExpr *getVecVarExpr(coords::VecVarExpr* c) const;
-	coords::VecVarExpr *getVecVarExpr(interp::VecVarExpr* d) const;
-
-	void putVecVecAddExpr(coords::VecVecAddExpr *n, interp::VecVecAddExpr *e);
-	interp::VecVecAddExpr *getVecVecAddExpr(coords::VecVecAddExpr* c) const;
-	coords::VecVecAddExpr *getVecVecAddExpr(interp::VecVecAddExpr* d) const;
-	
-	// KEVIN: This stuff here for VecParenExpr module
-	void putVecParenExpr(coords::VecParenExpr *ast, interp::VecParenExpr *expr);
-	interp::VecParenExpr *getVecParenExpr(coords::VecParenExpr* c) const;
-	coords::VecParenExpr *getVecParenExpr(interp::VecParenExpr* d) const;
-
-	void putVecScalarMulExpr(coords::VecScalarMulExpr *n, interp::VecScalarMulExpr *e);
-	interp::VecScalarMulExpr *getVecScalarMulExpr(coords::VecScalarMulExpr* c) const;
-	coords::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* d) const;
-
-	void putTransformVecApplyExpr(coords::TransformVecApplyExpr *n, interp::TransformVecApplyExpr *e);
-	interp::TransformVecApplyExpr *getTransformVecApplyExpr(coords::TransformVecApplyExpr* c) const;
-	coords::TransformVecApplyExpr *getTransformVecApplyExpr(interp::TransformVecApplyExpr* d) const;
-
-	void putScalarScalarAddExpr(coords::ScalarScalarAddExpr *n, interp::ScalarScalarAddExpr *e);
-	interp::ScalarScalarAddExpr *getScalarScalarAddExpr(coords::ScalarScalarAddExpr* c) const;
-	coords::ScalarScalarAddExpr *getScalarScalarAddExpr(interp::ScalarScalarAddExpr* d) const;
-	
-	void putScalarScalarMulExpr(coords::ScalarScalarMulExpr *n, interp::ScalarScalarMulExpr *e);
-	interp::ScalarScalarMulExpr *getScalarScalarMulExpr(coords::ScalarScalarMulExpr* c) const;
-	coords::ScalarScalarMulExpr *getScalarScalarMulExpr(interp::ScalarScalarMulExpr* d) const;
-	
-	void putTransformTransformComposeExpr(coords::TransformTransformComposeExpr *n, interp::TransformTransformComposeExpr *e);
-	interp::TransformTransformComposeExpr *getTransformTransformComposeExpr(coords::TransformTransformComposeExpr* c) const;
-	coords::TransformTransformComposeExpr *getTransformTransformComposeExpr(interp::TransformTransformComposeExpr* d) const;
-
-// Ident
-
-	void putScalarIdent(coords::ScalarIdent *key, interp::ScalarIdent *i);
-	interp::ScalarIdent *getScalarIdent(coords::ScalarIdent *c) const;
-	coords::ScalarIdent *getScalarIdent(interp::ScalarIdent *d) const;
-
-// Expr
-
-	interp::ScalarExpr *getScalarExpr(coords::ScalarExpr* c) const;
-	coords::ScalarExpr *getScalarExpr(interp::ScalarExpr* d) const;
-
-	void putScalarVarExpr(coords::ScalarVarExpr *n, interp::ScalarVarExpr *e);
-	interp::ScalarVarExpr *getScalarVarExpr(coords::ScalarVarExpr* c) const;
-	coords::ScalarVarExpr *getScalarVarExpr(interp::ScalarVarExpr* d) const;
-	
-	// KEVIN: This stuff here for ScalarParenExpr module
-	void putScalarParenExpr(coords::ScalarParenExpr *ast, interp::ScalarParenExpr *expr);
-	interp::ScalarParenExpr *getScalarParenExpr(coords::ScalarParenExpr* c) const;
-	coords::ScalarParenExpr *getScalarParenExpr(interp::ScalarParenExpr* d) const;
+public:
 
 
-// Ident
+	interp::STMT* getSTMT(coords::STMT* c) const;
+	coords::STMT* getSTMT(interp::STMT* i) const;
 
-	void putTransformIdent(coords::TransformIdent *key, interp::TransformIdent *i);
-	interp::TransformIdent *getTransformIdent(coords::TransformIdent *c) const;
-	coords::TransformIdent *getTransformIdent(interp::TransformIdent *d) const;
+	void putCOMPOUND_STMT(coords::COMPOUND_STMT* key, interp::COMPOUND_STMT* val);
+	interp::COMPOUND_STMT* getCOMPOUND_STMT(coords::COMPOUND_STMT* c) const;
+	coords::COMPOUND_STMT* getCOMPOUND_STMT(interp::COMPOUND_STMT* i) const;
 
-// Expr
+	interp::IFCOND* getIFCOND(coords::IFCOND* c) const;
+	coords::IFCOND* getIFCOND(interp::IFCOND* i) const;
 
-	interp::TransformExpr *getTransformExpr(coords::TransformExpr* c) const;
-	coords::TransformExpr *getTransformExpr(interp::TransformExpr* d) const;
+	void putIFTHEN_EXPR_STMT(coords::IFTHEN_EXPR_STMT* key, interp::IFTHEN_EXPR_STMT* val);
+	interp::IFTHEN_EXPR_STMT* getIFTHEN_EXPR_STMT(coords::IFTHEN_EXPR_STMT* c) const;
+	coords::IFTHEN_EXPR_STMT* getIFTHEN_EXPR_STMT(interp::IFTHEN_EXPR_STMT* i) const;
 
-	void putTransformVarExpr(coords::TransformVarExpr *n, interp::TransformVarExpr *e);
-	interp::TransformVarExpr *getTransformVarExpr(coords::TransformVarExpr* c) const;
-	coords::TransformVarExpr *getTransformVarExpr(interp::TransformVarExpr* d) const;
-	
-	// KEVIN: This stuff here for TransformParenExpr module
-	void putTransformParenExpr(coords::TransformParenExpr *ast, interp::TransformParenExpr *expr);
-	interp::TransformParenExpr *getTransformParenExpr(coords::TransformParenExpr* c) const;
-	coords::TransformParenExpr *getTransformParenExpr(interp::TransformParenExpr* d) const;
+	void putIFTHENELSEIF_EXPR_STMT_IFCOND(coords::IFTHENELSEIF_EXPR_STMT_IFCOND* key, interp::IFTHENELSEIF_EXPR_STMT_IFCOND* val);
+	interp::IFTHENELSEIF_EXPR_STMT_IFCOND* getIFTHENELSEIF_EXPR_STMT_IFCOND(coords::IFTHENELSEIF_EXPR_STMT_IFCOND* c) const;
+	coords::IFTHENELSEIF_EXPR_STMT_IFCOND* getIFTHENELSEIF_EXPR_STMT_IFCOND(interp::IFTHENELSEIF_EXPR_STMT_IFCOND* i) const;
 
-// Vector
+	void putIFTHENELSE_EXPR_STMT_STMT(coords::IFTHENELSE_EXPR_STMT_STMT* key, interp::IFTHENELSE_EXPR_STMT_STMT* val);
+	interp::IFTHENELSE_EXPR_STMT_STMT* getIFTHENELSE_EXPR_STMT_STMT(coords::IFTHENELSE_EXPR_STMT_STMT* c) const;
+	coords::IFTHENELSE_EXPR_STMT_STMT* getIFTHENELSE_EXPR_STMT_STMT(interp::IFTHENELSE_EXPR_STMT_STMT* i) const;
 
-	void putVector_Lit(coords::Vector *ast, interp::Vector_Lit *v);
-	interp::Vector_Lit *getVector_Lit(coords::Vector_Lit* c) const;
-	coords::Vector_Lit *getVector_Lit(interp::Vector_Lit* d) const;
+	interp::EXPR* getEXPR(coords::EXPR* c) const;
+	coords::EXPR* getEXPR(interp::EXPR* i) const;
 
-	void putVector_Expr(coords::Vector *ast, interp::Vector_Expr *v);
-	interp::Vector_Expr *getVector_Expr(coords::Vector_Expr* c) const;
-	coords::Vector_Expr *getVector_Expr(interp::Vector_Expr* d) const;
+	interp::ASSIGNMENT* getASSIGNMENT(coords::ASSIGNMENT* c) const;
+	coords::ASSIGNMENT* getASSIGNMENT(interp::ASSIGNMENT* i) const;
 
-	coords::Vector *getVector(interp::Vector* v);
-	interp::Vector *getVector(coords::Vector* v);
+	void putASSIGN_REAL1_VAR_REAL1_EXPR(coords::ASSIGN_REAL1_VAR_REAL1_EXPR* key, interp::ASSIGN_REAL1_VAR_REAL1_EXPR* val);
+	interp::ASSIGN_REAL1_VAR_REAL1_EXPR* getASSIGN_REAL1_VAR_REAL1_EXPR(coords::ASSIGN_REAL1_VAR_REAL1_EXPR* c) const;
+	coords::ASSIGN_REAL1_VAR_REAL1_EXPR* getASSIGN_REAL1_VAR_REAL1_EXPR(interp::ASSIGN_REAL1_VAR_REAL1_EXPR* i) const;
 
-// Def
+	void putASSIGN_REAL3_VAR_REAL3_EXPR(coords::ASSIGN_REAL3_VAR_REAL3_EXPR* key, interp::ASSIGN_REAL3_VAR_REAL3_EXPR* val);
+	interp::ASSIGN_REAL3_VAR_REAL3_EXPR* getASSIGN_REAL3_VAR_REAL3_EXPR(coords::ASSIGN_REAL3_VAR_REAL3_EXPR* c) const;
+	coords::ASSIGN_REAL3_VAR_REAL3_EXPR* getASSIGN_REAL3_VAR_REAL3_EXPR(interp::ASSIGN_REAL3_VAR_REAL3_EXPR* i) const;
 
-	void putVector_Def(coords::Vector_Def *vardecl_wrapper, interp::Vector_Def *b);
-	interp::Vector_Def *getVector_Def(coords::Vector_Def* c) const;
-	coords::Vector_Def *getVector_Def(interp::Vector_Def* d) const;
+	void putASSIGN_REAL4_VAR_REAL4_EXPR(coords::ASSIGN_REAL4_VAR_REAL4_EXPR* key, interp::ASSIGN_REAL4_VAR_REAL4_EXPR* val);
+	interp::ASSIGN_REAL4_VAR_REAL4_EXPR* getASSIGN_REAL4_VAR_REAL4_EXPR(coords::ASSIGN_REAL4_VAR_REAL4_EXPR* c) const;
+	coords::ASSIGN_REAL4_VAR_REAL4_EXPR* getASSIGN_REAL4_VAR_REAL4_EXPR(interp::ASSIGN_REAL4_VAR_REAL4_EXPR* i) const;
 
-// Assign
+	void putASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(coords::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* key, interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* val);
+	interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* getASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(coords::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* c) const;
+	coords::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* getASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* i) const;
 
-	void putVector_Assign(coords::Vector_Assign *varassn_wrapper, interp::Vector_Assign *b);
-	interp::Vector_Assign *getVector_Assign(coords::Vector_Assign* c) const;
-	coords::Vector_Assign *getVector_Assign(interp::Vector_Assign* d) const;
+	interp::DECLARE* getDECLARE(coords::DECLARE* c) const;
+	coords::DECLARE* getDECLARE(interp::DECLARE* i) const;
 
-// Scalar
+	void putDECL_REAL1_VAR_REAL1_EXPR(coords::DECL_REAL1_VAR_REAL1_EXPR* key, interp::DECL_REAL1_VAR_REAL1_EXPR* val);
+	interp::DECL_REAL1_VAR_REAL1_EXPR* getDECL_REAL1_VAR_REAL1_EXPR(coords::DECL_REAL1_VAR_REAL1_EXPR* c) const;
+	coords::DECL_REAL1_VAR_REAL1_EXPR* getDECL_REAL1_VAR_REAL1_EXPR(interp::DECL_REAL1_VAR_REAL1_EXPR* i) const;
 
-	void putScalar_Lit(coords::Scalar *ast, interp::Scalar_Lit *v);
-	interp::Scalar_Lit *getScalar_Lit(coords::Scalar_Lit* c) const;
-	coords::Scalar_Lit *getScalar_Lit(interp::Scalar_Lit* d) const;
+	void putDECL_REAL3_VAR_REAL3_EXPR(coords::DECL_REAL3_VAR_REAL3_EXPR* key, interp::DECL_REAL3_VAR_REAL3_EXPR* val);
+	interp::DECL_REAL3_VAR_REAL3_EXPR* getDECL_REAL3_VAR_REAL3_EXPR(coords::DECL_REAL3_VAR_REAL3_EXPR* c) const;
+	coords::DECL_REAL3_VAR_REAL3_EXPR* getDECL_REAL3_VAR_REAL3_EXPR(interp::DECL_REAL3_VAR_REAL3_EXPR* i) const;
 
-	void putScalar_Expr(coords::Scalar *ast, interp::Scalar_Expr *v);
-	interp::Scalar_Expr *getScalar_Expr(coords::Scalar_Expr* c) const;
-	coords::Scalar_Expr *getScalar_Expr(interp::Scalar_Expr* d) const;
+	void putDECL_REAL4_VAR_REAL4_EXPR(coords::DECL_REAL4_VAR_REAL4_EXPR* key, interp::DECL_REAL4_VAR_REAL4_EXPR* val);
+	interp::DECL_REAL4_VAR_REAL4_EXPR* getDECL_REAL4_VAR_REAL4_EXPR(coords::DECL_REAL4_VAR_REAL4_EXPR* c) const;
+	coords::DECL_REAL4_VAR_REAL4_EXPR* getDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* i) const;
 
-	coords::Scalar *getScalar(interp::Scalar* v);
-	interp::Scalar *getScalar(coords::Scalar* v);
+	void putDECL_REALMATRIX_VAR_REALMATRIX_EXPR(coords::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* key, interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* val);
+	interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* getDECL_REALMATRIX_VAR_REALMATRIX_EXPR(coords::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* c) const;
+	coords::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* getDECL_REALMATRIX_VAR_REALMATRIX_EXPR(interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* i) const;
 
-// Def
+	void putDECL_REAL1_VAR(coords::DECL_REAL1_VAR* key, interp::DECL_REAL1_VAR* val);
+	interp::DECL_REAL1_VAR* getDECL_REAL1_VAR(coords::DECL_REAL1_VAR* c) const;
+	coords::DECL_REAL1_VAR* getDECL_REAL1_VAR(interp::DECL_REAL1_VAR* i) const;
 
-	void putScalar_Def(coords::Scalar_Def *vardecl_wrapper, interp::Scalar_Def *b);
-	interp::Scalar_Def *getScalar_Def(coords::Scalar_Def* c) const;
-	coords::Scalar_Def *getScalar_Def(interp::Scalar_Def* d) const;
+	void putDECL_REAL3_VAR(coords::DECL_REAL3_VAR* key, interp::DECL_REAL3_VAR* val);
+	interp::DECL_REAL3_VAR* getDECL_REAL3_VAR(coords::DECL_REAL3_VAR* c) const;
+	coords::DECL_REAL3_VAR* getDECL_REAL3_VAR(interp::DECL_REAL3_VAR* i) const;
 
-// Assign
+	void putDECL_REAL4_VAR(coords::DECL_REAL4_VAR* key, interp::DECL_REAL4_VAR* val);
+	interp::DECL_REAL4_VAR* getDECL_REAL4_VAR(coords::DECL_REAL4_VAR* c) const;
+	coords::DECL_REAL4_VAR* getDECL_REAL4_VAR(interp::DECL_REAL4_VAR* i) const;
 
-	void putScalar_Assign(coords::Scalar_Assign *varassn_wrapper, interp::Scalar_Assign *b);
-	interp::Scalar_Assign *getScalar_Assign(coords::Scalar_Assign* c) const;
-	coords::Scalar_Assign *getScalar_Assign(interp::Scalar_Assign* d) const;
+	void putDECL_REALMATRIX_VAR(coords::DECL_REALMATRIX_VAR* key, interp::DECL_REALMATRIX_VAR* val);
+	interp::DECL_REALMATRIX_VAR* getDECL_REALMATRIX_VAR(coords::DECL_REALMATRIX_VAR* c) const;
+	coords::DECL_REALMATRIX_VAR* getDECL_REALMATRIX_VAR(interp::DECL_REALMATRIX_VAR* i) const;
 
-// Transform
+	interp::REAL1_EXPR* getREAL1_EXPR(coords::REAL1_EXPR* c) const;
+	coords::REAL1_EXPR* getREAL1_EXPR(interp::REAL1_EXPR* i) const;
 
-	void putTransform_Lit(coords::Transform *ast, interp::Transform_Lit *v);
-	interp::Transform_Lit *getTransform_Lit(coords::Transform_Lit* c) const;
-	coords::Transform_Lit *getTransform_Lit(interp::Transform_Lit* d) const;
+	void putPAREN_REAL1_EXPR(coords::PAREN_REAL1_EXPR* key, interp::PAREN_REAL1_EXPR* val);
+	interp::PAREN_REAL1_EXPR* getPAREN_REAL1_EXPR(coords::PAREN_REAL1_EXPR* c) const;
+	coords::PAREN_REAL1_EXPR* getPAREN_REAL1_EXPR(interp::PAREN_REAL1_EXPR* i) const;
 
-	void putTransform_Expr(coords::Transform *ast, interp::Transform_Expr *v);
-	interp::Transform_Expr *getTransform_Expr(coords::Transform_Expr* c) const;
-	coords::Transform_Expr *getTransform_Expr(interp::Transform_Expr* d) const;
+	void putINV_REAL1_EXPR(coords::INV_REAL1_EXPR* key, interp::INV_REAL1_EXPR* val);
+	interp::INV_REAL1_EXPR* getINV_REAL1_EXPR(coords::INV_REAL1_EXPR* c) const;
+	coords::INV_REAL1_EXPR* getINV_REAL1_EXPR(interp::INV_REAL1_EXPR* i) const;
 
-	coords::Transform *getTransform(interp::Transform* v);
-	interp::Transform *getTransform(coords::Transform* v);
+	void putNEG_REAL1_EXPR(coords::NEG_REAL1_EXPR* key, interp::NEG_REAL1_EXPR* val);
+	interp::NEG_REAL1_EXPR* getNEG_REAL1_EXPR(coords::NEG_REAL1_EXPR* c) const;
+	coords::NEG_REAL1_EXPR* getNEG_REAL1_EXPR(interp::NEG_REAL1_EXPR* i) const;
 
-// Def
+	void putADD_REAL1_EXPR_REAL1_EXPR(coords::ADD_REAL1_EXPR_REAL1_EXPR* key, interp::ADD_REAL1_EXPR_REAL1_EXPR* val);
+	interp::ADD_REAL1_EXPR_REAL1_EXPR* getADD_REAL1_EXPR_REAL1_EXPR(coords::ADD_REAL1_EXPR_REAL1_EXPR* c) const;
+	coords::ADD_REAL1_EXPR_REAL1_EXPR* getADD_REAL1_EXPR_REAL1_EXPR(interp::ADD_REAL1_EXPR_REAL1_EXPR* i) const;
 
-	void putTransform_Def(coords::Transform_Def *vardecl_wrapper, interp::Transform_Def *b);
-	interp::Transform_Def *getTransform_Def(coords::Transform_Def* c) const;
-	coords::Transform_Def *getTransform_Def(interp::Transform_Def* d) const;
+	void putSUB_REAL1_EXPR_REAL1_EXPR(coords::SUB_REAL1_EXPR_REAL1_EXPR* key, interp::SUB_REAL1_EXPR_REAL1_EXPR* val);
+	interp::SUB_REAL1_EXPR_REAL1_EXPR* getSUB_REAL1_EXPR_REAL1_EXPR(coords::SUB_REAL1_EXPR_REAL1_EXPR* c) const;
+	coords::SUB_REAL1_EXPR_REAL1_EXPR* getSUB_REAL1_EXPR_REAL1_EXPR(interp::SUB_REAL1_EXPR_REAL1_EXPR* i) const;
 
-// Assign
+	void putMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* key, interp::MUL_REAL1_EXPR_REAL1_EXPR* val);
+	interp::MUL_REAL1_EXPR_REAL1_EXPR* getMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* c) const;
+	coords::MUL_REAL1_EXPR_REAL1_EXPR* getMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* i) const;
 
-	void putTransform_Assign(coords::Transform_Assign *varassn_wrapper, interp::Transform_Assign *b);
-	interp::Transform_Assign *getTransform_Assign(coords::Transform_Assign* c) const;
-	coords::Transform_Assign *getTransform_Assign(interp::Transform_Assign* d) const;
+	void putDIV_REAL1_EXPR_REAL1_EXPR(coords::DIV_REAL1_EXPR_REAL1_EXPR* key, interp::DIV_REAL1_EXPR_REAL1_EXPR* val);
+	interp::DIV_REAL1_EXPR_REAL1_EXPR* getDIV_REAL1_EXPR_REAL1_EXPR(coords::DIV_REAL1_EXPR_REAL1_EXPR* c) const;
+	coords::DIV_REAL1_EXPR_REAL1_EXPR* getDIV_REAL1_EXPR_REAL1_EXPR(interp::DIV_REAL1_EXPR_REAL1_EXPR* i) const;
 
+	void putREF_REAL1_VAR(coords::REF_REAL1_VAR* key, interp::REF_REAL1_VAR* val);
+	interp::REF_REAL1_VAR* getREF_REAL1_VAR(coords::REF_REAL1_VAR* c) const;
+	coords::REF_REAL1_VAR* getREF_REAL1_VAR(interp::REF_REAL1_VAR* i) const;
 
-	void dump() const;
+	interp::REAL3_EXPR* getREAL3_EXPR(coords::REAL3_EXPR* c) const;
+	coords::REAL3_EXPR* getREAL3_EXPR(interp::REAL3_EXPR* i) const;
 
-  private:
-	/* 
-	We implement an interpretation as a collection of typed maps. 
-	The keys are "Code Coordinate" objects, which, in turn, are 
-	currently just containers for pointers to AST nodes, basically
-	just adding operator==() and hash functions.
+	void putPAREN_REAL3_EXPR(coords::PAREN_REAL3_EXPR* key, interp::PAREN_REAL3_EXPR* val);
+	interp::PAREN_REAL3_EXPR* getPAREN_REAL3_EXPR(coords::PAREN_REAL3_EXPR* c) const;
+	coords::PAREN_REAL3_EXPR* getPAREN_REAL3_EXPR(interp::PAREN_REAL3_EXPR* i) const;
 
-	TODO: Compare with ast2coords. There it's clear that every
-	AST node maps to a coords::Coords. But here we distinguish
-	between different kinds of coords. Re-evaluate.
-	*/
- 
-	std::unordered_map <coords::VecIdent*,	interp::VecIdent*	> 	coords2interp_VecIdent;
-	std::unordered_map <coords::VecExpr*, 	interp::VecExpr*	> 	coords2interp_VecExpr;
-	std::unordered_map <coords::Vector*, 	interp::Vector*		> 	coords2interp_Vector;
-	std::unordered_map <coords::Vector_Def*,interp::Vector_Def*	> 	coords2interp_Vector_Def;
-	std::unordered_map <coords::Vector_Assign*,interp::Vector_Assign*> 	coords2interp_Vector_Assign;
+	void putADD_REAL3_EXPR_REAL3_EXPR(coords::ADD_REAL3_EXPR_REAL3_EXPR* key, interp::ADD_REAL3_EXPR_REAL3_EXPR* val);
+	interp::ADD_REAL3_EXPR_REAL3_EXPR* getADD_REAL3_EXPR_REAL3_EXPR(coords::ADD_REAL3_EXPR_REAL3_EXPR* c) const;
+	coords::ADD_REAL3_EXPR_REAL3_EXPR* getADD_REAL3_EXPR_REAL3_EXPR(interp::ADD_REAL3_EXPR_REAL3_EXPR* i) const;
 
+	void putSUB_REAL3_EXPR_REAL3_EXPR(coords::SUB_REAL3_EXPR_REAL3_EXPR* key, interp::SUB_REAL3_EXPR_REAL3_EXPR* val);
+	interp::SUB_REAL3_EXPR_REAL3_EXPR* getSUB_REAL3_EXPR_REAL3_EXPR(coords::SUB_REAL3_EXPR_REAL3_EXPR* c) const;
+	coords::SUB_REAL3_EXPR_REAL3_EXPR* getSUB_REAL3_EXPR_REAL3_EXPR(interp::SUB_REAL3_EXPR_REAL3_EXPR* i) const;
 
-	std::unordered_map<interp::VecIdent*, 	coords::VecIdent*	> 	interp2coords_VecIdent;
-	std::unordered_map<interp::VecExpr*, 	coords::VecExpr*	> 	interp2coords_VecExpr;
-	std::unordered_map<interp::Vector*, 	coords::Vector*		> 	interp2coords_Vector;
-	std::unordered_map<interp::Vector_Def*, coords::Vector_Def*	> 	interp2coords_Vector_Def;
-	std::unordered_map<interp::Vector_Assign*, coords::Vector_Assign*> 	interp2coords_Vector_Assign;
+	void putINV_REAL3_EXPR(coords::INV_REAL3_EXPR* key, interp::INV_REAL3_EXPR* val);
+	interp::INV_REAL3_EXPR* getINV_REAL3_EXPR(coords::INV_REAL3_EXPR* c) const;
+	coords::INV_REAL3_EXPR* getINV_REAL3_EXPR(interp::INV_REAL3_EXPR* i) const;
 
-	std::unordered_map <coords::ScalarIdent*,interp::ScalarIdent* > 	coords2interp_ScalarIdent;
-	std::unordered_map <coords::ScalarExpr*, interp::ScalarExpr*	> 	coords2interp_ScalarExpr;
-	std::unordered_map <coords::Scalar*, 	interp::Scalar*		> 	coords2interp_Scalar;
-	std::unordered_map <coords::Scalar_Def*, interp::Scalar_Def*	> 	coords2interp_Scalar_Def;
-	std::unordered_map <coords::Scalar_Assign*, interp::Scalar_Assign*> 	coords2interp_Scalar_Assign;
+	void putNEG_REAL3_EXPR(coords::NEG_REAL3_EXPR* key, interp::NEG_REAL3_EXPR* val);
+	interp::NEG_REAL3_EXPR* getNEG_REAL3_EXPR(coords::NEG_REAL3_EXPR* c) const;
+	coords::NEG_REAL3_EXPR* getNEG_REAL3_EXPR(interp::NEG_REAL3_EXPR* i) const;
 
+	void putMUL_REAL3_EXPR_REAL1_EXPR(coords::MUL_REAL3_EXPR_REAL1_EXPR* key, interp::MUL_REAL3_EXPR_REAL1_EXPR* val);
+	interp::MUL_REAL3_EXPR_REAL1_EXPR* getMUL_REAL3_EXPR_REAL1_EXPR(coords::MUL_REAL3_EXPR_REAL1_EXPR* c) const;
+	coords::MUL_REAL3_EXPR_REAL1_EXPR* getMUL_REAL3_EXPR_REAL1_EXPR(interp::MUL_REAL3_EXPR_REAL1_EXPR* i) const;
 
-	std::unordered_map<interp::ScalarIdent*, coords::ScalarIdent*	> 	interp2coords_ScalarIdent;
-	std::unordered_map<interp::ScalarExpr*, 	coords::ScalarExpr*	> 	interp2coords_ScalarExpr;
-	std::unordered_map<interp::Scalar*, 		coords::Scalar*		> 	interp2coords_Scalar;
-	std::unordered_map<interp::Scalar_Def*, 	coords::Scalar_Def*	> 	interp2coords_Scalar_Def;
-	std::unordered_map<interp::Scalar_Assign*, 	coords::Scalar_Assign*> 	interp2coords_Scalar_Assign;
+	void putMUL_REALMATRIX_EXPR_REAL3_EXPR(coords::MUL_REALMATRIX_EXPR_REAL3_EXPR* key, interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* val);
+	interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* getMUL_REALMATRIX_EXPR_REAL3_EXPR(coords::MUL_REALMATRIX_EXPR_REAL3_EXPR* c) const;
+	coords::MUL_REALMATRIX_EXPR_REAL3_EXPR* getMUL_REALMATRIX_EXPR_REAL3_EXPR(interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* i) const;
 
-	std::unordered_map <coords::TransformIdent*,interp::TransformIdent* > 	coords2interp_TransformIdent;
-	std::unordered_map <coords::TransformExpr*, interp::TransformExpr*	> 	coords2interp_TransformExpr;
-	std::unordered_map <coords::Transform*, 	interp::Transform*		> 	coords2interp_Transform;
-	std::unordered_map <coords::Transform_Def*, interp::Transform_Def*	> 	coords2interp_Transform_Def;
-	std::unordered_map <coords::Transform_Assign*, interp::Transform_Assign*> 	coords2interp_Transform_Assign;
+	void putDIV_REAL3_EXPR_REAL1_EXPR(coords::DIV_REAL3_EXPR_REAL1_EXPR* key, interp::DIV_REAL3_EXPR_REAL1_EXPR* val);
+	interp::DIV_REAL3_EXPR_REAL1_EXPR* getDIV_REAL3_EXPR_REAL1_EXPR(coords::DIV_REAL3_EXPR_REAL1_EXPR* c) const;
+	coords::DIV_REAL3_EXPR_REAL1_EXPR* getDIV_REAL3_EXPR_REAL1_EXPR(interp::DIV_REAL3_EXPR_REAL1_EXPR* i) const;
 
+	void putREF_REAL3_VAR(coords::REF_REAL3_VAR* key, interp::REF_REAL3_VAR* val);
+	interp::REF_REAL3_VAR* getREF_REAL3_VAR(coords::REF_REAL3_VAR* c) const;
+	coords::REF_REAL3_VAR* getREF_REAL3_VAR(interp::REF_REAL3_VAR* i) const;
 
-	std::unordered_map<interp::TransformIdent*, coords::TransformIdent*	> 	interp2coords_TransformIdent;
-	std::unordered_map<interp::TransformExpr*, 	coords::TransformExpr*	> 	interp2coords_TransformExpr;
-	std::unordered_map<interp::Transform*, 		coords::Transform*		> 	interp2coords_Transform;
-	std::unordered_map<interp::Transform_Def*, 	coords::Transform_Def*	> 	interp2coords_Transform_Def;
-	std::unordered_map<interp::Transform_Assign*, 	coords::Transform_Assign*> 	interp2coords_Transform_Assign;
+	interp::REAL4_EXPR* getREAL4_EXPR(coords::REAL4_EXPR* c) const;
+	coords::REAL4_EXPR* getREAL4_EXPR(interp::REAL4_EXPR* i) const;
+
+	void putPAREN_REAL4_EXPR(coords::PAREN_REAL4_EXPR* key, interp::PAREN_REAL4_EXPR* val);
+	interp::PAREN_REAL4_EXPR* getPAREN_REAL4_EXPR(coords::PAREN_REAL4_EXPR* c) const;
+	coords::PAREN_REAL4_EXPR* getPAREN_REAL4_EXPR(interp::PAREN_REAL4_EXPR* i) const;
+
+	void putADD_REAL4_EXPR_REAL4_EXPR(coords::ADD_REAL4_EXPR_REAL4_EXPR* key, interp::ADD_REAL4_EXPR_REAL4_EXPR* val);
+	interp::ADD_REAL4_EXPR_REAL4_EXPR* getADD_REAL4_EXPR_REAL4_EXPR(coords::ADD_REAL4_EXPR_REAL4_EXPR* c) const;
+	coords::ADD_REAL4_EXPR_REAL4_EXPR* getADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* i) const;
+
+	void putMUL_REAL4_EXPR_REAL1_EXPR(coords::MUL_REAL4_EXPR_REAL1_EXPR* key, interp::MUL_REAL4_EXPR_REAL1_EXPR* val);
+	interp::MUL_REAL4_EXPR_REAL1_EXPR* getMUL_REAL4_EXPR_REAL1_EXPR(coords::MUL_REAL4_EXPR_REAL1_EXPR* c) const;
+	coords::MUL_REAL4_EXPR_REAL1_EXPR* getMUL_REAL4_EXPR_REAL1_EXPR(interp::MUL_REAL4_EXPR_REAL1_EXPR* i) const;
+
+	void putREF_REAL4_VAR(coords::REF_REAL4_VAR* key, interp::REF_REAL4_VAR* val);
+	interp::REF_REAL4_VAR* getREF_REAL4_VAR(coords::REF_REAL4_VAR* c) const;
+	coords::REF_REAL4_VAR* getREF_REAL4_VAR(interp::REF_REAL4_VAR* i) const;
+
+	interp::REALMATRIX_EXPR* getREALMATRIX_EXPR(coords::REALMATRIX_EXPR* c) const;
+	coords::REALMATRIX_EXPR* getREALMATRIX_EXPR(interp::REALMATRIX_EXPR* i) const;
+
+	void putPAREN_REALMATRIX_EXPR(coords::PAREN_REALMATRIX_EXPR* key, interp::PAREN_REALMATRIX_EXPR* val);
+	interp::PAREN_REALMATRIX_EXPR* getPAREN_REALMATRIX_EXPR(coords::PAREN_REALMATRIX_EXPR* c) const;
+	coords::PAREN_REALMATRIX_EXPR* getPAREN_REALMATRIX_EXPR(interp::PAREN_REALMATRIX_EXPR* i) const;
+
+	void putMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(coords::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* key, interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* val);
+	interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(coords::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* c) const;
+	coords::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* i) const;
+
+	void putREF_EXPR_REALMATRIX_VAR(coords::REF_EXPR_REALMATRIX_VAR* key, interp::REF_EXPR_REALMATRIX_VAR* val);
+	interp::REF_EXPR_REALMATRIX_VAR* getREF_EXPR_REALMATRIX_VAR(coords::REF_EXPR_REALMATRIX_VAR* c) const;
+	coords::REF_EXPR_REALMATRIX_VAR* getREF_EXPR_REALMATRIX_VAR(interp::REF_EXPR_REALMATRIX_VAR* i) const;
+
+	void putREAL1_VAR_IDENT(coords::REAL1_VAR_IDENT* key, interp::REAL1_VAR_IDENT* val);
+	interp::REAL1_VAR_IDENT* getREAL1_VAR_IDENT(coords::REAL1_VAR_IDENT* c) const;
+	coords::REAL1_VAR_IDENT* getREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* i) const;
+
+	void putREAL3_VAR_IDENT(coords::REAL3_VAR_IDENT* key, interp::REAL3_VAR_IDENT* val);
+	interp::REAL3_VAR_IDENT* getREAL3_VAR_IDENT(coords::REAL3_VAR_IDENT* c) const;
+	coords::REAL3_VAR_IDENT* getREAL3_VAR_IDENT(interp::REAL3_VAR_IDENT* i) const;
+
+	void putREAL4_VAR_IDENT(coords::REAL4_VAR_IDENT* key, interp::REAL4_VAR_IDENT* val);
+	interp::REAL4_VAR_IDENT* getREAL4_VAR_IDENT(coords::REAL4_VAR_IDENT* c) const;
+	coords::REAL4_VAR_IDENT* getREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* i) const;
+
+	void putREALMATRIX_VAR_IDENT(coords::REALMATRIX_VAR_IDENT* key, interp::REALMATRIX_VAR_IDENT* val);
+	interp::REALMATRIX_VAR_IDENT* getREALMATRIX_VAR_IDENT(coords::REALMATRIX_VAR_IDENT* c) const;
+	coords::REALMATRIX_VAR_IDENT* getREALMATRIX_VAR_IDENT(interp::REALMATRIX_VAR_IDENT* i) const;
+
+	interp::REAL1_LITERAL* getREAL1_LITERAL(coords::REAL1_LITERAL* c) const;
+	coords::REAL1_LITERAL* getREAL1_LITERAL(interp::REAL1_LITERAL* i) const;
+
+	void putREAL1_LITERAL1(coords::REAL1_LITERAL1* key, interp::REAL1_LITERAL1* val);
+	interp::REAL1_LITERAL1* getREAL1_LITERAL1(coords::REAL1_LITERAL1* c) const;
+	coords::REAL1_LITERAL1* getREAL1_LITERAL1(interp::REAL1_LITERAL1* i) const;
+
+	interp::REAL3_LITERAL* getREAL3_LITERAL(coords::REAL3_LITERAL* c) const;
+	coords::REAL3_LITERAL* getREAL3_LITERAL(interp::REAL3_LITERAL* i) const;
+
+	void putREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* val);
+	interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c) const;
+	coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i) const;
+
+	void putREAL3_LITERAL3(coords::REAL3_LITERAL3* key, interp::REAL3_LITERAL3* val);
+	interp::REAL3_LITERAL3* getREAL3_LITERAL3(coords::REAL3_LITERAL3* c) const;
+	coords::REAL3_LITERAL3* getREAL3_LITERAL3(interp::REAL3_LITERAL3* i) const;
+
+	interp::REAL4_LITERAL* getREAL4_LITERAL(coords::REAL4_LITERAL* c) const;
+	coords::REAL4_LITERAL* getREAL4_LITERAL(interp::REAL4_LITERAL* i) const;
+
+	void putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* val);
+	interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c) const;
+	coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i) const;
+
+	void putREAL4_LITERAL4(coords::REAL4_LITERAL4* key, interp::REAL4_LITERAL4* val);
+	interp::REAL4_LITERAL4* getREAL4_LITERAL4(coords::REAL4_LITERAL4* c) const;
+	coords::REAL4_LITERAL4* getREAL4_LITERAL4(interp::REAL4_LITERAL4* i) const;
+
+	interp::REALMATRIX_LITERAL* getREALMATRIX_LITERAL(coords::REALMATRIX_LITERAL* c) const;
+	coords::REALMATRIX_LITERAL* getREALMATRIX_LITERAL(interp::REALMATRIX_LITERAL* i) const;
+
+	void putREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(coords::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* key, interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* val);
+	interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(coords::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* c) const;
+	coords::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* i) const;
+
+	void putREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* val);
+	interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c) const;
+	coords::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i) const;
+
+	void putREALMATRIX_LITERAL9(coords::REALMATRIX_LITERAL9* key, interp::REALMATRIX_LITERAL9* val);
+	interp::REALMATRIX_LITERAL9* getREALMATRIX_LITERAL9(coords::REALMATRIX_LITERAL9* c) const;
+	coords::REALMATRIX_LITERAL9* getREALMATRIX_LITERAL9(interp::REALMATRIX_LITERAL9* i) const;
+
+private:
+
+	std::unordered_map <coords::STMT*,	interp::STMT*	> 	coords2interp_STMT;
+	std::unordered_map <interp::STMT*,	coords::STMT*	> 	interp2coords_STMT;
+
+	std::unordered_map <coords::IFCOND*,	interp::IFCOND*	> 	coords2interp_IFCOND;
+	std::unordered_map <interp::IFCOND*,	coords::IFCOND*	> 	interp2coords_IFCOND;
+
+	std::unordered_map <coords::EXPR*,	interp::EXPR*	> 	coords2interp_EXPR;
+	std::unordered_map <interp::EXPR*,	coords::EXPR*	> 	interp2coords_EXPR;
+
+	std::unordered_map <coords::ASSIGNMENT*,	interp::ASSIGNMENT*	> 	coords2interp_ASSIGNMENT;
+	std::unordered_map <interp::ASSIGNMENT*,	coords::ASSIGNMENT*	> 	interp2coords_ASSIGNMENT;
+
+	std::unordered_map <coords::DECLARE*,	interp::DECLARE*	> 	coords2interp_DECLARE;
+	std::unordered_map <interp::DECLARE*,	coords::DECLARE*	> 	interp2coords_DECLARE;
+
+	std::unordered_map <coords::REAL1_EXPR*,	interp::REAL1_EXPR*	> 	coords2interp_REAL1_EXPR;
+	std::unordered_map <interp::REAL1_EXPR*,	coords::REAL1_EXPR*	> 	interp2coords_REAL1_EXPR;
+
+	std::unordered_map <coords::REAL3_EXPR*,	interp::REAL3_EXPR*	> 	coords2interp_REAL3_EXPR;
+	std::unordered_map <interp::REAL3_EXPR*,	coords::REAL3_EXPR*	> 	interp2coords_REAL3_EXPR;
+
+	std::unordered_map <coords::REAL4_EXPR*,	interp::REAL4_EXPR*	> 	coords2interp_REAL4_EXPR;
+	std::unordered_map <interp::REAL4_EXPR*,	coords::REAL4_EXPR*	> 	interp2coords_REAL4_EXPR;
+
+	std::unordered_map <coords::REALMATRIX_EXPR*,	interp::REALMATRIX_EXPR*	> 	coords2interp_REALMATRIX_EXPR;
+	std::unordered_map <interp::REALMATRIX_EXPR*,	coords::REALMATRIX_EXPR*	> 	interp2coords_REALMATRIX_EXPR;
+
+	std::unordered_map <coords::REAL1_VAR_IDENT*,	interp::REAL1_VAR_IDENT*	> 	coords2interp_REAL1_VAR_IDENT;
+	std::unordered_map <interp::REAL1_VAR_IDENT*,	coords::REAL1_VAR_IDENT*	> 	interp2coords_REAL1_VAR_IDENT;
+
+	std::unordered_map <coords::REAL3_VAR_IDENT*,	interp::REAL3_VAR_IDENT*	> 	coords2interp_REAL3_VAR_IDENT;
+	std::unordered_map <interp::REAL3_VAR_IDENT*,	coords::REAL3_VAR_IDENT*	> 	interp2coords_REAL3_VAR_IDENT;
+
+	std::unordered_map <coords::REAL4_VAR_IDENT*,	interp::REAL4_VAR_IDENT*	> 	coords2interp_REAL4_VAR_IDENT;
+	std::unordered_map <interp::REAL4_VAR_IDENT*,	coords::REAL4_VAR_IDENT*	> 	interp2coords_REAL4_VAR_IDENT;
+
+	std::unordered_map <coords::REALMATRIX_VAR_IDENT*,	interp::REALMATRIX_VAR_IDENT*	> 	coords2interp_REALMATRIX_VAR_IDENT;
+	std::unordered_map <interp::REALMATRIX_VAR_IDENT*,	coords::REALMATRIX_VAR_IDENT*	> 	interp2coords_REALMATRIX_VAR_IDENT;
+
+	std::unordered_map <coords::REAL1_LITERAL*,	interp::REAL1_LITERAL*	> 	coords2interp_REAL1_LITERAL;
+	std::unordered_map <interp::REAL1_LITERAL*,	coords::REAL1_LITERAL*	> 	interp2coords_REAL1_LITERAL;
+
+	std::unordered_map <coords::REAL3_LITERAL*,	interp::REAL3_LITERAL*	> 	coords2interp_REAL3_LITERAL;
+	std::unordered_map <interp::REAL3_LITERAL*,	coords::REAL3_LITERAL*	> 	interp2coords_REAL3_LITERAL;
+
+	std::unordered_map <coords::REAL4_LITERAL*,	interp::REAL4_LITERAL*	> 	coords2interp_REAL4_LITERAL;
+	std::unordered_map <interp::REAL4_LITERAL*,	coords::REAL4_LITERAL*	> 	interp2coords_REAL4_LITERAL;
+
+	std::unordered_map <coords::REALMATRIX_LITERAL*,	interp::REALMATRIX_LITERAL*	> 	coords2interp_REALMATRIX_LITERAL;
+	std::unordered_map <interp::REALMATRIX_LITERAL*,	coords::REALMATRIX_LITERAL*	> 	interp2coords_REALMATRIX_LITERAL;
 };
 
 } // namespace
