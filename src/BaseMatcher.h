@@ -50,14 +50,14 @@ public:
     virtual void start();
     virtual void visit(const clang::Stmt &node);
 
-    clang::Expr* getChildExprStore() const {
+    clang::Stmt* getChildExprStore() const {
         return this->childExprStore_;
     }
 protected:
     MatchFinder localFinder_;//pattern matchers are stored here, matches are "named"
     clang::ASTContext* context_;
     interp::Interpretation* interp_;
-    clang::Expr* childExprStore_;
+    clang::Stmt* childExprStore_;
 
 };
 

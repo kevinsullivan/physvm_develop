@@ -1,3 +1,4 @@
+
 #ifndef BRIDGE_H
 #define BRIDGE_H
 
@@ -26,881 +27,685 @@ using namespace std;
 - Defn
 */
 
-namespace domain {
+namespace domain{
+
 
 
 class Space;
 class MapSpace;
-class VecIdent;
-class VecExpr;
+class DomainObject;
+class DomainContainer;
 
-class ScalarIdent;
-class ScalarExpr;
-//class VecLitExpr;
-class VecVarExpr;
-class VecVecAddExpr;
+class EuclideanGeometry;
 
-class VecScalarMulExpr;
-class TransformVecApplyExpr;
+class Geometric3Rotation;
 
-class ScalarVarExpr;
+class Geometric3Orientation;
 
+class Geometric3Angle;
 
-// KEVIN ADDING FOR HORIZONTAL MODULE
-class VecParenExpr;
+class Geometric3FrameChange;
 
-class ScalarParenExpr;
+class Geometric3Point;
 
-class Vector;
-class Vector_Lit;
-class Vector_Expr;
-class Vector_Var;
-class Vector_Def;
-class Vector_Assign;
+class Geometric3HomogenousPoint;
 
-class Scalar;
-class Scalar_Lit;
-class Scalar_Expr;
-class Scalar_Var;
-class Scalar_Def;
-class Scalar_Assign;
+class Geometric3Vector;
 
+class Geometric3Scalar;
 
-class TransformIdent;
-class TransformExpr;
-class TransformVarExpr;
-class TransformParenExpr;
+class Geometric3BasisChange;
 
-class Transform;
-class Transform_Lit;
-class Transform_Expr;
-class Transform_Var;
-class Transform_Def;
-class Transform_Assign;
+class Geometric3Scaling;
 
-class ScalarScalarAddExpr;
-class ScalarScalarMulExpr;
+class Geometric3Shear;
 
+class ClassicalTime;
 
-class TransformTransformComposeExpr;
+class TimeFrameChange;
 
+class TimePoint;
 
+class TimeHomogenousPoint;
+
+class TimeVector;
+
+class TimeScalar;
+
+class TimeBasisChange;
+
+class TimeScaling;
+
+class TimeShear;
+
+class ClassicalVelocity;
+
+class Velocity3Vector;
+
+class Velocity3Scalar;
+
+class Velocity3BasisChange;
+
+class Velocity3Scaling;
+
+class Velocity3Shear;
+
+            
 // Definition for Domain class 
 
 class Domain {
 public:
 // Space
-	Space& mkSpace(const std::string& name);
 	std::vector<Space*>& getSpaces();
 
-// Idents
 
-	VecIdent* mkVecIdent(Space* s);
-	VecIdent* mkVecIdent();
-	std::vector<VecIdent *> &getVecIdents() { return idents;  }
+    Space* getSpace(std::string key);
 
-	ScalarIdent* mkScalarIdent(Space* s);
-	ScalarIdent* mkScalarIdent();
-	std::vector<ScalarIdent*> &getScalarIdents() { return float_idents; }
+    DomainObject* mkDefaultDomainContainer();
+    DomainObject* mkDefaultDomainContainer(std::initializer_list<DomainObject*> operands);
+    DomainObject* mkDefaultDomainContainer(std::vector<DomainObject*> operands);
 
-	TransformIdent* mkTransformIdent(MapSpace* s);
-	TransformIdent* mkTransformIdent();
-	std::vector<TransformIdent*> &getTransformIdents() { return tfm_idents; }
+	EuclideanGeometry* mkEuclideanGeometry(std::string key ,std::string name_, int dimension_);
+	std::vector<EuclideanGeometry*> &getEuclideanGeometrySpaces() { return EuclideanGeometry_vec; }
 
-	// Exprs
-	std::vector<VecExpr *> &getVecExprs() { return exprs;  }
+	Geometric3Rotation* mkGeometric3Rotation(EuclideanGeometry* sp);
+	Geometric3Rotation* mkGeometric3Rotation();
+	std::vector<Geometric3Rotation*> &getGeometric3Rotations() { return Geometric3Rotation_vec; }
 
-	ScalarExpr* mkScalarExpr(Space* s);
-	ScalarExpr* mkScalarExpr();
-	std::vector<ScalarExpr *> &getScalarExprs() { return float_exprs; }
+	Geometric3Orientation* mkGeometric3Orientation(EuclideanGeometry* sp);
+	Geometric3Orientation* mkGeometric3Orientation();
+	std::vector<Geometric3Orientation*> &getGeometric3Orientations() { return Geometric3Orientation_vec; }
 
-	std::vector<TransformExpr *> &getTransformExprs() { return tfm_exprs; }
-	// Details available via externally represented backmappings
-	//
-	VecVarExpr* mkVecVarExpr(Space* s);
-	VecVarExpr* mkVecVarExpr();
+	Geometric3Angle* mkGeometric3Angle(EuclideanGeometry* sp);
+	Geometric3Angle* mkGeometric3Angle();
+	std::vector<Geometric3Angle*> &getGeometric3Angles() { return Geometric3Angle_vec; }
 
-	ScalarVarExpr* mkScalarVarExpr(Space* s);
-	ScalarVarExpr* mkScalarVarExpr();
+	Geometric3FrameChange* mkGeometric3FrameChange(EuclideanGeometry* sp);
+	Geometric3FrameChange* mkGeometric3FrameChange();
+	std::vector<Geometric3FrameChange*> &getGeometric3FrameChanges() { return Geometric3FrameChange_vec; }
 
-	TransformVarExpr* mkTransformVarExpr(MapSpace* s);
-	TransformVarExpr* mkTransformVarExpr();
+	Geometric3Point* mkGeometric3Point(EuclideanGeometry* sp);
+	Geometric3Point* mkGeometric3Point();
+	std::vector<Geometric3Point*> &getGeometric3Points() { return Geometric3Point_vec; }
 
-	// Create a vector-vector-add expression, mem-expr.add(arg-expr) object in domain
-	// Precondition: sub-expressions mem-expr and arg-expr are already in domain
-	//
-	VecVecAddExpr* mkVecVecAddExpr(Space* s, domain::VecExpr* left_, domain::VecExpr* right_);
-	VecVecAddExpr* mkVecVecAddExpr(domain::VecExpr* left_, domain::VecExpr* right_);
+	Geometric3HomogenousPoint* mkGeometric3HomogenousPoint(EuclideanGeometry* sp);
+	Geometric3HomogenousPoint* mkGeometric3HomogenousPoint();
+	std::vector<Geometric3HomogenousPoint*> &getGeometric3HomogenousPoints() { return Geometric3HomogenousPoint_vec; }
 
-	VecScalarMulExpr* mkVecScalarMulExpr(Space* s, domain::VecExpr *vec, domain::ScalarExpr *flt);
-	VecScalarMulExpr* mkVecScalarMulExpr(domain::VecExpr *vec, domain::ScalarExpr *flt);
+	Geometric3Vector* mkGeometric3Vector(EuclideanGeometry* sp);
+	Geometric3Vector* mkGeometric3Vector();
+	std::vector<Geometric3Vector*> &getGeometric3Vectors() { return Geometric3Vector_vec; }
 
-	ScalarScalarAddExpr* mkScalarScalarAddExpr(Space* s, domain::ScalarExpr* left_, domain::ScalarExpr* right_);
-	ScalarScalarAddExpr* mkScalarScalarAddExpr(domain::ScalarExpr* left_, domain::ScalarExpr* right_);
+	Geometric3Scalar* mkGeometric3Scalar(EuclideanGeometry* sp);
+	Geometric3Scalar* mkGeometric3Scalar();
+	std::vector<Geometric3Scalar*> &getGeometric3Scalars() { return Geometric3Scalar_vec; }
 
-	ScalarScalarMulExpr* mkScalarScalarMulExpr(Space* s, domain::ScalarExpr* left_, domain::ScalarExpr* right_);
-	ScalarScalarMulExpr* mkScalarScalarMulExpr(domain::ScalarExpr* left_, domain::ScalarExpr* right_);
+	Geometric3BasisChange* mkGeometric3BasisChange(EuclideanGeometry* sp);
+	Geometric3BasisChange* mkGeometric3BasisChange();
+	std::vector<Geometric3BasisChange*> &getGeometric3BasisChanges() { return Geometric3BasisChange_vec; }
 
-	TransformVecApplyExpr* mkTransformVecApplyExpr(Space* s, domain::TransformExpr* left_, domain::VecExpr* right_);
-	TransformVecApplyExpr* mkTransformVecApplyExpr(domain::TransformExpr* left_, domain::VecExpr* right_);
+	Geometric3Scaling* mkGeometric3Scaling(EuclideanGeometry* sp);
+	Geometric3Scaling* mkGeometric3Scaling();
+	std::vector<Geometric3Scaling*> &getGeometric3Scalings() { return Geometric3Scaling_vec; }
 
-	TransformTransformComposeExpr* mkTransformTransformComposeExpr(MapSpace* s, domain::TransformExpr* left_, domain::TransformExpr* right_);
-	TransformTransformComposeExpr* mkTransformTransformComposeExpr(domain::TransformExpr* left_, domain::TransformExpr* right_);
+	Geometric3Shear* mkGeometric3Shear(EuclideanGeometry* sp);
+	Geometric3Shear* mkGeometric3Shear();
+	std::vector<Geometric3Shear*> &getGeometric3Shears() { return Geometric3Shear_vec; }
 
+	ClassicalTime* mkClassicalTime(std::string key ,std::string name_);
+	std::vector<ClassicalTime*> &getClassicalTimeSpaces() { return ClassicalTime_vec; }
 
-	// Paren Exprs
-	//
-	VecParenExpr* mkVecParenExpr(Space *s, domain::VecExpr *);
-	VecParenExpr* mkVecParenExpr(domain::VecExpr*);
+	TimeFrameChange* mkTimeFrameChange(ClassicalTime* sp);
+	TimeFrameChange* mkTimeFrameChange();
+	std::vector<TimeFrameChange*> &getTimeFrameChanges() { return TimeFrameChange_vec; }
 
-	ScalarParenExpr* mkScalarParenExpr(Space *s, domain::ScalarExpr *);
-	ScalarParenExpr* mkScalarParenExpr(domain::ScalarExpr*);
+	TimePoint* mkTimePoint(ClassicalTime* sp);
+	TimePoint* mkTimePoint();
+	std::vector<TimePoint*> &getTimePoints() { return TimePoint_vec; }
 
-	TransformParenExpr* mkTransformParenExpr(MapSpace* s, domain::TransformExpr *);
-	TransformParenExpr* mkTransformParenExpr(domain::TransformExpr*);
+	TimeHomogenousPoint* mkTimeHomogenousPoint(ClassicalTime* sp);
+	TimeHomogenousPoint* mkTimeHomogenousPoint();
+	std::vector<TimeHomogenousPoint*> &getTimeHomogenousPoints() { return TimeHomogenousPoint_vec; }
 
-	// Values
-	std::vector<Vector *> &getVectors() { return vectors;  }
-	std::vector<Scalar *> &getScalars() { return floats; }
-	std::vector<Transform *> &getTransforms() { return transforms; }
+	TimeVector* mkTimeVector(ClassicalTime* sp);
+	TimeVector* mkTimeVector();
+	std::vector<TimeVector*> &getTimeVectors() { return TimeVector_vec; }
 
-	// Constructed literal vector value
-	//
-	Vector_Lit* mkVector_Lit(Space* space, float x, float y, float z); 
-	Vector_Lit* mkVector_Lit(float x, float y, float z);
+	TimeScalar* mkTimeScalar(ClassicalTime* sp);
+	TimeScalar* mkTimeScalar();
+	std::vector<TimeScalar*> &getTimeScalars() { return TimeScalar_vec; }
 
-	// Constructed vector from variable expression
-	//
-	Vector* mkVector_Var(Space* s /*coords::Vector* v, domain::VecExpr *vec*/);
-	Vector* mkVector_Var();
+	TimeBasisChange* mkTimeBasisChange(ClassicalTime* sp);
+	TimeBasisChange* mkTimeBasisChange();
+	std::vector<TimeBasisChange*> &getTimeBasisChanges() { return TimeBasisChange_vec; }
 
-	// Constructed vector from vector-valued expression
-	//
-	Vector_Expr* mkVector_Expr(Space* space/*, coords::Vector* v*/, domain::VecExpr *vec);
-	Vector_Expr* mkVector_Expr(domain::VecExpr *vec);
+	TimeScaling* mkTimeScaling(ClassicalTime* sp);
+	TimeScaling* mkTimeScaling();
+	std::vector<TimeScaling*> &getTimeScalings() { return TimeScaling_vec; }
 
+	TimeShear* mkTimeShear(ClassicalTime* sp);
+	TimeShear* mkTimeShear();
+	std::vector<TimeShear*> &getTimeShears() { return TimeShear_vec; }
 
-	Scalar_Lit* mkScalar_Lit(Space* space, float scalar);
-	Scalar_Lit* mkScalar_Lit(float scalar);
+	ClassicalVelocity* mkClassicalVelocity(std::string key ,std::string name_, int dimension_);
+	std::vector<ClassicalVelocity*> &getClassicalVelocitySpaces() { return ClassicalVelocity_vec; }
 
-	Scalar* mkScalar_Var(Space* s);
-	Scalar* mkScalar_Var();
+	Velocity3Vector* mkVelocity3Vector(ClassicalVelocity* sp);
+	Velocity3Vector* mkVelocity3Vector();
+	std::vector<Velocity3Vector*> &getVelocity3Vectors() { return Velocity3Vector_vec; }
 
-	Scalar_Expr* mkScalar_Expr(Space* space, domain::ScalarExpr *vec);
-	Scalar_Expr* mkScalar_Expr(domain::ScalarExpr *vec);
+	Velocity3Scalar* mkVelocity3Scalar(ClassicalVelocity* sp);
+	Velocity3Scalar* mkVelocity3Scalar();
+	std::vector<Velocity3Scalar*> &getVelocity3Scalars() { return Velocity3Scalar_vec; }
 
+	Velocity3BasisChange* mkVelocity3BasisChange(ClassicalVelocity* sp);
+	Velocity3BasisChange* mkVelocity3BasisChange();
+	std::vector<Velocity3BasisChange*> &getVelocity3BasisChanges() { return Velocity3BasisChange_vec; }
 
-	Transform_Lit* mkTransform_Lit(MapSpace* space, 
-		domain::VecExpr* arg1, 
-		domain::VecExpr* arg2,
-		domain::VecExpr* arg3);
-	Transform_Lit* mkTransform_Lit( 
-		domain::VecExpr* arg1, 
-		domain::VecExpr* arg2,
-		domain::VecExpr* arg3);
+	Velocity3Scaling* mkVelocity3Scaling(ClassicalVelocity* sp);
+	Velocity3Scaling* mkVelocity3Scaling();
+	std::vector<Velocity3Scaling*> &getVelocity3Scalings() { return Velocity3Scaling_vec; }
 
-	Transform* mkTransform_Var(MapSpace* s);
-	Transform* mkTransform_Var();
+	Velocity3Shear* mkVelocity3Shear(ClassicalVelocity* sp);
+	Velocity3Shear* mkVelocity3Shear();
+	std::vector<Velocity3Shear*> &getVelocity3Shears() { return Velocity3Shear_vec; }
 
-	Transform_Expr* mkTransform_Expr(MapSpace* space, domain::TransformExpr *vec);
-	Transform_Expr* mkTransform_Expr(domain::TransformExpr *vec);
-
-// Defs
-
-	// Binding of identifier to contsructed vector
-	//
-	Vector_Def* mkVector_Def(/*ast::Vector_Def* vardecl,*/ domain::VecIdent* identifier, domain::Vector* vec);
-	std::vector<Vector_Def*> &getVectorDefs() { return defs; }
-
-
-	Scalar_Def* mkScalar_Def(domain::ScalarIdent* identifier, domain::Scalar* vec);
-	std::vector<Scalar_Def*> &getScalarDefs() { return float_defs; }
-
-
-	Transform_Def* mkTransform_Def(domain::TransformIdent* identifier, domain::Transform* vec);
-	std::vector<Transform_Def*> &getTransformDefs() { return transform_defs; }
-
-
-
-	Vector_Assign* mkVector_Assign(/*ast::Vector_Assign* vardecl,*/ domain::VecVarExpr* identifier, domain::Vector* vec);
-	std::vector<Vector_Assign*> &getVectorAssigns() { return assigns; }
-
-
-	Scalar_Assign* mkScalar_Assign(domain::ScalarVarExpr* identifier, domain::Scalar* vec);
-	std::vector<Scalar_Assign*> &getScalarAssigns() { return float_assigns; }
-
-	Transform_Assign* mkTransform_Assign(domain::TransformVarExpr* identifier, domain::Transform* vec);
-	std::vector<Transform_Assign*> &getTransformAssigns() { return transform_assigns; }
-// Client -- Separated from Domain
-//	bool isConsistent();
 private:
-	std::vector<Space*> spaces;
-	std::vector<VecIdent*> idents;
-	std::vector<VecExpr*> exprs;
-	std::vector<ScalarIdent*> float_idents;
-	std::vector<ScalarExpr*> float_exprs;
-	std::vector<TransformIdent*> tfm_idents;
-	std::vector<TransformExpr*> tfm_exprs;
-	std::vector<Vector*> vectors;
-	std::vector<Vector_Def*> defs;
-	std::vector<Vector_Assign*> assigns;
-	std::vector<Scalar*> floats;
-	std::vector<Scalar_Def*> float_defs;
-	std::vector<Scalar_Assign*> float_assigns;
-	std::vector<Transform*> transforms;
-	std::vector<Transform_Def*> transform_defs;
-	std::vector<Transform_Assign*> transform_assigns;
+
+	std::unordered_map<std::string, Space*> Space_map;
+	std::vector<Space*> Space_vec;
+	std::vector<EuclideanGeometry*> EuclideanGeometry_vec;
+	std::vector<Geometric3Rotation*>Geometric3Rotation_vec;
+	std::vector<Geometric3Orientation*>Geometric3Orientation_vec;
+	std::vector<Geometric3Angle*>Geometric3Angle_vec;
+	std::vector<Geometric3FrameChange*>Geometric3FrameChange_vec;
+	std::vector<Geometric3Point*>Geometric3Point_vec;
+	std::vector<Geometric3HomogenousPoint*>Geometric3HomogenousPoint_vec;
+	std::vector<Geometric3Vector*>Geometric3Vector_vec;
+	std::vector<Geometric3Scalar*>Geometric3Scalar_vec;
+	std::vector<Geometric3BasisChange*>Geometric3BasisChange_vec;
+	std::vector<Geometric3Scaling*>Geometric3Scaling_vec;
+	std::vector<Geometric3Shear*>Geometric3Shear_vec;
+	std::vector<ClassicalTime*> ClassicalTime_vec;
+	std::vector<TimeFrameChange*>TimeFrameChange_vec;
+	std::vector<TimePoint*>TimePoint_vec;
+	std::vector<TimeHomogenousPoint*>TimeHomogenousPoint_vec;
+	std::vector<TimeVector*>TimeVector_vec;
+	std::vector<TimeScalar*>TimeScalar_vec;
+	std::vector<TimeBasisChange*>TimeBasisChange_vec;
+	std::vector<TimeScaling*>TimeScaling_vec;
+	std::vector<TimeShear*>TimeShear_vec;
+	std::vector<ClassicalVelocity*> ClassicalVelocity_vec;
+	std::vector<Velocity3Vector*>Velocity3Vector_vec;
+	std::vector<Velocity3Scalar*>Velocity3Scalar_vec;
+	std::vector<Velocity3BasisChange*>Velocity3BasisChange_vec;
+	std::vector<Velocity3Scaling*>Velocity3Scaling_vec;
+	std::vector<Velocity3Shear*>Velocity3Shear_vec;
 };
-	
-/*
-Named space. Later on this will become a full-fledged Euclidean space object.
-*/
+
+
 class Space {
 public:
-	Space() : name_("") {};
-	Space(std::string name) : name_(name) {};
-	std::string getName() const;
+	Space() {};
+    virtual ~Space(){};
 	std::string toString() const {
-		return getName(); 
+		return "This is a mixin interface"; 
 	}
 
-  private:
-	std::string name_;
+private:
 };
 
-class MapSpace {
+
+class MapSpace : public Space {
 public:
 	MapSpace() {}
-	MapSpace(std::string domain_name, std::string codomain_name) : domain_{Space(domain_name)}, codomain_{Space(codomain_name)} {}
 	MapSpace(domain::Space domain, domain::Space codomain) : domain_{domain}, codomain_{codomain} {}
-	std::string getName() const;
+
 	std::string toString() const {
-		return getName(); 
+		return domain_.toString() + "->" + codomain_.toString(); 
 	}
 	domain::Space domain_;
 	domain::Space codomain_;
 };
-
-union SpaceContainer{
-	SpaceContainer() { setDefault(); }//this->inferenceSymbol = leanInferenceWildcard; }
-	~SpaceContainer(){
-		delete space;
-		delete inferenceSymbol;
-	}
-    domain::Space* space;
-    std::string* inferenceSymbol;
-
-	void setDefault(){
-		//this->space = nullptr;
-		this->inferenceSymbol = new std::string("_");
-	}
-
-	void setSpace(Space* space){
-		if(space){
-			this->space = space;
-		}
-		else{
-			this->inferenceSymbol = new std::string("_");
-		}
-	}
-
-	std::string toString(){
-		if (*this->inferenceSymbol == "_"){
-			return *this->inferenceSymbol;
-		}
-		else{
-			return this->space->toString();
-		}
-	}
-};
-
-union MapSpaceContainer
-{
-	MapSpaceContainer() { setDefault(); }
-	~MapSpaceContainer(){
-		delete space;
-		//delete inferenceSymbol;
-	}
-
-	domain::MapSpace* space;
-	std::string* inferenceSymbol;
-
-	void setDefault(){
-		this->inferenceSymbol = new std::string(this->getDefault());
-	};
-
-	void setSpace(domain::MapSpace space){
-		if(true){
-			this->space = new MapSpace(space.domain_, space.codomain_);
-		}
-		else{
-			setDefault();
-		}
-	};
-
-	std::string getDefault(){
-		return domain::MapSpace(Space("_"),Space("_")).toString();
-	}
-
-	std::string toString(){
-		if(*(this->inferenceSymbol) == this->getDefault()){
-			return *(this->inferenceSymbol);
-		}
-		else{
-			return this->space->toString();
-		}
-	};
-
-};
-
-
-
-/*
-The next set of definitions provides a basis for representing code 
-expressions lifted to domain expressions.
-*/
-
-class VecIdent {
+class DomainObject {
 public:
-	VecIdent(Space& space) : space_(&space) {}
-	VecIdent() { this->spaceContainer_ = new SpaceContainer(); }// this->spaceContainer_-> }
-	Space* getSpace() const { return space_; }
-	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-
-	void setSpace(Space* space);
-	// TODO: Reconsider abstracting away of name
-private:
-	Space* space_;
-	SpaceContainer* spaceContainer_;
-};
-
-// TODO - Change name of this class? DomainExpr?
-class VecExpr  {
-public:
-    VecExpr(Space* s) : space_(s) {}
-	virtual ~VecExpr(){}
-		VecExpr() { this->spaceContainer_ = new SpaceContainer(); }
-    Space* getSpace() const { return space_; };
-		SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-		void setSpace(Space* s);
-		// virtual std::string toString() const;
-	protected:
-    Space* space_;
-		SpaceContainer* spaceContainer_;
-};
-
-class ScalarIdent {
-public:
-	ScalarIdent(Space& space) : space_(&space) {}
-	ScalarIdent() { this->spaceContainer_ = new SpaceContainer(); }// this->spaceContainer_-> }
-	Space* getSpace() const { return space_; }
-	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-
-	void setSpace(Space* space);
-	// TODO: Reconsider abstracting away of name
-private:
-	Space* space_;
-	SpaceContainer* spaceContainer_;
-};
-
-class ScalarExpr {
-public:
-	ScalarExpr(Space* s) : space_(s) {}
-	virtual ~ScalarExpr(){}
-	ScalarExpr() { this->spaceContainer_ = new SpaceContainer(); }
-	Space* getSpace() const { return space_; };
-	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-	void setSpace(Space* s);
-
-	protected:
-		Space* space_;
-		SpaceContainer* spaceContainer_;
-};
-
-class TransformIdent {
-public:
-	TransformIdent(MapSpace& space) : space_(&space) {}
-	TransformIdent() { this->spaceContainer_ = new MapSpaceContainer(); }// this->spaceContainer_-> }
-	MapSpace* getSpace() const { return space_; }
-	MapSpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-
-	void setSpace(MapSpace space);
-	// TODO: Reconsider abstracting away of name
+    DomainObject(std::initializer_list<DomainObject*> args);
+    DomainObject(std::vector<DomainObject*> operands) : operands_(operands) {};
+    DomainObject(){};
+    DomainObject* getOperand(int i);
+    std::vector<DomainObject*> getOperands() const { return operands_; };
+    void setOperands(std::vector<DomainObject*> operands);
+    virtual std::string toString();
+    friend class DomainObject; 
+  
 protected:
-	MapSpace* space_;
-	MapSpaceContainer* spaceContainer_;
+    std::vector<DomainObject*> operands_;
+    int operand_count;
 };
 
-class TransformExpr {
+class DomainContainer : public DomainObject{
 public:
-	TransformExpr(MapSpace* s) : space_(s) {}
-	virtual ~TransformExpr(){}
-	TransformExpr() { this->spaceContainer_ = new MapSpaceContainer(); }// this->spaceContainer_-> }
-	MapSpace* getSpace() const { return space_; }
-	MapSpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
+        DomainContainer() : DomainObject(), inner_(nullptr) {};
+        DomainContainer(DomainObject* inner) : inner_(inner) {};
+        DomainContainer(std::initializer_list<DomainObject*> operands);
+        DomainContainer(std::vector<DomainObject*> operands);
+        virtual std::string toString() override;// { this->hasValue() ? this->inner_->toString() : "No Provided Interpretation"; }
+        DomainObject* getValue() const { return this->inner_; }
+        void setValue(DomainObject* obj);
+        bool hasValue();
+        
 
-	void setSpace(MapSpace space);
-	// TODO: Reconsider abstracting away of name
-protected:
-	MapSpace* space_;
-	MapSpaceContainer* spaceContainer_;
-};
-class VecVarExpr : public VecExpr {
-public:
-    VecVarExpr(Space* s) : VecExpr(s) {}
-		VecVarExpr() : VecExpr() {}
-	virtual ~VecVarExpr(){}
-		// virtual std::string toString() const;
-	private:
-};
-
-class ScalarVarExpr : public ScalarExpr {
-public:
-    ScalarVarExpr(Space* s) : ScalarExpr(s) {}
-		ScalarVarExpr() : ScalarExpr() {}
-	virtual ~ScalarVarExpr(){}
-		// virtual std::string toString() const;
-	private:
-};
-
-class TransformVarExpr : public TransformExpr {
-public:
-    TransformVarExpr(MapSpace* s) : TransformExpr(s) {}
-		TransformVarExpr() : TransformExpr() {}
-	virtual ~TransformVarExpr(){}
-		// virtual std::string toString() const;
-	private:
-};
-
-class VecVecAddExpr : public VecExpr {
-public:
-   VecVecAddExpr(
-        Space* s, domain::VecExpr *mem, domain::VecExpr *arg) : 
-			domain::VecExpr(s), arg_(arg), mem_(mem) {	}
-	 VecVecAddExpr(domain::VecExpr *mem, domain::VecExpr *arg) :
-	 		domain::VecExpr(), arg_(arg), mem_(mem) { }
-	virtual ~VecVecAddExpr(){}
-	domain::VecExpr *getMemberVecExpr();
-	domain::VecExpr *getArgVecExpr();
-	// virtual std::string toString() const;
-	// const Space& getVecVecAddExprDefaultSpace();
 private:
-    domain::VecExpr* arg_;
-    domain::VecExpr* mem_;
+DomainObject* inner_;
 };
 
-class VecScalarMulExpr : public VecExpr {
+
+class EuclideanGeometry : public Space {
 public:
-	VecScalarMulExpr(
-		Space* s, domain::VecExpr *vec, domain::ScalarExpr *flt) :
-			domain::VecExpr(), vec_(vec), flt_(flt) {	}
-	VecScalarMulExpr(
-		domain::VecExpr *vec, domain::ScalarExpr *flt) :
-			domain::VecExpr(), vec_(vec), flt_(flt) {	}
-	domain::VecExpr *getVecExpr();
-	domain::ScalarExpr *getScalarExpr();
+	EuclideanGeometry() : name_("") {};
+	EuclideanGeometry(std::string name) : name_(name) {};
+	EuclideanGeometry(std::string name, int dimension) : name_(name), dimension_(dimension) {};
+	std::string getName() const { return name_; }; 
+	int getDimension() const { return dimension_; }; 
+	std::string toString() const {
+		return "@@EuclideanGeometry " + getName()   + "("+ std::to_string(getDimension()) + ")"; 
+	}
+
+private:
+    std::string name_;
+    int dimension_;
+};
+
+class Geometric3Rotation : public DomainObject {
+public:
+    Geometric3Rotation(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3Rotation(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3Rotation(){}
+    std::string toString() override {
+        return "@@Geometric3Rotation(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3Orientation : public DomainObject {
+public:
+    Geometric3Orientation(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3Orientation(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3Orientation(){}
+    std::string toString() override {
+        return "@@Geometric3Orientation(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3Angle : public DomainObject {
+public:
+    Geometric3Angle(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3Angle(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3Angle(){}
+    std::string toString() override {
+        return "@@Geometric3Angle(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3FrameChange : public DomainObject {
+public:
+    Geometric3FrameChange(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3FrameChange(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3FrameChange(){}
+    std::string toString() override {
+        return "@@Geometric3FrameChange(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3Point : public DomainObject {
+public:
+    Geometric3Point(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3Point(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3Point(){}
+    std::string toString() override {
+        return "@@Geometric3Point(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3HomogenousPoint : public DomainObject {
+public:
+    Geometric3HomogenousPoint(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3HomogenousPoint(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3HomogenousPoint(){}
+    std::string toString() override {
+        return "@@Geometric3HomogenousPoint(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3Vector : public DomainObject {
+public:
+    Geometric3Vector(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3Vector(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3Vector(){}
+    std::string toString() override {
+        return "@@Geometric3Vector(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3Scalar : public DomainObject {
+public:
+    Geometric3Scalar(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3Scalar(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3Scalar(){}
+    std::string toString() override {
+        return "@@Geometric3Scalar(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3BasisChange : public DomainObject {
+public:
+    Geometric3BasisChange(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3BasisChange(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3BasisChange(){}
+    std::string toString() override {
+        return "@@Geometric3BasisChange(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3Scaling : public DomainObject {
+public:
+    Geometric3Scaling(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3Scaling(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3Scaling(){}
+    std::string toString() override {
+        return "@@Geometric3Scaling(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class Geometric3Shear : public DomainObject {
+public:
+    Geometric3Shear(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Geometric3Shear(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Geometric3Shear(){}
+    std::string toString() override {
+        return "@@Geometric3Shear(" + space_.getName() + ")";
+    }
+private:
+    EuclideanGeometry space_;
+};
+
+
+class ClassicalTime : public Space {
+public:
+	ClassicalTime() : name_("") {};
+	ClassicalTime(std::string name) : name_(name) {};
 	
-	virtual ~VecScalarMulExpr(){}
-	private:
-		domain::VecExpr* vec_;
-		domain::ScalarExpr* flt_;
-
-};
-
-
-class ScalarScalarAddExpr : public ScalarExpr {
-public:
-   ScalarScalarAddExpr(
-        Space* s, domain::ScalarExpr *lhs, domain::ScalarExpr *rhs) : 
-			domain::ScalarExpr(s), lhs_(lhs), rhs_(rhs) {	}
-	 ScalarScalarAddExpr(domain::ScalarExpr *lhs, domain::ScalarExpr *rhs) :
-	 		domain::ScalarExpr(), lhs_(lhs), rhs_(rhs) { }
+	std::string getName() const { return name_; }; 
 	
-	virtual ~ScalarScalarAddExpr(){}
-	domain::ScalarExpr *getLHSScalarExpr();
-	domain::ScalarExpr *getRHSScalarExpr();
-	// virtual std::string toString() const;
-	// const Space& getScalarScalarAddExprDefaultSpace();
-private:
-    domain::ScalarExpr* lhs_;
-    domain::ScalarExpr* rhs_;
-};
-
-class ScalarScalarMulExpr : public ScalarExpr {
-public:
-   	ScalarScalarMulExpr(
-        Space* s, domain::ScalarExpr *lhs, domain::ScalarExpr *rhs) : 
-			domain::ScalarExpr(s), lhs_(lhs), rhs_(rhs) {	}
-	ScalarScalarMulExpr(domain::ScalarExpr *lhs, domain::ScalarExpr *rhs) :
-	 		domain::ScalarExpr(), lhs_(lhs), rhs_(rhs) { }
-	
-	virtual ~ScalarScalarMulExpr(){}
-	domain::ScalarExpr *getLHSScalarExpr();
-	domain::ScalarExpr *getRHSScalarExpr();
-	// virtual std::string toString() const;
-	// const Space& getScalarScalarAddExprDefaultSpace();
-private:
-    domain::ScalarExpr* lhs_;
-    domain::ScalarExpr* rhs_;
-};
-
-
-class TransformVecApplyExpr : public VecExpr {
-public:
-   	TransformVecApplyExpr(
-        Space* s, domain::TransformExpr *lhs, domain::VecExpr *rhs) : 
-			domain::VecExpr(s), lhs_(lhs), rhs_(rhs) {	}
-	TransformVecApplyExpr(domain::TransformExpr *lhs, domain::VecExpr *rhs) :
-	 		domain::VecExpr(), lhs_(lhs), rhs_(rhs) { }
-	
-	virtual ~TransformVecApplyExpr(){}
-	domain::TransformExpr *getLHSTransformExpr();
-	domain::VecExpr *getRHSVecExpr();
-	// virtual std::string toString() const;
-	// const Space& getScalarScalarAddExprDefaultSpace();
-private:
-    domain::TransformExpr* lhs_;
-    domain::VecExpr* rhs_;
-};
-
-
-class TransformTransformComposeExpr : public TransformExpr {
-public:
-   	TransformTransformComposeExpr(
-        MapSpace* s, domain::TransformExpr *lhs, domain::TransformExpr *rhs) : 
-			domain::TransformExpr(s), lhs_(lhs), rhs_(rhs) {	}
-	TransformTransformComposeExpr(domain::TransformExpr *lhs, domain::TransformExpr *rhs) :
-	 		domain::TransformExpr(), lhs_(lhs), rhs_(rhs) { }
-	
-	virtual ~TransformTransformComposeExpr(){}
-	domain::TransformExpr *getLHSTransformExpr();
-	domain::TransformExpr *getRHSTransformExpr();
-	// virtual std::string toString() const;
-	// const MapSpace& getScalarScalarAddExprDefaultMapSpace();
-private:
-    domain::TransformExpr* lhs_;
-    domain::TransformExpr* rhs_;
-};
-
-class VecParenExpr : public VecExpr  {
-public:
-		VecParenExpr(Space *s, domain::VecExpr *e) : domain::VecExpr(s), expr_(e) {}
-		VecParenExpr(domain::VecExpr *e) : domain::VecExpr(), expr_(e) {}
-		
-		virtual ~VecParenExpr(){}
-		const domain::VecExpr* getVecExpr() const { return expr_; }
-		//std::string toString() const; 
-private:
-		const domain::VecExpr* expr_; // vec expr from which vector is constructed
-};
-
-class ScalarParenExpr : public ScalarExpr  {
-public:
-		ScalarParenExpr(Space *s, domain::ScalarExpr *e) : domain::ScalarExpr(s), expr_(e) {}
-		ScalarParenExpr(domain::ScalarExpr *e) : domain::ScalarExpr(), expr_(e) {}
-		
-		virtual ~ScalarParenExpr(){}
-		const domain::ScalarExpr* getScalarExpr() const { return expr_; }
-		//std::string toString() const; 
-private:
-		const domain::ScalarExpr* expr_; // vec expr from which vector is constructed
-};
-
-
-class TransformParenExpr : public TransformExpr  {
-public:
-		TransformParenExpr(MapSpace *s, domain::TransformExpr *e) : domain::TransformExpr(s), expr_(e) {}
-		TransformParenExpr(domain::TransformExpr *e) : domain::TransformExpr(), expr_(e) {}
-		
-		virtual ~TransformParenExpr(){}
-		const domain::TransformExpr* getTransformExpr() const { return expr_; }
-		//std::string toString() const; 
-private:
-		const domain::TransformExpr* expr_; // vec expr from which vector is constructed
-};
-
-/*
-This is a sum type capable of representing different kinds of 
-fully constructed vectors.
-*/
-
-enum VecCtorType {VEC_EXPR, VEC_LIT, /*VEC_VAR,*/ VEC_NONE } ; 
-
-class Vector   {
-public:
-	Vector(const Space& s, VecCtorType tag) :
-		space_(&s), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
-	Vector(VecCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
-
-	bool isLit() { return (tag_ == VEC_LIT); } 
-	bool isExpr() { return (tag_ == VEC_EXPR); } 
-	//bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
-	const Space* getSpace() {return space_; }
-	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-	void setSpace(Space* space);
-	// virtual std::string toString() const {
-private:
-	const Space* space_; // TODO: INFER?
-	SpaceContainer* spaceContainer_;
-	VecCtorType tag_;
-};
-
-enum ScalarCtorType {FLOAT_EXPR, FLOAT_LIT, /*VEC_VAR,*/ FLOAT_NONE } ; 
-class Scalar{
-public:
-	Scalar(const Space& s, ScalarCtorType tag) :
-		space_(&s), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
-	Scalar(ScalarCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new SpaceContainer(); }
-
-	bool isLit() { return (tag_ == FLOAT_LIT); } 
-	bool isExpr() { return (tag_ == FLOAT_EXPR); } 
-	//bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
-	const Space* getSpace() {return space_; }
-	SpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-	void setSpace(Space* space);
-	// virtual std::string toString() const {
-private:
-	const Space* space_; // TODO: INFER?
-	SpaceContainer* spaceContainer_;
-	ScalarCtorType tag_;
-};
-
-enum TransformCtorType {TFM_EXPR, TFM_LIT, TFM_NONE } ; 
-class Transform{
-public:
-	Transform(const MapSpace& s, TransformCtorType tag) :
-		space_(&s), tag_(tag)  { this->spaceContainer_ = new MapSpaceContainer(); }
-	Transform(TransformCtorType tag) : space_(nullptr), tag_(tag)  { this->spaceContainer_ = new MapSpaceContainer(); }
-
-	bool isLit() { return (tag_ == TFM_LIT); } 
-	bool isExpr() { return (tag_ == TFM_EXPR); } 
-	//bool isVar() { return (tag_ == VEC_VAR); } -- a kind of expression
-	const MapSpace* getSpace() {return space_; }
-	MapSpaceContainer* getSpaceContainer() const { return this->spaceContainer_; }
-	void setSpace(MapSpace space);
-	// virtual std::string toString() const {
-private:
-	const MapSpace* space_; // TODO: INFER?
-	MapSpaceContainer* spaceContainer_;
-	TransformCtorType tag_;
-};
-
-
-// Constructed literal vector value
-//
-// TODO: Replace float with domain::scalar
-//
-class Vector_Lit : public Vector {
-public:
-	Vector_Lit(const Space& s, float x, float y, float z) :
-		Vector(s, VEC_LIT), x_(x), y_(y), z_(z) {
+	std::string toString() const {
+		return "@@ClassicalTime " + getName()   + "(" + ")"; 
 	}
 
-	Vector_Lit(float x, float y, float z) : Vector(VEC_LIT), x_(x), y_(y), z_(z) {}
-
-	float getX() { return x_; }
-	float getY() { return y_; }
-	float getZ() { return z_; }
 private:
-  float x_;
-  float y_;
-  float z_;
+    std::string name_;
+    
 };
 
-// Constructed vector value from vector-valued expression
-//
-class Vector_Expr : public Vector  {
+class TimeFrameChange : public DomainObject {
 public:
-	Vector_Expr(const Space& s, domain::VecExpr* e) :
-		Vector(s, VEC_EXPR), expr_(e) { 
+    TimeFrameChange(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    TimeFrameChange(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~TimeFrameChange(){}
+    std::string toString() override {
+        return "@@TimeFrameChange(" + space_.getName() + ")";
+    }
+private:
+    ClassicalTime space_;
+};
+
+
+class TimePoint : public DomainObject {
+public:
+    TimePoint(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    TimePoint(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~TimePoint(){}
+    std::string toString() override {
+        return "@@TimePoint(" + space_.getName() + ")";
+    }
+private:
+    ClassicalTime space_;
+};
+
+
+class TimeHomogenousPoint : public DomainObject {
+public:
+    TimeHomogenousPoint(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    TimeHomogenousPoint(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~TimeHomogenousPoint(){}
+    std::string toString() override {
+        return "@@TimeHomogenousPoint(" + space_.getName() + ")";
+    }
+private:
+    ClassicalTime space_;
+};
+
+
+class TimeVector : public DomainObject {
+public:
+    TimeVector(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    TimeVector(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~TimeVector(){}
+    std::string toString() override {
+        return "@@TimeVector(" + space_.getName() + ")";
+    }
+private:
+    ClassicalTime space_;
+};
+
+
+class TimeScalar : public DomainObject {
+public:
+    TimeScalar(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    TimeScalar(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~TimeScalar(){}
+    std::string toString() override {
+        return "@@TimeScalar(" + space_.getName() + ")";
+    }
+private:
+    ClassicalTime space_;
+};
+
+
+class TimeBasisChange : public DomainObject {
+public:
+    TimeBasisChange(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    TimeBasisChange(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~TimeBasisChange(){}
+    std::string toString() override {
+        return "@@TimeBasisChange(" + space_.getName() + ")";
+    }
+private:
+    ClassicalTime space_;
+};
+
+
+class TimeScaling : public DomainObject {
+public:
+    TimeScaling(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    TimeScaling(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~TimeScaling(){}
+    std::string toString() override {
+        return "@@TimeScaling(" + space_.getName() + ")";
+    }
+private:
+    ClassicalTime space_;
+};
+
+
+class TimeShear : public DomainObject {
+public:
+    TimeShear(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    TimeShear(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~TimeShear(){}
+    std::string toString() override {
+        return "@@TimeShear(" + space_.getName() + ")";
+    }
+private:
+    ClassicalTime space_;
+};
+
+
+class ClassicalVelocity : public Space {
+public:
+	ClassicalVelocity() : name_("") {};
+	ClassicalVelocity(std::string name) : name_(name) {};
+	ClassicalVelocity(std::string name, int dimension) : name_(name), dimension_(dimension) {};
+	std::string getName() const { return name_; }; 
+	int getDimension() const { return dimension_; }; 
+	std::string toString() const {
+		return "@@ClassicalVelocity " + getName()   + "("+ std::to_string(getDimension()) + ")"; 
 	}
 
-	Vector_Expr(domain::VecExpr* e) : Vector(VEC_EXPR) {}
-
-	const domain::VecExpr* getVecExpr() const { return expr_; }
-	std::string toString() const;
 private:
-	const domain::VecExpr* expr_; // vec expr from which vector is constructed
+    std::string name_;
+    int dimension_;
 };
 
-
-// TODO: This is unnecessary, as variable expressions are just expressions
-// and expressions are already taken care of?
-//
-class Vector_Var : public Vector {
-	Vector_Var() : Vector(*new Space(""), VEC_EXPR ) { 
-		LOG(DBUG) <<"Domain::Vector_Var::Vector_Var: Error. Not implemented.\n";
-	}
-};
-
-class Scalar_Lit : public Scalar {
+class Velocity3Vector : public DomainObject {
 public:
-	Scalar_Lit(const Space& s, float scalar) :
-		Scalar(s, FLOAT_LIT), scalar_(scalar) {
-	}
-
-	Scalar_Lit(float scalar) : Scalar(FLOAT_LIT), scalar_(scalar){}
-
-	float getScalar() { return scalar_; }
+    Velocity3Vector(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Velocity3Vector(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Velocity3Vector(){}
+    std::string toString() override {
+        return "@@Velocity3Vector(" + space_.getName() + ")";
+    }
 private:
-  float scalar_;
+    ClassicalVelocity space_;
 };
 
-// Constructed vector value from vector-valued expression
-//
-class Scalar_Expr : public Scalar  {
+
+class Velocity3Scalar : public DomainObject {
 public:
-	Scalar_Expr(const Space& s, domain::ScalarExpr* e) :
-		Scalar(s, FLOAT_EXPR), expr_(e) { 
-	}
-
-	Scalar_Expr(domain::ScalarExpr* e) : Scalar(FLOAT_EXPR) {}
-
-	const domain::ScalarExpr* getScalarExpr() const { return expr_; }
-	std::string toString() const;
+    Velocity3Scalar(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Velocity3Scalar(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Velocity3Scalar(){}
+    std::string toString() override {
+        return "@@Velocity3Scalar(" + space_.getName() + ")";
+    }
 private:
-	const domain::ScalarExpr* expr_; // vec expr from which vector is constructed
-};
-
-class Scalar_Var : public Scalar {
-	Scalar_Var() : Scalar(*new Space(""), FLOAT_EXPR ) { 
-		LOG(DBUG) <<"Domain::Scalar_Var::Scalar_-Var: Error. Not implemented.\n";
-	}
+    ClassicalVelocity space_;
 };
 
 
-class Transform_Lit : public Transform {
+class Velocity3BasisChange : public DomainObject {
 public:
-	Transform_Lit(const MapSpace& s,
-		domain::VecExpr* arg1, 
-		domain::VecExpr* arg2,
-		domain::VecExpr* arg3) :
-		Transform(s, TFM_LIT),
-		arg1_{arg1},
-		arg2_{arg2},
-		arg3_{arg3} {
-	}
-
-	Transform_Lit(
-		domain::VecExpr* arg1, 
-		domain::VecExpr* arg2,
-		domain::VecExpr* arg3) :
-		Transform(TFM_LIT),
-		arg1_{arg1},
-		arg2_{arg2},
-		arg3_{arg3} {
-	}
-	
-	//float getTransform() { return Transform_; }
+    Velocity3BasisChange(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Velocity3BasisChange(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Velocity3BasisChange(){}
+    std::string toString() override {
+        return "@@Velocity3BasisChange(" + space_.getName() + ")";
+    }
 private:
-   domain::VecExpr *arg1_, *arg2_, *arg3_;
+    ClassicalVelocity space_;
 };
 
-// Constructed vector value from vector-valued expression
-//
-class Transform_Expr : public Transform  {
+
+class Velocity3Scaling : public DomainObject {
 public:
-	Transform_Expr(const MapSpace& s, domain::TransformExpr* e) :
-		Transform(s, TFM_EXPR), expr_(e) { 
-	}
-
-	Transform_Expr(domain::TransformExpr* e) : Transform(TFM_EXPR) {}
-
-	const domain::TransformExpr* getTransformExpr() const { return expr_; }
-	std::string toString() const;
+    Velocity3Scaling(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Velocity3Scaling(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Velocity3Scaling(){}
+    std::string toString() override {
+        return "@@Velocity3Scaling(" + space_.getName() + ")";
+    }
 private:
-	const domain::TransformExpr* expr_; // vec expr from which vector is constructed
-};
-
-class Transform_Var : public Transform {
-	Transform_Var() : Transform(*new MapSpace("",""), TFM_EXPR ) { 
-		LOG(DBUG) <<"Domain::Transform_Var::Transform_-Var: Error. Not implemented.\n";
-	}
+    ClassicalVelocity space_;
 };
 
 
-/*
-Domain representation of binding of identifier to expression.
-Takes clang::VarDecl establishing binding (in a wrapper) and 
-the *domain* VecIdent and Expression objects being bound.
-*/
-class Vector_Def  {
+class Velocity3Shear : public DomainObject {
 public:
-	Vector_Def(domain::VecIdent* id, domain::Vector* vec): 
-			id_(id), vec_(vec) {}
-	const domain::Vector* getVector() const { return vec_; }
-	const domain::VecIdent* getIdent() { return id_; }
-	// std::string toString() const;
+    Velocity3Shear(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+			domain::DomainObject(args)  {}
+    Velocity3Shear(std::initializer_list<DomainObject*> args ) :
+	 		domain::DomainObject(args) {}
+	virtual ~Velocity3Shear(){}
+    std::string toString() override {
+        return "@@Velocity3Shear(" + space_.getName() + ")";
+    }
 private:
-	const VecIdent* id_;
-	const Vector* vec_;
+    ClassicalVelocity space_;
 };
-
-
-class Scalar_Def  {
-public:
-	Scalar_Def(domain::ScalarIdent* id, domain::Scalar* flt): 
-			id_(id), flt_(flt) {}
-	const domain::Scalar* getScalar() const { return flt_; }
-	const domain::ScalarIdent* getIdent() { return id_; }
-	// std::string toString() const;
-private:
-	const ScalarIdent* id_;
-	const Scalar* flt_;
-};
-
-
-class Transform_Def  {
-public:
-	Transform_Def(domain::TransformIdent* id, domain::Transform* tfm): 
-			id_(id), tfm_(tfm) {}
-	const domain::Transform* getTransform() const { return tfm_; }
-	const domain::TransformIdent* getIdent() { return id_; }
-	// std::string toString() const;
-private:
-	const TransformIdent* id_;
-	const Transform* tfm_;
-};
-
-class Vector_Assign  {
-public:
-	Vector_Assign(domain::VecVarExpr* id, domain::Vector* vec): 
-			id_(id), vec_(vec) {}
-	const domain::Vector* getVector() const { return vec_; }
-	const domain::VecVarExpr* getVarExpr() { return id_; }
-	// std::string toString() const;
-private:
-	const VecVarExpr* id_;
-	const Vector* vec_;
-};
-
-
-class Scalar_Assign  {
-public:
-	Scalar_Assign(domain::ScalarVarExpr* id, domain::Scalar* flt): 
-			id_(id), flt_(flt) {}
-	const domain::Scalar* getScalar() const { return flt_; }
-	const domain::ScalarVarExpr* getVarExpr() { return id_; }
-	// std::string toString() const;
-private:
-	const ScalarVarExpr* id_;
-	const Scalar* flt_;
-};
-
-class Transform_Assign  {
-public:
-	Transform_Assign(domain::TransformVarExpr* id, domain::Transform* tfm): 
-			id_(id), tfm_(tfm) {}
-	const domain::Transform* getTransform() const { return tfm_; }
-	const domain::TransformVarExpr* getVarExpr() { return id_; }
-	// std::string toString() const;
-private:
-	const TransformVarExpr* id_;
-	const Transform* tfm_;
-};
-
-
-
 
 } // end namespace
 

@@ -119,11 +119,11 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     if(scalarDecl or scalarVarDecl or scalarDeclRV){//matches Scalar variable declaration
         if(scalarDecl and scalarVarDecl and scalarDeclRV){
            
-            this->interp_->mkScalarIdent(scalarVarDecl);
+           // this->interp_->mkScalarIdent(scalarVarDecl);
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*scalarDeclRV);
-            this->interp_->mkScalar_Def(scalarDecl, scalarVarDecl, exprMatcher.getChildExprStore());
+            //this->interp_->mkScalar_Def(scalarDecl, scalarVarDecl, exprMatcher.getChildExprStore());
         }
         else{
             //log error
@@ -132,11 +132,11 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     else if(vectorDecl or vectorVarDecl or vectorDeclRV){//matches Vector variable declaration
         if(vectorDecl and vectorVarDecl and vectorDeclRV){
 
-            this->interp_->mkVecIdent(vectorVarDecl);
+            //this->interp_->mkVecIdent(vectorVarDecl);
             VectorExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*vectorDeclRV);
-            this->interp_->mkVector_Def(vectorDecl, vectorVarDecl, exprMatcher.getChildExprStore());
+           // this->interp_->mkVector_Def(vectorDecl, vectorVarDecl, exprMatcher.getChildExprStore());
 
         }
         else{
@@ -145,11 +145,11 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
     }
     else if(transformDecl or transformVarDecl or transformDeclRV){
         if(transformDecl and transformVarDecl and transformDeclRV){
-            this->interp_->mkTransformIdent(transformVarDecl);
+           // this->interp_->mkTransformIdent(transformVarDecl);
             TransformExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*transformDeclRV);
-            this->interp_->mkTransform_Def(transformDecl, transformVarDecl, exprMatcher.getChildExprStore());
+          //  this->interp_->mkTransform_Def(transformDecl, transformVarDecl, exprMatcher.getChildExprStore());
         }
         else{
             //log error
@@ -187,7 +187,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.search();
             rhsMatcher.visit(*scalarAssignRHS);
 
-            interp_->mkScalar_Assign(scalarAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+          //  interp_->mkScalar_Assign(scalarAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
 
             //we don't set this property in statements
             //this->childExprStore_ = (clang::Expr*)scalarAssign;
@@ -205,7 +205,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.search();
             rhsMatcher.visit(*vectorAssignRHS);
 
-            interp_->mkVector_Assign(vectorAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+          // interp_->mkVector_Assign(vectorAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
 
            //this->childExprStore_ = (clang::Expr*)vectorAssign;
         }
@@ -222,7 +222,7 @@ void StatementProductionMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.search();
             rhsMatcher.visit(*transformAssignRHS);
 
-            interp_->mkTransform_Assign(transformAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+          //  interp_->mkTransform_Assign(transformAssign, (clang::DeclRefExpr*)lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
 
            //this->childExprStore_ = (clang::Expr*)vectorAssign;
         }

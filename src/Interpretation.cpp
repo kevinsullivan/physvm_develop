@@ -1,3 +1,4 @@
+
 /*
 Establish interpretations for AST nodes:
 
@@ -19,8 +20,11 @@ Establish interpretations for AST nodes:
 #include "InterpToDomain.h"
 #include "ASTToCoords.h"
 #include "Oracle_AskAll.h"    // default oracle
+#include "Space.h"
+#include "Checker.h"
 
 //#include <g3log/g3log.hpp>
+#include <unordered_map>
 
 using namespace interp;
 
@@ -34,1034 +38,1440 @@ Interpretation::Interpretation() {
     coords2dom_ = new coords2domain::CoordsToDomain();
     coords2interp_ = new coords2interp::CoordsToInterp();
     interp2domain_ = new interp2domain::InterpToDomain();
-}
-
-/******
-* Ident
-******/
-
-void Interpretation::mkVecIdent(ast::VecIdent *ast)
-{
-  coords::VecIdent *coords = ast2coords_->mkVecIdent(ast, context_);
-  LOG(DBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-  //domain::Space &space = oracle_->getSpaceForVecIdent(coords);
-  domain::VecIdent *dom = domain_->mkVecIdent();
-  coords2dom_->putVecIdent(coords, dom);
-  interp::VecIdent *interp = new interp::VecIdent(coords, dom);
-  coords2interp_->putVecIdent(coords, interp);
-  interp2domain_->putVecIdent(interp, dom);
-}
-
-void Interpretation::mkScalarIdent(ast::ScalarIdent *ast)
-{
-  coords::ScalarIdent *coords = ast2coords_->mkScalarIdent(ast, context_);
-  LOG(DBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-  //domain::Space &space = oracle_->getSpaceForVecIdent(coords);
-  domain::ScalarIdent *dom = domain_->mkScalarIdent();
-  coords2dom_->putScalarIdent(coords, dom);
-  interp::ScalarIdent *interp = new interp::ScalarIdent(coords, dom);
-  coords2interp_->putScalarIdent(coords, interp);
-  interp2domain_->putScalarIdent(interp, dom);
-}
-
-void Interpretation::mkTransformIdent(ast::TransformIdent *ast)
-{
-  coords::TransformIdent *coords = ast2coords_->mkTransformIdent(ast, context_);
-  LOG(DBUG) << "Interpretation::mkVecIdent. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-  //domain::Space &space = oracle_->getSpaceForVecIdent(coords);
-  domain::TransformIdent *dom = domain_->mkTransformIdent();
-  coords2dom_->putTransformIdent(coords, dom);
-  interp::TransformIdent *interp = new interp::TransformIdent(coords, dom);
-  coords2interp_->putTransformIdent(coords, interp);
-  interp2domain_->putTransformIdent(interp, dom);
-}
-
-/*****
-* Expr
-*****/
-
-
-void Interpretation::mkVecVarExpr(ast::VecVarExpr *ast/*, clang::ASTContext *c*/) {
-    coords::VecVarExpr *coords = ast2coords_->mkVecVarExpr(ast, context_);
-    LOG(DBUG) << "Interpretation::mkVecVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-
-    //domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
-    domain::VecVarExpr *dom = domain_->mkVecVarExpr();
-    coords2dom_->PutVecVarExpr(coords, dom);
-    interp::VecVarExpr *interp = new interp::VecVarExpr(coords,dom);
-    coords2interp_->putVecVarExpr(coords, interp);
-    interp2domain_->putVecVarExpr(interp,dom);
-}
-
-void Interpretation::mkScalarVarExpr(ast::ScalarVarExpr *ast/*, clang::ASTContext *c*/) {
-    coords::ScalarVarExpr *coords = ast2coords_->mkScalarVarExpr(ast, context_);
-    LOG(DBUG) << "Interpretation::mkScalarVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-
-    //domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
-    domain::ScalarVarExpr *dom = domain_->mkScalarVarExpr();
-    coords2dom_->PutScalarVarExpr(coords, dom);
-    interp::ScalarVarExpr *interp = new interp::ScalarVarExpr(coords,dom);
-    coords2interp_->putScalarVarExpr(coords, interp);
-    interp2domain_->putScalarVarExpr(interp,dom);
-}
-
-void Interpretation::mkTransformVarExpr(ast::TransformVarExpr *ast/*, clang::ASTContext *c*/) {
-    coords::TransformVarExpr *coords = ast2coords_->mkTransformVarExpr(ast, context_);
-    LOG(DBUG) << "Interpretation::mkTransformVarExpr. ast=" << std::hex << ast << ", " << coords->toString() << "\n";
-
-    //domain::Space &space = oracle_->getSpaceForVecVarExpr(coords);
-    domain::TransformVarExpr *dom = domain_->mkTransformVarExpr();
-    coords2dom_->PutTransformVarExpr(coords, dom);
-    interp::TransformVarExpr *interp = new interp::TransformVarExpr(coords,dom);
-    coords2interp_->putTransformVarExpr(coords, interp);
-    interp2domain_->putTransformVarExpr(interp,dom);
+    checker_ = new Checker(this);
 }
 
 
-void Interpretation::mkVecVecAddExpr(ast::VecVecAddExpr *add_ast, const ast::VecExpr *mem_expr, const ast::VecExpr *arg_expr) {
-  coords::VecExpr *mem_coords = static_cast<coords::VecExpr*>
-                                  (ast2coords_->getStmtCoords(mem_expr));
-  coords::VecExpr *arg_coords = static_cast<coords::VecExpr*>
-                                  (ast2coords_->getStmtCoords(arg_expr));
+
+void Interpretation::mkCOMPOUND_STMT(const ast::COMPOUND_STMT * ast , std::vector <ast::STMT*> operands) {
+//const ast::COMPOUND_STMT * ast , std::vector < ast::STMT *> operands 
+	//coords::STMT* operand1_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operands));
+
+    vector<coords::STMT*> operand_coords;
+
+    for(auto op : operands)
+    {
+        
+        if(ast2coords_->existsStmtCoords(op)){
+            operand_coords.push_back(static_cast<coords::STMT*>(ast2coords_->getStmtCoords(op)));
+        }
+    }
+
+    coords::COMPOUND_STMT* coords = ast2coords_->mkCOMPOUND_STMT(ast, context_ ,operand_coords);
+
+	//domain::DomainObject* operand1_dom = coords2dom_->getSTMT(operand_coords);
+
+    vector<domain::DomainObject*> operand_domain;
+
+    for(auto op : operand_coords)
+    {
+        operand_domain.push_back(coords2dom_->getSTMT(op));
+    }
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer(operand_domain);
+    coords2dom_->putCOMPOUND_STMT(coords, dom);
+
+	//interp::STMT* operand1_interp = coords2interp_->getSTMT(operand1_coords);
+
+    vector<interp::STMT*> operand_interp;
+
+    for(auto op : operand_coords)
+    {
+        auto p = coords2interp_->getSTMT(op);
+        operand_interp.push_back(coords2interp_->getSTMT(op));
+    }
+
+    interp::COMPOUND_STMT* interp = new interp::COMPOUND_STMT(coords, dom, operand_interp);
+    coords2interp_->putCOMPOUND_STMT(coords, interp);
+    interp2domain_->putCOMPOUND_STMT(interp, dom); 
+	this->STMT_vec.push_back(coords);
+};
 
 
-
-  LOG(DBUG) << "Interpretation::mkVecVecAddExpr. ast=" << std::hex << add_ast << "\n";
-  if (mem_coords == NULL || arg_coords == NULL) {
-    LOG(FATAL) <<"Interpretation::mkVecVecAddExpr: bad coordinates. Mem coords "
-            << std::hex << mem_coords << " arg coords "
-            << std::hex << arg_coords << "\n";
-  }
-  coords::VecVecAddExpr *coords = ast2coords_->mkVecVecAddExpr(add_ast, context_, mem_coords, arg_coords);
-  //domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
-  domain::VecExpr *dom_mem_expr = coords2dom_->getVecExpr(mem_coords);
-  domain::VecExpr *dom_arg_expr = coords2dom_->getVecExpr(arg_coords);
-  if (dom_mem_expr == NULL || dom_arg_expr == NULL) {
-    LOG(DBUG) <<"Interpretation::mkVecVecAddExpr: bad domain exprs. Mem "
-              << std::hex << dom_mem_expr << " Arg "
-              << std::hex << dom_arg_expr << "\n";
-  }
-  domain::VecVecAddExpr *dom = domain_->mkVecVecAddExpr(dom_mem_expr, dom_arg_expr);
-  coords2dom_->PutVecVecAddExpr(coords, dom);
-  LOG(DBUG) << "Interpretation::mkVecVecAddExpr: Mem_Coords: " << mem_coords->toString() << "\n";
-  LOG(DBUG) << "Interpretation::mkVecVecAddExpr: Arg_Coords: " << arg_coords->toString() << "\n";
-  std::cout<< "Interpretation::mkVecVecAddExpr: Arg_Coords: " << arg_coords->toString() << "\n";
-  interp::Interp *mem_interp = coords2interp_->getVecExpr(mem_coords);  // dyn type's toString not being called
-  std::string mi_str = mem_interp->toString();
-  LOG(DBUG) << "Interpretation::mkVecVecAddExpr: Mem_Interp: " << mi_str << "\n";
-  interp::Interp *arg_interp = coords2interp_->getVecExpr(arg_coords);
-  LOG(DBUG) << "Interpretation::mkVecVecAddExpr: Arg_Interp: " << arg_interp->toString() << "\n";
-  interp::VecVecAddExpr *interp = new interp::VecVecAddExpr(coords, dom, mem_interp, arg_interp);
-  coords2interp_->putVecVecAddExpr(coords, interp); 
-  interp2domain_->putVecVecAddExpr(interp,dom);
+ std::string Interpretation::toString_STMTs(){ 
+    std::vector<interp::STMT*> interps;
+    for(auto coord : this->STMT_vec){
+        interps.push_back(this->coords2interp_->getSTMT(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
 }
+void Interpretation::mkIFTHEN_EXPR_STMT(const ast::IFTHEN_EXPR_STMT * ast ,ast::EXPR* operand1,ast::STMT* operand2) {
 
-void Interpretation::mkVecScalarMulExpr(ast::VecScalarMulExpr *mul_ast, const ast::VecExpr *vec_expr, const ast::ScalarExpr *flt_expr) {
-  coords::ScalarExpr *flt_coords = static_cast<coords::ScalarExpr*>
-                                  (ast2coords_->getStmtCoords(flt_expr));
-  coords::VecExpr *vec_coords = static_cast<coords::VecExpr*>
-                                  (ast2coords_->getStmtCoords(vec_expr));
- 
+	coords::EXPR* operand1_coords = static_cast<coords::EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::STMT* operand2_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operand2));
 
-  coords::VecScalarMulExpr *coords = ast2coords_->mkVecScalarMulExpr(mul_ast, context_, flt_coords, vec_coords);
-  //domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
-  domain::ScalarExpr *dom_flt_expr = coords2dom_->getScalarExpr(flt_coords);
-  domain::VecExpr *dom_vec_expr = coords2dom_->getVecExpr(vec_coords);
+    coords::IFTHEN_EXPR_STMT* coords = ast2coords_->mkIFTHEN_EXPR_STMT(ast, context_ ,operand1_coords,operand2_coords);
 
-  domain::VecScalarMulExpr *dom = domain_->mkVecScalarMulExpr(dom_vec_expr, dom_flt_expr);
-  coords2dom_->PutVecScalarMulExpr(coords, dom);
+	domain::DomainObject* operand1_dom = coords2dom_->getEXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getSTMT(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putIFTHEN_EXPR_STMT(coords, dom);
 
-  interp::Interp *flt_interp = coords2interp_->getScalarExpr(flt_coords);  // dyn type's toString not being called
-  std::string mi_str = flt_interp->toString();
-  interp::Interp *vec_interp = coords2interp_->getVecExpr(vec_coords);
-  interp::VecScalarMulExpr *interp = new interp::VecScalarMulExpr(coords, dom, vec_interp, flt_interp);
-  coords2interp_->putVecScalarMulExpr(coords, interp); 
-  interp2domain_->putVecScalarMulExpr(interp,dom);
-}
+	interp::EXPR* operand1_interp = coords2interp_->getEXPR(operand1_coords);;
+	interp::STMT* operand2_interp = coords2interp_->getSTMT(operand2_coords);
 
-void Interpretation::mkTransformVecApplyExpr(ast::TransformVecApplyExpr *ast, const ast::TransformExpr *tfm, 
-                         const ast::VecExpr *vec) {
-  coords::TransformExpr *tfm_coords = static_cast<coords::TransformExpr*>
-                                  (ast2coords_->getStmtCoords(tfm));
-  coords::VecExpr *vec_coords = static_cast<coords::VecExpr*>
-                                  (ast2coords_->getStmtCoords(vec));
- 
+    interp::IFTHEN_EXPR_STMT* interp = new interp::IFTHEN_EXPR_STMT(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putIFTHEN_EXPR_STMT(coords, interp);
+    interp2domain_->putIFTHEN_EXPR_STMT(interp, dom); 
+	this->IFCOND_vec.push_back(coords);
 
-  coords::TransformVecApplyExpr *coords = ast2coords_->mkTransformVecApplyExpr(ast, tfm_coords, vec_coords, context_);
-  //domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
-  domain::TransformExpr *dom_tfm_expr = coords2dom_->getTransformExpr(tfm_coords);
-  domain::VecExpr *dom_vec_expr = coords2dom_->getVecExpr(vec_coords);
-
-  domain::TransformVecApplyExpr *dom = domain_->mkTransformVecApplyExpr(dom_tfm_expr, dom_vec_expr);
-  coords2dom_->PutTransformVecApplyExpr(coords, dom);
-
-  interp::Interp *tfm_interp = coords2interp_->getTransformExpr(tfm_coords);  // dyn type's toString not being called
-  std::string mi_str = tfm_interp->toString();
-  interp::Interp *vec_interp = coords2interp_->getVecExpr(vec_coords);
-  interp::TransformVecApplyExpr *interp = new interp::TransformVecApplyExpr(coords, dom, tfm_interp, vec_interp);
-  coords2interp_->putTransformVecApplyExpr(coords, interp); 
-  interp2domain_->putTransformVecApplyExpr(interp,dom);
-}
-
-void Interpretation::mkVecParenExpr(ast::VecParenExpr *ast, ast::VecExpr *expr) { 
-    coords::VecParenExpr *coords = ast2coords_->mkVecParenExpr(ast, context_, expr);   
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr));
-    LOG(DBUG) << 
-      "Interpretation::mkVecParenExpr. ast=" << 
-      std::hex << ast << ", " << coords->toString() << 
-      "expr = " << expr_coords->toString() << "\n";
-    //domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
-    domain::VecExpr *dom_expr = coords2dom_->getVecExpr(expr_coords);
-    domain::VecParenExpr *dom = domain_->mkVecParenExpr(dom_expr);
-    coords2dom_->PutVecParenExpr(coords, dom);
-    interp::VecExpr *expr_interp = coords2interp_->getVecExpr(expr_coords);
-    interp::VecParenExpr *interp = new interp::VecParenExpr(coords, dom, expr_interp);
-    coords2interp_->putVecParenExpr(coords, interp);  
-    interp2domain_->putVecParenExpr(interp,dom);
 } 
 
-void Interpretation::mkScalarParenExpr(ast::ScalarParenExpr *ast, ast::ScalarExpr *expr) { 
-    coords::ScalarParenExpr *coords = ast2coords_->mkScalarParenExpr(ast, context_, expr);   
-    coords::ScalarExpr *expr_coords = static_cast<coords::ScalarExpr *>(ast2coords_->getStmtCoords(expr));
-    LOG(DBUG) << 
-      "Interpretation::mkScalarParenExpr. ast=" << 
-      std::hex << ast << ", " << coords->toString() << 
-      "expr = " << expr_coords->toString() << "\n";
-    //domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
-    domain::ScalarExpr *dom_expr = coords2dom_->getScalarExpr(expr_coords);
-    domain::ScalarParenExpr *dom = domain_->mkScalarParenExpr(dom_expr);
-    coords2dom_->PutScalarParenExpr(coords, dom);
-    interp::ScalarExpr *expr_interp = coords2interp_->getScalarExpr(expr_coords);
-    interp::ScalarParenExpr *interp = new interp::ScalarParenExpr(coords, dom, expr_interp);
-    coords2interp_->putScalarParenExpr(coords, interp);  
-    interp2domain_->putScalarParenExpr(interp,dom);
+void Interpretation::mkIFTHENELSEIF_EXPR_STMT_IFCOND(const ast::IFTHENELSEIF_EXPR_STMT_IFCOND * ast ,ast::EXPR* operand1,ast::STMT* operand2,ast::IFCOND* operand3) {
+
+	coords::EXPR* operand1_coords = static_cast<coords::EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::STMT* operand2_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operand2));;
+	coords::IFCOND* operand3_coords = static_cast<coords::IFCOND*>(ast2coords_->getStmtCoords(operand3));
+
+    coords::IFTHENELSEIF_EXPR_STMT_IFCOND* coords = ast2coords_->mkIFTHENELSEIF_EXPR_STMT_IFCOND(ast, context_ ,operand1_coords,operand2_coords,operand3_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getEXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getSTMT(operand2_coords);
+	domain::DomainObject* operand3_dom = coords2dom_->getIFCOND(operand3_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom,operand3_dom});
+    coords2dom_->putIFTHENELSEIF_EXPR_STMT_IFCOND(coords, dom);
+
+	interp::EXPR* operand1_interp = coords2interp_->getEXPR(operand1_coords);;
+	interp::STMT* operand2_interp = coords2interp_->getSTMT(operand2_coords);;
+	interp::IFCOND* operand3_interp = coords2interp_->getIFCOND(operand3_coords);
+
+    interp::IFTHENELSEIF_EXPR_STMT_IFCOND* interp = new interp::IFTHENELSEIF_EXPR_STMT_IFCOND(coords, dom, operand1_interp,operand2_interp,operand3_interp);
+    coords2interp_->putIFTHENELSEIF_EXPR_STMT_IFCOND(coords, interp);
+    interp2domain_->putIFTHENELSEIF_EXPR_STMT_IFCOND(interp, dom); 
+	this->IFCOND_vec.push_back(coords);
+
 } 
 
-void Interpretation::mkTransformParenExpr(ast::TransformParenExpr *ast, ast::TransformExpr *expr) { 
-    coords::TransformParenExpr *coords = ast2coords_->mkTransformParenExpr(ast,expr, context_);   
-    coords::TransformExpr *expr_coords = static_cast<coords::TransformExpr *>(ast2coords_->getStmtCoords(expr));
-    LOG(DBUG) << 
-      "Interpretation::mkTransformParenExpr. ast=" << 
-      std::hex << ast << ", " << coords->toString() << 
-      "expr = " << expr_coords->toString() << "\n";
-    //domain::Space &space = oracle_->getSpaceForVecParenExpr(coords);
-    domain::TransformExpr *dom_expr = coords2dom_->getTransformExpr(expr_coords);
-    domain::TransformParenExpr *dom = domain_->mkTransformParenExpr(dom_expr);
-    coords2dom_->PutTransformParenExpr(coords, dom);
-    interp::TransformExpr *expr_interp = coords2interp_->getTransformExpr(expr_coords);
-    interp::TransformParenExpr *interp = new interp::TransformParenExpr(coords, dom, expr_interp);
-    coords2interp_->putTransformParenExpr(coords, interp);  
-    interp2domain_->putTransformParenExpr(interp,dom);
+void Interpretation::mkIFTHENELSE_EXPR_STMT_STMT(const ast::IFTHENELSE_EXPR_STMT_STMT * ast ,ast::EXPR* operand1,ast::STMT* operand2,ast::STMT* operand3) {
+
+	coords::EXPR* operand1_coords = static_cast<coords::EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::STMT* operand2_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operand2));;
+	coords::STMT* operand3_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operand3));
+
+    coords::IFTHENELSE_EXPR_STMT_STMT* coords = ast2coords_->mkIFTHENELSE_EXPR_STMT_STMT(ast, context_ ,operand1_coords,operand2_coords,operand3_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getEXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getSTMT(operand2_coords);
+	domain::DomainObject* operand3_dom = coords2dom_->getSTMT(operand3_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom,operand3_dom});
+    coords2dom_->putIFTHENELSE_EXPR_STMT_STMT(coords, dom);
+
+	interp::EXPR* operand1_interp = coords2interp_->getEXPR(operand1_coords);;
+	interp::STMT* operand2_interp = coords2interp_->getSTMT(operand2_coords);;
+	interp::STMT* operand3_interp = coords2interp_->getSTMT(operand3_coords);
+
+    interp::IFTHENELSE_EXPR_STMT_STMT* interp = new interp::IFTHENELSE_EXPR_STMT_STMT(coords, dom, operand1_interp,operand2_interp,operand3_interp);
+    coords2interp_->putIFTHENELSE_EXPR_STMT_STMT(coords, interp);
+    interp2domain_->putIFTHENELSE_EXPR_STMT_STMT(interp, dom); 
+	this->IFCOND_vec.push_back(coords);
+
 } 
 
 
-
-void Interpretation::mkScalarScalarAddExpr(ast::ScalarScalarAddExpr *ast, const ast::ScalarExpr* lhs, const ast::ScalarExpr *rhs){
-  //coords::ScalarExpr *lhs_coords = static_cast<coords::ScalarExpr*>
-  //                                (ast2coords_->getStmtCoords(lhs));
-  //coords::ScalarExpr *rhs_coords = static_cast<coords::ScalarExpr*>
-  //                                (ast2coords_->getStmtCoords(rhs));
-  
-  coords::Scalar *lhs_coords = (coords::Scalar*)
-      (ast2coords_->getStmtCoords(lhs));
-  coords::Scalar *rhs_coords = (coords::Scalar*)
-      (ast2coords_->getStmtCoords(rhs));
-  
-  LOG(DBUG) << "Interpretation::mkScalarScalarAddExpr. ast=" << std::hex << ast << "\n";
-
-  coords::ScalarScalarAddExpr *coords = ast2coords_->mkScalarScalarAddExpr(ast, context_, lhs_coords, rhs_coords);
-  //domain::Space &space = oracle_->getSpaceForAddExpression(mem_coords, arg_coords);
-  domain::ScalarExpr *dom_lhs_expr = coords2dom_->getScalarExpr(lhs_coords);
-  domain::ScalarExpr *dom_rhs_expr = coords2dom_->getScalarExpr(rhs_coords);
-
-
-  domain::ScalarScalarAddExpr *dom = domain_->mkScalarScalarAddExpr(dom_lhs_expr, dom_rhs_expr);
-  coords2dom_->PutScalarScalarAddExpr(coords, dom);
-  
-  LOG(DBUG) << "Interpretation::mkScalarScalarAddExpr: LHS_Coords: " << lhs_coords->toString() << "\n";
-  LOG(DBUG) << "Interpretation::mkScalarScalarAddExpr: RHS_Coords: " << rhs_coords->toString() << "\n";
-
-  interp::Interp *lhs_interp = coords2interp_->getScalarExpr(lhs_coords);  // dyn type's toString not being called
-  if(not lhs_interp){
-    lhs_interp = coords2interp_->getScalar(lhs_coords);
-  }
-  std::string mi_str = lhs_interp->toString();
-  interp::Interp *rhs_interp = coords2interp_->getScalarExpr(rhs_coords);
-  interp::ScalarScalarAddExpr *interp = new interp::ScalarScalarAddExpr(coords, dom, lhs_interp, rhs_interp);
-  coords2interp_->putScalarScalarAddExpr(coords, interp); 
-  interp2domain_->putScalarScalarAddExpr(interp,dom);
-}
-
-void Interpretation::mkScalarScalarMulExpr(ast::ScalarScalarMulExpr *ast, const ast::ScalarExpr* lhs, const ast::ScalarExpr *rhs){
-  coords::ScalarExpr *lhs_coords = static_cast<coords::ScalarExpr*>
-                                  (ast2coords_->getStmtCoords(lhs));
-  coords::ScalarExpr *rhs_coords = static_cast<coords::ScalarExpr*>
-                                  (ast2coords_->getStmtCoords(rhs));
-  LOG(DBUG) << "Interpretation::mkScalarScalarMulExpr. ast=" << std::hex << ast << "\n";
-  if (lhs_coords == NULL || rhs_coords == NULL) {
-    LOG(FATAL) <<"Interpretation::mkScalarScalarMulExpr: bad coordinates. lhs coords "
-            << std::hex << lhs_coords << " rhs coords "
-            << std::hex << rhs_coords << "\n";
-  }
-  coords::ScalarScalarMulExpr *coords = ast2coords_->mkScalarScalarMulExpr(ast, context_, lhs_coords, rhs_coords);
-
-  domain::ScalarExpr *dom_lhs_expr = coords2dom_->getScalarExpr(lhs_coords);
-  domain::ScalarExpr *dom_rhs_expr = coords2dom_->getScalarExpr(rhs_coords);
-  if (dom_lhs_expr == NULL || dom_rhs_expr == NULL) {
-    LOG(DBUG) <<"Interpretation::mkScalarScalarMulExpr: bad domain exprs. lhs "
-              << std::hex << dom_lhs_expr << " rhs "
-              << std::hex << dom_rhs_expr << "\n";
-  }
-  domain::ScalarScalarMulExpr *dom = domain_->mkScalarScalarMulExpr(dom_lhs_expr, dom_rhs_expr);
-  coords2dom_->PutScalarScalarMulExpr(coords, dom);
-  LOG(DBUG) << "Interpretation::mkScalarScalarMulExpr: lhs_Coords: " << lhs_coords->toString() << "\n";
-  LOG(DBUG) << "Interpretation::mkScalarScalarMulExpr: rhs_Coords: " << rhs_coords->toString() << "\n";
-
-  interp::Interp *lhs_interp = coords2interp_->getScalarExpr(lhs_coords);  // dyn type's toString not being called
-  std::string mi_str = lhs_interp->toString();
-  LOG(DBUG) << "Interpretation::mkScalarScalarMulExpr: lhs_Interp: " << mi_str << "\n";
-  interp::Interp *rhs_interp = coords2interp_->getScalarExpr(rhs_coords);
-  LOG(DBUG) << "Interpretation::mkScalarScalarMulExpr: rhs_Interp: " << rhs_interp->toString() << "\n";
-  interp::ScalarScalarMulExpr *interp = new interp::ScalarScalarMulExpr(coords, dom, lhs_interp, rhs_interp);
-  coords2interp_->putScalarScalarMulExpr(coords, interp); 
-  interp2domain_->putScalarScalarMulExpr(interp,dom);
-}
-
-void Interpretation::mkTransformTransformComposeExpr(ast::TransformTransformComposeExpr *ast, const ast::TransformExpr* lhs, const ast::TransformExpr *rhs){
-  coords::TransformExpr *lhs_coords = static_cast<coords::TransformExpr*>
-                                  (ast2coords_->getStmtCoords(lhs));
-  coords::TransformExpr *rhs_coords = static_cast<coords::TransformExpr*>
-                                  (ast2coords_->getStmtCoords(rhs));
-  LOG(DBUG) << "Interpretation::mkTransformTransformComposeExpr. ast=" << std::hex << ast << "\n";
-  if (lhs_coords == NULL || rhs_coords == NULL) {
-    LOG(FATAL) <<"Interpretation::mkTransformTransformComposeExpr: bad coordinates. lhs coords "
-            << std::hex << lhs_coords << " rhs coords "
-            << std::hex << rhs_coords << "\n";
-  }
-  coords::TransformTransformComposeExpr *coords = ast2coords_->mkTransformTransformComposeExpr(ast, lhs_coords, rhs_coords,context_);
-
-  domain::TransformExpr *dom_lhs_expr = coords2dom_->getTransformExpr(lhs_coords);
-  domain::TransformExpr *dom_rhs_expr = coords2dom_->getTransformExpr(rhs_coords);
-  if (dom_lhs_expr == NULL || dom_rhs_expr == NULL) {
-    LOG(DBUG) <<"Interpretation::mkTransformTransformComposeExpr: bad domain exprs. lhs "
-              << std::hex << dom_lhs_expr << " rhs "
-              << std::hex << dom_rhs_expr << "\n";
-  }
-  domain::TransformTransformComposeExpr *dom = domain_->mkTransformTransformComposeExpr(dom_lhs_expr, dom_rhs_expr);
-  coords2dom_->PutTransformTransformComposeExpr(coords, dom);
-  LOG(DBUG) << "Interpretation::mkTransformTransformComposeExpr: lhs_Coords: " << lhs_coords->toString() << "\n";
-  LOG(DBUG) << "Interpretation::mkTransformTransformComposeExpr: rhs_Coords: " << rhs_coords->toString() << "\n";
-
-  interp::Interp *lhs_interp = coords2interp_->getTransformExpr(lhs_coords);  // dyn type's toString not being called
-  std::string mi_str = lhs_interp->toString();
-  LOG(DBUG) << "Interpretation::mkTransformTransformComposeExpr: lhs_Interp: " << mi_str << "\n";
-  interp::Interp *rhs_interp = coords2interp_->getTransformExpr(rhs_coords);
-  LOG(DBUG) << "Interpretation::mkTransformTransformComposeExpr: rhs_Interp: " << rhs_interp->toString() << "\n";
-  interp::TransformTransformComposeExpr *interp = new interp::TransformTransformComposeExpr(coords, dom, lhs_interp, rhs_interp);
-  coords2interp_->putTransformTransformComposeExpr(coords, interp); 
-  interp2domain_->putTransformTransformComposeExpr(interp,dom);
-}
-
-/*******
-* Vector
-*******/
-
-/*
-Vectors are fully "constructed" objects. We're seeing a bit of Clang AST
-design showing through here, as clang separated things like function appl
-expressions and objects constructed from them.
-*/
-
-void Interpretation::mkVector_Lit(ast::Vector_Lit *ast, float x, float y, float z) {
-    coords::Vector_Lit *coords = ast2coords_->mkVector_Lit(ast, context_, x, y, z);  
-    
-    domain::Vector_Lit *dom = domain_->mkVector_Lit(x, y, z);
-    coords2dom_->putVector_Lit(coords, dom); 
-    interp::Vector_Lit *interp = new interp::Vector_Lit(coords, dom);
-    coords2interp_->putVector_Lit(coords, interp);
-    interp2domain_->putVector_Lit(interp,dom);
-}
-
-void Interpretation::mkScalar_Lit(ast::Scalar_Lit *ast, float scalar) {
-    coords::Scalar_Lit *coords = ast2coords_->mkScalar_Lit(ast, context_, scalar);  
-    
-    domain::Scalar_Lit *dom = domain_->mkScalar_Lit(scalar);
-    coords2dom_->putScalar_Lit(coords, dom); 
-    interp::Scalar_Lit *interp = new interp::Scalar_Lit(coords, dom);
-    coords2interp_->putScalar_Lit(coords, interp);
-    interp2domain_->putScalar_Lit(interp,dom);
-}
-
-void Interpretation::mkTransform_Lit(ast::Transform_Lit *ast, ast::VecExpr *vec1, ast::VecExpr *vec2, ast::VecExpr *vec3) {
-    coords::VecExpr *carg1 = (coords::VecExpr*)ast2coords_->getStmtCoords(vec1);
-    coords::VecExpr *carg2 = (coords::VecExpr*)ast2coords_->getStmtCoords(vec2);
-    coords::VecExpr *carg3 = (coords::VecExpr*)ast2coords_->getStmtCoords(vec3);
-
-    coords::Transform_Lit *coords = ast2coords_->mkTransform_Lit(ast, carg1, carg2, carg3, context_);  
-    
-    domain::VecExpr *darg1 = (domain::VecExpr*)coords2dom_->getVecExpr(carg1);
-    domain::VecExpr *darg2 = (domain::VecExpr*)coords2dom_->getVecExpr(carg2);
-    domain::VecExpr *darg3 = (domain::VecExpr*)coords2dom_->getVecExpr(carg3);
-
-    domain::Transform_Lit *dom = domain_->mkTransform_Lit(darg1, darg2, darg3);
-    coords2dom_->putTransform_Lit(coords, dom); 
-
-
-    interp::VecExpr *iarg1 = (interp::VecExpr*)coords2interp_->getVecExpr(carg1);
-    interp::VecExpr *iarg2 = (interp::VecExpr*)coords2interp_->getVecExpr(carg2);
-    interp::VecExpr *iarg3 = (interp::VecExpr*)coords2interp_->getVecExpr(carg3);
-
-    interp::Transform_Lit *interp = new interp::Transform_Lit(coords, dom, iarg1, iarg2, iarg3);
-    coords2interp_->putTransform_Lit(coords, interp);
-
-    interp2domain_->putTransform_Lit(interp,dom);
-}
-
-
-void Interpretation::mkVector_Expr(
-      ast::Vector_Expr *ctor_ast, ast::VecExpr* expr_ast/*, clang::ASTContext *c*/) {
-    coords::Vector_Expr *ctor_coords = ast2coords_->mkVector_Expr(ctor_ast, context_, expr_ast);
-    coords::VecExpr *expr_coords = static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(expr_ast));
-
-    domain::VecExpr *expr_dom = coords2dom_->getVecExpr(expr_coords);
-    
-    domain::Vector_Expr *dom_vec = domain_->mkVector_Expr(expr_dom); 
-    coords2dom_->putVector_Expr(ctor_coords, dom_vec);
-    interp::Interp *expr_interp = coords2interp_->getVecExpr(expr_coords);
-    if(not expr_interp){
-      //expr_interp = coords2interp_->getVector_Lit(expr_coords);
+ std::string Interpretation::toString_IFCONDs(){ 
+    std::vector<interp::IFCOND*> interps;
+    for(auto coord : this->IFCOND_vec){
+        interps.push_back(this->coords2interp_->getIFCOND(coord));
     }
-    interp::Vector_Expr *interp = new interp::Vector_Expr(ctor_coords, dom_vec, expr_interp);
-    coords2interp_->putVector_Expr(ctor_coords, interp);
-    interp2domain_->putVector_Expr(interp, dom_vec);
-}
-
-/****
-* Def
-*****/
-
-/****
- * Note: Have made decision that main communicates with Interpretation in terms
- * of coords objects alone, not in terms of interp, oracle, or domain objects.
- * */
-
-void Interpretation::mkVector_Def(ast::Vector_Def *def_ast,  
-                                  ast::VecIdent *id_ast, 
-                                  ast::VecExpr *expr_ast)
-{
-    coords::VecIdent *id_coords = static_cast<coords::VecIdent *>
-      (ast2coords_->getDeclCoords(id_ast));
-    coords::Vector *vec_coords = static_cast<coords::Vector *>
-      (ast2coords_->getStmtCoords(expr_ast));
-    coords::Vector_Def *def_coords = ast2coords_->mkVector_Def(def_ast, context_, id_coords, vec_coords);
-    domain::VecIdent *vec_ident = coords2dom_->getVecIdent(id_coords);
-    /*
-    Here there is some subtlety. We don't know if what was left in our
-    interpretation by previous work was a Vector_Lit or a Vector_Expr.
-    So we check first for a Vector_Expr
-    */
-    domain::Vector *vec = coords2dom_->getVector(vec_coords);
-    domain::Vector_Def* dom_vec_def = 
-      domain_->mkVector_Def(vec_ident, vec); 
-    coords2dom_->putVector_Def(def_coords, dom_vec_def);
-    interp::VecIdent *id_interp = coords2interp_->getVecIdent(id_coords);
-    interp::Interp *vec_interp = coords2interp_->getVector(vec_coords);
-    if(not vec_interp){
-      vec_interp = coords2interp_->getVecExpr(vec_coords);
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
     }
-
-    interp::Vector_Def *interp = new interp::Vector_Def(def_coords, dom_vec_def, id_interp, vec_interp);
-    coords2interp_->putVector_Def(def_coords, interp);
-    interp2domain_->putVector_Def(interp, dom_vec_def);
+    return retval;
 }
 
-void Interpretation::mkVector_Assign(ast::Vector_Assign *assign_ast,  
-                                  ast::VecVarExpr *id_ast, 
-                                  ast::VecExpr *expr_ast)
-{
-    coords::VecVarExpr *var_coords = static_cast<coords::VecVarExpr *>
-      (ast2coords_->getStmtCoords(id_ast));
-    coords::Vector *vec_coords = static_cast<coords::Vector *>
-      (ast2coords_->getStmtCoords(expr_ast));
-    coords::Vector_Assign *assign_coords = ast2coords_->mkVector_Assign(assign_ast, context_, var_coords, vec_coords);
-    domain::VecVarExpr *vec_varexpr = coords2dom_->getVecVarExpr(var_coords);
-    /*
-    Here there is some subtlety. We don't know if what was left in our
-    interpretation by previous work was a Vector_Lit or a Vector_Expr.
-    So we check first for a Vector_Expr
-    */
-    domain::Vector *vec = coords2dom_->getVector(vec_coords);
-    domain::Vector_Assign* dom_vec_assign = 
-      domain_->mkVector_Assign(vec_varexpr, vec); 
-    coords2dom_->putVector_Assign(assign_coords, dom_vec_assign);
-    interp::VecVarExpr *var_interp = coords2interp_->getVecVarExpr(var_coords);
-    interp::Interp *vec_interp = coords2interp_->getVector(vec_coords);
-    if(not vec_interp){
-      vec_interp = coords2interp_->getVecExpr(vec_coords);
+ std::string Interpretation::toString_EXPRs(){ 
+    std::vector<interp::EXPR*> interps;
+    for(auto coord : this->EXPR_vec){
+        interps.push_back(this->coords2interp_->getEXPR(coord));
     }
-    
-    interp::Vector_Assign *interp = new interp::Vector_Assign(assign_coords, dom_vec_assign, var_interp, vec_interp);
-    coords2interp_->putVector_Assign(assign_coords, interp);
-    interp2domain_->putVector_Assign(interp, dom_vec_assign);
-}
-
-void Interpretation::mkScalar_Expr(
-      ast::Scalar_Expr *ctor_ast, ast::ScalarExpr* expr_ast/*, clang::ASTContext *c*/) {
-    coords::Scalar_Expr *ctor_coords = ast2coords_->mkScalar_Expr(ctor_ast, context_, expr_ast);
-    coords::ScalarExpr *expr_coords = static_cast<coords::ScalarExpr *>(ast2coords_->getStmtCoords(expr_ast));
-    
-    domain::ScalarExpr *expr_dom = coords2dom_->getScalarExpr(expr_coords);
-    domain::Scalar_Expr *dom_flt = domain_->mkScalar_Expr(expr_dom); 
-    coords2dom_->putScalar_Expr(ctor_coords, dom_flt);
-    interp::ScalarExpr *expr_interp = coords2interp_->getScalarExpr(expr_coords);
-    interp::Scalar_Expr *interp = new interp::Scalar_Expr(ctor_coords, dom_flt, expr_interp);
-    coords2interp_->putScalar_Expr(ctor_coords, interp);
-    interp2domain_->putScalar_Expr(interp, dom_flt);
-}
-
-void Interpretation::mkScalar_Def(ast::Scalar_Def *def_ast,  
-                                  ast::ScalarIdent *id_ast, 
-                                  ast::ScalarExpr *expr_ast)
-{
-
-    coords::ScalarIdent *id_coords = static_cast<coords::ScalarIdent *>
-      (ast2coords_->getDeclCoords(id_ast));
-      
-    coords::Scalar *flt_coords = (coords::Scalar*)
-      (ast2coords_->getStmtCoords(expr_ast));
-    coords::Scalar_Def *def_coords = ast2coords_->mkScalar_Def(def_ast, context_, id_coords, flt_coords);
-    domain::ScalarIdent *flt_ident = coords2dom_->getScalarIdent(id_coords);
-    /*
-    Here there is some subtlety. We don't know if what was left in our
-    interpretation by previous work was a Vector_Lit or a Vector_Expr.
-    So we check first for a Vector_Expr
-    */
-    domain::Scalar *flt = coords2dom_->getScalar(flt_coords);
-    domain::Scalar_Def* dom_flt_def = 
-      domain_->mkScalar_Def(flt_ident, flt); 
-    coords2dom_->putScalar_Def(def_coords, dom_flt_def);
-    interp::ScalarIdent *id_interp = coords2interp_->getScalarIdent(id_coords);
-    interp::Interp *flt_interp = coords2interp_->getScalar(flt_coords);
-    if(not flt_interp){
-      flt_interp = coords2interp_->getScalarExpr(flt_coords);
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
     }
-    interp::Scalar_Def *interp = new interp::Scalar_Def(def_coords, dom_flt_def, id_interp, flt_interp);
-    coords2interp_->putScalar_Def(def_coords, interp);
-    interp2domain_->putScalar_Def(interp, dom_flt_def);
+    return retval;
 }
+void Interpretation::mkASSIGN_REAL1_VAR_REAL1_EXPR(const ast::ASSIGN_REAL1_VAR_REAL1_EXPR * ast ,ast::REAL1_VAR_IDENT* operand1,ast::REAL1_EXPR* operand2) {
+
+	coords::REAL1_VAR_IDENT* operand1_coords = static_cast<coords::REAL1_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::ASSIGN_REAL1_VAR_REAL1_EXPR* coords = ast2coords_->mkASSIGN_REAL1_VAR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_VAR_IDENT(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putASSIGN_REAL1_VAR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_VAR_IDENT* operand1_interp = coords2interp_->getREAL1_VAR_IDENT(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::ASSIGN_REAL1_VAR_REAL1_EXPR* interp = new interp::ASSIGN_REAL1_VAR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putASSIGN_REAL1_VAR_REAL1_EXPR(coords, interp);
+    interp2domain_->putASSIGN_REAL1_VAR_REAL1_EXPR(interp, dom); 
+	this->ASSIGNMENT_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkASSIGN_REAL3_VAR_REAL3_EXPR(const ast::ASSIGN_REAL3_VAR_REAL3_EXPR * ast ,ast::REAL3_VAR_IDENT* operand1,ast::REAL3_EXPR* operand2) {
+
+	coords::REAL3_VAR_IDENT* operand1_coords = static_cast<coords::REAL3_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
+	coords::REAL3_EXPR* operand2_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::ASSIGN_REAL3_VAR_REAL3_EXPR* coords = ast2coords_->mkASSIGN_REAL3_VAR_REAL3_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_VAR_IDENT(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL3_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putASSIGN_REAL3_VAR_REAL3_EXPR(coords, dom);
+
+	interp::REAL3_VAR_IDENT* operand1_interp = coords2interp_->getREAL3_VAR_IDENT(operand1_coords);;
+	interp::REAL3_EXPR* operand2_interp = coords2interp_->getREAL3_EXPR(operand2_coords);
+
+    interp::ASSIGN_REAL3_VAR_REAL3_EXPR* interp = new interp::ASSIGN_REAL3_VAR_REAL3_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putASSIGN_REAL3_VAR_REAL3_EXPR(coords, interp);
+    interp2domain_->putASSIGN_REAL3_VAR_REAL3_EXPR(interp, dom); 
+	this->ASSIGNMENT_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkASSIGN_REAL4_VAR_REAL4_EXPR(const ast::ASSIGN_REAL4_VAR_REAL4_EXPR * ast ,ast::REAL4_VAR_IDENT* operand1,ast::REAL4_EXPR* operand2) {
+
+	coords::REAL4_VAR_IDENT* operand1_coords = static_cast<coords::REAL4_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
+	coords::REAL4_EXPR* operand2_coords = static_cast<coords::REAL4_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::ASSIGN_REAL4_VAR_REAL4_EXPR* coords = ast2coords_->mkASSIGN_REAL4_VAR_REAL4_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL4_VAR_IDENT(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL4_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putASSIGN_REAL4_VAR_REAL4_EXPR(coords, dom);
+
+	interp::REAL4_VAR_IDENT* operand1_interp = coords2interp_->getREAL4_VAR_IDENT(operand1_coords);;
+	interp::REAL4_EXPR* operand2_interp = coords2interp_->getREAL4_EXPR(operand2_coords);
+
+    interp::ASSIGN_REAL4_VAR_REAL4_EXPR* interp = new interp::ASSIGN_REAL4_VAR_REAL4_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putASSIGN_REAL4_VAR_REAL4_EXPR(coords, interp);
+    interp2domain_->putASSIGN_REAL4_VAR_REAL4_EXPR(interp, dom); 
+	this->ASSIGNMENT_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(const ast::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR * ast ,ast::REALMATRIX_VAR_IDENT* operand1,ast::REALMATRIX_EXPR* operand2) {
+
+	coords::REALMATRIX_VAR_IDENT* operand1_coords = static_cast<coords::REALMATRIX_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
+	coords::REALMATRIX_EXPR* operand2_coords = static_cast<coords::REALMATRIX_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* coords = ast2coords_->mkASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX_VAR_IDENT(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREALMATRIX_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(coords, dom);
+
+	interp::REALMATRIX_VAR_IDENT* operand1_interp = coords2interp_->getREALMATRIX_VAR_IDENT(operand1_coords);;
+	interp::REALMATRIX_EXPR* operand2_interp = coords2interp_->getREALMATRIX_EXPR(operand2_coords);
+
+    interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* interp = new interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(coords, interp);
+    interp2domain_->putASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(interp, dom); 
+	this->ASSIGNMENT_vec.push_back(coords);
+
+} 
 
 
-
-void Interpretation::mkScalar_Assign(ast::Scalar_Assign *assign_ast,  
-                                  ast::ScalarVarExpr *id_ast, 
-                                  ast::ScalarExpr *expr_ast)
-{
-    coords::ScalarVarExpr *id_coords = static_cast<coords::ScalarVarExpr *>
-      (ast2coords_->getStmtCoords(id_ast));
-    coords::Scalar *float_coords = static_cast<coords::Scalar *>
-      (ast2coords_->getStmtCoords(expr_ast));
-    coords::Scalar_Assign *assign_coords = ast2coords_->mkScalar_Assign(assign_ast, context_, id_coords, float_coords);
-    domain::ScalarVarExpr *float_varexpr = coords2dom_->getScalarVarExpr(id_coords);
-    /*
-    Here there is some subtlety. We don't know if what was left in our
-    interpretation by previous work was a Scalar_Lit or a Scalar_Expr.
-    So we check first for a Scalar_Expr
-    */
-    domain::Scalar *Scalar = coords2dom_->getScalar(float_coords);
-    domain::Scalar_Assign* dom_float_assign = 
-      domain_->mkScalar_Assign(float_varexpr, Scalar); 
-    coords2dom_->putScalar_Assign(assign_coords, dom_float_assign);
-    interp::ScalarVarExpr *id_interp = coords2interp_->getScalarVarExpr(id_coords);
-    interp::Interp *flt_interp = coords2interp_->getScalar(float_coords);
-    if(not flt_interp){
-      flt_interp = coords2interp_->getScalarExpr(float_coords);
+ std::string Interpretation::toString_ASSIGNMENTs(){ 
+    std::vector<interp::ASSIGNMENT*> interps;
+    for(auto coord : this->ASSIGNMENT_vec){
+        interps.push_back(this->coords2interp_->getASSIGNMENT(coord));
     }
-    interp::Scalar_Assign *interp = new interp::Scalar_Assign(assign_coords, dom_float_assign, id_interp, flt_interp);
-    coords2interp_->putScalar_Assign(assign_coords, interp);
-    interp2domain_->putScalar_Assign(interp, dom_float_assign);
-}
-
-void Interpretation::mkTransform_Expr(
-      ast::Transform_Expr *ctor_ast, ast::TransformExpr* expr_ast/*, clang::ASTContext *c*/) {
-    coords::Transform_Expr *ctor_coords = ast2coords_->mkTransform_Expr(ctor_ast, expr_ast, context_);
-    coords::TransformExpr *expr_coords = static_cast<coords::TransformExpr *>(ast2coords_->getStmtCoords(expr_ast));
-    
-    domain::TransformExpr *expr_dom = coords2dom_->getTransformExpr(expr_coords);
-    domain::Transform_Expr *dom_flt = domain_->mkTransform_Expr(expr_dom); 
-    coords2dom_->putTransform_Expr(ctor_coords, dom_flt);
-    interp::TransformExpr *expr_interp = coords2interp_->getTransformExpr(expr_coords);
-    interp::Transform_Expr *interp = new interp::Transform_Expr(ctor_coords, dom_flt, expr_interp);
-    coords2interp_->putTransform_Expr(ctor_coords, interp);
-    interp2domain_->putTransform_Expr(interp, dom_flt);
-}
-
-void Interpretation::mkTransform_Def(ast::Transform_Def *def_ast,  
-                                  ast::TransformIdent *id_ast, 
-                                  ast::TransformExpr *expr_ast)
-{
-    coords::TransformIdent *id_coords = static_cast<coords::TransformIdent *>
-      (ast2coords_->getDeclCoords(id_ast));
-      
-    coords::Transform *tfm_coords = (coords::Transform*)
-      (ast2coords_->getStmtCoords(expr_ast));
-    coords::Transform_Def *def_coords = ast2coords_->mkTransform_Def(def_ast, context_, id_coords, tfm_coords);
-    domain::TransformIdent *tfm_ident = coords2dom_->getTransformIdent(id_coords);
-    /*
-    Here there is some subtlety. We don't know if what was left in our
-    interpretation by previous work was a Vector_Lit or a Vector_Expr.
-    So we check first for a Vector_Expr
-    */
-    domain::Transform *tfm = coords2dom_->getTransform(tfm_coords);
-    domain::Transform_Def* dom_tfm_def = 
-      domain_->mkTransform_Def(tfm_ident, tfm); 
-    coords2dom_->putTransform_Def(def_coords, dom_tfm_def);
-    interp::TransformIdent *id_interp = coords2interp_->getTransformIdent(id_coords);
-    interp::Interp *tfm_interp = coords2interp_->getTransform(tfm_coords);
-    if(not tfm_interp){
-      tfm_interp = coords2interp_->getTransformExpr(tfm_coords);
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
     }
-    interp::Transform_Def *interp = new interp::Transform_Def(def_coords, dom_tfm_def, id_interp, tfm_interp);
-    coords2interp_->putTransform_Def(def_coords, interp);
-    interp2domain_->putTransform_Def(interp, dom_tfm_def);
+    return retval;
 }
+void Interpretation::mkDECL_REAL1_VAR_REAL1_EXPR(const ast::DECL_REAL1_VAR_REAL1_EXPR * ast ,ast::REAL1_VAR_IDENT* operand1,ast::REAL1_EXPR* operand2) {
+
+	coords::REAL1_VAR_IDENT* operand1_coords = static_cast<coords::REAL1_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::DECL_REAL1_VAR_REAL1_EXPR* coords = ast2coords_->mkDECL_REAL1_VAR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_VAR_IDENT(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putDECL_REAL1_VAR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_VAR_IDENT* operand1_interp = coords2interp_->getREAL1_VAR_IDENT(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::DECL_REAL1_VAR_REAL1_EXPR* interp = new interp::DECL_REAL1_VAR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putDECL_REAL1_VAR_REAL1_EXPR(coords, interp);
+    interp2domain_->putDECL_REAL1_VAR_REAL1_EXPR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkDECL_REAL3_VAR_REAL3_EXPR(const ast::DECL_REAL3_VAR_REAL3_EXPR * ast ,ast::REAL3_VAR_IDENT* operand1,ast::REAL3_EXPR* operand2) {
+
+	coords::REAL3_VAR_IDENT* operand1_coords = static_cast<coords::REAL3_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
+	coords::REAL3_EXPR* operand2_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::DECL_REAL3_VAR_REAL3_EXPR* coords = ast2coords_->mkDECL_REAL3_VAR_REAL3_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_VAR_IDENT(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL3_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putDECL_REAL3_VAR_REAL3_EXPR(coords, dom);
+
+	interp::REAL3_VAR_IDENT* operand1_interp = coords2interp_->getREAL3_VAR_IDENT(operand1_coords);;
+	interp::REAL3_EXPR* operand2_interp = coords2interp_->getREAL3_EXPR(operand2_coords);
+
+    interp::DECL_REAL3_VAR_REAL3_EXPR* interp = new interp::DECL_REAL3_VAR_REAL3_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putDECL_REAL3_VAR_REAL3_EXPR(coords, interp);
+    interp2domain_->putDECL_REAL3_VAR_REAL3_EXPR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkDECL_REAL4_VAR_REAL4_EXPR(const ast::DECL_REAL4_VAR_REAL4_EXPR * ast ,ast::REAL4_VAR_IDENT* operand1,ast::REAL4_EXPR* operand2) {
+
+	coords::REAL4_VAR_IDENT* operand1_coords = static_cast<coords::REAL4_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
+	coords::REAL4_EXPR* operand2_coords = static_cast<coords::REAL4_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::DECL_REAL4_VAR_REAL4_EXPR* coords = ast2coords_->mkDECL_REAL4_VAR_REAL4_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL4_VAR_IDENT(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL4_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putDECL_REAL4_VAR_REAL4_EXPR(coords, dom);
+
+	interp::REAL4_VAR_IDENT* operand1_interp = coords2interp_->getREAL4_VAR_IDENT(operand1_coords);;
+	interp::REAL4_EXPR* operand2_interp = coords2interp_->getREAL4_EXPR(operand2_coords);
+
+    interp::DECL_REAL4_VAR_REAL4_EXPR* interp = new interp::DECL_REAL4_VAR_REAL4_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putDECL_REAL4_VAR_REAL4_EXPR(coords, interp);
+    interp2domain_->putDECL_REAL4_VAR_REAL4_EXPR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkDECL_REALMATRIX_VAR_REALMATRIX_EXPR(const ast::DECL_REALMATRIX_VAR_REALMATRIX_EXPR * ast ,ast::REALMATRIX_VAR_IDENT* operand1,ast::REALMATRIX_EXPR* operand2) {
+
+	coords::REALMATRIX_VAR_IDENT* operand1_coords = static_cast<coords::REALMATRIX_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
+	coords::REALMATRIX_EXPR* operand2_coords = static_cast<coords::REALMATRIX_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* coords = ast2coords_->mkDECL_REALMATRIX_VAR_REALMATRIX_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX_VAR_IDENT(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREALMATRIX_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putDECL_REALMATRIX_VAR_REALMATRIX_EXPR(coords, dom);
+
+	interp::REALMATRIX_VAR_IDENT* operand1_interp = coords2interp_->getREALMATRIX_VAR_IDENT(operand1_coords);;
+	interp::REALMATRIX_EXPR* operand2_interp = coords2interp_->getREALMATRIX_EXPR(operand2_coords);
+
+    interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* interp = new interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putDECL_REALMATRIX_VAR_REALMATRIX_EXPR(coords, interp);
+    interp2domain_->putDECL_REALMATRIX_VAR_REALMATRIX_EXPR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkDECL_REAL1_VAR(const ast::DECL_REAL1_VAR * ast ,ast::REAL1_VAR_IDENT* operand1) {
+
+	coords::REAL1_VAR_IDENT* operand1_coords = static_cast<coords::REAL1_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::DECL_REAL1_VAR* coords = ast2coords_->mkDECL_REAL1_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putDECL_REAL1_VAR(coords, dom);
+
+	interp::REAL1_VAR_IDENT* operand1_interp = coords2interp_->getREAL1_VAR_IDENT(operand1_coords);
+
+    interp::DECL_REAL1_VAR* interp = new interp::DECL_REAL1_VAR(coords, dom, operand1_interp);
+    coords2interp_->putDECL_REAL1_VAR(coords, interp);
+    interp2domain_->putDECL_REAL1_VAR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkDECL_REAL3_VAR(const ast::DECL_REAL3_VAR * ast ,ast::REAL3_VAR_IDENT* operand1) {
+
+	coords::REAL3_VAR_IDENT* operand1_coords = static_cast<coords::REAL3_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::DECL_REAL3_VAR* coords = ast2coords_->mkDECL_REAL3_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putDECL_REAL3_VAR(coords, dom);
+
+	interp::REAL3_VAR_IDENT* operand1_interp = coords2interp_->getREAL3_VAR_IDENT(operand1_coords);
+
+    interp::DECL_REAL3_VAR* interp = new interp::DECL_REAL3_VAR(coords, dom, operand1_interp);
+    coords2interp_->putDECL_REAL3_VAR(coords, interp);
+    interp2domain_->putDECL_REAL3_VAR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkDECL_REAL4_VAR(const ast::DECL_REAL4_VAR * ast ,ast::REAL4_VAR_IDENT* operand1) {
+
+	coords::REAL4_VAR_IDENT* operand1_coords = static_cast<coords::REAL4_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::DECL_REAL4_VAR* coords = ast2coords_->mkDECL_REAL4_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL4_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putDECL_REAL4_VAR(coords, dom);
+
+	interp::REAL4_VAR_IDENT* operand1_interp = coords2interp_->getREAL4_VAR_IDENT(operand1_coords);
+
+    interp::DECL_REAL4_VAR* interp = new interp::DECL_REAL4_VAR(coords, dom, operand1_interp);
+    coords2interp_->putDECL_REAL4_VAR(coords, interp);
+    interp2domain_->putDECL_REAL4_VAR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkDECL_REALMATRIX_VAR(const ast::DECL_REALMATRIX_VAR * ast ,ast::REALMATRIX_VAR_IDENT* operand1) {
+
+	coords::REALMATRIX_VAR_IDENT* operand1_coords = static_cast<coords::REALMATRIX_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::DECL_REALMATRIX_VAR* coords = ast2coords_->mkDECL_REALMATRIX_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putDECL_REALMATRIX_VAR(coords, dom);
+
+	interp::REALMATRIX_VAR_IDENT* operand1_interp = coords2interp_->getREALMATRIX_VAR_IDENT(operand1_coords);
+
+    interp::DECL_REALMATRIX_VAR* interp = new interp::DECL_REALMATRIX_VAR(coords, dom, operand1_interp);
+    coords2interp_->putDECL_REALMATRIX_VAR(coords, interp);
+    interp2domain_->putDECL_REALMATRIX_VAR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
 
 
-
-void Interpretation::mkTransform_Assign(ast::Transform_Assign *assign_ast,  
-                                  ast::TransformVarExpr *id_ast, 
-                                  ast::TransformExpr *expr_ast)
-{
-    coords::TransformVarExpr *id_coords = static_cast<coords::TransformVarExpr *>
-      (ast2coords_->getStmtCoords(id_ast));
-    coords::Transform *tfm_coords = static_cast<coords::Transform *>
-      (ast2coords_->getStmtCoords(expr_ast));
-    coords::Transform_Assign *assign_coords = ast2coords_->mkTransform_Assign(assign_ast, context_, id_coords, tfm_coords);
-    domain::TransformVarExpr *tfm_varexpr = coords2dom_->getTransformVarExpr(id_coords);
-    /*
-    Here there is some subtlety. We don't know if what was left in our
-    interpretation by previous work was a Transform_Lit or a Transform_Expr.
-    So we check first for a Transform_Expr
-    */
-    domain::Transform *Transform = coords2dom_->getTransform(tfm_coords);
-    domain::Transform_Assign* dom_tfm_assign = 
-      domain_->mkTransform_Assign( tfm_varexpr, Transform); 
-    coords2dom_->putTransform_Assign(assign_coords, dom_tfm_assign);
-    interp::TransformVarExpr *id_interp = coords2interp_->getTransformVarExpr(id_coords);
-    interp::Interp *tfm_interp = coords2interp_->getTransform(tfm_coords);
-    if(not tfm_interp){
-      tfm_interp = coords2interp_->getTransformExpr(tfm_coords);
+ std::string Interpretation::toString_DECLAREs(){ 
+    std::vector<interp::DECLARE*> interps;
+    for(auto coord : this->DECLARE_vec){
+        interps.push_back(this->coords2interp_->getDECLARE(coord));
     }
-    interp::Transform_Assign *interp = new interp::Transform_Assign(assign_coords, dom_tfm_assign, id_interp, tfm_interp);
-    coords2interp_->putTransform_Assign(assign_coords, interp);
-    interp2domain_->putTransform_Assign(interp, dom_tfm_assign);
-}
-
-// private
-// Precondition: coords2domain_ is defined for exp
-//
-domain::VecExpr* Interpretation::getVecExpr(ast::VecExpr* ast) {
-    // we use these objects as key for query purposes
-    coords::VecExpr *coords = 
-        static_cast<coords::VecExpr *>(ast2coords_->getStmtCoords(ast));
-    domain::VecExpr* dom = coords2dom_->getVecExpr(coords);
-    if (!dom) {
-       LOG(DBUG) <<"Interpretation::getVecExpr. Error. Undefined for key!\n";
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
     }
-    return dom;
+    return retval;
 }
+void Interpretation::mkPAREN_REAL1_EXPR(const ast::PAREN_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1) {
 
-domain::ScalarExpr* Interpretation::getScalarExpr(ast::ScalarExpr* ast) {
-    // we use these objects as key for query purposes
-    coords::ScalarExpr *coords = 
-        static_cast<coords::ScalarExpr *>(ast2coords_->getStmtCoords(ast));
-    domain::ScalarExpr* dom = coords2dom_->getScalarExpr(coords);
-    if (!dom) {
-      LOG(DBUG) <<"Interpretation::getVecExpr. Error. Undefined for key!\n";
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::PAREN_REAL1_EXPR* coords = ast2coords_->mkPAREN_REAL1_EXPR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putPAREN_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);
+
+    interp::PAREN_REAL1_EXPR* interp = new interp::PAREN_REAL1_EXPR(coords, dom, operand1_interp);
+    coords2interp_->putPAREN_REAL1_EXPR(coords, interp);
+    interp2domain_->putPAREN_REAL1_EXPR(interp, dom); 
+	this->REAL1_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkINV_REAL1_EXPR(const ast::INV_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::INV_REAL1_EXPR* coords = ast2coords_->mkINV_REAL1_EXPR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putINV_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);
+
+    interp::INV_REAL1_EXPR* interp = new interp::INV_REAL1_EXPR(coords, dom, operand1_interp);
+    coords2interp_->putINV_REAL1_EXPR(coords, interp);
+    interp2domain_->putINV_REAL1_EXPR(interp, dom); 
+	this->REAL1_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkNEG_REAL1_EXPR(const ast::NEG_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::NEG_REAL1_EXPR* coords = ast2coords_->mkNEG_REAL1_EXPR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putNEG_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);
+
+    interp::NEG_REAL1_EXPR* interp = new interp::NEG_REAL1_EXPR(coords, dom, operand1_interp);
+    coords2interp_->putNEG_REAL1_EXPR(coords, interp);
+    interp2domain_->putNEG_REAL1_EXPR(interp, dom); 
+	this->REAL1_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkADD_REAL1_EXPR_REAL1_EXPR(const ast::ADD_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::ADD_REAL1_EXPR_REAL1_EXPR* coords = ast2coords_->mkADD_REAL1_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putADD_REAL1_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::ADD_REAL1_EXPR_REAL1_EXPR* interp = new interp::ADD_REAL1_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putADD_REAL1_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putADD_REAL1_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL1_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkSUB_REAL1_EXPR_REAL1_EXPR(const ast::SUB_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::SUB_REAL1_EXPR_REAL1_EXPR* coords = ast2coords_->mkSUB_REAL1_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putSUB_REAL1_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::SUB_REAL1_EXPR_REAL1_EXPR* interp = new interp::SUB_REAL1_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putSUB_REAL1_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putSUB_REAL1_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL1_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkMUL_REAL1_EXPR_REAL1_EXPR(const ast::MUL_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::MUL_REAL1_EXPR_REAL1_EXPR* coords = ast2coords_->mkMUL_REAL1_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putMUL_REAL1_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::MUL_REAL1_EXPR_REAL1_EXPR* interp = new interp::MUL_REAL1_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putMUL_REAL1_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putMUL_REAL1_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL1_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkDIV_REAL1_EXPR_REAL1_EXPR(const ast::DIV_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::DIV_REAL1_EXPR_REAL1_EXPR* coords = ast2coords_->mkDIV_REAL1_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putDIV_REAL1_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::DIV_REAL1_EXPR_REAL1_EXPR* interp = new interp::DIV_REAL1_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putDIV_REAL1_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putDIV_REAL1_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL1_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkREF_REAL1_VAR(const ast::REF_REAL1_VAR * ast ,ast::REAL1_VAR_IDENT* operand1) {
+
+	coords::REAL1_VAR_IDENT* operand1_coords = static_cast<coords::REAL1_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::REF_REAL1_VAR* coords = ast2coords_->mkREF_REAL1_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putREF_REAL1_VAR(coords, dom);
+
+	interp::REAL1_VAR_IDENT* operand1_interp = coords2interp_->getREAL1_VAR_IDENT(operand1_coords);
+
+    interp::REF_REAL1_VAR* interp = new interp::REF_REAL1_VAR(coords, dom, operand1_interp);
+    coords2interp_->putREF_REAL1_VAR(coords, interp);
+    interp2domain_->putREF_REAL1_VAR(interp, dom); 
+	this->REAL1_EXPR_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REAL1_EXPRs(){ 
+    std::vector<interp::REAL1_EXPR*> interps;
+    for(auto coord : this->REAL1_EXPR_vec){
+        interps.push_back(this->coords2interp_->getREAL1_EXPR(coord));
     }
-    return dom;
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkPAREN_REAL3_EXPR(const ast::PAREN_REAL3_EXPR * ast ,ast::REAL3_EXPR* operand1) {
+
+	coords::REAL3_EXPR* operand1_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::PAREN_REAL3_EXPR* coords = ast2coords_->mkPAREN_REAL3_EXPR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_EXPR(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putPAREN_REAL3_EXPR(coords, dom);
+
+	interp::REAL3_EXPR* operand1_interp = coords2interp_->getREAL3_EXPR(operand1_coords);
+
+    interp::PAREN_REAL3_EXPR* interp = new interp::PAREN_REAL3_EXPR(coords, dom, operand1_interp);
+    coords2interp_->putPAREN_REAL3_EXPR(coords, interp);
+    interp2domain_->putPAREN_REAL3_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkADD_REAL3_EXPR_REAL3_EXPR(const ast::ADD_REAL3_EXPR_REAL3_EXPR * ast ,ast::REAL3_EXPR* operand1,ast::REAL3_EXPR* operand2) {
+
+	coords::REAL3_EXPR* operand1_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL3_EXPR* operand2_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::ADD_REAL3_EXPR_REAL3_EXPR* coords = ast2coords_->mkADD_REAL3_EXPR_REAL3_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL3_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putADD_REAL3_EXPR_REAL3_EXPR(coords, dom);
+
+	interp::REAL3_EXPR* operand1_interp = coords2interp_->getREAL3_EXPR(operand1_coords);;
+	interp::REAL3_EXPR* operand2_interp = coords2interp_->getREAL3_EXPR(operand2_coords);
+
+    interp::ADD_REAL3_EXPR_REAL3_EXPR* interp = new interp::ADD_REAL3_EXPR_REAL3_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putADD_REAL3_EXPR_REAL3_EXPR(coords, interp);
+    interp2domain_->putADD_REAL3_EXPR_REAL3_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkSUB_REAL3_EXPR_REAL3_EXPR(const ast::SUB_REAL3_EXPR_REAL3_EXPR * ast ,ast::REAL3_EXPR* operand1,ast::REAL3_EXPR* operand2) {
+
+	coords::REAL3_EXPR* operand1_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL3_EXPR* operand2_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::SUB_REAL3_EXPR_REAL3_EXPR* coords = ast2coords_->mkSUB_REAL3_EXPR_REAL3_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL3_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putSUB_REAL3_EXPR_REAL3_EXPR(coords, dom);
+
+	interp::REAL3_EXPR* operand1_interp = coords2interp_->getREAL3_EXPR(operand1_coords);;
+	interp::REAL3_EXPR* operand2_interp = coords2interp_->getREAL3_EXPR(operand2_coords);
+
+    interp::SUB_REAL3_EXPR_REAL3_EXPR* interp = new interp::SUB_REAL3_EXPR_REAL3_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putSUB_REAL3_EXPR_REAL3_EXPR(coords, interp);
+    interp2domain_->putSUB_REAL3_EXPR_REAL3_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkINV_REAL3_EXPR(const ast::INV_REAL3_EXPR * ast ,ast::REAL3_EXPR* operand1) {
+
+	coords::REAL3_EXPR* operand1_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::INV_REAL3_EXPR* coords = ast2coords_->mkINV_REAL3_EXPR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_EXPR(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putINV_REAL3_EXPR(coords, dom);
+
+	interp::REAL3_EXPR* operand1_interp = coords2interp_->getREAL3_EXPR(operand1_coords);
+
+    interp::INV_REAL3_EXPR* interp = new interp::INV_REAL3_EXPR(coords, dom, operand1_interp);
+    coords2interp_->putINV_REAL3_EXPR(coords, interp);
+    interp2domain_->putINV_REAL3_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkNEG_REAL3_EXPR(const ast::NEG_REAL3_EXPR * ast ,ast::REAL3_EXPR* operand1) {
+
+	coords::REAL3_EXPR* operand1_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::NEG_REAL3_EXPR* coords = ast2coords_->mkNEG_REAL3_EXPR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_EXPR(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putNEG_REAL3_EXPR(coords, dom);
+
+	interp::REAL3_EXPR* operand1_interp = coords2interp_->getREAL3_EXPR(operand1_coords);
+
+    interp::NEG_REAL3_EXPR* interp = new interp::NEG_REAL3_EXPR(coords, dom, operand1_interp);
+    coords2interp_->putNEG_REAL3_EXPR(coords, interp);
+    interp2domain_->putNEG_REAL3_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkMUL_REAL3_EXPR_REAL1_EXPR(const ast::MUL_REAL3_EXPR_REAL1_EXPR * ast ,ast::REAL3_EXPR* operand1,ast::REAL1_EXPR* operand2) {
+
+	coords::REAL3_EXPR* operand1_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::MUL_REAL3_EXPR_REAL1_EXPR* coords = ast2coords_->mkMUL_REAL3_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putMUL_REAL3_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL3_EXPR* operand1_interp = coords2interp_->getREAL3_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::MUL_REAL3_EXPR_REAL1_EXPR* interp = new interp::MUL_REAL3_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putMUL_REAL3_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putMUL_REAL3_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkMUL_REALMATRIX_EXPR_REAL3_EXPR(const ast::MUL_REALMATRIX_EXPR_REAL3_EXPR * ast ,ast::REALMATRIX_EXPR* operand1,ast::REAL3_EXPR* operand2) {
+
+	coords::REALMATRIX_EXPR* operand1_coords = static_cast<coords::REALMATRIX_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL3_EXPR* operand2_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::MUL_REALMATRIX_EXPR_REAL3_EXPR* coords = ast2coords_->mkMUL_REALMATRIX_EXPR_REAL3_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL3_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putMUL_REALMATRIX_EXPR_REAL3_EXPR(coords, dom);
+
+	interp::REALMATRIX_EXPR* operand1_interp = coords2interp_->getREALMATRIX_EXPR(operand1_coords);;
+	interp::REAL3_EXPR* operand2_interp = coords2interp_->getREAL3_EXPR(operand2_coords);
+
+    interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* interp = new interp::MUL_REALMATRIX_EXPR_REAL3_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putMUL_REALMATRIX_EXPR_REAL3_EXPR(coords, interp);
+    interp2domain_->putMUL_REALMATRIX_EXPR_REAL3_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkDIV_REAL3_EXPR_REAL1_EXPR(const ast::DIV_REAL3_EXPR_REAL1_EXPR * ast ,ast::REAL3_EXPR* operand1,ast::REAL1_EXPR* operand2) {
+
+	coords::REAL3_EXPR* operand1_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::DIV_REAL3_EXPR_REAL1_EXPR* coords = ast2coords_->mkDIV_REAL3_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putDIV_REAL3_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL3_EXPR* operand1_interp = coords2interp_->getREAL3_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::DIV_REAL3_EXPR_REAL1_EXPR* interp = new interp::DIV_REAL3_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putDIV_REAL3_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putDIV_REAL3_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkREF_REAL3_VAR(const ast::REF_REAL3_VAR * ast ,ast::REAL3_VAR_IDENT* operand1) {
+
+	coords::REAL3_VAR_IDENT* operand1_coords = static_cast<coords::REAL3_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::REF_REAL3_VAR* coords = ast2coords_->mkREF_REAL3_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putREF_REAL3_VAR(coords, dom);
+
+	interp::REAL3_VAR_IDENT* operand1_interp = coords2interp_->getREAL3_VAR_IDENT(operand1_coords);
+
+    interp::REF_REAL3_VAR* interp = new interp::REF_REAL3_VAR(coords, dom, operand1_interp);
+    coords2interp_->putREF_REAL3_VAR(coords, interp);
+    interp2domain_->putREF_REAL3_VAR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REAL3_EXPRs(){ 
+    std::vector<interp::REAL3_EXPR*> interps;
+    for(auto coord : this->REAL3_EXPR_vec){
+        interps.push_back(this->coords2interp_->getREAL3_EXPR(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkPAREN_REAL4_EXPR(const ast::PAREN_REAL4_EXPR * ast ,ast::REAL4_EXPR* operand1) {
+
+	coords::REAL4_EXPR* operand1_coords = static_cast<coords::REAL4_EXPR*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::PAREN_REAL4_EXPR* coords = ast2coords_->mkPAREN_REAL4_EXPR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL4_EXPR(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putPAREN_REAL4_EXPR(coords, dom);
+
+	interp::REAL4_EXPR* operand1_interp = coords2interp_->getREAL4_EXPR(operand1_coords);
+
+    interp::PAREN_REAL4_EXPR* interp = new interp::PAREN_REAL4_EXPR(coords, dom, operand1_interp);
+    coords2interp_->putPAREN_REAL4_EXPR(coords, interp);
+    interp2domain_->putPAREN_REAL4_EXPR(interp, dom); 
+	this->REAL4_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkADD_REAL4_EXPR_REAL4_EXPR(const ast::ADD_REAL4_EXPR_REAL4_EXPR * ast ,ast::REAL4_EXPR* operand1,ast::REAL4_EXPR* operand2) {
+
+	coords::REAL4_EXPR* operand1_coords = static_cast<coords::REAL4_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL4_EXPR* operand2_coords = static_cast<coords::REAL4_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::ADD_REAL4_EXPR_REAL4_EXPR* coords = ast2coords_->mkADD_REAL4_EXPR_REAL4_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL4_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL4_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putADD_REAL4_EXPR_REAL4_EXPR(coords, dom);
+
+	interp::REAL4_EXPR* operand1_interp = coords2interp_->getREAL4_EXPR(operand1_coords);;
+	interp::REAL4_EXPR* operand2_interp = coords2interp_->getREAL4_EXPR(operand2_coords);
+
+    interp::ADD_REAL4_EXPR_REAL4_EXPR* interp = new interp::ADD_REAL4_EXPR_REAL4_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putADD_REAL4_EXPR_REAL4_EXPR(coords, interp);
+    interp2domain_->putADD_REAL4_EXPR_REAL4_EXPR(interp, dom); 
+	this->REAL4_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkMUL_REAL4_EXPR_REAL1_EXPR(const ast::MUL_REAL4_EXPR_REAL1_EXPR * ast ,ast::REAL4_EXPR* operand1,ast::REAL1_EXPR* operand2) {
+
+	coords::REAL4_EXPR* operand1_coords = static_cast<coords::REAL4_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::MUL_REAL4_EXPR_REAL1_EXPR* coords = ast2coords_->mkMUL_REAL4_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL4_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putMUL_REAL4_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL4_EXPR* operand1_interp = coords2interp_->getREAL4_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::MUL_REAL4_EXPR_REAL1_EXPR* interp = new interp::MUL_REAL4_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putMUL_REAL4_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putMUL_REAL4_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL4_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkREF_REAL4_VAR(const ast::REF_REAL4_VAR * ast ,ast::REAL4_VAR_IDENT* operand1) {
+
+	coords::REAL4_VAR_IDENT* operand1_coords = static_cast<coords::REAL4_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::REF_REAL4_VAR* coords = ast2coords_->mkREF_REAL4_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL4_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putREF_REAL4_VAR(coords, dom);
+
+	interp::REAL4_VAR_IDENT* operand1_interp = coords2interp_->getREAL4_VAR_IDENT(operand1_coords);
+
+    interp::REF_REAL4_VAR* interp = new interp::REF_REAL4_VAR(coords, dom, operand1_interp);
+    coords2interp_->putREF_REAL4_VAR(coords, interp);
+    interp2domain_->putREF_REAL4_VAR(interp, dom); 
+	this->REAL4_EXPR_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REAL4_EXPRs(){ 
+    std::vector<interp::REAL4_EXPR*> interps;
+    for(auto coord : this->REAL4_EXPR_vec){
+        interps.push_back(this->coords2interp_->getREAL4_EXPR(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkPAREN_REALMATRIX_EXPR(const ast::PAREN_REALMATRIX_EXPR * ast ,ast::REALMATRIX_EXPR* operand1) {
+
+	coords::REALMATRIX_EXPR* operand1_coords = static_cast<coords::REALMATRIX_EXPR*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::PAREN_REALMATRIX_EXPR* coords = ast2coords_->mkPAREN_REALMATRIX_EXPR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX_EXPR(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putPAREN_REALMATRIX_EXPR(coords, dom);
+
+	interp::REALMATRIX_EXPR* operand1_interp = coords2interp_->getREALMATRIX_EXPR(operand1_coords);
+
+    interp::PAREN_REALMATRIX_EXPR* interp = new interp::PAREN_REALMATRIX_EXPR(coords, dom, operand1_interp);
+    coords2interp_->putPAREN_REALMATRIX_EXPR(coords, interp);
+    interp2domain_->putPAREN_REALMATRIX_EXPR(interp, dom); 
+	this->REALMATRIX_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(const ast::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR * ast ,ast::REALMATRIX_EXPR* operand1,ast::REALMATRIX_EXPR* operand2) {
+
+	coords::REALMATRIX_EXPR* operand1_coords = static_cast<coords::REALMATRIX_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REALMATRIX_EXPR* operand2_coords = static_cast<coords::REALMATRIX_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* coords = ast2coords_->mkMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREALMATRIX_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(coords, dom);
+
+	interp::REALMATRIX_EXPR* operand1_interp = coords2interp_->getREALMATRIX_EXPR(operand1_coords);;
+	interp::REALMATRIX_EXPR* operand2_interp = coords2interp_->getREALMATRIX_EXPR(operand2_coords);
+
+    interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* interp = new interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(coords, interp);
+    interp2domain_->putMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp, dom); 
+	this->REALMATRIX_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkREF_EXPR_REALMATRIX_VAR(const ast::REF_EXPR_REALMATRIX_VAR * ast ,ast::REALMATRIX_VAR_IDENT* operand1) {
+
+	coords::REALMATRIX_VAR_IDENT* operand1_coords = static_cast<coords::REALMATRIX_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::REF_EXPR_REALMATRIX_VAR* coords = ast2coords_->mkREF_EXPR_REALMATRIX_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putREF_EXPR_REALMATRIX_VAR(coords, dom);
+
+	interp::REALMATRIX_VAR_IDENT* operand1_interp = coords2interp_->getREALMATRIX_VAR_IDENT(operand1_coords);
+
+    interp::REF_EXPR_REALMATRIX_VAR* interp = new interp::REF_EXPR_REALMATRIX_VAR(coords, dom, operand1_interp);
+    coords2interp_->putREF_EXPR_REALMATRIX_VAR(coords, interp);
+    interp2domain_->putREF_EXPR_REALMATRIX_VAR(interp, dom); 
+	this->REALMATRIX_EXPR_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REALMATRIX_EXPRs(){ 
+    std::vector<interp::REALMATRIX_EXPR*> interps;
+    for(auto coord : this->REALMATRIX_EXPR_vec){
+        interps.push_back(this->coords2interp_->getREALMATRIX_EXPR(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREAL1_VAR_IDENT(const ast::REAL1_VAR_IDENT * ast ) {
+
+
+    coords::REAL1_VAR_IDENT* coords = ast2coords_->mkREAL1_VAR_IDENT(ast, context_ );
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREAL1_VAR_IDENT(coords, dom);
+
+
+    interp::REAL1_VAR_IDENT* interp = new interp::REAL1_VAR_IDENT(coords, dom);
+    coords2interp_->putREAL1_VAR_IDENT(coords, interp);
+    interp2domain_->putREAL1_VAR_IDENT(interp, dom); 
+	this->REAL1_VAR_IDENT_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REAL1_VAR_IDENTs(){ 
+    std::vector<interp::REAL1_VAR_IDENT*> interps;
+    for(auto coord : this->REAL1_VAR_IDENT_vec){
+        interps.push_back(this->coords2interp_->getREAL1_VAR_IDENT(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREAL3_VAR_IDENT(const ast::REAL3_VAR_IDENT * ast ) {
+
+
+    coords::REAL3_VAR_IDENT* coords = ast2coords_->mkREAL3_VAR_IDENT(ast, context_ );
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREAL3_VAR_IDENT(coords, dom);
+
+
+    interp::REAL3_VAR_IDENT* interp = new interp::REAL3_VAR_IDENT(coords, dom);
+    coords2interp_->putREAL3_VAR_IDENT(coords, interp);
+    interp2domain_->putREAL3_VAR_IDENT(interp, dom); 
+	this->REAL3_VAR_IDENT_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REAL3_VAR_IDENTs(){ 
+    std::vector<interp::REAL3_VAR_IDENT*> interps;
+    for(auto coord : this->REAL3_VAR_IDENT_vec){
+        interps.push_back(this->coords2interp_->getREAL3_VAR_IDENT(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREAL4_VAR_IDENT(const ast::REAL4_VAR_IDENT * ast ) {
+
+
+    coords::REAL4_VAR_IDENT* coords = ast2coords_->mkREAL4_VAR_IDENT(ast, context_ );
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREAL4_VAR_IDENT(coords, dom);
+
+
+    interp::REAL4_VAR_IDENT* interp = new interp::REAL4_VAR_IDENT(coords, dom);
+    coords2interp_->putREAL4_VAR_IDENT(coords, interp);
+    interp2domain_->putREAL4_VAR_IDENT(interp, dom); 
+	this->REAL4_VAR_IDENT_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REAL4_VAR_IDENTs(){ 
+    std::vector<interp::REAL4_VAR_IDENT*> interps;
+    for(auto coord : this->REAL4_VAR_IDENT_vec){
+        interps.push_back(this->coords2interp_->getREAL4_VAR_IDENT(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREALMATRIX_VAR_IDENT(const ast::REALMATRIX_VAR_IDENT * ast ) {
+
+
+    coords::REALMATRIX_VAR_IDENT* coords = ast2coords_->mkREALMATRIX_VAR_IDENT(ast, context_ );
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREALMATRIX_VAR_IDENT(coords, dom);
+
+
+    interp::REALMATRIX_VAR_IDENT* interp = new interp::REALMATRIX_VAR_IDENT(coords, dom);
+    coords2interp_->putREALMATRIX_VAR_IDENT(coords, interp);
+    interp2domain_->putREALMATRIX_VAR_IDENT(interp, dom); 
+	this->REALMATRIX_VAR_IDENT_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REALMATRIX_VAR_IDENTs(){ 
+    std::vector<interp::REALMATRIX_VAR_IDENT*> interps;
+    for(auto coord : this->REALMATRIX_VAR_IDENT_vec){
+        interps.push_back(this->coords2interp_->getREALMATRIX_VAR_IDENT(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREAL1_LITERAL1(const ast::REAL1_LITERAL1 * ast ) {
+
+
+    coords::REAL1_LITERAL1* coords = ast2coords_->mkREAL1_LITERAL1(ast, context_ ,1);
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREAL1_LITERAL1(coords, dom);
+
+
+    interp::REAL1_LITERAL1* interp = new interp::REAL1_LITERAL1(coords, dom);
+    coords2interp_->putREAL1_LITERAL1(coords, interp);
+    interp2domain_->putREAL1_LITERAL1(interp, dom); 
+	this->REAL1_LITERAL_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REAL1_LITERALs(){ 
+    std::vector<interp::REAL1_LITERAL*> interps;
+    for(auto coord : this->REAL1_LITERAL_vec){
+        interps.push_back(this->coords2interp_->getREAL1_LITERAL(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,ast::REAL1_EXPR* operand3) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));;
+	coords::REAL1_EXPR* operand3_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand3));
+
+    coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* coords = ast2coords_->mkREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords,operand3_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+	domain::DomainObject* operand3_dom = coords2dom_->getREAL1_EXPR(operand3_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom,operand3_dom});
+    coords2dom_->putREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);;
+	interp::REAL1_EXPR* operand3_interp = coords2interp_->getREAL1_EXPR(operand3_coords);
+
+    interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* interp = new interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp,operand3_interp);
+    coords2interp_->putREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL3_LITERAL_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkREAL3_LITERAL3(const ast::REAL3_LITERAL3 * ast ) {
+
+
+    coords::REAL3_LITERAL3* coords = ast2coords_->mkREAL3_LITERAL3(ast, context_ ,1,2,3);
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREAL3_LITERAL3(coords, dom);
+
+
+    interp::REAL3_LITERAL3* interp = new interp::REAL3_LITERAL3(coords, dom);
+    coords2interp_->putREAL3_LITERAL3(coords, interp);
+    interp2domain_->putREAL3_LITERAL3(interp, dom); 
+	this->REAL3_LITERAL_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REAL3_LITERALs(){ 
+    std::vector<interp::REAL3_LITERAL*> interps;
+    for(auto coord : this->REAL3_LITERAL_vec){
+        interps.push_back(this->coords2interp_->getREAL3_LITERAL(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,ast::REAL1_EXPR* operand3,ast::REAL1_EXPR* operand4) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));;
+	coords::REAL1_EXPR* operand3_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand3));;
+	coords::REAL1_EXPR* operand4_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand4));
+
+    coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* coords = ast2coords_->mkREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords,operand3_coords,operand4_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+	domain::DomainObject* operand3_dom = coords2dom_->getREAL1_EXPR(operand3_coords);
+	domain::DomainObject* operand4_dom = coords2dom_->getREAL1_EXPR(operand4_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom,operand3_dom,operand4_dom});
+    coords2dom_->putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);;
+	interp::REAL1_EXPR* operand3_interp = coords2interp_->getREAL1_EXPR(operand3_coords);;
+	interp::REAL1_EXPR* operand4_interp = coords2interp_->getREAL1_EXPR(operand4_coords);
+
+    interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* interp = new interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp,operand3_interp,operand4_interp);
+    coords2interp_->putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL4_LITERAL_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkREAL4_LITERAL4(const ast::REAL4_LITERAL4 * ast ) {
+
+
+    coords::REAL4_LITERAL4* coords = ast2coords_->mkREAL4_LITERAL4(ast, context_ ,1,2,3,4);
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREAL4_LITERAL4(coords, dom);
+
+
+    interp::REAL4_LITERAL4* interp = new interp::REAL4_LITERAL4(coords, dom);
+    coords2interp_->putREAL4_LITERAL4(coords, interp);
+    interp2domain_->putREAL4_LITERAL4(interp, dom); 
+	this->REAL4_LITERAL_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REAL4_LITERALs(){ 
+    std::vector<interp::REAL4_LITERAL*> interps;
+    for(auto coord : this->REAL4_LITERAL_vec){
+        interps.push_back(this->coords2interp_->getREAL4_LITERAL(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(const ast::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR * ast ,ast::REAL3_EXPR* operand1,ast::REAL3_EXPR* operand2,ast::REAL3_EXPR* operand3) {
+
+	coords::REAL3_EXPR* operand1_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL3_EXPR* operand2_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand2));;
+	coords::REAL3_EXPR* operand3_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand3));
+
+    coords::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* coords = ast2coords_->mkREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(ast, context_ ,operand1_coords,operand2_coords,operand3_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL3_EXPR(operand2_coords);
+	domain::DomainObject* operand3_dom = coords2dom_->getREAL3_EXPR(operand3_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom,operand3_dom});
+    coords2dom_->putREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(coords, dom);
+
+	interp::REAL3_EXPR* operand1_interp = coords2interp_->getREAL3_EXPR(operand1_coords);;
+	interp::REAL3_EXPR* operand2_interp = coords2interp_->getREAL3_EXPR(operand2_coords);;
+	interp::REAL3_EXPR* operand3_interp = coords2interp_->getREAL3_EXPR(operand3_coords);
+
+    interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* interp = new interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(coords, dom, operand1_interp,operand2_interp,operand3_interp);
+    coords2interp_->putREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(coords, interp);
+    interp2domain_->putREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp, dom); 
+	this->REALMATRIX_LITERAL_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,ast::REAL1_EXPR* operand3,ast::REAL1_EXPR* operand4,ast::REAL1_EXPR* operand5,ast::REAL1_EXPR* operand6,ast::REAL1_EXPR* operand7,ast::REAL1_EXPR* operand8,ast::REAL1_EXPR* operand9) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));;
+	coords::REAL1_EXPR* operand3_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand3));;
+	coords::REAL1_EXPR* operand4_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand4));;
+	coords::REAL1_EXPR* operand5_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand5));;
+	coords::REAL1_EXPR* operand6_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand6));;
+	coords::REAL1_EXPR* operand7_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand7));;
+	coords::REAL1_EXPR* operand8_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand8));;
+	coords::REAL1_EXPR* operand9_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand9));
+
+    coords::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* coords = ast2coords_->mkREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords,operand3_coords,operand4_coords,operand5_coords,operand6_coords,operand7_coords,operand8_coords,operand9_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+	domain::DomainObject* operand3_dom = coords2dom_->getREAL1_EXPR(operand3_coords);
+	domain::DomainObject* operand4_dom = coords2dom_->getREAL1_EXPR(operand4_coords);
+	domain::DomainObject* operand5_dom = coords2dom_->getREAL1_EXPR(operand5_coords);
+	domain::DomainObject* operand6_dom = coords2dom_->getREAL1_EXPR(operand6_coords);
+	domain::DomainObject* operand7_dom = coords2dom_->getREAL1_EXPR(operand7_coords);
+	domain::DomainObject* operand8_dom = coords2dom_->getREAL1_EXPR(operand8_coords);
+	domain::DomainObject* operand9_dom = coords2dom_->getREAL1_EXPR(operand9_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom,operand3_dom,operand4_dom,operand5_dom,operand6_dom,operand7_dom,operand8_dom,operand9_dom});
+    coords2dom_->putREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);;
+	interp::REAL1_EXPR* operand3_interp = coords2interp_->getREAL1_EXPR(operand3_coords);;
+	interp::REAL1_EXPR* operand4_interp = coords2interp_->getREAL1_EXPR(operand4_coords);;
+	interp::REAL1_EXPR* operand5_interp = coords2interp_->getREAL1_EXPR(operand5_coords);;
+	interp::REAL1_EXPR* operand6_interp = coords2interp_->getREAL1_EXPR(operand6_coords);;
+	interp::REAL1_EXPR* operand7_interp = coords2interp_->getREAL1_EXPR(operand7_coords);;
+	interp::REAL1_EXPR* operand8_interp = coords2interp_->getREAL1_EXPR(operand8_coords);;
+	interp::REAL1_EXPR* operand9_interp = coords2interp_->getREAL1_EXPR(operand9_coords);
+
+    interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* interp = new interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp,operand3_interp,operand4_interp,operand5_interp,operand6_interp,operand7_interp,operand8_interp,operand9_interp);
+    coords2interp_->putREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom); 
+	this->REALMATRIX_LITERAL_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkREALMATRIX_LITERAL9(const ast::REALMATRIX_LITERAL9 * ast ) {
+
+
+    coords::REALMATRIX_LITERAL9* coords = ast2coords_->mkREALMATRIX_LITERAL9(ast, context_ ,1,2,3,4,5,6,7,8,9);
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREALMATRIX_LITERAL9(coords, dom);
+
+
+    interp::REALMATRIX_LITERAL9* interp = new interp::REALMATRIX_LITERAL9(coords, dom);
+    coords2interp_->putREALMATRIX_LITERAL9(coords, interp);
+    interp2domain_->putREALMATRIX_LITERAL9(interp, dom); 
+	this->REALMATRIX_LITERAL_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REALMATRIX_LITERALs(){ 
+    std::vector<interp::REALMATRIX_LITERAL*> interps;
+    for(auto coord : this->REALMATRIX_LITERAL_vec){
+        interps.push_back(this->coords2interp_->getREALMATRIX_LITERAL(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
 }
 
-/******
- * 
- * TODO: Replace all this with direct calls to interp objects
- * TODO: Move checker-specific unparsing to separate client class.
- * ****/
 
-// private
 std::string Interpretation::toString_Spaces() {
-  int index = 0;
-  std::string retval = "";
-  std::vector<domain::Space *> &s = domain_->getSpaces();
-  for (std::vector<domain::Space *>::iterator it = s.begin(); it != s.end(); ++it)
-    retval = retval.append("def ")
-                 .append((*it)->toString()) 
-                 .append(" : peirce.vector_space := peirce.vector_space.mk ")
-                 .append(std::to_string(index++)) 
-                 .append("\n");
-  return retval;
-}
-
-// TODO: Private
-//
-std::string Interpretation::toString_Idents() {
+        int index = 0;
     std::string retval = "";
-    std::vector<domain::VecIdent*> &id = domain_->getVecIdents();
-    for (std::vector<domain::VecIdent *>::iterator it = id.begin(); it != id.end(); ++it) {
-        coords::VecIdent* coords = coords2dom_->getVecIdent(*it);
-        interp::VecIdent *interp = coords2interp_->getVecIdent(coords);
-        retval = retval.append(interp->toString());
-        retval = retval.append("\n"); 
-    }
-    return retval;
-}
-
-// TODO: Factor toPrint (printing) out of coords, put here in, or in client of, interpretation
-//
-std::string Interpretation::toString_Exprs() {
-  std::string retval = "";
-  std::vector<domain::VecExpr*> &id = domain_->getVecExprs();
-  for (std::vector<domain::VecExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::VecExpr* coords = coords2dom_->getVecExpr(*it);
-      interp::VecExpr *interp = coords2interp_->getVecExpr(coords);
-      retval = retval.append(interp->toString());
-      retval = retval.append("\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_Vectors() {
-  std::string retval = "";
-  std::vector<domain::Vector*> &id = domain_->getVectors();
-  for (std::vector<domain::Vector *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Vector* coords = coords2dom_->getVector(*it);
-      interp::Vector *interp = coords2interp_->getVector(coords);
-      std::cout<<"coords??\n";
-      coords->toString(); 
-      retval = retval
-      .append("(")
-      .append(interp->toString())
-      .append(" : vec ")
-      .append((*it)->getSpaceContainer()->toString())
-      .append(")\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_Defs() {
-  std::string retval = "";
-  std::vector<domain::Vector_Def*> &id = domain_->getVectorDefs();
-  for (std::vector<domain::Vector_Def *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Vector_Def* coords = coords2dom_->getVector_Def(*it);
-      interp::Vector_Def *interp = coords2interp_->getVector_Def(coords);
-      retval = retval.append(interp->toString()).append("\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_Assigns() {
-  std::string retval = "";
-  std::vector<domain::Vector_Assign*> &id = domain_->getVectorAssigns();
-  for (std::vector<domain::Vector_Assign *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Vector_Assign* coords = coords2dom_->getVector_Assign(*it);
-      interp::Vector_Assign *interp = coords2interp_->getVector_Assign(coords);
-      retval = retval.append(interp->toString()).append("\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_ScalarIdents() {
-    std::string retval = "";
-    std::vector<domain::ScalarIdent*> &id = domain_->getScalarIdents();
-    for (std::vector<domain::ScalarIdent *>::iterator it = id.begin(); it != id.end(); ++it) {
-        coords::ScalarIdent* coords = coords2dom_->getScalarIdent(*it);
-        interp::ScalarIdent *interp = coords2interp_->getScalarIdent(coords);
-        retval = retval.append(interp->toString());
-        retval = retval.append("\n"); 
-    }
-    return retval;
-}
-
-std::string Interpretation::toString_ScalarExprs() {
-  std::string retval = "";
-  std::vector<domain::ScalarExpr*> &id = domain_->getScalarExprs();
-  for (std::vector<domain::ScalarExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::ScalarExpr* coords = coords2dom_->getScalarExpr(*it);
-      interp::ScalarExpr *interp = coords2interp_->getScalarExpr(coords);
-      retval = retval.append(interp->toString());
-      retval = retval.append("\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_Scalars() {
-  std::string retval = "";
-  std::vector<domain::Scalar*> &id = domain_->getScalars();
-  for (std::vector<domain::Scalar *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Scalar* coords = coords2dom_->getScalar(*it);
-      interp::Scalar *interp = coords2interp_->getScalar(coords);   
-      retval = retval
-      .append("(")
-      .append(interp->toString())
-      .append(" : vec ")
-      .append((*it)->getSpaceContainer()->toString())
-      .append(")\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_ScalarDefs() {
-  std::string retval = "";
-  std::vector<domain::Scalar_Def*> &id = domain_->getScalarDefs();
-  for (std::vector<domain::Scalar_Def *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Scalar_Def* coords = coords2dom_->getScalar_Def(*it);
-      interp::Scalar_Def *interp = coords2interp_->getScalar_Def(coords);
-      retval = retval.append(interp->toString()).append("\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_ScalarAssigns() {
-  std::string retval = "";
-  std::vector<domain::Scalar_Assign*> &id = domain_->getScalarAssigns();
-  for (std::vector<domain::Scalar_Assign *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Scalar_Assign* coords = coords2dom_->getScalar_Assign(*it);
-      interp::Scalar_Assign *interp = coords2interp_->getScalar_Assign(coords);
-      retval = retval.append(interp->toString()).append("\n");
-  }
-  return retval;
-}
-
-
-std::string Interpretation::toString_TransformIdents() {
-    std::string retval = "";
-    std::vector<domain::TransformIdent*> &id = domain_->getTransformIdents();
-    for (std::vector<domain::TransformIdent *>::iterator it = id.begin(); it != id.end(); ++it) {
-        coords::TransformIdent* coords = coords2dom_->getTransformIdent(*it);
-        interp::TransformIdent *interp = coords2interp_->getTransformIdent(coords);
-        retval = retval.append(interp->toString());
-        retval = retval.append("\n"); 
-    }
-    return retval;
-}
-
-std::string Interpretation::toString_TransformExprs() {
-  std::string retval = "";
-  std::vector<domain::TransformExpr*> &id = domain_->getTransformExprs();
-  for (std::vector<domain::TransformExpr *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::TransformExpr* coords = coords2dom_->getTransformExpr(*it);
-      interp::TransformExpr *interp = coords2interp_->getTransformExpr(coords);
-      retval = retval.append(interp->toString());
-      retval = retval.append("\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_Transforms() {
-  std::string retval = "";
-  std::vector<domain::Transform*> &id = domain_->getTransforms();
-  for (std::vector<domain::Transform *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Transform* coords = coords2dom_->getTransform(*it);
-      interp::Transform *interp = coords2interp_->getTransform(coords);   
-      retval = retval
-      .append("(")
-      .append(interp->toString())
-      .append(" : transform ")
-      .append((*it)->getSpaceContainer()->toString())
-      .append(")\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_TransformDefs() {
-  std::string retval = "";
-  std::vector<domain::Transform_Def*> &id = domain_->getTransformDefs();
-  for (std::vector<domain::Transform_Def *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Transform_Def* coords = coords2dom_->getTransform_Def(*it);
-      interp::Transform_Def *interp = coords2interp_->getTransform_Def(coords);
-      retval = retval.append(interp->toString()).append("\n");
-  }
-  return retval;
-}
-
-std::string Interpretation::toString_TransformAssigns() {
-  std::string retval = "";
-  std::vector<domain::Transform_Assign*> &id = domain_->getTransformAssigns();
-  for (std::vector<domain::Transform_Assign *>::iterator it = id.begin(); it != id.end(); ++it) {
-      coords::Transform_Assign* coords = coords2dom_->getTransform_Assign(*it);
-      interp::Transform_Assign *interp = coords2interp_->getTransform_Assign(coords);
-      retval = retval.append(interp->toString()).append("\n");
-  }
-  return retval;
-}
-
-
-
-
-void Interpretation::setAll_Spaces() {
-  auto vecIdents = domain_->getVecIdents();
-  auto vecExprs = domain_->getVecExprs();
-  auto vecs = domain_->getVectors();
-  auto vecDefs = domain_->getVectorDefs();
-
-  for(auto beg = vecIdents.begin(); beg != vecIdents.end(); beg++)
-  {
-
-    auto p = *beg;
-
-    coords::VecIdent *coords = coords2dom_->getVecIdent(*beg);
-    domain::Space& space = oracle_->getSpaceForVecIdent(coords);
-    p->setSpace(&space);
-
-  }
-
-  for(auto beg = vecExprs.begin(); beg != vecExprs.end(); beg++)
-  {
-    auto ve = *beg;
-
-    auto vve = (domain::VecVarExpr*)ve;
-    auto vpr = (domain::VecParenExpr*)ve;
-    auto vvae = (domain::VecVecAddExpr*)ve;
-
-    coords::VecExpr *coords = coords2dom_->getVecExpr(*beg);
-
-    auto cvve = (coords::VecVarExpr*)coords;
-    auto cvpr = (coords::VecParenExpr*)coords;
-    auto cvvae = (coords::VecVecAddExpr*)coords;
-
-    if(vve)
-    {
-
-      domain::Space& space = oracle_->getSpaceForVecVarExpr(cvve);
-      ve->setSpace(&space);
-    }
-    else if(vpr)
-    {
-
-      domain::Space& space = oracle_->getSpaceForVecParenExpr(cvpr);
-      ve->setSpace(&space);
-    }
-    else if(vvae)
-    {
-      auto left = (coords::VecExpr*) cvvae->getLeft();
-      auto right = (coords::VecExpr*) cvvae->getRight();
-
-      domain::Space& space = oracle_->getSpaceForAddExpression(left, right);
-      ve->setSpace(&space);
-    }
+    //std::vector<domain::Space*> & s = domain_->getSpaces();
+    //for (std::vector<domain::Space*>::iterator it = s.begin(); it != s.end(); ++it)
+     //   retval = retval.append("def ")
+     //                   .append((*it)->toString())
+     //                   .append(" : peirce.vector_space := peirce.vector_space.mk ")
+     //                   .append(std::to_string(index++))
+     //                   .append("\n");
+     //auto spaces = domain_->getSpaces();
     
-  }
-
-  for(auto beg = vecs.begin(); beg != vecs.end(); beg++)
-  {
-    auto vec = *beg;
-
-    auto vl = (domain::Vector_Lit*)vec;
-    auto ve = (domain::Vector_Expr*)vec;
-
-    if(vl)
+	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
+    for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
     {
-      coords::Vector_Lit* cvl = coords2dom_->getVector_Lit(vl);
-
-      domain::Space& s = oracle_->getSpaceForVector_Lit(cvl);
-      vec->setSpace(&s);
+        auto sp = interp2domain_->getSpace(*it);
+        retval.append("\n" + (sp->toString()) + "\n");
     }
-    else if(ve)
+            
+	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
+    for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
     {
-      coords::Vector_Expr* cve = coords2dom_->getVector_Expr(ve);
-      domain::Space& s = oracle_->getSpaceForVector_Expr(cve);
-      vec->setSpace(&s);
+        auto sp = interp2domain_->getSpace(*it);
+        retval.append("\n" + (sp->toString()) + "\n");
     }
+            
+	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
+    for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        retval.append("\n" + (sp->toString()) + "\n");
+    }
+            
 
-  }
-  //don't label statements
-  /*for(auto beg = vecDefs.begin(); beg != vecDefs.end(); beg++)
-  {
-    auto vd = *beg;
-  }*/
+    return retval;
+}       
+void Interpretation::buildDefaultSpaces(){
+    auto worldGeometry= domain_->mkEuclideanGeometry("geom3d","worldGeometry",3);
+    auto iworldGeometry = new interp::Space(worldGeometry);
+    interp2domain_->putSpace(iworldGeometry, worldGeometry);
+	auto worldTime= domain_->mkClassicalTime("time","worldTime");
+    auto iworldTime = new interp::Space(worldTime);
+    interp2domain_->putSpace(iworldTime, worldTime);
+	auto worldVelocity= domain_->mkClassicalVelocity("vel","worldVelocity",3);
+    auto iworldVelocity = new interp::Space(worldVelocity);
+    interp2domain_->putSpace(iworldVelocity, worldVelocity);
+
 
 }
-//make a printable, indexed table of variables that can have their types assigned by a user or oracle
+
 void Interpretation::mkVarTable(){
-  auto vecIdents = domain_->getVecIdents();
-  auto vecExprs = domain_->getVecExprs();
-  auto vecs = domain_->getVectors();
-  auto vecDefs = domain_->getVectorDefs();
+    int idx = 0;
+  
 
-  auto idx = 1;
+    for(auto it = this->REAL1_EXPR_vec.begin(); it != this->REAL1_EXPR_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-  for(auto it = vecIdents.begin(); it != vecIdents.end();it++)
-  {
-   // auto q = this->coords2dom_->getVecIdent(this->coords2dom_->getVecIdent(*it));
+	
+    for(auto it = this->REAL3_EXPR_vec.begin(); it != this->REAL3_EXPR_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVecIdent(*it);
-  }
+	
+    for(auto it = this->REAL4_EXPR_vec.begin(); it != this->REAL4_EXPR_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-  for(auto it = vecExprs.begin(); it != vecExprs.end();it++)
-  {
-   // auto q = this->coords2dom_->getVecExpr(this->coords2dom_->getVecExpr(*it));
-    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVecExpr(*it);
-  }
+	
+    for(auto it = this->REALMATRIX_EXPR_vec.begin(); it != this->REALMATRIX_EXPR_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-  for(auto it = vecs.begin(); it != vecs.end(); it++)
-  {
+	
+    for(auto it = this->REAL1_VAR_IDENT_vec.begin(); it != this->REAL1_VAR_IDENT_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-   // auto q = this->coords2dom_->getVector(this->coords2dom_->getVector(*it));
+	
+    for(auto it = this->REAL3_VAR_IDENT_vec.begin(); it != this->REAL3_VAR_IDENT_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getVector(*it);//static_cast<coords::Coords*>(this->coords2dom_->getVector(*it));
+	
+    for(auto it = this->REAL4_VAR_IDENT_vec.begin(); it != this->REAL4_VAR_IDENT_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-  }
+	
+    for(auto it = this->REALMATRIX_VAR_IDENT_vec.begin(); it != this->REALMATRIX_VAR_IDENT_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-  auto floatIdents = domain_->getScalarIdents();
-  auto floatExprs = domain_->getScalarExprs();
-  auto floats = domain_->getScalars();
-  auto floatDefs = domain_->getScalarDefs();
+	
+    for(auto it = this->REAL1_LITERAL_vec.begin(); it != this->REAL1_LITERAL_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-  for(auto it = floatIdents.begin(); it != floatIdents.end();it++)
-  {
-   // auto q = this->coords2dom_->getScalarIdent(this->coords2dom_->getScalarIdent(*it));
+	
+    for(auto it = this->REAL3_LITERAL_vec.begin(); it != this->REAL3_LITERAL_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getScalarIdent(*it);
-  }
-  for(auto it = floatExprs.begin(); it != floatExprs.end();it++)
-  {
-  //  auto q = this->coords2dom_->getScalarExpr(this->coords2dom_->getScalarExpr(*it));
-    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getScalarExpr(*it);
+	
+    for(auto it = this->REAL4_LITERAL_vec.begin(); it != this->REAL4_LITERAL_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
-  }
-  for(auto it = floats.begin(); it != floats.end(); it++)
-  {
+	
+    for(auto it = this->REALMATRIX_LITERAL_vec.begin(); it != this->REALMATRIX_LITERAL_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+    }
 
- //   auto q = this->coords2dom_->getScalar(this->coords2dom_->getScalar(*it));
 
-    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getScalar(*it);
-
-  }
-
-  auto tfmIdents = domain_->getTransformIdents();
-  auto tfmExprs = domain_->getTransformExprs();
-  auto tfms = domain_->getTransforms();
-  auto tfmDefs = domain_->getTransformDefs();
-
-  for(auto it = tfmIdents.begin(); it != tfmIdents.end();it++)
-  {
-   // auto q = this->coords2dom_->getTransformIdent(this->coords2dom_->getTransformIdent(*it));
-
-    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getTransformIdent(*it);
-  }
-  for(auto it = tfmExprs.begin(); it != tfmExprs.end();it++)
-  {
-  //  auto q = this->coords2dom_->getTransformExpr(this->coords2dom_->getTransformExpr(*it));
-    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getTransformExpr(*it);
-
-  }
-  for(auto it = tfms.begin(); it != tfms.end(); it++)
-  {
-
- //   auto q = this->coords2dom_->getTransform(this->coords2dom_->getTransform(*it));
-
-    this->index2coords_[idx++]=(coords::Coords*)this->coords2dom_->getTransform(*it);
-
-  }
 }
 
 //print the indexed variable table for the user
@@ -1070,398 +1480,892 @@ void Interpretation::printVarTable(){
 
   for(int i = 1; i<=sz;i++)
   {
-    auto variable = this->index2coords_.at(i);
-    auto v = static_cast<coords::Vector*>(variable);
-    auto dom_v = this->coords2dom_->getVector(v);
-    auto dom_vi = this->coords2dom_->getVecIdent((coords::VecIdent*)variable);
-    auto dom_ve = this->coords2dom_->getVecExpr((coords::VecExpr*)variable);
-    auto f = static_cast<coords::Scalar*>(variable);
-    auto dom_f = this->coords2dom_->getScalar(f);
-    auto dom_fi = this->coords2dom_->getScalarIdent((coords::ScalarIdent*)variable);
-    auto dom_fe = this->coords2dom_->getScalarExpr((coords::ScalarExpr*)variable);
-    auto t = static_cast<coords::Transform*>(variable);
-    auto dom_tr = this->coords2dom_->getTransform(t);
-    auto dom_tri = this->coords2dom_->getTransformIdent((coords::TransformIdent*)variable);
-    auto dom_tre = this->coords2dom_->getTransformExpr((coords::TransformExpr*)variable);
+    coords::Coords* coords = this->index2coords_[i];
+    if(false){}
 
-
-    if ((coords::Vector_Def*)variable and false){
-     // auto dom_vd = this->coords2dom_->getVector_Def((coords::Vector_Def*)variable);
-    }
-    else if(dom_v){
-      std::cout<<"Index:"<<i<<", Vector: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_v->getSpaceContainer()->toString()<<std::endl;
+    else if(auto dc = dynamic_cast<coords::PAREN_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getPAREN_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"A parenthesized expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
 
     }
-    else if(dom_vi){
-      std::cout<<"Index:"<<i<<", Vec Ident: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_vi->getSpaceContainer()->toString()<<std::endl;
+
+    else if(auto dc = dynamic_cast<coords::INV_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getINV_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Inverse of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
 
     }
-    else if(dom_ve){
-      std::cout<<"Index:"<<i<<", Vec Expr: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_ve->getSpaceContainer()->toString()<<std::endl;
+
+    else if(auto dc = dynamic_cast<coords::NEG_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getNEG_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Negation of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
 
     }
-    else if(dom_f){
-      std::cout<<"Index:"<<i<<", Scalar: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_f->getSpaceContainer()->toString()<<std::endl;
+
+    else if(auto dc = dynamic_cast<coords::ADD_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getADD_REAL1_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Addition of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
 
     }
-    else if(dom_fi){
-      std::cout<<"Index:"<<i<<", Scalar Ident: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_fi->getSpaceContainer()->toString()<<std::endl;
+
+    else if(auto dc = dynamic_cast<coords::SUB_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getSUB_REAL1_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Subtraction of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
 
     }
-    else if(dom_fe){
-      std::cout<<"Index:"<<i<<", Scalar Expr: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_fe->getSpaceContainer()->toString()<<std::endl;
+
+    else if(auto dc = dynamic_cast<coords::MUL_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
 
     }
-    else if(dom_tr){
-      std::cout<<"Index:"<<i<<", Transform: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_tr->getSpaceContainer()->toString()<<std::endl;
+
+    else if(auto dc = dynamic_cast<coords::DIV_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getDIV_REAL1_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Division of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
 
     }
-    else if(dom_tri){
-      std::cout<<"Index:"<<i<<", Transform Ident: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_tri->getSpaceContainer()->toString()<<std::endl;
+
+    else if(auto dc = dynamic_cast<coords::REF_REAL1_VAR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REAL1_VAR(dc);
+        std::cout<<"Index: "<<i<<","<<"A variable expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
 
     }
-    else if(dom_tre){
-      std::cout<<"Index:"<<i<<", Transform Expr: "<<variable->toString()<<", Source Location: "<<variable->getSourceLoc()<<", Physical Type: "<<dom_tre->getSpaceContainer()->toString()<<std::endl;
+
+    else if(auto dc = dynamic_cast<coords::PAREN_REAL3_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getPAREN_REAL3_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"A parenthesized expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
 
     }
+
+    else if(auto dc = dynamic_cast<coords::ADD_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getADD_REAL3_EXPR_REAL3_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Addition of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::SUB_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getSUB_REAL3_EXPR_REAL3_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Subtraction of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::INV_REAL3_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getINV_REAL3_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Inverse of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::NEG_REAL3_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getNEG_REAL3_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Negation of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::MUL_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REAL3_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::MUL_REALMATRIX_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REALMATRIX_EXPR_REAL3_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a real matrix with an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::DIV_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getDIV_REAL3_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Division of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REF_REAL3_VAR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REAL3_VAR(dc);
+        std::cout<<"Index: "<<i<<","<<"A variable expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::PAREN_REAL4_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getPAREN_REAL4_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"A parenthesized expression evaluating to a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::ADD_REAL4_EXPR_REAL4_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getADD_REAL4_EXPR_REAL4_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Addition of an expression evaluating to a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::MUL_REAL4_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REAL4_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REF_REAL4_VAR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REAL4_VAR(dc);
+        std::cout<<"Index: "<<i<<","<<"A variable expression evaluating to a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::PAREN_REALMATRIX_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getPAREN_REALMATRIX_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"A parenthesized expression evaluating to a matrix with real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a real matrix with an expression evaluating to a matrix with real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REF_EXPR_REALMATRIX_VAR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_EXPR_REALMATRIX_VAR(dc);
+        std::cout<<"Index: "<<i<<","<<"A variable expression evaluating to a matrix with real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL1_VAR_IDENT(dc);
+        std::cout<<"Index: "<<i<<","<<"An identifier storing a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_VAR_IDENT(dc);
+        std::cout<<"Index: "<<i<<","<<"An identifier storing a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL4_VAR_IDENT(dc);
+        std::cout<<"Index: "<<i<<","<<"An identifier storing a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX_VAR_IDENT(dc);
+        std::cout<<"Index: "<<i<<","<<"An identifier storing a matrix with real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REAL1_LITERAL1*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL1_LITERAL1(dc);
+        std::cout<<"Index: "<<i<<","<<" A real literal ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"A real tuple literal with 3 coordinates constructed from expressions each evaluating to a real,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REAL3_LITERAL3*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_LITERAL3(dc);
+        std::cout<<"Index: "<<i<<","<<"A real tuple literal with 3 coordinates ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"A real tuple literal with 4 coordinates constructed from expressions each evaluating to a real,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REAL4_LITERAL4*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL4_LITERAL4(dc);
+        std::cout<<"Index: "<<i<<","<<"A real tuple literal with 4 coordinates ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"A real matrix literal with 9 coordinates constructed from expressions each evaluating to a real,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REALMATRIX_LITERAL9*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX_LITERAL9(dc);
+        std::cout<<"Index: "<<i<<","<<"A real matrix literal with 9 coordinates ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+    
   }
-}
 
+}//make a printable, indexed table of variables that can have their types assigned by a user or oracle
+
+//void Interpretation::printVarTable(){}//print the indexed variable table for the user
 //while loop where user can select a variable by index and provide a physical type for that variable
 void Interpretation::updateVarTable(){
-  auto vecIdents = domain_->getVecIdents();
-  auto vecExprs = domain_->getVecExprs();
-  auto vecs = domain_->getVectors();
-  auto vecDefs = domain_->getVectorDefs();
-
   auto sz = (int)this->index2coords_.size()+1;
   int choice;
   try{
-    std::cout<<"Enter 0 to print the Variable Table again. Enter the index of a Variable to update its physical type. Enter "<<sz<<" to exit and check."<<std::endl;
-    
-    std::cin >> choice;
-
-    while((choice == 0 || this->index2coords_.find(choice) != this->index2coords_.end()) && choice != sz)
-    {
-
-      if(choice == 0){
-        this->printVarTable();
-      }
-      else{
-
-        auto v = this->index2coords_.find(choice)->second;
-
-        auto cvi = dynamic_cast<coords::VecIdent*>(v);
-        auto cvve = dynamic_cast<coords::VecVarExpr*>(v);
-        auto cvpr = dynamic_cast<coords::VecParenExpr*>(v);
-        auto cvvae = dynamic_cast<coords::VecVecAddExpr*>(v);
-        auto cvsme = dynamic_cast<coords::VecScalarMulExpr*>(v);
-        auto ctvae = dynamic_cast<coords::TransformVecApplyExpr*>(v);
-        auto cvl = dynamic_cast<coords::Vector_Lit*>(v);
-        auto cve = dynamic_cast<coords::Vector_Expr*>(v);
+        checker_->CheckPoll();
+        std::cout << "********************************************\n";
+        std::cout << "********************************************\n";
+        std::cout << "********************************************\n";
+        std::cout << "See type-checking output in /peirce/phys/deps/orig/PeirceOutput.lean\n";
+        std::cout << "********************************************\n";
+        std::cout << "********************************************\n";
+        std::cout << "********************************************\n";
+        std::cout<<"Enter 0 to print the Variable Table again.\n";
+        std::cout << "Enter the index of a Variable to update its physical type. Enter " << sz << " to exit and check." << std::endl;
+        std::cin >> choice;
+        std::cout << std::to_string(choice) << "\n";
 
 
-        auto dom_v = this->coords2dom_->getVector((coords::Vector*)v);
-        auto dom_vi = this->coords2dom_->getVecIdent((coords::VecIdent*)v);
-        auto dom_ve = this->coords2dom_->getVecExpr((coords::VecExpr*)v);
+        while ((choice == 0 || this->index2coords_.find(choice) != this->index2coords_.end()) && choice != sz)
+        {
 
-        
+            if (choice == 0)
+            {
+                this->printVarTable();
+            }
+            else
+            {
+                if(false){}
 
-        domain::Space* space = nullptr;
+                else if(auto dc = dynamic_cast<coords::PAREN_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getPAREN_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getPAREN_REAL1_EXPR(dc);
+                    //this->coords2dom_->erasePAREN_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->erasePAREN_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->erasePAREN_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->erasePAREN_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putPAREN_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putPAREN_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
 
-        if(cvi){
-          space = &this->oracle_->getSpaceForVecIdent(cvi);
+                else if(auto dc = dynamic_cast<coords::INV_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getINV_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getINV_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseINV_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseINV_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseINV_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseINV_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putINV_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putINV_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::NEG_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getNEG_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getNEG_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseNEG_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseNEG_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseNEG_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseNEG_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putNEG_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putNEG_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::ADD_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getADD_REAL1_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getADD_REAL1_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseADD_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseADD_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseADD_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseADD_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putADD_REAL1_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putADD_REAL1_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::SUB_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getSUB_REAL1_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getSUB_REAL1_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseSUB_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseSUB_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseSUB_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseSUB_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putSUB_REAL1_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putSUB_REAL1_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::MUL_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseMUL_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseMUL_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseMUL_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseMUL_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putMUL_REAL1_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putMUL_REAL1_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::DIV_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getDIV_REAL1_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getDIV_REAL1_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseDIV_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseDIV_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseDIV_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseDIV_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putDIV_REAL1_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putDIV_REAL1_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REF_REAL1_VAR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREF_REAL1_VAR(dc);
+                    auto interp = this->coords2interp_->getREF_REAL1_VAR(dc);
+                    //this->coords2dom_->eraseREF_REAL1_VAR(dc, dom);
+                    //this->interp2domain_->eraseREF_REAL1_VAR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREF_REAL1_VAR(dc, dom);
+                        //this->interp2domain_->eraseREF_REAL1_VAR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREF_REAL1_VAR(dc, upd_dom);
+                        //this->interp2domain_->putREF_REAL1_VAR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::PAREN_REAL3_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getPAREN_REAL3_EXPR(dc);
+                    auto interp = this->coords2interp_->getPAREN_REAL3_EXPR(dc);
+                    //this->coords2dom_->erasePAREN_REAL3_EXPR(dc, dom);
+                    //this->interp2domain_->erasePAREN_REAL3_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->erasePAREN_REAL3_EXPR(dc, dom);
+                        //this->interp2domain_->erasePAREN_REAL3_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putPAREN_REAL3_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putPAREN_REAL3_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::ADD_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getADD_REAL3_EXPR_REAL3_EXPR(dc);
+                    auto interp = this->coords2interp_->getADD_REAL3_EXPR_REAL3_EXPR(dc);
+                    //this->coords2dom_->eraseADD_REAL3_EXPR_REAL3_EXPR(dc, dom);
+                    //this->interp2domain_->eraseADD_REAL3_EXPR_REAL3_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseADD_REAL3_EXPR_REAL3_EXPR(dc, dom);
+                        //this->interp2domain_->eraseADD_REAL3_EXPR_REAL3_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putADD_REAL3_EXPR_REAL3_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putADD_REAL3_EXPR_REAL3_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::SUB_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getSUB_REAL3_EXPR_REAL3_EXPR(dc);
+                    auto interp = this->coords2interp_->getSUB_REAL3_EXPR_REAL3_EXPR(dc);
+                    //this->coords2dom_->eraseSUB_REAL3_EXPR_REAL3_EXPR(dc, dom);
+                    //this->interp2domain_->eraseSUB_REAL3_EXPR_REAL3_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseSUB_REAL3_EXPR_REAL3_EXPR(dc, dom);
+                        //this->interp2domain_->eraseSUB_REAL3_EXPR_REAL3_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putSUB_REAL3_EXPR_REAL3_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putSUB_REAL3_EXPR_REAL3_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::INV_REAL3_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getINV_REAL3_EXPR(dc);
+                    auto interp = this->coords2interp_->getINV_REAL3_EXPR(dc);
+                    //this->coords2dom_->eraseINV_REAL3_EXPR(dc, dom);
+                    //this->interp2domain_->eraseINV_REAL3_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseINV_REAL3_EXPR(dc, dom);
+                        //this->interp2domain_->eraseINV_REAL3_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putINV_REAL3_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putINV_REAL3_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::NEG_REAL3_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getNEG_REAL3_EXPR(dc);
+                    auto interp = this->coords2interp_->getNEG_REAL3_EXPR(dc);
+                    //this->coords2dom_->eraseNEG_REAL3_EXPR(dc, dom);
+                    //this->interp2domain_->eraseNEG_REAL3_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseNEG_REAL3_EXPR(dc, dom);
+                        //this->interp2domain_->eraseNEG_REAL3_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putNEG_REAL3_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putNEG_REAL3_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::MUL_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getMUL_REAL3_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getMUL_REAL3_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseMUL_REAL3_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseMUL_REAL3_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseMUL_REAL3_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseMUL_REAL3_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putMUL_REAL3_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putMUL_REAL3_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::MUL_REALMATRIX_EXPR_REAL3_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getMUL_REALMATRIX_EXPR_REAL3_EXPR(dc);
+                    auto interp = this->coords2interp_->getMUL_REALMATRIX_EXPR_REAL3_EXPR(dc);
+                    //this->coords2dom_->eraseMUL_REALMATRIX_EXPR_REAL3_EXPR(dc, dom);
+                    //this->interp2domain_->eraseMUL_REALMATRIX_EXPR_REAL3_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseMUL_REALMATRIX_EXPR_REAL3_EXPR(dc, dom);
+                        //this->interp2domain_->eraseMUL_REALMATRIX_EXPR_REAL3_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putMUL_REALMATRIX_EXPR_REAL3_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putMUL_REALMATRIX_EXPR_REAL3_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::DIV_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getDIV_REAL3_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getDIV_REAL3_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseDIV_REAL3_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseDIV_REAL3_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseDIV_REAL3_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseDIV_REAL3_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putDIV_REAL3_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putDIV_REAL3_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REF_REAL3_VAR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREF_REAL3_VAR(dc);
+                    auto interp = this->coords2interp_->getREF_REAL3_VAR(dc);
+                    //this->coords2dom_->eraseREF_REAL3_VAR(dc, dom);
+                    //this->interp2domain_->eraseREF_REAL3_VAR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREF_REAL3_VAR(dc, dom);
+                        //this->interp2domain_->eraseREF_REAL3_VAR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREF_REAL3_VAR(dc, upd_dom);
+                        //this->interp2domain_->putREF_REAL3_VAR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::PAREN_REAL4_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getPAREN_REAL4_EXPR(dc);
+                    auto interp = this->coords2interp_->getPAREN_REAL4_EXPR(dc);
+                    //this->coords2dom_->erasePAREN_REAL4_EXPR(dc, dom);
+                    //this->interp2domain_->erasePAREN_REAL4_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL4_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->erasePAREN_REAL4_EXPR(dc, dom);
+                        //this->interp2domain_->erasePAREN_REAL4_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putPAREN_REAL4_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putPAREN_REAL4_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::ADD_REAL4_EXPR_REAL4_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getADD_REAL4_EXPR_REAL4_EXPR(dc);
+                    auto interp = this->coords2interp_->getADD_REAL4_EXPR_REAL4_EXPR(dc);
+                    //this->coords2dom_->eraseADD_REAL4_EXPR_REAL4_EXPR(dc, dom);
+                    //this->interp2domain_->eraseADD_REAL4_EXPR_REAL4_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL4_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseADD_REAL4_EXPR_REAL4_EXPR(dc, dom);
+                        //this->interp2domain_->eraseADD_REAL4_EXPR_REAL4_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putADD_REAL4_EXPR_REAL4_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putADD_REAL4_EXPR_REAL4_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::MUL_REAL4_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getMUL_REAL4_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getMUL_REAL4_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseMUL_REAL4_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseMUL_REAL4_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL4_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseMUL_REAL4_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseMUL_REAL4_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putMUL_REAL4_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putMUL_REAL4_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REF_REAL4_VAR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREF_REAL4_VAR(dc);
+                    auto interp = this->coords2interp_->getREF_REAL4_VAR(dc);
+                    //this->coords2dom_->eraseREF_REAL4_VAR(dc, dom);
+                    //this->interp2domain_->eraseREF_REAL4_VAR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL4_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREF_REAL4_VAR(dc, dom);
+                        //this->interp2domain_->eraseREF_REAL4_VAR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREF_REAL4_VAR(dc, upd_dom);
+                        //this->interp2domain_->putREF_REAL4_VAR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::PAREN_REALMATRIX_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getPAREN_REALMATRIX_EXPR(dc);
+                    auto interp = this->coords2interp_->getPAREN_REALMATRIX_EXPR(dc);
+                    //this->coords2dom_->erasePAREN_REALMATRIX_EXPR(dc, dom);
+                    //this->interp2domain_->erasePAREN_REALMATRIX_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->erasePAREN_REALMATRIX_EXPR(dc, dom);
+                        //this->interp2domain_->erasePAREN_REALMATRIX_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putPAREN_REALMATRIX_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putPAREN_REALMATRIX_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(dc);
+                    auto interp = this->coords2interp_->getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(dc);
+                    //this->coords2dom_->eraseMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(dc, dom);
+                    //this->interp2domain_->eraseMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(dc, dom);
+                        //this->interp2domain_->eraseMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REF_EXPR_REALMATRIX_VAR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREF_EXPR_REALMATRIX_VAR(dc);
+                    auto interp = this->coords2interp_->getREF_EXPR_REALMATRIX_VAR(dc);
+                    //this->coords2dom_->eraseREF_EXPR_REALMATRIX_VAR(dc, dom);
+                    //this->interp2domain_->eraseREF_EXPR_REALMATRIX_VAR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREF_EXPR_REALMATRIX_VAR(dc, dom);
+                        //this->interp2domain_->eraseREF_EXPR_REALMATRIX_VAR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREF_EXPR_REALMATRIX_VAR(dc, upd_dom);
+                        //this->interp2domain_->putREF_EXPR_REALMATRIX_VAR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREAL1_VAR_IDENT(dc);
+                    auto interp = this->coords2interp_->getREAL1_VAR_IDENT(dc);
+                    //this->coords2dom_->eraseREAL1_VAR_IDENT(dc, dom);
+                    //this->interp2domain_->eraseREAL1_VAR_IDENT(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_VAR_IDENT(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREAL1_VAR_IDENT(dc, dom);
+                        //this->interp2domain_->eraseREAL1_VAR_IDENT(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREAL1_VAR_IDENT(dc, upd_dom);
+                        //this->interp2domain_->putREAL1_VAR_IDENT(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREAL3_VAR_IDENT(dc);
+                    auto interp = this->coords2interp_->getREAL3_VAR_IDENT(dc);
+                    //this->coords2dom_->eraseREAL3_VAR_IDENT(dc, dom);
+                    //this->interp2domain_->eraseREAL3_VAR_IDENT(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_VAR_IDENT(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREAL3_VAR_IDENT(dc, dom);
+                        //this->interp2domain_->eraseREAL3_VAR_IDENT(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREAL3_VAR_IDENT(dc, upd_dom);
+                        //this->interp2domain_->putREAL3_VAR_IDENT(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREAL4_VAR_IDENT(dc);
+                    auto interp = this->coords2interp_->getREAL4_VAR_IDENT(dc);
+                    //this->coords2dom_->eraseREAL4_VAR_IDENT(dc, dom);
+                    //this->interp2domain_->eraseREAL4_VAR_IDENT(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL4_VAR_IDENT(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREAL4_VAR_IDENT(dc, dom);
+                        //this->interp2domain_->eraseREAL4_VAR_IDENT(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREAL4_VAR_IDENT(dc, upd_dom);
+                        //this->interp2domain_->putREAL4_VAR_IDENT(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREALMATRIX_VAR_IDENT(dc);
+                    auto interp = this->coords2interp_->getREALMATRIX_VAR_IDENT(dc);
+                    //this->coords2dom_->eraseREALMATRIX_VAR_IDENT(dc, dom);
+                    //this->interp2domain_->eraseREALMATRIX_VAR_IDENT(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX_VAR_IDENT(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREALMATRIX_VAR_IDENT(dc, dom);
+                        //this->interp2domain_->eraseREALMATRIX_VAR_IDENT(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREALMATRIX_VAR_IDENT(dc, upd_dom);
+                        //this->interp2domain_->putREALMATRIX_VAR_IDENT(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REAL1_LITERAL1*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREAL1_LITERAL1(dc);
+                    auto interp = this->coords2interp_->getREAL1_LITERAL1(dc);
+                    //this->coords2dom_->eraseREAL1_LITERAL1(dc, dom);
+                    //this->interp2domain_->eraseREAL1_LITERAL1(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_LITERAL(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREAL1_LITERAL1(dc, dom);
+                        //this->interp2domain_->eraseREAL1_LITERAL1(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREAL1_LITERAL1(dc, upd_dom);
+                        //this->interp2domain_->putREAL1_LITERAL1(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_LITERAL(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REAL3_LITERAL3*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREAL3_LITERAL3(dc);
+                    auto interp = this->coords2interp_->getREAL3_LITERAL3(dc);
+                    //this->coords2dom_->eraseREAL3_LITERAL3(dc, dom);
+                    //this->interp2domain_->eraseREAL3_LITERAL3(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_LITERAL(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREAL3_LITERAL3(dc, dom);
+                        //this->interp2domain_->eraseREAL3_LITERAL3(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREAL3_LITERAL3(dc, upd_dom);
+                        //this->interp2domain_->putREAL3_LITERAL3(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL4_LITERAL(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REAL4_LITERAL4*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREAL4_LITERAL4(dc);
+                    auto interp = this->coords2interp_->getREAL4_LITERAL4(dc);
+                    //this->coords2dom_->eraseREAL4_LITERAL4(dc, dom);
+                    //this->interp2domain_->eraseREAL4_LITERAL4(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL4_LITERAL(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREAL4_LITERAL4(dc, dom);
+                        //this->interp2domain_->eraseREAL4_LITERAL4(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREAL4_LITERAL4(dc, upd_dom);
+                        //this->interp2domain_->putREAL4_LITERAL4(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(dc);
+                    auto interp = this->coords2interp_->getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(dc);
+                    //this->coords2dom_->eraseREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(dc, dom);
+                    //this->interp2domain_->eraseREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX_LITERAL(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(dc, dom);
+                        //this->interp2domain_->eraseREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX_LITERAL(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REALMATRIX_LITERAL9*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREALMATRIX_LITERAL9(dc);
+                    auto interp = this->coords2interp_->getREALMATRIX_LITERAL9(dc);
+                    //this->coords2dom_->eraseREALMATRIX_LITERAL9(dc, dom);
+                    //this->interp2domain_->eraseREALMATRIX_LITERAL9(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX_LITERAL(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREALMATRIX_LITERAL9(dc, dom);
+                        //this->interp2domain_->eraseREALMATRIX_LITERAL9(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREALMATRIX_LITERAL9(dc, upd_dom);
+                        //this->interp2domain_->putREALMATRIX_LITERAL9(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+            }
+            checker_->CheckPoll();
+            std::cout << "********************************************\n";
+            std::cout << "********************************************\n";
+            std::cout << "********************************************\n";
+            std::cout << "See type-checking output in /peirce/phys/deps/orig/PeirceOutput.lean\n";
+            std::cout << "********************************************\n";
+            std::cout << "********************************************\n";
+            std::cout << "********************************************\n";
+            std::cout<<"Enter 0 to print the Variable Table again.\n";
+            std::cout << "Enter the index of a Variable to update its physical type. Enter " << sz << " to exit and check." << std::endl;
+            std::cin >> choice;
+            std::cout << std::to_string(choice) << "\n";
         }
-        else if(cvve){
-          space = &this->oracle_->getSpaceForVecVarExpr(cvve);
-        }
-        else if (cvpr){
-          space = &this->oracle_->getSpaceForVecParenExpr(cvpr);
-        }
-        else if(cvvae){
-          auto left = (coords::VecExpr*) cvvae->getLeft();
-          auto right = (coords::VecExpr*) cvvae->getRight();
-
-          space = &this->oracle_->getSpaceForAddExpression(left, right);
-        }
-        else if(ctvae){
-          auto left = (coords::TransformExpr*) ctvae->getLeft();
-          auto right = (coords::VecExpr*) ctvae->getRight();
-
-          space = &this->oracle_->getSpaceForTransformApplyExpression(left, right);
-        }
-        else if(cvsme){
-          auto left = (coords::VecExpr*) cvsme->getLeft();
-          auto right = (coords::ScalarExpr*) cvsme->getRight();
-          space = &this->oracle_->getSpaceForMulExpression(left, right);
-        }
-        else if(cvl){
-          space = &this->oracle_->getSpaceForVector_Lit(cvl);
-        }
-        else if(cve){
-          space = &this->oracle_->getSpaceForVector_Expr(cve);
-        }
-        else{
-
-        }
-
-
-
-        auto csi = dynamic_cast<coords::ScalarIdent*>(v);
-        auto csvve = dynamic_cast<coords::ScalarVarExpr*>(v);
-        auto cspe = dynamic_cast<coords::ScalarParenExpr*>(v);
-        auto cssae = dynamic_cast<coords::ScalarScalarAddExpr*>(v);
-        auto cssme = dynamic_cast<coords::ScalarScalarMulExpr*>(v);
-        auto csl = dynamic_cast<coords::Scalar_Lit*>(v);
-        auto cse = dynamic_cast<coords::Scalar_Expr*>(v);
-
-        auto dom_f = this->coords2dom_->getScalar((coords::Scalar*)v);
-        auto dom_fi = this->coords2dom_->getScalarIdent((coords::ScalarIdent*)v);
-        auto dom_fe = this->coords2dom_->getScalarExpr((coords::ScalarExpr*)v);
-
-        if(csi){
-          space = &this->oracle_->getSpaceForScalarIdent(csi);
-        }
-        else if(csvve){
-          space = &this->oracle_->getSpaceForScalarVarExpr(csvve);
-
-        }
-        else if(cspe){
-          space = &this->oracle_->getSpaceForScalarParenExpr(cspe);
-
-        }
-        else if(cssae){
-          auto left = (coords::ScalarExpr*)cssae->getLeft();
-          auto right = (coords::ScalarExpr*)cssae->getRight();
-
-          space = &this->oracle_->getSpaceForScalarAddExpression(left, right);
-
-        }
-        else if(cssme){
-          auto left = (coords::ScalarExpr*)cssme->getLeft();
-          auto right = (coords::ScalarExpr*)cssme->getRight();
-
-          space = &this->oracle_->getSpaceForScalarMulExpression(left, right);
-
-        }
-        else if(csl){
-          space = &this->oracle_->getSpaceForScalar_Lit(csl);
-
-        }
-        else if(cse){
-          space = &this->oracle_->getSpaceForScalar_Expr(cse);
-
-        }
-        else{
-
-        }
-
-        auto cti = dynamic_cast<coords::TransformIdent*>(v);
-        auto ctve = dynamic_cast<coords::TransformVarExpr*>(v);
-        auto ctpe = dynamic_cast<coords::TransformParenExpr*>(v);
-        auto cttce = dynamic_cast<coords::TransformTransformComposeExpr*>(v);
-        auto ctl = dynamic_cast<coords::Transform_Lit*>(v);
-        auto cte = dynamic_cast<coords::Transform_Expr*>(v);
-
-        auto dom_tr = this->coords2dom_->getTransform((coords::Transform*)v);
-        auto dom_tri = this->coords2dom_->getTransformIdent((coords::TransformIdent*)v);
-        auto dom_tre = this->coords2dom_->getTransformExpr((coords::TransformExpr*)v);
-
-        domain::MapSpace mapSpace;
-
-        if(cti){
-          mapSpace = this->oracle_->getSpaceForTransformIdent(cti);
-        }
-        else if(ctve){
-          mapSpace = this->oracle_->getSpaceForTransformVarExpr(ctve);
-
-        }
-        else if(ctpe){
-          mapSpace = this->oracle_->getSpaceForTransformParenExpr(ctpe);
-
-        }
-        else if(cttce){
-          auto left = (coords::TransformExpr*)cttce->getLeft();
-          auto right = (coords::TransformExpr*)cttce->getRight();
-
-          mapSpace = this->oracle_->getSpaceForTransformComposeExpression(left, right);
-
-        }
-        else if(ctl){
-          mapSpace = this->oracle_->getSpaceForTransform_Lit(ctl);
-
-        }
-        else if(cte){
-          mapSpace = this->oracle_->getSpaceForTransform_Expr(cte);
-
-        }
-        else{
-
-        }
-
-        if(dom_v){
-          dom_v->setSpace(space);
-        }
-        else if(dom_vi){
-          dom_vi->setSpace(space);
-        }
-        else if(dom_ve){
-          dom_ve->setSpace(space);
-        }
-
-
-        if(dom_f){
-          dom_f->setSpace(space);
-        }
-        else if(dom_fi){
-          dom_fi->setSpace(space);
-        }
-        else if(dom_fe){
-          dom_fe->setSpace(space);
-        }
-
-
-        //std::cout<<"CREATED THISMAPSPACE"<<mapSpace.toString()<<"\n";
-
-
-        if(dom_tr){
-          dom_tr->setSpace(mapSpace);
-        }
-        else if(dom_tri){
-          dom_tri->setSpace(mapSpace);
-        }
-        else if(dom_tre){
-          dom_tre->setSpace(mapSpace);
-        }
-        
-      }
-      std::cout<<"Enter 0 to print the Variable Table again. Enter the index of a Variable to update its physical type. Enter "<<sz<<" to exit and check."<<std::endl;
-      std::cin >> choice;
-      std::cout<<std::to_string(choice)<<"\n";
-
-      try{
-      if(choice == 0 || this->index2coords_.find(choice) != this->index2coords_.end()){
-        
-      }
-      }
-      catch(std::exception ex){
-        std::cout<<ex.what()<<std::endl;
-      }
-
     }
-  }
-  catch(std::exception& ex){
-    std::cout<<ex.what();
-  }
-
-}
-
-/*
-* Builds a list of variables that have a type either assigned or inferred.
-* Used for runtime constraint generation/logging 
-*/
-
-void Interpretation::buildTypedDeclList()
-{ 
-  auto spaces = domain_->getSpaces();
-  auto vec_idents = domain_->getVecIdents();
-  auto float_idents = domain_->getScalarIdents();
-  auto vec_exprs = domain_->getVecExprs();
-  auto float_exprs = domain_->getScalarExprs();
-  std::list<domain::VecExpr*> vec_vars;
-  std::list<domain::ScalarExpr*> float_vars;
-  std::copy_if (vec_exprs.begin(), vec_exprs.end(), std::back_inserter(vec_vars), [=](domain::VecExpr* ve){return dynamic_cast<domain::VecVarExpr*>(ve) != nullptr;} );
-  std::copy_if (float_exprs.begin(), float_exprs.end(), std::back_inserter(float_vars), [=](domain::ScalarExpr* fe){return dynamic_cast<domain::ScalarVarExpr*>(fe) != nullptr;});
-
-  std::vector<ast::VecIdent*> vec_with_space;
-  std::vector<ast::ScalarIdent*> float_with_space;
-
-  for(auto var = vec_vars.begin(); var != vec_vars.end(); var++)
-  {
-    auto ast_ident = static_cast<ast::VecIdent*>(static_cast<ast::VecVarExpr*>(ast2coords_->coords_stmt->at(coords2dom_->getVecExpr(*var)))->getDecl());
-
-    bool 
-      has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*var)->getSpaceContainer()->toString(); }) != spaces.end(),
-      already_labeled = std::find(vec_with_space.begin(), vec_with_space.end(), ast_ident) != vec_with_space.end();
-
-    if(has_space and !already_labeled)
-      vec_with_space.push_back(ast_ident);
-
-  }
-
-  for(auto ident = vec_idents.begin(); ident != vec_idents.end(); ident++)
-  {
-    auto ast_ident = static_cast<ast::VecIdent*>(ast2coords_->coords_decl->at(coords2dom_->getVecIdent(*ident)));
-
-    bool 
-      has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*ident)->getSpaceContainer()->toString(); }) != spaces.end(),
-      already_labeled = std::find(vec_with_space.begin(), vec_with_space.end(), ast_ident) != vec_with_space.end();
-
-
-    if(!has_space and !already_labeled)
-      this->unconstrained_vecs.push_back(ast_ident);
-  }
-
-
-  for(auto var = float_vars.begin(); var != float_vars.end(); var++)
-  {
-    auto ast_ident = static_cast<ast::ScalarIdent*>(static_cast<ast::ScalarVarExpr*>(ast2coords_->coords_stmt->at(coords2dom_->getScalarExpr(*var)))->getDecl());
-
-    bool 
-      has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*var)->getSpaceContainer()->toString(); }) != spaces.end(),
-      already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != float_with_space.end();
-
-
-    if(has_space and !already_labeled)
-      float_with_space.push_back(ast_ident);
-
-  }
-
-  for(auto ident = float_idents.begin(); ident != float_idents.end(); ident++)
-  {
-    auto ast_ident = static_cast<ast::ScalarIdent*>(ast2coords_->coords_decl->at(coords2dom_->getScalarIdent(*ident)));
-
-    bool 
-      has_space = std::find_if(spaces.begin(), spaces.end(), [=](domain::Space* space){ return space->getName() == (*ident)->getSpaceContainer()->toString(); }) != spaces.end(),
-      already_labeled = std::find(float_with_space.begin(), float_with_space.end(), ast_ident) != float_with_space.end();
-
-    if(!has_space and !already_labeled){
-      this->unconstrained_floats.push_back(ast_ident);
+    catch(std::exception ex){
+        std::cout<<ex.what()<<"\n";
     }
-   // if 
-  }
+};
 
-  for(auto it = this->unconstrained_vecs.begin(); it != this->unconstrained_vecs.end();it++)
-  {
-    unconstrained_vec_names.push_back((*it)->getNameAsString());
-  }
+void remap(coords::Coords c, domain::DomainObject newinterp){
+    return;
+};
 
-  for(auto it = this->unconstrained_floats.begin(); it != this->unconstrained_floats.end(); it++)
-  {
-    unconstrained_float_names.push_back((*it)->getNameAsString());
-  }
-
-}
-
-
-/*
-used for generating dynamic constraints.
-given a variable, determine whether or not it does not have a type available (if so, a constraint must be registered)
-*/
-bool Interpretation::needsConstraint(clang::VarDecl* var)
-{
-  auto locStr = var->getNameAsString();
-    
-  bool 
-    is_vec = 
-      std::find_if(this->unconstrained_vec_names.begin(), this->unconstrained_vec_names.end(), [=](std::string vec){ return vec == locStr;}) != this->unconstrained_vec_names.end(),
-    is_float =     
-      std::find_if(this->unconstrained_float_names.begin(), this->unconstrained_float_names.end(), [=](std::string flt){ return flt == locStr;}) != this->unconstrained_float_names.end();
-
-  
-
-  return 
-    is_vec 
-    or 
-    is_float;
-}

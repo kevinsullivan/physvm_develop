@@ -1,3 +1,4 @@
+
 #ifndef AST_H
 #define AST_H
 
@@ -7,83 +8,83 @@
 //#include "clang/AST/Stmt.h"
 
 
-namespace ast {
-// Scalar
-using ScalarValue = double;
+namespace ast{
+
+using RealScalar = double;
 
 
-// Ident
-using VecIdent = const clang::VarDecl;
-using ScalarIdent = const clang::VarDecl;
-using TransformIdent = const clang::VarDecl;
-
-// Expr
-using VecExpr = const clang::Expr;
-using VecLitExpr = const clang::CXXConstructExpr;
-using VecVarExpr = const clang::DeclRefExpr;
-using VecVecAddExpr = const clang::CXXMemberCallExpr;
-
-
-using ScalarExpr = const clang::Expr;
-using ScalarLitExpr = const clang::CXXConstructExpr;
-using ScalarVarExpr = const clang::DeclRefExpr;
-
-using TransformExpr = const clang::Expr;
-using TransformLitExpr = const clang::CXXConstructExpr;
-using TransformVarExpr = const clang::DeclRefExpr;
-
-
-using ScalarScalarAddExpr = const clang::BinaryOperator;
-using ScalarScalarMulExpr = const clang::BinaryOperator;
-
-using VecScalarMulExpr = const clang::CXXMemberCallExpr;
-using TransformVecApplyExpr = const clang::CXXMemberCallExpr;
-using TransformTransformComposeExpr = const clang::CXXMemberCallExpr;
-
-using ScalarAssignExpr = const clang::CXXConstructExpr;
-using VectorAssignExpr = const clang::CXXConstructExpr;
-using TransformAssignExpr = const clang::CXXOperatorCallExpr;
-
-// KEVIN: Add for VecParenExpr module
-using VecParenExpr = const clang::ParenExpr;
-
-using ScalarParenExpr = const clang::ParenExpr;
-
-using TransformParenExpr = const clang::ParenExpr;
-
-// Value
-using Vector = const clang::CXXConstructExpr;
-using Vector_Lit = const clang::CXXConstructExpr;
-using Vector_Var = const clang::CXXConstructExpr;
-using Vector_Expr = const clang::CXXConstructExpr; // A Clang Stmt!
-
-using Scalar = const clang::Expr;
-using Scalar_Lit = const clang::Expr;
-using Scalar_Var = const clang::Expr;
-using Scalar_Expr = const clang::Expr;
-
-using Transform = const clang::CXXConstructExpr;
-using Transform_Lit = const clang::CXXConstructExpr;
-using Transform_Var = const clang::CXXConstructExpr;
-using Transform_Expr = const clang::CXXConstructExpr;
-
-using ScalarScalarAddExpr = const clang::BinaryOperator;
-using ScalarScalarMulExpr = const clang::BinaryOperator;
-
-
-// Def
-using Vector_Def = const clang::DeclStmt;
-
-using Scalar_Def = const clang::DeclStmt;
-
-using Transform_Def = const clang::DeclStmt;
-
-using Vector_Assign = const clang::CXXOperatorCallExpr;
-
-using Scalar_Assign = const clang::BinaryOperator;
-
-using Transform_Assign = const clang::CXXOperatorCallExpr;
+using STMT = const clang::Stmt;
+using COMPOUND_STMT = const clang::Stmt;
+using IFCOND = const clang::Stmt;
+using IFTHEN_EXPR_STMT = const clang::Stmt;
+using IFTHENELSEIF_EXPR_STMT_IFCOND = const clang::Stmt;
+using IFTHENELSE_EXPR_STMT_STMT = const clang::Stmt;
+using EXPR = const clang::Stmt;
+using REAL3_EXPR = const clang::Stmt;
+using REAL1_EXPR = const clang::Stmt;
+using REALMATRIX_EXPR = const clang::Stmt;
+using REAL4_EXPR = const clang::Stmt;
+using ASSIGNMENT = const clang::Stmt;
+using ASSIGN_REAL1_VAR_REAL1_EXPR = const clang::Stmt;
+using ASSIGN_REAL3_VAR_REAL3_EXPR = const clang::Stmt;
+using ASSIGN_REAL4_VAR_REAL4_EXPR = const clang::Stmt;
+using ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR = const clang::Stmt;
+using DECLARE = const clang::Stmt;
+using DECL_REAL1_VAR_REAL1_EXPR = const clang::Stmt;
+using DECL_REAL3_VAR_REAL3_EXPR = const clang::Stmt;
+using DECL_REAL4_VAR_REAL4_EXPR = const clang::Stmt;
+using DECL_REALMATRIX_VAR_REALMATRIX_EXPR = const clang::Stmt;
+using DECL_REAL1_VAR = const clang::Stmt;
+using DECL_REAL3_VAR = const clang::Stmt;
+using DECL_REAL4_VAR = const clang::Stmt;
+using DECL_REALMATRIX_VAR = const clang::Stmt;
+using REAL1_EXPR = const clang::Stmt;
+using PAREN_REAL1_EXPR = const clang::Stmt;
+using INV_REAL1_EXPR = const clang::Stmt;
+using NEG_REAL1_EXPR = const clang::Stmt;
+using ADD_REAL1_EXPR_REAL1_EXPR = const clang::Stmt;
+using SUB_REAL1_EXPR_REAL1_EXPR = const clang::Stmt;
+using MUL_REAL1_EXPR_REAL1_EXPR = const clang::Stmt;
+using DIV_REAL1_EXPR_REAL1_EXPR = const clang::Stmt;
+using REF_REAL1_VAR = const clang::Stmt;
+using REAL3_EXPR = const clang::Stmt;
+using PAREN_REAL3_EXPR = const clang::Stmt;
+using ADD_REAL3_EXPR_REAL3_EXPR = const clang::Stmt;
+using SUB_REAL3_EXPR_REAL3_EXPR = const clang::Stmt;
+using INV_REAL3_EXPR = const clang::Stmt;
+using NEG_REAL3_EXPR = const clang::Stmt;
+using MUL_REAL3_EXPR_REAL1_EXPR = const clang::Stmt;
+using MUL_REALMATRIX_EXPR_REAL3_EXPR = const clang::Stmt;
+using DIV_REAL3_EXPR_REAL1_EXPR = const clang::Stmt;
+using REF_REAL3_VAR = const clang::Stmt;
+using REAL4_EXPR = const clang::Stmt;
+using PAREN_REAL4_EXPR = const clang::Stmt;
+using ADD_REAL4_EXPR_REAL4_EXPR = const clang::Stmt;
+using MUL_REAL4_EXPR_REAL1_EXPR = const clang::Stmt;
+using REF_REAL4_VAR = const clang::Stmt;
+using REALMATRIX_EXPR = const clang::Stmt;
+using PAREN_REALMATRIX_EXPR = const clang::Stmt;
+using MUL_REALMATRIX_EXPR_REALMATRIX_EXPR = const clang::Stmt;
+using REF_EXPR_REALMATRIX_VAR = const clang::Stmt;
+using REAL1_VAR_IDENT = const clang::VarDecl;
+using REAL3_VAR_IDENT = const clang::VarDecl;
+using REAL4_VAR_IDENT = const clang::VarDecl;
+using REALMATRIX_VAR_IDENT = const clang::VarDecl;
+using REAL1_LITERAL = const clang::Stmt;
+using REAL1_LITERAL1 = const clang::Stmt;
+using REAL3_LITERAL = const clang::Stmt;
+using REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR = const clang::Stmt;
+using REAL3_LITERAL3 = const clang::Stmt;
+using REAL4_LITERAL = const clang::Stmt;
+using REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR = const clang::Stmt;
+using REAL4_LITERAL4 = const clang::Stmt;
+using REALMATRIX_LITERAL = const clang::Stmt;
+using REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR = const clang::Stmt;
+using REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR = const clang::Stmt;
+using REALMATRIX_LITERAL9 = const clang::Stmt;
 
 } // namespace
 
 #endif
+
+

@@ -8,527 +8,872 @@
 #include "AST.h"
 #include "Domain.h"
 
-namespace interp
-{
+namespace interp{
 
-class VecIdent;
-class VecExpr;
+class Interp;
+class Space;
 
-class VecVarExpr;
-class VecVecAddExpr;
-class Vector;
-class Vector_Lit;
-class Vector_Var;
-class Vector_Expr;
-class Vector_Def;
-class Vector_Assign;
+class STMT;
+class COMPOUND_STMT;
+class IFCOND;
+class IFTHEN_EXPR_STMT;
+class IFTHENELSEIF_EXPR_STMT_IFCOND;
+class IFTHENELSE_EXPR_STMT_STMT;
+class EXPR;
+class ASSIGNMENT;
+class ASSIGN_REAL1_VAR_REAL1_EXPR;
+class ASSIGN_REAL3_VAR_REAL3_EXPR;
+class ASSIGN_REAL4_VAR_REAL4_EXPR;
+class ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR;
+class DECLARE;
+class DECL_REAL1_VAR_REAL1_EXPR;
+class DECL_REAL3_VAR_REAL3_EXPR;
+class DECL_REAL4_VAR_REAL4_EXPR;
+class DECL_REALMATRIX_VAR_REALMATRIX_EXPR;
+class DECL_REAL1_VAR;
+class DECL_REAL3_VAR;
+class DECL_REAL4_VAR;
+class DECL_REALMATRIX_VAR;
+class REAL1_EXPR;
+class PAREN_REAL1_EXPR;
+class INV_REAL1_EXPR;
+class NEG_REAL1_EXPR;
+class ADD_REAL1_EXPR_REAL1_EXPR;
+class SUB_REAL1_EXPR_REAL1_EXPR;
+class MUL_REAL1_EXPR_REAL1_EXPR;
+class DIV_REAL1_EXPR_REAL1_EXPR;
+class REF_REAL1_VAR;
+class REAL3_EXPR;
+class PAREN_REAL3_EXPR;
+class ADD_REAL3_EXPR_REAL3_EXPR;
+class SUB_REAL3_EXPR_REAL3_EXPR;
+class INV_REAL3_EXPR;
+class NEG_REAL3_EXPR;
+class MUL_REAL3_EXPR_REAL1_EXPR;
+class MUL_REALMATRIX_EXPR_REAL3_EXPR;
+class DIV_REAL3_EXPR_REAL1_EXPR;
+class REF_REAL3_VAR;
+class REAL4_EXPR;
+class PAREN_REAL4_EXPR;
+class ADD_REAL4_EXPR_REAL4_EXPR;
+class MUL_REAL4_EXPR_REAL1_EXPR;
+class REF_REAL4_VAR;
+class REALMATRIX_EXPR;
+class PAREN_REALMATRIX_EXPR;
+class MUL_REALMATRIX_EXPR_REALMATRIX_EXPR;
+class REF_EXPR_REALMATRIX_VAR;
+class REAL1_VAR_IDENT;
+class REAL3_VAR_IDENT;
+class REAL4_VAR_IDENT;
+class REALMATRIX_VAR_IDENT;
+class REAL1_LITERAL;
+class REAL1_LITERAL1;
+class REAL3_LITERAL;
+class REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
+class REAL3_LITERAL3;
+class REAL4_LITERAL;
+class REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
+class REAL4_LITERAL4;
+class REALMATRIX_LITERAL;
+class REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR;
+class REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
+class REALMATRIX_LITERAL9;
 
-class ScalarIdent;
-class ScalarExpr;
-
-class ScalarVarExpr;
-class VecScalarMulExpr;
-
-class Scalar;
-class Scalar_Lit;
-class Scalar_Var;
-class Scalar_Expr;
-class Scalar_Def;
-class Scalar_Assign;
-
-
-class VecParenExpr;
-class ScalarParenExpr;
-
-class TransformIdent;
-class TransformExpr;
-
-class TransformVarExpr;
-class TransformParenExpr;
-
-class TransformVecApplyExpr;
-class TransformTransformComposeExpr;
-
-class Transform;
-class Transform_Lit;
-class Transform_Var;
-class Transform_Expr;
-class Transform_Def;
-class Transform_Assign;
-
-enum domType
-{
-  dom_vecIdent_type,
-  dom_vecExpr_type,
-  dom_vector_type,
-  dom_vector_def_type,
-  dom_vector_assign_type,
-
-  dom_floatIdent_type,
-  dom_floatExpr_type,
-  dom_float_type,
-  dom_float_def_type,
-  dom_float_assign_type,
-
-  dom_transformIdent_type,
-  dom_transformExpr_type,
-  dom_transform_type,
-  dom_transform_def_type,
-  dom_transform_assign_type
-};
 
 class Interp
 {
 public:
-  Interp(coords::VecIdent *c, domain::VecIdent *d);
-  Interp(coords::VecExpr *c, domain::VecExpr *d);
-  Interp(coords::Vector *c, domain::Vector *d);
-  Interp(coords::Vector_Def *c, domain::Vector_Def *d);
-  Interp(coords::Vector_Assign *c, domain::Vector_Assign *d);
-
-  Interp(coords::ScalarIdent *c, domain::ScalarIdent *d);
-  Interp(coords::ScalarExpr *c, domain::ScalarExpr *d);
-  Interp(coords::Scalar *c, domain::Scalar *d);
-  Interp(coords::Scalar_Def *c, domain::Scalar_Def *d);
-  Interp(coords::Scalar_Assign *c, domain::Scalar_Assign *d);
-
-  Interp(coords::TransformIdent *c, domain::TransformIdent *d);
-  Interp(coords::TransformExpr *c, domain::TransformExpr *d);
-  Interp(coords::Transform *c, domain::Transform *d);
-  Interp(coords::Transform_Def *c, domain::Transform_Def *d);
-  Interp(coords::Transform_Assign *c, domain::Transform_Assign *d);
-
-  virtual std::string toString() const;
-
+  Interp(coords::Coords *c, domain::DomainObject *d);
+  //friend class Interp;
 //protected:
   coords::Coords *coords_;
-  domType type_;
-  // TODO: make it a union
-  domain::VecIdent *ident_;
-  domain::VecExpr *expr_;
-  domain::Vector *vector_;
-  domain::Vector_Def *def_;
-  domain::Vector_Assign *assign_;
-
-  domain::ScalarIdent *float_ident_;
-  domain::ScalarExpr *float_expr_;
-  domain::Scalar *float_;
-  domain::Scalar_Def *float_def_;
-  domain::Scalar_Assign *float_assign_;
-
-  domain::TransformIdent *transform_ident_;
-  domain::TransformExpr *transform_expr_;
-  domain::Transform *transform_;
-  domain::Transform_Def *transform_def_;
-  domain::Transform_Assign *transform_assign_;
+  domain::DomainObject *dom_;
 };
 
-/*************************************************************
- * Coordinate subclasses, for type checking, override behaviors
- *************************************************************/
 
-/******
- * Ident
- ******/
-
-/***
-**** TODO: Change types in all methods to ast:: abstractions.
-***/
-
-class VecIdent : public Interp
-{
-  public:
-  VecIdent(coords::VecIdent *c, domain::VecIdent *d);
-  virtual std::string toString() const;
-  bool operator==(const VecIdent &other) const
-  {
-    return (ident_ == other.ident_);
-  }
-};
-
-class ScalarIdent : public Interp
-{
-  public:
-  ScalarIdent(coords::ScalarIdent *c, domain::ScalarIdent *d);
-  virtual std::string toString() const;
-  bool operator==(const ScalarIdent &other) const
-  {
-    return (ident_ == other.ident_);
-  }
-};
-
-class TransformIdent : public Interp
-{
-  public:
-  TransformIdent(coords::TransformIdent *c, domain::TransformIdent *d);
-  virtual std::string toString() const;
-  bool operator==(const TransformIdent &other) const
-  {
-    return (ident_ == other.ident_);
-  }
-};
-
-/*****
- * Expr
- *****/
-
-// TODO: Add a dynamic type tag here
-// Abstract
-class VecExpr : public Interp
+class Space
 {
 public:
-  VecExpr(coords::VecExpr *, domain::VecExpr *);
-  bool operator==(const VecExpr &other) const
-  {
-    return (expr_ == other.expr_);
-  }
-  virtual std::string toString() const;
+    Space(domain::Space* s) : s_(s) {};
+    std::string toString() const;
+protected:
+    domain::Space* s_;
 };
 
-class ScalarExpr : public Interp
-{
+
+
+
+
+class STMT : public Interp {
 public:
-  ScalarExpr(coords::ScalarExpr *, domain::ScalarExpr *);
-  bool operator==(const ScalarExpr &other) const
-  {
-    return (expr_ == other.expr_);
-  }
-  virtual std::string toString() const;
+    STMT(coords::STMT* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
 };
 
-class TransformExpr : public Interp
-{
+
+
+class COMPOUND_STMT : public STMT {
 public:
-  TransformExpr(coords::TransformExpr *, domain::TransformExpr *);
-  bool operator==(const TransformExpr &other) const
-  {
-    return (expr_ == other.expr_);
-  }
-  virtual std::string toString() const;
+    COMPOUND_STMT(coords::COMPOUND_STMT* coords, domain::DomainObject* dom, std::vector<STMT*> operands);
+    virtual std::string toString() const;
+    //friend class Interp;              
+    
+protected:
+	
+    std::vector<interp::STMT*> operands_;
+
 };
 
 
 
-class VecVarExpr : public VecExpr
-{
+class IFCOND : public STMT {
 public:
-  VecVarExpr(coords::VecVarExpr *, domain::VecVarExpr *);
-  const coords::VecVarExpr *getVecVarCoords() const;
-  virtual std::string toString() const;
+    IFCOND(coords::IFCOND* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
 };
 
-class ScalarVarExpr : public ScalarExpr
-{
+
+
+class IFTHEN_EXPR_STMT : public IFCOND {
 public:
-  ScalarVarExpr(coords::ScalarVarExpr *, domain::ScalarVarExpr *);
-  const coords::ScalarVarExpr *getScalarVarCoords() const;
-  virtual std::string toString() const;
+    IFTHEN_EXPR_STMT(coords::IFTHEN_EXPR_STMT* coords, domain::DomainObject* dom ,interp::EXPR *operand1,interp::STMT *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::EXPR *operand_1;
+	interp::STMT *operand_2;
 };
 
-class TransformVarExpr : public TransformExpr
-{
+
+
+class IFTHENELSEIF_EXPR_STMT_IFCOND : public IFCOND {
 public:
-  TransformVarExpr(coords::TransformVarExpr *, domain::TransformVarExpr *);
-  const coords::TransformVarExpr *getTransformVarCoords() const;
-  virtual std::string toString() const;
+    IFTHENELSEIF_EXPR_STMT_IFCOND(coords::IFTHENELSEIF_EXPR_STMT_IFCOND* coords, domain::DomainObject* dom ,interp::EXPR *operand1,interp::STMT *operand2,interp::IFCOND *operand3 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::EXPR *operand_1;
+	interp::STMT *operand_2;
+	interp::IFCOND *operand_3;
 };
 
 
-// TODO: add accessors for left and right
-class VecVecAddExpr : public VecExpr
-{
+
+class IFTHENELSE_EXPR_STMT_STMT : public IFCOND {
 public:
-  VecVecAddExpr(coords::VecVecAddExpr *, domain::VecVecAddExpr *,
-                interp::Interp *mem, interp::Interp *arg);
-  virtual std::string toString() const;
-
-private:
-  interp::Interp *mem_;
-  interp::Interp *arg_;
+    IFTHENELSE_EXPR_STMT_STMT(coords::IFTHENELSE_EXPR_STMT_STMT* coords, domain::DomainObject* dom ,interp::EXPR *operand1,interp::STMT *operand2,interp::STMT *operand3 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::EXPR *operand_1;
+	interp::STMT *operand_2;
+	interp::STMT *operand_3;
 };
 
-class ScalarScalarAddExpr : public ScalarExpr
-{
+
+
+class EXPR : public STMT {
 public:
-  ScalarScalarAddExpr(coords::ScalarScalarAddExpr *, domain::ScalarScalarAddExpr *,
-                interp::Interp *lhs, interp::Interp *rhs);
-  virtual std::string toString() const;
-
-private:
-  interp::Interp *lhs_;
-  interp::Interp *rhs_;
+    EXPR(coords::EXPR* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
 };
 
-class ScalarScalarMulExpr : public ScalarExpr
-{
+
+
+class ASSIGNMENT : public STMT {
 public:
-  ScalarScalarMulExpr(coords::ScalarScalarMulExpr *, domain::ScalarScalarMulExpr *,
-                interp::Interp *lhs, interp::Interp *rhs);
-  virtual std::string toString() const;
-
-private:
-  interp::Interp *lhs_;
-  interp::Interp *rhs_;
+    ASSIGNMENT(coords::ASSIGNMENT* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
 };
 
 
-class VecScalarMulExpr : public VecExpr
-{
+
+class ASSIGN_REAL1_VAR_REAL1_EXPR : public ASSIGNMENT {
 public:
-  VecScalarMulExpr(coords::VecScalarMulExpr *, domain::VecScalarMulExpr *,
-                interp::Interp *vec, interp::Interp *flt);
-  virtual std::string toString() const;
-
-private:
-  interp::Interp *vec_;
-  interp::Interp *flt_;
+    ASSIGN_REAL1_VAR_REAL1_EXPR(coords::ASSIGN_REAL1_VAR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_VAR_IDENT *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_VAR_IDENT *operand_1;
+	interp::REAL1_EXPR *operand_2;
 };
 
 
-class TransformVecApplyExpr : public VecExpr
-{
+
+class ASSIGN_REAL3_VAR_REAL3_EXPR : public ASSIGNMENT {
 public:
-  TransformVecApplyExpr(coords::TransformVecApplyExpr *, domain::TransformVecApplyExpr *,
-                interp::Interp *tfm, interp::Interp *vec);
-  virtual std::string toString() const;
-
-private:
-  interp::Interp *tfm_;
-  interp::Interp *vec_;
+    ASSIGN_REAL3_VAR_REAL3_EXPR(coords::ASSIGN_REAL3_VAR_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_VAR_IDENT *operand1,interp::REAL3_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_VAR_IDENT *operand_1;
+	interp::REAL3_EXPR *operand_2;
 };
 
 
-class TransformTransformComposeExpr : public TransformExpr
-{
+
+class ASSIGN_REAL4_VAR_REAL4_EXPR : public ASSIGNMENT {
 public:
-  TransformTransformComposeExpr(coords::TransformTransformComposeExpr *, domain::TransformTransformComposeExpr *,
-                interp::Interp *outer, interp::Interp *inner);
-  virtual std::string toString() const;
-
-private:
-  interp::Interp *outer_;
-  interp::Interp *inner_;
+    ASSIGN_REAL4_VAR_REAL4_EXPR(coords::ASSIGN_REAL4_VAR_REAL4_EXPR* coords, domain::DomainObject* dom ,interp::REAL4_VAR_IDENT *operand1,interp::REAL4_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL4_VAR_IDENT *operand_1;
+	interp::REAL4_EXPR *operand_2;
 };
 
-class VecParenExpr : public VecExpr
-{
+
+
+class ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR : public ASSIGNMENT {
 public:
-  VecParenExpr(coords::VecParenExpr *, domain::VecParenExpr *, interp::VecExpr *expr_);
-  virtual std::string toString() const;
-  interp::VecExpr *getVector_Expr() const { return paren_expr_; }
-
-private:
-  interp::VecExpr *paren_expr_;
+    ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(coords::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* coords, domain::DomainObject* dom ,interp::REALMATRIX_VAR_IDENT *operand1,interp::REALMATRIX_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REALMATRIX_VAR_IDENT *operand_1;
+	interp::REALMATRIX_EXPR *operand_2;
 };
 
-class ScalarParenExpr : public ScalarExpr
-{
+
+
+class DECLARE : public STMT {
 public:
-  ScalarParenExpr(coords::ScalarParenExpr *, domain::ScalarParenExpr *, interp::ScalarExpr *expr_);
-  virtual std::string toString() const;
-  interp::ScalarExpr *getScalar_Expr() const { return paren_expr_; }
-
-private:
-  interp::ScalarExpr *paren_expr_;
+    DECLARE(coords::DECLARE* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
 };
 
-class TransformParenExpr : public TransformExpr
-{
+
+
+class DECL_REAL1_VAR_REAL1_EXPR : public DECLARE {
 public:
-  TransformParenExpr(coords::TransformParenExpr *, domain::TransformParenExpr *, interp::TransformExpr *expr_);
-  virtual std::string toString() const;
-  interp::TransformExpr *getTransform_Expr() const { return paren_expr_; }
-
-private:
-  interp::TransformExpr *paren_expr_;
+    DECL_REAL1_VAR_REAL1_EXPR(coords::DECL_REAL1_VAR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_VAR_IDENT *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_VAR_IDENT *operand_1;
+	interp::REAL1_EXPR *operand_2;
 };
 
-/*
-Superclass. Abstract
-*/
-class Vector : public Interp
-{
+
+
+class DECL_REAL3_VAR_REAL3_EXPR : public DECLARE {
 public:
-  Vector(coords::Vector *, domain::Vector *); // tag?
-  const ast::Vector *getVector() const;
-  coords::VectorCtorType getVectorType();
-  virtual std::string toString() const;
+    DECL_REAL3_VAR_REAL3_EXPR(coords::DECL_REAL3_VAR_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_VAR_IDENT *operand1,interp::REAL3_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_VAR_IDENT *operand_1;
+	interp::REAL3_EXPR *operand_2;
 };
 
-class Scalar : public Interp
-{
+
+
+class DECL_REAL4_VAR_REAL4_EXPR : public DECLARE {
 public:
-  Scalar(coords::Scalar *, domain::Scalar *); // tag?
-  const ast::Scalar *getScalar() const;
-  coords::ScalarCtorType getScalarType();
-  virtual std::string toString() const;
+    DECL_REAL4_VAR_REAL4_EXPR(coords::DECL_REAL4_VAR_REAL4_EXPR* coords, domain::DomainObject* dom ,interp::REAL4_VAR_IDENT *operand1,interp::REAL4_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL4_VAR_IDENT *operand_1;
+	interp::REAL4_EXPR *operand_2;
 };
 
-class Transform : public Interp
-{
+
+
+class DECL_REALMATRIX_VAR_REALMATRIX_EXPR : public DECLARE {
 public:
-  Transform(coords::Transform *, domain::Transform *); // tag?
-  const ast::Transform *getTransform() const;
-  coords::TransformCtorType getTransformType();
-  virtual std::string toString() const;
+    DECL_REALMATRIX_VAR_REALMATRIX_EXPR(coords::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* coords, domain::DomainObject* dom ,interp::REALMATRIX_VAR_IDENT *operand1,interp::REALMATRIX_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REALMATRIX_VAR_IDENT *operand_1;
+	interp::REALMATRIX_EXPR *operand_2;
 };
 
 
-// TODO: methods to get x, y, z
-class Vector_Lit : public Vector
-{
+
+class DECL_REAL1_VAR : public DECLARE {
 public:
-  Vector_Lit(coords::Vector_Lit *, domain::Vector_Lit *);
-  virtual std::string toString() const;
+    DECL_REAL1_VAR(coords::DECL_REAL1_VAR* coords, domain::DomainObject* dom ,interp::REAL1_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_VAR_IDENT *operand_1;
 };
 
-class Scalar_Lit : public Scalar
-{
+
+
+class DECL_REAL3_VAR : public DECLARE {
 public:
-  Scalar_Lit(coords::Scalar_Lit *, domain::Scalar_Lit *);
-  virtual std::string toString() const;
+    DECL_REAL3_VAR(coords::DECL_REAL3_VAR* coords, domain::DomainObject* dom ,interp::REAL3_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_VAR_IDENT *operand_1;
 };
 
-class Transform_Lit : public Transform
-{
+
+
+class DECL_REAL4_VAR : public DECLARE {
 public:
-  Transform_Lit(coords::Transform_Lit *, domain::Transform_Lit *, interp::Interp *, interp::Interp *, interp::Interp *);
-  virtual std::string toString() const;
-private:
-  interp::Interp* arg1_;
-  interp::Interp* arg2_;
-  interp::Interp* arg3_;
+    DECL_REAL4_VAR(coords::DECL_REAL4_VAR* coords, domain::DomainObject* dom ,interp::REAL4_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL4_VAR_IDENT *operand_1;
 };
 
 
-class Vector_Var : public Vector
-{
+
+class DECL_REALMATRIX_VAR : public DECLARE {
 public:
-  Vector_Var(coords::Vector_Var *, domain::Vector_Var *);
-  virtual std::string toString() const;
-  //VecVarExpr *getVecVarExpr() const;
+    DECL_REALMATRIX_VAR(coords::DECL_REALMATRIX_VAR* coords, domain::DomainObject* dom ,interp::REALMATRIX_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REALMATRIX_VAR_IDENT *operand_1;
 };
 
-class Scalar_Var : public Scalar
-{
+
+
+class REAL1_EXPR : public EXPR {
 public:
-  Scalar_Var(coords::Scalar_Var *, domain::Scalar_Var *);
-  virtual std::string toString() const;
-
+    REAL1_EXPR(coords::REAL1_EXPR* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
 };
 
-class Transform_Var : public Transform
-{
+
+
+class PAREN_REAL1_EXPR : public REAL1_EXPR {
 public:
-  Transform_Var(coords::Transform_Var *, domain::Transform_Var *);
-  virtual std::string toString() const;
-
+    PAREN_REAL1_EXPR(coords::PAREN_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
 };
 
-// change name to VecVecAddExpr? Or generalize from that a bit.
-class Vector_Expr : public Vector
-{
+
+
+class INV_REAL1_EXPR : public REAL1_EXPR {
 public:
-  Vector_Expr(coords::Vector_Expr *, domain::Vector_Expr *, interp::Interp *expr_interp);
-  virtual std::string toString() const;
-  interp::Interp *getVector_Expr() const { return expr_interp_; }
-
-private:
-  interp::Interp *expr_interp_;
+    INV_REAL1_EXPR(coords::INV_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
 };
 
-class Scalar_Expr : public Scalar
-{
+
+
+class NEG_REAL1_EXPR : public REAL1_EXPR {
 public:
-  Scalar_Expr(coords::Scalar_Expr *, domain::Scalar_Expr *, interp::ScalarExpr *expr_interp);
-  virtual std::string toString() const;
-  interp::ScalarExpr *getScalar_Expr() const { return expr_interp_; }
-
-private:
-  interp::ScalarExpr *expr_interp_;
+    NEG_REAL1_EXPR(coords::NEG_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
 };
 
-class Transform_Expr : public Transform
-{
+
+
+class ADD_REAL1_EXPR_REAL1_EXPR : public REAL1_EXPR {
 public:
-  Transform_Expr(coords::Transform_Expr *, domain::Transform_Expr *, interp::TransformExpr *expr_interp);
-  virtual std::string toString() const;
-  interp::TransformExpr *getTransform_Expr() const { return expr_interp_; }
-
-private:
-  interp::TransformExpr *expr_interp_;
+    ADD_REAL1_EXPR_REAL1_EXPR(coords::ADD_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
 };
 
-/****
- * Def
- ****/
 
-class Vector_Def : public Interp
-{
+
+class SUB_REAL1_EXPR_REAL1_EXPR : public REAL1_EXPR {
 public:
-  Vector_Def(coords::Vector_Def *, domain::Vector_Def *, interp::VecIdent *id, interp::Interp *vec);
-  virtual std::string toString() const;
-
-private:
-  interp::VecIdent *id_;
-  interp::Interp *vec_;
+    SUB_REAL1_EXPR_REAL1_EXPR(coords::SUB_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
 };
 
-class Scalar_Def : public Interp
-{
+
+
+class MUL_REAL1_EXPR_REAL1_EXPR : public REAL1_EXPR {
 public:
-  Scalar_Def(coords::Scalar_Def *, domain::Scalar_Def *, interp::ScalarIdent *id, interp::Interp *flt);
-  virtual std::string toString() const;
-
-private:
-  interp::ScalarIdent *id_;
-  interp::Interp *flt_;
+    MUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
 };
 
-class Transform_Def : public Interp
-{
+
+
+class DIV_REAL1_EXPR_REAL1_EXPR : public REAL1_EXPR {
 public:
-  Transform_Def(coords::Transform_Def *, domain::Transform_Def *, interp::TransformIdent *id, interp::Interp *tfm);
-  virtual std::string toString() const;
-
-private:
-  interp::TransformIdent *id_;
-  interp::Interp *tfm_;
+    DIV_REAL1_EXPR_REAL1_EXPR(coords::DIV_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
 };
 
-class Vector_Assign : public Interp
-{
+
+
+class REF_REAL1_VAR : public REAL1_EXPR {
 public:
-  Vector_Assign(coords::Vector_Assign *, domain::Vector_Assign *, interp::VecVarExpr *id,  interp::Interp *ve);
-  virtual std::string toString() const;
-
-private:
-  interp::VecVarExpr *id_;
-  interp::Interp *vec_;
+    REF_REAL1_VAR(coords::REF_REAL1_VAR* coords, domain::DomainObject* dom ,interp::REAL1_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_VAR_IDENT *operand_1;
 };
 
-class Scalar_Assign : public Interp
-{
+
+
+class REAL3_EXPR : public EXPR {
 public:
-  Scalar_Assign(coords::Scalar_Assign *, domain::Scalar_Assign *, interp::ScalarVarExpr *id,  interp::Interp *flt);
-  virtual std::string toString() const;
-
-private:
-  interp::ScalarVarExpr *id_;
-  interp::Interp *flt_;
+    REAL3_EXPR(coords::REAL3_EXPR* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
 };
 
-class Transform_Assign : public Interp
-{
+
+
+class PAREN_REAL3_EXPR : public REAL3_EXPR {
 public:
-  Transform_Assign(coords::Transform_Assign *, domain::Transform_Assign *, interp::TransformVarExpr *id,  interp::Interp *tfm);
-  virtual std::string toString() const;
-
-private:
-  interp::TransformVarExpr *id_;
-  interp::Interp *tfm_;
+    PAREN_REAL3_EXPR(coords::PAREN_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_EXPR *operand_1;
 };
 
-} // namespace interp
+
+
+class ADD_REAL3_EXPR_REAL3_EXPR : public REAL3_EXPR {
+public:
+    ADD_REAL3_EXPR_REAL3_EXPR(coords::ADD_REAL3_EXPR_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1,interp::REAL3_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_EXPR *operand_1;
+	interp::REAL3_EXPR *operand_2;
+};
+
+
+
+class SUB_REAL3_EXPR_REAL3_EXPR : public REAL3_EXPR {
+public:
+    SUB_REAL3_EXPR_REAL3_EXPR(coords::SUB_REAL3_EXPR_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1,interp::REAL3_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_EXPR *operand_1;
+	interp::REAL3_EXPR *operand_2;
+};
+
+
+
+class INV_REAL3_EXPR : public REAL3_EXPR {
+public:
+    INV_REAL3_EXPR(coords::INV_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_EXPR *operand_1;
+};
+
+
+
+class NEG_REAL3_EXPR : public REAL3_EXPR {
+public:
+    NEG_REAL3_EXPR(coords::NEG_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_EXPR *operand_1;
+};
+
+
+
+class MUL_REAL3_EXPR_REAL1_EXPR : public REAL3_EXPR {
+public:
+    MUL_REAL3_EXPR_REAL1_EXPR(coords::MUL_REAL3_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
+};
+
+
+
+class MUL_REALMATRIX_EXPR_REAL3_EXPR : public REAL3_EXPR {
+public:
+    MUL_REALMATRIX_EXPR_REAL3_EXPR(coords::MUL_REALMATRIX_EXPR_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REALMATRIX_EXPR *operand1,interp::REAL3_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REALMATRIX_EXPR *operand_1;
+	interp::REAL3_EXPR *operand_2;
+};
+
+
+
+class DIV_REAL3_EXPR_REAL1_EXPR : public REAL3_EXPR {
+public:
+    DIV_REAL3_EXPR_REAL1_EXPR(coords::DIV_REAL3_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
+};
+
+
+
+class REF_REAL3_VAR : public REAL3_EXPR {
+public:
+    REF_REAL3_VAR(coords::REF_REAL3_VAR* coords, domain::DomainObject* dom ,interp::REAL3_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_VAR_IDENT *operand_1;
+};
+
+
+
+class REAL4_EXPR : public EXPR {
+public:
+    REAL4_EXPR(coords::REAL4_EXPR* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class PAREN_REAL4_EXPR : public REAL4_EXPR {
+public:
+    PAREN_REAL4_EXPR(coords::PAREN_REAL4_EXPR* coords, domain::DomainObject* dom ,interp::REAL4_EXPR *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL4_EXPR *operand_1;
+};
+
+
+
+class ADD_REAL4_EXPR_REAL4_EXPR : public REAL4_EXPR {
+public:
+    ADD_REAL4_EXPR_REAL4_EXPR(coords::ADD_REAL4_EXPR_REAL4_EXPR* coords, domain::DomainObject* dom ,interp::REAL4_EXPR *operand1,interp::REAL4_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL4_EXPR *operand_1;
+	interp::REAL4_EXPR *operand_2;
+};
+
+
+
+class MUL_REAL4_EXPR_REAL1_EXPR : public REAL4_EXPR {
+public:
+    MUL_REAL4_EXPR_REAL1_EXPR(coords::MUL_REAL4_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL4_EXPR *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL4_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
+};
+
+
+
+class REF_REAL4_VAR : public REAL4_EXPR {
+public:
+    REF_REAL4_VAR(coords::REF_REAL4_VAR* coords, domain::DomainObject* dom ,interp::REAL4_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL4_VAR_IDENT *operand_1;
+};
+
+
+
+class REALMATRIX_EXPR : public EXPR {
+public:
+    REALMATRIX_EXPR(coords::REALMATRIX_EXPR* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class PAREN_REALMATRIX_EXPR : public REALMATRIX_EXPR {
+public:
+    PAREN_REALMATRIX_EXPR(coords::PAREN_REALMATRIX_EXPR* coords, domain::DomainObject* dom ,interp::REALMATRIX_EXPR *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REALMATRIX_EXPR *operand_1;
+};
+
+
+
+class MUL_REALMATRIX_EXPR_REALMATRIX_EXPR : public REALMATRIX_EXPR {
+public:
+    MUL_REALMATRIX_EXPR_REALMATRIX_EXPR(coords::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* coords, domain::DomainObject* dom ,interp::REALMATRIX_EXPR *operand1,interp::REALMATRIX_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REALMATRIX_EXPR *operand_1;
+	interp::REALMATRIX_EXPR *operand_2;
+};
+
+
+
+class REF_EXPR_REALMATRIX_VAR : public REALMATRIX_EXPR {
+public:
+    REF_EXPR_REALMATRIX_VAR(coords::REF_EXPR_REALMATRIX_VAR* coords, domain::DomainObject* dom ,interp::REALMATRIX_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REALMATRIX_VAR_IDENT *operand_1;
+};
+
+
+
+class REAL1_VAR_IDENT : public Interp {
+public:
+    REAL1_VAR_IDENT(coords::REAL1_VAR_IDENT* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class REAL3_VAR_IDENT : public Interp {
+public:
+    REAL3_VAR_IDENT(coords::REAL3_VAR_IDENT* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class REAL4_VAR_IDENT : public Interp {
+public:
+    REAL4_VAR_IDENT(coords::REAL4_VAR_IDENT* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class REALMATRIX_VAR_IDENT : public Interp {
+public:
+    REALMATRIX_VAR_IDENT(coords::REALMATRIX_VAR_IDENT* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class REAL1_LITERAL : public REAL1_EXPR {
+public:
+    REAL1_LITERAL(coords::REAL1_LITERAL* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class REAL1_LITERAL1 : public REAL1_LITERAL {
+public:
+    REAL1_LITERAL1(coords::REAL1_LITERAL1* coords, domain::DomainObject* dom  );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	
+};
+
+
+
+class REAL3_LITERAL : public REAL3_EXPR {
+public:
+    REAL3_LITERAL(coords::REAL3_LITERAL* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR : public REAL3_LITERAL {
+public:
+    REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2,interp::REAL1_EXPR *operand3 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
+	interp::REAL1_EXPR *operand_3;
+};
+
+
+
+class REAL3_LITERAL3 : public REAL3_LITERAL {
+public:
+    REAL3_LITERAL3(coords::REAL3_LITERAL3* coords, domain::DomainObject* dom  );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	
+};
+
+
+
+class REAL4_LITERAL : public REAL4_EXPR {
+public:
+    REAL4_LITERAL(coords::REAL4_LITERAL* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR : public REAL4_LITERAL {
+public:
+    REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2,interp::REAL1_EXPR *operand3,interp::REAL1_EXPR *operand4 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
+	interp::REAL1_EXPR *operand_3;
+	interp::REAL1_EXPR *operand_4;
+};
+
+
+
+class REAL4_LITERAL4 : public REAL4_LITERAL {
+public:
+    REAL4_LITERAL4(coords::REAL4_LITERAL4* coords, domain::DomainObject* dom  );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	
+};
+
+
+
+class REALMATRIX_LITERAL : public REALMATRIX_EXPR {
+public:
+    REALMATRIX_LITERAL(coords::REALMATRIX_LITERAL* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR : public REALMATRIX_LITERAL {
+public:
+    REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(coords::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1,interp::REAL3_EXPR *operand2,interp::REAL3_EXPR *operand3 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL3_EXPR *operand_1;
+	interp::REAL3_EXPR *operand_2;
+	interp::REAL3_EXPR *operand_3;
+};
+
+
+
+class REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR : public REALMATRIX_LITERAL {
+public:
+    REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2,interp::REAL1_EXPR *operand3,interp::REAL1_EXPR *operand4,interp::REAL1_EXPR *operand5,interp::REAL1_EXPR *operand6,interp::REAL1_EXPR *operand7,interp::REAL1_EXPR *operand8,interp::REAL1_EXPR *operand9 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
+	interp::REAL1_EXPR *operand_3;
+	interp::REAL1_EXPR *operand_4;
+	interp::REAL1_EXPR *operand_5;
+	interp::REAL1_EXPR *operand_6;
+	interp::REAL1_EXPR *operand_7;
+	interp::REAL1_EXPR *operand_8;
+	interp::REAL1_EXPR *operand_9;
+};
+
+
+
+class REALMATRIX_LITERAL9 : public REALMATRIX_LITERAL {
+public:
+    REALMATRIX_LITERAL9(coords::REALMATRIX_LITERAL9* coords, domain::DomainObject* dom  );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	
+};
+
+
+} // namespace coords
 
 #endif
