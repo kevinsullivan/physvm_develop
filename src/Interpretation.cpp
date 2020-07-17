@@ -1413,62 +1413,62 @@ void Interpretation::mkVarTable(){
   
 
     for(auto it = this->REAL1_EXPR_vec.begin(); it != this->REAL1_EXPR_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REAL3_EXPR_vec.begin(); it != this->REAL3_EXPR_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REAL4_EXPR_vec.begin(); it != this->REAL4_EXPR_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REALMATRIX_EXPR_vec.begin(); it != this->REALMATRIX_EXPR_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REAL1_VAR_IDENT_vec.begin(); it != this->REAL1_VAR_IDENT_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REAL3_VAR_IDENT_vec.begin(); it != this->REAL3_VAR_IDENT_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REAL4_VAR_IDENT_vec.begin(); it != this->REAL4_VAR_IDENT_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REALMATRIX_VAR_IDENT_vec.begin(); it != this->REALMATRIX_VAR_IDENT_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REAL1_LITERAL_vec.begin(); it != this->REAL1_LITERAL_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REAL3_LITERAL_vec.begin(); it != this->REAL3_LITERAL_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REAL4_LITERAL_vec.begin(); it != this->REAL4_LITERAL_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 	
     for(auto it = this->REALMATRIX_LITERAL_vec.begin(); it != this->REALMATRIX_LITERAL_vec.end(); it++){
-        this->index2coords_[idx++] = *it;
+        this->index2coords_[++idx] = *it;
     }
 
 

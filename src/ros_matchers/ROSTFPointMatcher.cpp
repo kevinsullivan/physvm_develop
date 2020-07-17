@@ -212,8 +212,8 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
 
                 if(lexpr and rexpr){
                     std::cout<<"LEFT AND RIGHT SUB???\n";
-                    lexpr->dump();
-                    rexpr->dump();
+                    //lexpr->dump();
+                    //rexpr->dump();
                     this->interp_->mkSUB_REAL3_EXPR_REAL3_EXPR(cxxOperatorCallExpr_, lexpr, rexpr);
                 }
             }

@@ -147,7 +147,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         m.search();
                         m.visit((*vd->getInit()));
                         if(m.getChildExprStore()){
-                            m.getChildExprStore()->dump();
+                            //m.getChildExprStore()->dump();
                             interp_->mkREAL3_VAR_IDENT(vd);
                             interp_->mkDECL_REAL3_VAR_REAL3_EXPR(declStmt, vd, m.getChildExprStore());
                         }
