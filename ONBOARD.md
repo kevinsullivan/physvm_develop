@@ -44,9 +44,9 @@ git config --global core.autocrlf input
 ```
 2. Ensure you have an account with Github.
 3. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, and https://github.com/drewjel/PeirceDocker.
-4. In your local Peirce repository directory, type the following to download dependencies
+4. Clone the Peirce repository, along with its subrepositories, using the following command:
 ```shell
-git submodule update --init --recursive
+git clone https://github.com/kevinsullivan/Peirce.git --recursive
 ```
 This step may fail if you do not have access to any submodules, (for example, phys, which is another Github project).
 
@@ -70,7 +70,8 @@ docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --nam
 5. There should be an "open folder" option that will open a dialog, from which you should navigate to "/peirce" (This will be the same as your local peirce repository directory if you performed Step 1 correctly).
 6. Go to your Extensions
 7. VSCode does not have all of your extensions installed by default within the container context. After you are attached to the container, you will likely receive an installation prompt as you did in section VSCode Setup, Step 4. If not, proceed to your extensions tab, filter to "installed", click on all recommended extensions, including C/C++ and Clang Command Adapter, and, for all, click on "Install in Container". This will likely require you to click "Reload", afterwards
-8. You'll now be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
+8. If you have any pending changes along the git tab, you should be able to discard those changes. The next time you open the container those pending changes won't exist.
+9. You'll now be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
 
 ## Running Mathlib within the container
 1. Once you're in the container in vscode, open up a terminal window within VSCode (Terminal -> New Terminal). 
