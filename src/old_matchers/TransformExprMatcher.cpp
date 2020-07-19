@@ -85,7 +85,7 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
             TransformExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
-            interp_->mkTransformParenExpr(parenExpr, exprMatcher.getChildExprStore());
+           // interp_->mkTransformParenExpr(parenExpr, exprMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)parenExpr;
             
         }
@@ -102,7 +102,7 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
             TransformExprMatcher argMatcher{this->context_, this->interp_};
             argMatcher.search();
             argMatcher.visit(*transformComposeArgument);
-            interp_->mkTransformTransformComposeExpr(transformComposeExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
+           // interp_->mkTransformTransformComposeExpr(transformComposeExpr, memMatcher.getChildExprStore(), argMatcher.getChildExprStore());
             this->childExprStore_ = (clang::Expr*)transformComposeExpr;
         }
         else{
@@ -110,7 +110,7 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
         }
     }
     else if(transformDeclRefExpr){
-        interp_->mkTransformVarExpr(transformDeclRefExpr);
+       // interp_->mkTransformVarExpr(transformDeclRefExpr);
         this->childExprStore_ = (clang::Expr*)transformDeclRefExpr;
     }
     else if(transformLiteral or transformLiteralVecArg1 or transformLiteralVecArg2 or transformLiteralVecArg3){
@@ -124,7 +124,7 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
         exprMatcher3.search();
         exprMatcher3.visit(*transformLiteralVecArg3);
 
-        interp_->mkTransform_Lit(transformLiteral, exprMatcher1.getChildExprStore(), exprMatcher2.getChildExprStore(), exprMatcher3.getChildExprStore());
+        //interp_->mkTransform_Lit(transformLiteral, exprMatcher1.getChildExprStore(), exprMatcher2.getChildExprStore(), exprMatcher3.getChildExprStore());
         this->childExprStore_ = (clang::Expr*)transformLiteral;
     }
     else if(transformExprWithCleanups){
@@ -151,7 +151,7 @@ void TransformExprMatcher::run(const MatchFinder::MatchResult &Result){
             
             this->childExprStore_ = (clang::Expr*)exprMatcher.getChildExprStore();
 
-            interp_->mkTransform_Expr(transformConstructExpr, exprMatcher.getChildExprStore());
+          //  interp_->mkTransform_Expr(transformConstructExpr, exprMatcher.getChildExprStore());
             //interp_->mkVecWrapperExpr(transformConstructExpr, transformConstructExprChild);
         }
         else{

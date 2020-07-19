@@ -1,3 +1,4 @@
+
 #include <vector>
 #include <iostream>
 #include <string>
@@ -18,531 +19,390 @@ using namespace std;
 using namespace domain;
 
 
-/******
-* Space
-******/
-
-
-Space &Domain::mkSpace(const string &name)
-{
-    Space *s = new Space(name);
-    spaces.push_back(s);
-    return *s;
+DomainObject::DomainObject(std::initializer_list<DomainObject*> args) {
+    for(auto dom : args){
+        operands_.push_back(dom);
+    }
+    operand_count = this->operands_.size();
 }
-
-
+DomainObject* DomainObject::getOperand(int i) { return this->operands_.at(i); };
+void DomainObject::setOperands(std::vector<DomainObject*> operands) { this->operands_ = operands; };
+std::string DomainObject::toString(){return "A generic, default DomainObject"; };
 std::vector<Space*> &Domain::getSpaces() 
 {
-    return spaces; 
-}
-
-// TODO: MOVE THIS STUFF
-std::string Space::getName() const { return name_; }
-
-std::string MapSpace::getName() const { 
-    return this->domain_.toString() + " " + this->codomain_.toString(); 
-}
-
-/****
-Ident
-****/
-
-
-VecIdent *Domain::mkVecIdent(Space *s)
-{
-    VecIdent *id = new VecIdent(*s);
-    idents.push_back(id);
-    return id;
-}
-
-VecIdent* Domain::mkVecIdent()
-{
-   VecIdent *id = new VecIdent();
-   idents.push_back(id);
-   return id; 
-}
-
-
-ScalarIdent* Domain::mkScalarIdent(Space* s){
-    domain::ScalarIdent* flt = new domain::ScalarIdent(*s);
-    float_idents.push_back(flt);
-    return flt;
-}
-
-ScalarIdent* Domain::mkScalarIdent(){
-    domain::ScalarIdent* flt = new domain::ScalarIdent();
-    float_idents.push_back(flt);
-    return flt;
-}
-
-
-TransformIdent* Domain::mkTransformIdent(MapSpace* s){
-    domain::TransformIdent* flt = new domain::TransformIdent(*s);
-    tfm_idents.push_back(flt);
-    return flt;
-}
-
-TransformIdent* Domain::mkTransformIdent(){
-    domain::TransformIdent* flt = new domain::TransformIdent();
-    tfm_idents.push_back(flt);
-    return flt;
-}
-
-ScalarExpr* Domain::mkScalarExpr(Space* s){
-    domain::ScalarExpr* flt = new domain::ScalarExpr(s);
-    float_exprs.push_back(flt);
-    return flt;
-}
-
-ScalarExpr* Domain::mkScalarExpr(){
-    domain::ScalarExpr* flt = new domain::ScalarExpr();
-    float_exprs.push_back(flt);
-    return flt;
-}
+    return Space_vec; 
+};
 
-/****
- * Set
- * **/
 
-void VecIdent::setSpace(Space* space) {
-    if(!this->spaceContainer_)
-        this->spaceContainer_ = new domain::SpaceContainer();
-    this->spaceContainer_->setSpace(space);
-}
 
-void VecExpr::setSpace(Space* space) {
-    if(!this->spaceContainer_)
-        this->spaceContainer_ = new domain::SpaceContainer();
-    this->spaceContainer_->setSpace(space);
-}
-void ScalarIdent::setSpace(Space* space) {
-    if(!this->spaceContainer_)
-        this->spaceContainer_ = new domain::SpaceContainer();
-    this->spaceContainer_->setSpace(space);
-}
+DomainContainer::DomainContainer(std::initializer_list<DomainObject*> operands) : DomainObject(operands) {
+    this->inner_ = nullptr;
+};
 
-void ScalarExpr::setSpace(Space* space) {
-    if(!this->spaceContainer_)
-        this->spaceContainer_ = new domain::SpaceContainer();
-    this->spaceContainer_->setSpace(space);
-}
+DomainContainer::DomainContainer(std::vector<DomainObject*> operands) : DomainObject(operands) {
+    this->inner_ = nullptr;
+};
 
-void TransformIdent::setSpace(MapSpace space) {
-    if(!this->spaceContainer_)
-        this->spaceContainer_ = new domain::MapSpaceContainer();
-    this->spaceContainer_->setSpace(space);
-}
 
-void TransformExpr::setSpace(MapSpace space) {
-    if(!this->spaceContainer_)
-        this->spaceContainer_ = new domain::MapSpaceContainer();
-    this->spaceContainer_->setSpace(space);
-}
+void DomainContainer::setValue(DomainObject* dom_){
 
-/****
- * Get
- * **/
+    //dom_->setOperands(this->inner_->getOperands());
+    
+    /*
+    WARNING - THIS IS NOT CORRECT CODE. YOU ALSO NEED TO UNMAP/ERASE FROM THE "OBJECT_VEC". DO THIS SOON! 7/12
+    */
 
+    delete this->inner_;
 
-/****
- Expr
-****/
+    this->inner_ = dom_;
+};
 
-domain::VecVarExpr *Domain::mkVecVarExpr(Space *s)
-{
-    domain::VecVarExpr *var = new domain::VecVarExpr(s);
-    exprs.push_back(var);
-    return var;
-}
+bool DomainContainer::hasValue(){
+    return (bool)this->inner_;
+};
 
-domain::VecVarExpr* Domain::mkVecVarExpr()
-{
-    domain::VecVarExpr *var = new domain::VecVarExpr();
-    exprs.push_back(var);
-    return var;
-}
+std::string DomainContainer::toString(){
+    if(this->hasValue()){
+        return this->inner_->toString();
+    }
+    else{
+        return "No Interpretation provided";
+    }
+};
 
-domain::ScalarVarExpr *Domain::mkScalarVarExpr(Space *s)
-{
-    domain::ScalarVarExpr *var = new domain::ScalarVarExpr(s);
-    float_exprs.push_back(var);
-    return var;
-}
 
-domain::ScalarVarExpr* Domain::mkScalarVarExpr()
-{
-    domain::ScalarVarExpr *var = new domain::ScalarVarExpr();
-    float_exprs.push_back(var);
-    return var;
-}
 
-domain::TransformVarExpr *Domain::mkTransformVarExpr(MapSpace *s)
-{
-    domain::TransformVarExpr *var = new domain::TransformVarExpr(s);
-    tfm_exprs.push_back(var);
-    return var;
-}
+Space* Domain::getSpace(std::string key){
+    return this->Space_map[key];
+};
 
-domain::TransformVarExpr* Domain::mkTransformVarExpr()
-{
-    domain::TransformVarExpr *var = new domain::TransformVarExpr();
-    tfm_exprs.push_back(var);
-    return var;
-}
+DomainObject* Domain::mkDefaultDomainContainer(){
+    return new domain::DomainContainer();
+};
 
-domain::VecVecAddExpr *Domain::mkVecVecAddExpr(Space *s, domain::VecExpr *mem, domain::VecExpr *arg)
-{
-    domain::VecVecAddExpr *be = new domain::VecVecAddExpr(s, mem, arg);
-    exprs.push_back(be);
-    return be;
-}
+DomainObject* Domain::mkDefaultDomainContainer(std::initializer_list<DomainObject*> operands){
+    return new domain::DomainContainer(operands);
+};
 
-domain::VecVecAddExpr* Domain::mkVecVecAddExpr(domain::VecExpr* mem, domain::VecExpr* arg)
-{
-    domain::VecVecAddExpr *b = new domain::VecVecAddExpr(mem, arg);
-    exprs.push_back(b);
-    return b;
-}
+DomainObject* Domain::mkDefaultDomainContainer(std::vector<DomainObject*> operands){
+    return new domain::DomainContainer(operands);
+};
 
-domain::VecExpr *VecVecAddExpr::getMemberVecExpr()
-{
-    return mem_;
-}
 
-domain::VecExpr *VecVecAddExpr::getArgVecExpr()
-{
-    return arg_;
+EuclideanGeometry* Domain::mkEuclideanGeometry(std::string key,std::string name_, int dimension_){
+    EuclideanGeometry* s = new EuclideanGeometry(name_, dimension_);
+    this->EuclideanGeometry_vec.push_back(s);
+    this->Space_vec.push_back(s);
+    this->Space_map[key] = s;
+    return s;
 }
 
-domain::TransformVecApplyExpr* Domain::mkTransformVecApplyExpr(Space* s, domain::TransformExpr* lhs, domain::VecExpr* rhs)
-{
-    domain::TransformVecApplyExpr *b = new domain::TransformVecApplyExpr(s, lhs, rhs);
-    exprs.push_back(b);
-    return b;
-}
+//std::vector<EuclideanGeometry*> &Domain::getEuclideanGeometrySpaces() { return EuclideanGeometry_vec; }
 
-domain::TransformVecApplyExpr* Domain::mkTransformVecApplyExpr(domain::TransformExpr* lhs, domain::VecExpr* rhs)
-{
-    domain::TransformVecApplyExpr *b = new domain::TransformVecApplyExpr(lhs, rhs);
-    exprs.push_back(b);
-    return b;
+Geometric3Rotation* Domain::mkGeometric3Rotation(EuclideanGeometry* sp){
+    Geometric3Rotation* dom_ = new Geometric3Rotation(sp, {});
+    this->Geometric3Rotation_vec.push_back(dom_);
+    return dom_;
 }
-
-domain::TransformExpr *TransformVecApplyExpr::getLHSTransformExpr()
-{
-    return lhs_;
+                
+Geometric3Rotation* Domain::mkGeometric3Rotation(){
+    Geometric3Rotation* dom_ = new Geometric3Rotation({});
+    this->Geometric3Rotation_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::VecExpr *TransformVecApplyExpr::getRHSVecExpr()
-{
-    return rhs_;
+Geometric3Orientation* Domain::mkGeometric3Orientation(EuclideanGeometry* sp){
+    Geometric3Orientation* dom_ = new Geometric3Orientation(sp, {});
+    this->Geometric3Orientation_vec.push_back(dom_);
+    return dom_;
 }
-
-VecScalarMulExpr* Domain::mkVecScalarMulExpr(Space* s, domain::VecExpr *vec, domain::ScalarExpr *flt){
-    domain::VecScalarMulExpr* expr = new domain::VecScalarMulExpr(s, vec, flt);
-    exprs.push_back(expr);
-    return expr;
+                
+Geometric3Orientation* Domain::mkGeometric3Orientation(){
+    Geometric3Orientation* dom_ = new Geometric3Orientation({});
+    this->Geometric3Orientation_vec.push_back(dom_);   
+    return dom_;
 }
 
-VecScalarMulExpr* Domain::mkVecScalarMulExpr(domain::VecExpr *vec, domain::ScalarExpr *flt){
-    auto expr = new domain::VecScalarMulExpr(vec, flt);
-    exprs.push_back(expr);
-    return expr;
+Geometric3Angle* Domain::mkGeometric3Angle(EuclideanGeometry* sp){
+    Geometric3Angle* dom_ = new Geometric3Angle(sp, {});
+    this->Geometric3Angle_vec.push_back(dom_);
+    return dom_;
 }
-
-domain::VecExpr *VecScalarMulExpr::getVecExpr()
-{
-    return vec_;
+                
+Geometric3Angle* Domain::mkGeometric3Angle(){
+    Geometric3Angle* dom_ = new Geometric3Angle({});
+    this->Geometric3Angle_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::ScalarExpr *VecScalarMulExpr::getScalarExpr()
-{
-    return flt_;
+Geometric3FrameChange* Domain::mkGeometric3FrameChange(EuclideanGeometry* sp){
+    Geometric3FrameChange* dom_ = new Geometric3FrameChange(sp, {});
+    this->Geometric3FrameChange_vec.push_back(dom_);
+    return dom_;
 }
-
-
-domain::ScalarScalarAddExpr *Domain::mkScalarScalarAddExpr(Space *s, domain::ScalarExpr *lhs, domain::ScalarExpr *rhs)
-{
-    domain::ScalarScalarAddExpr *be = new domain::ScalarScalarAddExpr(s, lhs, rhs);
-    float_exprs.push_back(be);
-    return be;
+                
+Geometric3FrameChange* Domain::mkGeometric3FrameChange(){
+    Geometric3FrameChange* dom_ = new Geometric3FrameChange({});
+    this->Geometric3FrameChange_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::ScalarScalarAddExpr* Domain::mkScalarScalarAddExpr(domain::ScalarExpr* lhs, domain::ScalarExpr* rhs)
-{
-    domain::ScalarScalarAddExpr *b = new domain::ScalarScalarAddExpr(lhs, rhs);
-    float_exprs.push_back(b);
-    return b;
+Geometric3Point* Domain::mkGeometric3Point(EuclideanGeometry* sp){
+    Geometric3Point* dom_ = new Geometric3Point(sp, {});
+    this->Geometric3Point_vec.push_back(dom_);
+    return dom_;
+}
+                
+Geometric3Point* Domain::mkGeometric3Point(){
+    Geometric3Point* dom_ = new Geometric3Point({});
+    this->Geometric3Point_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::ScalarExpr *ScalarScalarAddExpr::getLHSScalarExpr()
-{
-    return lhs_;
+Geometric3HomogenousPoint* Domain::mkGeometric3HomogenousPoint(EuclideanGeometry* sp){
+    Geometric3HomogenousPoint* dom_ = new Geometric3HomogenousPoint(sp, {});
+    this->Geometric3HomogenousPoint_vec.push_back(dom_);
+    return dom_;
+}
+                
+Geometric3HomogenousPoint* Domain::mkGeometric3HomogenousPoint(){
+    Geometric3HomogenousPoint* dom_ = new Geometric3HomogenousPoint({});
+    this->Geometric3HomogenousPoint_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::ScalarExpr *ScalarScalarAddExpr::getRHSScalarExpr()
-{
-    return rhs_;
+Geometric3Vector* Domain::mkGeometric3Vector(EuclideanGeometry* sp){
+    Geometric3Vector* dom_ = new Geometric3Vector(sp, {});
+    this->Geometric3Vector_vec.push_back(dom_);
+    return dom_;
+}
+                
+Geometric3Vector* Domain::mkGeometric3Vector(){
+    Geometric3Vector* dom_ = new Geometric3Vector({});
+    this->Geometric3Vector_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::ScalarScalarMulExpr *Domain::mkScalarScalarMulExpr(Space *s, domain::ScalarExpr *lhs, domain::ScalarExpr *rhs)
-{
-    domain::ScalarScalarMulExpr *be = new domain::ScalarScalarMulExpr(s, lhs, rhs);
-    float_exprs.push_back(be);
-    return be;
+Geometric3Scalar* Domain::mkGeometric3Scalar(EuclideanGeometry* sp){
+    Geometric3Scalar* dom_ = new Geometric3Scalar(sp, {});
+    this->Geometric3Scalar_vec.push_back(dom_);
+    return dom_;
+}
+                
+Geometric3Scalar* Domain::mkGeometric3Scalar(){
+    Geometric3Scalar* dom_ = new Geometric3Scalar({});
+    this->Geometric3Scalar_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::ScalarScalarMulExpr* Domain::mkScalarScalarMulExpr(domain::ScalarExpr* lhs, domain::ScalarExpr* rhs)
-{
-    domain::ScalarScalarMulExpr *b = new domain::ScalarScalarMulExpr(lhs, rhs);
-    float_exprs.push_back(b);
-    return b;
+Geometric3BasisChange* Domain::mkGeometric3BasisChange(EuclideanGeometry* sp){
+    Geometric3BasisChange* dom_ = new Geometric3BasisChange(sp, {});
+    this->Geometric3BasisChange_vec.push_back(dom_);
+    return dom_;
+}
+                
+Geometric3BasisChange* Domain::mkGeometric3BasisChange(){
+    Geometric3BasisChange* dom_ = new Geometric3BasisChange({});
+    this->Geometric3BasisChange_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::ScalarExpr *ScalarScalarMulExpr::getLHSScalarExpr()
-{
-    return lhs_;
+Geometric3Scaling* Domain::mkGeometric3Scaling(EuclideanGeometry* sp){
+    Geometric3Scaling* dom_ = new Geometric3Scaling(sp, {});
+    this->Geometric3Scaling_vec.push_back(dom_);
+    return dom_;
+}
+                
+Geometric3Scaling* Domain::mkGeometric3Scaling(){
+    Geometric3Scaling* dom_ = new Geometric3Scaling({});
+    this->Geometric3Scaling_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::ScalarExpr *ScalarScalarMulExpr::getRHSScalarExpr()
-{
-    return rhs_;
+Geometric3Shear* Domain::mkGeometric3Shear(EuclideanGeometry* sp){
+    Geometric3Shear* dom_ = new Geometric3Shear(sp, {});
+    this->Geometric3Shear_vec.push_back(dom_);
+    return dom_;
+}
+                
+Geometric3Shear* Domain::mkGeometric3Shear(){
+    Geometric3Shear* dom_ = new Geometric3Shear({});
+    this->Geometric3Shear_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::TransformTransformComposeExpr* Domain::mkTransformTransformComposeExpr(domain::TransformExpr* lhs, domain::TransformExpr* rhs)
-{
-    domain::TransformTransformComposeExpr *b = new domain::TransformTransformComposeExpr(lhs, rhs);
-    tfm_exprs.push_back(b);
-    return b;
+ClassicalTime* Domain::mkClassicalTime(std::string key,std::string name_){
+    ClassicalTime* s = new ClassicalTime(name_);
+    this->ClassicalTime_vec.push_back(s);
+    this->Space_vec.push_back(s);
+    this->Space_map[key] = s;
+    return s;
 }
 
-domain::TransformExpr *TransformTransformComposeExpr::getLHSTransformExpr()
-{
-    return lhs_;
-}
+//std::vector<ClassicalTime*> &Domain::getClassicalTimeSpaces() { return ClassicalTime_vec; }
 
-domain::TransformExpr *TransformTransformComposeExpr::getRHSTransformExpr()
-{
-    return rhs_;
+TimeFrameChange* Domain::mkTimeFrameChange(ClassicalTime* sp){
+    TimeFrameChange* dom_ = new TimeFrameChange(sp, {});
+    this->TimeFrameChange_vec.push_back(dom_);
+    return dom_;
 }
-
-// KEVIN: Added for VecParen module, has to stay in Domain.h
-domain::ScalarParenExpr *Domain::mkScalarParenExpr(Space *s, domain::ScalarExpr *expr)
-{
-		domain::ScalarParenExpr *var = new domain::ScalarParenExpr(s, expr);
-		float_exprs.push_back(var);
-		return var;
+                
+TimeFrameChange* Domain::mkTimeFrameChange(){
+    TimeFrameChange* dom_ = new TimeFrameChange({});
+    this->TimeFrameChange_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::ScalarParenExpr* Domain::mkScalarParenExpr(domain::ScalarExpr* expr)
-{
-    domain::ScalarParenExpr* var = new domain::ScalarParenExpr(expr);
-    float_exprs.push_back(var);
-    return var;
+TimePoint* Domain::mkTimePoint(ClassicalTime* sp){
+    TimePoint* dom_ = new TimePoint(sp, {});
+    this->TimePoint_vec.push_back(dom_);
+    return dom_;
 }
-
-domain::VecParenExpr *Domain::mkVecParenExpr(Space *s, domain::VecExpr *expr)
-{
-		domain::VecParenExpr *var = new domain::VecParenExpr(s, expr);
-		exprs.push_back(var);
-		return var;
+                
+TimePoint* Domain::mkTimePoint(){
+    TimePoint* dom_ = new TimePoint({});
+    this->TimePoint_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::VecParenExpr* Domain::mkVecParenExpr(domain::VecExpr* expr)
-{
-    domain::VecParenExpr* var = new domain::VecParenExpr(expr);
-    exprs.push_back(var);
-    return var;
+TimeHomogenousPoint* Domain::mkTimeHomogenousPoint(ClassicalTime* sp){
+    TimeHomogenousPoint* dom_ = new TimeHomogenousPoint(sp, {});
+    this->TimeHomogenousPoint_vec.push_back(dom_);
+    return dom_;
 }
-
-domain::TransformParenExpr *Domain::mkTransformParenExpr(MapSpace *s, domain::TransformExpr *expr)
-{
-	domain::TransformParenExpr *var = new domain::TransformParenExpr(s, expr);
-	tfm_exprs.push_back(var);
-	return var;
+                
+TimeHomogenousPoint* Domain::mkTimeHomogenousPoint(){
+    TimeHomogenousPoint* dom_ = new TimeHomogenousPoint({});
+    this->TimeHomogenousPoint_vec.push_back(dom_);   
+    return dom_;
 }
 
-domain::TransformParenExpr* Domain::mkTransformParenExpr(domain::TransformExpr* expr)
-{
-    domain::TransformParenExpr* var = new domain::TransformParenExpr(expr);
-    tfm_exprs.push_back(var);
-    return var;
+TimeVector* Domain::mkTimeVector(ClassicalTime* sp){
+    TimeVector* dom_ = new TimeVector(sp, {});
+    this->TimeVector_vec.push_back(dom_);
+    return dom_;
 }
-/******
-* Value
-*******/
-
-void Vector::setSpace(Space* space){
-
-    if(!this->spaceContainer_)
-        this->spaceContainer_ = new domain::SpaceContainer();
-    this->spaceContainer_->setSpace(space);
+                
+TimeVector* Domain::mkTimeVector(){
+    TimeVector* dom_ = new TimeVector({});
+    this->TimeVector_vec.push_back(dom_);   
+    return dom_;
 }
-void Scalar::setSpace(Space* space){
 
-    if(!this->spaceContainer_)
-        this->spaceContainer_ = new domain::SpaceContainer();
-    this->spaceContainer_->setSpace(space);
+TimeScalar* Domain::mkTimeScalar(ClassicalTime* sp){
+    TimeScalar* dom_ = new TimeScalar(sp, {});
+    this->TimeScalar_vec.push_back(dom_);
+    return dom_;
 }
-
-void Transform::setSpace(MapSpace space){
-    if(!this->spaceContainer_)
-        this->spaceContainer_ = new domain::MapSpaceContainer();
-    this->spaceContainer_->setSpace(space);
+                
+TimeScalar* Domain::mkTimeScalar(){
+    TimeScalar* dom_ = new TimeScalar({});
+    this->TimeScalar_vec.push_back(dom_);   
+    return dom_;
 }
 
-
-Vector_Lit* Domain::mkVector_Lit(Space* space, float x, float y, float z) {
-    Vector_Lit* vec = new domain::Vector_Lit(*space, x, y, z); 
-    vectors.push_back(vec); 
-    return vec;
+TimeBasisChange* Domain::mkTimeBasisChange(ClassicalTime* sp){
+    TimeBasisChange* dom_ = new TimeBasisChange(sp, {});
+    this->TimeBasisChange_vec.push_back(dom_);
+    return dom_;
 }
-
-Vector_Lit* Domain::mkVector_Lit(float x, float y, float z)
-{
-    Vector_Lit* vec = new domain::Vector_Lit(x, y, z);
-    vectors.push_back(vec);
-    return vec;
+                
+TimeBasisChange* Domain::mkTimeBasisChange(){
+    TimeBasisChange* dom_ = new TimeBasisChange({});
+    this->TimeBasisChange_vec.push_back(dom_);   
+    return dom_;
 }
 
-Vector_Expr* Domain::mkVector_Expr(Space* s, domain::VecExpr* exp) {
-    Vector_Expr* vec = new domain::Vector_Expr(*s, exp);
-    vectors.push_back(vec);
-    return vec;
+TimeScaling* Domain::mkTimeScaling(ClassicalTime* sp){
+    TimeScaling* dom_ = new TimeScaling(sp, {});
+    this->TimeScaling_vec.push_back(dom_);
+    return dom_;
 }
-
-Vector_Expr* Domain::mkVector_Expr(domain::VecExpr* exp){
-    Vector_Expr* vec = new domain::Vector_Expr(exp);
-    vectors.push_back(vec);
-    return vec;
+                
+TimeScaling* Domain::mkTimeScaling(){
+    TimeScaling* dom_ = new TimeScaling({});
+    this->TimeScaling_vec.push_back(dom_);   
+    return dom_;
 }
-
 
-/****
-* Def
-*****/
-
-
-// TODO: Should be binding to Vector, not Expr
-// 
-Vector_Def *Domain::mkVector_Def(domain::VecIdent* i, domain::Vector* v)
-{
-    LOG(DBUG) <<"Domain::mkVector_Def ";
-    Vector_Def *bd = new Vector_Def(i, v);  
-    defs.push_back(bd); 
-    return bd;
+TimeShear* Domain::mkTimeShear(ClassicalTime* sp){
+    TimeShear* dom_ = new TimeShear(sp, {});
+    this->TimeShear_vec.push_back(dom_);
+    return dom_;
 }
-
-
-Vector_Assign *Domain::mkVector_Assign(domain::VecVarExpr* i, domain::Vector* v)
-{
-    LOG(DBUG) <<"Domain::mkVector_Assign ";
-    Vector_Assign *bd = new Vector_Assign(i, v);  
-    assigns.push_back(bd); 
-    return bd;
+                
+TimeShear* Domain::mkTimeShear(){
+    TimeShear* dom_ = new TimeShear({});
+    this->TimeShear_vec.push_back(dom_);   
+    return dom_;
 }
-
 
-
-Scalar_Lit* Domain::mkScalar_Lit(Space* space, float scalar){
-    auto flt = new domain::Scalar_Lit(*space, scalar);
-    floats.push_back(flt);
-    return flt;
+ClassicalVelocity* Domain::mkClassicalVelocity(std::string key,std::string name_, int dimension_){
+    ClassicalVelocity* s = new ClassicalVelocity(name_, dimension_);
+    this->ClassicalVelocity_vec.push_back(s);
+    this->Space_vec.push_back(s);
+    this->Space_map[key] = s;
+    return s;
 }
 
-Scalar_Lit* Domain::mkScalar_Lit(float scalar){
-    auto flt = new domain::Scalar_Lit(scalar);
-    floats.push_back(flt);
-    return flt;
-}
+//std::vector<ClassicalVelocity*> &Domain::getClassicalVelocitySpaces() { return ClassicalVelocity_vec; }
 
-Scalar_Expr* Domain::mkScalar_Expr(Space* s, domain::ScalarExpr* exp) {
-    Scalar_Expr* flt = new domain::Scalar_Expr(*s, exp);
-    floats.push_back(flt);
-    return flt;
+Velocity3Vector* Domain::mkVelocity3Vector(ClassicalVelocity* sp){
+    Velocity3Vector* dom_ = new Velocity3Vector(sp, {});
+    this->Velocity3Vector_vec.push_back(dom_);
+    return dom_;
 }
-
-Scalar_Expr* Domain::mkScalar_Expr(domain::ScalarExpr* exp){
-    Scalar_Expr* flt = new domain::Scalar_Expr(exp);
-    floats.push_back(flt);
-    return flt;
+                
+Velocity3Vector* Domain::mkVelocity3Vector(){
+    Velocity3Vector* dom_ = new Velocity3Vector({});
+    this->Velocity3Vector_vec.push_back(dom_);   
+    return dom_;
 }
 
-
-/****
-* Def
-*****/
-
-
-Scalar_Def *Domain::mkScalar_Def(domain::ScalarIdent* i, domain::Scalar* v)
-{
-    LOG(DBUG) <<"Domain::mkScalar_Def ";
-    Scalar_Def *bd = new Scalar_Def(i, v);  
-    float_defs.push_back(bd); 
-    return bd;
+Velocity3Scalar* Domain::mkVelocity3Scalar(ClassicalVelocity* sp){
+    Velocity3Scalar* dom_ = new Velocity3Scalar(sp, {});
+    this->Velocity3Scalar_vec.push_back(dom_);
+    return dom_;
 }
-
-
-Scalar_Assign *Domain::mkScalar_Assign(domain::ScalarVarExpr* i, domain::Scalar* v)
-{
-    LOG(DBUG) <<"Domain::mkScalar_Assign ";
-    Scalar_Assign *bd = new Scalar_Assign(i, v);  
-    float_assigns.push_back(bd); 
-    return bd;
+                
+Velocity3Scalar* Domain::mkVelocity3Scalar(){
+    Velocity3Scalar* dom_ = new Velocity3Scalar({});
+    this->Velocity3Scalar_vec.push_back(dom_);   
+    return dom_;
 }
 
-
-
-Transform_Lit* Domain::mkTransform_Lit(MapSpace* space,
-		domain::VecExpr* arg1, 
-		domain::VecExpr* arg2,
-		domain::VecExpr* arg3){
-    auto tfm = new domain::Transform_Lit(*space, arg1, arg2, arg3);
-    transforms.push_back(tfm);
-    return tfm;
+Velocity3BasisChange* Domain::mkVelocity3BasisChange(ClassicalVelocity* sp){
+    Velocity3BasisChange* dom_ = new Velocity3BasisChange(sp, {});
+    this->Velocity3BasisChange_vec.push_back(dom_);
+    return dom_;
 }
-
-Transform_Lit* Domain::mkTransform_Lit(
-		domain::VecExpr* arg1, 
-		domain::VecExpr* arg2,
-		domain::VecExpr* arg3){
-    auto tfm = new domain::Transform_Lit(arg1, arg2, arg3);
-    transforms.push_back(tfm);
-    return tfm;
+                
+Velocity3BasisChange* Domain::mkVelocity3BasisChange(){
+    Velocity3BasisChange* dom_ = new Velocity3BasisChange({});
+    this->Velocity3BasisChange_vec.push_back(dom_);   
+    return dom_;
 }
 
-Transform_Expr* Domain::mkTransform_Expr(MapSpace* s, domain::TransformExpr* exp) {
-    Transform_Expr* tfm = new domain::Transform_Expr(*s, exp);
-    transforms.push_back(tfm);
-    return tfm;
+Velocity3Scaling* Domain::mkVelocity3Scaling(ClassicalVelocity* sp){
+    Velocity3Scaling* dom_ = new Velocity3Scaling(sp, {});
+    this->Velocity3Scaling_vec.push_back(dom_);
+    return dom_;
 }
-
-Transform_Expr* Domain::mkTransform_Expr(domain::TransformExpr* exp){
-    Transform_Expr* tfm = new domain::Transform_Expr(exp);
-    transforms.push_back(tfm);
-    return tfm;
+                
+Velocity3Scaling* Domain::mkVelocity3Scaling(){
+    Velocity3Scaling* dom_ = new Velocity3Scaling({});
+    this->Velocity3Scaling_vec.push_back(dom_);   
+    return dom_;
 }
-
 
-/****
-* Def
-*****/
-
-
-Transform_Def *Domain::mkTransform_Def(domain::TransformIdent* i, domain::Transform* v)
-{
-    LOG(DBUG) <<"Domain::mkTransform_Def ";
-    Transform_Def *bd = new Transform_Def(i, v);  
-    transform_defs.push_back(bd); 
-    return bd;
+Velocity3Shear* Domain::mkVelocity3Shear(ClassicalVelocity* sp){
+    Velocity3Shear* dom_ = new Velocity3Shear(sp, {});
+    this->Velocity3Shear_vec.push_back(dom_);
+    return dom_;
 }
-
-
-Transform_Assign *Domain::mkTransform_Assign(domain::TransformVarExpr* i, domain::Transform* v)
-{
-    LOG(DBUG) <<"Domain::mkTransform_Assign ";
-    Transform_Assign *bd = new Transform_Assign(i, v);  
-    transform_assigns.push_back(bd); 
-    return bd;
+                
+Velocity3Shear* Domain::mkVelocity3Shear(){
+    Velocity3Shear* dom_ = new Velocity3Shear({});
+    this->Velocity3Shear_vec.push_back(dom_);   
+    return dom_;
 }
-

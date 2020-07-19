@@ -6,9 +6,9 @@
 #include "geometry_msgs/TransformStamped.h"
 #include <tf/transform_datatypes.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#include "nav_msgs/MapMetaData.h"
-#include "nav_msgs/OccupancyGrid.h"
-#include "nav_msgs/GetMap.h"
+//#include "nav_msgs/MapMetaData.h"
+//#include "nav_msgs/OccupancyGrid.h"
+//#include "nav_msgs/GetMap.h"
 
 #include <cmath>
 
@@ -109,13 +109,13 @@ int main(int argc, char **argv){
     @@AffineFrame base_link_frame_(geom3d, <computed>, geom3.stdFrame);
     */
 
-    @@EuclideanGeometry geom3d<3,"worldGeometry">;  // a space (affine space)
-    @@ClassicalTime time<"worldTime">;              // a space (affine space)
-    @@ClassicalVelocity vel<"worldVelocities">      // a space (a vector space)
+    //@@EuclideanGeometry geom3d<3,"worldGeometry">;  // a space (affine space)
+    //@@ClassicalTime time<"worldTime">;              // a space (affine space)
+    //@@ClassicalVelocity vel<"worldVelocities">      // a space (a vector space)
 
-    @@AffineFrame world_frame_(geom3d, <origin=<computed>,orientation=<x="north", y="east", z="up">>, geom3.stdFrame);
+    //@@AffineFrame world_frame_(geom3d, <origin=<computed>,orientation=<x="north", y="east", z="up">>, geom3.stdFrame);
 
-    @@Interpret ROS.worldFrame -> world_frame_
+    //@@Interpret ROS.worldFrame -> world_frame_
 
     /*
     Key insight: Just being in ROS brings in a whole set of intended physical interpretations.
@@ -165,7 +165,7 @@ int main(int argc, char **argv){
     */
 
 
-   ROS_INFO("Calling initROS (commented out for now");
+   //ROS_INFO("Calling initROS (commented out for now");
     //initROS(); 
    // there is a 3D Euclidean world space (implicit in ROS, we make it explicit as "s3").
    // there is a standard frame, the "world frame", on this world space, NED, conventions, standards, ... 
@@ -195,13 +195,13 @@ int main(int argc, char **argv){
     tf::Stamped<tf::Point> 
         tf_start_point(tf::Point(10, 10, 10), ros::Time::now() + ros::Duration(-10), "world"), 
         tf_end_point(tf::Point(20, -2, 12), ros::Time::now(), "world");*/
-    @@GeometricPoint tf_start_point_(geom3, [10.0,10.0,10.0], geom3.stdFrame)
-    @@GeometricPoint tf_end_point_(geom3, [20.0,-2.0,12.0], geom3.stdFrame)
+    //@@GeometricPoint tf_start_point_(geom3, [10.0,10.0,10.0], geom3.stdFrame)
+    //@@GeometricPoint tf_end_point_(geom3, [20.0,-2.0,12.0], geom3.stdFrame)
     tf::Point
         tf_start_point = tf::Point(10, 10, 10),
         tf_end_point = tf::Point(20, -2, 12);
-    @@Interpret tf_start_point -> tf_start_point_
-    @@Interpret tf_end_point -> tf_end_point_
+    //@@Interpret tf_start_point -> tf_start_point_
+    //@@Interpret tf_end_point -> tf_end_point_
 
     /*
     @@Define AffinePoint tf_start_point' in geometry with coordinates (10, 10, 10) relative to geometry.stdFrame
@@ -211,13 +211,13 @@ int main(int argc, char **argv){
     @@Interpret tf_end_point as POINT in geometry whose coordinates are (20,-2,12) relative to geometry.stdFrame
     */
    
-    @@TimePoint start_time_point_(time, <computed>, time.stdFrame);
-    @@TimePoint end_time_point_(time, <computed>, time.stdFrame);
+    //@@TimePoint start_time_point_(time, <computed>, time.stdFrame);
+    //@@TimePoint end_time_point_(time, <computed>, time.stdFrame);
     ros::Time 
         start_time_point = ros::Time::now() + ros::Duration(-10), 
         end_time_point = ros::Time::now();
-    @@Interpret start_time_point -> start_time_point_
-    @@Interpret end_time_point -> end_time_point_
+    //@@Interpret start_time_point -> start_time_point_
+    //@@Interpret end_time_point -> end_time_point_
 
    /*fix
     @@Define AffineVector time.VEC.ANON1 in time with coordinates (-10) relative to time.UTC-origin
@@ -269,13 +269,13 @@ int main(int argc, char **argv){
 
        //Define a geometry_msgs version of the points to be used for eays printing
     
-    @@GeometricPoint start_point_(geom3, [0, 0, 0], geom3.stdFrame)
-    @@GeometricPoint end_point_(geom3, [0, 0, 0], geom3.stdFrame)
+    //@@GeometricPoint start_point_(geom3, [0, 0, 0], geom3.stdFrame)
+    //@@GeometricPoint end_point_(geom3, [0, 0, 0], geom3.stdFrame)
     geometry_msgs::Point 
         start_point,
         end_point;
-    @@Interpret start_point -> start_point_
-    @@Interpret end_point -> end_point_
+    //@@Interpret start_point -> start_point_
+    //@@Interpret end_point -> end_point_
     
     /*
     @@Define AffinePoint geometry.VEC.UNK1 in geometry with coordinates (UNK, UNK, UNK) relative to geometry.std_frame
@@ -288,8 +288,8 @@ int main(int argc, char **argv){
     //Perform a conversion from the tf data type to the geometry_msg data type to be printed later
     tf::pointTFToMsg(tf_start_point, start_point);
     tf::pointTFToMsg(tf_end_point, end_point);
-    @@Interpret start_point -> tf_start_point_
-    @@Interpret end_point -> tf_end_point_
+    //@@Interpret start_point -> tf_start_point_
+    //@@Interpret end_point -> tf_end_point_
     /*
     @@Interpret start_point as tf_start_point'
     @@Interpret end_point as tf_end_point'
@@ -298,9 +298,9 @@ int main(int argc, char **argv){
     //Calculate the coordinate-wise vector displacement by the robot over the time horizon of its movement
     //@@ As both tf_end_point and tf_start_point are points, we conclude that tf_displacement is a Vector, indeed in the euclidean 3d-geometry space
     //although tf_displacement is coordinate-free, we annotate and infer that it is again in the world frame
-    @@GeometricVector tf_displacement_(geom3, <computed>, geom3.stdFrame)
+    //@@GeometricVector tf_displacement_(geom3, <computed>, geom3.stdFrame)
     tf::Vector3 tf_displacement = tf_end_point - tf_start_point;
-    @@Interpret tf_displacement -> tf_displacement_
+    //@@Interpret tf_displacement -> tf_displacement_
     /*
     @@Define AffineVector geometry.VEC.ANON1 in geometry with coordinates (-10, 12, -2) relative to geometry.stdFrame
     @@Define AffineVector tf_displacement' in geometry with coordinates geometry.VEC.ANON1 relative to geometry.stdFrame
@@ -319,12 +319,12 @@ int main(int argc, char **argv){
     //The denominator contains a computation in parenthesis and a conversion. The computation in parenthesis involves subtracting a Point from a Point
     //and , as a result, produces a vector. This vector inherits the space, units, and dimensions  of its arguments: namely, the 1d-time space with dimensions and units of seconds^1
     
-    @@Scalar+Units scalar_ ... whats going on here exactly with respect to frames?
+    //@@Scalar+Units scalar_ ... whats going on here exactly with respect to frames?
     tfScalar scalar = (end_time_point - start_time_point).toSec();
-    @@Interpret scalar -> scalar_
-    @@VelocityVector tf_average_displacement_per_second_(vel, <computed>, geom3.stdFrame)
+    //@@Interpret scalar -> scalar_
+    //@@VelocityVector tf_average_displacement_per_second_(vel, <computed>, geom3.stdFrame)
     tf::Vector3 tf_average_displacement_per_second = tf_displacement/scalar;
-    @@Interpret tf_average_displacement_per_second -> tf_average_displacement_per_second_
+    //@@Interpret tf_average_displacement_per_second -> tf_average_displacement_per_second_
     /*
     @@Define AffineVector time.VEC.ANON2 in time with coordinates end_time_point' - start_time_point' relative to time.UTC-origin
     @@Define AffineScalar geometry.SCALAR.ANON1 in geometry with coordinates (UNK)
@@ -340,13 +340,13 @@ int main(int argc, char **argv){
     //We defined two vectors, displacement and velocity, which will store the exact same values as tf_displacement and tf_velocity.
     //@@As we will simply store the results of tf_displacement and tf_velocity into these two vectors, they will have the exact same annotations. Namely,
     //displacement and velocity both represent vectors in the 3d geometric space, with the "world" as the coordinate frame, with units and dimensions of meters^3
-    @@GeometricVector displacement_(geom3, <computed>, geom3.stdFrame)
-    @@VelocityVector average_displacement_per_second_(vel, <computed>, geom3.stdFrame)
+    //@@GeometricVector displacement_(geom3, <computed>, geom3.stdFrame)
+    //@@VelocityVector average_displacement_per_second_(vel, <computed>, geom3.stdFrame)
     geometry_msgs::Vector3 
         displacement, //= //tf2::toMsg(tf2_displacement),
         average_displacement_per_second; //= //tf2::toMsg(tf2_velocity);
-    @@Interpret displacement -> displacement_
-    @@Interpret average_displacement_per_second -> average_displacement_per_second_
+    //@@Interpret displacement -> displacement_
+    //@@Interpret average_displacement_per_second -> average_displacement_per_second_
     /*
     @@Define AffineVector geometry.VEC.UNK3 in geometry with coordinates (UNK, UNK, UNK) relative to geometry.stdFrame
     @@Define AffineVector geometry.VEC.UNK4 in geometry with coordinates (UNK, UNK, UNK) relative to geometry.stdFrame
@@ -358,8 +358,8 @@ int main(int argc, char **argv){
     //These two commands are simply type conversions, so that we can take advantage of ROS's excellent formatting of geometry_msgs when printing 
     tf::vector3TFToMsg(tf_displacement, displacement);
     tf::vector3TFToMsg(tf_average_displacement_per_second, average_displacement_per_second);
-    @@Interpret displacement -> tf_displacement_
-    @@Interpret average_displacement_per_second -> tf_average_displacement_per_second_
+    //@@Interpret displacement -> tf_displacement_
+    //@@Interpret average_displacement_per_second -> tf_average_displacement_per_second_
     /*
     @@Interpret displacement as tf_displacement'
     @@Interpret average_displacement_per_second as tf_average_displacement_per_second'
@@ -368,14 +368,14 @@ int main(int argc, char **argv){
     */
     
     //Print off the start point, end point, displacement vector, and average_displacement_per_second vector
-    ROS_INFO("Start Point : ");
-    ROS_INFO_STREAM(start_point);
-    ROS_INFO("End Point : ");
-    ROS_INFO_STREAM(end_point);
-    ROS_INFO("Coordinate-wise Distance displacement : ");
-    ROS_INFO_STREAM(displacement);
-    ROS_INFO("Coordinate-wise Velocity : ");
-    ROS_INFO_STREAM(average_displacement_per_second);
+    //ROS_INFO("Start Point : ");
+    //ROS_INFO_STREAM(start_point);
+    //ROS_INFO("End Point : ");
+    //ROS_INFO_STREAM(end_point);
+    //ROS_INFO("Coordinate-wise Distance displacement : ");
+    //ROS_INFO_STREAM(displacement);
+    //ROS_INFO("Coordinate-wise Velocity : ");
+    //ROS_INFO_STREAM(average_displacement_per_second);
 
     //Calculate the total distance displacement by the robot in meters
     //@@The result of this computation is a real scalar. It has units and dimensions as meters ^1. It lives in the 1d euclidean geometric space, 
@@ -385,9 +385,9 @@ int main(int argc, char **argv){
     //in its standard frame, with units and dimensions in meters. The result of the multiplication, and the operands of the addition, 
     //are again in the 1d geometric space with the standard frame, but its units are now in meters^2. The result of the addition preserves both the space, frame, units, and dimensions
     //The final result of the square root operation preserves the 1d geometric space and frame, but yields dimensions and units of meters^1
-    @@Scalar absolute_distance_
+    //@@Scalar absolute_distance_
     tf2Scalar absolute_distance = std::sqrt(displacement.x * displacement.x + displacement.y * displacement.y + displacement.z * displacement.z);
-    @@Interpret absolute_distance -> absolute_distance_
+    //@@Interpret absolute_distance -> absolute_distance_
 
 
     /*
@@ -435,12 +435,12 @@ int main(int argc, char **argv){
     //are again in the 1d geometric space with the standard frame, but its units are now in meters^2/seconds^2. The result of the addition preserves both the space, frame, units, and dimensions
     //The final result of the square root operation preserves the 1d geometric space and frame, but yields dimensions and units of meters^1/seconds^1
    
-    @@Scalar absolute_velocity_
+    //@@Scalar absolute_velocity_
     tf2Scalar absolute_velocity = std::sqrt(
         average_displacement_per_second.x * average_displacement_per_second.x + 
         average_displacement_per_second.y * average_displacement_per_second.y + 
         average_displacement_per_second.z * average_displacement_per_second.z);
-    @@Interpret absolute_velocity -> absolute_velocity_
+    //@@Interpret absolute_velocity -> absolute_velocity_
     /*
     
     @@Define AffineScalar geometry.SCALAR.UNK1 in geometry with coordinates UNK
@@ -470,10 +470,10 @@ int main(int argc, char **argv){
     */
 
 
-    ROS_INFO("Total Distance in meters : %f", absolute_distance);
+    //ROS_INFO("Total Distance in meters : %f", absolute_distance);
 
     //print off the absolute velocity of the 
-    ROS_INFO("Velocity in meters/second : %f", absolute_velocity);
+    //ROS_INFO("Velocity in meters/second : %f", absolute_velocity);
 
     /* END VELOCITY EXAMPLE */
 }

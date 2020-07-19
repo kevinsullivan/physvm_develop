@@ -7,196 +7,370 @@
 
 #include <unordered_map>
 
-namespace interp2domain {
+namespace interp2domain{
 
 class InterpToDomain
 {
-  public:
+    public:
+	void putSpace(interp::Space* key, domain::Space* val);
+	domain::Space* getSpace(interp::Space* c) const;
+	interp::Space* getSpace(domain::Space* d) const;
 
-// Ident
-
-	void putVecIdent(interp::VecIdent *key, domain::VecIdent *i);
-	domain::VecIdent *getVecIdent(interp::VecIdent *c) const;
-	interp::VecIdent *getVecIdent(domain::VecIdent *d) const;
-
-	void putScalarIdent(interp::ScalarIdent *key, domain::ScalarIdent *i);
-	domain::ScalarIdent *getScalarIdent(interp::ScalarIdent *c) const;
-	interp::ScalarIdent *getScalarIdent(domain::ScalarIdent *d) const;
-
-	void putTransformIdent(interp::TransformIdent *key, domain::TransformIdent *i);
-	domain::TransformIdent *getTransformIdent(interp::TransformIdent *c) const;
-	interp::TransformIdent *getTransformIdent(domain::TransformIdent *d) const;
-// Expr
-
-	domain::VecExpr *getVecExpr(interp::VecExpr* c) const;
-	interp::VecExpr *getVecExpr(domain::VecExpr* d) const;
-
-	domain::ScalarExpr *getScalarExpr(interp::ScalarExpr* c) const;
-	interp::ScalarExpr *getScalarExpr(domain::ScalarExpr* d) const;
-
-	domain::TransformExpr *getTransformExpr(interp::TransformExpr* c) const;
-	interp::TransformExpr *getTransformExpr(domain::TransformExpr* d) const;
-
-/*	void putVecLitExpr(interp::VecLitExpr n, domain::VecLitExpr &v);
-	domain::VecLitExpr *getLitInterp(interp::VecLitExpr c) const;
-	interp::VecLitExpr *getLitInterp(domain::VecLitExpr d) const;*/
-
-	void putVecVarExpr(interp::VecVarExpr *n, domain::VecVarExpr *e);
-	domain::VecVarExpr *getVecVarExpr(interp::VecVarExpr* c) const;
-	interp::VecVarExpr *getVecVarExpr(domain::VecVarExpr* d) const;
-
-	void putScalarVarExpr(interp::ScalarVarExpr *n, domain::ScalarVarExpr *e);
-	domain::ScalarVarExpr *getScalarVarExpr(interp::ScalarVarExpr* c) const;
-	interp::ScalarVarExpr *getScalarVarExpr(domain::ScalarVarExpr* d) const;
-
-	void putTransformVarExpr(interp::TransformVarExpr *n, domain::TransformVarExpr *e);
-	domain::TransformVarExpr *getTransformVarExpr(interp::TransformVarExpr* c) const;
-	interp::TransformVarExpr *getTransformVarExpr(domain::TransformVarExpr* d) const;
-
-	void putVecVecAddExpr(interp::VecVecAddExpr *n, domain::VecVecAddExpr *e);
-	domain::VecVecAddExpr *getVecVecAddExpr(interp::VecVecAddExpr* c) const;
-	interp::VecVecAddExpr *getVecVecAddExpr(domain::VecVecAddExpr* d) const;
-
-	void putVecScalarMulExpr(interp::VecScalarMulExpr *n, domain::VecScalarMulExpr* e);
-	domain::VecScalarMulExpr *getVecScalarMulExpr(interp::VecScalarMulExpr* n) const;
-	interp::VecScalarMulExpr *getVecScalarMulExpr(domain::VecScalarMulExpr* e) const;
-
-	void putTransformVecApplyExpr(interp::TransformVecApplyExpr *n, domain::TransformVecApplyExpr* e);
-	domain::TransformVecApplyExpr *getTransformVecApplyExpr(interp::TransformVecApplyExpr* n) const;
-	interp::TransformVecApplyExpr *getTransformVecApplyExpr(domain::TransformVecApplyExpr* e) const;
-
-	void putScalarScalarAddExpr(interp::ScalarScalarAddExpr *n, domain::ScalarScalarAddExpr *e);
-	domain::ScalarScalarAddExpr *getScalarScalarAddExpr(interp::ScalarScalarAddExpr* c) const;
-	interp::ScalarScalarAddExpr *getScalarScalarAddExpr(domain::ScalarScalarAddExpr* d) const;
-
-	void putScalarScalarMulExpr(interp::ScalarScalarMulExpr *n, domain::ScalarScalarMulExpr *e);
-	domain::ScalarScalarMulExpr *getScalarScalarMulExpr(interp::ScalarScalarMulExpr* c) const;
-	interp::ScalarScalarMulExpr *getScalarScalarMulExpr(domain::ScalarScalarMulExpr* d) const;
-
-	void putTransformTransformComposeExpr(interp::TransformTransformComposeExpr *n, domain::TransformTransformComposeExpr *e);
-	domain::TransformTransformComposeExpr *getTransformTransformComposeExpr(interp::TransformTransformComposeExpr* c) const;
-	interp::TransformTransformComposeExpr *getTransformTransformComposeExpr(domain::TransformTransformComposeExpr* d) const;
-
-	// KEVIN: Added for VecParenExpr horizontal module
-	void putVecParenExpr(interp::VecParenExpr *n, domain::VecParenExpr *e);
-	domain::VecParenExpr *getVecParenExpr(interp::VecParenExpr* c) const;
-	interp::VecParenExpr *getVecParenExpr(domain::VecParenExpr* d) const;
-
-	void putScalarParenExpr(interp::ScalarParenExpr *n, domain::ScalarParenExpr *e);
-	domain::ScalarParenExpr *getScalarParenExpr(interp::ScalarParenExpr* c) const;
-	interp::ScalarParenExpr *getScalarParenExpr(domain::ScalarParenExpr* d) const;
-
-	void putTransformParenExpr(interp::TransformParenExpr *n, domain::TransformParenExpr *e);
-	domain::TransformParenExpr *getTransformParenExpr(interp::TransformParenExpr* c) const;
-	interp::TransformParenExpr *getTransformParenExpr(domain::TransformParenExpr* d) const;
-
-// Vector
-
-	void putVector_Lit(interp::Vector *ast, domain::Vector_Lit *v);
-	domain::Vector_Lit *getVector_Lit(interp::Vector_Lit* c) const;
-	interp::Vector_Lit *getVector_Lit(domain::Vector_Lit* d) const;
-
-	void putVector_Expr(interp::Vector *ast, domain::Vector_Expr *v);
-	domain::Vector_Expr *getVector_Expr(interp::Vector_Expr* c) const;
-	interp::Vector_Expr *getVector_Expr(domain::Vector_Expr* d) const;
-
-	interp::Vector *getVector(domain::Vector* v);
-	domain::Vector *getVector(interp::Vector* v);
-
-// Def
-
-	void putVector_Def(interp::Vector_Def *vardecl_wrapper, domain::Vector_Def *b);
-	domain::Vector_Def *getVector_Def(interp::Vector_Def* c) const;
-	interp::Vector_Def *getVector_Def(domain::Vector_Def* d) const;
-
-	void putVector_Assign(interp::Vector_Assign *var_wrapper, domain::Vector_Assign *b);
-	domain::Vector_Assign *getVector_Assign(interp::Vector_Assign* c) const;
-	interp::Vector_Assign *getVector_Assign(domain::Vector_Assign* d) const;
-
-	void putScalar_Lit(interp::Scalar* ast, domain::Scalar_Lit *v);
-	domain::Scalar_Lit *getScalar_Lit(interp::Scalar_Lit* c) const;
-	interp::Scalar_Lit *getScalar_Lit(domain::Scalar_Lit* d) const;
-
-	void putScalar_Expr(interp::Scalar *ast, domain::Scalar_Expr *v);
-	domain::Scalar_Expr *getScalar_Expr(interp::Scalar_Expr* c) const;
-	interp::Scalar_Expr *getScalar_Expr(domain::Scalar_Expr* d) const;
-
-	interp::Scalar* getScalar(domain::Scalar* v);
-	domain::Scalar* getScalar(interp::Scalar* v);
-
-	void putScalar_Def(interp::Scalar_Def *vardecl_wrapper, domain::Scalar_Def *b);
-	domain::Scalar_Def* getScalar_Def(interp::Scalar_Def* c) const;
-	interp::Scalar_Def* getScalar_Def(domain::Scalar_Def* d) const;
-
-	void putScalar_Assign(interp::Scalar_Assign *var_wrapper, domain::Scalar_Assign *b);
-	domain::Scalar_Assign* getScalar_Assign(interp::Scalar_Assign* c) const;
-	interp::Scalar_Assign* getScalar_Assign(domain::Scalar_Assign* d) const;
-
-	void putTransform_Lit(interp::Transform* ast, domain::Transform_Lit *v);
-	domain::Transform_Lit *getTransform_Lit(interp::Transform_Lit* c) const;
-	interp::Transform_Lit *getTransform_Lit(domain::Transform_Lit* d) const;
-
-	void putTransform_Expr(interp::Transform *ast, domain::Transform_Expr *v);
-	domain::Transform_Expr *getTransform_Expr(interp::Transform_Expr* c) const;
-	interp::Transform_Expr *getTransform_Expr(domain::Transform_Expr* d) const;
-
-	interp::Transform* getTransform(domain::Transform* v);
-	domain::Transform* getTransform(interp::Transform* v);
-
-	void putTransform_Def(interp::Transform_Def *vardecl_wrapper, domain::Transform_Def *b);
-	domain::Transform_Def* getTransform_Def(interp::Transform_Def* c) const;
-	interp::Transform_Def* getTransform_Def(domain::Transform_Def* d) const;
-
-	void putTransform_Assign(interp::Transform_Assign *var_wrapper, domain::Transform_Assign *b);
-	domain::Transform_Assign* getTransform_Assign(interp::Transform_Assign* c) const;
-	interp::Transform_Assign* getTransform_Assign(domain::Transform_Assign* d) const;
+	domain::DomainObject* getSTMT(interp::STMT* c) const;
+	interp::STMT* getSTMT(domain::DomainObject* d) const;
 	
+	void putCOMPOUND_STMT(interp::COMPOUND_STMT* key, domain::DomainObject* val);
+	domain::DomainObject* getCOMPOUND_STMT(interp::COMPOUND_STMT* c) const;
+	interp::COMPOUND_STMT* getCOMPOUND_STMT(domain::DomainObject* d) const;
+void eraseCOMPOUND_STMT(interp::COMPOUND_STMT* key, domain::DomainObject* val);
 
-	void dump() const;
+	domain::DomainObject* getIFCOND(interp::IFCOND* c) const;
+	interp::IFCOND* getIFCOND(domain::DomainObject* d) const;
+	
+	void putIFTHEN_EXPR_STMT(interp::IFTHEN_EXPR_STMT* key, domain::DomainObject* val);
+	domain::DomainObject* getIFTHEN_EXPR_STMT(interp::IFTHEN_EXPR_STMT* c) const;
+	interp::IFTHEN_EXPR_STMT* getIFTHEN_EXPR_STMT(domain::DomainObject* d) const;
+void eraseIFTHEN_EXPR_STMT(interp::IFTHEN_EXPR_STMT* key, domain::DomainObject* val);
 
-  private:
-	/* 
-	We implement an domainretation as a collection of typed maps. 
-	The keys are "Code Coordinate" objects, which, in turn, are 
-	currently just containers for pointers to AST nodes, basically
-	just adding operator==() and hash functions.
-	*/
- 
-	std::unordered_map <interp::VecIdent*,	domain::VecIdent*	> 	interp2domain_VecIdent;
-	std::unordered_map <interp::VecExpr*, 	domain::VecExpr*	> 	interp2domain_VecExpr;
-	std::unordered_map <interp::Vector*, 	domain::Vector*		> 	interp2domain_Vector;
-	std::unordered_map <interp::Vector_Def*,domain::Vector_Def*	> 	interp2domain_Vector_Def;
-	std::unordered_map <interp::Vector_Assign*,domain::Vector_Assign*> 	interp2domain_Vector_Assign;
+	void putIFTHENELSEIF_EXPR_STMT_IFCOND(interp::IFTHENELSEIF_EXPR_STMT_IFCOND* key, domain::DomainObject* val);
+	domain::DomainObject* getIFTHENELSEIF_EXPR_STMT_IFCOND(interp::IFTHENELSEIF_EXPR_STMT_IFCOND* c) const;
+	interp::IFTHENELSEIF_EXPR_STMT_IFCOND* getIFTHENELSEIF_EXPR_STMT_IFCOND(domain::DomainObject* d) const;
+void eraseIFTHENELSEIF_EXPR_STMT_IFCOND(interp::IFTHENELSEIF_EXPR_STMT_IFCOND* key, domain::DomainObject* val);
 
-	std::unordered_map <interp::ScalarIdent*,domain::ScalarIdent* >	interp2domain_ScalarIdent;
-	std::unordered_map <interp::ScalarExpr*, domain::ScalarExpr*	>	interp2domain_ScalarExpr;
-	std::unordered_map <interp::Scalar*, domain::Scalar*			>	interp2domain_Scalar;
-	std::unordered_map <interp::Scalar_Def*, domain::Scalar_Def*	>	interp2domain_Scalar_Def;
-	std::unordered_map <interp::Scalar_Assign*, domain::Scalar_Assign*>	interp2domain_Scalar_Assign;
+	void putIFTHENELSE_EXPR_STMT_STMT(interp::IFTHENELSE_EXPR_STMT_STMT* key, domain::DomainObject* val);
+	domain::DomainObject* getIFTHENELSE_EXPR_STMT_STMT(interp::IFTHENELSE_EXPR_STMT_STMT* c) const;
+	interp::IFTHENELSE_EXPR_STMT_STMT* getIFTHENELSE_EXPR_STMT_STMT(domain::DomainObject* d) const;
+void eraseIFTHENELSE_EXPR_STMT_STMT(interp::IFTHENELSE_EXPR_STMT_STMT* key, domain::DomainObject* val);
 
-	std::unordered_map <interp::TransformIdent*,domain::TransformIdent* >	interp2domain_TransformIdent;
-	std::unordered_map <interp::TransformExpr*, domain::TransformExpr*	>	interp2domain_TransformExpr;
-	std::unordered_map <interp::Transform*, domain::Transform*			>	interp2domain_Transform;
-	std::unordered_map <interp::Transform_Def*, domain::Transform_Def*	>	interp2domain_Transform_Def;
-	std::unordered_map <interp::Transform_Assign*, domain::Transform_Assign*>	interp2domain_Transform_Assign;
+	domain::DomainObject* getEXPR(interp::EXPR* c) const;
+	interp::EXPR* getEXPR(domain::DomainObject* d) const;
+	
+	domain::DomainObject* getASSIGNMENT(interp::ASSIGNMENT* c) const;
+	interp::ASSIGNMENT* getASSIGNMENT(domain::DomainObject* d) const;
+	
+	void putASSIGN_REAL1_VAR_REAL1_EXPR(interp::ASSIGN_REAL1_VAR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getASSIGN_REAL1_VAR_REAL1_EXPR(interp::ASSIGN_REAL1_VAR_REAL1_EXPR* c) const;
+	interp::ASSIGN_REAL1_VAR_REAL1_EXPR* getASSIGN_REAL1_VAR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseASSIGN_REAL1_VAR_REAL1_EXPR(interp::ASSIGN_REAL1_VAR_REAL1_EXPR* key, domain::DomainObject* val);
 
-	std::unordered_map<domain::VecIdent*, 	interp::VecIdent*	> 	domain2interp_VecIdent;
-	std::unordered_map<domain::VecExpr*, 	interp::VecExpr*	> 	domain2interp_VecExpr;
-	std::unordered_map<domain::Vector*, 	interp::Vector*		> 	domain2interp_Vector;
-	std::unordered_map<domain::Vector_Def*, interp::Vector_Def*	> 	domain2interp_Vector_Def;
-	std::unordered_map<domain::Vector_Assign*, interp::Vector_Assign*> 	domain2interp_Vector_Assign;
+	void putASSIGN_REAL3_VAR_REAL3_EXPR(interp::ASSIGN_REAL3_VAR_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getASSIGN_REAL3_VAR_REAL3_EXPR(interp::ASSIGN_REAL3_VAR_REAL3_EXPR* c) const;
+	interp::ASSIGN_REAL3_VAR_REAL3_EXPR* getASSIGN_REAL3_VAR_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseASSIGN_REAL3_VAR_REAL3_EXPR(interp::ASSIGN_REAL3_VAR_REAL3_EXPR* key, domain::DomainObject* val);
 
-	std::unordered_map<domain::ScalarIdent*, interp::ScalarIdent*	> 	domain2interp_ScalarIdent;
-	std::unordered_map<domain::ScalarExpr*, 	interp::ScalarExpr*	> 	domain2interp_ScalarExpr;
-	std::unordered_map<domain::Scalar*, 		interp::Scalar*		> 	domain2interp_Scalar;
-	std::unordered_map<domain::Scalar_Def*, 	interp::Scalar_Def*	> 	domain2interp_Scalar_Def;
-	std::unordered_map<domain::Scalar_Assign*, 	interp::Scalar_Assign*> 	domain2interp_Scalar_Assign;
+	void putASSIGN_REAL4_VAR_REAL4_EXPR(interp::ASSIGN_REAL4_VAR_REAL4_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getASSIGN_REAL4_VAR_REAL4_EXPR(interp::ASSIGN_REAL4_VAR_REAL4_EXPR* c) const;
+	interp::ASSIGN_REAL4_VAR_REAL4_EXPR* getASSIGN_REAL4_VAR_REAL4_EXPR(domain::DomainObject* d) const;
+void eraseASSIGN_REAL4_VAR_REAL4_EXPR(interp::ASSIGN_REAL4_VAR_REAL4_EXPR* key, domain::DomainObject* val);
 
-	std::unordered_map<domain::TransformIdent*, interp::TransformIdent*	> 	domain2interp_TransformIdent;
-	std::unordered_map<domain::TransformExpr*, 	interp::TransformExpr*	> 	domain2interp_TransformExpr;
-	std::unordered_map<domain::Transform*, 		interp::Transform*		> 	domain2interp_Transform;
-	std::unordered_map<domain::Transform_Def*, 	interp::Transform_Def*	> 	domain2interp_Transform_Def;
-	std::unordered_map<domain::Transform_Assign*, 	interp::Transform_Assign*> 	domain2interp_Transform_Assign;
+	void putASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* c) const;
+	interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* getASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(domain::DomainObject* d) const;
+void eraseASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR(interp::ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR* key, domain::DomainObject* val);
+
+	domain::DomainObject* getDECLARE(interp::DECLARE* c) const;
+	interp::DECLARE* getDECLARE(domain::DomainObject* d) const;
+	
+	void putDECL_REAL1_VAR_REAL1_EXPR(interp::DECL_REAL1_VAR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REAL1_VAR_REAL1_EXPR(interp::DECL_REAL1_VAR_REAL1_EXPR* c) const;
+	interp::DECL_REAL1_VAR_REAL1_EXPR* getDECL_REAL1_VAR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseDECL_REAL1_VAR_REAL1_EXPR(interp::DECL_REAL1_VAR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putDECL_REAL3_VAR_REAL3_EXPR(interp::DECL_REAL3_VAR_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REAL3_VAR_REAL3_EXPR(interp::DECL_REAL3_VAR_REAL3_EXPR* c) const;
+	interp::DECL_REAL3_VAR_REAL3_EXPR* getDECL_REAL3_VAR_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseDECL_REAL3_VAR_REAL3_EXPR(interp::DECL_REAL3_VAR_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* c) const;
+	interp::DECL_REAL4_VAR_REAL4_EXPR* getDECL_REAL4_VAR_REAL4_EXPR(domain::DomainObject* d) const;
+void eraseDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* key, domain::DomainObject* val);
+
+	void putDECL_REALMATRIX_VAR_REALMATRIX_EXPR(interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REALMATRIX_VAR_REALMATRIX_EXPR(interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* c) const;
+	interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* getDECL_REALMATRIX_VAR_REALMATRIX_EXPR(domain::DomainObject* d) const;
+void eraseDECL_REALMATRIX_VAR_REALMATRIX_EXPR(interp::DECL_REALMATRIX_VAR_REALMATRIX_EXPR* key, domain::DomainObject* val);
+
+	void putDECL_REAL1_VAR(interp::DECL_REAL1_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REAL1_VAR(interp::DECL_REAL1_VAR* c) const;
+	interp::DECL_REAL1_VAR* getDECL_REAL1_VAR(domain::DomainObject* d) const;
+void eraseDECL_REAL1_VAR(interp::DECL_REAL1_VAR* key, domain::DomainObject* val);
+
+	void putDECL_REAL3_VAR(interp::DECL_REAL3_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REAL3_VAR(interp::DECL_REAL3_VAR* c) const;
+	interp::DECL_REAL3_VAR* getDECL_REAL3_VAR(domain::DomainObject* d) const;
+void eraseDECL_REAL3_VAR(interp::DECL_REAL3_VAR* key, domain::DomainObject* val);
+
+	void putDECL_REAL4_VAR(interp::DECL_REAL4_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REAL4_VAR(interp::DECL_REAL4_VAR* c) const;
+	interp::DECL_REAL4_VAR* getDECL_REAL4_VAR(domain::DomainObject* d) const;
+void eraseDECL_REAL4_VAR(interp::DECL_REAL4_VAR* key, domain::DomainObject* val);
+
+	void putDECL_REALMATRIX_VAR(interp::DECL_REALMATRIX_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REALMATRIX_VAR(interp::DECL_REALMATRIX_VAR* c) const;
+	interp::DECL_REALMATRIX_VAR* getDECL_REALMATRIX_VAR(domain::DomainObject* d) const;
+void eraseDECL_REALMATRIX_VAR(interp::DECL_REALMATRIX_VAR* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREAL1_EXPR(interp::REAL1_EXPR* c) const;
+	interp::REAL1_EXPR* getREAL1_EXPR(domain::DomainObject* d) const;
+	
+	void putPAREN_REAL1_EXPR(interp::PAREN_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getPAREN_REAL1_EXPR(interp::PAREN_REAL1_EXPR* c) const;
+	interp::PAREN_REAL1_EXPR* getPAREN_REAL1_EXPR(domain::DomainObject* d) const;
+void erasePAREN_REAL1_EXPR(interp::PAREN_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putINV_REAL1_EXPR(interp::INV_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getINV_REAL1_EXPR(interp::INV_REAL1_EXPR* c) const;
+	interp::INV_REAL1_EXPR* getINV_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseINV_REAL1_EXPR(interp::INV_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putNEG_REAL1_EXPR(interp::NEG_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getNEG_REAL1_EXPR(interp::NEG_REAL1_EXPR* c) const;
+	interp::NEG_REAL1_EXPR* getNEG_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseNEG_REAL1_EXPR(interp::NEG_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putADD_REAL1_EXPR_REAL1_EXPR(interp::ADD_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getADD_REAL1_EXPR_REAL1_EXPR(interp::ADD_REAL1_EXPR_REAL1_EXPR* c) const;
+	interp::ADD_REAL1_EXPR_REAL1_EXPR* getADD_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseADD_REAL1_EXPR_REAL1_EXPR(interp::ADD_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putSUB_REAL1_EXPR_REAL1_EXPR(interp::SUB_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getSUB_REAL1_EXPR_REAL1_EXPR(interp::SUB_REAL1_EXPR_REAL1_EXPR* c) const;
+	interp::SUB_REAL1_EXPR_REAL1_EXPR* getSUB_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseSUB_REAL1_EXPR_REAL1_EXPR(interp::SUB_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* c) const;
+	interp::MUL_REAL1_EXPR_REAL1_EXPR* getMUL_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putDIV_REAL1_EXPR_REAL1_EXPR(interp::DIV_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getDIV_REAL1_EXPR_REAL1_EXPR(interp::DIV_REAL1_EXPR_REAL1_EXPR* c) const;
+	interp::DIV_REAL1_EXPR_REAL1_EXPR* getDIV_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseDIV_REAL1_EXPR_REAL1_EXPR(interp::DIV_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putREF_REAL1_VAR(interp::REF_REAL1_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getREF_REAL1_VAR(interp::REF_REAL1_VAR* c) const;
+	interp::REF_REAL1_VAR* getREF_REAL1_VAR(domain::DomainObject* d) const;
+void eraseREF_REAL1_VAR(interp::REF_REAL1_VAR* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREAL3_EXPR(interp::REAL3_EXPR* c) const;
+	interp::REAL3_EXPR* getREAL3_EXPR(domain::DomainObject* d) const;
+	
+	void putPAREN_REAL3_EXPR(interp::PAREN_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getPAREN_REAL3_EXPR(interp::PAREN_REAL3_EXPR* c) const;
+	interp::PAREN_REAL3_EXPR* getPAREN_REAL3_EXPR(domain::DomainObject* d) const;
+void erasePAREN_REAL3_EXPR(interp::PAREN_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putADD_REAL3_EXPR_REAL3_EXPR(interp::ADD_REAL3_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getADD_REAL3_EXPR_REAL3_EXPR(interp::ADD_REAL3_EXPR_REAL3_EXPR* c) const;
+	interp::ADD_REAL3_EXPR_REAL3_EXPR* getADD_REAL3_EXPR_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseADD_REAL3_EXPR_REAL3_EXPR(interp::ADD_REAL3_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putSUB_REAL3_EXPR_REAL3_EXPR(interp::SUB_REAL3_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getSUB_REAL3_EXPR_REAL3_EXPR(interp::SUB_REAL3_EXPR_REAL3_EXPR* c) const;
+	interp::SUB_REAL3_EXPR_REAL3_EXPR* getSUB_REAL3_EXPR_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseSUB_REAL3_EXPR_REAL3_EXPR(interp::SUB_REAL3_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putINV_REAL3_EXPR(interp::INV_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getINV_REAL3_EXPR(interp::INV_REAL3_EXPR* c) const;
+	interp::INV_REAL3_EXPR* getINV_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseINV_REAL3_EXPR(interp::INV_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putNEG_REAL3_EXPR(interp::NEG_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getNEG_REAL3_EXPR(interp::NEG_REAL3_EXPR* c) const;
+	interp::NEG_REAL3_EXPR* getNEG_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseNEG_REAL3_EXPR(interp::NEG_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putMUL_REAL3_EXPR_REAL1_EXPR(interp::MUL_REAL3_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getMUL_REAL3_EXPR_REAL1_EXPR(interp::MUL_REAL3_EXPR_REAL1_EXPR* c) const;
+	interp::MUL_REAL3_EXPR_REAL1_EXPR* getMUL_REAL3_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseMUL_REAL3_EXPR_REAL1_EXPR(interp::MUL_REAL3_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putMUL_REALMATRIX_EXPR_REAL3_EXPR(interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getMUL_REALMATRIX_EXPR_REAL3_EXPR(interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* c) const;
+	interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* getMUL_REALMATRIX_EXPR_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseMUL_REALMATRIX_EXPR_REAL3_EXPR(interp::MUL_REALMATRIX_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putDIV_REAL3_EXPR_REAL1_EXPR(interp::DIV_REAL3_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getDIV_REAL3_EXPR_REAL1_EXPR(interp::DIV_REAL3_EXPR_REAL1_EXPR* c) const;
+	interp::DIV_REAL3_EXPR_REAL1_EXPR* getDIV_REAL3_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseDIV_REAL3_EXPR_REAL1_EXPR(interp::DIV_REAL3_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putREF_REAL3_VAR(interp::REF_REAL3_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getREF_REAL3_VAR(interp::REF_REAL3_VAR* c) const;
+	interp::REF_REAL3_VAR* getREF_REAL3_VAR(domain::DomainObject* d) const;
+void eraseREF_REAL3_VAR(interp::REF_REAL3_VAR* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREAL4_EXPR(interp::REAL4_EXPR* c) const;
+	interp::REAL4_EXPR* getREAL4_EXPR(domain::DomainObject* d) const;
+	
+	void putPAREN_REAL4_EXPR(interp::PAREN_REAL4_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getPAREN_REAL4_EXPR(interp::PAREN_REAL4_EXPR* c) const;
+	interp::PAREN_REAL4_EXPR* getPAREN_REAL4_EXPR(domain::DomainObject* d) const;
+void erasePAREN_REAL4_EXPR(interp::PAREN_REAL4_EXPR* key, domain::DomainObject* val);
+
+	void putADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* c) const;
+	interp::ADD_REAL4_EXPR_REAL4_EXPR* getADD_REAL4_EXPR_REAL4_EXPR(domain::DomainObject* d) const;
+void eraseADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* key, domain::DomainObject* val);
+
+	void putMUL_REAL4_EXPR_REAL1_EXPR(interp::MUL_REAL4_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getMUL_REAL4_EXPR_REAL1_EXPR(interp::MUL_REAL4_EXPR_REAL1_EXPR* c) const;
+	interp::MUL_REAL4_EXPR_REAL1_EXPR* getMUL_REAL4_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseMUL_REAL4_EXPR_REAL1_EXPR(interp::MUL_REAL4_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putREF_REAL4_VAR(interp::REF_REAL4_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getREF_REAL4_VAR(interp::REF_REAL4_VAR* c) const;
+	interp::REF_REAL4_VAR* getREF_REAL4_VAR(domain::DomainObject* d) const;
+void eraseREF_REAL4_VAR(interp::REF_REAL4_VAR* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREALMATRIX_EXPR(interp::REALMATRIX_EXPR* c) const;
+	interp::REALMATRIX_EXPR* getREALMATRIX_EXPR(domain::DomainObject* d) const;
+	
+	void putPAREN_REALMATRIX_EXPR(interp::PAREN_REALMATRIX_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getPAREN_REALMATRIX_EXPR(interp::PAREN_REALMATRIX_EXPR* c) const;
+	interp::PAREN_REALMATRIX_EXPR* getPAREN_REALMATRIX_EXPR(domain::DomainObject* d) const;
+void erasePAREN_REALMATRIX_EXPR(interp::PAREN_REALMATRIX_EXPR* key, domain::DomainObject* val);
+
+	void putMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* c) const;
+	interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(domain::DomainObject* d) const;
+void eraseMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(interp::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR* key, domain::DomainObject* val);
+
+	void putREF_EXPR_REALMATRIX_VAR(interp::REF_EXPR_REALMATRIX_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getREF_EXPR_REALMATRIX_VAR(interp::REF_EXPR_REALMATRIX_VAR* c) const;
+	interp::REF_EXPR_REALMATRIX_VAR* getREF_EXPR_REALMATRIX_VAR(domain::DomainObject* d) const;
+void eraseREF_EXPR_REALMATRIX_VAR(interp::REF_EXPR_REALMATRIX_VAR* key, domain::DomainObject* val);
+
+	void putREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* c) const;
+	interp::REAL1_VAR_IDENT* getREAL1_VAR_IDENT(domain::DomainObject* d) const;
+void eraseREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* key, domain::DomainObject* val);
+
+	void putREAL3_VAR_IDENT(interp::REAL3_VAR_IDENT* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL3_VAR_IDENT(interp::REAL3_VAR_IDENT* c) const;
+	interp::REAL3_VAR_IDENT* getREAL3_VAR_IDENT(domain::DomainObject* d) const;
+void eraseREAL3_VAR_IDENT(interp::REAL3_VAR_IDENT* key, domain::DomainObject* val);
+
+	void putREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* c) const;
+	interp::REAL4_VAR_IDENT* getREAL4_VAR_IDENT(domain::DomainObject* d) const;
+void eraseREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* key, domain::DomainObject* val);
+
+	void putREALMATRIX_VAR_IDENT(interp::REALMATRIX_VAR_IDENT* key, domain::DomainObject* val);
+	domain::DomainObject* getREALMATRIX_VAR_IDENT(interp::REALMATRIX_VAR_IDENT* c) const;
+	interp::REALMATRIX_VAR_IDENT* getREALMATRIX_VAR_IDENT(domain::DomainObject* d) const;
+void eraseREALMATRIX_VAR_IDENT(interp::REALMATRIX_VAR_IDENT* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREAL1_LITERAL(interp::REAL1_LITERAL* c) const;
+	interp::REAL1_LITERAL* getREAL1_LITERAL(domain::DomainObject* d) const;
+	
+	void putREAL1_LITERAL1(interp::REAL1_LITERAL1* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL1_LITERAL1(interp::REAL1_LITERAL1* c) const;
+	interp::REAL1_LITERAL1* getREAL1_LITERAL1(domain::DomainObject* d) const;
+void eraseREAL1_LITERAL1(interp::REAL1_LITERAL1* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREAL3_LITERAL(interp::REAL3_LITERAL* c) const;
+	interp::REAL3_LITERAL* getREAL3_LITERAL(domain::DomainObject* d) const;
+	
+	void putREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c) const;
+	interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putREAL3_LITERAL3(interp::REAL3_LITERAL3* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL3_LITERAL3(interp::REAL3_LITERAL3* c) const;
+	interp::REAL3_LITERAL3* getREAL3_LITERAL3(domain::DomainObject* d) const;
+void eraseREAL3_LITERAL3(interp::REAL3_LITERAL3* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREAL4_LITERAL(interp::REAL4_LITERAL* c) const;
+	interp::REAL4_LITERAL* getREAL4_LITERAL(domain::DomainObject* d) const;
+	
+	void putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c) const;
+	interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putREAL4_LITERAL4(interp::REAL4_LITERAL4* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL4_LITERAL4(interp::REAL4_LITERAL4* c) const;
+	interp::REAL4_LITERAL4* getREAL4_LITERAL4(domain::DomainObject* d) const;
+void eraseREAL4_LITERAL4(interp::REAL4_LITERAL4* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREALMATRIX_LITERAL(interp::REALMATRIX_LITERAL* c) const;
+	interp::REALMATRIX_LITERAL* getREALMATRIX_LITERAL(domain::DomainObject* d) const;
+	
+	void putREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* c) const;
+	interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(interp::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c) const;
+	interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putREALMATRIX_LITERAL9(interp::REALMATRIX_LITERAL9* key, domain::DomainObject* val);
+	domain::DomainObject* getREALMATRIX_LITERAL9(interp::REALMATRIX_LITERAL9* c) const;
+	interp::REALMATRIX_LITERAL9* getREALMATRIX_LITERAL9(domain::DomainObject* d) const;
+void eraseREALMATRIX_LITERAL9(interp::REALMATRIX_LITERAL9* key, domain::DomainObject* val);
+
+private:
+
+std::unordered_map<interp::Space*, domain::Space*> interp2dom_Spaces;
+
+std::unordered_map<domain::Space*, interp::Space*> dom2interp_Spaces;
+
+	std::unordered_map <interp::STMT*,	domain::DomainObject*	> 	interp2dom_STMT;
+	std::unordered_map <domain::DomainObject*,	interp::STMT*	> 	dom2interp_STMT;
+
+	std::unordered_map <interp::IFCOND*,	domain::DomainObject*	> 	interp2dom_IFCOND;
+	std::unordered_map <domain::DomainObject*,	interp::IFCOND*	> 	dom2interp_IFCOND;
+
+	std::unordered_map <interp::EXPR*,	domain::DomainObject*	> 	interp2dom_EXPR;
+	std::unordered_map <domain::DomainObject*,	interp::EXPR*	> 	dom2interp_EXPR;
+
+	std::unordered_map <interp::ASSIGNMENT*,	domain::DomainObject*	> 	interp2dom_ASSIGNMENT;
+	std::unordered_map <domain::DomainObject*,	interp::ASSIGNMENT*	> 	dom2interp_ASSIGNMENT;
+
+	std::unordered_map <interp::DECLARE*,	domain::DomainObject*	> 	interp2dom_DECLARE;
+	std::unordered_map <domain::DomainObject*,	interp::DECLARE*	> 	dom2interp_DECLARE;
+
+	std::unordered_map <interp::REAL1_EXPR*,	domain::DomainObject*	> 	interp2dom_REAL1_EXPR;
+	std::unordered_map <domain::DomainObject*,	interp::REAL1_EXPR*	> 	dom2interp_REAL1_EXPR;
+
+	std::unordered_map <interp::REAL3_EXPR*,	domain::DomainObject*	> 	interp2dom_REAL3_EXPR;
+	std::unordered_map <domain::DomainObject*,	interp::REAL3_EXPR*	> 	dom2interp_REAL3_EXPR;
+
+	std::unordered_map <interp::REAL4_EXPR*,	domain::DomainObject*	> 	interp2dom_REAL4_EXPR;
+	std::unordered_map <domain::DomainObject*,	interp::REAL4_EXPR*	> 	dom2interp_REAL4_EXPR;
+
+	std::unordered_map <interp::REALMATRIX_EXPR*,	domain::DomainObject*	> 	interp2dom_REALMATRIX_EXPR;
+	std::unordered_map <domain::DomainObject*,	interp::REALMATRIX_EXPR*	> 	dom2interp_REALMATRIX_EXPR;
+
+	std::unordered_map <interp::REAL1_VAR_IDENT*,	domain::DomainObject*	> 	interp2dom_REAL1_VAR_IDENT;
+	std::unordered_map <domain::DomainObject*,	interp::REAL1_VAR_IDENT*	> 	dom2interp_REAL1_VAR_IDENT;
+
+	std::unordered_map <interp::REAL3_VAR_IDENT*,	domain::DomainObject*	> 	interp2dom_REAL3_VAR_IDENT;
+	std::unordered_map <domain::DomainObject*,	interp::REAL3_VAR_IDENT*	> 	dom2interp_REAL3_VAR_IDENT;
+
+	std::unordered_map <interp::REAL4_VAR_IDENT*,	domain::DomainObject*	> 	interp2dom_REAL4_VAR_IDENT;
+	std::unordered_map <domain::DomainObject*,	interp::REAL4_VAR_IDENT*	> 	dom2interp_REAL4_VAR_IDENT;
+
+	std::unordered_map <interp::REALMATRIX_VAR_IDENT*,	domain::DomainObject*	> 	interp2dom_REALMATRIX_VAR_IDENT;
+	std::unordered_map <domain::DomainObject*,	interp::REALMATRIX_VAR_IDENT*	> 	dom2interp_REALMATRIX_VAR_IDENT;
+
+	std::unordered_map <interp::REAL1_LITERAL*,	domain::DomainObject*	> 	interp2dom_REAL1_LITERAL;
+	std::unordered_map <domain::DomainObject*,	interp::REAL1_LITERAL*	> 	dom2interp_REAL1_LITERAL;
+
+	std::unordered_map <interp::REAL3_LITERAL*,	domain::DomainObject*	> 	interp2dom_REAL3_LITERAL;
+	std::unordered_map <domain::DomainObject*,	interp::REAL3_LITERAL*	> 	dom2interp_REAL3_LITERAL;
+
+	std::unordered_map <interp::REAL4_LITERAL*,	domain::DomainObject*	> 	interp2dom_REAL4_LITERAL;
+	std::unordered_map <domain::DomainObject*,	interp::REAL4_LITERAL*	> 	dom2interp_REAL4_LITERAL;
+
+	std::unordered_map <interp::REALMATRIX_LITERAL*,	domain::DomainObject*	> 	interp2dom_REALMATRIX_LITERAL;
+	std::unordered_map <domain::DomainObject*,	interp::REALMATRIX_LITERAL*	> 	dom2interp_REALMATRIX_LITERAL;
 };
 
 } // namespace

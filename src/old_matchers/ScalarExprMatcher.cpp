@@ -72,7 +72,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             ScalarExprMatcher exprMatcher{this->context_, this->interp_};
             exprMatcher.search();
             exprMatcher.visit(*innerExpr);
-            interp_->mkScalarParenExpr(parenExpr, exprMatcher.getChildExprStore());
+            //interp_->mkScalarParenExpr(parenExpr, exprMatcher.getChildExprStore());
             
             this->childExprStore_ = const_cast<clang::Expr*>((const clang::Expr*)parenExpr);
 
@@ -92,7 +92,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.search();
             rhsMatcher.visit(*addRHS);
 
-            interp_->mkScalarScalarAddExpr(addExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+           // interp_->mkScalarScalarAddExpr(addExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
             
             this->childExprStore_ = const_cast<clang::Expr*>((const clang::Expr*)addExpr);
         }
@@ -110,7 +110,7 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
             rhsMatcher.search();
             rhsMatcher.visit(*mulRHS);
 
-            interp_->mkScalarScalarMulExpr(mulExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
+           //interp_->mkScalarScalarMulExpr(mulExpr, lhsMatcher.getChildExprStore(), rhsMatcher.getChildExprStore());
           
             this->childExprStore_ = const_cast<clang::Expr*>((const clang::Expr*)mulExpr);
         }
@@ -119,12 +119,12 @@ void ScalarExprMatcher::run(const MatchFinder::MatchResult &Result){
         }
     }
     else if(declRefExpr){
-        interp_->mkScalarVarExpr(declRefExpr);
+        //interp_->mkScalarVarExpr(declRefExpr);
         
         this->childExprStore_ = (clang::Expr*)declRefExpr;
     }
     else if(literal){
-        interp_->mkScalar_Lit(literal, 0);
+       // interp_->mkScalar_Lit(literal, 0);
         this->childExprStore_ =  const_cast<clang::Expr*>((const clang::Expr*)literal);
     }
     else if(scalarExprWithCleanups){
