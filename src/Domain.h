@@ -38,57 +38,57 @@ class DomainContainer;
 
 class EuclideanGeometry;
 
-class Geometric3Rotation;
+class EuclideanGeometry3Rotation;
 
-class Geometric3Orientation;
+class EuclideanGeometry3Orientation;
 
-class Geometric3Angle;
+class EuclideanGeometry3Angle;
 
-class Geometric3FrameChange;
+class EuclideanGeometry3FrameChange;
 
-class Geometric3Point;
+class EuclideanGeometry3Point;
 
-class Geometric3HomogenousPoint;
+class EuclideanGeometry3HomogenousPoint;
 
-class Geometric3Vector;
+class EuclideanGeometry3Vector;
 
-class Geometric3Scalar;
+class EuclideanGeometry3Scalar;
 
-class Geometric3BasisChange;
+class EuclideanGeometry3BasisChange;
 
-class Geometric3Scaling;
+class EuclideanGeometry3Scaling;
 
-class Geometric3Shear;
+class EuclideanGeometry3Shear;
 
 class ClassicalTime;
 
-class TimeFrameChange;
+class ClassicalTimeFrameChange;
 
-class TimePoint;
+class ClassicalTimePoint;
 
-class TimeHomogenousPoint;
+class ClassicalTimeHomogenousPoint;
 
-class TimeVector;
+class ClassicalTimeVector;
 
-class TimeScalar;
+class ClassicalTimeScalar;
 
-class TimeBasisChange;
+class ClassicalTimeBasisChange;
 
-class TimeScaling;
+class ClassicalTimeScaling;
 
-class TimeShear;
+class ClassicalTimeShear;
 
 class ClassicalVelocity;
 
-class Velocity3Vector;
+class ClassicalVelocity3Vector;
 
-class Velocity3Scalar;
+class ClassicalVelocity3Scalar;
 
-class Velocity3BasisChange;
+class ClassicalVelocity3BasisChange;
 
-class Velocity3Scaling;
+class ClassicalVelocity3Scaling;
 
-class Velocity3Shear;
+class ClassicalVelocity3Shear;
 
             
 // Definition for Domain class 
@@ -108,139 +108,139 @@ public:
 	EuclideanGeometry* mkEuclideanGeometry(std::string key ,std::string name_, int dimension_);
 	std::vector<EuclideanGeometry*> &getEuclideanGeometrySpaces() { return EuclideanGeometry_vec; }
 
-	Geometric3Rotation* mkGeometric3Rotation(EuclideanGeometry* sp);
-	Geometric3Rotation* mkGeometric3Rotation();
-	std::vector<Geometric3Rotation*> &getGeometric3Rotations() { return Geometric3Rotation_vec; }
+	EuclideanGeometry3Rotation* mkEuclideanGeometry3Rotation(EuclideanGeometry* sp);
+	EuclideanGeometry3Rotation* mkEuclideanGeometry3Rotation();
+	std::vector<EuclideanGeometry3Rotation*> &getEuclideanGeometry3Rotations() { return EuclideanGeometry3Rotation_vec; }
 
-	Geometric3Orientation* mkGeometric3Orientation(EuclideanGeometry* sp);
-	Geometric3Orientation* mkGeometric3Orientation();
-	std::vector<Geometric3Orientation*> &getGeometric3Orientations() { return Geometric3Orientation_vec; }
+	EuclideanGeometry3Orientation* mkEuclideanGeometry3Orientation(EuclideanGeometry* sp);
+	EuclideanGeometry3Orientation* mkEuclideanGeometry3Orientation();
+	std::vector<EuclideanGeometry3Orientation*> &getEuclideanGeometry3Orientations() { return EuclideanGeometry3Orientation_vec; }
 
-	Geometric3Angle* mkGeometric3Angle(EuclideanGeometry* sp);
-	Geometric3Angle* mkGeometric3Angle();
-	std::vector<Geometric3Angle*> &getGeometric3Angles() { return Geometric3Angle_vec; }
+	EuclideanGeometry3Angle* mkEuclideanGeometry3Angle(EuclideanGeometry* sp);
+	EuclideanGeometry3Angle* mkEuclideanGeometry3Angle();
+	std::vector<EuclideanGeometry3Angle*> &getEuclideanGeometry3Angles() { return EuclideanGeometry3Angle_vec; }
 
-	Geometric3FrameChange* mkGeometric3FrameChange(EuclideanGeometry* sp);
-	Geometric3FrameChange* mkGeometric3FrameChange();
-	std::vector<Geometric3FrameChange*> &getGeometric3FrameChanges() { return Geometric3FrameChange_vec; }
+	EuclideanGeometry3FrameChange* mkEuclideanGeometry3FrameChange(EuclideanGeometry* sp);
+	EuclideanGeometry3FrameChange* mkEuclideanGeometry3FrameChange();
+	std::vector<EuclideanGeometry3FrameChange*> &getEuclideanGeometry3FrameChanges() { return EuclideanGeometry3FrameChange_vec; }
 
-	Geometric3Point* mkGeometric3Point(EuclideanGeometry* sp);
-	Geometric3Point* mkGeometric3Point();
-	std::vector<Geometric3Point*> &getGeometric3Points() { return Geometric3Point_vec; }
+	EuclideanGeometry3Point* mkEuclideanGeometry3Point(EuclideanGeometry* sp);
+	EuclideanGeometry3Point* mkEuclideanGeometry3Point();
+	std::vector<EuclideanGeometry3Point*> &getEuclideanGeometry3Points() { return EuclideanGeometry3Point_vec; }
 
-	Geometric3HomogenousPoint* mkGeometric3HomogenousPoint(EuclideanGeometry* sp);
-	Geometric3HomogenousPoint* mkGeometric3HomogenousPoint();
-	std::vector<Geometric3HomogenousPoint*> &getGeometric3HomogenousPoints() { return Geometric3HomogenousPoint_vec; }
+	EuclideanGeometry3HomogenousPoint* mkEuclideanGeometry3HomogenousPoint(EuclideanGeometry* sp);
+	EuclideanGeometry3HomogenousPoint* mkEuclideanGeometry3HomogenousPoint();
+	std::vector<EuclideanGeometry3HomogenousPoint*> &getEuclideanGeometry3HomogenousPoints() { return EuclideanGeometry3HomogenousPoint_vec; }
 
-	Geometric3Vector* mkGeometric3Vector(EuclideanGeometry* sp);
-	Geometric3Vector* mkGeometric3Vector();
-	std::vector<Geometric3Vector*> &getGeometric3Vectors() { return Geometric3Vector_vec; }
+	EuclideanGeometry3Vector* mkEuclideanGeometry3Vector(EuclideanGeometry* sp);
+	EuclideanGeometry3Vector* mkEuclideanGeometry3Vector();
+	std::vector<EuclideanGeometry3Vector*> &getEuclideanGeometry3Vectors() { return EuclideanGeometry3Vector_vec; }
 
-	Geometric3Scalar* mkGeometric3Scalar(EuclideanGeometry* sp);
-	Geometric3Scalar* mkGeometric3Scalar();
-	std::vector<Geometric3Scalar*> &getGeometric3Scalars() { return Geometric3Scalar_vec; }
+	EuclideanGeometry3Scalar* mkEuclideanGeometry3Scalar(EuclideanGeometry* sp);
+	EuclideanGeometry3Scalar* mkEuclideanGeometry3Scalar();
+	std::vector<EuclideanGeometry3Scalar*> &getEuclideanGeometry3Scalars() { return EuclideanGeometry3Scalar_vec; }
 
-	Geometric3BasisChange* mkGeometric3BasisChange(EuclideanGeometry* sp);
-	Geometric3BasisChange* mkGeometric3BasisChange();
-	std::vector<Geometric3BasisChange*> &getGeometric3BasisChanges() { return Geometric3BasisChange_vec; }
+	EuclideanGeometry3BasisChange* mkEuclideanGeometry3BasisChange(EuclideanGeometry* sp);
+	EuclideanGeometry3BasisChange* mkEuclideanGeometry3BasisChange();
+	std::vector<EuclideanGeometry3BasisChange*> &getEuclideanGeometry3BasisChanges() { return EuclideanGeometry3BasisChange_vec; }
 
-	Geometric3Scaling* mkGeometric3Scaling(EuclideanGeometry* sp);
-	Geometric3Scaling* mkGeometric3Scaling();
-	std::vector<Geometric3Scaling*> &getGeometric3Scalings() { return Geometric3Scaling_vec; }
+	EuclideanGeometry3Scaling* mkEuclideanGeometry3Scaling(EuclideanGeometry* sp);
+	EuclideanGeometry3Scaling* mkEuclideanGeometry3Scaling();
+	std::vector<EuclideanGeometry3Scaling*> &getEuclideanGeometry3Scalings() { return EuclideanGeometry3Scaling_vec; }
 
-	Geometric3Shear* mkGeometric3Shear(EuclideanGeometry* sp);
-	Geometric3Shear* mkGeometric3Shear();
-	std::vector<Geometric3Shear*> &getGeometric3Shears() { return Geometric3Shear_vec; }
+	EuclideanGeometry3Shear* mkEuclideanGeometry3Shear(EuclideanGeometry* sp);
+	EuclideanGeometry3Shear* mkEuclideanGeometry3Shear();
+	std::vector<EuclideanGeometry3Shear*> &getEuclideanGeometry3Shears() { return EuclideanGeometry3Shear_vec; }
 
 	ClassicalTime* mkClassicalTime(std::string key ,std::string name_);
 	std::vector<ClassicalTime*> &getClassicalTimeSpaces() { return ClassicalTime_vec; }
 
-	TimeFrameChange* mkTimeFrameChange(ClassicalTime* sp);
-	TimeFrameChange* mkTimeFrameChange();
-	std::vector<TimeFrameChange*> &getTimeFrameChanges() { return TimeFrameChange_vec; }
+	ClassicalTimeFrameChange* mkClassicalTimeFrameChange(ClassicalTime* sp);
+	ClassicalTimeFrameChange* mkClassicalTimeFrameChange();
+	std::vector<ClassicalTimeFrameChange*> &getClassicalTimeFrameChanges() { return ClassicalTimeFrameChange_vec; }
 
-	TimePoint* mkTimePoint(ClassicalTime* sp);
-	TimePoint* mkTimePoint();
-	std::vector<TimePoint*> &getTimePoints() { return TimePoint_vec; }
+	ClassicalTimePoint* mkClassicalTimePoint(ClassicalTime* sp);
+	ClassicalTimePoint* mkClassicalTimePoint();
+	std::vector<ClassicalTimePoint*> &getClassicalTimePoints() { return ClassicalTimePoint_vec; }
 
-	TimeHomogenousPoint* mkTimeHomogenousPoint(ClassicalTime* sp);
-	TimeHomogenousPoint* mkTimeHomogenousPoint();
-	std::vector<TimeHomogenousPoint*> &getTimeHomogenousPoints() { return TimeHomogenousPoint_vec; }
+	ClassicalTimeHomogenousPoint* mkClassicalTimeHomogenousPoint(ClassicalTime* sp);
+	ClassicalTimeHomogenousPoint* mkClassicalTimeHomogenousPoint();
+	std::vector<ClassicalTimeHomogenousPoint*> &getClassicalTimeHomogenousPoints() { return ClassicalTimeHomogenousPoint_vec; }
 
-	TimeVector* mkTimeVector(ClassicalTime* sp);
-	TimeVector* mkTimeVector();
-	std::vector<TimeVector*> &getTimeVectors() { return TimeVector_vec; }
+	ClassicalTimeVector* mkClassicalTimeVector(ClassicalTime* sp);
+	ClassicalTimeVector* mkClassicalTimeVector();
+	std::vector<ClassicalTimeVector*> &getClassicalTimeVectors() { return ClassicalTimeVector_vec; }
 
-	TimeScalar* mkTimeScalar(ClassicalTime* sp);
-	TimeScalar* mkTimeScalar();
-	std::vector<TimeScalar*> &getTimeScalars() { return TimeScalar_vec; }
+	ClassicalTimeScalar* mkClassicalTimeScalar(ClassicalTime* sp);
+	ClassicalTimeScalar* mkClassicalTimeScalar();
+	std::vector<ClassicalTimeScalar*> &getClassicalTimeScalars() { return ClassicalTimeScalar_vec; }
 
-	TimeBasisChange* mkTimeBasisChange(ClassicalTime* sp);
-	TimeBasisChange* mkTimeBasisChange();
-	std::vector<TimeBasisChange*> &getTimeBasisChanges() { return TimeBasisChange_vec; }
+	ClassicalTimeBasisChange* mkClassicalTimeBasisChange(ClassicalTime* sp);
+	ClassicalTimeBasisChange* mkClassicalTimeBasisChange();
+	std::vector<ClassicalTimeBasisChange*> &getClassicalTimeBasisChanges() { return ClassicalTimeBasisChange_vec; }
 
-	TimeScaling* mkTimeScaling(ClassicalTime* sp);
-	TimeScaling* mkTimeScaling();
-	std::vector<TimeScaling*> &getTimeScalings() { return TimeScaling_vec; }
+	ClassicalTimeScaling* mkClassicalTimeScaling(ClassicalTime* sp);
+	ClassicalTimeScaling* mkClassicalTimeScaling();
+	std::vector<ClassicalTimeScaling*> &getClassicalTimeScalings() { return ClassicalTimeScaling_vec; }
 
-	TimeShear* mkTimeShear(ClassicalTime* sp);
-	TimeShear* mkTimeShear();
-	std::vector<TimeShear*> &getTimeShears() { return TimeShear_vec; }
+	ClassicalTimeShear* mkClassicalTimeShear(ClassicalTime* sp);
+	ClassicalTimeShear* mkClassicalTimeShear();
+	std::vector<ClassicalTimeShear*> &getClassicalTimeShears() { return ClassicalTimeShear_vec; }
 
 	ClassicalVelocity* mkClassicalVelocity(std::string key ,std::string name_, int dimension_);
 	std::vector<ClassicalVelocity*> &getClassicalVelocitySpaces() { return ClassicalVelocity_vec; }
 
-	Velocity3Vector* mkVelocity3Vector(ClassicalVelocity* sp);
-	Velocity3Vector* mkVelocity3Vector();
-	std::vector<Velocity3Vector*> &getVelocity3Vectors() { return Velocity3Vector_vec; }
+	ClassicalVelocity3Vector* mkClassicalVelocity3Vector(ClassicalVelocity* sp);
+	ClassicalVelocity3Vector* mkClassicalVelocity3Vector();
+	std::vector<ClassicalVelocity3Vector*> &getClassicalVelocity3Vectors() { return ClassicalVelocity3Vector_vec; }
 
-	Velocity3Scalar* mkVelocity3Scalar(ClassicalVelocity* sp);
-	Velocity3Scalar* mkVelocity3Scalar();
-	std::vector<Velocity3Scalar*> &getVelocity3Scalars() { return Velocity3Scalar_vec; }
+	ClassicalVelocity3Scalar* mkClassicalVelocity3Scalar(ClassicalVelocity* sp);
+	ClassicalVelocity3Scalar* mkClassicalVelocity3Scalar();
+	std::vector<ClassicalVelocity3Scalar*> &getClassicalVelocity3Scalars() { return ClassicalVelocity3Scalar_vec; }
 
-	Velocity3BasisChange* mkVelocity3BasisChange(ClassicalVelocity* sp);
-	Velocity3BasisChange* mkVelocity3BasisChange();
-	std::vector<Velocity3BasisChange*> &getVelocity3BasisChanges() { return Velocity3BasisChange_vec; }
+	ClassicalVelocity3BasisChange* mkClassicalVelocity3BasisChange(ClassicalVelocity* sp);
+	ClassicalVelocity3BasisChange* mkClassicalVelocity3BasisChange();
+	std::vector<ClassicalVelocity3BasisChange*> &getClassicalVelocity3BasisChanges() { return ClassicalVelocity3BasisChange_vec; }
 
-	Velocity3Scaling* mkVelocity3Scaling(ClassicalVelocity* sp);
-	Velocity3Scaling* mkVelocity3Scaling();
-	std::vector<Velocity3Scaling*> &getVelocity3Scalings() { return Velocity3Scaling_vec; }
+	ClassicalVelocity3Scaling* mkClassicalVelocity3Scaling(ClassicalVelocity* sp);
+	ClassicalVelocity3Scaling* mkClassicalVelocity3Scaling();
+	std::vector<ClassicalVelocity3Scaling*> &getClassicalVelocity3Scalings() { return ClassicalVelocity3Scaling_vec; }
 
-	Velocity3Shear* mkVelocity3Shear(ClassicalVelocity* sp);
-	Velocity3Shear* mkVelocity3Shear();
-	std::vector<Velocity3Shear*> &getVelocity3Shears() { return Velocity3Shear_vec; }
+	ClassicalVelocity3Shear* mkClassicalVelocity3Shear(ClassicalVelocity* sp);
+	ClassicalVelocity3Shear* mkClassicalVelocity3Shear();
+	std::vector<ClassicalVelocity3Shear*> &getClassicalVelocity3Shears() { return ClassicalVelocity3Shear_vec; }
 
 private:
 
 	std::unordered_map<std::string, Space*> Space_map;
 	std::vector<Space*> Space_vec;
 	std::vector<EuclideanGeometry*> EuclideanGeometry_vec;
-	std::vector<Geometric3Rotation*>Geometric3Rotation_vec;
-	std::vector<Geometric3Orientation*>Geometric3Orientation_vec;
-	std::vector<Geometric3Angle*>Geometric3Angle_vec;
-	std::vector<Geometric3FrameChange*>Geometric3FrameChange_vec;
-	std::vector<Geometric3Point*>Geometric3Point_vec;
-	std::vector<Geometric3HomogenousPoint*>Geometric3HomogenousPoint_vec;
-	std::vector<Geometric3Vector*>Geometric3Vector_vec;
-	std::vector<Geometric3Scalar*>Geometric3Scalar_vec;
-	std::vector<Geometric3BasisChange*>Geometric3BasisChange_vec;
-	std::vector<Geometric3Scaling*>Geometric3Scaling_vec;
-	std::vector<Geometric3Shear*>Geometric3Shear_vec;
+	std::vector<EuclideanGeometry3Rotation*>EuclideanGeometry3Rotation_vec;
+	std::vector<EuclideanGeometry3Orientation*>EuclideanGeometry3Orientation_vec;
+	std::vector<EuclideanGeometry3Angle*>EuclideanGeometry3Angle_vec;
+	std::vector<EuclideanGeometry3FrameChange*>EuclideanGeometry3FrameChange_vec;
+	std::vector<EuclideanGeometry3Point*>EuclideanGeometry3Point_vec;
+	std::vector<EuclideanGeometry3HomogenousPoint*>EuclideanGeometry3HomogenousPoint_vec;
+	std::vector<EuclideanGeometry3Vector*>EuclideanGeometry3Vector_vec;
+	std::vector<EuclideanGeometry3Scalar*>EuclideanGeometry3Scalar_vec;
+	std::vector<EuclideanGeometry3BasisChange*>EuclideanGeometry3BasisChange_vec;
+	std::vector<EuclideanGeometry3Scaling*>EuclideanGeometry3Scaling_vec;
+	std::vector<EuclideanGeometry3Shear*>EuclideanGeometry3Shear_vec;
 	std::vector<ClassicalTime*> ClassicalTime_vec;
-	std::vector<TimeFrameChange*>TimeFrameChange_vec;
-	std::vector<TimePoint*>TimePoint_vec;
-	std::vector<TimeHomogenousPoint*>TimeHomogenousPoint_vec;
-	std::vector<TimeVector*>TimeVector_vec;
-	std::vector<TimeScalar*>TimeScalar_vec;
-	std::vector<TimeBasisChange*>TimeBasisChange_vec;
-	std::vector<TimeScaling*>TimeScaling_vec;
-	std::vector<TimeShear*>TimeShear_vec;
+	std::vector<ClassicalTimeFrameChange*>ClassicalTimeFrameChange_vec;
+	std::vector<ClassicalTimePoint*>ClassicalTimePoint_vec;
+	std::vector<ClassicalTimeHomogenousPoint*>ClassicalTimeHomogenousPoint_vec;
+	std::vector<ClassicalTimeVector*>ClassicalTimeVector_vec;
+	std::vector<ClassicalTimeScalar*>ClassicalTimeScalar_vec;
+	std::vector<ClassicalTimeBasisChange*>ClassicalTimeBasisChange_vec;
+	std::vector<ClassicalTimeScaling*>ClassicalTimeScaling_vec;
+	std::vector<ClassicalTimeShear*>ClassicalTimeShear_vec;
 	std::vector<ClassicalVelocity*> ClassicalVelocity_vec;
-	std::vector<Velocity3Vector*>Velocity3Vector_vec;
-	std::vector<Velocity3Scalar*>Velocity3Scalar_vec;
-	std::vector<Velocity3BasisChange*>Velocity3BasisChange_vec;
-	std::vector<Velocity3Scaling*>Velocity3Scaling_vec;
-	std::vector<Velocity3Shear*>Velocity3Shear_vec;
+	std::vector<ClassicalVelocity3Vector*>ClassicalVelocity3Vector_vec;
+	std::vector<ClassicalVelocity3Scalar*>ClassicalVelocity3Scalar_vec;
+	std::vector<ClassicalVelocity3BasisChange*>ClassicalVelocity3BasisChange_vec;
+	std::vector<ClassicalVelocity3Scaling*>ClassicalVelocity3Scaling_vec;
+	std::vector<ClassicalVelocity3Shear*>ClassicalVelocity3Shear_vec;
 };
 
 
@@ -316,165 +316,165 @@ private:
     int dimension_;
 };
 
-class Geometric3Rotation : public DomainObject {
+class EuclideanGeometry3Rotation : public DomainObject {
 public:
-    Geometric3Rotation(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3Rotation(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3Rotation(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3Rotation(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3Rotation(){}
+	virtual ~EuclideanGeometry3Rotation(){}
     std::string toString() override {
-        return "@@Geometric3Rotation(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3Rotation(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3Orientation : public DomainObject {
+class EuclideanGeometry3Orientation : public DomainObject {
 public:
-    Geometric3Orientation(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3Orientation(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3Orientation(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3Orientation(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3Orientation(){}
+	virtual ~EuclideanGeometry3Orientation(){}
     std::string toString() override {
-        return "@@Geometric3Orientation(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3Orientation(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3Angle : public DomainObject {
+class EuclideanGeometry3Angle : public DomainObject {
 public:
-    Geometric3Angle(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3Angle(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3Angle(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3Angle(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3Angle(){}
+	virtual ~EuclideanGeometry3Angle(){}
     std::string toString() override {
-        return "@@Geometric3Angle(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3Angle(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3FrameChange : public DomainObject {
+class EuclideanGeometry3FrameChange : public DomainObject {
 public:
-    Geometric3FrameChange(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3FrameChange(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3FrameChange(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3FrameChange(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3FrameChange(){}
+	virtual ~EuclideanGeometry3FrameChange(){}
     std::string toString() override {
-        return "@@Geometric3FrameChange(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3FrameChange(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3Point : public DomainObject {
+class EuclideanGeometry3Point : public DomainObject {
 public:
-    Geometric3Point(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3Point(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3Point(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3Point(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3Point(){}
+	virtual ~EuclideanGeometry3Point(){}
     std::string toString() override {
-        return "@@Geometric3Point(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3Point(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3HomogenousPoint : public DomainObject {
+class EuclideanGeometry3HomogenousPoint : public DomainObject {
 public:
-    Geometric3HomogenousPoint(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3HomogenousPoint(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3HomogenousPoint(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3HomogenousPoint(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3HomogenousPoint(){}
+	virtual ~EuclideanGeometry3HomogenousPoint(){}
     std::string toString() override {
-        return "@@Geometric3HomogenousPoint(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3HomogenousPoint(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3Vector : public DomainObject {
+class EuclideanGeometry3Vector : public DomainObject {
 public:
-    Geometric3Vector(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3Vector(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3Vector(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3Vector(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3Vector(){}
+	virtual ~EuclideanGeometry3Vector(){}
     std::string toString() override {
-        return "@@Geometric3Vector(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3Vector(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3Scalar : public DomainObject {
+class EuclideanGeometry3Scalar : public DomainObject {
 public:
-    Geometric3Scalar(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3Scalar(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3Scalar(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3Scalar(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3Scalar(){}
+	virtual ~EuclideanGeometry3Scalar(){}
     std::string toString() override {
-        return "@@Geometric3Scalar(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3Scalar(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3BasisChange : public DomainObject {
+class EuclideanGeometry3BasisChange : public DomainObject {
 public:
-    Geometric3BasisChange(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3BasisChange(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3BasisChange(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3BasisChange(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3BasisChange(){}
+	virtual ~EuclideanGeometry3BasisChange(){}
     std::string toString() override {
-        return "@@Geometric3BasisChange(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3BasisChange(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3Scaling : public DomainObject {
+class EuclideanGeometry3Scaling : public DomainObject {
 public:
-    Geometric3Scaling(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3Scaling(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3Scaling(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3Scaling(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3Scaling(){}
+	virtual ~EuclideanGeometry3Scaling(){}
     std::string toString() override {
-        return "@@Geometric3Scaling(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3Scaling(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
 };
 
 
-class Geometric3Shear : public DomainObject {
+class EuclideanGeometry3Shear : public DomainObject {
 public:
-    Geometric3Shear(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+    EuclideanGeometry3Shear(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Geometric3Shear(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3Shear(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Geometric3Shear(){}
+	virtual ~EuclideanGeometry3Shear(){}
     std::string toString() override {
-        return "@@Geometric3Shear(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@EuclideanGeometry3Shear(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     EuclideanGeometry* space_;
@@ -497,120 +497,120 @@ private:
     
 };
 
-class TimeFrameChange : public DomainObject {
+class ClassicalTimeFrameChange : public DomainObject {
 public:
-    TimeFrameChange(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalTimeFrameChange(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    TimeFrameChange(std::initializer_list<DomainObject*> args ) :
+    ClassicalTimeFrameChange(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~TimeFrameChange(){}
+	virtual ~ClassicalTimeFrameChange(){}
     std::string toString() override {
-        return "@@TimeFrameChange(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalTimeFrameChange(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalTime* space_;
 };
 
 
-class TimePoint : public DomainObject {
+class ClassicalTimePoint : public DomainObject {
 public:
-    TimePoint(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalTimePoint(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    TimePoint(std::initializer_list<DomainObject*> args ) :
+    ClassicalTimePoint(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~TimePoint(){}
+	virtual ~ClassicalTimePoint(){}
     std::string toString() override {
-        return "@@TimePoint(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalTimePoint(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalTime* space_;
 };
 
 
-class TimeHomogenousPoint : public DomainObject {
+class ClassicalTimeHomogenousPoint : public DomainObject {
 public:
-    TimeHomogenousPoint(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalTimeHomogenousPoint(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    TimeHomogenousPoint(std::initializer_list<DomainObject*> args ) :
+    ClassicalTimeHomogenousPoint(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~TimeHomogenousPoint(){}
+	virtual ~ClassicalTimeHomogenousPoint(){}
     std::string toString() override {
-        return "@@TimeHomogenousPoint(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalTimeHomogenousPoint(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalTime* space_;
 };
 
 
-class TimeVector : public DomainObject {
+class ClassicalTimeVector : public DomainObject {
 public:
-    TimeVector(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalTimeVector(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    TimeVector(std::initializer_list<DomainObject*> args ) :
+    ClassicalTimeVector(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~TimeVector(){}
+	virtual ~ClassicalTimeVector(){}
     std::string toString() override {
-        return "@@TimeVector(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalTimeVector(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalTime* space_;
 };
 
 
-class TimeScalar : public DomainObject {
+class ClassicalTimeScalar : public DomainObject {
 public:
-    TimeScalar(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalTimeScalar(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    TimeScalar(std::initializer_list<DomainObject*> args ) :
+    ClassicalTimeScalar(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~TimeScalar(){}
+	virtual ~ClassicalTimeScalar(){}
     std::string toString() override {
-        return "@@TimeScalar(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalTimeScalar(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalTime* space_;
 };
 
 
-class TimeBasisChange : public DomainObject {
+class ClassicalTimeBasisChange : public DomainObject {
 public:
-    TimeBasisChange(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalTimeBasisChange(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    TimeBasisChange(std::initializer_list<DomainObject*> args ) :
+    ClassicalTimeBasisChange(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~TimeBasisChange(){}
+	virtual ~ClassicalTimeBasisChange(){}
     std::string toString() override {
-        return "@@TimeBasisChange(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalTimeBasisChange(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalTime* space_;
 };
 
 
-class TimeScaling : public DomainObject {
+class ClassicalTimeScaling : public DomainObject {
 public:
-    TimeScaling(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalTimeScaling(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    TimeScaling(std::initializer_list<DomainObject*> args ) :
+    ClassicalTimeScaling(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~TimeScaling(){}
+	virtual ~ClassicalTimeScaling(){}
     std::string toString() override {
-        return "@@TimeScaling(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalTimeScaling(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalTime* space_;
 };
 
 
-class TimeShear : public DomainObject {
+class ClassicalTimeShear : public DomainObject {
 public:
-    TimeShear(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalTimeShear(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    TimeShear(std::initializer_list<DomainObject*> args ) :
+    ClassicalTimeShear(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~TimeShear(){}
+	virtual ~ClassicalTimeShear(){}
     std::string toString() override {
-        return "@@TimeShear(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalTimeShear(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalTime* space_;
@@ -633,75 +633,75 @@ private:
     int dimension_;
 };
 
-class Velocity3Vector : public DomainObject {
+class ClassicalVelocity3Vector : public DomainObject {
 public:
-    Velocity3Vector(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalVelocity3Vector(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Velocity3Vector(std::initializer_list<DomainObject*> args ) :
+    ClassicalVelocity3Vector(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Velocity3Vector(){}
+	virtual ~ClassicalVelocity3Vector(){}
     std::string toString() override {
-        return "@@Velocity3Vector(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalVelocity3Vector(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalVelocity* space_;
 };
 
 
-class Velocity3Scalar : public DomainObject {
+class ClassicalVelocity3Scalar : public DomainObject {
 public:
-    Velocity3Scalar(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalVelocity3Scalar(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Velocity3Scalar(std::initializer_list<DomainObject*> args ) :
+    ClassicalVelocity3Scalar(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Velocity3Scalar(){}
+	virtual ~ClassicalVelocity3Scalar(){}
     std::string toString() override {
-        return "@@Velocity3Scalar(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalVelocity3Scalar(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalVelocity* space_;
 };
 
 
-class Velocity3BasisChange : public DomainObject {
+class ClassicalVelocity3BasisChange : public DomainObject {
 public:
-    Velocity3BasisChange(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalVelocity3BasisChange(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Velocity3BasisChange(std::initializer_list<DomainObject*> args ) :
+    ClassicalVelocity3BasisChange(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Velocity3BasisChange(){}
+	virtual ~ClassicalVelocity3BasisChange(){}
     std::string toString() override {
-        return "@@Velocity3BasisChange(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalVelocity3BasisChange(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalVelocity* space_;
 };
 
 
-class Velocity3Scaling : public DomainObject {
+class ClassicalVelocity3Scaling : public DomainObject {
 public:
-    Velocity3Scaling(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalVelocity3Scaling(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Velocity3Scaling(std::initializer_list<DomainObject*> args ) :
+    ClassicalVelocity3Scaling(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Velocity3Scaling(){}
+	virtual ~ClassicalVelocity3Scaling(){}
     std::string toString() override {
-        return "@@Velocity3Scaling(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalVelocity3Scaling(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalVelocity* space_;
 };
 
 
-class Velocity3Shear : public DomainObject {
+class ClassicalVelocity3Shear : public DomainObject {
 public:
-    Velocity3Shear(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+    ClassicalVelocity3Shear(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
 			domain::DomainObject(args), space_(s)  {}
-    Velocity3Shear(std::initializer_list<DomainObject*> args ) :
+    ClassicalVelocity3Shear(std::initializer_list<DomainObject*> args ) :
 	 		domain::DomainObject(args) {}
-	virtual ~Velocity3Shear(){}
+	virtual ~ClassicalVelocity3Shear(){}
     std::string toString() override {
-        return "@@Velocity3Shear(" + (space_?space_->getName():"Missing Space") + ")";
+        return "@@ClassicalVelocity3Shear(" + (space_?space_->getName():"Missing Space") + ")";
     }
 private:
     ClassicalVelocity* space_;
