@@ -40,7 +40,7 @@ git config --global core.autocrlf true
 ```
 b. If you're development computer runs OSX or Linux, configure git any CRLFs that might have crept in to LFs on commit.
 ```shell
-git config --global core.autocrlf input
+ git config --global core.autocrlf true
 ```
 2. Ensure you have an account with Github.
 3. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, and https://github.com/drewjel/PeirceDocker.
