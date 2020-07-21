@@ -8,6 +8,136 @@
 
 using namespace coords2interp;
 
+coords::PROGRAM *CoordsToInterp::getPROGRAM(interp::PROGRAM *i) const
+    {
+        coords::PROGRAM *coords = NULL;
+        try {
+            coords = interp2coords_PROGRAM.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::PROGRAM*)coords;
+    }
+interp::PROGRAM *CoordsToInterp::getPROGRAM(coords::PROGRAM *c) const
+    {
+        interp::PROGRAM*interp = NULL;
+        try {
+            interp = coords2interp_PROGRAM.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::PROGRAM*)interp;
+    }
+
+void CoordsToInterp::putSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c, interp::SEQ_GLOBALSTMT* i)
+{
+    coords2interp_PROGRAM[c] = (interp::PROGRAM*)i;
+    interp2coords_PROGRAM[(interp::PROGRAM*)i] = c;
+}
+coords::SEQ_GLOBALSTMT* CoordsToInterp::getSEQ_GLOBALSTMT(interp::SEQ_GLOBALSTMT* i) const
+{
+    coords::PROGRAM* coo = NULL;
+    try {
+        coo = interp2coords_PROGRAM.at((interp::PROGRAM*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::SEQ_GLOBALSTMT*>(coo);
+}
+interp::SEQ_GLOBALSTMT* CoordsToInterp::getSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c) const
+{
+    interp::PROGRAM *interp = NULL;
+    try {
+        interp = coords2interp_PROGRAM.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::SEQ_GLOBALSTMT*>(interp);
+}
+
+coords::GLOBALSTMT *CoordsToInterp::getGLOBALSTMT(interp::GLOBALSTMT *i) const
+    {
+        coords::GLOBALSTMT *coords = NULL;
+        try {
+            coords = interp2coords_GLOBALSTMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::GLOBALSTMT*)coords;
+    }
+interp::GLOBALSTMT *CoordsToInterp::getGLOBALSTMT(coords::GLOBALSTMT *c) const
+    {
+        interp::GLOBALSTMT*interp = NULL;
+        try {
+            interp = coords2interp_GLOBALSTMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::GLOBALSTMT*)interp;
+    }
+
+void CoordsToInterp::putMAIN_STMT(coords::MAIN_STMT* c, interp::MAIN_STMT* i)
+{
+    coords2interp_GLOBALSTMT[c] = (interp::GLOBALSTMT*)i;
+    interp2coords_GLOBALSTMT[(interp::GLOBALSTMT*)i] = c;
+}
+coords::MAIN_STMT* CoordsToInterp::getMAIN_STMT(interp::MAIN_STMT* i) const
+{
+    coords::GLOBALSTMT* coo = NULL;
+    try {
+        coo = interp2coords_GLOBALSTMT.at((interp::GLOBALSTMT*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::MAIN_STMT*>(coo);
+}
+interp::MAIN_STMT* CoordsToInterp::getMAIN_STMT(coords::MAIN_STMT* c) const
+{
+    interp::GLOBALSTMT *interp = NULL;
+    try {
+        interp = coords2interp_GLOBALSTMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::MAIN_STMT*>(interp);
+}
+
+void CoordsToInterp::putFUNCTION_STMT(coords::FUNCTION_STMT* c, interp::FUNCTION_STMT* i)
+{
+    coords2interp_GLOBALSTMT[c] = (interp::GLOBALSTMT*)i;
+    interp2coords_GLOBALSTMT[(interp::GLOBALSTMT*)i] = c;
+}
+coords::FUNCTION_STMT* CoordsToInterp::getFUNCTION_STMT(interp::FUNCTION_STMT* i) const
+{
+    coords::GLOBALSTMT* coo = NULL;
+    try {
+        coo = interp2coords_GLOBALSTMT.at((interp::GLOBALSTMT*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::FUNCTION_STMT*>(coo);
+}
+interp::FUNCTION_STMT* CoordsToInterp::getFUNCTION_STMT(coords::FUNCTION_STMT* c) const
+{
+    interp::GLOBALSTMT *interp = NULL;
+    try {
+        interp = coords2interp_GLOBALSTMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::FUNCTION_STMT*>(interp);
+}
+
 coords::STMT *CoordsToInterp::getSTMT(interp::STMT *i) const
     {
         coords::STMT *coords = NULL;

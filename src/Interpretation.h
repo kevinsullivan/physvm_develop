@@ -49,6 +49,20 @@ public:
     }
 
 
+	std::string toString_SEQ_GLOBALSTMTs();
+
+	void mkSEQ_GLOBALSTMT(const ast::SEQ_GLOBALSTMT * ast , std::vector < ast::GLOBALSTMT *> operands );
+                    
+	std::string toString_PROGRAMs();
+
+	void mkMAIN_STMT(const ast::MAIN_STMT * ast ,ast::STMT* operand1);
+                    
+	void mkFUNCTION_STMT(const ast::FUNCTION_STMT * ast ,ast::STMT* operand1);
+                    
+	std::string toString_GLOBALSTMTs();
+
+	std::string toString_COMPOUND_STMTs();
+
 	void mkCOMPOUND_STMT(const ast::COMPOUND_STMT * ast , std::vector < ast::STMT *> operands );
                     
 	std::string toString_STMTs();
@@ -188,10 +202,13 @@ public:
 	std::string toString_REALMATRIX_LITERALs();
 
 	std::string toString_Spaces();
-    void buildDefaultSpaces();
+	std::vector<interp::Space*> getSpaceInterps();
+	std::vector<std::string> getSpaceNames();    void buildDefaultSpaces();
 
+    void buildSpace();
     //void setAll_Spaces();
-
+    void printSpaces();
+    void buildFrame();
     void mkVarTable();//make a printable, indexed table of variables that can have their types assigned by a user or oracle
     void printVarTable();//print the indexed variable table for the user
     void updateVarTable();//while loop where user can select a variable by index and provide a physical type for that variable
@@ -219,6 +236,8 @@ public:
     coords2interp::CoordsToInterp *coords2interp_;
     interp2domain::InterpToDomain *interp2domain_; 
     Checker *checker_;
+	std::vector<coords::PROGRAM*> PROGRAM_vec;
+	std::vector<coords::GLOBALSTMT*> GLOBALSTMT_vec;
 	std::vector<coords::STMT*> STMT_vec;
 	std::vector<coords::IFCOND*> IFCOND_vec;
 	std::vector<coords::EXPR*> EXPR_vec;
@@ -235,7 +254,8 @@ public:
 	std::vector<coords::REAL1_LITERAL*> REAL1_LITERAL_vec;
 	std::vector<coords::REAL3_LITERAL*> REAL3_LITERAL_vec;
 	std::vector<coords::REAL4_LITERAL*> REAL4_LITERAL_vec;
-	std::vector<coords::REALMATRIX_LITERAL*> REALMATRIX_LITERAL_vec;
+	std::vector<coords::REALMATRIX_LITERAL*> REALMATRIX_LITERAL_vec;	std::vector<coords::SEQ_GLOBALSTMT*> SEQ_GLOBALSTMT_vec;
+	std::vector<coords::COMPOUND_STMT*> COMPOUND_STMT_vec;
 
     std::unordered_map<int, coords::Coords*> index2coords_;
     std::unordered_map<int, void*> index2dom_;

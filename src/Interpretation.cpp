@@ -43,6 +43,128 @@ Interpretation::Interpretation() {
 
 
 
+void Interpretation::mkSEQ_GLOBALSTMT(const ast::SEQ_GLOBALSTMT * ast , std::vector <ast::GLOBALSTMT*> operands) {
+//const ast::COMPOUND_STMT * ast , std::vector < ast::STMT *> operands 
+	//coords::GLOBALSTMT* operand1_coords = static_cast<coords::GLOBALSTMT*>(ast2coords_->getDeclCoords(operands));
+
+    vector<coords::GLOBALSTMT*> operand_coords;
+
+    for(auto op : operands)
+    {
+        
+        if(ast2coords_->existsDeclCoords(op)){
+            operand_coords.push_back(static_cast<coords::GLOBALSTMT*>(ast2coords_->getDeclCoords(op)));
+        } 
+    }
+
+    coords::SEQ_GLOBALSTMT* coords = ast2coords_->mkSEQ_GLOBALSTMT(ast, context_ ,operand_coords);
+
+	//domain::DomainObject* operand1_dom = coords2dom_->getGLOBALSTMT(operand_coords);
+
+    vector<domain::DomainObject*> operand_domain;
+
+    for(auto op : operand_coords)
+    {
+        operand_domain.push_back(coords2dom_->getGLOBALSTMT(op));
+    }
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer(operand_domain);
+    coords2dom_->putSEQ_GLOBALSTMT(coords, dom);
+
+	//interp::GLOBALSTMT* operand1_interp = coords2interp_->getGLOBALSTMT(operand1_coords);
+
+    vector<interp::GLOBALSTMT*> operand_interp;
+
+    for(auto op : operand_coords)
+    {
+        auto p = coords2interp_->getGLOBALSTMT(op);
+        operand_interp.push_back(coords2interp_->getGLOBALSTMT(op));
+    }
+
+    interp::SEQ_GLOBALSTMT* interp = new interp::SEQ_GLOBALSTMT(coords, dom, operand_interp);
+    coords2interp_->putSEQ_GLOBALSTMT(coords, interp);
+    interp2domain_->putSEQ_GLOBALSTMT(interp, dom); 
+	this->PROGRAM_vec.push_back(coords);
+	this->SEQ_GLOBALSTMT_vec.push_back(coords);
+};
+
+
+ std::string Interpretation::toString_SEQ_GLOBALSTMTs(){ 
+    std::vector<interp::SEQ_GLOBALSTMT*> interps;
+    for(auto coord : this->SEQ_GLOBALSTMT_vec){
+        interps.push_back((interp::SEQ_GLOBALSTMT*)this->coords2interp_->getPROGRAM(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toStringLinked(this->getSpaceInterps(), this->getSpaceNames(), true) + "\n";
+
+    }
+    return retval;
+}
+
+ std::string Interpretation::toString_PROGRAMs(){ 
+    std::vector<interp::PROGRAM*> interps;
+    for(auto coord : this->PROGRAM_vec){
+        interps.push_back(this->coords2interp_->getPROGRAM(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkMAIN_STMT(const ast::MAIN_STMT * ast ,ast::STMT* operand1) {
+
+	coords::STMT* operand1_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::MAIN_STMT* coords = ast2coords_->mkMAIN_STMT(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getSTMT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putMAIN_STMT(coords, dom);
+
+	interp::STMT* operand1_interp = coords2interp_->getSTMT(operand1_coords);
+
+    interp::MAIN_STMT* interp = new interp::MAIN_STMT(coords, dom, operand1_interp);
+    coords2interp_->putMAIN_STMT(coords, interp);
+    interp2domain_->putMAIN_STMT(interp, dom); 
+	this->GLOBALSTMT_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkFUNCTION_STMT(const ast::FUNCTION_STMT * ast ,ast::STMT* operand1) {
+
+	coords::STMT* operand1_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operand1));
+
+    coords::FUNCTION_STMT* coords = ast2coords_->mkFUNCTION_STMT(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getSTMT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putFUNCTION_STMT(coords, dom);
+
+	interp::STMT* operand1_interp = coords2interp_->getSTMT(operand1_coords);
+
+    interp::FUNCTION_STMT* interp = new interp::FUNCTION_STMT(coords, dom, operand1_interp);
+    coords2interp_->putFUNCTION_STMT(coords, interp);
+    interp2domain_->putFUNCTION_STMT(interp, dom); 
+	this->GLOBALSTMT_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_GLOBALSTMTs(){ 
+    std::vector<interp::GLOBALSTMT*> interps;
+    for(auto coord : this->GLOBALSTMT_vec){
+        interps.push_back(this->coords2interp_->getGLOBALSTMT(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+
+
 void Interpretation::mkCOMPOUND_STMT(const ast::COMPOUND_STMT * ast , std::vector <ast::STMT*> operands) {
 //const ast::COMPOUND_STMT * ast , std::vector < ast::STMT *> operands 
 	//coords::STMT* operand1_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operands));
@@ -54,7 +176,7 @@ void Interpretation::mkCOMPOUND_STMT(const ast::COMPOUND_STMT * ast , std::vecto
         
         if(ast2coords_->existsStmtCoords(op)){
             operand_coords.push_back(static_cast<coords::STMT*>(ast2coords_->getStmtCoords(op)));
-        }
+        } 
     }
 
     coords::COMPOUND_STMT* coords = ast2coords_->mkCOMPOUND_STMT(ast, context_ ,operand_coords);
@@ -85,8 +207,21 @@ void Interpretation::mkCOMPOUND_STMT(const ast::COMPOUND_STMT * ast , std::vecto
     coords2interp_->putCOMPOUND_STMT(coords, interp);
     interp2domain_->putCOMPOUND_STMT(interp, dom); 
 	this->STMT_vec.push_back(coords);
+	this->COMPOUND_STMT_vec.push_back(coords);
 };
 
+
+ std::string Interpretation::toString_COMPOUND_STMTs(){ 
+    std::vector<interp::COMPOUND_STMT*> interps;
+    for(auto coord : this->COMPOUND_STMT_vec){
+        interps.push_back((interp::COMPOUND_STMT*)this->coords2interp_->getSTMT(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
 
  std::string Interpretation::toString_STMTs(){ 
     std::vector<interp::STMT*> interps;
@@ -1393,7 +1528,65 @@ std::string Interpretation::toString_Spaces() {
             
 
     return retval;
-}       
+}   
+
+std::vector<interp::Space*> Interpretation::getSpaceInterps() {
+    std::vector<interp::Space*> interps;
+    
+	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
+    for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        interps.push_back(sp);
+    }
+            
+	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
+    for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        interps.push_back(sp);
+    }
+            
+	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
+    for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        interps.push_back(sp);
+    }
+            
+
+    return interps;
+}   
+
+std::vector<std::string> Interpretation::getSpaceNames() {
+    std::vector<std::string> names;
+    
+	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
+    for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        names.push_back((*it)->getName());
+    }
+            
+	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
+    for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        names.push_back((*it)->getName());
+    }
+            
+	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
+    for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        names.push_back((*it)->getName());
+    }
+            
+
+    return names;
+}
+
+    
 void Interpretation::buildDefaultSpaces(){
     auto worldGeometry= domain_->mkEuclideanGeometry("geom3d","worldGeometry",3);
     auto iworldGeometry = new interp::Space(worldGeometry);
@@ -1406,6 +1599,48 @@ void Interpretation::buildDefaultSpaces(){
     interp2domain_->putSpace(iworldVelocity, worldVelocity);
 
 
+}
+
+void Interpretation::buildSpace(){
+    int index = 0;
+    int choice = 0;
+    int size = 3;
+    if (size == 0){
+        std::cout<<"Warning: No Available Spaces to Build";
+        return;
+    }
+    while((choice <= 0 or choice > size)){ 
+        std::cout<<"Available types of Spaces to build:\n";
+        std::cout <<"("<<std::to_string(++index)<<")"<<"EuclideanGeometry";
+		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalTime";
+		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalVelocity";
+        std::cin>>choice;
+    }
+    index = 0;
+    
+	
+	
+    
+}
+
+void Interpretation::printSpaces(){
+    int index = 0;
+    
+	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
+    for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
+    {
+        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString();
+    }
+	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
+    for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+    {
+        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString();
+    }
+	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
+    for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString();
+    }
 }
 
 void Interpretation::mkVarTable(){
@@ -1717,15 +1952,19 @@ void Interpretation::updateVarTable(){
         std::cout << "********************************************\n";
         std::cout << "********************************************\n";
         std::cout << "********************************************\n";
+        std::cout<<"Enter -1 to print Available Spaces\n";
         std::cout<<"Enter 0 to print the Variable Table again.\n";
         std::cout << "Enter the index of a Variable to update its physical type. Enter " << sz << " to exit and check." << std::endl;
         std::cin >> choice;
         std::cout << std::to_string(choice) << "\n";
 
 
-        while ((choice == 0 || this->index2coords_.find(choice) != this->index2coords_.end()) && choice != sz)
+        while ((choice == -1 || choice == 0 || this->index2coords_.find(choice) != this->index2coords_.end()) && choice != sz)
         {
-
+            if (choice == -1)
+            {
+                this->printSpaces();
+            }
             if (choice == 0)
             {
                 this->printVarTable();

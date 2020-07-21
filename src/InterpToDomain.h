@@ -16,6 +16,27 @@ class InterpToDomain
 	domain::Space* getSpace(interp::Space* c) const;
 	interp::Space* getSpace(domain::Space* d) const;
 
+	domain::DomainObject* getPROGRAM(interp::PROGRAM* c) const;
+	interp::PROGRAM* getPROGRAM(domain::DomainObject* d) const;
+	
+	void putSEQ_GLOBALSTMT(interp::SEQ_GLOBALSTMT* key, domain::DomainObject* val);
+	domain::DomainObject* getSEQ_GLOBALSTMT(interp::SEQ_GLOBALSTMT* c) const;
+	interp::SEQ_GLOBALSTMT* getSEQ_GLOBALSTMT(domain::DomainObject* d) const;
+void eraseSEQ_GLOBALSTMT(interp::SEQ_GLOBALSTMT* key, domain::DomainObject* val);
+
+	domain::DomainObject* getGLOBALSTMT(interp::GLOBALSTMT* c) const;
+	interp::GLOBALSTMT* getGLOBALSTMT(domain::DomainObject* d) const;
+	
+	void putMAIN_STMT(interp::MAIN_STMT* key, domain::DomainObject* val);
+	domain::DomainObject* getMAIN_STMT(interp::MAIN_STMT* c) const;
+	interp::MAIN_STMT* getMAIN_STMT(domain::DomainObject* d) const;
+void eraseMAIN_STMT(interp::MAIN_STMT* key, domain::DomainObject* val);
+
+	void putFUNCTION_STMT(interp::FUNCTION_STMT* key, domain::DomainObject* val);
+	domain::DomainObject* getFUNCTION_STMT(interp::FUNCTION_STMT* c) const;
+	interp::FUNCTION_STMT* getFUNCTION_STMT(domain::DomainObject* d) const;
+void eraseFUNCTION_STMT(interp::FUNCTION_STMT* key, domain::DomainObject* val);
+
 	domain::DomainObject* getSTMT(interp::STMT* c) const;
 	interp::STMT* getSTMT(domain::DomainObject* d) const;
 	
@@ -320,6 +341,12 @@ private:
 std::unordered_map<interp::Space*, domain::Space*> interp2dom_Spaces;
 
 std::unordered_map<domain::Space*, interp::Space*> dom2interp_Spaces;
+
+	std::unordered_map <interp::PROGRAM*,	domain::DomainObject*	> 	interp2dom_PROGRAM;
+	std::unordered_map <domain::DomainObject*,	interp::PROGRAM*	> 	dom2interp_PROGRAM;
+
+	std::unordered_map <interp::GLOBALSTMT*,	domain::DomainObject*	> 	interp2dom_GLOBALSTMT;
+	std::unordered_map <domain::DomainObject*,	interp::GLOBALSTMT*	> 	dom2interp_GLOBALSTMT;
 
 	std::unordered_map <interp::STMT*,	domain::DomainObject*	> 	interp2dom_STMT;
 	std::unordered_map <domain::DomainObject*,	interp::STMT*	> 	dom2interp_STMT;

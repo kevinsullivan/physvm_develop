@@ -32,6 +32,151 @@ using namespace interp2domain;
     return interp;
 }
 
+interp::PROGRAM *InterpToDomain::getPROGRAM(domain::DomainObject *d) const
+    {
+        interp::PROGRAM *interp = NULL;
+        try {
+            interp = dom2interp_PROGRAM.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::PROGRAM*)interp;
+    }
+domain::DomainObject *InterpToDomain::getPROGRAM(interp::PROGRAM *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_PROGRAM.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putSEQ_GLOBALSTMT(interp::SEQ_GLOBALSTMT* i, domain::DomainObject* d)
+{
+    interp2dom_PROGRAM[i] = d;
+    dom2interp_PROGRAM[d] = i;
+}
+void InterpToDomain::eraseSEQ_GLOBALSTMT(interp::SEQ_GLOBALSTMT* i, domain::DomainObject* d)
+{
+    interp2dom_PROGRAM.erase(i);
+    dom2interp_PROGRAM.erase(d);
+}
+domain::DomainObject* InterpToDomain::getSEQ_GLOBALSTMT(interp::SEQ_GLOBALSTMT* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_PROGRAM.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::SEQ_GLOBALSTMT* InterpToDomain::getSEQ_GLOBALSTMT(domain::DomainObject* d) const
+{
+    interp::PROGRAM *interp = NULL;
+    try {
+        interp = dom2interp_PROGRAM.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::SEQ_GLOBALSTMT*>(interp);
+}
+
+interp::GLOBALSTMT *InterpToDomain::getGLOBALSTMT(domain::DomainObject *d) const
+    {
+        interp::GLOBALSTMT *interp = NULL;
+        try {
+            interp = dom2interp_GLOBALSTMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::GLOBALSTMT*)interp;
+    }
+domain::DomainObject *InterpToDomain::getGLOBALSTMT(interp::GLOBALSTMT *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_GLOBALSTMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putMAIN_STMT(interp::MAIN_STMT* i, domain::DomainObject* d)
+{
+    interp2dom_GLOBALSTMT[i] = d;
+    dom2interp_GLOBALSTMT[d] = i;
+}
+void InterpToDomain::eraseMAIN_STMT(interp::MAIN_STMT* i, domain::DomainObject* d)
+{
+    interp2dom_GLOBALSTMT.erase(i);
+    dom2interp_GLOBALSTMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getMAIN_STMT(interp::MAIN_STMT* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_GLOBALSTMT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::MAIN_STMT* InterpToDomain::getMAIN_STMT(domain::DomainObject* d) const
+{
+    interp::GLOBALSTMT *interp = NULL;
+    try {
+        interp = dom2interp_GLOBALSTMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::MAIN_STMT*>(interp);
+}
+
+void InterpToDomain::putFUNCTION_STMT(interp::FUNCTION_STMT* i, domain::DomainObject* d)
+{
+    interp2dom_GLOBALSTMT[i] = d;
+    dom2interp_GLOBALSTMT[d] = i;
+}
+void InterpToDomain::eraseFUNCTION_STMT(interp::FUNCTION_STMT* i, domain::DomainObject* d)
+{
+    interp2dom_GLOBALSTMT.erase(i);
+    dom2interp_GLOBALSTMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getFUNCTION_STMT(interp::FUNCTION_STMT* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_GLOBALSTMT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::FUNCTION_STMT* InterpToDomain::getFUNCTION_STMT(domain::DomainObject* d) const
+{
+    interp::GLOBALSTMT *interp = NULL;
+    try {
+        interp = dom2interp_GLOBALSTMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::FUNCTION_STMT*>(interp);
+}
+
 interp::STMT *InterpToDomain::getSTMT(domain::DomainObject *d) const
     {
         interp::STMT *interp = NULL;

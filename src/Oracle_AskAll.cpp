@@ -67,6 +67,42 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords, d
     }
 }
 
+domain::DomainObject* Oracle_AskAll::getInterpretationForPROGRAM(coords::PROGRAM * coords, domain::DomainObject * dom){
+    std::cout << "Provide new interpretation for : " << "";
+    std::cout << "\nExisting interpretation:   ";
+    std::cout << dom->toString();
+    std::cout << "\nAt location:  ";
+    std::cout << coords->getSourceLoc();
+    int choice;
+    choose:
+    std::cout<<"\nAvailable Interpretations (Enter numeral choice) : \n";
+    
+    //return getInterpretation(coords);
+
+                    
+    std::cout<<"None available!\n";
+    return this->domain_->mkDefaultDomainContainer();
+}
+
+
+domain::DomainObject* Oracle_AskAll::getInterpretationForGLOBALSTMT(coords::GLOBALSTMT * coords, domain::DomainObject * dom){
+    std::cout << "Provide new interpretation for : " << "";
+    std::cout << "\nExisting interpretation:   ";
+    std::cout << dom->toString();
+    std::cout << "\nAt location:  ";
+    std::cout << coords->getSourceLoc();
+    int choice;
+    choose:
+    std::cout<<"\nAvailable Interpretations (Enter numeral choice) : \n";
+    
+    //return getInterpretation(coords);
+
+                    
+    std::cout<<"None available!\n";
+    return this->domain_->mkDefaultDomainContainer();
+}
+
+
 domain::DomainObject* Oracle_AskAll::getInterpretationForIFCOND(coords::IFCOND * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
     std::cout << "\nExisting interpretation:   ";

@@ -13,6 +13,11 @@ namespace ast{
 using RealScalar = double;
 
 
+using PROGRAM = const clang::TranslationUnitDecl;
+using SEQ_GLOBALSTMT = const clang::TranslationUnitDecl;
+using GLOBALSTMT = const clang::FunctionDecl;
+using MAIN_STMT = const clang::FunctionDecl;
+using FUNCTION_STMT = const clang::FunctionDecl;
 using STMT = const clang::Stmt;
 using COMPOUND_STMT = const clang::Stmt;
 using IFCOND = const clang::Stmt;

@@ -21,18 +21,21 @@ std::string Space::toString() const {
 
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry*>(s_)){
         found = true;
-        retval += "def " + dc->getName() + " := EuclideanGeometry " + " \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()); 
-
+        retval += "def " + dc->getName() + "var : PhysSpaceVar := PhysSpaceVar.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "(!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        retval += "def " + dc->getName() + "sp := PhysSpaceExpression.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "Expr (EuclideanGeometry" + std::to_string(dc->getDimension()) +  "SpaceExpression.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "Literal ( BuildEuclideanGeometrySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
+        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace " + dc->getName() + "var " + dc->getName() + "sp\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTime*>(s_)){
         found = true;
-        retval += "def " + dc->getName() + " := ClassicalTime " + " \"" + dc->getName() + "\"  ";
-
+        retval += "def " + dc->getName() + "var : PhysSpaceVar := PhysSpaceVar.ClassicalTime(!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        retval += "def " + dc->getName() + "sp := PhysSpaceExpression.ClassicalTimeExpr (ClassicalTimeSpaceExpression.ClassicalTimeLiteral ( BuildClassicalTimeSpace \"" + dc->getName() + "\" ))\n";; 
+        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace " + dc->getName() + "var " + dc->getName() + "sp\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
         found = true;
-        retval += "def " + dc->getName() + " := ClassicalVelocity " + " \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()); 
-
+        retval += "def " + dc->getName() + "var : PhysSpaceVar := PhysSpaceVar.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "(!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        retval += "def " + dc->getName() + "sp := PhysSpaceExpression.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "Expr (ClassicalVelocity" + std::to_string(dc->getDimension()) +  "SpaceExpression.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "Literal ( BuildClassicalVelocitySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
+        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace " + dc->getName() + "var " + dc->getName() + "sp\n";
     }
 
     if(!found){
@@ -41,6 +44,298 @@ std::string Space::toString() const {
 
     return retval;
 };
+
+PROGRAM::PROGRAM(coords::PROGRAM* c, domain::DomainObject* d) : Interp(c,d) {}
+                    
+std::string PROGRAM::toString() const {
+    std::string retval = "";
+    bool found = false;
+    
+    //  ret += "(";
+    //ret += "def var_" + std::to_string(++index) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        std::cout<<"Warning - Calling toString on a production rather than a case\n;";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+SEQ_GLOBALSTMT::SEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c, domain::DomainObject* d, std::vector<interp::GLOBALSTMT*> operands)  :PROGRAM(c, d) {
+    for(auto& op : operands){
+        this->operands_.push_back(op);
+    }
+
+};
+std::string SEQ_GLOBALSTMT::toString() const{ 
+    std::string retval = "";
+    string cmdval = "[]";
+    for(auto op: this->operands_){ 
+        retval += "\n" + op->toString() + "\n";
+        cmdval = op->coords_->toString() + "::" + cmdval;
+    }
+    cmdval += ""; 
+    cmdval = "\ndef " + this->coords_->toString() + "globalseq : PhysGlobalCommand := PhysGlobalCommand.Seq " + cmdval;
+
+
+    cmdval += "\ndef " + this->coords_->toString() + " : PhysProgram := PhysProgram.Program " + this->coords_->toString() + "globalseq";
+
+
+    retval += "\n" + cmdval + "\n";
+    
+
+    //std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {   
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+std::string SEQ_GLOBALSTMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before) { 
+    //std::string toStr = this->toString();
+    std::string retval = "";
+        string cmdvalstart = "[]";
+        string cmdval = "";
+    int i = 0;
+    if(before)
+    {
+        
+        for(auto op: links){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = names[i++] + "::" + cmdval;
+            
+        }
+        /*
+        bool start = true;
+        for(auto op: this->operands_){ 
+            retval += "\n" + op->toString() + "\n";
+            cmdval = cmdval + (!start?"::":"") + op->coords_->toString();
+            start = false;
+        }
+        */
+    }
+    else
+    {
+        for(auto op: this->operands_){ 
+            retval += "\n" + op->toString() + "\n";
+            cmdval = op->coords_->toString() + "::" + cmdval;
+        }
+        bool start = true;
+        for(auto op: links){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = cmdval + (!start?"::":"") + names[i++];
+            start = false;
+            
+        }
+
+    }
+    cmdval += ""; 
+    cmdval = "\ndef " + this->coords_->toString() + "globalseq : PhysGlobalCommand := PhysGlobalCommand.Seq (" + cmdval + cmdvalstart + ")";
+
+
+    cmdval += "\ndef " + this->coords_->toString() + " : PhysProgram := PhysProgram.Program " + this->coords_->toString() + "globalseq";
+
+
+    retval += "\n" + cmdval + "\n";
+    
+
+    //std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {   
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    if(before)
+    {
+        
+    }
+    else
+    {
+
+    }
+
+    return retval;
+}
+
+
+GLOBALSTMT::GLOBALSTMT(coords::GLOBALSTMT* c, domain::DomainObject* d) : Interp(c,d) {}
+                    
+std::string GLOBALSTMT::toString() const {
+    std::string retval = "";
+    bool found = false;
+    
+    //  ret += "(";
+    //ret += "def var_" + std::to_string(++index) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        std::cout<<"Warning - Calling toString on a production rather than a case\n;";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+MAIN_STMT::MAIN_STMT(coords::MAIN_STMT* c, domain::DomainObject* d,interp::STMT * operand1 ) : GLOBALSTMT(c,d)
+   ,operand_1(operand1) {}
+
+std::string MAIN_STMT::toString() const {
+    bool found = false;
+    std::string retval = "";
+	retval += "\n"+ operand_1->toString() + "\n";
+    //  ret += "(";
+    //ret += "def var_" + std::to_string(++index) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //retval = "";
+        
+            auto case_coords = dynamic_cast<coords::GLOBALSTMT*>(this->coords_);
+            retval += "def " + case_coords->toString() + " : PhysGlobalCommand := PhysGlobalCommand.Main " + operand_1->coords_->toString();
+
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
+FUNCTION_STMT::FUNCTION_STMT(coords::FUNCTION_STMT* c, domain::DomainObject* d,interp::STMT * operand1 ) : GLOBALSTMT(c,d)
+   ,operand_1(operand1) {}
+
+std::string FUNCTION_STMT::toString() const {
+    bool found = false;
+    std::string retval = "";
+	retval += "\n"+ operand_1->toString() + "\n";
+    //  ret += "(";
+    //ret += "def var_" + std::to_string(++index) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //retval = "";
+        
+            auto case_coords = dynamic_cast<coords::GLOBALSTMT*>(this->coords_);
+            retval += "def " + case_coords->toString() + " : PhysGlobalCommand := PhysGlobalCommand.Function " + operand_1->coords_->toString();
+
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
 
 STMT::STMT(coords::STMT* c, domain::DomainObject* d) : Interp(c,d) {}
                     
@@ -66,23 +361,23 @@ std::string STMT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
     return retval;
 }
                 
-COMPOUND_STMT::COMPOUND_STMT(coords::COMPOUND_STMT* c, domain::DomainObject* d, std::vector<STMT*> operands)  :STMT(c, d) {
+COMPOUND_STMT::COMPOUND_STMT(coords::COMPOUND_STMT* c, domain::DomainObject* d, std::vector<interp::STMT*> operands)  :STMT(c, d) {
     for(auto& op : operands){
         this->operands_.push_back(op);
     }
@@ -90,27 +385,106 @@ COMPOUND_STMT::COMPOUND_STMT(coords::COMPOUND_STMT* c, domain::DomainObject* d, 
 };
 std::string COMPOUND_STMT::toString() const{ 
     std::string retval = "";
+    string cmdval = "[]";
     for(auto op: this->operands_){ 
         retval += "\n" + op->toString() + "\n";
+        cmdval = op->coords_->toString() + "::" + cmdval;
     }
+    cmdval += ""; 
+    cmdval = "\ndef " + this->coords_->toString() + " : PhysCommand := PhysCommand.Seq " + cmdval;
+
+
+    retval += "\n" + cmdval + "\n";
+    
+
     //std::replace(retval.begin(), retval.end(), '_', '.');
     int index;
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {   
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
+    return retval;
+}
+std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before) { 
+    //std::string toStr = this->toString();
+    std::string retval = "";
+        string cmdvalstart = "::[]";
+        string cmdval = "";
+    int i = 0;
+    if(before)
+    {
+        
+        for(auto op: links){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = names[i++] + "::" + cmdval;
+            
+        }
+        bool start = true;
+        for(auto op: this->operands_){ 
+            retval += "\n" + op->toString() + "\n";
+            cmdval = cmdval + (!start?"::":"") + op->coords_->toString();
+            start = false;
+        }
+    }
+    else
+    {
+        for(auto op: this->operands_){ 
+            retval += "\n" + op->toString() + "\n";
+            cmdval = op->coords_->toString() + "::" + cmdval;
+        }
+        bool start = true;
+        for(auto op: links){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = cmdval + (!start?"::":"") + names[i++];
+            start = false;
+            
+        }
+
+    }
+    cmdval += ""; 
+    cmdval = "\ndef " + this->coords_->toString() + " : PhysCommand := PhysCommand.Seq " + cmdval;
+
+
+    retval += "\n" + cmdval + "\n";
+    
+
+    //std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {   
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    if(before)
+    {
+        
+    }
+    else
+    {
+
+    }
+
     return retval;
 }
 
@@ -139,16 +513,16 @@ std::string IFCOND::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -182,16 +556,16 @@ std::string IFTHEN_EXPR_STMT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -227,16 +601,16 @@ std::string IFTHENELSEIF_EXPR_STMT_IFCOND::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -272,16 +646,16 @@ std::string IFTHENELSE_EXPR_STMT_STMT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -313,16 +687,16 @@ std::string EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -353,16 +727,16 @@ std::string ASSIGNMENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -391,8 +765,8 @@ std::string ASSIGN_REAL1_VAR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "=" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -401,16 +775,16 @@ std::string ASSIGN_REAL1_VAR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -440,8 +814,8 @@ std::string ASSIGN_REAL3_VAR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "=" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -450,16 +824,16 @@ std::string ASSIGN_REAL3_VAR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -489,8 +863,8 @@ std::string ASSIGN_REAL4_VAR_REAL4_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL4.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "=" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -499,16 +873,16 @@ std::string ASSIGN_REAL4_VAR_REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -538,8 +912,8 @@ std::string ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "=" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -548,16 +922,16 @@ std::string ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -589,16 +963,16 @@ std::string DECLARE::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -627,8 +1001,8 @@ std::string DECL_REAL1_VAR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "=" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -637,16 +1011,16 @@ std::string DECL_REAL1_VAR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -676,8 +1050,8 @@ std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "=" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -686,16 +1060,16 @@ std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -725,8 +1099,8 @@ std::string DECL_REAL4_VAR_REAL4_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL4.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "=" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -735,16 +1109,16 @@ std::string DECL_REAL4_VAR_REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -774,8 +1148,8 @@ std::string DECL_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "=" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -784,16 +1158,16 @@ std::string DECL_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -827,16 +1201,16 @@ std::string DECL_REAL1_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -870,16 +1244,16 @@ std::string DECL_REAL3_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -912,16 +1286,16 @@ std::string DECL_REAL4_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -955,16 +1329,16 @@ std::string DECL_REALMATRIX_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1032,16 +1406,16 @@ std::string REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -1062,8 +1436,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1072,8 +1446,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1082,8 +1456,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1092,8 +1466,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1106,8 +1480,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1115,8 +1489,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1124,8 +1498,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1133,8 +1507,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1145,8 +1519,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "$" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "$" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1155,16 +1529,16 @@ std::string PAREN_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1186,8 +1560,8 @@ std::string INV_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -1196,8 +1570,8 @@ std::string INV_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -1206,8 +1580,8 @@ std::string INV_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -1216,8 +1590,8 @@ std::string INV_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -1230,8 +1604,8 @@ std::string INV_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -1239,8 +1613,8 @@ std::string INV_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -1248,8 +1622,8 @@ std::string INV_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -1257,8 +1631,8 @@ std::string INV_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -1269,8 +1643,8 @@ std::string INV_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + " (REAL1_EXPR" + operand_1->coords_->toString() + ") + " + "⁻¹";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + " (" + operand_1->coords_->toString() + ") + " + "⁻¹";
             //return retval;
     
     }
@@ -1279,16 +1653,16 @@ std::string INV_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1310,8 +1684,8 @@ std::string NEG_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1320,8 +1694,8 @@ std::string NEG_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1330,8 +1704,8 @@ std::string NEG_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1340,8 +1714,8 @@ std::string NEG_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1354,8 +1728,8 @@ std::string NEG_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1363,8 +1737,8 @@ std::string NEG_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1372,8 +1746,8 @@ std::string NEG_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1381,8 +1755,8 @@ std::string NEG_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1393,8 +1767,8 @@ std::string NEG_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "-" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "-" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1403,16 +1777,16 @@ std::string NEG_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1435,8 +1809,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1445,8 +1819,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1455,8 +1829,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1465,8 +1839,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1479,8 +1853,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1488,8 +1862,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1497,8 +1871,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1506,8 +1880,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1518,8 +1892,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "+" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1528,16 +1902,16 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1560,8 +1934,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1570,8 +1944,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1580,8 +1954,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1590,8 +1964,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1604,8 +1978,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1613,8 +1987,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1622,8 +1996,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1631,8 +2005,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1643,8 +2017,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "-" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1653,16 +2027,16 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1685,8 +2059,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1695,8 +2069,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1705,8 +2079,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1715,8 +2089,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1729,8 +2103,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1738,8 +2112,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1747,8 +2121,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1756,8 +2130,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1768,8 +2142,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1778,16 +2152,16 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1810,8 +2184,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1820,8 +2194,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1830,8 +2204,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1840,8 +2214,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1854,8 +2228,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1863,8 +2237,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1872,8 +2246,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1881,8 +2255,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1893,8 +2267,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "/" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1903,16 +2277,16 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1933,8 +2307,8 @@ std::string REF_REAL1_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1943,8 +2317,8 @@ std::string REF_REAL1_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1953,8 +2327,8 @@ std::string REF_REAL1_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1963,8 +2337,8 @@ std::string REF_REAL1_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1977,8 +2351,8 @@ std::string REF_REAL1_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1986,8 +2360,8 @@ std::string REF_REAL1_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1995,8 +2369,8 @@ std::string REF_REAL1_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2004,8 +2378,8 @@ std::string REF_REAL1_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2016,8 +2390,8 @@ std::string REF_REAL1_VAR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "%" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "%" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2026,16 +2400,16 @@ std::string REF_REAL1_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2130,16 +2504,16 @@ std::string REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -2160,8 +2534,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2170,8 +2544,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2180,8 +2554,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2190,8 +2564,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2200,8 +2574,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2210,8 +2584,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2220,8 +2594,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2234,8 +2608,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2243,8 +2617,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2252,8 +2626,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2261,8 +2635,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2270,8 +2644,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2279,8 +2653,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2288,8 +2662,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2300,8 +2674,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "$" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "$" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2310,16 +2684,16 @@ std::string PAREN_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2342,8 +2716,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2352,8 +2726,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2362,8 +2736,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2372,8 +2746,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2382,8 +2756,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2392,8 +2766,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2402,8 +2776,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2416,8 +2790,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2425,8 +2799,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2434,8 +2808,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2443,8 +2817,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2452,8 +2826,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2461,8 +2835,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2470,8 +2844,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2482,8 +2856,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "+" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "+" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2492,16 +2866,16 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2524,8 +2898,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -2534,8 +2908,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -2544,8 +2918,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -2554,8 +2928,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -2564,8 +2938,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -2574,8 +2948,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -2584,8 +2958,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -2598,8 +2972,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -2607,8 +2981,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -2616,8 +2990,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -2625,8 +2999,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -2634,8 +3008,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -2643,8 +3017,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -2652,8 +3026,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -2664,8 +3038,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ")"+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "-" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2674,16 +3048,16 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2705,8 +3079,8 @@ std::string INV_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -2715,8 +3089,8 @@ std::string INV_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -2725,8 +3099,8 @@ std::string INV_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -2735,8 +3109,8 @@ std::string INV_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -2745,8 +3119,8 @@ std::string INV_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -2755,8 +3129,8 @@ std::string INV_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -2765,8 +3139,8 @@ std::string INV_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -2779,8 +3153,8 @@ std::string INV_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -2788,8 +3162,8 @@ std::string INV_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -2797,8 +3171,8 @@ std::string INV_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -2806,8 +3180,8 @@ std::string INV_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -2815,8 +3189,8 @@ std::string INV_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -2824,8 +3198,8 @@ std::string INV_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -2833,8 +3207,8 @@ std::string INV_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -2845,8 +3219,8 @@ std::string INV_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + " (REAL3_EXPR" + operand_1->coords_->toString() + ") + " + "⁻¹";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + " (" + operand_1->coords_->toString() + ") + " + "⁻¹";
             //return retval;
     
     }
@@ -2855,16 +3229,16 @@ std::string INV_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2886,8 +3260,8 @@ std::string NEG_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2896,8 +3270,8 @@ std::string NEG_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2906,8 +3280,8 @@ std::string NEG_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2916,8 +3290,8 @@ std::string NEG_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2926,8 +3300,8 @@ std::string NEG_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2936,8 +3310,8 @@ std::string NEG_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2946,8 +3320,8 @@ std::string NEG_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2960,8 +3334,8 @@ std::string NEG_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2969,8 +3343,8 @@ std::string NEG_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2978,8 +3352,8 @@ std::string NEG_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2987,8 +3361,8 @@ std::string NEG_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2996,8 +3370,8 @@ std::string NEG_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3005,8 +3379,8 @@ std::string NEG_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3014,8 +3388,8 @@ std::string NEG_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3026,8 +3400,8 @@ std::string NEG_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "-" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "-" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3036,16 +3410,16 @@ std::string NEG_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3068,8 +3442,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3078,8 +3452,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3088,8 +3462,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3098,8 +3472,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3108,8 +3482,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3118,8 +3492,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3128,8 +3502,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3142,8 +3516,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3151,8 +3525,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3160,8 +3534,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3169,8 +3543,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3178,8 +3552,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3187,8 +3561,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3196,8 +3570,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3208,8 +3582,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3218,16 +3592,16 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3250,8 +3624,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3260,8 +3634,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3270,8 +3644,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3280,8 +3654,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3290,8 +3664,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3300,8 +3674,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3310,8 +3684,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3324,8 +3698,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3333,8 +3707,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3342,8 +3716,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3351,8 +3725,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3360,8 +3734,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3369,8 +3743,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3378,8 +3752,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3390,8 +3764,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3400,16 +3774,16 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3432,8 +3806,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3442,8 +3816,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3452,8 +3826,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3462,8 +3836,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3472,8 +3846,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3482,8 +3856,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3492,8 +3866,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3506,8 +3880,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3515,8 +3889,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3524,8 +3898,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3533,8 +3907,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3542,8 +3916,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3551,8 +3925,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3560,8 +3934,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3572,8 +3946,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ")"+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "/" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3582,16 +3956,16 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3612,8 +3986,8 @@ std::string REF_REAL3_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3622,8 +3996,8 @@ std::string REF_REAL3_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3632,8 +4006,8 @@ std::string REF_REAL3_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3642,8 +4016,8 @@ std::string REF_REAL3_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3652,8 +4026,8 @@ std::string REF_REAL3_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3662,8 +4036,8 @@ std::string REF_REAL3_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3672,8 +4046,8 @@ std::string REF_REAL3_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3686,8 +4060,8 @@ std::string REF_REAL3_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3695,8 +4069,8 @@ std::string REF_REAL3_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3704,8 +4078,8 @@ std::string REF_REAL3_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3713,8 +4087,8 @@ std::string REF_REAL3_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3722,8 +4096,8 @@ std::string REF_REAL3_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3731,8 +4105,8 @@ std::string REF_REAL3_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3740,8 +4114,8 @@ std::string REF_REAL3_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3752,8 +4126,8 @@ std::string REF_REAL3_VAR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "%" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "%" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3762,16 +4136,16 @@ std::string REF_REAL3_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3839,16 +4213,16 @@ std::string REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -3869,8 +4243,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3879,8 +4253,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3889,8 +4263,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3899,8 +4273,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3913,8 +4287,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3922,8 +4296,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3931,8 +4305,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3940,8 +4314,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3952,8 +4326,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "$" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "$" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3962,16 +4336,16 @@ std::string PAREN_REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3994,8 +4368,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4004,8 +4378,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4014,8 +4388,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4024,8 +4398,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4038,8 +4412,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4047,8 +4421,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4056,8 +4430,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4065,8 +4439,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4077,8 +4451,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ")"+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "+" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4087,16 +4461,16 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -4119,8 +4493,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4129,8 +4503,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4139,8 +4513,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4149,8 +4523,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4163,8 +4537,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4172,8 +4546,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4181,8 +4555,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4190,8 +4564,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4202,8 +4576,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4212,16 +4586,16 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -4242,8 +4616,8 @@ std::string REF_REAL4_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4252,8 +4626,8 @@ std::string REF_REAL4_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4262,8 +4636,8 @@ std::string REF_REAL4_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4272,8 +4646,8 @@ std::string REF_REAL4_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4286,8 +4660,8 @@ std::string REF_REAL4_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4295,8 +4669,8 @@ std::string REF_REAL4_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4304,8 +4678,8 @@ std::string REF_REAL4_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4313,8 +4687,8 @@ std::string REF_REAL4_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4325,8 +4699,8 @@ std::string REF_REAL4_VAR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "%" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "%" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4335,16 +4709,16 @@ std::string REF_REAL4_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -4484,16 +4858,16 @@ std::string REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -4514,8 +4888,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4524,8 +4898,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4534,8 +4908,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4544,8 +4918,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4554,8 +4928,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4564,8 +4938,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4574,8 +4948,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4584,8 +4958,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4594,8 +4968,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4604,8 +4978,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4614,8 +4988,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4624,8 +4998,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4638,8 +5012,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4647,8 +5021,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4656,8 +5030,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4665,8 +5039,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4674,8 +5048,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4683,8 +5057,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4692,8 +5066,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4701,8 +5075,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4710,8 +5084,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4719,8 +5093,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4728,8 +5102,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4737,8 +5111,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4749,8 +5123,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "$" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "$" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4759,16 +5133,16 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -4791,8 +5165,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4801,8 +5175,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4811,8 +5185,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4821,8 +5195,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4831,8 +5205,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4841,8 +5215,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4851,8 +5225,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4861,8 +5235,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4871,8 +5245,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4881,8 +5255,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4891,8 +5265,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4901,8 +5275,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4915,8 +5289,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4924,8 +5298,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4933,8 +5307,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4942,8 +5316,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4951,8 +5325,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4960,8 +5334,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4969,8 +5343,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4978,8 +5352,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4987,8 +5361,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4996,8 +5370,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5005,8 +5379,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5014,8 +5388,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5026,8 +5400,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "*" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "*" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5036,16 +5410,16 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -5067,8 +5441,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5077,8 +5451,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5087,8 +5461,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5097,8 +5471,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5107,8 +5481,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5117,8 +5491,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5127,8 +5501,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5137,8 +5511,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5147,8 +5521,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5157,8 +5531,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5167,8 +5541,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5177,8 +5551,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5191,8 +5565,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5200,8 +5574,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5209,8 +5583,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5218,8 +5592,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5227,8 +5601,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5236,8 +5610,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5245,8 +5619,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5254,8 +5628,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5263,8 +5637,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5272,8 +5646,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5281,8 +5655,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5290,8 +5664,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5302,8 +5676,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "%" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "%" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5312,16 +5686,16 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -5341,7 +5715,7 @@ std::string REAL1_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Geometric3AngleVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3AngleVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5351,7 +5725,7 @@ std::string REAL1_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Velocity3ScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5361,7 +5735,7 @@ std::string REAL1_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : TimeScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5371,7 +5745,7 @@ std::string REAL1_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Geometric3ScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5385,7 +5759,7 @@ std::string REAL1_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Geometric3AngleVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3AngleVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5394,7 +5768,7 @@ std::string REAL1_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Velocity3ScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5403,7 +5777,7 @@ std::string REAL1_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : TimeScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5412,7 +5786,7 @@ std::string REAL1_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Geometric3ScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5424,7 +5798,7 @@ std::string REAL1_VAR_IDENT::toString() const {
         //ret = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1.VAR.IDENT" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + "!"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5434,16 +5808,16 @@ std::string REAL1_VAR_IDENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -5462,7 +5836,7 @@ std::string REAL3_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5472,7 +5846,7 @@ std::string REAL3_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5482,7 +5856,7 @@ std::string REAL3_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Velocity3VectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3VectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5492,7 +5866,7 @@ std::string REAL3_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : TimeVectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeVectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5502,7 +5876,7 @@ std::string REAL3_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3VectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3VectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5512,7 +5886,7 @@ std::string REAL3_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : TimePointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimePointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5522,7 +5896,7 @@ std::string REAL3_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3PointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3PointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5536,7 +5910,7 @@ std::string REAL3_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5545,7 +5919,7 @@ std::string REAL3_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5554,7 +5928,7 @@ std::string REAL3_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Velocity3VectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3VectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5563,7 +5937,7 @@ std::string REAL3_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : TimeVectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeVectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5572,7 +5946,7 @@ std::string REAL3_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3VectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3VectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5581,7 +5955,7 @@ std::string REAL3_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : TimePointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimePointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5590,7 +5964,7 @@ std::string REAL3_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3PointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3PointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5602,7 +5976,7 @@ std::string REAL3_VAR_IDENT::toString() const {
         //ret = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3.VAR.IDENT" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + "!"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5612,16 +5986,16 @@ std::string REAL3_VAR_IDENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -5640,7 +6014,7 @@ std::string REAL4_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5650,7 +6024,7 @@ std::string REAL4_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5660,7 +6034,7 @@ std::string REAL4_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : TimeHomogenousPointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5670,7 +6044,7 @@ std::string REAL4_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3HomogenousPointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5684,7 +6058,7 @@ std::string REAL4_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5693,7 +6067,7 @@ std::string REAL4_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5702,7 +6076,7 @@ std::string REAL4_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : TimeHomogenousPointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5711,7 +6085,7 @@ std::string REAL4_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3HomogenousPointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5723,7 +6097,7 @@ std::string REAL4_VAR_IDENT::toString() const {
         //ret = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4.VAR.IDENT" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + "!"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5733,16 +6107,16 @@ std::string REAL4_VAR_IDENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -5761,7 +6135,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3ScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5771,7 +6145,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5781,7 +6155,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3ScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5791,7 +6165,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3ShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5801,7 +6175,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5811,7 +6185,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3ShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5821,7 +6195,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3BasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5831,7 +6205,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeBasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5841,7 +6215,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3BasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5851,7 +6225,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeFrameChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5861,7 +6235,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3FrameChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5871,7 +6245,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5885,7 +6259,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3ScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5894,7 +6268,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5903,7 +6277,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3ScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5912,7 +6286,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3ShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5921,7 +6295,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5930,7 +6304,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3ShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5939,7 +6313,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3BasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5948,7 +6322,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeBasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5957,7 +6331,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3BasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5966,7 +6340,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeFrameChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5975,7 +6349,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3FrameChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5984,7 +6358,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5996,7 +6370,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         //ret = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX.VAR.IDENT" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + "!"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -6006,16 +6380,16 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -6082,16 +6456,16 @@ std::string REAL1_LITERAL::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -6111,7 +6485,7 @@ std::string REAL1_LITERAL1::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
              + " ⬝(Geometric3AngleDefault worldGeometry) ";
             //return retval;
     
@@ -6121,7 +6495,7 @@ std::string REAL1_LITERAL1::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
              + " ⬝(Velocity3ScalarDefault worldGeometry) ";
             //return retval;
     
@@ -6131,7 +6505,7 @@ std::string REAL1_LITERAL1::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
              + " ⬝(TimeScalarDefault worldGeometry) ";
             //return retval;
     
@@ -6141,7 +6515,7 @@ std::string REAL1_LITERAL1::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
              + " ⬝(Geometric3ScalarDefault worldGeometry) ";
             //return retval;
     
@@ -6155,7 +6529,7 @@ std::string REAL1_LITERAL1::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
              + " ⬝(Geometric3AngleDefault worldGeometry) ";
             //return retval;
     
@@ -6164,7 +6538,7 @@ std::string REAL1_LITERAL1::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
              + " ⬝(Velocity3ScalarDefault worldGeometry) ";
             //return retval;
     
@@ -6173,7 +6547,7 @@ std::string REAL1_LITERAL1::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeScalarExpression " +  " := "
              + " ⬝(TimeScalarDefault worldGeometry) ";
             //return retval;
     
@@ -6182,7 +6556,7 @@ std::string REAL1_LITERAL1::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
              + " ⬝(Geometric3ScalarDefault worldGeometry) ";
             //return retval;
     
@@ -6194,7 +6568,7 @@ std::string REAL1_LITERAL1::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + " ⬝_ ";
             //return retval;
     
@@ -6204,16 +6578,16 @@ std::string REAL1_LITERAL1::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -6308,16 +6682,16 @@ std::string REAL3_LITERAL::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -6340,8 +6714,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6350,8 +6724,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6360,8 +6734,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6370,8 +6744,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6380,8 +6754,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6390,8 +6764,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6400,8 +6774,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6414,8 +6788,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6423,8 +6797,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6432,8 +6806,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6441,8 +6815,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6450,8 +6824,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6459,8 +6833,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6468,8 +6842,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6480,8 +6854,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")"+ "⬝" +"(" + operand_3->coords_->toString() + ")";
             //return retval;
     
     }
@@ -6490,16 +6864,16 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -6520,7 +6894,7 @@ std::string REAL3_LITERAL3::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
              + " ⬝(Geometric3RotationDefault worldGeometry) ";
             //return retval;
     
@@ -6530,7 +6904,7 @@ std::string REAL3_LITERAL3::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
              + " ⬝(Geometric3OrientationDefault worldGeometry) ";
             //return retval;
     
@@ -6540,7 +6914,7 @@ std::string REAL3_LITERAL3::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
              + " ⬝(Velocity3VectorDefault worldGeometry) ";
             //return retval;
     
@@ -6550,7 +6924,7 @@ std::string REAL3_LITERAL3::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
              + " ⬝(TimeVectorDefault worldGeometry) ";
             //return retval;
     
@@ -6560,7 +6934,7 @@ std::string REAL3_LITERAL3::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
              + " ⬝(Geometric3VectorDefault worldGeometry) ";
             //return retval;
     
@@ -6570,7 +6944,7 @@ std::string REAL3_LITERAL3::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
              + " ⬝(TimePointDefault worldGeometry) ";
             //return retval;
     
@@ -6580,7 +6954,7 @@ std::string REAL3_LITERAL3::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
              + " ⬝(Geometric3PointDefault worldGeometry) ";
             //return retval;
     
@@ -6594,7 +6968,7 @@ std::string REAL3_LITERAL3::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
              + " ⬝(Geometric3RotationDefault worldGeometry) ";
             //return retval;
     
@@ -6603,7 +6977,7 @@ std::string REAL3_LITERAL3::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
              + " ⬝(Geometric3OrientationDefault worldGeometry) ";
             //return retval;
     
@@ -6612,7 +6986,7 @@ std::string REAL3_LITERAL3::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
              + " ⬝(Velocity3VectorDefault worldGeometry) ";
             //return retval;
     
@@ -6621,7 +6995,7 @@ std::string REAL3_LITERAL3::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeVectorExpression " +  " := "
              + " ⬝(TimeVectorDefault worldGeometry) ";
             //return retval;
     
@@ -6630,7 +7004,7 @@ std::string REAL3_LITERAL3::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
              + " ⬝(Geometric3VectorDefault worldGeometry) ";
             //return retval;
     
@@ -6639,7 +7013,7 @@ std::string REAL3_LITERAL3::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimePointExpression " +  " := "
              + " ⬝(TimePointDefault worldGeometry) ";
             //return retval;
     
@@ -6648,7 +7022,7 @@ std::string REAL3_LITERAL3::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3PointExpression " +  " := "
              + " ⬝(Geometric3PointDefault worldGeometry) ";
             //return retval;
     
@@ -6660,7 +7034,7 @@ std::string REAL3_LITERAL3::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + " ⬝_ ";
             //return retval;
     
@@ -6670,16 +7044,16 @@ std::string REAL3_LITERAL3::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -6747,16 +7121,16 @@ std::string REAL4_LITERAL::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -6780,8 +7154,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6790,8 +7164,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6800,8 +7174,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6810,8 +7184,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6824,8 +7198,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6833,8 +7207,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6842,8 +7216,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6851,8 +7225,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6863,8 +7237,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")"+ "⬝" +"(" + operand_3->coords_->toString() + ")"+ "⬝" +"(" + operand_4->coords_->toString() + ")";
             //return retval;
     
     }
@@ -6873,16 +7247,16 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -6903,7 +7277,7 @@ std::string REAL4_LITERAL4::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
              + " %(Geometric3RotationDefault worldGeometry) ";
             //return retval;
     
@@ -6913,7 +7287,7 @@ std::string REAL4_LITERAL4::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
              + " %(Geometric3OrientationDefault worldGeometry) ";
             //return retval;
     
@@ -6923,7 +7297,7 @@ std::string REAL4_LITERAL4::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
              + " %(TimeHomogenousPointDefault worldGeometry) ";
             //return retval;
     
@@ -6933,7 +7307,7 @@ std::string REAL4_LITERAL4::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
              + " %(Geometric3HomogenousPointDefault worldGeometry) ";
             //return retval;
     
@@ -6947,7 +7321,7 @@ std::string REAL4_LITERAL4::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
              + " %(Geometric3RotationDefault worldGeometry) ";
             //return retval;
     
@@ -6956,7 +7330,7 @@ std::string REAL4_LITERAL4::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
              + " %(Geometric3OrientationDefault worldGeometry) ";
             //return retval;
     
@@ -6965,7 +7339,7 @@ std::string REAL4_LITERAL4::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
              + " %(TimeHomogenousPointDefault worldGeometry) ";
             //return retval;
     
@@ -6974,7 +7348,7 @@ std::string REAL4_LITERAL4::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
              + " %(Geometric3HomogenousPointDefault worldGeometry) ";
             //return retval;
     
@@ -6986,7 +7360,7 @@ std::string REAL4_LITERAL4::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + " %_ ";
             //return retval;
     
@@ -6996,16 +7370,16 @@ std::string REAL4_LITERAL4::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -7145,16 +7519,16 @@ std::string REALMATRIX_LITERAL::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -7177,8 +7551,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7187,8 +7561,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7197,8 +7571,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7207,8 +7581,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7217,8 +7591,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7227,8 +7601,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7237,8 +7611,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7247,8 +7621,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7257,8 +7631,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7267,8 +7641,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7277,8 +7651,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7287,8 +7661,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7301,8 +7675,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7310,8 +7684,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7319,8 +7693,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7328,8 +7702,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7337,8 +7711,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7346,8 +7720,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7355,8 +7729,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7364,8 +7738,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7373,8 +7747,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7382,8 +7756,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7391,8 +7765,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7400,8 +7774,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7412,8 +7786,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")"+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")"+ "⬝" +"(" + operand_3->coords_->toString() + ")";
             //return retval;
     
     }
@@ -7422,16 +7796,16 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -7461,8 +7835,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7471,8 +7845,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7481,8 +7855,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7491,8 +7865,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7501,8 +7875,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7511,8 +7885,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7521,8 +7895,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7531,8 +7905,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7541,8 +7915,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7551,8 +7925,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7561,8 +7935,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7571,8 +7945,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7585,8 +7959,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7594,8 +7968,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7603,8 +7977,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7612,8 +7986,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7621,8 +7995,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7630,8 +8004,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7639,8 +8013,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7648,8 +8022,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7657,8 +8031,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7666,8 +8040,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7675,8 +8049,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7684,8 +8058,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7696,8 +8070,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")"+ "⬝" +"(" + operand_3->coords_->toString() + ")"+ "⬝" +"(" + operand_4->coords_->toString() + ")"+ "⬝" +"(" + operand_5->coords_->toString() + ")"+ "⬝" +"(" + operand_6->coords_->toString() + ")"+ "⬝" +"(" + operand_7->coords_->toString() + ")"+ "⬝" +"(" + operand_8->coords_->toString() + ")"+ "⬝" +"(" + operand_9->coords_->toString() + ")";
             //return retval;
     
     }
@@ -7706,16 +8080,16 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -7736,7 +8110,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
              + " ⬝(Velocity3ScalingDefault worldGeometry) ";
             //return retval;
     
@@ -7746,7 +8120,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
              + " ⬝(TimeScalingDefault worldGeometry) ";
             //return retval;
     
@@ -7756,7 +8130,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
              + " ⬝(Geometric3ScalingDefault worldGeometry) ";
             //return retval;
     
@@ -7766,7 +8140,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
              + " ⬝(Velocity3ShearDefault worldGeometry) ";
             //return retval;
     
@@ -7776,7 +8150,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
              + " ⬝(TimeShearDefault worldGeometry) ";
             //return retval;
     
@@ -7786,7 +8160,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
              + " ⬝(Geometric3ShearDefault worldGeometry) ";
             //return retval;
     
@@ -7796,7 +8170,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
              + " ⬝(Velocity3BasisChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7806,7 +8180,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
              + " ⬝(TimeBasisChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7816,7 +8190,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
              + " ⬝(Geometric3BasisChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7826,7 +8200,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
              + " ⬝(TimeFrameChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7836,7 +8210,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
              + " ⬝(Geometric3FrameChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7846,7 +8220,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
              + " ⬝(Geometric3RotationDefault worldGeometry) ";
             //return retval;
     
@@ -7860,7 +8234,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
              + " ⬝(Velocity3ScalingDefault worldGeometry) ";
             //return retval;
     
@@ -7869,7 +8243,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeScalingExpression " +  " := "
              + " ⬝(TimeScalingDefault worldGeometry) ";
             //return retval;
     
@@ -7878,7 +8252,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
              + " ⬝(Geometric3ScalingDefault worldGeometry) ";
             //return retval;
     
@@ -7887,7 +8261,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
              + " ⬝(Velocity3ShearDefault worldGeometry) ";
             //return retval;
     
@@ -7896,7 +8270,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeShearExpression " +  " := "
              + " ⬝(TimeShearDefault worldGeometry) ";
             //return retval;
     
@@ -7905,7 +8279,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
              + " ⬝(Geometric3ShearDefault worldGeometry) ";
             //return retval;
     
@@ -7914,7 +8288,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
              + " ⬝(Velocity3BasisChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7923,7 +8297,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
              + " ⬝(TimeBasisChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7932,7 +8306,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
              + " ⬝(Geometric3BasisChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7941,7 +8315,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
              + " ⬝(TimeFrameChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7950,7 +8324,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
              + " ⬝(Geometric3FrameChangeDefault worldGeometry) ";
             //return retval;
     
@@ -7959,7 +8333,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
+            retval += "def " + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
              + " ⬝(Geometric3RotationDefault worldGeometry) ";
             //return retval;
     
@@ -7971,7 +8345,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + " ⬝_ ";
             //return retval;
     
@@ -7981,16 +8355,16 @@ std::string REALMATRIX_LITERAL9::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 

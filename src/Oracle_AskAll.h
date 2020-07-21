@@ -15,6 +15,10 @@ public:
     domain::DomainObject* getInterpretation(coords::Coords* coords, domain::DomainObject* dom);
     //domain::Space &getSpace();
     //domain::MapSpace &getMapSpace();
+    virtual domain::DomainObject* getInterpretationForPROGRAM(coords::PROGRAM* coords, domain::DomainObject* dom);
+
+    virtual domain::DomainObject* getInterpretationForGLOBALSTMT(coords::GLOBALSTMT* coords, domain::DomainObject* dom);
+
     virtual domain::DomainObject* getInterpretationForSTMT(coords::STMT* coords, domain::DomainObject* dom);
 
     virtual domain::DomainObject* getInterpretationForIFCOND(coords::IFCOND* coords, domain::DomainObject* dom);
