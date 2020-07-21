@@ -21,18 +21,21 @@ std::string Space::toString() const {
 
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry*>(s_)){
         found = true;
-        retval += "def " + dc->getName() + " := EuclideanGeometry " + " \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()); 
-
+        retval += "def " + dc->getName() + "var : PhysSpaceVar := PhysSpaceVar.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "(!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        retval += "def " + dc->getName() + "sp := PhysSpaceExpression.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "Expr (EuclideanGeometry" + std::to_string(dc->getDimension()) +  "SpaceExpression.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "Literal ( BuildEuclideanGeometrySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
+        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace " + dc->getName() + "var " + dc->getName() + "sp\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTime*>(s_)){
         found = true;
-        retval += "def " + dc->getName() + " := ClassicalTime " + " \"" + dc->getName() + "\"  ";
-
+        retval += "def " + dc->getName() + "var : PhysSpaceVar := PhysSpaceVar.ClassicalTime(!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        retval += "def " + dc->getName() + "sp := PhysSpaceExpression.ClassicalTimeExpr (ClassicalTimeSpaceExpression.ClassicalTimeLiteral ( BuildClassicalTimeSpace \"" + dc->getName() + "\" ))\n";; 
+        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace " + dc->getName() + "var " + dc->getName() + "sp\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
         found = true;
-        retval += "def " + dc->getName() + " := ClassicalVelocity " + " \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()); 
-
+        retval += "def " + dc->getName() + "var : PhysSpaceVar := PhysSpaceVar.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "(!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        retval += "def " + dc->getName() + "sp := PhysSpaceExpression.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "Expr (ClassicalVelocity" + std::to_string(dc->getDimension()) +  "SpaceExpression.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "Literal ( BuildClassicalVelocitySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
+        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace " + dc->getName() + "var " + dc->getName() + "sp\n";
     }
 
     if(!found){
@@ -41,6 +44,298 @@ std::string Space::toString() const {
 
     return retval;
 };
+
+PROGRAM::PROGRAM(coords::PROGRAM* c, domain::DomainObject* d) : Interp(c,d) {}
+                    
+std::string PROGRAM::toString() const {
+    std::string retval = "";
+    bool found = false;
+    
+    //  ret += "(";
+    //ret += "def var_" + std::to_string(++index) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        std::cout<<"Warning - Calling toString on a production rather than a case\n;";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+SEQ_GLOBALSTMT::SEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c, domain::DomainObject* d, std::vector<interp::GLOBALSTMT*> operands)  :PROGRAM(c, d) {
+    for(auto& op : operands){
+        this->operands_.push_back(op);
+    }
+
+};
+std::string SEQ_GLOBALSTMT::toString() const{ 
+    std::string retval = "";
+    string cmdval = "[]";
+    for(auto op: this->operands_){ 
+        retval += "\n" + op->toString() + "\n";
+        cmdval = op->coords_->toString() + "::" + cmdval;
+    }
+    cmdval = "(" + cmdval + ")";
+
+    cmdval += ""; 
+    cmdval = "\ndef " + this->coords_->toString() + "globalseq : PhysGlobalCommand := PhysGlobalCommand.Seq " + cmdval;
+
+
+    cmdval += "\ndef " + this->coords_->toString() + " : PhysProgram := PhysProgram.Program " + this->coords_->toString() + "globalseq";
+
+
+    retval += "\n" + cmdval + "\n";
+    
+
+    //std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {   
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+std::string SEQ_GLOBALSTMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before) { 
+    //std::string toStr = this->toString();
+    std::string retval = "";
+        string cmdvalstart = "::[]";
+        string cmdval = "";
+    int i = 0;
+    if(before)
+    {
+        
+        for(auto op: links){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = names[i++] + "::" + cmdval;
+            
+        }
+        bool start = true;
+        for(auto op: this->operands_){ 
+            retval += "\n" + op->toString() + "\n";
+            cmdval = cmdval + (!start?"::":"") + op->coords_->toString();
+            start = false;
+        }
+    }
+    else
+    {
+        for(auto op: this->operands_){ 
+            retval += "\n" + op->toString() + "\n";
+            cmdval = op->coords_->toString() + "::" + cmdval;
+        }
+        bool start = true;
+        for(auto op: links){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = cmdval + (!start?"::":"") + names[i++];
+            start = false;
+            
+        }
+
+    }
+    cmdval += ""; 
+    cmdval = "\ndef " + this->coords_->toString() + "globalseq : PhysGlobalCommand := PhysGlobalCommand.Seq (" + cmdval + cmdvalstart + ")";
+
+
+    cmdval += "\ndef " + this->coords_->toString() + " : PhysProgram := PhysProgram.Program " + this->coords_->toString() + "globalseq";
+
+
+    retval += "\n" + cmdval + "\n";
+    
+
+    //std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {   
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    if(before)
+    {
+        
+    }
+    else
+    {
+
+    }
+
+    return retval;
+}
+
+
+GLOBALSTMT::GLOBALSTMT(coords::GLOBALSTMT* c, domain::DomainObject* d) : Interp(c,d) {}
+                    
+std::string GLOBALSTMT::toString() const {
+    std::string retval = "";
+    bool found = false;
+    
+    //  ret += "(";
+    //ret += "def var_" + std::to_string(++index) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        std::cout<<"Warning - Calling toString on a production rather than a case\n;";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+MAIN_STMT::MAIN_STMT(coords::MAIN_STMT* c, domain::DomainObject* d,interp::STMT * operand1 ) : GLOBALSTMT(c,d)
+   ,operand_1(operand1) {}
+
+std::string MAIN_STMT::toString() const {
+    bool found = false;
+    std::string retval = "";
+	retval += "\n"+ operand_1->toString() + "\n";
+    //  ret += "(";
+    //ret += "def var_" + std::to_string(++index) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //retval = "";
+        
+            auto case_coords = dynamic_cast<coords::GLOBALSTMT*>(this->coords_);
+            retval += "def " + case_coords->toString() + " : PhysGlobalCommand := PhysGlobalCommand.Main " + operand_1->coords_->toString();
+
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
+FUNCTION_STMT::FUNCTION_STMT(coords::FUNCTION_STMT* c, domain::DomainObject* d,interp::STMT * operand1 ) : GLOBALSTMT(c,d)
+   ,operand_1(operand1) {}
+
+std::string FUNCTION_STMT::toString() const {
+    bool found = false;
+    std::string retval = "";
+	retval += "\n"+ operand_1->toString() + "\n";
+    //  ret += "(";
+    //ret += "def var_" + std::to_string(++index) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //retval = "";
+        
+            auto case_coords = dynamic_cast<coords::GLOBALSTMT*>(this->coords_);
+            retval += "def " + case_coords->toString() + " : PhysGlobalCommand := PhysGlobalCommand.Function " + operand_1->coords_->toString();
+
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
 
 STMT::STMT(coords::STMT* c, domain::DomainObject* d) : Interp(c,d) {}
                     
@@ -66,23 +361,23 @@ std::string STMT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
     return retval;
 }
                 
-COMPOUND_STMT::COMPOUND_STMT(coords::COMPOUND_STMT* c, domain::DomainObject* d, std::vector<STMT*> operands)  :STMT(c, d) {
+COMPOUND_STMT::COMPOUND_STMT(coords::COMPOUND_STMT* c, domain::DomainObject* d, std::vector<interp::STMT*> operands)  :STMT(c, d) {
     for(auto& op : operands){
         this->operands_.push_back(op);
     }
@@ -90,27 +385,108 @@ COMPOUND_STMT::COMPOUND_STMT(coords::COMPOUND_STMT* c, domain::DomainObject* d, 
 };
 std::string COMPOUND_STMT::toString() const{ 
     std::string retval = "";
+    string cmdval = "[]";
     for(auto op: this->operands_){ 
         retval += "\n" + op->toString() + "\n";
+        cmdval = op->coords_->toString() + "::" + cmdval;
     }
+    cmdval = "(" + cmdval + ")";
+
+    cmdval += ""; 
+    cmdval = "\ndef " + this->coords_->toString() + " : PhysCommand := PhysCommand.Seq " + cmdval;
+
+
+    retval += "\n" + cmdval + "\n";
+    
+
     //std::replace(retval.begin(), retval.end(), '_', '.');
     int index;
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {   
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
+    return retval;
+}
+std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before) { 
+    //std::string toStr = this->toString();
+    std::string retval = "";
+        string cmdvalstart = "::[]";
+        string cmdval = "";
+    int i = 0;
+    if(before)
+    {
+        
+        for(auto op: links){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = names[i++] + "::" + cmdval;
+            
+        }
+        bool start = true;
+        for(auto op: this->operands_){ 
+            retval += "\n" + op->toString() + "\n";
+            cmdval = cmdval + (!start?"::":"") + op->coords_->toString();
+            start = false;
+        }
+    }
+    else
+    {
+        for(auto op: this->operands_){ 
+            retval += "\n" + op->toString() + "\n";
+            cmdval = op->coords_->toString() + "::" + cmdval;
+        }
+        bool start = true;
+        for(auto op: links){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = cmdval + (!start?"::":"") + names[i++];
+            start = false;
+            
+        }
+
+    }
+    cmdval += ""; 
+    cmdval = "\ndef " + this->coords_->toString() + " : PhysCommand := PhysCommand.Seq " + cmdval;
+
+
+    retval += "\n" + cmdval + "\n";
+    
+
+    //std::replace(retval.begin(), retval.end(), '_', '.');
+    int index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {   
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    if(before)
+    {
+        
+    }
+    else
+    {
+
+    }
+
     return retval;
 }
 
@@ -139,16 +515,16 @@ std::string IFCOND::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -182,16 +558,16 @@ std::string IFTHEN_EXPR_STMT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -227,16 +603,16 @@ std::string IFTHENELSEIF_EXPR_STMT_IFCOND::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -272,16 +648,16 @@ std::string IFTHENELSE_EXPR_STMT_STMT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -313,16 +689,16 @@ std::string EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -353,16 +729,16 @@ std::string ASSIGNMENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -391,8 +767,8 @@ std::string ASSIGN_REAL1_VAR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + + "(⊢("+this->operand_1->coords_->toString()+"))=(⊢("+this->operand_2->coords_->toString()+"))";;
             //return retval;
     
     }
@@ -401,16 +777,16 @@ std::string ASSIGN_REAL1_VAR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -440,8 +816,8 @@ std::string ASSIGN_REAL3_VAR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + + "(⊢("+this->operand_1->coords_->toString()+"))=(⊢("+this->operand_2->coords_->toString()+"))";;
             //return retval;
     
     }
@@ -450,16 +826,16 @@ std::string ASSIGN_REAL3_VAR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -489,8 +865,8 @@ std::string ASSIGN_REAL4_VAR_REAL4_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL4.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + + "(⊢("+this->operand_1->coords_->toString()+"))=(⊢("+this->operand_2->coords_->toString()+"))";;
             //return retval;
     
     }
@@ -499,16 +875,16 @@ std::string ASSIGN_REAL4_VAR_REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -538,8 +914,8 @@ std::string ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + + "(⊢("+this->operand_1->coords_->toString()+"))=(⊢("+this->operand_2->coords_->toString()+"))";;
             //return retval;
     
     }
@@ -548,16 +924,16 @@ std::string ASSIGN_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -589,16 +965,16 @@ std::string DECLARE::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -627,8 +1003,8 @@ std::string DECL_REAL1_VAR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + + "(⊢("+this->operand_1->coords_->toString()+"))=(⊢("+this->operand_2->coords_->toString()+"))";;
             //return retval;
     
     }
@@ -637,16 +1013,16 @@ std::string DECL_REAL1_VAR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -676,8 +1052,8 @@ std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + + "(⊢("+this->operand_1->coords_->toString()+"))=(⊢("+this->operand_2->coords_->toString()+"))";;
             //return retval;
     
     }
@@ -686,16 +1062,16 @@ std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -725,8 +1101,8 @@ std::string DECL_REAL4_VAR_REAL4_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REAL4.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + + "(⊢("+this->operand_1->coords_->toString()+"))=(⊢("+this->operand_2->coords_->toString()+"))";;
             //return retval;
     
     }
@@ -735,16 +1111,16 @@ std::string DECL_REAL4_VAR_REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -774,8 +1150,8 @@ std::string DECL_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::STMT*>(this->coords_);
-            retval += "def STMT" + case_coords->toString() + " : ^ := "
-             + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")"+ "=" +"(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + + "(⊢("+this->operand_1->coords_->toString()+"))=(⊢("+this->operand_2->coords_->toString()+"))";;
             //return retval;
     
     }
@@ -784,16 +1160,16 @@ std::string DECL_REALMATRIX_VAR_REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -827,16 +1203,16 @@ std::string DECL_REAL1_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -870,16 +1246,16 @@ std::string DECL_REAL3_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -912,16 +1288,16 @@ std::string DECL_REAL4_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -955,16 +1331,16 @@ std::string DECL_REALMATRIX_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -980,22 +1356,22 @@ std::string REAL1_EXPR::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
@@ -1004,19 +1380,19 @@ std::string REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
@@ -1032,16 +1408,16 @@ std::string REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -1058,42 +1434,42 @@ std::string PAREN_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_1->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1102,39 +1478,39 @@ std::string PAREN_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " $" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1145,8 +1521,8 @@ std::string PAREN_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "$" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "$" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1155,16 +1531,16 @@ std::string PAREN_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1182,42 +1558,42 @@ std::string INV_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_1->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -1226,39 +1602,39 @@ std::string INV_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -1269,8 +1645,8 @@ std::string INV_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + " (REAL1_EXPR" + operand_1->coords_->toString() + ") + " + "⁻¹";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + " (" + operand_1->coords_->toString() + ") + " + "⁻¹";
             //return retval;
     
     }
@@ -1279,16 +1655,16 @@ std::string INV_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1306,42 +1682,42 @@ std::string NEG_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_1->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1350,39 +1726,39 @@ std::string NEG_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " -" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -1393,8 +1769,8 @@ std::string NEG_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "-" + "(REAL1.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "-" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1403,16 +1779,16 @@ std::string NEG_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1431,42 +1807,42 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1475,39 +1851,39 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1518,8 +1894,8 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "+" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "+" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1528,16 +1904,16 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1556,42 +1932,42 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1600,39 +1976,39 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1643,8 +2019,8 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "-" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "-" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1653,16 +2029,16 @@ std::string SUB_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1681,42 +2057,42 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1725,39 +2101,39 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1768,8 +2144,8 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1778,16 +2154,16 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1806,42 +2182,42 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -1850,39 +2226,39 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -1893,8 +2269,8 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "/" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1903,16 +2279,16 @@ std::string DIV_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -1929,42 +2305,42 @@ std::string REF_REAL1_VAR::toString() const {
     std::string retval = "";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -1973,39 +2349,39 @@ std::string REF_REAL1_VAR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " %" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2016,8 +2392,8 @@ std::string REF_REAL1_VAR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
-             + "%" + "(REAL1.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "%" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2026,16 +2402,16 @@ std::string REF_REAL1_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2051,37 +2427,37 @@ std::string REAL3_EXPR::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
@@ -2090,31 +2466,31 @@ std::string REAL3_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
@@ -2130,16 +2506,16 @@ std::string REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -2156,72 +2532,72 @@ std::string PAREN_REAL3_EXPR::toString() const {
 	retval += "\n"+ operand_1->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2230,66 +2606,66 @@ std::string PAREN_REAL3_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " $" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2300,8 +2676,8 @@ std::string PAREN_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "$" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "$" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2310,16 +2686,16 @@ std::string PAREN_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2338,72 +2714,72 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2412,66 +2788,66 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " +" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " +" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -2482,8 +2858,8 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "+" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")" + "(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "+" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2492,16 +2868,16 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2520,72 +2896,72 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -2594,66 +2970,66 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "-" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -2664,8 +3040,8 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ")"+ "-" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "-" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2674,16 +3050,16 @@ std::string SUB_REAL3_EXPR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2701,72 +3077,72 @@ std::string INV_REAL3_EXPR::toString() const {
 	retval += "\n"+ operand_1->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
     }
@@ -2775,66 +3151,66 @@ std::string INV_REAL3_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3_EXPR" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") " + " ⁻¹ ";
             //return retval;
     
             }
@@ -2845,8 +3221,8 @@ std::string INV_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + " (REAL3_EXPR" + operand_1->coords_->toString() + ") + " + "⁻¹";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + " (" + operand_1->coords_->toString() + ") + " + "⁻¹";
             //return retval;
     
     }
@@ -2855,16 +3231,16 @@ std::string INV_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -2882,72 +3258,72 @@ std::string NEG_REAL3_EXPR::toString() const {
 	retval += "\n"+ operand_1->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -2956,66 +3332,66 @@ std::string NEG_REAL3_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " -" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " -" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3026,8 +3402,8 @@ std::string NEG_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "-" + "(REAL3.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "-" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3036,16 +3412,16 @@ std::string NEG_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3064,72 +3440,72 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3138,66 +3514,66 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3208,8 +3584,8 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3218,16 +3594,16 @@ std::string MUL_REAL3_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3246,72 +3622,72 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3320,66 +3696,66 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3390,8 +3766,8 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3400,16 +3776,16 @@ std::string MUL_REALMATRIX_EXPR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3428,72 +3804,72 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -3502,66 +3878,66 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "/" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -3572,8 +3948,8 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ")"+ "/" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "/" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3582,16 +3958,16 @@ std::string DIV_REAL3_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3608,72 +3984,72 @@ std::string REF_REAL3_VAR::toString() const {
     std::string retval = "";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3682,66 +4058,66 @@ std::string REF_REAL3_VAR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " %" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3752,8 +4128,8 @@ std::string REF_REAL3_VAR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "%" + "(REAL3.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "%" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3762,16 +4138,16 @@ std::string REF_REAL3_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3787,22 +4163,22 @@ std::string REAL4_EXPR::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
@@ -3811,19 +4187,19 @@ std::string REAL4_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
@@ -3839,16 +4215,16 @@ std::string REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -3865,42 +4241,42 @@ std::string PAREN_REAL4_EXPR::toString() const {
 	retval += "\n"+ operand_1->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3909,39 +4285,39 @@ std::string PAREN_REAL4_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " $" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -3952,8 +4328,8 @@ std::string PAREN_REAL4_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "$" + "(REAL4.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "$" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -3962,16 +4338,16 @@ std::string PAREN_REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -3990,42 +4366,42 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4034,39 +4410,39 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "+" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4077,8 +4453,8 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ")"+ "+" +"(REAL4.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "+" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4087,16 +4463,16 @@ std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -4115,42 +4491,42 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -4159,39 +4535,39 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -4202,8 +4578,8 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL4.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4212,16 +4588,16 @@ std::string MUL_REAL4_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -4238,42 +4614,42 @@ std::string REF_REAL4_VAR::toString() const {
     std::string retval = "";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4282,39 +4658,39 @@ std::string REF_REAL4_VAR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " %" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4325,8 +4701,8 @@ std::string REF_REAL4_VAR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "%" + "(REAL4.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "%" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4335,16 +4711,16 @@ std::string REF_REAL4_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -4360,62 +4736,62 @@ std::string REALMATRIX_EXPR::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeShear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeBasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeFrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
@@ -4424,51 +4800,51 @@ std::string REALMATRIX_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeScaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeShear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeBasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeFrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
@@ -4484,16 +4860,16 @@ std::string REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -4510,122 +4886,122 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
 	retval += "\n"+ operand_1->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeShear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeBasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeFrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4634,111 +5010,111 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeShear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeBasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeFrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " $" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " $" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -4749,8 +5125,8 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "$" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "$" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4759,16 +5135,16 @@ std::string PAREN_REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -4787,122 +5163,122 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
 	retval += "\n"+ operand_2->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeShear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeBasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeFrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -4911,111 +5287,111 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeShear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeBasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeFrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " *" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " *" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5026,8 +5402,8 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "*" + "(REALMATRIX.EXPR" + operand_1->coords_->toString() + ")" + "(REALMATRIX.EXPR" + operand_2->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "*" + "(" + operand_1->coords_->toString() + ")" + "(" + operand_2->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5036,16 +5412,16 @@ std::string MUL_REALMATRIX_EXPR_REALMATRIX_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -5063,122 +5439,122 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
 	retval += "\n"+ operand_1->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeShear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeBasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeFrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5187,111 +5563,111 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeShear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeBasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeFrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " %" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
             }
@@ -5302,8 +5678,8 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "%" + "(REALMATRIX.VAR.IDENT" + operand_1->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "%" + "(" + operand_1->coords_->toString() + ")";
             //return retval;
     
     }
@@ -5312,16 +5688,16 @@ std::string REF_EXPR_REALMATRIX_VAR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -5337,41 +5713,41 @@ std::string REAL1_VAR_IDENT::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Geometric3AngleVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Velocity3ScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : TimeScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Geometric3ScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5381,38 +5757,38 @@ std::string REAL1_VAR_IDENT::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Geometric3AngleVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Velocity3ScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : TimeScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1_VAR_IDENT" + case_coords->toString() + " : Geometric3ScalarVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5424,7 +5800,7 @@ std::string REAL1_VAR_IDENT::toString() const {
         //ret = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->coords_);
-            retval += "def REAL1.VAR.IDENT" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + "!"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5434,16 +5810,16 @@ std::string REAL1_VAR_IDENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -5458,71 +5834,71 @@ std::string REAL3_VAR_IDENT::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Velocity3VectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : TimeVectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3VectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : TimePointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3PointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5532,65 +5908,65 @@ std::string REAL3_VAR_IDENT::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Velocity3VectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : TimeVectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3VectorVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : TimePointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3_VAR_IDENT" + case_coords->toString() + " : Geometric3PointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5602,7 +5978,7 @@ std::string REAL3_VAR_IDENT::toString() const {
         //ret = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->coords_);
-            retval += "def REAL3.VAR.IDENT" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + "!"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5612,16 +5988,16 @@ std::string REAL3_VAR_IDENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -5636,41 +6012,41 @@ std::string REAL4_VAR_IDENT::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : TimeHomogenousPointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3HomogenousPointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5680,38 +6056,38 @@ std::string REAL4_VAR_IDENT::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3OrientationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : TimeHomogenousPointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4_VAR_IDENT" + case_coords->toString() + " : Geometric3HomogenousPointVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5723,7 +6099,7 @@ std::string REAL4_VAR_IDENT::toString() const {
         //ret = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->coords_);
-            retval += "def REAL4.VAR.IDENT" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + "!"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5733,16 +6109,16 @@ std::string REAL4_VAR_IDENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -5757,121 +6133,121 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3ScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3ScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3ShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeShear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3ShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3BasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeBasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeBasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3BasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeFrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeFrameChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3FrameChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5881,110 +6257,110 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3ScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3ScalingVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3ShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeShear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3ShearVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Velocity3BasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeBasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeBasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3BasisChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeFrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : TimeFrameChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3FrameChangeVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX_VAR_IDENT" + case_coords->toString() + " : Geometric3RotationVar " +  " := "
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationVar " +  " := "
              + " !"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -5996,7 +6372,7 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
         //ret = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->coords_);
-            retval += "def REALMATRIX.VAR.IDENT" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + "!"+ std::to_string(++GLOBAL_INDEX);
             //return retval;
     
@@ -6006,16 +6382,16 @@ std::string REALMATRIX_VAR_IDENT::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -6030,22 +6406,22 @@ std::string REAL1_LITERAL::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
@@ -6054,19 +6430,19 @@ std::string REAL1_LITERAL::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
@@ -6082,16 +6458,16 @@ std::string REAL1_LITERAL::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -6107,42 +6483,42 @@ std::string REAL1_LITERAL1::toString() const {
     std::string retval = "";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Angle*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " ⬝(Geometric3AngleDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + " ⬝(EuclideanGeometry3AngleDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " ⬝(Velocity3ScalarDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + " ⬝(ClassicalVelocity3ScalarDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " ⬝(TimeScalarDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + " ⬝(ClassicalTimeScalarDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " ⬝(Geometric3ScalarDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + " ⬝(EuclideanGeometry3ScalarDefault worldGeometry) ";
             //return retval;
     
     }
@@ -6151,39 +6527,39 @@ std::string REAL1_LITERAL1::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Angle*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Angle*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3AngleExpression " +  " := "
-             + " ⬝(Geometric3AngleDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
+             + " ⬝(EuclideanGeometry3AngleDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Velocity3ScalarExpression " +  " := "
-             + " ⬝(Velocity3ScalarDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
+             + " ⬝(ClassicalVelocity3ScalarDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : TimeScalarExpression " +  " := "
-             + " ⬝(TimeScalarDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
+             + " ⬝(ClassicalTimeScalarDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scalar*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1_EXPR" + case_coords->toString() + " : Geometric3ScalarExpression " +  " := "
-             + " ⬝(Geometric3ScalarDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
+             + " ⬝(EuclideanGeometry3ScalarDefault worldGeometry) ";
             //return retval;
     
             }
@@ -6194,7 +6570,7 @@ std::string REAL1_LITERAL1::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
-            retval += "def REAL1.EXPR" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + " ⬝_ ";
             //return retval;
     
@@ -6204,16 +6580,16 @@ std::string REAL1_LITERAL1::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -6229,37 +6605,37 @@ std::string REAL3_LITERAL::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
@@ -6268,31 +6644,31 @@ std::string REAL3_LITERAL::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
@@ -6308,16 +6684,16 @@ std::string REAL3_LITERAL::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -6336,72 +6712,72 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
 	retval += "\n"+ operand_3->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6410,66 +6786,66 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6480,8 +6856,8 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")"+ "⬝" +"(" + operand_3->coords_->toString() + ")";
             //return retval;
     
     }
@@ -6490,16 +6866,16 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -6516,72 +6892,72 @@ std::string REAL3_LITERAL3::toString() const {
     std::string retval = "";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " ⬝(Geometric3RotationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " ⬝(EuclideanGeometry3RotationDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " ⬝(Geometric3OrientationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " ⬝(EuclideanGeometry3OrientationDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " ⬝(Velocity3VectorDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " ⬝(ClassicalVelocity3VectorDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeVector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " ⬝(TimeVectorDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " ⬝(ClassicalTimeVectorDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Vector*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " ⬝(Geometric3VectorDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " ⬝(EuclideanGeometry3VectorDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimePoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " ⬝(TimePointDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " ⬝(ClassicalTimePointDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Point*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " ⬝(Geometric3PointDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " ⬝(EuclideanGeometry3PointDefault worldGeometry) ";
             //return retval;
     
     }
@@ -6590,66 +6966,66 @@ std::string REAL3_LITERAL3::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " ⬝(Geometric3RotationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " ⬝(EuclideanGeometry3RotationDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " ⬝(Geometric3OrientationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " ⬝(EuclideanGeometry3OrientationDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Velocity3VectorExpression " +  " := "
-             + " ⬝(Velocity3VectorDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
+             + " ⬝(ClassicalVelocity3VectorDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeVector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeVector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimeVectorExpression " +  " := "
-             + " ⬝(TimeVectorDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
+             + " ⬝(ClassicalTimeVectorDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Vector*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Vector*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3VectorExpression " +  " := "
-             + " ⬝(Geometric3VectorDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
+             + " ⬝(EuclideanGeometry3VectorDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimePoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimePoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : TimePointExpression " +  " := "
-             + " ⬝(TimePointDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
+             + " ⬝(ClassicalTimePointDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Point*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Point*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3_EXPR" + case_coords->toString() + " : Geometric3PointExpression " +  " := "
-             + " ⬝(Geometric3PointDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
+             + " ⬝(EuclideanGeometry3PointDefault worldGeometry) ";
             //return retval;
     
             }
@@ -6660,7 +7036,7 @@ std::string REAL3_LITERAL3::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
-            retval += "def REAL3.EXPR" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + " ⬝_ ";
             //return retval;
     
@@ -6670,16 +7046,16 @@ std::string REAL3_LITERAL3::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -6695,22 +7071,22 @@ std::string REAL4_LITERAL::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
@@ -6719,19 +7095,19 @@ std::string REAL4_LITERAL::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
@@ -6747,16 +7123,16 @@ std::string REAL4_LITERAL::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -6776,42 +7152,42 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
 	retval += "\n"+ operand_4->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -6820,39 +7196,39 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -6863,8 +7239,8 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")"+ "⬝" +"(" + operand_3->coords_->toString() + ")"+ "⬝" +"(" + operand_4->coords_->toString() + ")";
             //return retval;
     
     }
@@ -6873,16 +7249,16 @@ std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() co
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -6899,42 +7275,42 @@ std::string REAL4_LITERAL4::toString() const {
     std::string retval = "";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %(Geometric3RotationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " %(EuclideanGeometry3RotationDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %(Geometric3OrientationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " %(EuclideanGeometry3OrientationDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " %(TimeHomogenousPointDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + " %(ClassicalTimeHomogenousPointDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " %(Geometric3HomogenousPointDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + " %(EuclideanGeometry3HomogenousPointDefault worldGeometry) ";
             //return retval;
     
     }
@@ -6943,39 +7319,39 @@ std::string REAL4_LITERAL4::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " %(Geometric3RotationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " %(EuclideanGeometry3RotationDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Orientation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Orientation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3OrientationExpression " +  " := "
-             + " %(Geometric3OrientationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
+             + " %(EuclideanGeometry3OrientationDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeHomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeHomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : TimeHomogenousPointExpression " +  " := "
-             + " %(TimeHomogenousPointDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
+             + " %(ClassicalTimeHomogenousPointDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3HomogenousPoint*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3HomogenousPoint*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4_EXPR" + case_coords->toString() + " : Geometric3HomogenousPointExpression " +  " := "
-             + " %(Geometric3HomogenousPointDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
+             + " %(EuclideanGeometry3HomogenousPointDefault worldGeometry) ";
             //return retval;
     
             }
@@ -6986,7 +7362,7 @@ std::string REAL4_LITERAL4::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
-            retval += "def REAL4.EXPR" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + " %_ ";
             //return retval;
     
@@ -6996,16 +7372,16 @@ std::string REAL4_LITERAL4::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -7021,62 +7397,62 @@ std::string REALMATRIX_LITERAL::toString() const {
     
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeShear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeBasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::TimeFrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         std::cout<<"Warning - Calling toString on a production rather than a case\n;";
     }
@@ -7085,51 +7461,51 @@ std::string REALMATRIX_LITERAL::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeScaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeShear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeBasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::TimeFrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 std::cout<<"Warning - Calling toString on a production rather than a case\n;";
             }
@@ -7145,16 +7521,16 @@ std::string REALMATRIX_LITERAL::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
     }
     
     
@@ -7173,122 +7549,122 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
 	retval += "\n"+ operand_3->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeShear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeBasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeFrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7297,111 +7673,111 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeShear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeBasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeFrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7412,8 +7788,8 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL3.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL3.EXPR" + operand_2->coords_->toString() + ")"+ "⬝" +"(REAL3.EXPR" + operand_3->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")"+ "⬝" +"(" + operand_3->coords_->toString() + ")";
             //return retval;
     
     }
@@ -7422,16 +7798,16 @@ std::string REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -7457,122 +7833,122 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
 	retval += "\n"+ operand_9->toString() + "\n";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeShear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeBasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeFrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
     }
@@ -7581,111 +7957,111 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeShear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeBasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeFrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ") "+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ") ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + "(" + operand_1->coords_->toString() + ") "+ "⬝" +"(" + operand_2->coords_->toString() + ") "+ "⬝" +"(" + operand_3->coords_->toString() + ") "+ "⬝" +"(" + operand_4->coords_->toString() + ") "+ "⬝" +"(" + operand_5->coords_->toString() + ") "+ "⬝" +"(" + operand_6->coords_->toString() + ") "+ "⬝" +"(" + operand_7->coords_->toString() + ") "+ "⬝" +"(" + operand_8->coords_->toString() + ") "+ "⬝" +"(" + operand_9->coords_->toString() + ") ";
             //return retval;
     
             }
@@ -7696,8 +8072,8 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
-             + "(REAL1.EXPR" + operand_1->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_2->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_3->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_4->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_5->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_6->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_7->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_8->coords_->toString() + ")"+ "⬝" +"(REAL1.EXPR" + operand_9->coords_->toString() + ")";
+            retval += "def " + case_coords->toString() + " : ^ := "
+             + "(" + operand_1->coords_->toString() + ")"+ "⬝" +"(" + operand_2->coords_->toString() + ")"+ "⬝" +"(" + operand_3->coords_->toString() + ")"+ "⬝" +"(" + operand_4->coords_->toString() + ")"+ "⬝" +"(" + operand_5->coords_->toString() + ")"+ "⬝" +"(" + operand_6->coords_->toString() + ")"+ "⬝" +"(" + operand_7->coords_->toString() + ")"+ "⬝" +"(" + operand_8->coords_->toString() + ")"+ "⬝" +"(" + operand_9->coords_->toString() + ")";
             //return retval;
     
     }
@@ -7706,16 +8082,16 @@ std::string REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXP
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 
@@ -7732,122 +8108,122 @@ std::string REALMATRIX_LITERAL9::toString() const {
     std::string retval = "";
     //  ret += "(";
     //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " ⬝(Velocity3ScalingDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + " ⬝(ClassicalVelocity3ScalingDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeScaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " ⬝(TimeScalingDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + " ⬝(ClassicalTimeScalingDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " ⬝(Geometric3ScalingDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + " ⬝(EuclideanGeometry3ScalingDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " ⬝(Velocity3ShearDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + " ⬝(ClassicalVelocity3ShearDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeShear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " ⬝(TimeShearDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + " ⬝(ClassicalTimeShearDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Shear*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " ⬝(Geometric3ShearDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + " ⬝(EuclideanGeometry3ShearDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " ⬝(Velocity3BasisChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + " ⬝(ClassicalVelocity3BasisChangeDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeBasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " ⬝(TimeBasisChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + " ⬝(ClassicalTimeBasisChangeDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " ⬝(Geometric3BasisChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + " ⬝(EuclideanGeometry3BasisChangeDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::TimeFrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " ⬝(TimeFrameChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + " ⬝(ClassicalTimeFrameChangeDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " ⬝(Geometric3FrameChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + " ⬝(EuclideanGeometry3FrameChangeDefault worldGeometry) ";
             //return retval;
     
     }
 
-    if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(this->dom_)){
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(this->dom_)){
         found = true;
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " ⬝(Geometric3RotationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " ⬝(EuclideanGeometry3RotationDefault worldGeometry) ";
             //return retval;
     
     }
@@ -7856,111 +8232,111 @@ std::string REALMATRIX_LITERAL9::toString() const {
         if(cont->hasValue()){
 
                         
-            if(auto dc = dynamic_cast<domain::Velocity3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ScalingExpression " +  " := "
-             + " ⬝(Velocity3ScalingDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
+             + " ⬝(ClassicalVelocity3ScalingDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeScaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeScalingExpression " +  " := "
-             + " ⬝(TimeScalingDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
+             + " ⬝(ClassicalTimeScalingDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Scaling*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scaling*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ScalingExpression " +  " := "
-             + " ⬝(Geometric3ScalingDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
+             + " ⬝(EuclideanGeometry3ScalingDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3ShearExpression " +  " := "
-             + " ⬝(Velocity3ShearDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
+             + " ⬝(ClassicalVelocity3ShearDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeShear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeShear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeShearExpression " +  " := "
-             + " ⬝(TimeShearDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
+             + " ⬝(ClassicalTimeShearDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Shear*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Shear*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3ShearExpression " +  " := "
-             + " ⬝(Geometric3ShearDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
+             + " ⬝(EuclideanGeometry3ShearDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Velocity3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalVelocity3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Velocity3BasisChangeExpression " +  " := "
-             + " ⬝(Velocity3BasisChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
+             + " ⬝(ClassicalVelocity3BasisChangeDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeBasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeBasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeBasisChangeExpression " +  " := "
-             + " ⬝(TimeBasisChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
+             + " ⬝(ClassicalTimeBasisChangeDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3BasisChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3BasisChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3BasisChangeExpression " +  " := "
-             + " ⬝(Geometric3BasisChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
+             + " ⬝(EuclideanGeometry3BasisChangeDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::TimeFrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::ClassicalTimeFrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : TimeFrameChangeExpression " +  " := "
-             + " ⬝(TimeFrameChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
+             + " ⬝(ClassicalTimeFrameChangeDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3FrameChange*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3FrameChange*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3FrameChangeExpression " +  " := "
-             + " ⬝(Geometric3FrameChangeDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
+             + " ⬝(EuclideanGeometry3FrameChangeDefault worldGeometry) ";
             //return retval;
     
             }
-            if(auto dc = dynamic_cast<domain::Geometric3Rotation*>(cont->getValue())){
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Rotation*>(cont->getValue())){
                 found = true;
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX_EXPR" + case_coords->toString() + " : Geometric3RotationExpression " +  " := "
-             + " ⬝(Geometric3RotationDefault worldGeometry) ";
+            retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
+             + " ⬝(EuclideanGeometry3RotationDefault worldGeometry) ";
             //return retval;
     
             }
@@ -7971,7 +8347,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         //retval = "";
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
-            retval += "def REALMATRIX.EXPR" + case_coords->toString() + " : ^ := "
+            retval += "def " + case_coords->toString() + " : ^ := "
              + " ⬝_ ";
             //return retval;
     
@@ -7981,16 +8357,16 @@ std::string REALMATRIX_LITERAL9::toString() const {
     string sub_str = ": _";
     string singleperiod = ".a";
     while ((index = retval.find(": .")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find(": ^")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, sub_str.length(), sub_str); //remove and replace from that position
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
     }
     while ((index = retval.find("..")) != string::npos)
-    {    //for each location where Hello is found
-        retval.replace(index, singleperiod.length(), singleperiod); //remove and replace from that position
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
     }
     
 

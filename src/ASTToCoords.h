@@ -55,6 +55,12 @@ public:
     void setASTState(coords::Coords* coords, clang::Decl* decl, clang::ASTContext* c);
 
 
+	coords::SEQ_GLOBALSTMT* mkSEQ_GLOBALSTMT(const ast::SEQ_GLOBALSTMT* ast, clang::ASTContext* c, std::vector<coords::GLOBALSTMT*> operands );
+
+	coords::MAIN_STMT* mkMAIN_STMT(const ast::MAIN_STMT* ast, clang::ASTContext* c,coords::STMT* operand1);
+
+	coords::FUNCTION_STMT* mkFUNCTION_STMT(const ast::FUNCTION_STMT* ast, clang::ASTContext* c,coords::STMT* operand1);
+
 	coords::COMPOUND_STMT* mkCOMPOUND_STMT(const ast::COMPOUND_STMT* ast, clang::ASTContext* c, std::vector<coords::STMT*> operands );
 
 	coords::IFTHEN_EXPR_STMT* mkIFTHEN_EXPR_STMT(const ast::IFTHEN_EXPR_STMT* ast, clang::ASTContext* c,coords::EXPR* operand1,coords::STMT* operand2);

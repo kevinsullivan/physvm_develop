@@ -92,6 +92,11 @@ public:
     protected:
 };
 
+class PROGRAM;
+class SEQ_GLOBALSTMT;
+class GLOBALSTMT;
+class MAIN_STMT;
+class FUNCTION_STMT;
 class STMT;
 class COMPOUND_STMT;
 class IFCOND;
@@ -157,6 +162,75 @@ class REALMATRIX_LITERAL;
 class REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR;
 class REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
 class REALMATRIX_LITERAL9;
+
+    class PROGRAM : public Coords {
+    public:
+        PROGRAM() : Coords() {};
+        std::string virtual toString() const { return "Do not call this"; };
+        bool operator==(const PROGRAM &other) const {
+        return this->state_ == other.state_;
+        };
+    };
+
+    
+
+class SEQ_GLOBALSTMT : public PROGRAM {
+public:
+    SEQ_GLOBALSTMT(std::vector<GLOBALSTMT*> operands);
+    virtual std::string toString() const;
+    bool operator==(const PROGRAM &other) const {
+        return this->state_ == other.state_;
+    };
+
+    coords::GLOBALSTMT* getOperand(int i) const {
+        return this->operands_.size() >= i ? this->operands_[i-1] : nullptr;
+    }
+protected:
+	
+    std::vector<GLOBALSTMT*> operands_;
+
+};
+
+
+
+    class GLOBALSTMT : public Coords {
+    public:
+        GLOBALSTMT() : Coords() {};
+        std::string virtual toString() const { return "Do not call this"; };
+        bool operator==(const GLOBALSTMT &other) const {
+        return this->state_ == other.state_;
+        };
+    };
+
+    
+
+class MAIN_STMT : public GLOBALSTMT {
+public:
+    MAIN_STMT(coords::STMT * operand_1);
+    virtual std::string toString() const;
+    bool operator==(const GLOBALSTMT &other) const {
+        return this->state_ == other.state_;
+    };
+	coords::STMT *getOperand1(); 
+protected:
+	coords::STMT *operand1;
+};
+
+
+
+class FUNCTION_STMT : public GLOBALSTMT {
+public:
+    FUNCTION_STMT(coords::STMT * operand_1);
+    virtual std::string toString() const;
+    bool operator==(const GLOBALSTMT &other) const {
+        return this->state_ == other.state_;
+    };
+	coords::STMT *getOperand1(); 
+protected:
+	coords::STMT *operand1;
+};
+
+
 
     class STMT : public Coords {
     public:

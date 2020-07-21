@@ -99,135 +99,135 @@ EuclideanGeometry* Domain::mkEuclideanGeometry(std::string key,std::string name_
 
 //std::vector<EuclideanGeometry*> &Domain::getEuclideanGeometrySpaces() { return EuclideanGeometry_vec; }
 
-Geometric3Rotation* Domain::mkGeometric3Rotation(EuclideanGeometry* sp){
-    Geometric3Rotation* dom_ = new Geometric3Rotation(sp, {});
-    this->Geometric3Rotation_vec.push_back(dom_);
+EuclideanGeometry3Rotation* Domain::mkEuclideanGeometry3Rotation(EuclideanGeometry* sp){
+    EuclideanGeometry3Rotation* dom_ = new EuclideanGeometry3Rotation(sp, {});
+    this->EuclideanGeometry3Rotation_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3Rotation* Domain::mkGeometric3Rotation(){
-    Geometric3Rotation* dom_ = new Geometric3Rotation({});
-    this->Geometric3Rotation_vec.push_back(dom_);   
+EuclideanGeometry3Rotation* Domain::mkEuclideanGeometry3Rotation(){
+    EuclideanGeometry3Rotation* dom_ = new EuclideanGeometry3Rotation({});
+    this->EuclideanGeometry3Rotation_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3Orientation* Domain::mkGeometric3Orientation(EuclideanGeometry* sp){
-    Geometric3Orientation* dom_ = new Geometric3Orientation(sp, {});
-    this->Geometric3Orientation_vec.push_back(dom_);
+EuclideanGeometry3Orientation* Domain::mkEuclideanGeometry3Orientation(EuclideanGeometry* sp){
+    EuclideanGeometry3Orientation* dom_ = new EuclideanGeometry3Orientation(sp, {});
+    this->EuclideanGeometry3Orientation_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3Orientation* Domain::mkGeometric3Orientation(){
-    Geometric3Orientation* dom_ = new Geometric3Orientation({});
-    this->Geometric3Orientation_vec.push_back(dom_);   
+EuclideanGeometry3Orientation* Domain::mkEuclideanGeometry3Orientation(){
+    EuclideanGeometry3Orientation* dom_ = new EuclideanGeometry3Orientation({});
+    this->EuclideanGeometry3Orientation_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3Angle* Domain::mkGeometric3Angle(EuclideanGeometry* sp){
-    Geometric3Angle* dom_ = new Geometric3Angle(sp, {});
-    this->Geometric3Angle_vec.push_back(dom_);
+EuclideanGeometry3Angle* Domain::mkEuclideanGeometry3Angle(EuclideanGeometry* sp){
+    EuclideanGeometry3Angle* dom_ = new EuclideanGeometry3Angle(sp, {});
+    this->EuclideanGeometry3Angle_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3Angle* Domain::mkGeometric3Angle(){
-    Geometric3Angle* dom_ = new Geometric3Angle({});
-    this->Geometric3Angle_vec.push_back(dom_);   
+EuclideanGeometry3Angle* Domain::mkEuclideanGeometry3Angle(){
+    EuclideanGeometry3Angle* dom_ = new EuclideanGeometry3Angle({});
+    this->EuclideanGeometry3Angle_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3FrameChange* Domain::mkGeometric3FrameChange(EuclideanGeometry* sp){
-    Geometric3FrameChange* dom_ = new Geometric3FrameChange(sp, {});
-    this->Geometric3FrameChange_vec.push_back(dom_);
+EuclideanGeometry3FrameChange* Domain::mkEuclideanGeometry3FrameChange(EuclideanGeometry* sp){
+    EuclideanGeometry3FrameChange* dom_ = new EuclideanGeometry3FrameChange(sp, {});
+    this->EuclideanGeometry3FrameChange_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3FrameChange* Domain::mkGeometric3FrameChange(){
-    Geometric3FrameChange* dom_ = new Geometric3FrameChange({});
-    this->Geometric3FrameChange_vec.push_back(dom_);   
+EuclideanGeometry3FrameChange* Domain::mkEuclideanGeometry3FrameChange(){
+    EuclideanGeometry3FrameChange* dom_ = new EuclideanGeometry3FrameChange({});
+    this->EuclideanGeometry3FrameChange_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3Point* Domain::mkGeometric3Point(EuclideanGeometry* sp){
-    Geometric3Point* dom_ = new Geometric3Point(sp, {});
-    this->Geometric3Point_vec.push_back(dom_);
+EuclideanGeometry3Point* Domain::mkEuclideanGeometry3Point(EuclideanGeometry* sp){
+    EuclideanGeometry3Point* dom_ = new EuclideanGeometry3Point(sp, {});
+    this->EuclideanGeometry3Point_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3Point* Domain::mkGeometric3Point(){
-    Geometric3Point* dom_ = new Geometric3Point({});
-    this->Geometric3Point_vec.push_back(dom_);   
+EuclideanGeometry3Point* Domain::mkEuclideanGeometry3Point(){
+    EuclideanGeometry3Point* dom_ = new EuclideanGeometry3Point({});
+    this->EuclideanGeometry3Point_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3HomogenousPoint* Domain::mkGeometric3HomogenousPoint(EuclideanGeometry* sp){
-    Geometric3HomogenousPoint* dom_ = new Geometric3HomogenousPoint(sp, {});
-    this->Geometric3HomogenousPoint_vec.push_back(dom_);
+EuclideanGeometry3HomogenousPoint* Domain::mkEuclideanGeometry3HomogenousPoint(EuclideanGeometry* sp){
+    EuclideanGeometry3HomogenousPoint* dom_ = new EuclideanGeometry3HomogenousPoint(sp, {});
+    this->EuclideanGeometry3HomogenousPoint_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3HomogenousPoint* Domain::mkGeometric3HomogenousPoint(){
-    Geometric3HomogenousPoint* dom_ = new Geometric3HomogenousPoint({});
-    this->Geometric3HomogenousPoint_vec.push_back(dom_);   
+EuclideanGeometry3HomogenousPoint* Domain::mkEuclideanGeometry3HomogenousPoint(){
+    EuclideanGeometry3HomogenousPoint* dom_ = new EuclideanGeometry3HomogenousPoint({});
+    this->EuclideanGeometry3HomogenousPoint_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3Vector* Domain::mkGeometric3Vector(EuclideanGeometry* sp){
-    Geometric3Vector* dom_ = new Geometric3Vector(sp, {});
-    this->Geometric3Vector_vec.push_back(dom_);
+EuclideanGeometry3Vector* Domain::mkEuclideanGeometry3Vector(EuclideanGeometry* sp){
+    EuclideanGeometry3Vector* dom_ = new EuclideanGeometry3Vector(sp, {});
+    this->EuclideanGeometry3Vector_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3Vector* Domain::mkGeometric3Vector(){
-    Geometric3Vector* dom_ = new Geometric3Vector({});
-    this->Geometric3Vector_vec.push_back(dom_);   
+EuclideanGeometry3Vector* Domain::mkEuclideanGeometry3Vector(){
+    EuclideanGeometry3Vector* dom_ = new EuclideanGeometry3Vector({});
+    this->EuclideanGeometry3Vector_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3Scalar* Domain::mkGeometric3Scalar(EuclideanGeometry* sp){
-    Geometric3Scalar* dom_ = new Geometric3Scalar(sp, {});
-    this->Geometric3Scalar_vec.push_back(dom_);
+EuclideanGeometry3Scalar* Domain::mkEuclideanGeometry3Scalar(EuclideanGeometry* sp){
+    EuclideanGeometry3Scalar* dom_ = new EuclideanGeometry3Scalar(sp, {});
+    this->EuclideanGeometry3Scalar_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3Scalar* Domain::mkGeometric3Scalar(){
-    Geometric3Scalar* dom_ = new Geometric3Scalar({});
-    this->Geometric3Scalar_vec.push_back(dom_);   
+EuclideanGeometry3Scalar* Domain::mkEuclideanGeometry3Scalar(){
+    EuclideanGeometry3Scalar* dom_ = new EuclideanGeometry3Scalar({});
+    this->EuclideanGeometry3Scalar_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3BasisChange* Domain::mkGeometric3BasisChange(EuclideanGeometry* sp){
-    Geometric3BasisChange* dom_ = new Geometric3BasisChange(sp, {});
-    this->Geometric3BasisChange_vec.push_back(dom_);
+EuclideanGeometry3BasisChange* Domain::mkEuclideanGeometry3BasisChange(EuclideanGeometry* sp){
+    EuclideanGeometry3BasisChange* dom_ = new EuclideanGeometry3BasisChange(sp, {});
+    this->EuclideanGeometry3BasisChange_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3BasisChange* Domain::mkGeometric3BasisChange(){
-    Geometric3BasisChange* dom_ = new Geometric3BasisChange({});
-    this->Geometric3BasisChange_vec.push_back(dom_);   
+EuclideanGeometry3BasisChange* Domain::mkEuclideanGeometry3BasisChange(){
+    EuclideanGeometry3BasisChange* dom_ = new EuclideanGeometry3BasisChange({});
+    this->EuclideanGeometry3BasisChange_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3Scaling* Domain::mkGeometric3Scaling(EuclideanGeometry* sp){
-    Geometric3Scaling* dom_ = new Geometric3Scaling(sp, {});
-    this->Geometric3Scaling_vec.push_back(dom_);
+EuclideanGeometry3Scaling* Domain::mkEuclideanGeometry3Scaling(EuclideanGeometry* sp){
+    EuclideanGeometry3Scaling* dom_ = new EuclideanGeometry3Scaling(sp, {});
+    this->EuclideanGeometry3Scaling_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3Scaling* Domain::mkGeometric3Scaling(){
-    Geometric3Scaling* dom_ = new Geometric3Scaling({});
-    this->Geometric3Scaling_vec.push_back(dom_);   
+EuclideanGeometry3Scaling* Domain::mkEuclideanGeometry3Scaling(){
+    EuclideanGeometry3Scaling* dom_ = new EuclideanGeometry3Scaling({});
+    this->EuclideanGeometry3Scaling_vec.push_back(dom_);   
     return dom_;
 }
 
-Geometric3Shear* Domain::mkGeometric3Shear(EuclideanGeometry* sp){
-    Geometric3Shear* dom_ = new Geometric3Shear(sp, {});
-    this->Geometric3Shear_vec.push_back(dom_);
+EuclideanGeometry3Shear* Domain::mkEuclideanGeometry3Shear(EuclideanGeometry* sp){
+    EuclideanGeometry3Shear* dom_ = new EuclideanGeometry3Shear(sp, {});
+    this->EuclideanGeometry3Shear_vec.push_back(dom_);
     return dom_;
 }
                 
-Geometric3Shear* Domain::mkGeometric3Shear(){
-    Geometric3Shear* dom_ = new Geometric3Shear({});
-    this->Geometric3Shear_vec.push_back(dom_);   
+EuclideanGeometry3Shear* Domain::mkEuclideanGeometry3Shear(){
+    EuclideanGeometry3Shear* dom_ = new EuclideanGeometry3Shear({});
+    this->EuclideanGeometry3Shear_vec.push_back(dom_);   
     return dom_;
 }
 
@@ -241,99 +241,99 @@ ClassicalTime* Domain::mkClassicalTime(std::string key,std::string name_){
 
 //std::vector<ClassicalTime*> &Domain::getClassicalTimeSpaces() { return ClassicalTime_vec; }
 
-TimeFrameChange* Domain::mkTimeFrameChange(ClassicalTime* sp){
-    TimeFrameChange* dom_ = new TimeFrameChange(sp, {});
-    this->TimeFrameChange_vec.push_back(dom_);
+ClassicalTimeFrameChange* Domain::mkClassicalTimeFrameChange(ClassicalTime* sp){
+    ClassicalTimeFrameChange* dom_ = new ClassicalTimeFrameChange(sp, {});
+    this->ClassicalTimeFrameChange_vec.push_back(dom_);
     return dom_;
 }
                 
-TimeFrameChange* Domain::mkTimeFrameChange(){
-    TimeFrameChange* dom_ = new TimeFrameChange({});
-    this->TimeFrameChange_vec.push_back(dom_);   
+ClassicalTimeFrameChange* Domain::mkClassicalTimeFrameChange(){
+    ClassicalTimeFrameChange* dom_ = new ClassicalTimeFrameChange({});
+    this->ClassicalTimeFrameChange_vec.push_back(dom_);   
     return dom_;
 }
 
-TimePoint* Domain::mkTimePoint(ClassicalTime* sp){
-    TimePoint* dom_ = new TimePoint(sp, {});
-    this->TimePoint_vec.push_back(dom_);
+ClassicalTimePoint* Domain::mkClassicalTimePoint(ClassicalTime* sp){
+    ClassicalTimePoint* dom_ = new ClassicalTimePoint(sp, {});
+    this->ClassicalTimePoint_vec.push_back(dom_);
     return dom_;
 }
                 
-TimePoint* Domain::mkTimePoint(){
-    TimePoint* dom_ = new TimePoint({});
-    this->TimePoint_vec.push_back(dom_);   
+ClassicalTimePoint* Domain::mkClassicalTimePoint(){
+    ClassicalTimePoint* dom_ = new ClassicalTimePoint({});
+    this->ClassicalTimePoint_vec.push_back(dom_);   
     return dom_;
 }
 
-TimeHomogenousPoint* Domain::mkTimeHomogenousPoint(ClassicalTime* sp){
-    TimeHomogenousPoint* dom_ = new TimeHomogenousPoint(sp, {});
-    this->TimeHomogenousPoint_vec.push_back(dom_);
+ClassicalTimeHomogenousPoint* Domain::mkClassicalTimeHomogenousPoint(ClassicalTime* sp){
+    ClassicalTimeHomogenousPoint* dom_ = new ClassicalTimeHomogenousPoint(sp, {});
+    this->ClassicalTimeHomogenousPoint_vec.push_back(dom_);
     return dom_;
 }
                 
-TimeHomogenousPoint* Domain::mkTimeHomogenousPoint(){
-    TimeHomogenousPoint* dom_ = new TimeHomogenousPoint({});
-    this->TimeHomogenousPoint_vec.push_back(dom_);   
+ClassicalTimeHomogenousPoint* Domain::mkClassicalTimeHomogenousPoint(){
+    ClassicalTimeHomogenousPoint* dom_ = new ClassicalTimeHomogenousPoint({});
+    this->ClassicalTimeHomogenousPoint_vec.push_back(dom_);   
     return dom_;
 }
 
-TimeVector* Domain::mkTimeVector(ClassicalTime* sp){
-    TimeVector* dom_ = new TimeVector(sp, {});
-    this->TimeVector_vec.push_back(dom_);
+ClassicalTimeVector* Domain::mkClassicalTimeVector(ClassicalTime* sp){
+    ClassicalTimeVector* dom_ = new ClassicalTimeVector(sp, {});
+    this->ClassicalTimeVector_vec.push_back(dom_);
     return dom_;
 }
                 
-TimeVector* Domain::mkTimeVector(){
-    TimeVector* dom_ = new TimeVector({});
-    this->TimeVector_vec.push_back(dom_);   
+ClassicalTimeVector* Domain::mkClassicalTimeVector(){
+    ClassicalTimeVector* dom_ = new ClassicalTimeVector({});
+    this->ClassicalTimeVector_vec.push_back(dom_);   
     return dom_;
 }
 
-TimeScalar* Domain::mkTimeScalar(ClassicalTime* sp){
-    TimeScalar* dom_ = new TimeScalar(sp, {});
-    this->TimeScalar_vec.push_back(dom_);
+ClassicalTimeScalar* Domain::mkClassicalTimeScalar(ClassicalTime* sp){
+    ClassicalTimeScalar* dom_ = new ClassicalTimeScalar(sp, {});
+    this->ClassicalTimeScalar_vec.push_back(dom_);
     return dom_;
 }
                 
-TimeScalar* Domain::mkTimeScalar(){
-    TimeScalar* dom_ = new TimeScalar({});
-    this->TimeScalar_vec.push_back(dom_);   
+ClassicalTimeScalar* Domain::mkClassicalTimeScalar(){
+    ClassicalTimeScalar* dom_ = new ClassicalTimeScalar({});
+    this->ClassicalTimeScalar_vec.push_back(dom_);   
     return dom_;
 }
 
-TimeBasisChange* Domain::mkTimeBasisChange(ClassicalTime* sp){
-    TimeBasisChange* dom_ = new TimeBasisChange(sp, {});
-    this->TimeBasisChange_vec.push_back(dom_);
+ClassicalTimeBasisChange* Domain::mkClassicalTimeBasisChange(ClassicalTime* sp){
+    ClassicalTimeBasisChange* dom_ = new ClassicalTimeBasisChange(sp, {});
+    this->ClassicalTimeBasisChange_vec.push_back(dom_);
     return dom_;
 }
                 
-TimeBasisChange* Domain::mkTimeBasisChange(){
-    TimeBasisChange* dom_ = new TimeBasisChange({});
-    this->TimeBasisChange_vec.push_back(dom_);   
+ClassicalTimeBasisChange* Domain::mkClassicalTimeBasisChange(){
+    ClassicalTimeBasisChange* dom_ = new ClassicalTimeBasisChange({});
+    this->ClassicalTimeBasisChange_vec.push_back(dom_);   
     return dom_;
 }
 
-TimeScaling* Domain::mkTimeScaling(ClassicalTime* sp){
-    TimeScaling* dom_ = new TimeScaling(sp, {});
-    this->TimeScaling_vec.push_back(dom_);
+ClassicalTimeScaling* Domain::mkClassicalTimeScaling(ClassicalTime* sp){
+    ClassicalTimeScaling* dom_ = new ClassicalTimeScaling(sp, {});
+    this->ClassicalTimeScaling_vec.push_back(dom_);
     return dom_;
 }
                 
-TimeScaling* Domain::mkTimeScaling(){
-    TimeScaling* dom_ = new TimeScaling({});
-    this->TimeScaling_vec.push_back(dom_);   
+ClassicalTimeScaling* Domain::mkClassicalTimeScaling(){
+    ClassicalTimeScaling* dom_ = new ClassicalTimeScaling({});
+    this->ClassicalTimeScaling_vec.push_back(dom_);   
     return dom_;
 }
 
-TimeShear* Domain::mkTimeShear(ClassicalTime* sp){
-    TimeShear* dom_ = new TimeShear(sp, {});
-    this->TimeShear_vec.push_back(dom_);
+ClassicalTimeShear* Domain::mkClassicalTimeShear(ClassicalTime* sp){
+    ClassicalTimeShear* dom_ = new ClassicalTimeShear(sp, {});
+    this->ClassicalTimeShear_vec.push_back(dom_);
     return dom_;
 }
                 
-TimeShear* Domain::mkTimeShear(){
-    TimeShear* dom_ = new TimeShear({});
-    this->TimeShear_vec.push_back(dom_);   
+ClassicalTimeShear* Domain::mkClassicalTimeShear(){
+    ClassicalTimeShear* dom_ = new ClassicalTimeShear({});
+    this->ClassicalTimeShear_vec.push_back(dom_);   
     return dom_;
 }
 
@@ -347,62 +347,62 @@ ClassicalVelocity* Domain::mkClassicalVelocity(std::string key,std::string name_
 
 //std::vector<ClassicalVelocity*> &Domain::getClassicalVelocitySpaces() { return ClassicalVelocity_vec; }
 
-Velocity3Vector* Domain::mkVelocity3Vector(ClassicalVelocity* sp){
-    Velocity3Vector* dom_ = new Velocity3Vector(sp, {});
-    this->Velocity3Vector_vec.push_back(dom_);
+ClassicalVelocity3Vector* Domain::mkClassicalVelocity3Vector(ClassicalVelocity* sp){
+    ClassicalVelocity3Vector* dom_ = new ClassicalVelocity3Vector(sp, {});
+    this->ClassicalVelocity3Vector_vec.push_back(dom_);
     return dom_;
 }
                 
-Velocity3Vector* Domain::mkVelocity3Vector(){
-    Velocity3Vector* dom_ = new Velocity3Vector({});
-    this->Velocity3Vector_vec.push_back(dom_);   
+ClassicalVelocity3Vector* Domain::mkClassicalVelocity3Vector(){
+    ClassicalVelocity3Vector* dom_ = new ClassicalVelocity3Vector({});
+    this->ClassicalVelocity3Vector_vec.push_back(dom_);   
     return dom_;
 }
 
-Velocity3Scalar* Domain::mkVelocity3Scalar(ClassicalVelocity* sp){
-    Velocity3Scalar* dom_ = new Velocity3Scalar(sp, {});
-    this->Velocity3Scalar_vec.push_back(dom_);
+ClassicalVelocity3Scalar* Domain::mkClassicalVelocity3Scalar(ClassicalVelocity* sp){
+    ClassicalVelocity3Scalar* dom_ = new ClassicalVelocity3Scalar(sp, {});
+    this->ClassicalVelocity3Scalar_vec.push_back(dom_);
     return dom_;
 }
                 
-Velocity3Scalar* Domain::mkVelocity3Scalar(){
-    Velocity3Scalar* dom_ = new Velocity3Scalar({});
-    this->Velocity3Scalar_vec.push_back(dom_);   
+ClassicalVelocity3Scalar* Domain::mkClassicalVelocity3Scalar(){
+    ClassicalVelocity3Scalar* dom_ = new ClassicalVelocity3Scalar({});
+    this->ClassicalVelocity3Scalar_vec.push_back(dom_);   
     return dom_;
 }
 
-Velocity3BasisChange* Domain::mkVelocity3BasisChange(ClassicalVelocity* sp){
-    Velocity3BasisChange* dom_ = new Velocity3BasisChange(sp, {});
-    this->Velocity3BasisChange_vec.push_back(dom_);
+ClassicalVelocity3BasisChange* Domain::mkClassicalVelocity3BasisChange(ClassicalVelocity* sp){
+    ClassicalVelocity3BasisChange* dom_ = new ClassicalVelocity3BasisChange(sp, {});
+    this->ClassicalVelocity3BasisChange_vec.push_back(dom_);
     return dom_;
 }
                 
-Velocity3BasisChange* Domain::mkVelocity3BasisChange(){
-    Velocity3BasisChange* dom_ = new Velocity3BasisChange({});
-    this->Velocity3BasisChange_vec.push_back(dom_);   
+ClassicalVelocity3BasisChange* Domain::mkClassicalVelocity3BasisChange(){
+    ClassicalVelocity3BasisChange* dom_ = new ClassicalVelocity3BasisChange({});
+    this->ClassicalVelocity3BasisChange_vec.push_back(dom_);   
     return dom_;
 }
 
-Velocity3Scaling* Domain::mkVelocity3Scaling(ClassicalVelocity* sp){
-    Velocity3Scaling* dom_ = new Velocity3Scaling(sp, {});
-    this->Velocity3Scaling_vec.push_back(dom_);
+ClassicalVelocity3Scaling* Domain::mkClassicalVelocity3Scaling(ClassicalVelocity* sp){
+    ClassicalVelocity3Scaling* dom_ = new ClassicalVelocity3Scaling(sp, {});
+    this->ClassicalVelocity3Scaling_vec.push_back(dom_);
     return dom_;
 }
                 
-Velocity3Scaling* Domain::mkVelocity3Scaling(){
-    Velocity3Scaling* dom_ = new Velocity3Scaling({});
-    this->Velocity3Scaling_vec.push_back(dom_);   
+ClassicalVelocity3Scaling* Domain::mkClassicalVelocity3Scaling(){
+    ClassicalVelocity3Scaling* dom_ = new ClassicalVelocity3Scaling({});
+    this->ClassicalVelocity3Scaling_vec.push_back(dom_);   
     return dom_;
 }
 
-Velocity3Shear* Domain::mkVelocity3Shear(ClassicalVelocity* sp){
-    Velocity3Shear* dom_ = new Velocity3Shear(sp, {});
-    this->Velocity3Shear_vec.push_back(dom_);
+ClassicalVelocity3Shear* Domain::mkClassicalVelocity3Shear(ClassicalVelocity* sp){
+    ClassicalVelocity3Shear* dom_ = new ClassicalVelocity3Shear(sp, {});
+    this->ClassicalVelocity3Shear_vec.push_back(dom_);
     return dom_;
 }
                 
-Velocity3Shear* Domain::mkVelocity3Shear(){
-    Velocity3Shear* dom_ = new Velocity3Shear({});
-    this->Velocity3Shear_vec.push_back(dom_);   
+ClassicalVelocity3Shear* Domain::mkClassicalVelocity3Shear(){
+    ClassicalVelocity3Shear* dom_ = new ClassicalVelocity3Shear({});
+    this->ClassicalVelocity3Shear_vec.push_back(dom_);   
     return dom_;
 }

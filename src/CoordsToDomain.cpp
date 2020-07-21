@@ -10,6 +10,151 @@
 //using namespace std;
 using namespace coords2domain;
 
+coords::PROGRAM *CoordsToDomain::getPROGRAM(domain::DomainObject *d) const
+    {
+        coords::PROGRAM *coords = NULL;
+        try {
+            coords = dom2coords_PROGRAM.at(d);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::PROGRAM *)coords;
+    }
+domain::DomainObject *CoordsToDomain::getPROGRAM(coords::PROGRAM *c) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = coords2dom_PROGRAM.at((coords::PROGRAM*)c);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void CoordsToDomain::putSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c, domain::DomainObject *d)
+{
+    coords2dom_PROGRAM[(coords::PROGRAM*)c] = d;
+    dom2coords_PROGRAM[d] = (coords::PROGRAM*)c;
+}
+void CoordsToDomain::eraseSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c, domain::DomainObject *d)
+{
+    coords2dom_PROGRAM.erase((coords::PROGRAM*)c);
+    dom2coords_PROGRAM.erase(d);
+}
+domain::DomainObject* CoordsToDomain::getSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = coords2dom_PROGRAM.at((coords::PROGRAM*)c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+coords::SEQ_GLOBALSTMT* CoordsToDomain::getSEQ_GLOBALSTMT(domain::DomainObject* d) const
+{
+    coords::PROGRAM *coords = NULL;
+    try {
+        coords = dom2coords_PROGRAM.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::SEQ_GLOBALSTMT*>(coords);
+}
+
+coords::GLOBALSTMT *CoordsToDomain::getGLOBALSTMT(domain::DomainObject *d) const
+    {
+        coords::GLOBALSTMT *coords = NULL;
+        try {
+            coords = dom2coords_GLOBALSTMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::GLOBALSTMT *)coords;
+    }
+domain::DomainObject *CoordsToDomain::getGLOBALSTMT(coords::GLOBALSTMT *c) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = coords2dom_GLOBALSTMT.at((coords::GLOBALSTMT*)c);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void CoordsToDomain::putMAIN_STMT(coords::MAIN_STMT* c, domain::DomainObject *d)
+{
+    coords2dom_GLOBALSTMT[(coords::GLOBALSTMT*)c] = d;
+    dom2coords_GLOBALSTMT[d] = (coords::GLOBALSTMT*)c;
+}
+void CoordsToDomain::eraseMAIN_STMT(coords::MAIN_STMT* c, domain::DomainObject *d)
+{
+    coords2dom_GLOBALSTMT.erase((coords::GLOBALSTMT*)c);
+    dom2coords_GLOBALSTMT.erase(d);
+}
+domain::DomainObject* CoordsToDomain::getMAIN_STMT(coords::MAIN_STMT* c) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = coords2dom_GLOBALSTMT.at((coords::GLOBALSTMT*)c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+coords::MAIN_STMT* CoordsToDomain::getMAIN_STMT(domain::DomainObject* d) const
+{
+    coords::GLOBALSTMT *coords = NULL;
+    try {
+        coords = dom2coords_GLOBALSTMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::MAIN_STMT*>(coords);
+}
+
+void CoordsToDomain::putFUNCTION_STMT(coords::FUNCTION_STMT* c, domain::DomainObject *d)
+{
+    coords2dom_GLOBALSTMT[(coords::GLOBALSTMT*)c] = d;
+    dom2coords_GLOBALSTMT[d] = (coords::GLOBALSTMT*)c;
+}
+void CoordsToDomain::eraseFUNCTION_STMT(coords::FUNCTION_STMT* c, domain::DomainObject *d)
+{
+    coords2dom_GLOBALSTMT.erase((coords::GLOBALSTMT*)c);
+    dom2coords_GLOBALSTMT.erase(d);
+}
+domain::DomainObject* CoordsToDomain::getFUNCTION_STMT(coords::FUNCTION_STMT* c) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = coords2dom_GLOBALSTMT.at((coords::GLOBALSTMT*)c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+coords::FUNCTION_STMT* CoordsToDomain::getFUNCTION_STMT(domain::DomainObject* d) const
+{
+    coords::GLOBALSTMT *coords = NULL;
+    try {
+        coords = dom2coords_GLOBALSTMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::FUNCTION_STMT*>(coords);
+}
+
 coords::STMT *CoordsToDomain::getSTMT(domain::DomainObject *d) const
     {
         coords::STMT *coords = NULL;

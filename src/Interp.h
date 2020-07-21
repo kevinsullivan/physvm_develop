@@ -13,6 +13,11 @@ namespace interp{
 class Interp;
 class Space;
 
+class PROGRAM;
+class SEQ_GLOBALSTMT;
+class GLOBALSTMT;
+class MAIN_STMT;
+class FUNCTION_STMT;
 class STMT;
 class COMPOUND_STMT;
 class IFCOND;
@@ -84,6 +89,8 @@ class Interp
 {
 public:
   Interp(coords::Coords *c, domain::DomainObject *d);
+  Interp(){};
+  std::string toString() const { return "Not Implemented -- don't call this!!";};
   //friend class Interp;
 //protected:
   coords::Coords *coords_;
@@ -91,7 +98,7 @@ public:
 };
 
 
-class Space
+class Space : public Interp
 {
 public:
     Space(domain::Space* s) : s_(s) {};
@@ -101,6 +108,64 @@ protected:
 };
 
 
+
+
+
+class PROGRAM : public Interp {
+public:
+    PROGRAM(coords::PROGRAM* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class SEQ_GLOBALSTMT : public PROGRAM {
+public:
+    SEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* coords, domain::DomainObject* dom, std::vector<GLOBALSTMT*> operands);
+    virtual std::string toString() const;
+    virtual std::string toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before);
+    void link(std::vector<GLOBALSTMT*> operands);
+    //friend class Interp;              
+    
+protected:
+	
+    std::vector<interp::GLOBALSTMT*> operands_;
+
+};
+
+
+
+class GLOBALSTMT : public Interp {
+public:
+    GLOBALSTMT(coords::GLOBALSTMT* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+    //friend class Interp;              
+};
+
+
+
+class MAIN_STMT : public GLOBALSTMT {
+public:
+    MAIN_STMT(coords::MAIN_STMT* coords, domain::DomainObject* dom ,interp::STMT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::STMT *operand_1;
+};
+
+
+
+class FUNCTION_STMT : public GLOBALSTMT {
+public:
+    FUNCTION_STMT(coords::FUNCTION_STMT* coords, domain::DomainObject* dom ,interp::STMT *operand1 );
+    virtual std::string toString() const override ;
+    //friend class Interp;              
+    
+protected:
+	interp::STMT *operand_1;
+};
 
 
 
@@ -117,6 +182,8 @@ class COMPOUND_STMT : public STMT {
 public:
     COMPOUND_STMT(coords::COMPOUND_STMT* coords, domain::DomainObject* dom, std::vector<STMT*> operands);
     virtual std::string toString() const;
+    virtual std::string toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before);
+    void link(std::vector<STMT*> operands);
     //friend class Interp;              
     
 protected:

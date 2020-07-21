@@ -30,6 +30,27 @@ class CoordsToDomain
 public:
 
 
+	domain::DomainObject* getPROGRAM(coords::PROGRAM* c) const;
+	coords::PROGRAM* getPROGRAM(domain::DomainObject* d) const;
+
+	void putSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* key, domain::DomainObject* val);
+	domain::DomainObject* getSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c) const;
+	coords::SEQ_GLOBALSTMT* getSEQ_GLOBALSTMT(domain::DomainObject* d) const;
+void eraseSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* key, domain::DomainObject* val);
+
+	domain::DomainObject* getGLOBALSTMT(coords::GLOBALSTMT* c) const;
+	coords::GLOBALSTMT* getGLOBALSTMT(domain::DomainObject* d) const;
+
+	void putMAIN_STMT(coords::MAIN_STMT* key, domain::DomainObject* val);
+	domain::DomainObject* getMAIN_STMT(coords::MAIN_STMT* c) const;
+	coords::MAIN_STMT* getMAIN_STMT(domain::DomainObject* d) const;
+void eraseMAIN_STMT(coords::MAIN_STMT* key, domain::DomainObject* val);
+
+	void putFUNCTION_STMT(coords::FUNCTION_STMT* key, domain::DomainObject* val);
+	domain::DomainObject* getFUNCTION_STMT(coords::FUNCTION_STMT* c) const;
+	coords::FUNCTION_STMT* getFUNCTION_STMT(domain::DomainObject* d) const;
+void eraseFUNCTION_STMT(coords::FUNCTION_STMT* key, domain::DomainObject* val);
+
 	domain::DomainObject* getSTMT(coords::STMT* c) const;
 	coords::STMT* getSTMT(domain::DomainObject* d) const;
 
@@ -330,6 +351,12 @@ void eraseREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_
 void eraseREALMATRIX_LITERAL9(coords::REALMATRIX_LITERAL9* key, domain::DomainObject* val);
 
 private:
+
+	std::unordered_map <coords::PROGRAM*,	domain::DomainObject*	> 	coords2dom_PROGRAM;
+	std::unordered_map <domain::DomainObject*,	coords::PROGRAM*	> 	dom2coords_PROGRAM;
+
+	std::unordered_map <coords::GLOBALSTMT*,	domain::DomainObject*	> 	coords2dom_GLOBALSTMT;
+	std::unordered_map <domain::DomainObject*,	coords::GLOBALSTMT*	> 	dom2coords_GLOBALSTMT;
 
 	std::unordered_map <coords::STMT*,	domain::DomainObject*	> 	coords2dom_STMT;
 	std::unordered_map <domain::DomainObject*,	coords::STMT*	> 	dom2coords_STMT;

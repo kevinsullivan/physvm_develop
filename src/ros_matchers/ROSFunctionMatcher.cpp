@@ -1,6 +1,7 @@
 
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
+#include "clang/AST/Decl.h"
 #include <vector>
 #include <iostream>
 
@@ -56,6 +57,10 @@ void ROSFunctionMatcher::run(const MatchFinder::MatchResult &Result){
         }
 
         this->interp_->mkCOMPOUND_STMT(mainCompoundStatement, stmts);
-
+        this->interp_->mkMAIN_STMT(mainCandidate, mainCompoundStatement);
+        auto tud = clang::TranslationUnitDecl::castFromDeclContext(mainCandidate->getParent());
+        std::vector<const clang::FunctionDecl*> globals;
+        globals.push_back(mainCandidate);
+        this->interp_->mkSEQ_GLOBALSTMT(tud, globals);
     }
 };
