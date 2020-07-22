@@ -1,9 +1,0 @@
-[submodule "deps/g3log"]
-	path = deps/g3log
-	url = https://github.com/KjellKod/g3log.git
-[submodule "deps/phys"]
-	path = deps/phys
-	url = https://github.com/kevinsullivan/phys.git
-[submodule "deps/PeirceDocker"]
-	path = deps/PeirceDocker
-	url = https://github.com/drewjel/PeirceDocker.git
