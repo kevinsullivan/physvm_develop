@@ -32,7 +32,7 @@ bool Checker::Check() {
     return status;
 }
 
-std::string myfile = "/peirce/deps/phys/src/orig/PeirceOutput.lean";
+std::string myfile = "/peirce/phys/src/orig/PeirceOutput.lean";
 
 bool Checker::CheckPoll(){
     
