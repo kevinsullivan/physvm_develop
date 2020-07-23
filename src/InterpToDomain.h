@@ -16,6 +16,10 @@ class InterpToDomain
 	domain::Space* getSpace(interp::Space* c) const;
 	interp::Space* getSpace(domain::Space* d) const;
 
+	void putFrame(interp::Frame* key, domain::Frame* val);
+	domain::Frame* getFrame(interp::Frame* c) const;
+	interp::Frame* getFrame(domain::Frame* d) const;
+
 	domain::DomainObject* getPROGRAM(interp::PROGRAM* c) const;
 	interp::PROGRAM* getPROGRAM(domain::DomainObject* d) const;
 	
@@ -341,6 +345,10 @@ private:
 std::unordered_map<interp::Space*, domain::Space*> interp2dom_Spaces;
 
 std::unordered_map<domain::Space*, interp::Space*> dom2interp_Spaces;
+
+std::unordered_map<interp::Frame*, domain::Frame*> interp2dom_Frames;
+
+std::unordered_map<domain::Frame*, interp::Frame*> dom2interp_Frames;
 
 	std::unordered_map <interp::PROGRAM*,	domain::DomainObject*	> 	interp2dom_PROGRAM;
 	std::unordered_map <domain::DomainObject*,	interp::PROGRAM*	> 	dom2interp_PROGRAM;

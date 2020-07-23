@@ -32,6 +32,31 @@ using namespace interp2domain;
     return interp;
 }
 
+	void InterpToDomain::putFrame(interp::Frame* key, domain::Frame* val){
+    interp2dom_Frames[key] = val;
+    dom2interp_Frames[val] = key;
+}
+	domain::Frame* InterpToDomain::getFrame(interp::Frame* i) const{
+    domain::Frame* dom = NULL;
+    try {
+        dom = interp2dom_Frames.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return dom;
+}
+	interp::Frame* InterpToDomain::getFrame(domain::Frame* d) const{
+    interp::Frame *interp = NULL;
+    try {
+        interp = dom2interp_Frames.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return interp;
+}
+
 interp::PROGRAM *InterpToDomain::getPROGRAM(domain::DomainObject *d) const
     {
         interp::PROGRAM *interp = NULL;

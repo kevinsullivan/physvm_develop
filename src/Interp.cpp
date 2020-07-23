@@ -21,21 +21,21 @@ std::string Space::toString() const {
 
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry*>(s_)){
         found = true;
-        retval += "def " + dc->getName() + "var : PhysSpaceVar := PhysSpaceVar.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "(!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
-        retval += "def " + dc->getName() + "sp := PhysSpaceExpression.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "Expr (EuclideanGeometry" + std::to_string(dc->getDimension()) +  "SpaceExpression.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "Literal ( BuildEuclideanGeometrySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
-        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace " + dc->getName() + "var " + dc->getName() + "sp\n";
+        retval += "def " + dc->getName() + "var : EuclideanGeometry3SpaceVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        retval += "def " + dc->getName() + "sp := (EuclideanGeometry" + std::to_string(dc->getDimension()) +  "SpaceExpression.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "Literal ( BuildEuclideanGeometrySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
+        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace (⊢" + dc->getName() + "var) (⊢" + dc->getName() + "sp)\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTime*>(s_)){
         found = true;
-        retval += "def " + dc->getName() + "var : PhysSpaceVar := PhysSpaceVar.ClassicalTime(!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
-        retval += "def " + dc->getName() + "sp := PhysSpaceExpression.ClassicalTimeExpr (ClassicalTimeSpaceExpression.ClassicalTimeLiteral ( BuildClassicalTimeSpace \"" + dc->getName() + "\" ))\n";; 
-        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace " + dc->getName() + "var " + dc->getName() + "sp\n";
+        retval += "def " + dc->getName() + "var : ClassicalTimeSpaceVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        retval += "def " + dc->getName() + "sp :=  (ClassicalTimeSpaceExpression.ClassicalTimeLiteral ( BuildClassicalTimeSpace \"" + dc->getName() + "\" ))\n";; 
+        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace (⊢" + dc->getName() + "var) (⊢" + dc->getName() + "sp)\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
         found = true;
-        retval += "def " + dc->getName() + "var : PhysSpaceVar := PhysSpaceVar.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "(!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
-        retval += "def " + dc->getName() + "sp := PhysSpaceExpression.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "Expr (ClassicalVelocity" + std::to_string(dc->getDimension()) +  "SpaceExpression.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "Literal ( BuildClassicalVelocitySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
-        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace " + dc->getName() + "var " + dc->getName() + "sp\n";
+        retval += "def " + dc->getName() + "var : ClassicalVelocity3SpaceVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        retval += "def " + dc->getName() + "sp := (ClassicalVelocity" + std::to_string(dc->getDimension()) +  "SpaceExpression.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "Literal ( BuildClassicalVelocitySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
+        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace (⊢" + dc->getName() + "var) (⊢" + dc->getName() + "sp)\n";
     }
 
     if(!found){
@@ -44,6 +44,59 @@ std::string Space::toString() const {
 
     return retval;
 };
+
+std::string Frame::toString() const {
+    std::string retval = "";
+    bool found = false;
+    bool isStandard = this->f_->getName() == "Standard";
+    if(!isStandard)
+        return retval;
+
+	if(auto dc = dynamic_cast<domain::EuclideanGeometry*>(f_->getSpace())){
+        found = true;
+        retval += "def " +dc->getName()+"."+f_->getName() + "var : EuclideanGeometry3FrameVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        if(!isStandard){
+            retval += "def " + dc->getName()+"."+f_->getName() + "fr := EuclideanGeometry3FrameExpression.FrameLiteral ( BuildEuclideanGeometryFrame "+ dc->getName()+"))";
+        }
+        else{
+            retval += "def " + dc->getName()+"."+f_->getName() + "fr := EuclideanGeometry3FrameExpression.FrameLiteral ( GetEuclideanGeometryStandardFrame (EvalEuclideanGeometry3SpaceExpression " + dc->getName()+"sp))\n";
+    
+        }
+        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysGlobalCommand.GlobalFrame (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
+    }
+	if(auto dc = dynamic_cast<domain::ClassicalTime*>(f_->getSpace())){
+        found = true;
+        retval += "def " +dc->getName()+"."+f_->getName() + "var : ClassicalTimeFrameVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        if(!isStandard){
+            retval += "def " + dc->getName()+"."+f_->getName() + "fr := ClassicalTimeFrameExpression.FrameLiteral ( BuildClassicalTimeFrame "+ dc->getName()+"))";
+        }
+        else{
+            retval += "def " + dc->getName()+"."+f_->getName() + "fr := ClassicalTimeFrameExpression.FrameLiteral ( GetClassicalTimeStandardFrame (EvalClassicalTimeSpaceExpression " + dc->getName()+"sp))\n";
+    
+        }
+        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysGlobalCommand.GlobalFrame (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
+    }
+	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(f_->getSpace())){
+        found = true;
+        retval += "def " +dc->getName()+"."+f_->getName() + "var : ClassicalVelocity3FrameVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        if(!isStandard){
+            retval += "def " + dc->getName()+"."+f_->getName() + "fr := ClassicalVelocity3FrameExpression.FrameLiteral ( BuildClassicalVelocityFrame "+ dc->getName()+"))";
+        }
+        else{
+            retval += "def " + dc->getName()+"."+f_->getName() + "fr := ClassicalVelocity3FrameExpression.FrameLiteral ( GetClassicalVelocityStandardFrame (EvalClassicalVelocity3SpaceExpression " + dc->getName()+"sp))\n";
+    
+        }
+        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysGlobalCommand.GlobalFrame (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
+    }
+
+    if(!found){
+        //retval = "--Unknown Frame type - Translation Failed!";
+    }
+
+    return retval;
+
+};
+
 
 PROGRAM::PROGRAM(coords::PROGRAM* c, domain::DomainObject* d) : Interp(c,d) {}
                     
@@ -130,7 +183,7 @@ std::string SEQ_GLOBALSTMT::toString() const{
     
     return retval;
 }
-std::string SEQ_GLOBALSTMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before) { 
+std::string SEQ_GLOBALSTMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, std::vector<interp::Frame*> framelinks, std::vector<string> framenames, bool before) { 
     //std::string toStr = this->toString();
     std::string retval = "";
         string cmdvalstart = "::[]";
@@ -144,6 +197,12 @@ std::string SEQ_GLOBALSTMT::toStringLinked(std::vector<interp::Space*> links, st
             cmdval = names[i++] + "::" + cmdval;
             
         }
+        i = 0;
+        for(auto op: framelinks){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = framenames[i++] + "::" + cmdval;
+        }
+
         bool start = true;
         for(auto op: this->operands_){ 
             retval += "\n" + op->toString() + "\n";
@@ -163,6 +222,11 @@ std::string SEQ_GLOBALSTMT::toStringLinked(std::vector<interp::Space*> links, st
             cmdval = cmdval + (!start?"::":"") + names[i++];
             start = false;
             
+        }
+        i = 0;
+        for(auto op: framelinks){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = framenames[i++] + "::" + cmdval;
         }
 
     }
@@ -419,7 +483,7 @@ std::string COMPOUND_STMT::toString() const{
     
     return retval;
 }
-std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before) { 
+std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, std::vector<interp::Frame*> framelinks, std::vector<string> framenames, bool before) { 
     //std::string toStr = this->toString();
     std::string retval = "";
         string cmdvalstart = "::[]";
@@ -433,6 +497,12 @@ std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std
             cmdval = names[i++] + "::" + cmdval;
             
         }
+        i = 0;
+        for(auto op: framelinks){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = framenames[i++] + "::" + cmdval;
+        }
+
         bool start = true;
         for(auto op: this->operands_){ 
             retval += "\n" + op->toString() + "\n";
@@ -452,6 +522,11 @@ std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std
             cmdval = cmdval + (!start?"::":"") + names[i++];
             start = false;
             
+        }
+        i = 0;
+        for(auto op: framelinks){
+            retval += "\n" + op->toString() + "\n";
+            cmdval = framenames[i++] + "::" + cmdval;
         }
 
     }
@@ -6488,7 +6563,7 @@ std::string REAL1_LITERAL1::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
-             + " ⬝(EuclideanGeometry3AngleDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3AngleDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6498,7 +6573,7 @@ std::string REAL1_LITERAL1::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
-             + " ⬝(ClassicalVelocity3ScalarDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3ScalarDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6508,7 +6583,7 @@ std::string REAL1_LITERAL1::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
-             + " ⬝(ClassicalTimeScalarDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeScalarDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6518,7 +6593,7 @@ std::string REAL1_LITERAL1::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
-             + " ⬝(EuclideanGeometry3ScalarDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3ScalarDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6532,7 +6607,7 @@ std::string REAL1_LITERAL1::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3AngleExpression " +  " := "
-             + " ⬝(EuclideanGeometry3AngleDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3AngleDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -6541,7 +6616,7 @@ std::string REAL1_LITERAL1::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalarExpression " +  " := "
-             + " ⬝(ClassicalVelocity3ScalarDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3ScalarDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -6550,7 +6625,7 @@ std::string REAL1_LITERAL1::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeScalarExpression " +  " := "
-             + " ⬝(ClassicalTimeScalarDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeScalarDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -6559,7 +6634,7 @@ std::string REAL1_LITERAL1::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL1_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalarExpression " +  " := "
-             + " ⬝(EuclideanGeometry3ScalarDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3ScalarDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -6897,7 +6972,7 @@ std::string REAL3_LITERAL3::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
-             + " ⬝(EuclideanGeometry3RotationDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3RotationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6907,7 +6982,7 @@ std::string REAL3_LITERAL3::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
-             + " ⬝(EuclideanGeometry3OrientationDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3OrientationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6917,7 +6992,7 @@ std::string REAL3_LITERAL3::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
-             + " ⬝(ClassicalVelocity3VectorDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3VectorDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6927,7 +7002,7 @@ std::string REAL3_LITERAL3::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
-             + " ⬝(ClassicalTimeVectorDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeVectorDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6937,7 +7012,7 @@ std::string REAL3_LITERAL3::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
-             + " ⬝(EuclideanGeometry3VectorDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3VectorDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6947,7 +7022,7 @@ std::string REAL3_LITERAL3::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
-             + " ⬝(ClassicalTimePointDefault worldGeometry) ";
+             + " ⬝(ClassicalTimePointDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6957,7 +7032,7 @@ std::string REAL3_LITERAL3::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
-             + " ⬝(EuclideanGeometry3PointDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3PointDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -6971,7 +7046,7 @@ std::string REAL3_LITERAL3::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
-             + " ⬝(EuclideanGeometry3RotationDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3RotationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -6980,7 +7055,7 @@ std::string REAL3_LITERAL3::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
-             + " ⬝(EuclideanGeometry3OrientationDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3OrientationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -6989,7 +7064,7 @@ std::string REAL3_LITERAL3::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3VectorExpression " +  " := "
-             + " ⬝(ClassicalVelocity3VectorDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3VectorDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -6998,7 +7073,7 @@ std::string REAL3_LITERAL3::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeVectorExpression " +  " := "
-             + " ⬝(ClassicalTimeVectorDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeVectorDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -7007,7 +7082,7 @@ std::string REAL3_LITERAL3::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3VectorExpression " +  " := "
-             + " ⬝(EuclideanGeometry3VectorDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3VectorDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -7016,7 +7091,7 @@ std::string REAL3_LITERAL3::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimePointExpression " +  " := "
-             + " ⬝(ClassicalTimePointDefault worldGeometry) ";
+             + " ⬝(ClassicalTimePointDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -7025,7 +7100,7 @@ std::string REAL3_LITERAL3::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL3_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3PointExpression " +  " := "
-             + " ⬝(EuclideanGeometry3PointDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3PointDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -7280,7 +7355,7 @@ std::string REAL4_LITERAL4::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
-             + " %(EuclideanGeometry3RotationDefault worldGeometry) ";
+             + " %(EuclideanGeometry3RotationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -7290,7 +7365,7 @@ std::string REAL4_LITERAL4::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
-             + " %(EuclideanGeometry3OrientationDefault worldGeometry) ";
+             + " %(EuclideanGeometry3OrientationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -7300,7 +7375,7 @@ std::string REAL4_LITERAL4::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
-             + " %(ClassicalTimeHomogenousPointDefault worldGeometry) ";
+             + " %(ClassicalTimeHomogenousPointDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -7310,7 +7385,7 @@ std::string REAL4_LITERAL4::toString() const {
         
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
-             + " %(EuclideanGeometry3HomogenousPointDefault worldGeometry) ";
+             + " %(EuclideanGeometry3HomogenousPointDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -7324,7 +7399,7 @@ std::string REAL4_LITERAL4::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
-             + " %(EuclideanGeometry3RotationDefault worldGeometry) ";
+             + " %(EuclideanGeometry3RotationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -7333,7 +7408,7 @@ std::string REAL4_LITERAL4::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3OrientationExpression " +  " := "
-             + " %(EuclideanGeometry3OrientationDefault worldGeometry) ";
+             + " %(EuclideanGeometry3OrientationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -7342,7 +7417,7 @@ std::string REAL4_LITERAL4::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeHomogenousPointExpression " +  " := "
-             + " %(ClassicalTimeHomogenousPointDefault worldGeometry) ";
+             + " %(ClassicalTimeHomogenousPointDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -7351,7 +7426,7 @@ std::string REAL4_LITERAL4::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REAL4_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3HomogenousPointExpression " +  " := "
-             + " %(EuclideanGeometry3HomogenousPointDefault worldGeometry) ";
+             + " %(EuclideanGeometry3HomogenousPointDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8113,7 +8188,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
-             + " ⬝(ClassicalVelocity3ScalingDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3ScalingDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8123,7 +8198,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
-             + " ⬝(ClassicalTimeScalingDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeScalingDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8133,7 +8208,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
-             + " ⬝(EuclideanGeometry3ScalingDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3ScalingDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8143,7 +8218,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
-             + " ⬝(ClassicalVelocity3ShearDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3ShearDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8153,7 +8228,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
-             + " ⬝(ClassicalTimeShearDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeShearDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8163,7 +8238,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
-             + " ⬝(EuclideanGeometry3ShearDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3ShearDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8173,7 +8248,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
-             + " ⬝(ClassicalVelocity3BasisChangeDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3BasisChangeDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8183,7 +8258,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
-             + " ⬝(ClassicalTimeBasisChangeDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeBasisChangeDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8193,7 +8268,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
-             + " ⬝(EuclideanGeometry3BasisChangeDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3BasisChangeDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8203,7 +8278,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
-             + " ⬝(ClassicalTimeFrameChangeDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeFrameChangeDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8213,7 +8288,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
-             + " ⬝(EuclideanGeometry3FrameChangeDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3FrameChangeDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8223,7 +8298,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
         
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
-             + " ⬝(EuclideanGeometry3RotationDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3RotationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
     }
@@ -8237,7 +8312,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3ScalingExpression " +  " := "
-             + " ⬝(ClassicalVelocity3ScalingDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3ScalingDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8246,7 +8321,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeScalingExpression " +  " := "
-             + " ⬝(ClassicalTimeScalingDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeScalingDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8255,7 +8330,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3ScalingExpression " +  " := "
-             + " ⬝(EuclideanGeometry3ScalingDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3ScalingDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8264,7 +8339,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3ShearExpression " +  " := "
-             + " ⬝(ClassicalVelocity3ShearDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3ShearDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8273,7 +8348,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeShearExpression " +  " := "
-             + " ⬝(ClassicalTimeShearDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeShearDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8282,7 +8357,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3ShearExpression " +  " := "
-             + " ⬝(EuclideanGeometry3ShearDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3ShearDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8291,7 +8366,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalVelocity3BasisChangeExpression " +  " := "
-             + " ⬝(ClassicalVelocity3BasisChangeDefault worldGeometry) ";
+             + " ⬝(ClassicalVelocity3BasisChangeDefault (EvalClassicalVelocity3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8300,7 +8375,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeBasisChangeExpression " +  " := "
-             + " ⬝(ClassicalTimeBasisChangeDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeBasisChangeDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8309,7 +8384,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3BasisChangeExpression " +  " := "
-             + " ⬝(EuclideanGeometry3BasisChangeDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3BasisChangeDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8318,7 +8393,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : ClassicalTimeFrameChangeExpression " +  " := "
-             + " ⬝(ClassicalTimeFrameChangeDefault worldGeometry) ";
+             + " ⬝(ClassicalTimeFrameChangeDefault (EvalClassicalTimeSpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8327,7 +8402,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3FrameChangeExpression " +  " := "
-             + " ⬝(EuclideanGeometry3FrameChangeDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3FrameChangeDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }
@@ -8336,7 +8411,7 @@ std::string REALMATRIX_LITERAL9::toString() const {
                 
             auto case_coords = dynamic_cast<coords::REALMATRIX_EXPR*>(this->coords_);
             retval += "def " + case_coords->toString() + " : EuclideanGeometry3RotationExpression " +  " := "
-             + " ⬝(EuclideanGeometry3RotationDefault worldGeometry) ";
+             + " ⬝(EuclideanGeometry3RotationDefault (EvalEuclideanGeometry3SpaceExpression worldGeometrysp)) ";
             //return retval;
     
             }

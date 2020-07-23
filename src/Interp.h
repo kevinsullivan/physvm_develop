@@ -12,6 +12,7 @@ namespace interp{
 
 class Interp;
 class Space;
+class Frame;
 
 class PROGRAM;
 class SEQ_GLOBALSTMT;
@@ -107,6 +108,15 @@ protected:
     domain::Space* s_;
 };
 
+class Frame : public Interp
+{
+public:
+    Frame(domain::Frame* f) : f_(f) {};
+    std::string toString() const;
+protected:
+    domain::Frame* f_;
+};
+
 
 
 
@@ -124,7 +134,7 @@ class SEQ_GLOBALSTMT : public PROGRAM {
 public:
     SEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* coords, domain::DomainObject* dom, std::vector<GLOBALSTMT*> operands);
     virtual std::string toString() const;
-    virtual std::string toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before);
+    virtual std::string toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, std::vector<interp::Frame*> framelinks, std::vector<string> framenames, bool before);
     void link(std::vector<GLOBALSTMT*> operands);
     //friend class Interp;              
     
@@ -182,7 +192,7 @@ class COMPOUND_STMT : public STMT {
 public:
     COMPOUND_STMT(coords::COMPOUND_STMT* coords, domain::DomainObject* dom, std::vector<STMT*> operands);
     virtual std::string toString() const;
-    virtual std::string toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, bool before);
+    virtual std::string toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, std::vector<interp::Frame*> framelinks, std::vector<string> framenames, bool before);
     void link(std::vector<STMT*> operands);
     //friend class Interp;              
     

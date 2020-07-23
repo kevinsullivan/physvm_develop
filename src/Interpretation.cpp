@@ -96,7 +96,7 @@ void Interpretation::mkSEQ_GLOBALSTMT(const ast::SEQ_GLOBALSTMT * ast , std::vec
     }
     std::string retval = "";
     for(auto interp_ : interps){
-        retval += "\n" + interp_->toStringLinked(this->getSpaceInterps(), this->getSpaceNames(), true) + "\n";
+        retval += "\n" + interp_->toStringLinked(this->getSpaceInterps(), this->getSpaceNames(), this->getFrameInterps(), this->getFrameNames(), true) + "\n";
 
     }
     return retval;
@@ -1586,17 +1586,109 @@ std::vector<std::string> Interpretation::getSpaceNames() {
     return names;
 }
 
+std::vector<interp::Frame*> Interpretation::getFrameInterps() {
+    std::vector<interp::Frame*> interps;
+    
+	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
+    for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            auto intfr = interp2domain_->getFrame(fr);
+            interps.push_back(intfr);
+        }
+    }
+            
+	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
+    for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            auto intfr = interp2domain_->getFrame(fr);
+            interps.push_back(intfr);
+        }
+    }
+            
+	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
+    for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            auto intfr = interp2domain_->getFrame(fr);
+            interps.push_back(intfr);
+        }
+    }
+            
+
+    return interps;
+}   
+
+std::vector<std::string> Interpretation::getFrameNames() {
+    std::vector<std::string> names;
+    
+	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
+    for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            //auto intfr = interp2domain_->getFrame(fr);
+            names.push_back((*it)->getName()+"."+fr->getName());
+        }
+    }
+            
+	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
+    for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            //auto intfr = interp2domain_->getFrame(fr);
+            names.push_back((*it)->getName()+"."+fr->getName());
+        }
+    }
+            
+	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
+    for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            //auto intfr = interp2domain_->getFrame(fr);
+            names.push_back((*it)->getName()+"."+fr->getName());
+        }
+    }
+            
+
+    return names;
+}
+
+
+
+
     
 void Interpretation::buildDefaultSpaces(){
     auto worldGeometry= domain_->mkEuclideanGeometry("geom3d","worldGeometry",3);
     auto iworldGeometry = new interp::Space(worldGeometry);
     interp2domain_->putSpace(iworldGeometry, worldGeometry);
+    auto standard_frameworldGeometry = worldGeometry->getFrames()[0];
+    auto interp_frameworldGeometry = new interp::Frame(standard_frameworldGeometry);
+    interp2domain_->putFrame(interp_frameworldGeometry, worldGeometry->getFrames()[0]);
 	auto worldTime= domain_->mkClassicalTime("time","worldTime");
     auto iworldTime = new interp::Space(worldTime);
     interp2domain_->putSpace(iworldTime, worldTime);
+    auto standard_frameworldTime = worldTime->getFrames()[0];
+    auto interp_frameworldTime = new interp::Frame(standard_frameworldTime);
+    interp2domain_->putFrame(interp_frameworldTime, worldTime->getFrames()[0]);
 	auto worldVelocity= domain_->mkClassicalVelocity("vel","worldVelocity",3);
     auto iworldVelocity = new interp::Space(worldVelocity);
     interp2domain_->putSpace(iworldVelocity, worldVelocity);
+    auto standard_frameworldVelocity = worldVelocity->getFrames()[0];
+    auto interp_frameworldVelocity = new interp::Frame(standard_frameworldVelocity);
+    interp2domain_->putFrame(interp_frameworldVelocity, worldVelocity->getFrames()[0]);
 
 
 }
@@ -1623,24 +1715,117 @@ void Interpretation::buildSpace(){
     
 }
 
+void Interpretation::buildFrame(){
+    while(true){
+        std::cout<<"Select Space : "<<"\n";
+        int index = 0;
+        std::unordered_map<int, domain::Space*> index_to_sp;
+    
+	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
+        for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
+        {
+            std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+            index_to_sp[index] = *it;
+        }
+	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
+        for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+        {
+            std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+            index_to_sp[index] = *it;
+        }
+	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
+        for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+        {
+            std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+            index_to_sp[index] = *it;
+        }
+        int choice;
+        std::cin>>choice;
+        if(choice >0 and choice <=index){
+            auto chosen = index_to_sp[choice];
+            std::cout<<"Building Frame For : "<<chosen->toString()<<"\n";
+            auto frames = chosen->getFrames();
+            std::cout<<"Select Parent Frame : "<<"\n";
+            index = 0;
+            std::unordered_map<int, domain::Frame*> index_to_fr;
+        
+            auto frs = chosen->getFrames();
+            for(auto fr : frs){
+            std::cout<<"("<<std::to_string(++index)<<")"<<(fr)->toString()<<"\n";
+            index_to_fr[index] = fr;
+            }
+            choice = 0;
+            std::cin>>choice;
+            if(choice > 0 and choice<= index){
+                auto parent = index_to_fr[index];
+                std::cout<<"Enter Name of Frame:\n";
+                std::string name;
+                std::cin>>name;
+                auto child = domain_->mkFrame(name, chosen, parent);
+                interp::Frame* interp = new interp::Frame(child);
+                interp2domain_->putFrame(interp, child);
+                return;
+            }
+            
+        }
+
+    }
+}
+
 void Interpretation::printSpaces(){
     int index = 0;
     
 	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
     for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
     {
-        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString();
+        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
     }
 	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
     for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
     {
-        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString();
+        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
     }
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
     for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
     {
-        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString();
+        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
     }
+}
+
+void Interpretation::printFrames(){
+    int index = 0;
+    
+	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
+    for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
+    {
+        std::cout<<"Printing Frames For : " + (*it)->toString() + "\n";
+        auto frs = (*it)->getFrames();
+        index = 0;
+        for(auto fr : frs){
+            std::cout<<"("<<std::to_string(++index)<<")"<<fr->toString() + "\n";
+        }
+    }
+	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
+    for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+    {
+        std::cout<<"Printing Frames For : " + (*it)->toString() + "\n";
+        auto frs = (*it)->getFrames();
+        index = 0;
+        for(auto fr : frs){
+            std::cout<<"("<<std::to_string(++index)<<")"<<fr->toString() + "\n";
+        }
+    }
+	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
+    for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        std::cout<<"Printing Frames For : " + (*it)->toString() + "\n";
+        auto frs = (*it)->getFrames();
+        index = 0;
+        for(auto fr : frs){
+            std::cout<<"("<<std::to_string(++index)<<")"<<fr->toString() + "\n";
+        }
+    }
+
 }
 
 void Interpretation::mkVarTable(){
@@ -1649,61 +1834,73 @@ void Interpretation::mkVarTable(){
 
     for(auto it = this->REAL1_EXPR_vec.begin(); it != this->REAL1_EXPR_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REAL3_EXPR_vec.begin(); it != this->REAL3_EXPR_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REAL4_EXPR_vec.begin(); it != this->REAL4_EXPR_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REALMATRIX_EXPR_vec.begin(); it != this->REALMATRIX_EXPR_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REAL1_VAR_IDENT_vec.begin(); it != this->REAL1_VAR_IDENT_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REAL3_VAR_IDENT_vec.begin(); it != this->REAL3_VAR_IDENT_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REAL4_VAR_IDENT_vec.begin(); it != this->REAL4_VAR_IDENT_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REALMATRIX_VAR_IDENT_vec.begin(); it != this->REALMATRIX_VAR_IDENT_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REAL1_LITERAL_vec.begin(); it != this->REAL1_LITERAL_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REAL3_LITERAL_vec.begin(); it != this->REAL3_LITERAL_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REAL4_LITERAL_vec.begin(); it != this->REAL4_LITERAL_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 	
     for(auto it = this->REALMATRIX_LITERAL_vec.begin(); it != this->REALMATRIX_LITERAL_vec.end(); it++){
         this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
     }
 
 
@@ -1720,217 +1917,217 @@ void Interpretation::printVarTable(){
 
     else if(auto dc = dynamic_cast<coords::PAREN_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getPAREN_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"A parenthesized expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<" Paren Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::INV_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getINV_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Inverse of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<" Inverse Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::NEG_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getNEG_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Negation of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Negation Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::ADD_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getADD_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Addition of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Addition Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::SUB_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getSUB_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Subtraction of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Subtraction Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::MUL_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::DIV_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getDIV_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Division of an expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Division Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REF_REAL1_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REAL1_VAR(dc);
-        std::cout<<"Index: "<<i<<","<<"A variable expression evaluating to a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::PAREN_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getPAREN_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"A parenthesized expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Paren Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::ADD_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getADD_REAL3_EXPR_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Addition of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Addition Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::SUB_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getSUB_REAL3_EXPR_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Subtraction of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Subtraction Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::INV_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getINV_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Inverse of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<" Inverse Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::NEG_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getNEG_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Negation of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Negation Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::MUL_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REAL3_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::MUL_REALMATRIX_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REALMATRIX_EXPR_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a real matrix with an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::DIV_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getDIV_REAL3_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Division of an expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Division Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REF_REAL3_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REAL3_VAR(dc);
-        std::cout<<"Index: "<<i<<","<<"A variable expression evaluating to a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::PAREN_REAL4_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getPAREN_REAL4_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"A parenthesized expression evaluating to a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Paren Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::ADD_REAL4_EXPR_REAL4_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getADD_REAL4_EXPR_REAL4_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Addition of an expression evaluating to a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Addition Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::MUL_REAL4_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REAL4_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REF_REAL4_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REAL4_VAR(dc);
-        std::cout<<"Index: "<<i<<","<<"A variable expression evaluating to a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::PAREN_REALMATRIX_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getPAREN_REALMATRIX_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"A parenthesized expression evaluating to a matrix with real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Paren Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::MUL_REALMATRIX_EXPR_REALMATRIX_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REALMATRIX_EXPR_REALMATRIX_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication of an expression evaluating to a real matrix with an expression evaluating to a matrix with real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REF_EXPR_REALMATRIX_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_EXPR_REALMATRIX_VAR(dc);
-        std::cout<<"Index: "<<i<<","<<"A variable expression evaluating to a matrix with real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL1_VAR_IDENT(dc);
-        std::cout<<"Index: "<<i<<","<<"An identifier storing a real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"R1 Variable Identifier,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_VAR_IDENT(dc);
-        std::cout<<"Index: "<<i<<","<<"An identifier storing a tuple with 3 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"R3 Variable Identifier,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL4_VAR_IDENT*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL4_VAR_IDENT(dc);
-        std::cout<<"Index: "<<i<<","<<"An identifier storing a tuple with 4 real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"R4 Variable Identifier,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REALMATRIX_VAR_IDENT*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX_VAR_IDENT(dc);
-        std::cout<<"Index: "<<i<<","<<"An identifier storing a matrix with real ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"Matrix Variable Identifier,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL1_LITERAL1*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL1_LITERAL1(dc);
-        std::cout<<"Index: "<<i<<","<<" A real literal ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<" R1 Literal From Real Value,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"A real tuple literal with 3 coordinates constructed from expressions each evaluating to a real,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"R3 Literal From 3 R1 Expressions,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL3_LITERAL3*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_LITERAL3(dc);
-        std::cout<<"Index: "<<i<<","<<"A real tuple literal with 3 coordinates ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"R3 Literal From 3 Real Values,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"A real tuple literal with 4 coordinates constructed from expressions each evaluating to a real,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<"R4 Literal From 4 R1 Expressions,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL4_LITERAL4*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL4_LITERAL4(dc);
-        std::cout<<"Index: "<<i<<","<<"A real tuple literal with 4 coordinates ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<" R4 Literal From 4 Real Values,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX_LIT_REAL3_EXPR_REAL3_EXPR_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"A real matrix literal with 9 coordinates constructed from expressions each evaluating to a real,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<" Matrix Literal From 3 R3 Expressions,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<" Matrix Literal From 9 R1 Expressions,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REALMATRIX_LITERAL9*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX_LITERAL9(dc);
-        std::cout<<"Index: "<<i<<","<<"A real matrix literal with 9 coordinates ,"<<dc->toString()<<", Source Location: "<<dc->getSourceLoc()<<", Existing Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<","<<" Matrix Literal from 9 Real Values,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
     
@@ -1945,27 +2142,37 @@ void Interpretation::updateVarTable(){
   int choice;
   try{
         checker_->CheckPoll();
-        std::cout << "********************************************\n";
+        //std::cout << "********************************************\n";
         std::cout << "********************************************\n";
         std::cout << "********************************************\n";
         std::cout << "See type-checking output in /peirce/phys/deps/orig/PeirceOutput.lean\n";
         std::cout << "********************************************\n";
-        std::cout << "********************************************\n";
+        //std::cout << "********************************************\n";
         std::cout << "********************************************\n";
         std::cout<<"Enter -1 to print Available Spaces\n";
+        std::cout<<"Enter -2 to print Available Frames\n";
+        std::cout<<"Enter -3 to create a New Frame\n";
         std::cout<<"Enter 0 to print the Variable Table again.\n";
         std::cout << "Enter the index of a Variable to update its physical type. Enter " << sz << " to exit and check." << std::endl;
         std::cin >> choice;
         std::cout << std::to_string(choice) << "\n";
 
 
-        while ((choice == -1 || choice == 0 || this->index2coords_.find(choice) != this->index2coords_.end()) && choice != sz)
+        while ((choice == -3 || choice == -2 || choice == -1 || choice == 0 || this->index2coords_.find(choice) != this->index2coords_.end()) && choice != sz)
         {
-            if (choice == -1)
+            if (choice == -3)
+            {
+                this->buildFrame();
+            }
+            else if(choice == -2)
+            {
+                this->printFrames();
+            }
+            else if (choice == -1)
             {
                 this->printSpaces();
             }
-            if (choice == 0)
+            else if (choice == 0)
             {
                 this->printVarTable();
             }
@@ -2588,11 +2795,14 @@ void Interpretation::updateVarTable(){
             checker_->CheckPoll();
             std::cout << "********************************************\n";
             std::cout << "********************************************\n";
-            std::cout << "********************************************\n";
+            //std::cout << "********************************************\n";
             std::cout << "See type-checking output in /peirce/phys/deps/orig/PeirceOutput.lean\n";
             std::cout << "********************************************\n";
             std::cout << "********************************************\n";
-            std::cout << "********************************************\n";
+            //std::cout << "********************************************\n";
+            std::cout<<"Enter -1 to print Available Spaces\n";
+            std::cout<<"Enter -2 to print Available Frames\n";
+            std::cout<<"Enter -3 to create a New Frame\n";
             std::cout<<"Enter 0 to print the Variable Table again.\n";
             std::cout << "Enter the index of a Variable to update its physical type. Enter " << sz << " to exit and check." << std::endl;
             std::cin >> choice;

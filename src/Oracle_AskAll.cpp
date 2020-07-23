@@ -14,6 +14,25 @@ using namespace oracle;
 
 
 
+domain::Frame* Oracle_AskAll::getFrame(domain::Space* space){
+
+    auto frames = space->getFrames();
+    auto sz = frames.size();
+            
+    while(true){
+        int i = 0;
+        std::cout<<"Available Frames For : " << space->toString() << "\n";
+        for(auto fr : frames){
+            std::cout<<"("+std::to_string((i + 1))+") "<<frames[i++]->toString()<<"\n";
+        }
+        int choice = 0;
+        std::cin>>choice;
+        if(choice > 0 and choice <= sz){
+            return frames[choice-1];
+        }
+    }
+}
+
 domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords, domain::DomainObject* dom){
 
 	if(false){}
@@ -206,10 +225,10 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@EuclideanGeometry3Angle(geom3d)\n";
-    std::cout<<"(2)"<<"@@ClassicalVelocity3Scalar(vel)\n";
-    std::cout<<"(3)"<<"@@ClassicalTimeScalar(time)\n";
-    std::cout<<"(4)"<<"@@EuclideanGeometry3Scalar(geom3d)\n";
+    std::cout<<"(1)"<<"@@EuclideanGeometry3Angle()\n";
+    std::cout<<"(2)"<<"@@ClassicalVelocity3Scalar()\n";
+    std::cout<<"(3)"<<"@@ClassicalTimeScalar()\n";
+    std::cout<<"(4)"<<"@@EuclideanGeometry3Scalar()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 4) {
         goto choose;
@@ -218,23 +237,103 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
 
             case 1 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Angle(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Angle(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Scalar(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalVelocity3Scalar(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeScalar(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimeScalar(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Scalar(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Scalar(sp);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -256,13 +355,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation(geom3d)\n";
-    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation(geom3d)\n";
-    std::cout<<"(3)"<<"@@ClassicalVelocity3Vector(vel)\n";
-    std::cout<<"(4)"<<"@@ClassicalTimeVector(time)\n";
-    std::cout<<"(5)"<<"@@EuclideanGeometry3Vector(geom3d)\n";
-    std::cout<<"(6)"<<"@@ClassicalTimePoint(time)\n";
-    std::cout<<"(7)"<<"@@EuclideanGeometry3Point(geom3d)\n";
+    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation()\n";
+    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation()\n";
+    std::cout<<"(3)"<<"@@ClassicalVelocity3Vector()\n";
+    std::cout<<"(4)"<<"@@ClassicalTimeVector()\n";
+    std::cout<<"(5)"<<"@@EuclideanGeometry3Vector()\n";
+    std::cout<<"(6)"<<"@@ClassicalTimePoint()\n";
+    std::cout<<"(7)"<<"@@EuclideanGeometry3Point()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 7) {
         goto choose;
@@ -271,38 +370,188 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
 
             case 1 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Rotation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Rotation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Orientation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Orientation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Vector(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalVelocity3Vector(sp);
+                        auto frame = (domain::ClassicalVelocity3Frame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeVector(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimeVector(sp);
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 5 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Vector(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Vector(sp);
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 6 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimePoint(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimePoint(sp);
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 7 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Point(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Point(sp);
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -324,10 +573,10 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL4_VAR_IDENT(coords:
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation(geom3d)\n";
-    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation(geom3d)\n";
-    std::cout<<"(3)"<<"@@ClassicalTimeHomogenousPoint(time)\n";
-    std::cout<<"(4)"<<"@@EuclideanGeometry3HomogenousPoint(geom3d)\n";
+    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation()\n";
+    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation()\n";
+    std::cout<<"(3)"<<"@@ClassicalTimeHomogenousPoint()\n";
+    std::cout<<"(4)"<<"@@EuclideanGeometry3HomogenousPoint()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 4) {
         goto choose;
@@ -336,23 +585,103 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL4_VAR_IDENT(coords:
 
             case 1 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Rotation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Rotation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Orientation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Orientation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeHomogenousPoint(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimeHomogenousPoint(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3HomogenousPoint(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3HomogenousPoint(sp);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -374,18 +703,18 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX_VAR_IDENT(co
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@ClassicalVelocity3Scaling(vel)\n";
-    std::cout<<"(2)"<<"@@ClassicalTimeScaling(time)\n";
-    std::cout<<"(3)"<<"@@EuclideanGeometry3Scaling(geom3d)\n";
-    std::cout<<"(4)"<<"@@ClassicalVelocity3Shear(vel)\n";
-    std::cout<<"(5)"<<"@@ClassicalTimeShear(time)\n";
-    std::cout<<"(6)"<<"@@EuclideanGeometry3Shear(geom3d)\n";
-    std::cout<<"(7)"<<"@@ClassicalVelocity3BasisChange(vel)\n";
-    std::cout<<"(8)"<<"@@ClassicalTimeBasisChange(time)\n";
-    std::cout<<"(9)"<<"@@EuclideanGeometry3BasisChange(geom3d)\n";
-    std::cout<<"(10)"<<"@@ClassicalTimeFrameChange(time)\n";
-    std::cout<<"(11)"<<"@@EuclideanGeometry3FrameChange(geom3d)\n";
-    std::cout<<"(12)"<<"@@EuclideanGeometry3Rotation(geom3d)\n";
+    std::cout<<"(1)"<<"@@ClassicalVelocity3Scaling()\n";
+    std::cout<<"(2)"<<"@@ClassicalTimeScaling()\n";
+    std::cout<<"(3)"<<"@@EuclideanGeometry3Scaling()\n";
+    std::cout<<"(4)"<<"@@ClassicalVelocity3Shear()\n";
+    std::cout<<"(5)"<<"@@ClassicalTimeShear()\n";
+    std::cout<<"(6)"<<"@@EuclideanGeometry3Shear()\n";
+    std::cout<<"(7)"<<"@@ClassicalVelocity3BasisChange()\n";
+    std::cout<<"(8)"<<"@@ClassicalTimeBasisChange()\n";
+    std::cout<<"(9)"<<"@@EuclideanGeometry3BasisChange()\n";
+    std::cout<<"(10)"<<"@@ClassicalTimeFrameChange()\n";
+    std::cout<<"(11)"<<"@@EuclideanGeometry3FrameChange()\n";
+    std::cout<<"(12)"<<"@@EuclideanGeometry3Rotation()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 12) {
         goto choose;
@@ -394,63 +723,633 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX_VAR_IDENT(co
 
             case 1 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Scaling(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalVelocity3Scaling(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeScaling(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeScaling(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Scaling(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3Scaling(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Shear(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalVelocity3Shear(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 5 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeShear(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeShear(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 6 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Shear(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3Shear(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 7 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3BasisChange(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalVelocity3BasisChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 8 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeBasisChange(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeBasisChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 9 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3BasisChange(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3BasisChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 10 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeFrameChange(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeFrameChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 11 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3FrameChange(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3FrameChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 12 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Rotation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Rotation(sp);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -472,10 +1371,10 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@EuclideanGeometry3Angle(geom3d)\n";
-    std::cout<<"(2)"<<"@@ClassicalVelocity3Scalar(vel)\n";
-    std::cout<<"(3)"<<"@@ClassicalTimeScalar(time)\n";
-    std::cout<<"(4)"<<"@@EuclideanGeometry3Scalar(geom3d)\n";
+    std::cout<<"(1)"<<"@@EuclideanGeometry3Angle()\n";
+    std::cout<<"(2)"<<"@@ClassicalVelocity3Scalar()\n";
+    std::cout<<"(3)"<<"@@ClassicalTimeScalar()\n";
+    std::cout<<"(4)"<<"@@EuclideanGeometry3Scalar()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 4) {
         goto choose;
@@ -484,23 +1383,103 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
 
             case 1 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Angle(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Angle(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Scalar(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalVelocity3Scalar(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeScalar(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimeScalar(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Scalar(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Scalar(sp);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -522,10 +1501,10 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@EuclideanGeometry3Angle(geom3d)\n";
-    std::cout<<"(2)"<<"@@ClassicalVelocity3Scalar(vel)\n";
-    std::cout<<"(3)"<<"@@ClassicalTimeScalar(time)\n";
-    std::cout<<"(4)"<<"@@EuclideanGeometry3Scalar(geom3d)\n";
+    std::cout<<"(1)"<<"@@EuclideanGeometry3Angle()\n";
+    std::cout<<"(2)"<<"@@ClassicalVelocity3Scalar()\n";
+    std::cout<<"(3)"<<"@@ClassicalTimeScalar()\n";
+    std::cout<<"(4)"<<"@@EuclideanGeometry3Scalar()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 4) {
         goto choose;
@@ -534,23 +1513,103 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
 
             case 1 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Angle(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Angle(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Scalar(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalVelocity3Scalar(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeScalar(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimeScalar(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Scalar(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Scalar(sp);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -572,13 +1631,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation(geom3d)\n";
-    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation(geom3d)\n";
-    std::cout<<"(3)"<<"@@ClassicalVelocity3Vector(vel)\n";
-    std::cout<<"(4)"<<"@@ClassicalTimeVector(time)\n";
-    std::cout<<"(5)"<<"@@EuclideanGeometry3Vector(geom3d)\n";
-    std::cout<<"(6)"<<"@@ClassicalTimePoint(time)\n";
-    std::cout<<"(7)"<<"@@EuclideanGeometry3Point(geom3d)\n";
+    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation()\n";
+    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation()\n";
+    std::cout<<"(3)"<<"@@ClassicalVelocity3Vector()\n";
+    std::cout<<"(4)"<<"@@ClassicalTimeVector()\n";
+    std::cout<<"(5)"<<"@@EuclideanGeometry3Vector()\n";
+    std::cout<<"(6)"<<"@@ClassicalTimePoint()\n";
+    std::cout<<"(7)"<<"@@EuclideanGeometry3Point()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 7) {
         goto choose;
@@ -587,38 +1646,188 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
 
             case 1 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Rotation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Rotation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Orientation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Orientation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Vector(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalVelocity3Vector(sp);
+                        auto frame = (domain::ClassicalVelocity3Frame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeVector(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimeVector(sp);
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 5 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Vector(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Vector(sp);
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 6 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimePoint(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimePoint(sp);
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 7 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Point(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Point(sp);
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -640,13 +1849,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation(geom3d)\n";
-    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation(geom3d)\n";
-    std::cout<<"(3)"<<"@@ClassicalVelocity3Vector(vel)\n";
-    std::cout<<"(4)"<<"@@ClassicalTimeVector(time)\n";
-    std::cout<<"(5)"<<"@@EuclideanGeometry3Vector(geom3d)\n";
-    std::cout<<"(6)"<<"@@ClassicalTimePoint(time)\n";
-    std::cout<<"(7)"<<"@@EuclideanGeometry3Point(geom3d)\n";
+    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation()\n";
+    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation()\n";
+    std::cout<<"(3)"<<"@@ClassicalVelocity3Vector()\n";
+    std::cout<<"(4)"<<"@@ClassicalTimeVector()\n";
+    std::cout<<"(5)"<<"@@EuclideanGeometry3Vector()\n";
+    std::cout<<"(6)"<<"@@ClassicalTimePoint()\n";
+    std::cout<<"(7)"<<"@@EuclideanGeometry3Point()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 7) {
         goto choose;
@@ -655,38 +1864,188 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
 
             case 1 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Rotation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Rotation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Orientation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Orientation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Vector(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalVelocity3Vector(sp);
+                        auto frame = (domain::ClassicalVelocity3Frame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeVector(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimeVector(sp);
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 5 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Vector(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Vector(sp);
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 6 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimePoint(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimePoint(sp);
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
             case 7 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Point(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Point(sp);
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrame(sp); 
+                        ret->setFrame(frame);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -708,10 +2067,10 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL4_LITERAL(coords::R
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation(geom3d)\n";
-    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation(geom3d)\n";
-    std::cout<<"(3)"<<"@@ClassicalTimeHomogenousPoint(time)\n";
-    std::cout<<"(4)"<<"@@EuclideanGeometry3HomogenousPoint(geom3d)\n";
+    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation()\n";
+    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation()\n";
+    std::cout<<"(3)"<<"@@ClassicalTimeHomogenousPoint()\n";
+    std::cout<<"(4)"<<"@@EuclideanGeometry3HomogenousPoint()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 4) {
         goto choose;
@@ -720,23 +2079,103 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL4_LITERAL(coords::R
 
             case 1 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Rotation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Rotation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Orientation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Orientation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeHomogenousPoint(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimeHomogenousPoint(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3HomogenousPoint(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3HomogenousPoint(sp);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -758,10 +2197,10 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL4_EXPR(coords::REAL
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation(geom3d)\n";
-    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation(geom3d)\n";
-    std::cout<<"(3)"<<"@@ClassicalTimeHomogenousPoint(time)\n";
-    std::cout<<"(4)"<<"@@EuclideanGeometry3HomogenousPoint(geom3d)\n";
+    std::cout<<"(1)"<<"@@EuclideanGeometry3Rotation()\n";
+    std::cout<<"(2)"<<"@@EuclideanGeometry3Orientation()\n";
+    std::cout<<"(3)"<<"@@ClassicalTimeHomogenousPoint()\n";
+    std::cout<<"(4)"<<"@@EuclideanGeometry3HomogenousPoint()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 4) {
         goto choose;
@@ -770,23 +2209,103 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL4_EXPR(coords::REAL
 
             case 1 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Rotation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Rotation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Orientation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Orientation(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeHomogenousPoint(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkClassicalTimeHomogenousPoint(sp);
+                        return ret;
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3HomogenousPoint(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3HomogenousPoint(sp);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -808,18 +2327,18 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX_LITERAL(coor
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@ClassicalVelocity3Scaling(vel)\n";
-    std::cout<<"(2)"<<"@@ClassicalTimeScaling(time)\n";
-    std::cout<<"(3)"<<"@@EuclideanGeometry3Scaling(geom3d)\n";
-    std::cout<<"(4)"<<"@@ClassicalVelocity3Shear(vel)\n";
-    std::cout<<"(5)"<<"@@ClassicalTimeShear(time)\n";
-    std::cout<<"(6)"<<"@@EuclideanGeometry3Shear(geom3d)\n";
-    std::cout<<"(7)"<<"@@ClassicalVelocity3BasisChange(vel)\n";
-    std::cout<<"(8)"<<"@@ClassicalTimeBasisChange(time)\n";
-    std::cout<<"(9)"<<"@@EuclideanGeometry3BasisChange(geom3d)\n";
-    std::cout<<"(10)"<<"@@ClassicalTimeFrameChange(time)\n";
-    std::cout<<"(11)"<<"@@EuclideanGeometry3FrameChange(geom3d)\n";
-    std::cout<<"(12)"<<"@@EuclideanGeometry3Rotation(geom3d)\n";
+    std::cout<<"(1)"<<"@@ClassicalVelocity3Scaling()\n";
+    std::cout<<"(2)"<<"@@ClassicalTimeScaling()\n";
+    std::cout<<"(3)"<<"@@EuclideanGeometry3Scaling()\n";
+    std::cout<<"(4)"<<"@@ClassicalVelocity3Shear()\n";
+    std::cout<<"(5)"<<"@@ClassicalTimeShear()\n";
+    std::cout<<"(6)"<<"@@EuclideanGeometry3Shear()\n";
+    std::cout<<"(7)"<<"@@ClassicalVelocity3BasisChange()\n";
+    std::cout<<"(8)"<<"@@ClassicalTimeBasisChange()\n";
+    std::cout<<"(9)"<<"@@EuclideanGeometry3BasisChange()\n";
+    std::cout<<"(10)"<<"@@ClassicalTimeFrameChange()\n";
+    std::cout<<"(11)"<<"@@EuclideanGeometry3FrameChange()\n";
+    std::cout<<"(12)"<<"@@EuclideanGeometry3Rotation()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 12) {
         goto choose;
@@ -828,63 +2347,633 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX_LITERAL(coor
 
             case 1 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Scaling(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalVelocity3Scaling(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeScaling(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeScaling(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Scaling(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3Scaling(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Shear(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalVelocity3Shear(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 5 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeShear(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeShear(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 6 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Shear(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3Shear(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 7 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3BasisChange(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalVelocity3BasisChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 8 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeBasisChange(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeBasisChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 9 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3BasisChange(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3BasisChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 10 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeFrameChange(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeFrameChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 11 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3FrameChange(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3FrameChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 12 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Rotation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Rotation(sp);
+                        return ret;
+            
+                    }
+                }
             }
 
         }
@@ -906,18 +2995,18 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX_EXPR(coords:
     //return getInterpretation(coords);
 
                     
-    std::cout<<"(1)"<<"@@ClassicalVelocity3Scaling(vel)\n";
-    std::cout<<"(2)"<<"@@ClassicalTimeScaling(time)\n";
-    std::cout<<"(3)"<<"@@EuclideanGeometry3Scaling(geom3d)\n";
-    std::cout<<"(4)"<<"@@ClassicalVelocity3Shear(vel)\n";
-    std::cout<<"(5)"<<"@@ClassicalTimeShear(time)\n";
-    std::cout<<"(6)"<<"@@EuclideanGeometry3Shear(geom3d)\n";
-    std::cout<<"(7)"<<"@@ClassicalVelocity3BasisChange(vel)\n";
-    std::cout<<"(8)"<<"@@ClassicalTimeBasisChange(time)\n";
-    std::cout<<"(9)"<<"@@EuclideanGeometry3BasisChange(geom3d)\n";
-    std::cout<<"(10)"<<"@@ClassicalTimeFrameChange(time)\n";
-    std::cout<<"(11)"<<"@@EuclideanGeometry3FrameChange(geom3d)\n";
-    std::cout<<"(12)"<<"@@EuclideanGeometry3Rotation(geom3d)\n";
+    std::cout<<"(1)"<<"@@ClassicalVelocity3Scaling()\n";
+    std::cout<<"(2)"<<"@@ClassicalTimeScaling()\n";
+    std::cout<<"(3)"<<"@@EuclideanGeometry3Scaling()\n";
+    std::cout<<"(4)"<<"@@ClassicalVelocity3Shear()\n";
+    std::cout<<"(5)"<<"@@ClassicalTimeShear()\n";
+    std::cout<<"(6)"<<"@@EuclideanGeometry3Shear()\n";
+    std::cout<<"(7)"<<"@@ClassicalVelocity3BasisChange()\n";
+    std::cout<<"(8)"<<"@@ClassicalTimeBasisChange()\n";
+    std::cout<<"(9)"<<"@@EuclideanGeometry3BasisChange()\n";
+    std::cout<<"(10)"<<"@@ClassicalTimeFrameChange()\n";
+    std::cout<<"(11)"<<"@@EuclideanGeometry3FrameChange()\n";
+    std::cout<<"(12)"<<"@@EuclideanGeometry3Rotation()\n";
     std::cin>>choice;
     if(choice < 1 or choice > 12) {
         goto choose;
@@ -926,63 +3015,633 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX_EXPR(coords:
 
             case 1 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Scaling(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalVelocity3Scaling(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 2 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeScaling(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeScaling(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 3 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Scaling(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3Scaling(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 4 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3Shear(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalVelocity3Shear(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 5 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeShear(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeShear(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 6 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Shear(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3Shear(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 7 : 
             {
-            domain::ClassicalVelocity* vel = (domain::ClassicalVelocity*)this->domain_->getSpace("vel");
-            return this->domain_->mkClassicalVelocity3BasisChange(vel);
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalVelocity3BasisChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 8 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeBasisChange(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeBasisChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 9 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3BasisChange(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3BasisChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 10 : 
             {
-            domain::ClassicalTime* time = (domain::ClassicalTime*)this->domain_->getSpace("time");
-            return this->domain_->mkClassicalTimeFrameChange(time);
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkClassicalTimeFrameChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 11 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3FrameChange(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = fr;
+                                std::cout<<"("<<std::to_string(index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_index]);
+                                auto ret = this->domain_->mkEuclideanGeometry3FrameChange(mapsp);
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
             }
             case 12 : 
             {
-            domain::EuclideanGeometry* geom3d = (domain::EuclideanGeometry*)this->domain_->getSpace("geom3d");
-            return this->domain_->mkEuclideanGeometry3Rotation(geom3d);
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(true){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        auto ret = this->domain_->mkEuclideanGeometry3Rotation(sp);
+                        return ret;
+            
+                    }
+                }
             }
 
         }

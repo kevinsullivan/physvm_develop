@@ -87,9 +87,12 @@ public:
     virtual bool operator ==(const Coords &other) const;
     virtual std::string toString() const;
     virtual std::string getSourceLoc() const;
+    int getIndex() const { return index_; };
+    void setIndex(int index);
 
     ASTState* state_; //maybe  change this to a constructor argument
     protected:
+        int index_;
 };
 
 class PROGRAM;

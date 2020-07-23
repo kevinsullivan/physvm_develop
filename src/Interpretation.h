@@ -203,12 +203,17 @@ public:
 
 	std::string toString_Spaces();
 	std::vector<interp::Space*> getSpaceInterps();
-	std::vector<std::string> getSpaceNames();    void buildDefaultSpaces();
+	std::vector<std::string> getSpaceNames();
+	std::vector<interp::Frame*> getFrameInterps();
+	std::vector<std::string> getFrameNames();
+	    void buildDefaultSpaces();
 
     void buildSpace();
+    void buildFrame();
+
     //void setAll_Spaces();
     void printSpaces();
-    void buildFrame();
+    void printFrames();
     void mkVarTable();//make a printable, indexed table of variables that can have their types assigned by a user or oracle
     void printVarTable();//print the indexed variable table for the user
     void updateVarTable();//while loop where user can select a variable by index and provide a physical type for that variable
