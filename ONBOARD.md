@@ -48,7 +48,7 @@ b. If you're development computer runs OSX or Linux, configure git any CRLFs tha
 ```shell
 git clone --recursive  https://github.com/kevinsullivan/Peirce
 cd Peirce
-git submodule foreach git checkout master"
+git submodule foreach git checkout master
 git submodule foreach git pull origin master
 ```
 This step may fail if you do not have access to any of the required submodules, (for example, phys, which is another Github project).
