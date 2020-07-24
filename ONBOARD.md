@@ -5,6 +5,9 @@ This document contains an abbreviated set of steps to be followed to pepare your
 ## Docker Setup
 
 1. Download Docker for your respective platform (https://www.docker.com/products/docker-desktop) and ensure daemon is running. Make an account with Docker and get permission from the owner of the docker to pull the current image (owner as of 5/26/2020 is Andrew Elsey).
+
+1.5. Check your hardware for amount of memory (Host_mem) number of cores/threads (Host_cores), and then change your Docker Preferences to allocate desired shares of these resources to Docker (VM_cores and VM_mem). Remember the values of VM_cores and VM_mem, as you will need them later in these oboarding instructions.
+
 2. Issue the following command in a terminal window:
 ```shell
 docker login
@@ -48,7 +51,7 @@ b. If you're development computer runs OSX or Linux, configure git any CRLFs tha
 ```shell
 git clone --recursive  https://github.com/kevinsullivan/Peirce
 cd Peirce
-git submodule foreach git checkout master"
+git submodule foreach git checkout master
 git submodule foreach git pull origin master
 ```
 This step may fail if you do not have access to any of the required submodules, (for example, phys, which is another Github project).
