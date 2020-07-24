@@ -10,3 +10,6 @@
 [submodule "affine_lib"]
 	path = math
 	url = https://github.com/drewjel/affine_lib.git
+[submodule "lang"]
+	path = lang
+	url = https://github.com/drewjel/lang.git
