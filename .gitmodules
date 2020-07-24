@@ -8,5 +8,5 @@
 	path = g3log
 	url = https://github.com/KjellKod/g3log.git
 [submodule "affine_lib"]
-	path = affine_lib
+	path = math
 	url = https://github.com/drewjel/affine_lib.git
