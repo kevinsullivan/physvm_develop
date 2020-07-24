@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "/usr/lib/llvm-6.0/include",
-                "/llvm/"
+                "/llvm/", "/opt/ros/melodic/include"
             ],
             "defines": [],
             "macFrameworkPath": [
