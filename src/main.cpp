@@ -59,12 +59,16 @@ coords, interp, domain objects.
 */
 
 /**************************************
+ * NOTE: The next section of this file, ending with END LOGGING below can be 
+ * skipped, if all you're interested in is Peirce functionality. This implements 
+ * a prototype logging injection functionality to support future dynamic analysis
+ * use cases.
+ * 
  * This implments a portion of the "RecursiveASTVisitor" interface of Clang
  * It is used to recursively search an AST during the FrontendAction and determine where the program needs to add constraints.
  * This will get instantiated after the AST is initially parsed and types are added/inferred
  * Specifically, we're adding in constraints/logging code where we don't have any assigned type
  * ***********************************/
-
 class RewriteASTVisitor : public RecursiveASTVisitor<RewriteASTVisitor>
 {
 public:
@@ -121,12 +125,12 @@ public:
   {
       auto mf_id = this->ctxt_->getSourceManager().getMainFileID();
       auto newSourceLoc = this->ctxt_->getSourceManager().translateLineCol(mf_id, 1, 1);
-     
+  
       constraintWriter->InsertText(newSourceLoc, "\n#include <g3log/g3log.hpp>\n#include <g3log/logworker.hpp>\n#include <string>\n");
       
   }
 
-  //overridden callback from bass class
+  //overridden callback from bass class (recursive AST visitor)
   //this method will trigger everytime the traversal hits a declaraction
   //we check if the decl needs a constraint, if so, insert it
   bool VisitDecl(Decl* decl)
@@ -235,12 +239,21 @@ public:
       logcode << string(rewriter->begin(), rewriter->end());
       logcode.close();
       std::cout<<"Done writing file "<<fname<<std::endl;
-
     }
-
-
   }
 };
+
+
+
+
+
+/*
+END LOGGING INSERTION CODE. 
+*/
+
+
+
+
 
 /***************************************
 This will get instantiated by the Frontend Action Tool. It contains the entry point for the first pass through the program via the FrontendAction.
@@ -333,42 +346,18 @@ int main(int argc, const char **argv)
   //creates a "ToolAction" unique pointer object
   auto toolAction = newFrontendActionFactory<MyFrontendAction>()  ;
 
+  // Parse the source and build empty interpretation
   Tool.run(toolAction.get() );
 
-  //maps the parsed AST into indices for printing and editing for the user
+  /* 
+  Iteratively obtain actual interpretation from user
+  - maps the parsed AST into indices for printing and editing for the user
+  - prints all variables that can be assigned
+  - enters a while loop allowing user to select variables to edit or exit and perform inference
+  */
   interp_->mkVarTable();
-  //prints all variables that can be assigned
   interp_->printVarTable();
-  //enters a while loop allowing user to select variables to edit or exit and perform inference
   interp_->updateVarTable();
-
-/*
-  Commented Dr. Sullivan's debugging code - 5/6 - Andrew
-
-  cout <<"Spaces\n";
-  cout <<interp_->toString_Spaces();
-  cout <<"\nVector Identifiers\n";
-  cout <<interp_->toString_Idents(); 
-  cout <<"\nVector Expressions\n";
-  cout <<interp_->toString_Exprs();
-  cout <<"\nVectors\n";
-  cout <<interp_->toString_Vectors();
-  cout <<"\nVector Definitions\n"; 
-  cout <<interp_->toString_Defs();
-  cout << "\nVector Assignments\n";
-  cout <<interp_->toString_Assigns();
-
-  cout <<"Scalar Identifiers\n";
-  cout <<interp_->toString_ScalarIdents();
-  cout <<"\nScalar Expressions\n";
-  cout <<interp_->toString_ScalarExprs();
-  cout <<"\nScalars\n";
-  cout <<interp_->toString_Scalars();
-  cout <<"\nScalar Definitions\n";
-  cout <<interp_->toString_ScalarDefs();
-  cout << "\nScalar Assignments\n";
-  cout <<interp_->toString_ScalarAssigns();
-*/
 
 //THE ORDER YOU RUN THE CHECKER AND THE REWRITE-PASS MATTERS. 
 //Not only does Tool.run change/lose state on entry, but also on exit

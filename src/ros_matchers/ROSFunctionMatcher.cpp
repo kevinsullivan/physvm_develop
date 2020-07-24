@@ -27,6 +27,9 @@ void ROSFunctionMatcher::search(){
     localFinder_.addMatcher(root, this);
 };
 
+/*
+This is a callback method that gets called when Clang matches on a pattern set up in the search method above.
+*/
 void ROSFunctionMatcher::run(const MatchFinder::MatchResult &Result){
     auto mainCompoundStatement = Result.Nodes.getNodeAs<clang::CompoundStmt>("MainCompoundStatement");
     auto mainCandidate = Result.Nodes.getNodeAs<clang::FunctionDecl>("MainCandidate");
@@ -34,7 +37,9 @@ void ROSFunctionMatcher::run(const MatchFinder::MatchResult &Result){
     //since we can't check for main in clang, check each function candidate to see if it's main
     if(mainCandidate->isMain()){
 
+        // stmts gets converted into a SEQ construct in lang.
         std::vector<const clang::Stmt*> stmts;
+
         //visit each statement in the main procedure
         for(auto it = mainCompoundStatement->body_begin(); it != mainCompoundStatement->body_end();it++)
         {
