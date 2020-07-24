@@ -50,6 +50,9 @@ cd Peirce
 git submodule foreach git checkout master
 git submodule foreach git pull origin master
 ```
+
+Note to Kevin: Close folder in VM. Open again to /peirce/. Then do a git pull. Then you're ready to go.
+
 This step may fail if you do not have access to any of the required submodules, (for example, phys, which is another Github project).
 **The clone will not finish for ANY of the 4 subrepositories if you lack access to one. Please click on each link in Step 3 and make sure that you do not "404"! If you do,
 make sure that you have been invited by Dr. Sullivan, and that you have accepted his invitation via your email!**
