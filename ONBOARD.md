@@ -46,9 +46,12 @@ b. If you're development computer runs OSX or Linux, configure git any CRLFs tha
 3. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, and https://github.com/drewjel/PeirceDocker.
 4. Clone the Peirce repository, along with its subrepositories, using the following command:
 ```shell
-git clone https://github.com/kevinsullivan/Peirce.git --recursive
+git clone --recursive  https://github.com/kevinsullivan/Peirce
+cd Peirce
+git submodule foreach git checkout master"
+git submodule foreach git pull origin master
 ```
-This step may fail if you do not have access to any submodules, (for example, phys, which is another Github project).
+This step may fail if you do not have access to any of the required submodules, (for example, phys, which is another Github project).
 
 
 ## VSCode Setup
