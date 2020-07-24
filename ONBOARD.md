@@ -52,6 +52,7 @@ git submodule foreach git pull origin master
 ```
 
 Note to Kevin: Close folder in VM. Open again to /peirce/. Then do a git pull. Then you're ready to go.
+Note to Kevin: Each time you do this, be sure to stop and restart your docker container.
 
 This step may fail if you do not have access to any of the required submodules, (for example, phys, which is another Github project).
 **The clone will not finish for ANY of the 4 subrepositories if you lack access to one. Please click on each link in Step 3 and make sure that you do not "404"! If you do,
