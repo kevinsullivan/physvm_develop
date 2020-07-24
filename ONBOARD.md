@@ -6,7 +6,7 @@ This document contains an abbreviated set of steps to be followed to pepare your
 
 1. Download Docker for your respective platform (https://www.docker.com/products/docker-desktop) and ensure daemon is running. Make an account with Docker and get permission from the owner of the docker to pull the current image (owner as of 5/26/2020 is Andrew Elsey).
 
-1.5. Check your hardware for amount of memory (Host_mem) number of cores/threads (Host_cores), and then change your Docker Preferences to allocate desired shares of these resources to Docker (VM_cores and VM_mem). Remember the values of VM_cores and VM_mem, as you will need them later in these oboarding instructions.
+1.5. Check your hardware for amount of memory (Host_mem) number of cores/threads (Host_cores), and then change your Docker Preferences to allocate desired shares of these resources to Docker (VM_cores and VM_mem). Try to give Docker at least 4-8GB of memory, and 4 cores if you have them available on your CPU. This is not a required step, but will improve the "build time" of Peirce, which could be 15-30 minutes on less powerful machines.
 
 2. Issue the following command in a terminal window:
 ```shell
@@ -36,17 +36,13 @@ exit
 
 ## Github Setup
 
-1. Configure git on your local machine.
-a. If you're development computer runs Windows, configure git to convert LF line endings to CRLF (which is what Windows uses) when you check out code. 
+1. Download Git on your local machine.
+a. Turn off carriage returns in code checkout. 
 ```shell
-git config --global core.autocrlf true
-```
-b. If you're development computer runs OSX or Linux, configure git any CRLFs that might have crept in to LFs on commit.
-```shell
- git config --global core.autocrlf true
+git config --global core.autocrlf input
 ```
 2. Ensure you have an account with Github.
-3. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, and https://github.com/drewjel/PeirceDocker.
+3. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, https://github.com/drewjel/PeirceDocker, and https://github.com/drewjel/affine_lib. All 4 are owned by Dr. Sullivan, as of 7/23/20.
 4. Clone the Peirce repository, along with its subrepositories, using the following command:
 ```shell
 git clone --recursive  https://github.com/kevinsullivan/Peirce
@@ -55,6 +51,8 @@ git submodule foreach git checkout master
 git submodule foreach git pull origin master
 ```
 This step may fail if you do not have access to any of the required submodules, (for example, phys, which is another Github project).
+**The clone will not finish for ANY of the 4 subrepositories if you lack access to one. Please click on each link in Step 3 and make sure that you do not "404"! If you do,
+make sure that you have been invited by Dr. Sullivan, and that you have accepted his invitation via your email!**
 
 
 ## VSCode Setup
