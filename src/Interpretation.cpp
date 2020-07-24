@@ -20,7 +20,6 @@ Establish interpretations for AST nodes:
 #include "InterpToDomain.h"
 #include "ASTToCoords.h"
 #include "Oracle_AskAll.h"    // default oracle
-#include "Space.h"
 #include "Checker.h"
 
 //#include <g3log/g3log.hpp>

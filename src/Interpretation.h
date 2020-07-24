@@ -9,7 +9,6 @@ class Checker;
 #include "AST.h"
 #include "Coords.h"
 #include "Domain.h"
-#include "Space.h"
 #include "ASTToCoords.h"
 #include "CoordsToDomain.h"
 #include "Oracle.h"
