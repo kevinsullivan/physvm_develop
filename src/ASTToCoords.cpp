@@ -91,18 +91,17 @@ ASTToCoords::ASTToCoords() {
         coords::SEQ_GLOBALSTMT* coord = new coords::SEQ_GLOBALSTMT(operands);
         ast::SEQ_GLOBALSTMT* unconst_ast = const_cast<ast::SEQ_GLOBALSTMT*>(ast);
 
-        if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
-            clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
-            setASTState(coord, unconst_dc, c);
-            overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
-            overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
-        }
-        /*if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
-            clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
-            setASTState(coord, unconst_dc, c);
-            overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
-            overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
-        }*/
+        coord->state_ = new coords::ASTState(
+            "",
+            "",
+            "",
+            "",
+            0,
+            0,
+            0,
+            0
+        );
+
         return coord;
     }
     
