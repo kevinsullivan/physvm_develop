@@ -76,7 +76,7 @@ aFile* openFile(std::string fname) {
 
 void generateMath(aFile* f, interp::Interpretation* interp) {
     std::string math = "";
-    math += "import .lang.src.physlang2\n\n";
+    math += "import .lang.src.physlang\n\n";
     math += "noncomputable theory\n\n";
     //math += interp->toString_Spaces();
     //math += interp->toString_PROGRAMs();
