@@ -13,3 +13,6 @@
 [submodule "lang"]
 	path = lang
 	url = https://github.com/drewjel/lang.git
+[submodule "PeirceGen"]
+	path = PeirceGen
+	url = https://github.com/kevinsullivan/PeirceGen.git
