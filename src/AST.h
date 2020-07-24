@@ -12,6 +12,9 @@ namespace ast{
 
 using RealScalar = double;
 
+/*
+Imperative code
+*/
 using PROGRAM = const clang::TranslationUnitDecl;
 using SEQ_GLOBALSTMT = const clang::TranslationUnitDecl;
 using GLOBALSTMT = const clang::FunctionDecl;
@@ -23,12 +26,21 @@ using IFCOND = const clang::Stmt;
 using IFTHEN_EXPR_STMT = const clang::Stmt;
 using IFTHENELSEIF_EXPR_STMT_IFCOND = const clang::Stmt;
 using IFTHENELSE_EXPR_STMT_STMT = const clang::Stmt;
+
+/*
+Physically relevant expression, e.g., a Real3 expression
+*/
 using EXPR = const clang::Stmt;
 
+/*
+
+*/
 using REAL3_EXPR = const clang::Stmt;
 using REAL1_EXPR = const clang::Stmt;
 using REALMATRIX_EXPR = const clang::Stmt;
 using REAL4_EXPR = const clang::Stmt;
+
+// ANDREW: move under imperative?
 using ASSIGNMENT = const clang::Stmt;
 
 using ASSIGN_REAL1_VAR_REAL1_EXPR = const clang::Stmt;
