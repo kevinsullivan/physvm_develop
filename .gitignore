@@ -8,3 +8,5 @@ build/
 .DS_Store
 peirce
 *.tar.gz
+PeirceOutput.lean
+Peircelog.*
