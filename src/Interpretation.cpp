@@ -20,6 +20,7 @@ Establish interpretations for AST nodes:
 #include "InterpToDomain.h"
 #include "ASTToCoords.h"
 #include "Oracle_AskAll.h"    // default oracle
+//#include "Space.h"
 #include "Checker.h"
 
 //#include <g3log/g3log.hpp>
@@ -40,128 +41,6 @@ Interpretation::Interpretation() {
     checker_ = new Checker(this);
 }
 
-
-
-void Interpretation::mkSEQ_GLOBALSTMT(const ast::SEQ_GLOBALSTMT * ast , std::vector <ast::GLOBALSTMT*> operands) {
-//const ast::COMPOUND_STMT * ast , std::vector < ast::STMT *> operands 
-	//coords::GLOBALSTMT* operand1_coords = static_cast<coords::GLOBALSTMT*>(ast2coords_->getDeclCoords(operands));
-
-    vector<coords::GLOBALSTMT*> operand_coords;
-
-    for(auto op : operands)
-    {
-        
-        if(ast2coords_->existsDeclCoords(op)){
-            operand_coords.push_back(static_cast<coords::GLOBALSTMT*>(ast2coords_->getDeclCoords(op)));
-        } 
-    }
-
-    coords::SEQ_GLOBALSTMT* coords = ast2coords_->mkSEQ_GLOBALSTMT(ast, context_ ,operand_coords);
-
-	//domain::DomainObject* operand1_dom = coords2dom_->getGLOBALSTMT(operand_coords);
-
-    vector<domain::DomainObject*> operand_domain;
-
-    for(auto op : operand_coords)
-    {
-        operand_domain.push_back(coords2dom_->getGLOBALSTMT(op));
-    }
-
-    domain::DomainObject* dom = domain_->mkDefaultDomainContainer(operand_domain);
-    coords2dom_->putSEQ_GLOBALSTMT(coords, dom);
-
-	//interp::GLOBALSTMT* operand1_interp = coords2interp_->getGLOBALSTMT(operand1_coords);
-
-    vector<interp::GLOBALSTMT*> operand_interp;
-
-    for(auto op : operand_coords)
-    {
-        auto p = coords2interp_->getGLOBALSTMT(op);
-        operand_interp.push_back(coords2interp_->getGLOBALSTMT(op));
-    }
-
-    interp::SEQ_GLOBALSTMT* interp = new interp::SEQ_GLOBALSTMT(coords, dom, operand_interp);
-    coords2interp_->putSEQ_GLOBALSTMT(coords, interp);
-    interp2domain_->putSEQ_GLOBALSTMT(interp, dom); 
-	this->PROGRAM_vec.push_back(coords);
-	this->SEQ_GLOBALSTMT_vec.push_back(coords);
-};
-
-
- std::string Interpretation::toString_SEQ_GLOBALSTMTs(){ 
-    std::vector<interp::SEQ_GLOBALSTMT*> interps;
-    for(auto coord : this->SEQ_GLOBALSTMT_vec){
-        interps.push_back((interp::SEQ_GLOBALSTMT*)this->coords2interp_->getPROGRAM(coord));
-    }
-    std::string retval = "";
-    for(auto interp_ : interps){
-        retval += "\n" + interp_->toStringLinked(this->getSpaceInterps(), this->getSpaceNames(), this->getFrameInterps(), this->getFrameNames(), true) + "\n";
-
-    }
-    return retval;
-}
-
- std::string Interpretation::toString_PROGRAMs(){ 
-    std::vector<interp::PROGRAM*> interps;
-    for(auto coord : this->PROGRAM_vec){
-        interps.push_back(this->coords2interp_->getPROGRAM(coord));
-    }
-    std::string retval = "";
-    for(auto interp_ : interps){
-        retval += "\n" + interp_->toString() + "\n";
-    }
-    return retval;
-}
-void Interpretation::mkMAIN_STMT(const ast::MAIN_STMT * ast ,ast::STMT* operand1) {
-
-	coords::STMT* operand1_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operand1));
-
-    coords::MAIN_STMT* coords = ast2coords_->mkMAIN_STMT(ast, context_ ,operand1_coords);
-
-	domain::DomainObject* operand1_dom = coords2dom_->getSTMT(operand1_coords);
-    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
-    coords2dom_->putMAIN_STMT(coords, dom);
-
-	interp::STMT* operand1_interp = coords2interp_->getSTMT(operand1_coords);
-
-    interp::MAIN_STMT* interp = new interp::MAIN_STMT(coords, dom, operand1_interp);
-    coords2interp_->putMAIN_STMT(coords, interp);
-    interp2domain_->putMAIN_STMT(interp, dom); 
-	this->GLOBALSTMT_vec.push_back(coords);
-
-} 
-
-void Interpretation::mkFUNCTION_STMT(const ast::FUNCTION_STMT * ast ,ast::STMT* operand1) {
-
-	coords::STMT* operand1_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operand1));
-
-    coords::FUNCTION_STMT* coords = ast2coords_->mkFUNCTION_STMT(ast, context_ ,operand1_coords);
-
-	domain::DomainObject* operand1_dom = coords2dom_->getSTMT(operand1_coords);
-    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
-    coords2dom_->putFUNCTION_STMT(coords, dom);
-
-	interp::STMT* operand1_interp = coords2interp_->getSTMT(operand1_coords);
-
-    interp::FUNCTION_STMT* interp = new interp::FUNCTION_STMT(coords, dom, operand1_interp);
-    coords2interp_->putFUNCTION_STMT(coords, interp);
-    interp2domain_->putFUNCTION_STMT(interp, dom); 
-	this->GLOBALSTMT_vec.push_back(coords);
-
-} 
-
-
- std::string Interpretation::toString_GLOBALSTMTs(){ 
-    std::vector<interp::GLOBALSTMT*> interps;
-    for(auto coord : this->GLOBALSTMT_vec){
-        interps.push_back(this->coords2interp_->getGLOBALSTMT(coord));
-    }
-    std::string retval = "";
-    for(auto interp_ : interps){
-        retval += "\n" + interp_->toString() + "\n";
-    }
-    return retval;
-}
 
 
 void Interpretation::mkCOMPOUND_STMT(const ast::COMPOUND_STMT * ast , std::vector <ast::STMT*> operands) {
@@ -217,7 +96,8 @@ void Interpretation::mkCOMPOUND_STMT(const ast::COMPOUND_STMT * ast , std::vecto
     }
     std::string retval = "";
     for(auto interp_ : interps){
-        retval += "\n" + interp_->toString() + "\n";
+        retval += "\n" + interp_->toStringLinked(this->getSpaceInterps(), this->getSpaceNames(), this->getFrameInterps(), this->getFrameNames(), true) + "\n";
+
     }
     return retval;
 }
@@ -1676,18 +1556,6 @@ void Interpretation::buildDefaultSpaces(){
     auto standard_frameworldGeometry = worldGeometry->getFrames()[0];
     auto interp_frameworldGeometry = new interp::Frame(standard_frameworldGeometry);
     interp2domain_->putFrame(interp_frameworldGeometry, worldGeometry->getFrames()[0]);
-	auto worldTime= domain_->mkClassicalTime("time","worldTime");
-    auto iworldTime = new interp::Space(worldTime);
-    interp2domain_->putSpace(iworldTime, worldTime);
-    auto standard_frameworldTime = worldTime->getFrames()[0];
-    auto interp_frameworldTime = new interp::Frame(standard_frameworldTime);
-    interp2domain_->putFrame(interp_frameworldTime, worldTime->getFrames()[0]);
-	auto worldVelocity= domain_->mkClassicalVelocity("vel","worldVelocity",3);
-    auto iworldVelocity = new interp::Space(worldVelocity);
-    interp2domain_->putSpace(iworldVelocity, worldVelocity);
-    auto standard_frameworldVelocity = worldVelocity->getFrames()[0];
-    auto interp_frameworldVelocity = new interp::Frame(standard_frameworldVelocity);
-    interp2domain_->putFrame(interp_frameworldVelocity, worldVelocity->getFrames()[0]);
 
 
 }

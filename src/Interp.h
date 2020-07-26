@@ -14,11 +14,6 @@ class Interp;
 class Space;
 class Frame;
 
-class PROGRAM;
-class SEQ_GLOBALSTMT;
-class GLOBALSTMT;
-class MAIN_STMT;
-class FUNCTION_STMT;
 class STMT;
 class COMPOUND_STMT;
 class IFCOND;
@@ -118,64 +113,6 @@ protected:
 };
 
 
-
-
-
-class PROGRAM : public Interp {
-public:
-    PROGRAM(coords::PROGRAM* coords, domain::DomainObject* dom);
-    virtual std::string toString() const;
-    //friend class Interp;              
-};
-
-
-
-class SEQ_GLOBALSTMT : public PROGRAM {
-public:
-    SEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* coords, domain::DomainObject* dom, std::vector<GLOBALSTMT*> operands);
-    virtual std::string toString() const;
-    virtual std::string toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, std::vector<interp::Frame*> framelinks, std::vector<string> framenames, bool before);
-    void link(std::vector<GLOBALSTMT*> operands);
-    //friend class Interp;              
-    
-protected:
-	
-    std::vector<interp::GLOBALSTMT*> operands_;
-
-};
-
-
-
-class GLOBALSTMT : public Interp {
-public:
-    GLOBALSTMT(coords::GLOBALSTMT* coords, domain::DomainObject* dom);
-    virtual std::string toString() const;
-    //friend class Interp;              
-};
-
-
-
-class MAIN_STMT : public GLOBALSTMT {
-public:
-    MAIN_STMT(coords::MAIN_STMT* coords, domain::DomainObject* dom ,interp::STMT *operand1 );
-    virtual std::string toString() const override ;
-    //friend class Interp;              
-    
-protected:
-	interp::STMT *operand_1;
-};
-
-
-
-class FUNCTION_STMT : public GLOBALSTMT {
-public:
-    FUNCTION_STMT(coords::FUNCTION_STMT* coords, domain::DomainObject* dom ,interp::STMT *operand1 );
-    virtual std::string toString() const override ;
-    //friend class Interp;              
-    
-protected:
-	interp::STMT *operand_1;
-};
 
 
 

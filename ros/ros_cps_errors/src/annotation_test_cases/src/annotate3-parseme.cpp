@@ -101,10 +101,10 @@ int main(int argc, char **argv){
     //Allow debug messages to show up in console
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
 
-    tf::Point
-        tf_start_point = tf::Point(10, 10, 10);
-    tf::Point
-        tf_end_point = tf::Point(20, -2, 12);
+    //tf::Point
+    //    tf_start_point = tf::Point(10, 10, 10);
+    //tf::Point
+    //    tf_end_point = tf::Point(20, -2, 12);
 
-    tf::Vector3 tf_displacement = tf_end_point - tf_start_point;
+    //tf::Vector3 tf_displacement = tf_end_point - tf_start_point;
 }

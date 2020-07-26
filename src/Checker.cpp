@@ -80,7 +80,7 @@ void generateMath(aFile* f, interp::Interpretation* interp) {
     math += "noncomputable theory\n\n";
     //math += interp->toString_Spaces();
     //math += interp->toString_PROGRAMs();
-    math += interp->toString_SEQ_GLOBALSTMTs();
+    math += interp->toString_COMPOUND_STMTs();
     //math += interp->toString_ScalarDefs();
     //math += interp->toString_Defs();
     //math += interp->toString_TransformDefs();

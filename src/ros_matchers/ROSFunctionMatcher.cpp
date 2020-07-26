@@ -62,10 +62,10 @@ void ROSFunctionMatcher::run(const MatchFinder::MatchResult &Result){
         }
 
         this->interp_->mkCOMPOUND_STMT(mainCompoundStatement, stmts);
-        this->interp_->mkMAIN_STMT(mainCandidate, mainCompoundStatement);
-        auto tud = clang::TranslationUnitDecl::castFromDeclContext(mainCandidate->getParent());
-        std::vector<const clang::FunctionDecl*> globals;
-        globals.push_back(mainCandidate);
-        this->interp_->mkSEQ_GLOBALSTMT(tud, globals);
+        //this->interp_->mkMAIN_STMT(mainCandidate, mainCompoundStatement);
+        //auto tud = clang::TranslationUnitDecl::castFromDeclContext(mainCandidate->getParent());
+        //std::vector<const clang::FunctionDecl*> globals;
+        //globals.push_back(mainCandidate);
+        //this->interp_->mkSEQ_GLOBALSTMT(tud, globals);
     }
 };

@@ -74,27 +74,6 @@ std::string Coords::getSourceLoc() const {
 *************************************************************/
 
 
-SEQ_GLOBALSTMT::SEQ_GLOBALSTMT(std::vector<GLOBALSTMT*> operands) :PROGRAM() {
-    for(auto& op : operands){
-        this->operands_.push_back(op);
-    }
-
-};
-std::string SEQ_GLOBALSTMT::toString() const{ return (this->getIndex() > 0 ? "INDEX"+std::to_string(this->getIndex())+".":"")+"PROGRAM" + std::string("")+ "COMMAND.B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
-
-
-MAIN_STMT::MAIN_STMT(coords::STMT *operand_1) : 
-		GLOBALSTMT(),operand1(operand_1){}
-coords::STMT* MAIN_STMT::getOperand1() { return this->operand1;}
-std::string MAIN_STMT::toString() const{ return (this->getIndex() > 0 ? "INDEX"+std::to_string(this->getIndex())+".":"")+"GLOBALSTMT" + std::string("")+ "COMMAND.B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
-
-
-FUNCTION_STMT::FUNCTION_STMT(coords::STMT *operand_1) : 
-		GLOBALSTMT(),operand1(operand_1){}
-coords::STMT* FUNCTION_STMT::getOperand1() { return this->operand1;}
-std::string FUNCTION_STMT::toString() const{ return (this->getIndex() > 0 ? "INDEX"+std::to_string(this->getIndex())+".":"")+"GLOBALSTMT" + std::string("")+ "COMMAND.B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
-
-
 COMPOUND_STMT::COMPOUND_STMT(std::vector<STMT*> operands) :STMT() {
     for(auto& op : operands){
         this->operands_.push_back(op);

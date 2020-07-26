@@ -11,10 +11,6 @@ namespace oracle {
 
 class Oracle {
 public:
-    virtual domain::DomainObject* getInterpretationForPROGRAM(coords::PROGRAM* coords, domain::DomainObject* dom) = 0;
-
-    virtual domain::DomainObject* getInterpretationForGLOBALSTMT(coords::GLOBALSTMT* coords, domain::DomainObject* dom) = 0;
-
     virtual domain::DomainObject* getInterpretationForSTMT(coords::STMT* coords, domain::DomainObject* dom) = 0;
 
     virtual domain::DomainObject* getInterpretationForIFCOND(coords::IFCOND* coords, domain::DomainObject* dom) = 0;

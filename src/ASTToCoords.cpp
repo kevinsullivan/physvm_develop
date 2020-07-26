@@ -87,62 +87,6 @@ ASTToCoords::ASTToCoords() {
 }
 
 
-     coords::SEQ_GLOBALSTMT* ASTToCoords::mkSEQ_GLOBALSTMT(const ast::SEQ_GLOBALSTMT* ast, clang::ASTContext* c, std::vector<coords::GLOBALSTMT*> operands ){
-        coords::SEQ_GLOBALSTMT* coord = new coords::SEQ_GLOBALSTMT(operands);
-        ast::SEQ_GLOBALSTMT* unconst_ast = const_cast<ast::SEQ_GLOBALSTMT*>(ast);
-
-        coord->state_ = new coords::ASTState(
-            "",
-            "",
-            "",
-            "",
-            0,
-            0,
-            0,
-            0
-        );
-
-        return coord;
-    }
-    
-     coords::MAIN_STMT* ASTToCoords::mkMAIN_STMT(const ast::MAIN_STMT* ast, clang::ASTContext* c,coords::STMT* operand1){
-        coords::MAIN_STMT* coord = new coords::MAIN_STMT(operand1);
-        ast::MAIN_STMT* unconst_ast = const_cast<ast::MAIN_STMT*>(ast);
- 
-        if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
-            clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
-            setASTState(coord, unconst_dc, c);
-            overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
-            overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
-        }
-        /*if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
-            clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
-            setASTState(coord, unconst_dc, c);
-            overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
-            overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
-        }*/
-        return coord;
-    }
-    
-     coords::FUNCTION_STMT* ASTToCoords::mkFUNCTION_STMT(const ast::FUNCTION_STMT* ast, clang::ASTContext* c,coords::STMT* operand1){
-        coords::FUNCTION_STMT* coord = new coords::FUNCTION_STMT(operand1);
-        ast::FUNCTION_STMT* unconst_ast = const_cast<ast::FUNCTION_STMT*>(ast);
- 
-        if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
-            clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
-            setASTState(coord, unconst_dc, c);
-            overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
-            overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
-        }
-        /*if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
-            clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
-            setASTState(coord, unconst_dc, c);
-            overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
-            overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
-        }*/
-        return coord;
-    }
-    
      coords::COMPOUND_STMT* ASTToCoords::mkCOMPOUND_STMT(const ast::COMPOUND_STMT* ast, clang::ASTContext* c, std::vector<coords::STMT*> operands ){
         coords::COMPOUND_STMT* coord = new coords::COMPOUND_STMT(operands);
         ast::COMPOUND_STMT* unconst_ast = const_cast<ast::COMPOUND_STMT*>(ast);

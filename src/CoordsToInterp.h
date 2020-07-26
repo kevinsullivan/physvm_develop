@@ -14,24 +14,6 @@ class CoordsToInterp
 public:
 
 
-	interp::PROGRAM* getPROGRAM(coords::PROGRAM* c) const;
-	coords::PROGRAM* getPROGRAM(interp::PROGRAM* i) const;
-
-	void putSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* key, interp::SEQ_GLOBALSTMT* val);
-	interp::SEQ_GLOBALSTMT* getSEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c) const;
-	coords::SEQ_GLOBALSTMT* getSEQ_GLOBALSTMT(interp::SEQ_GLOBALSTMT* i) const;
-
-	interp::GLOBALSTMT* getGLOBALSTMT(coords::GLOBALSTMT* c) const;
-	coords::GLOBALSTMT* getGLOBALSTMT(interp::GLOBALSTMT* i) const;
-
-	void putMAIN_STMT(coords::MAIN_STMT* key, interp::MAIN_STMT* val);
-	interp::MAIN_STMT* getMAIN_STMT(coords::MAIN_STMT* c) const;
-	coords::MAIN_STMT* getMAIN_STMT(interp::MAIN_STMT* i) const;
-
-	void putFUNCTION_STMT(coords::FUNCTION_STMT* key, interp::FUNCTION_STMT* val);
-	interp::FUNCTION_STMT* getFUNCTION_STMT(coords::FUNCTION_STMT* c) const;
-	coords::FUNCTION_STMT* getFUNCTION_STMT(interp::FUNCTION_STMT* i) const;
-
 	interp::STMT* getSTMT(coords::STMT* c) const;
 	coords::STMT* getSTMT(interp::STMT* i) const;
 
@@ -280,12 +262,6 @@ public:
 	coords::REALMATRIX_LITERAL9* getREALMATRIX_LITERAL9(interp::REALMATRIX_LITERAL9* i) const;
 
 private:
-
-	std::unordered_map <coords::PROGRAM*,	interp::PROGRAM*	> 	coords2interp_PROGRAM;
-	std::unordered_map <interp::PROGRAM*,	coords::PROGRAM*	> 	interp2coords_PROGRAM;
-
-	std::unordered_map <coords::GLOBALSTMT*,	interp::GLOBALSTMT*	> 	coords2interp_GLOBALSTMT;
-	std::unordered_map <interp::GLOBALSTMT*,	coords::GLOBALSTMT*	> 	interp2coords_GLOBALSTMT;
 
 	std::unordered_map <coords::STMT*,	interp::STMT*	> 	coords2interp_STMT;
 	std::unordered_map <interp::STMT*,	coords::STMT*	> 	interp2coords_STMT;

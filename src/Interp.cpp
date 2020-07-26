@@ -23,19 +23,19 @@ std::string Space::toString() const {
         found = true;
         retval += "def " + dc->getName() + "var : EuclideanGeometry3SpaceVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
         retval += "def " + dc->getName() + "sp := (EuclideanGeometry" + std::to_string(dc->getDimension()) +  "SpaceExpression.EuclideanGeometry" + std::to_string(dc->getDimension()) +  "Literal ( BuildEuclideanGeometrySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
-        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace (⊢" + dc->getName() + "var) (⊢" + dc->getName() + "sp)\n";
+        retval += "def " + dc->getName() + " := PhysCommand.SpaceAssignment (⊢" + dc->getName() + "var) (⊢" + dc->getName() + "sp)\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTime*>(s_)){
         found = true;
         retval += "def " + dc->getName() + "var : ClassicalTimeSpaceVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
         retval += "def " + dc->getName() + "sp :=  (ClassicalTimeSpaceExpression.ClassicalTimeLiteral ( BuildClassicalTimeSpace \"" + dc->getName() + "\" ))\n";; 
-        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace (⊢" + dc->getName() + "var) (⊢" + dc->getName() + "sp)\n";
+        retval += "def " + dc->getName() + " := PhysCommand.SpaceAssignment (⊢" + dc->getName() + "var) (⊢" + dc->getName() + "sp)\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
         found = true;
         retval += "def " + dc->getName() + "var : ClassicalVelocity3SpaceVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
         retval += "def " + dc->getName() + "sp := (ClassicalVelocity" + std::to_string(dc->getDimension()) +  "SpaceExpression.ClassicalVelocity" + std::to_string(dc->getDimension()) +  "Literal ( BuildClassicalVelocitySpace \"" + dc->getName() + "\" " + std::to_string(dc->getDimension()) +  "))\n";; 
-        retval += "def " + dc->getName() + " := PhysGlobalCommand.GlobalSpace (⊢" + dc->getName() + "var) (⊢" + dc->getName() + "sp)\n";
+        retval += "def " + dc->getName() + " := PhysCommand.SpaceAssignment (⊢" + dc->getName() + "var) (⊢" + dc->getName() + "sp)\n";
     }
 
     if(!found){
@@ -62,7 +62,7 @@ std::string Frame::toString() const {
             retval += "def " + dc->getName()+"."+f_->getName() + "fr := EuclideanGeometry3FrameExpression.FrameLiteral ( GetEuclideanGeometryStandardFrame (EvalEuclideanGeometry3SpaceExpression " + dc->getName()+"sp))\n";
     
         }
-        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysGlobalCommand.GlobalFrame (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
+        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysCommand.FrameAssignment (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTime*>(f_->getSpace())){
         found = true;
@@ -74,7 +74,7 @@ std::string Frame::toString() const {
             retval += "def " + dc->getName()+"."+f_->getName() + "fr := ClassicalTimeFrameExpression.FrameLiteral ( GetClassicalTimeStandardFrame (EvalClassicalTimeSpaceExpression " + dc->getName()+"sp))\n";
     
         }
-        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysGlobalCommand.GlobalFrame (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
+        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysCommand.FrameAssignment (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(f_->getSpace())){
         found = true;
@@ -86,7 +86,7 @@ std::string Frame::toString() const {
             retval += "def " + dc->getName()+"."+f_->getName() + "fr := ClassicalVelocity3FrameExpression.FrameLiteral ( GetClassicalVelocityStandardFrame (EvalClassicalVelocity3SpaceExpression " + dc->getName()+"sp))\n";
     
         }
-        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysGlobalCommand.GlobalFrame (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
+        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysCommand.FrameAssignment (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
     }
 
     if(!found){
@@ -97,309 +97,6 @@ std::string Frame::toString() const {
 
 };
 
-
-PROGRAM::PROGRAM(coords::PROGRAM* c, domain::DomainObject* d) : Interp(c,d) {}
-                    
-std::string PROGRAM::toString() const {
-    std::string retval = "";
-    bool found = false;
-    
-    //  ret += "(";
-    //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
-        if(cont->hasValue()){
-
-                        
-        }
-    }
-
-    if(!found){
-        //ret = "";
-        std::cout<<"Warning - Calling toString on a production rather than a case\n;";
-    }
-    std::replace(retval.begin(), retval.end(), '_', '.');
-    int index;
-    string sub_str = ": _";
-    string singleperiod = ".a";
-    while ((index = retval.find(": .")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find(": ^")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find("..")) != string::npos)
-    {    
-        retval.replace(index, singleperiod.length(), singleperiod); 
-    }
-    
-    
-    return retval;
-}
-                
-SEQ_GLOBALSTMT::SEQ_GLOBALSTMT(coords::SEQ_GLOBALSTMT* c, domain::DomainObject* d, std::vector<interp::GLOBALSTMT*> operands)  :PROGRAM(c, d) {
-    for(auto& op : operands){
-        this->operands_.push_back(op);
-    }
-
-};
-std::string SEQ_GLOBALSTMT::toString() const{ 
-    std::string retval = "";
-    string cmdval = "[]";
-    for(auto op: this->operands_){ 
-        retval += "\n" + op->toString() + "\n";
-        cmdval = op->coords_->toString() + "::" + cmdval;
-    }
-    cmdval = "(" + cmdval + ")";
-
-    cmdval += ""; 
-    cmdval = "\ndef " + this->coords_->toString() + "globalseq : PhysGlobalCommand := PhysGlobalCommand.Seq " + cmdval;
-
-
-    cmdval += "\ndef " + this->coords_->toString() + " : PhysProgram := PhysProgram.Program " + this->coords_->toString() + "globalseq";
-
-
-    retval += "\n" + cmdval + "\n";
-    
-
-    //std::replace(retval.begin(), retval.end(), '_', '.');
-    int index;
-    string sub_str = ": _";
-    string singleperiod = ".a";
-    while ((index = retval.find(": .")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find(": ^")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find("..")) != string::npos)
-    {   
-        retval.replace(index, singleperiod.length(), singleperiod); 
-    }
-    
-    
-    return retval;
-}
-std::string SEQ_GLOBALSTMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, std::vector<interp::Frame*> framelinks, std::vector<string> framenames, bool before) { 
-    //std::string toStr = this->toString();
-    std::string retval = "";
-        string cmdvalstart = "::[]";
-        string cmdval = "";
-    int i = 0;
-    if(before)
-    {
-        
-        for(auto op: links){
-            retval += "\n" + op->toString() + "\n";
-            cmdval = names[i++] + "::" + cmdval;
-            
-        }
-        i = 0;
-        for(auto op: framelinks){
-            retval += "\n" + op->toString() + "\n";
-            cmdval = framenames[i++] + "::" + cmdval;
-        }
-
-        bool start = true;
-        for(auto op: this->operands_){ 
-            retval += "\n" + op->toString() + "\n";
-            cmdval = cmdval + (!start?"::":"") + op->coords_->toString();
-            start = false;
-        }
-    }
-    else
-    {
-        for(auto op: this->operands_){ 
-            retval += "\n" + op->toString() + "\n";
-            cmdval = op->coords_->toString() + "::" + cmdval;
-        }
-        bool start = true;
-        for(auto op: links){
-            retval += "\n" + op->toString() + "\n";
-            cmdval = cmdval + (!start?"::":"") + names[i++];
-            start = false;
-            
-        }
-        i = 0;
-        for(auto op: framelinks){
-            retval += "\n" + op->toString() + "\n";
-            cmdval = framenames[i++] + "::" + cmdval;
-        }
-
-    }
-    cmdval += ""; 
-    cmdval = "\ndef " + this->coords_->toString() + "globalseq : PhysGlobalCommand := PhysGlobalCommand.Seq (" + cmdval + cmdvalstart + ")";
-
-
-    cmdval += "\ndef " + this->coords_->toString() + " : PhysProgram := PhysProgram.Program " + this->coords_->toString() + "globalseq";
-
-
-    retval += "\n" + cmdval + "\n";
-    
-
-    //std::replace(retval.begin(), retval.end(), '_', '.');
-    int index;
-    string sub_str = ": _";
-    string singleperiod = ".a";
-    while ((index = retval.find(": .")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find(": ^")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find("..")) != string::npos)
-    {   
-        retval.replace(index, singleperiod.length(), singleperiod); 
-    }
-    if(before)
-    {
-        
-    }
-    else
-    {
-
-    }
-
-    return retval;
-}
-
-
-GLOBALSTMT::GLOBALSTMT(coords::GLOBALSTMT* c, domain::DomainObject* d) : Interp(c,d) {}
-                    
-std::string GLOBALSTMT::toString() const {
-    std::string retval = "";
-    bool found = false;
-    
-    //  ret += "(";
-    //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
-        if(cont->hasValue()){
-
-                        
-        }
-    }
-
-    if(!found){
-        //ret = "";
-        std::cout<<"Warning - Calling toString on a production rather than a case\n;";
-    }
-    std::replace(retval.begin(), retval.end(), '_', '.');
-    int index;
-    string sub_str = ": _";
-    string singleperiod = ".a";
-    while ((index = retval.find(": .")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find(": ^")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find("..")) != string::npos)
-    {    
-        retval.replace(index, singleperiod.length(), singleperiod); 
-    }
-    
-    
-    return retval;
-}
-                
-
-MAIN_STMT::MAIN_STMT(coords::MAIN_STMT* c, domain::DomainObject* d,interp::STMT * operand1 ) : GLOBALSTMT(c,d)
-   ,operand_1(operand1) {}
-
-std::string MAIN_STMT::toString() const {
-    bool found = false;
-    std::string retval = "";
-	retval += "\n"+ operand_1->toString() + "\n";
-    //  ret += "(";
-    //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
-        if(cont->hasValue()){
-
-                        
-        }
-    }
-
-    if(!found){
-        //retval = "";
-        
-            auto case_coords = dynamic_cast<coords::GLOBALSTMT*>(this->coords_);
-            retval += "def " + case_coords->toString() + " : PhysGlobalCommand := PhysGlobalCommand.Main " + operand_1->coords_->toString();
-
-    }
-    std::replace(retval.begin(), retval.end(), '_', '.');
-    int index;
-    string sub_str = ": _";
-    string singleperiod = ".a";
-    while ((index = retval.find(": .")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find(": ^")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find("..")) != string::npos)
-    {    
-        retval.replace(index, singleperiod.length(), singleperiod);
-    }
-    
-
-    return retval;
-}
-                
-
-
-FUNCTION_STMT::FUNCTION_STMT(coords::FUNCTION_STMT* c, domain::DomainObject* d,interp::STMT * operand1 ) : GLOBALSTMT(c,d)
-   ,operand_1(operand1) {}
-
-std::string FUNCTION_STMT::toString() const {
-    bool found = false;
-    std::string retval = "";
-	retval += "\n"+ operand_1->toString() + "\n";
-    //  ret += "(";
-    //ret += "def var_" + std::to_string(++index) + ":= 1";
-    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
-        if(cont->hasValue()){
-
-                        
-        }
-    }
-
-    if(!found){
-        //retval = "";
-        
-            auto case_coords = dynamic_cast<coords::GLOBALSTMT*>(this->coords_);
-            retval += "def " + case_coords->toString() + " : PhysGlobalCommand := PhysGlobalCommand.Function " + operand_1->coords_->toString();
-
-    }
-    std::replace(retval.begin(), retval.end(), '_', '.');
-    int index;
-    string sub_str = ": _";
-    string singleperiod = ".a";
-    while ((index = retval.find(": .")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find(": ^")) != string::npos)
-    {    
-        retval.replace(index, sub_str.length(), sub_str); 
-    }
-    while ((index = retval.find("..")) != string::npos)
-    {    
-        retval.replace(index, singleperiod.length(), singleperiod);
-    }
-    
-
-    return retval;
-}
-                
 
 STMT::STMT(coords::STMT* c, domain::DomainObject* d) : Interp(c,d) {}
                     
@@ -486,10 +183,59 @@ std::string COMPOUND_STMT::toString() const{
 std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std::vector<std::string> names, std::vector<interp::Frame*> framelinks, std::vector<string> framenames, bool before) { 
     //std::string toStr = this->toString();
     std::string retval = "";
-        string cmdvalstart = "::[]";
-        string cmdval = "";
+    std::string cmdwrapper = "PhysCommand.Seq";
+    string cmdvalstart = "::[]";
+    string cmdval = "";
     int i = 0;
+    int count = this->operands_.size() + links.size() + framelinks.size();
     if(before)
+    {
+        bool prev;
+
+        for(auto op: links){
+            if(prev){
+                retval += "\n" + op->toString() + "\n";
+                cmdval = "(" + cmdwrapper + " " + names[i++] + " " + cmdval + ")";
+            }
+            else{
+                retval += "\n" + op->toString() + "\n";
+                cmdval = names[i++];
+                prev = true;
+            }
+        }
+        i = 0;
+        for(auto op: framelinks){
+            if(prev){
+                retval += "\n" + op->toString() + "\n";
+                cmdval = "(" + cmdwrapper + " " + framenames[i++] + " " + cmdval + ")";
+            }
+            else{
+                retval += "\n" + op->toString() + "\n";
+                cmdval = framenames[i++];
+                prev = true;
+            }
+        }
+
+        bool start = true;
+        for(auto op: this->operands_){ 
+            if(prev){
+                retval += "\n" + op->toString() + "\n";
+                cmdval = "(" + cmdwrapper + " " + op->coords_->toString() + " " + cmdval + ")";
+            }
+            else{
+                retval += "\n" + op->toString() + "\n";
+                cmdval = op->coords_->toString();
+                prev = true;
+            }
+            //retval += "\n" + op->toString() + "\n";
+            //cmdval = cmdval + (!start?"::":"") + op->coords_->toString();
+            //start = false;
+        }
+        
+    }
+
+
+    /*if(before)
     {
         
         for(auto op: links){
@@ -529,9 +275,9 @@ std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std
             cmdval = framenames[i++] + "::" + cmdval;
         }
 
-    }
+    }*/
     cmdval += ""; 
-    cmdval = "\ndef " + this->coords_->toString() + " : PhysCommand := PhysCommand.Seq " + cmdval;
+    cmdval = "\ndef " + this->coords_->toString() + " : PhysCommand :=  " + cmdval;
 
 
     retval += "\n" + cmdval + "\n";
