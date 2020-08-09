@@ -42,7 +42,7 @@ a. Turn off carriage returns in code checkout.
 git config --global core.autocrlf input
 ```
 2. Ensure you have an account with Github.
-3. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, https://github.com/drewjel/PeirceDocker, and https://github.com/drewjel/affine_lib. All 4 are owned by Dr. Sullivan, as of 7/23/20.
+3. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, https://github.com/drewjel/PeirceDocker, and https://github.com/drewjel/affine_lib, https://github.com/kevinsullivan/PeirceGen. All 5 are owned by Dr. Sullivan, as of 7/23/20.
 4. Clone the Peirce repository, along with its subrepositories, using the following command:
 ```shell
 git clone --recursive  https://github.com/kevinsullivan/Peirce
