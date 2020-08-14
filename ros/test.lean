@@ -24,7 +24,7 @@ def klklk := cmd.classicalTimeAssmt (klklkvar) (klklksp)
 
 def jjjjjjvar : lang.classicalVelocity.var := lang.classicalVelocity.var.mk 19
 
-def jjjjjjsp := lang.classicalVelocity.expr.lit (classicalVelocity.mk 20)
+def jjjjjjsp := lang.classicalVelocity.expr.lit 20 sakaskavar klklkvar
 def jjjjjj := cmd.classicalVelocityAssmt (jjjjjjvar) (jjjjjjsp)
 
 
