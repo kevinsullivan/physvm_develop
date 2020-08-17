@@ -43,7 +43,7 @@ public:
     //requires: clang action state containing AST, program state containing virtual AST
     BaseMatcher(clang::ASTContext* context, interp::Interpretation* interp) : context_(context), interp_(interp) {}
 
-    virtual void search() = 0;
+    virtual void setup() = 0;
     virtual void run(const MatchFinder::MatchResult &Result) = 0;
 
     //Helper methods. See BaseMatcher.cpp. No need to override in subclass.

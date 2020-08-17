@@ -1,17 +1,12 @@
+
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include <vector>
 
 #include "../Interpretation.h"
 
-
 #include "ROSStatementMatcher.h"
-#include "ROSTFPointMatcher.h"
-#include "ROSTFPoseMatcher.h"
-#include "ROSTFQuaternionMatcher.h"
-#include "ROSTFScalarMatcher.h"
-#include "ROSTFTransformMatcher.h"
-#include "ROSTFVector3Matcher.h"
+
 
 #include <string>
 
@@ -22,19 +17,16 @@
 
 #include "../ASTToCoords.h"
 /*
-STMT := 
-    VEC_VAR = EXPR | SCALAR_VAR = SCALAR_EXPR  | TRANSFORM_EXPR
-    VEC_EXPR | SCALAR_EXPR | TRANSFORM_EXPR
-    DECL VEC_VAR = VEC_EXPR | DECL SCALAR_VAR = SCALAR_EXPR | DECL TRANSFORM_VAR = TRANSFORM_EXPR
+This manages all statements in Clang.
 */
 
 
-void ROSStatementMatcher::search(){
-    
-    StatementMatcher exprWithCleanups_ = 
+void ROSStatementMatcher::setup(){
+
+    StatementMatcher exprWithCleanups_ =
         exprWithCleanups(has(expr().bind("UsefulExpr"))).bind("ExprWithCleanupsDiscard");//fluff node to discard
 
-    StatementMatcher 
+    StatementMatcher
         decl_ = declStmt().bind("DeclStmt");
     StatementMatcher
         assign_ = anyOf(
@@ -45,14 +37,33 @@ void ROSStatementMatcher::search(){
         );
 
     StatementMatcher
+        ifStmt_ = ifStmt().bind("IfStmt");
+
+    StatementMatcher
+        cmpdStmt_ = compoundStmt().bind("CompoundStmt");
+
+    StatementMatcher
         expr_ = expr().bind("ExprStmt");
+
+    StatementMatcher
+        returnStmt_ = returnStmt().bind("ReturnStmt");
+
+    StatementMatcher 
+        whileStmt_ = whileStmt().bind("WhileStmt");
+
     localFinder_.addMatcher(decl_, this);
     localFinder_.addMatcher(assign_, this);
     localFinder_.addMatcher(expr_, this);
+    localFinder_.addMatcher(ifStmt_,this);
+    localFinder_.addMatcher(cmpdStmt_, this);
+    localFinder_.addMatcher(returnStmt_, this);
+    localFinder_.addMatcher(whileStmt_, this);
 };
 
 void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
-    
+
+    this->childExprStore_ = nullptr;
+
     const auto declStmt = Result.Nodes.getNodeAs<clang::DeclStmt>("DeclStmt");
 
     const auto assignStmt = Result.Nodes.getNodeAs<clang::Expr>("Assign");
@@ -61,337 +72,133 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
 
     const auto exprWithCleanupsDiscard = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
 
+    const auto ifStmt_ = Result.Nodes.getNodeAs<clang::IfStmt>("IfStmt");
 
-    /*auto getMatcher = [=](std::string typestr_){
-        std::shared_ptr<BaseMatcher> mymatcher;
+    const auto cmpdStmt_ = Result.Nodes.getNodeAs<clang::CompoundStmt>("CompoundStmt");
+
+    const auto returnStmt_ = Result.Nodes.getNodeAs<clang::ReturnStmt>("ReturnStmt");
+
+    const auto whileStmt_ = Result.Nodes.getNodeAs<clang::WhileStmt>("WhileStmt");
+
+    /*
+        if(declStmt)
+            declStmt->dump();
+        else if(assignStmt)
+            assignStmt->dump();
+        else if(exprStmt)
+            exprStmt->dump();
+        */
+    /*
+    if(whileStmt_){
+        auto wcond = whileStmt_->getCond();
+        auto wbody = whileStmt_->getBody();
         
-        if(typestr_.find("tf::Vector3") != string::npos){
-            return 
-        }
-        else if(typestr_.find("tf::Quaternion") != string::npos){
+        ROSBooleanMatcher condm{ this->context_, this->interp_};
+        condm.setup();
+        condm.visit(*wcond);
 
-        }
-        else if(typestr_.find("tf::Point") != string::npos){
-
-        }
-        else if(typestr_.find("tf::Transform") != string::npos){
-
-        }
-        else if(typestr_.find("tfScalar")){
-
-        }
-        else if(typestr_.find("tf::Pose")){
-
+        if(!condm.getChildExprStore()){
+            std::cout<<"Unable to parse If condition!!\n";
+            wcond->dump();
+            throw "Broken Parse";
         }
 
-        return mymatcher;
-    };*/
-/*
-    if(declStmt)
-        declStmt->dump();
-    else if(assignStmt)
-        assignStmt->dump();
-    else if(exprStmt)
-        exprStmt->dump();
-    */
+        ROSStatementMatcher bodym{ this->context_, this->interp_};
+        bodym.setup();
+        bodym.visit(*wbody);
 
-    if(declStmt){
-        if(declStmt->isSingleDecl()){
-            if(auto vd = clang::dyn_cast<clang::VarDecl>(declStmt->getSingleDecl()))
-            {
-                auto typestr = ((clang::QualType)vd->getType()).getAsString();
+        if(!bodym.getChildExprStore()){
+            std::cout<<"Unable to parse If block!!\n";
+            wbody->dump();
+            throw "Broken Parse";
+        }
 
-                if(typestr.find("tf::Vector3") != string::npos){
-                    if(vd->hasInit()){
-                        ROSTFVector3Matcher m{this->context_, this->interp_};
-                        m.search();
-                        m.visit((*vd->getInit()));
-                        if(m.getChildExprStore()){
-                            interp_->mkREAL3_VAR_IDENT(vd);
-                            interp_->mkDECL_REAL3_VAR_REAL3_EXPR(declStmt, vd, m.getChildExprStore());
-                        }
-                        else{
-                            interp_->mkREAL3_VAR_IDENT(vd);
-                            interp_->mkDECL_REAL3_VAR(declStmt, vd);
-                        }
-                    }
-                    else{
-                        interp_->mkDECL_REAL3_VAR(declStmt, vd);
-                    }
-                    this->childExprStore_ = const_cast<clang::DeclStmt*>(declStmt);
+        this->interp_->mkWHILE_BOOL_EXPR_STMT(whileStmt_, condm.getChildExprStore(), bodym.getChildExprStore());
+        this->childExprStore_ = (clang::Stmt*)whileStmt_;
+        return;
 
-                }
-                else if(typestr.find("tf::Quaternion") != string::npos){
-                    if(vd->hasInit()){
-                        ROSTFQuaternionMatcher m{this->context_, this->interp_};
-                        m.search();
-                        m.visit((*vd->getInit()));
-                        if(m.getChildExprStore()){
-                            interp_->mkREAL4_VAR_IDENT(vd);
-                            interp_->mkDECL_REAL4_VAR_REAL4_EXPR(declStmt, vd, m.getChildExprStore());
-                        }
-                        else{
-                            interp_->mkREAL4_VAR_IDENT(vd);
-                            interp_->mkDECL_REAL4_VAR(declStmt, vd);
-                        }
-                    }
-                    else{
-                        interp_->mkDECL_REAL4_VAR(declStmt, vd);
-                    }
-                    
-                    this->childExprStore_ = const_cast<clang::DeclStmt*>(declStmt);
-                }
-                else if(typestr.find("tf::Point") != string::npos){
-                    if(vd->hasInit()){
-                        ROSTFPointMatcher m{this->context_, this->interp_};
-                        m.search();
-                        m.visit((*vd->getInit()));
-                        if(m.getChildExprStore()){
-                            //m.getChildExprStore()->dump();
-                            interp_->mkREAL3_VAR_IDENT(vd);
-                            interp_->mkDECL_REAL3_VAR_REAL3_EXPR(declStmt, vd, m.getChildExprStore());
-                        }
-                        else{
-                            interp_->mkREAL3_VAR_IDENT(vd);
-                            interp_->mkDECL_REAL3_VAR(declStmt, vd);
-                        }
-                    }
-                    else{
-                        interp_->mkDECL_REAL3_VAR(declStmt, vd);
-                    }
-                    this->childExprStore_ = const_cast<clang::DeclStmt*>(declStmt);
-                }
-                else if(typestr.find("tf::Transform") != string::npos){
-                    if(vd->hasInit()){
-                        ROSTFTransformMatcher m{this->context_, this->interp_};
-                        m.search();
-                        m.visit((*vd->getInit()));
-                        interp_->mkREALMATRIX_VAR_IDENT(vd);
-                        if(m.getChildExprStore()){
-                            interp_->mkDECL_REALMATRIX_VAR_REALMATRIX_EXPR(declStmt, vd, m.getChildExprStore());
-                        }
-                        else{
-                            interp_->mkDECL_REALMATRIX_VAR(declStmt, vd);
-                        }
-                    }
-                    else{
-                        interp_->mkDECL_REALMATRIX_VAR(declStmt, vd);
-                    }
-                    this->childExprStore_ = const_cast<clang::DeclStmt*>(declStmt);
+    }*/
 
-                }
-                else if(typestr.find("tfScalar") != string::npos){
-                    if(vd->hasInit()){
-                        ROSTFScalarMatcher m{this->context_, this->interp_};
-                        m.search();
-                        m.visit((*vd->getInit()));
-                        interp_->mkREAL1_VAR_IDENT(vd);
-                        if(m.getChildExprStore()){
-                            interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
-                        }
-                        else{
-                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
-                        }
-                    }
-                    else{
-                        interp_->mkDECL_REAL1_VAR(declStmt, vd);
-                    }
-                    this->childExprStore_ = const_cast<clang::DeclStmt*>(declStmt);
-                }
-                else if(typestr.find("tf::Pose") != string::npos){
-                    if(vd->hasInit()){
-                        ROSTFPoseMatcher m{this->context_, this->interp_};
-                        m.search();
-                        m.visit((*vd->getInit()));
-                        interp_->mkREALMATRIX_VAR_IDENT(vd);
-                        if(m.getChildExprStore()){
-                            interp_->mkDECL_REALMATRIX_VAR_REALMATRIX_EXPR(declStmt, vd, m.getChildExprStore());
-                        }
-                        else{
-                            interp_->mkDECL_REALMATRIX_VAR(declStmt, vd);
-                        }
-                    }
-                    else{
-                        interp_->mkDECL_REALMATRIX_VAR(declStmt, vd);
-                    }
-                    this->childExprStore_ = const_cast<clang::DeclStmt*>(declStmt);
-                }
+    /*
+    if(returnStmt_){
+        auto _expr = returnStmt_->getRetValue();
+        auto typestr = ((clang::QualType)_expr->getType()).getAsString();
+        if(false){}
+        
+    }*/
+
+    if(cmpdStmt_){
+        std::vector<const clang::Stmt*> stmts;
+
+        for(auto st : cmpdStmt_->body()){
+            ROSStatementMatcher stmti{this->context_,this->interp_};
+            stmti.setup();
+            stmti.visit(*st);
+            if(stmti.getChildExprStore()){
+                stmts.push_back(stmti.getChildExprStore());
             }
         }
-        else{
+        this->interp_->mkCOMPOUND_STMT(cmpdStmt_, stmts);
+        this->childExprStore_ = (clang::Stmt*)cmpdStmt_;
+        return;
+        
+    }
+
+    
+    if (declStmt)
+    {
+        if (declStmt->isSingleDecl())
+        {
+            if (auto vd = clang::dyn_cast<clang::VarDecl>(declStmt->getSingleDecl()))
+             {
+                auto typestr = ((clang::QualType)vd->getType()).getAsString();
+                if(false){}
+
+            }
+        }
+        else
+        {
             bool anyfound = false;
-            for(auto it = declStmt->decl_begin(); it != declStmt->decl_end();it++){
-                if(auto vd = clang::dyn_cast<clang::VarDecl>(declStmt->getSingleDecl()))
+            for (auto it = declStmt->decl_begin(); it != declStmt->decl_end(); it++)
+            {
+                if (auto vd = clang::dyn_cast<clang::VarDecl>(declStmt->getSingleDecl()))
                 {
                     auto typestr = ((clang::QualType)vd->getType()).getAsString();
-
-                    if(typestr.find("tf::Vector3") != string::npos){
-                        if(vd->hasInit()){
-                            ROSTFVector3Matcher m{this->context_, this->interp_};
-                            m.search();
-                            m.visit((*vd->getInit()));
-                            if(m.getChildExprStore()){
-                                interp_->mkDECL_REAL3_VAR_REAL3_EXPR(declStmt, vd, m.getChildExprStore());
-                            }
-                            else{
-                                interp_->mkDECL_REAL3_VAR(declStmt, vd);
-                            }
-                        }
-                        else{
-                            interp_->mkDECL_REAL3_VAR(declStmt, vd);
-                        }
-
-                    }
-                    else if(typestr.find("tf::Quaternion") != string::npos){
-                        if(vd->hasInit()){
-                            ROSTFQuaternionMatcher m{this->context_, this->interp_};
-                            m.search();
-                            m.visit((*vd->getInit()));
-                            if(m.getChildExprStore()){
-                                interp_->mkDECL_REAL4_VAR_REAL4_EXPR(declStmt, vd, m.getChildExprStore());
-                            }
-                            else{
-                                interp_->mkDECL_REAL4_VAR(declStmt, vd);
-                            }
-                        }
-                        else{
-                            interp_->mkDECL_REAL4_VAR(declStmt, vd);
-                        }
-                    }
-                    else if(typestr.find("tf::Point") != string::npos){
-                        if(vd->hasInit()){
-                            ROSTFPointMatcher m{this->context_, this->interp_};
-                            m.search();
-                            m.visit((*vd->getInit()));
-                            if(m.getChildExprStore()){
-                                interp_->mkDECL_REAL3_VAR_REAL3_EXPR(declStmt, vd, m.getChildExprStore());
-                            }
-                            else{
-                                interp_->mkDECL_REAL3_VAR(declStmt, vd);
-                            }
-                        }
-                        else{
-                            interp_->mkDECL_REAL3_VAR(declStmt, vd);
-                        }
-                    }
-                    else if(typestr.find("tf::Transform") != string::npos){
-                        if(vd->hasInit()){
-                            ROSTFTransformMatcher m{this->context_, this->interp_};
-                            m.search();
-                            m.visit((*vd->getInit()));
-                            if(m.getChildExprStore()){
-                                interp_->mkDECL_REALMATRIX_VAR_REALMATRIX_EXPR(declStmt, vd, m.getChildExprStore());
-                            }
-                            else{
-                                interp_->mkDECL_REALMATRIX_VAR(declStmt, vd);
-                            }
-                        }
-                        else{
-                            interp_->mkDECL_REALMATRIX_VAR(declStmt, vd);
-                        }
-
-                    }
-                    else if(typestr.find("tfScalar")){
-                        if(vd->hasInit()){
-                            ROSTFTransformMatcher m{this->context_, this->interp_};
-                            m.search();
-                            m.visit((*vd->getInit()));
-                            if(m.getChildExprStore()){
-                                interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
-                            }
-                            else{
-                                interp_->mkDECL_REAL1_VAR(declStmt, vd);
-                            }
-                        }
-                        else{
-                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
-                        }
-                    }
-                    else if(typestr.find("tf::Pose")){
-                        if(vd->hasInit()){
-                            ROSTFPoseMatcher m{this->context_, this->interp_};
-                            m.search();
-                            m.visit((*vd->getInit()));
-                            if(m.getChildExprStore()){
-                                interp_->mkDECL_REALMATRIX_VAR_REALMATRIX_EXPR(declStmt, vd, m.getChildExprStore());
-                            }
-                            else{
-                                interp_->mkDECL_REALMATRIX_VAR(declStmt, vd);
-                            }
-                        }
-                        else{
-                            interp_->mkDECL_REALMATRIX_VAR(declStmt, vd);
-                        }
-                    }
+                    if(false){}
+                
                 }
             }
-            if(anyfound){
+            if (anyfound)
+            {
                 this->childExprStore_ = const_cast<clang::DeclStmt*>(declStmt);
+                return;
             }
         }
-
     }
-    else if(assignStmt){
+    else if (assignStmt)
+    {
         //not implemented!!
     }
-    else if(exprStmt){
+    else if (exprStmt)
+    {
         auto typestr = ((clang::QualType)exprStmt->getType()).getAsString();
-
-        if(typestr.find("tf::Vector3") != string::npos){
-            ROSTFVector3Matcher m{this->context_, this->interp_};
-            m.search();
-            m.visit(*exprStmt);
-            if(m.getChildExprStore())
-                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
-        }
-        else if(typestr.find("tf::Quaternion") != string::npos){
-            ROSTFQuaternionMatcher m{this->context_, this->interp_};
-            m.search();
-            m.visit(*exprStmt);
-            if(m.getChildExprStore())
-                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
-        }
-        else if(typestr.find("tf::Point") != string::npos){
-            ROSTFPointMatcher m{this->context_, this->interp_};
-            m.search();
-            m.visit(*exprStmt);
-            if(m.getChildExprStore())
-                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
-        }
-        else if(typestr.find("tf::Transform") != string::npos){
-            ROSTFTransformMatcher m{this->context_, this->interp_};
-            m.search();
-            m.visit(*exprStmt);
-            if(m.getChildExprStore())
-                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
-
-        }
-        else if(typestr.find("tfScalar") != string::npos){
-            ROSTFTransformMatcher m{this->context_, this->interp_};
-            m.search();
-            m.visit(*exprStmt);
-            if(m.getChildExprStore())
-                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
-            this->childExprStore_ = const_cast<clang::DeclStmt*>(declStmt);
-        }
-        else if(typestr.find("tf::Pose") != string::npos){
-            ROSTFPoseMatcher m{this->context_, this->interp_};
-            m.search();
-            m.visit(*exprStmt);
-            if(m.getChildExprStore())
-                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
-        }
-            
+        
     }
-    else if(exprWithCleanupsDiscard){//matches fluff node to discard
-        ROSStatementMatcher innerMatcher{this->context_, this->interp_};
-        innerMatcher.search();
+
+
+    else if (exprWithCleanupsDiscard)
+    {//matches fluff node to discard
+        ROSStatementMatcher innerMatcher{ this->context_, this->interp_};
+        innerMatcher.setup();
         innerMatcher.visit(*exprWithCleanupsDiscard->getSubExpr());
-            if(innerMatcher.getChildExprStore())
-                this->childExprStore_ = const_cast<clang::Stmt*>(innerMatcher.getChildExprStore());
+        if (innerMatcher.getChildExprStore())
+            this->childExprStore_ = const_cast<clang::Stmt*>(innerMatcher.getChildExprStore());
+            return;
     }
-    else{
-            //log error
+    else
+    {
+        //log error
     }
 
 };
+

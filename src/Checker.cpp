@@ -75,12 +75,12 @@ aFile* openFile(std::string fname) {
 }
 
 void generateMath(aFile* f, interp::Interpretation* interp) {
-    std::string math = "";
-    math += "import .lang.src.physlang\n\n";
-    math += "noncomputable theory\n\n";
+    std::string math = interp->toString_AST();
+    //math += "import .lang.imperative_DSL.physlang\n\n";
+    //math += "noncomputable theory\n\n";
     //math += interp->toString_Spaces();
     //math += interp->toString_PROGRAMs();
-    math += interp->toString_COMPOUND_STMTs();
+   // math += interp->toString_COMPOUND_STMTs();
     //math += interp->toString_ScalarDefs();
     //math += interp->toString_Defs();
     //math += interp->toString_TransformDefs();
