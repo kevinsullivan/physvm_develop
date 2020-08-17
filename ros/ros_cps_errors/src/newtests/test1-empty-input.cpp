@@ -36,5 +36,4 @@ int main(int argc, char **argv){
     //1 : @@EuclideanGeometry worldGeometry("worldGeometry", 3)
     //2 : @@ClassicalTime worldTime("worldTime")
     
-    //3 : @@ClassicalVelocity worldVelocity(worldGeometry, worldTime)
 }
