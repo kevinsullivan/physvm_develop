@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "/usr/lib/llvm-6.0/include",
+                "/usr/lib/llvm-6.0/include/clang",
                 "/llvm/", "/opt/ros/melodic/include"
             ],
             "defines": [],
