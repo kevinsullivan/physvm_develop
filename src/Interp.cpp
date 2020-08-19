@@ -85,19 +85,19 @@ std::string Space::getEvalExpr() const {
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry*>(s_)){
             int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
-            return "(lang.classicalGeometry.eval (lang.classicalGeometry.expr.var (lang.classicalGeometry.var.mk " + std::to_string(id) + ")) (classicalGeometryGet " + lastEnv + ") )";
+            return "(classicalGeometryEval (lang.classicalGeometry.expr.var (lang.classicalGeometry.var.mk " + std::to_string(id) + ")) ( " + lastEnv + " ))";
 
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTime*>(s_)){
             int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
-            return "(lang.classicalTime.eval (lang.classicalTime.expr.var (lang.classicalTime.var.mk " + std::to_string(id) + ")) (classicalTimeGet " + lastEnv + ") )";
+            return "(classicalTimeEval (lang.classicalTime.expr.var (lang.classicalTime.var.mk " + std::to_string(id) + ")) ( " + lastEnv + " ))";
 
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
             int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
-            return "(lang.classicalVelocity.eval (lang.classicalVelocity.expr.var (lang.classicalVelocity.var.mk " + std::to_string(id) + ")) (classicalVelocityGet " + lastEnv + ") )";
+            return "(classicalVelocityEval (lang.classicalVelocity.expr.var (lang.classicalVelocity.var.mk " + std::to_string(id) + ")) ( " + lastEnv + " ))";
 
     }
     return "";

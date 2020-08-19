@@ -47,7 +47,7 @@ std::string Interpretation::toString_AST(){
 
     math += "import .lang.imperative_DSL.physlang\n\n";
     math += "noncomputable theory\n\n";
-            math += "def " + interp::getEnvName() + " := init_env";
+            math += "def " + interp::getEnvName() + " := environment.init_env";
             //math += interp->toString_Spaces();
             //math += interp->toString_PROGRAMs();
             math += this->toString_COMPOUND_STMTs();
