@@ -2,7 +2,8 @@
     "cSpell.words": [
         "coordinatized",
         "gitignore"
-    ],
+    ],,
+    "clangd.path": "/usr/bin/clangd-9".
     "files.associations": {
         "__locale": "cpp",
         "list": "cpp",
