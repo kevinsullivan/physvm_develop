@@ -30,7 +30,7 @@ std::string Space::toString() const {
     std::string retval = "";
     bool found = false;
     
-    int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = ++GLOBAL_INDEX + ++GLOBAL_INDEX - GLOBAL_INDEX; 
+    int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
 
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry*>(s_)){
@@ -58,23 +58,24 @@ std::string Space::toString() const {
 std::string Space::getVarExpr() const {
     
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry*>(s_)){
-            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = ++GLOBAL_INDEX + ++GLOBAL_INDEX - GLOBAL_INDEX; 
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
             return "lang.classicalGeometry.expr.var (lang.classicalGeometry.var.mk " + std::to_string(id) + ")";
 
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTime*>(s_)){
-            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = ++GLOBAL_INDEX + ++GLOBAL_INDEX - GLOBAL_INDEX; 
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
             return "lang.classicalTime.expr.var (lang.classicalTime.var.mk " + std::to_string(id) + ")";
 
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
-            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = ++GLOBAL_INDEX + ++GLOBAL_INDEX - GLOBAL_INDEX; 
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
             return "lang.classicalVelocity.expr.var (lang.classicalVelocity.var.mk " + std::to_string(id) + ")";
 
     }
+    return "";
 }
 
 std::string Space::getEvalExpr() const {
@@ -82,31 +83,31 @@ std::string Space::getEvalExpr() const {
 
 
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry*>(s_)){
-            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = ++GLOBAL_INDEX + ++GLOBAL_INDEX - GLOBAL_INDEX; 
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
             return "(lang.classicalGeometry.eval (lang.classicalGeometry.expr.var (lang.classicalGeometry.var.mk " + std::to_string(id) + ")) (classicalGeometryGet " + lastEnv + ") )";
 
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTime*>(s_)){
-            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = ++GLOBAL_INDEX + ++GLOBAL_INDEX - GLOBAL_INDEX; 
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
             return "(lang.classicalTime.eval (lang.classicalTime.expr.var (lang.classicalTime.var.mk " + std::to_string(id) + ")) (classicalTimeGet " + lastEnv + ") )";
 
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
-            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = ++GLOBAL_INDEX + ++GLOBAL_INDEX - GLOBAL_INDEX; 
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
             return "(lang.classicalVelocity.eval (lang.classicalVelocity.expr.var (lang.classicalVelocity.var.mk " + std::to_string(id) + ")) (classicalVelocityGet " + lastEnv + ") )";
 
     }
-
+    return "";
 }
 
 std::string DerivedSpace::toString() const {
     std::string retval = "";
     bool found = false;
     
-    int id = GLOBAL_IDS.count(const_cast<DerivedSpace*>(this)) ? GLOBAL_IDS[const_cast<DerivedSpace*>(this)] : GLOBAL_IDS[const_cast<DerivedSpace*>(this)] = ++GLOBAL_INDEX + ++GLOBAL_INDEX - GLOBAL_INDEX; 
+    int id = GLOBAL_IDS.count(const_cast<DerivedSpace*>(this)) ? GLOBAL_IDS[const_cast<DerivedSpace*>(this)] : GLOBAL_IDS[const_cast<DerivedSpace*>(this)] = (GLOBAL_INDEX += 2); 
     
 
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
@@ -273,7 +274,7 @@ std::string SEQ_GLOBALSTMT::toStringLinked(std::vector<interp::Space*> links, st
 
     std::string cmdwrapper = "PhysCommand.Seq";
 
-    int count = this->operands_.size() + links.size() + framelinks.size();
+    //int count = this->operands_.size() + links.size() + framelinks.size();
     int actualcount = 0;
     if(true)
     {
@@ -305,7 +306,7 @@ std::string SEQ_GLOBALSTMT::toStringLinked(std::vector<interp::Space*> links, st
             }
         }*/
 
-        bool start = true;
+        //bool start = true;
         for(auto op: this->operands_){ 
             if(prev and op->coords_->codegen()){
                 retval += "\n" + op->toString() + "\n";
@@ -535,7 +536,7 @@ std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std
 
     std::string cmdwrapper = "cmd.seq";
 
-    int count = this->operands_.size() + links.size() + framelinks.size();
+    //int count = this->operands_.size() + links.size() + framelinks.size();
     int actualcount = 0;
     if(true)
     {
@@ -567,7 +568,7 @@ std::string COMPOUND_STMT::toStringLinked(std::vector<interp::Space*> links, std
             }
         }*/
 
-        bool start = true;
+        //bool start = true;
         for(auto op: this->operands_){ 
             if(prev and op->coords_->codegen()){
                 retval += "\n" + op->toString() + "\n";

@@ -116,6 +116,7 @@ Frame* Domain::mkFrame(std::string name, Space* space, Frame* parent){
             return child;
         }
     }
+    return nullptr;
 };
 
 

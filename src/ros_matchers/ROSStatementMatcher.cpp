@@ -72,13 +72,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
 
     const auto exprWithCleanupsDiscard = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanupsDiscard");
 
-    const auto ifStmt_ = Result.Nodes.getNodeAs<clang::IfStmt>("IfStmt");
+    //const auto ifStmt_ = Result.Nodes.getNodeAs<clang::IfStmt>("IfStmt");
 
     const auto cmpdStmt_ = Result.Nodes.getNodeAs<clang::CompoundStmt>("CompoundStmt");
 
-    const auto returnStmt_ = Result.Nodes.getNodeAs<clang::ReturnStmt>("ReturnStmt");
+    //const auto returnStmt_ = Result.Nodes.getNodeAs<clang::ReturnStmt>("ReturnStmt");
 
-    const auto whileStmt_ = Result.Nodes.getNodeAs<clang::WhileStmt>("WhileStmt");
+    //const auto whileStmt_ = Result.Nodes.getNodeAs<clang::WhileStmt>("WhileStmt");
 
     /*
         if(declStmt)

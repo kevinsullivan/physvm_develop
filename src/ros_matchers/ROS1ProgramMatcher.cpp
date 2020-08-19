@@ -31,8 +31,8 @@ void ROS1ProgramMatcher::setup(){
 This is a callback method that gets called when Clang matches on a pattern set up in the search method above.
 */
 void ROS1ProgramMatcher::run(const MatchFinder::MatchResult &Result){
-    auto mainCompoundStatement = Result.Nodes.getNodeAs<clang::CompoundStmt>("MainCompoundStatement");
-    auto mainCandidate = Result.Nodes.getNodeAs<clang::FunctionDecl>("MainCandidate");
+    //auto mainCompoundStatement = Result.Nodes.getNodeAs<clang::CompoundStmt>("MainCompoundStatement");
+    //auto mainCandidate = Result.Nodes.getNodeAs<clang::FunctionDecl>("MainCandidate");
 
     auto tud = Result.Nodes.getNodeAs<clang::TranslationUnitDecl>("MainProg");
 

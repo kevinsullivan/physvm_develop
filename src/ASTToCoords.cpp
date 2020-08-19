@@ -90,7 +90,7 @@ ASTToCoords::ASTToCoords() {
 
 coords::SEQ_GLOBALSTMT* ASTToCoords::mkSEQ_GLOBALSTMT(const ast::SEQ_GLOBALSTMT* ast, clang::ASTContext* c, std::vector<coords::GLOBALSTMT*> operands ){
     coords::SEQ_GLOBALSTMT* coord = new coords::SEQ_GLOBALSTMT(operands);
-    ast::SEQ_GLOBALSTMT* unconst_ast = const_cast<ast::SEQ_GLOBALSTMT*>(ast);
+    //ast::SEQ_GLOBALSTMT* unconst_ast = const_cast<ast::SEQ_GLOBALSTMT*>(ast);
 
     coord->state_ = new coords::ASTState(
         "",

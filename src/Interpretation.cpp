@@ -92,7 +92,7 @@ void Interpretation::mkSEQ_GLOBALSTMT(const ast::SEQ_GLOBALSTMT * ast , std::vec
 
     for(auto op : operand_coords)
     {
-        auto p = coords2interp_->getGLOBALSTMT(op);
+        //auto p = coords2interp_->getGLOBALSTMT(op);
         operand_interp.push_back(coords2interp_->getGLOBALSTMT(op));
     }
 
@@ -176,7 +176,7 @@ void Interpretation::mkCOMPOUND_STMT(const ast::COMPOUND_STMT * ast , std::vecto
 
     for(auto op : operand_coords)
     {
-        auto p = coords2interp_->getSTMT(op);
+        //auto p = coords2interp_->getSTMT(op);
         operand_interp.push_back(coords2interp_->getSTMT(op));
     }
 
@@ -289,7 +289,7 @@ void Interpretation::mkMAIN_FUNC_DECL_STMT(const ast::MAIN_FUNC_DECL_STMT * ast 
 
 
 std::string Interpretation::toString_Spaces() {
-        int index = 0;
+      //  int index = 0;
     std::string retval = "";
     //std::vector<domain::Space*> & s = domain_->getSpaces();
     //for (std::vector<domain::Space*>::iterator it = s.begin(); it != s.end(); ++it)
@@ -359,21 +359,21 @@ std::vector<std::string> Interpretation::getSpaceNames() {
 	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
     for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
     {
-        auto sp = interp2domain_->getSpace(*it);
+        //auto sp = interp2domain_->getSpace(*it);
         names.push_back((*it)->getName());
     }
             
 	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
     for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
     {
-        auto sp = interp2domain_->getSpace(*it);
+        //auto sp = interp2domain_->getSpace(*it);
         names.push_back((*it)->getName());
     }
             
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
     for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
     {
-        auto sp = interp2domain_->getSpace(*it);
+        //auto sp = interp2domain_->getSpace(*it);
         names.push_back((*it)->getName());
     }
             
@@ -698,21 +698,13 @@ void Interpretation::printFrames(){
 }
 
 void Interpretation::mkVarTable(){
-    int idx = 0;
   
 
 
 }
 
 //print the indexed variable table for the user
-void Interpretation::printVarTable(){
-  int sz = this->index2coords_.size();
-
-  for(int i = 1; i<=sz;i++)
-  {
-    coords::Coords* coords = this->index2coords_[i];
-    if(false){}
-
+void Interpretation::printVarTable(){ {
     
   }
 

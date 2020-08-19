@@ -190,7 +190,7 @@ class MAIN_FUNC_DECL_STMT;
 class PROGRAM : public Coords {
 public:
     PROGRAM() : Coords() {};
-    std::string virtual toString() const { return "Do not call this"; };
+    std::string virtual toString() const override { return "Do not call this"; };
     bool operator==(const PROGRAM &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;
     };
@@ -204,7 +204,7 @@ public:
 class SEQ_GLOBALSTMT : public PROGRAM {
 public:
     SEQ_GLOBALSTMT(std::vector<GLOBALSTMT*> operands);
-    virtual std::string toString() const;
+    virtual std::string toString() const override;
     bool operator==(const PROGRAM &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;
     };
@@ -212,7 +212,7 @@ public:
     std::vector<GLOBALSTMT*> getOperands() const { return this->operands_; };
 
     coords::GLOBALSTMT* getOperand(int i) const {
-        return this->operands_.size() >= i ? this->operands_[i-1] : nullptr;
+        return ((int)this->operands_.size()) >= i ? this->operands_[i-1] : nullptr;
     }
 protected:
 	
@@ -225,7 +225,7 @@ protected:
 class GLOBALSTMT : public Coords {
 public:
     GLOBALSTMT() : Coords() {};
-    std::string virtual toString() const { return "Do not call this"; };
+    std::string virtual toString() const override { return "Do not call this"; };
     bool operator==(const GLOBALSTMT &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;
     };
@@ -239,7 +239,7 @@ public:
 class STMT : public Coords {
 public:
     STMT() : Coords() {};
-    std::string virtual toString() const { return "Do not call this"; };
+    std::string virtual toString() const override { return "Do not call this"; };
     bool operator==(const STMT &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;
     };
@@ -253,7 +253,7 @@ public:
 class COMPOUND_STMT : public STMT {
 public:
     COMPOUND_STMT(std::vector<STMT*> operands);
-    virtual std::string toString() const;
+    virtual std::string toString() const override;
     bool operator==(const STMT &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;
     };
@@ -261,7 +261,7 @@ public:
     std::vector<STMT*> getOperands() const { return this->operands_; };
 
     coords::STMT* getOperand(int i) const {
-        return this->operands_.size() >= i ? this->operands_[i-1] : nullptr;
+        return ((int)this->operands_.size()) >= i ? this->operands_[i-1] : nullptr;
     }
 protected:
 	
@@ -274,7 +274,7 @@ protected:
 class FUNC_DECL : public GLOBALSTMT {
 public:
     FUNC_DECL() : GLOBALSTMT() {};
-    std::string virtual toString() const { return "Do not call this"; };
+    std::string virtual toString() const override { return "Do not call this"; };
     bool operator==(const FUNC_DECL &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;
     };
@@ -289,7 +289,7 @@ class VOID_FUNC_DECL_STMT : public FUNC_DECL {
 public:
     VOID_FUNC_DECL_STMT(coords::STMT * operand0) : FUNC_DECL()
         , operand_0(operand0){};
-    std::string virtual toString() const;
+    std::string virtual toString() const override;
     coords::STMT * getOperand0(){ return this->operand_0;};
     bool operator==(const VOID_FUNC_DECL_STMT &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;
@@ -307,7 +307,7 @@ class MAIN_FUNC_DECL_STMT : public FUNC_DECL {
 public:
     MAIN_FUNC_DECL_STMT(coords::STMT * operand0) : FUNC_DECL()
         , operand_0(operand0){};
-    std::string virtual toString() const;
+    std::string virtual toString() const override;
     coords::STMT * getOperand0(){ return this->operand_0;};
     bool operator==(const MAIN_FUNC_DECL_STMT &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;

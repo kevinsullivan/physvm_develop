@@ -44,6 +44,7 @@ bool Checker::CheckPoll(){
 }
 
 bool Checker::Setup(){
+    return true;
     //this->to_check_ = openFile();
 }
 

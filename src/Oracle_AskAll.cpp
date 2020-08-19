@@ -18,13 +18,13 @@ using namespace oracle;
 domain::Frame* Oracle_AskAll::getFrame(domain::Space* space){
 
     auto frames = space->getFrames();
-    auto sz = frames.size();
+    auto sz = (int)frames.size();
             
     while(true){
         int i = 0;
         std::cout<<"Available Frames For : " << space->toString() << "\n";
         for(auto fr : frames){
-            std::cout<<"("+std::to_string((i + 1))+") "<<frames[i++]->toString()<<"\n";
+            std::cout<<"("+std::to_string((i++))+") "<<fr->toString()<<"\n";
         }
         int choice = 0;
         std::cin>>choice;
@@ -32,9 +32,11 @@ domain::Frame* Oracle_AskAll::getFrame(domain::Space* space){
             return frames[choice-1];
         }
     }
+    return nullptr;
 }
 
 domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords, domain::DomainObject* dom){
 
 	if(false){}
+	return nullptr;
 }
