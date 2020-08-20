@@ -554,23 +554,23 @@ void Interpretation::buildSpace(){
                 return;
             }
             int choice;
-            label1st:
+            ClassicalVelocitylabel1st:
             std::cout<<"Select First Base Space : "<<"\n";
             std::cin>>choice;
             if(choice >0 and choice <=index){
                 base1 = index_to_sp[choice];
             }
             else
-                goto label1st;
+                goto ClassicalVelocitylabel1st;
             
-            label2nd:
+            ClassicalVelocitylabel2nd:
             std::cout<<"Select Second Base Space : "<<"\n";
             std::cin>>choice;
             if(choice >0 and choice <=index){
                 base2 = index_to_sp[choice];
             }
             else
-                goto label2nd;
+                goto ClassicalVelocitylabel2nd;
             auto sp = this->domain_->mkClassicalVelocity(name, name, base1, base2);
             auto ib1 = this->interp2domain_->getSpace(base1);
             auto ib2 = this->interp2domain_->getSpace(base2);
