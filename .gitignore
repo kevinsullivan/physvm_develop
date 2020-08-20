@@ -11,3 +11,4 @@ peirce
 PeirceOutput.lean
 Peircelog.*
 PeirceGen.exe
+.clangd
