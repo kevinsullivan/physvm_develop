@@ -1,4 +1,3 @@
-
 #include "ros/ros.h"
 #include "geometry_msgs/Vector3Stamped.h"
 #include "geometry_msgs/Vector3.h"
@@ -56,10 +55,13 @@ int main(int argc, char **argv){
     //4 : @@ClassicalAcceleration worldAcceleration = ClassicalAccelerationLiteral(worldGeometry, worldTime)
     //5 : @@ClassicalGeometryFrame stdWorldFrame = worldGeometry.stdFrame
 
-    ///
-    //1 : @@EuclideanGeometry worldGeometry("worldGeometry", 3)
+    // NEW
+    //6 : @@EuclideanPoint p = EuclPoint(worldGeometry, [3,4,5], stdWorldFrame) worldGeometry("worldGeometry", 3)
+    //7 : NEW FRAMES -- in terms of a point and a basis with respect to any given frame (starting with stdFrame)
+    //    @@NewFrame f' = <<1,2,3>,<<1,2,0>, ...>>
+    //8. ... affine (and linear) transformations 
+    // *** Sebastian will declare an initial success?
 
-    //2 : @@EuclideanGeometryPoint(worldGeometry,Value=<10,10,10>,worldGeometry.stdFrame)
     tf::Point
         tf_start_point = tf::Point(10, 10, 10);
     //3 : @@EuclideanGeometryPoint(worldGeometry,Value=<20,-2,12>,worldGeometry.stdFrame)

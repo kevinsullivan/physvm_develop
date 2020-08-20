@@ -34,7 +34,12 @@ int main(int argc, char **argv){
     ros::NodeHandle node;  
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
 
-    //1 : @@EuclideanGeometry worldGeometry("worldGeometry", 3)
-    //2 : @@ClassicalTime worldTime("worldTime")
-    //3 : @@ClassicalVelocity worldVelocity(worldGeometry, worldTime)
+    // GIVEN
+    //1 : @@EuclideanGeometry worldGeometry =  EuclideanGeometryLiteral(3)
+    //2 : @@ClassicalTime worldTime = ClassicalTimeLiteral()
+    //3 : @@ClassicalVelocity worldVelocity = ClassicalVelocityLiteral(worldGeometry, worldTime)
+    //4 : @@ClassicalAcceleration worldAcceleration = ClassicalAccelerationLiteral(worldGeometry, worldTime)
+
+    // We're testing for this new functionality
+    //5 : @@ClassicalGeometryFrame stdWorldFrame = worldGeometry.stdFrame
 }
