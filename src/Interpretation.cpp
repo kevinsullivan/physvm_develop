@@ -321,6 +321,13 @@ std::string Interpretation::toString_Spaces() {
         retval.append("\n" + (sp->toString()) + "\n");
     }
             
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+    for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        retval.append("\n" + (sp->toString()) + "\n");
+    }
+            
 
     return retval;
 }   
@@ -349,6 +356,13 @@ std::vector<interp::Space*> Interpretation::getSpaceInterps() {
         interps.push_back(sp);
     }
             
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+    for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        interps.push_back(sp);
+    }
+            
 
     return interps;
 }   
@@ -372,6 +386,13 @@ std::vector<std::string> Interpretation::getSpaceNames() {
             
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
     for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        //auto sp = interp2domain_->getSpace(*it);
+        names.push_back((*it)->getName());
+    }
+            
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+    for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
     {
         //auto sp = interp2domain_->getSpace(*it);
         names.push_back((*it)->getName());
@@ -408,6 +429,17 @@ std::vector<interp::Frame*> Interpretation::getFrameInterps() {
             
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
     for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            auto intfr = interp2domain_->getFrame(fr);
+            interps.push_back(intfr);
+        }
+    }
+            
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+    for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
     {
         auto frs = (*it)->getFrames();
 
@@ -457,6 +489,17 @@ std::vector<std::string> Interpretation::getFrameNames() {
         }
     }
             
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+    for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            //auto intfr = interp2domain_->getFrame(fr);
+            names.push_back((*it)->getName()+"."+fr->getName());
+        }
+    }
+            
 
     return names;
 }
@@ -474,7 +517,7 @@ void Interpretation::buildDefaultSpaces(){
 void Interpretation::buildSpace(){
     int index = 0;
     int choice = 0;
-    int size = 3;
+    int size = 4;
     if (size == 0){
         std::cout<<"Warning: No Available Spaces to Build";
         return;
@@ -484,6 +527,7 @@ void Interpretation::buildSpace(){
         std::cout <<"("<<std::to_string(++index)<<")"<<"EuclideanGeometry\n";
 		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalTime\n";
 		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalVelocity\n";
+		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalAcceleration\n";
         std::cin>>choice;
     }
     index = 0;
@@ -548,6 +592,12 @@ void Interpretation::buildSpace(){
                 std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
                 index_to_sp[index] = *it;
             }
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+            for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
+            {
+                std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+                index_to_sp[index] = *it;
+            }
 
             if(index==0){
                 std::cout<<"Unable to Proceed - No Existing Spaces\n";
@@ -582,6 +632,73 @@ void Interpretation::buildSpace(){
             interp2domain_->putFrame(interp_framesp, sp->getFrames()[0]);
         }
 
+	
+        if(choice==++index){
+            std::string name;
+            domain::Space *base1,*base2;
+            std::cout<<"Enter Name (string):\n";
+            std::cin>>name;
+            int index = 0;
+            std::unordered_map<int, domain::Space*> index_to_sp;
+        
+	auto EuclideanGeometrys = domain_->getEuclideanGeometrySpaces();
+            for (auto it = EuclideanGeometrys.begin(); it != EuclideanGeometrys.end(); it++)
+            {
+                std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+                index_to_sp[index] = *it;
+            }
+	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
+            for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+            {
+                std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+                index_to_sp[index] = *it;
+            }
+	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
+            for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+            {
+                std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+                index_to_sp[index] = *it;
+            }
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+            for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
+            {
+                std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+                index_to_sp[index] = *it;
+            }
+
+            if(index==0){
+                std::cout<<"Unable to Proceed - No Existing Spaces\n";
+                return;
+            }
+            int choice;
+            ClassicalAccelerationlabel1st:
+            std::cout<<"Select First Base Space : "<<"\n";
+            std::cin>>choice;
+            if(choice >0 and choice <=index){
+                base1 = index_to_sp[choice];
+            }
+            else
+                goto ClassicalAccelerationlabel1st;
+            
+            ClassicalAccelerationlabel2nd:
+            std::cout<<"Select Second Base Space : "<<"\n";
+            std::cin>>choice;
+            if(choice >0 and choice <=index){
+                base2 = index_to_sp[choice];
+            }
+            else
+                goto ClassicalAccelerationlabel2nd;
+            auto sp = this->domain_->mkClassicalAcceleration(name, name, base1, base2);
+            auto ib1 = this->interp2domain_->getSpace(base1);
+            auto ib2 = this->interp2domain_->getSpace(base2);
+
+            auto isp = new interp::DerivedSpace(sp, ib1, ib2);
+            interp2domain_->putSpace(isp, sp);
+            auto standard_framesp = sp->getFrames()[0];
+            auto interp_framesp = new interp::Frame(standard_framesp);
+            interp2domain_->putFrame(interp_framesp, sp->getFrames()[0]);
+        }
+
 }
 
 void Interpretation::buildFrame(){
@@ -604,6 +721,12 @@ void Interpretation::buildFrame(){
         }
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
         for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+        {
+            std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+            index_to_sp[index] = *it;
+        }
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+        for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
         {
             std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
             index_to_sp[index] = *it;
@@ -659,6 +782,11 @@ void Interpretation::printSpaces(){
     {
         std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
     }
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+    for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
+    {
+        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+    }
 }
 
 void Interpretation::printFrames(){
@@ -686,6 +814,16 @@ void Interpretation::printFrames(){
     }
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
     for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
+    {
+        std::cout<<"Printing Frames For : " + (*it)->toString() + "\n";
+        auto frs = (*it)->getFrames();
+        index = 0;
+        for(auto fr : frs){
+            std::cout<<"("<<std::to_string(++index)<<")"<<fr->toString() + "\n";
+        }
+    }
+	auto ClassicalAccelerations = domain_->getClassicalAccelerationSpaces();
+    for (auto it = ClassicalAccelerations.begin(); it != ClassicalAccelerations.end(); it++)
     {
         std::cout<<"Printing Frames For : " + (*it)->toString() + "\n";
         auto frs = (*it)->getFrames();

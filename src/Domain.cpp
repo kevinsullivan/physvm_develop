@@ -116,6 +116,12 @@ Frame* Domain::mkFrame(std::string name, Space* space, Frame* parent){
             return child;
         }
     }
+	if(auto dc = dynamic_cast<domain::ClassicalAcceleration*>(space)){
+            if(auto df = dynamic_cast<domain::ClassicalAccelerationFrame*>(parent)){
+            auto child = this->mkClassicalAccelerationFrame(name, dc, df);
+            return child;
+        }
+    }
     return nullptr;
 };
 
@@ -191,5 +197,28 @@ ClassicalVelocityFrame* Domain::mkClassicalVelocityFrame(std::string name, domai
             
 
 void ClassicalVelocity::addFrame(ClassicalVelocityFrame* frame){
+    ((Space*)this)->addFrame(frame);
+}
+
+ClassicalAcceleration* Domain::mkClassicalAcceleration(std::string key,std::string name_, Space* base1, Space* base2){
+        ClassicalAcceleration* s = new ClassicalAcceleration(name_, base1, base2);
+        s->addFrame(new domain::ClassicalAccelerationFrame("Standard", s, nullptr));
+        this->ClassicalAcceleration_vec.push_back(s);
+        this->Space_vec.push_back(s);
+        this->Space_map[key] = s;
+    
+        return s;
+    };
+
+//std::vector<ClassicalAcceleration*> &Domain::getClassicalAccelerationSpaces() { return ClassicalAcceleration_vec; }
+
+ClassicalAccelerationFrame* Domain::mkClassicalAccelerationFrame(std::string name, domain::ClassicalAcceleration* space, domain::ClassicalAccelerationFrame* parent){
+    ClassicalAccelerationFrame* child = new domain::ClassicalAccelerationFrame(name, space, parent);
+    space->addFrame(child);
+    return child;
+}
+            
+
+void ClassicalAcceleration::addFrame(ClassicalAccelerationFrame* frame){
     ((Space*)this)->addFrame(frame);
 }

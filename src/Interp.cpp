@@ -75,6 +75,12 @@ std::string Space::getVarExpr() const {
             return "lang.classicalVelocity.expr.var (lang.classicalVelocity.var.mk " + std::to_string(id) + ")";
 
     }
+	if(auto dc = dynamic_cast<domain::ClassicalAcceleration*>(s_)){
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
+    
+            return "lang.classicalAcceleration.expr.var (lang.classicalAcceleration.var.mk " + std::to_string(id) + ")";
+
+    }
     return "";
 }
 
@@ -100,6 +106,12 @@ std::string Space::getEvalExpr() const {
             return "(classicalVelocityEval (lang.classicalVelocity.expr.var (lang.classicalVelocity.var.mk " + std::to_string(id) + ")) ( " + lastEnv + " ))";
 
     }
+	if(auto dc = dynamic_cast<domain::ClassicalAcceleration*>(s_)){
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
+    
+            return "(classicalAccelerationEval (lang.classicalAcceleration.expr.var (lang.classicalAcceleration.var.mk " + std::to_string(id) + ")) ( " + lastEnv + " ))";
+
+    }
     return "";
 }
 
@@ -116,6 +128,14 @@ std::string DerivedSpace::toString() const {
             //retval += "def " + dc->getName() + "var : lang.classicalVelocity.var := lang.classicalVelocity.var.mk " + std::to_string(id) + "" + "\n";
             //retval += "\ndef " + dc->getName() + "sp := lang.classicalVelocity.expr.lit (classicalVelocity.mk " + std::to_string(id) + " " + dc->getBase1()->getName() + " " + dc->getBase2()->getName() +  ")"; 
             retval += "\ndef " + dc->getName() + " := cmd.classicalVelocityAssmt \n\t\t(lang.classicalVelocity.var.mk " + std::to_string(id) + ") \n\t\t(lang.classicalVelocity.expr.lit (classicalVelocity.mk " + std::to_string(id-1) + " \n\t\t\t" + this->base_1->getEvalExpr() + " \n\t\t\t" + this->base_2->getEvalExpr() +  "))\n";
+            retval += "\n def " + currentEnv + " := cmdEval " + dc->getName() + " " + getLastEnv();
+    }
+	if(auto dc = dynamic_cast<domain::ClassicalAcceleration*>(s_)){
+            found = true;
+            auto currentEnv = getEnvName();
+            //retval += "def " + dc->getName() + "var : lang.classicalAcceleration.var := lang.classicalAcceleration.var.mk " + std::to_string(id) + "" + "\n";
+            //retval += "\ndef " + dc->getName() + "sp := lang.classicalAcceleration.expr.lit (classicalAcceleration.mk " + std::to_string(id) + " " + dc->getBase1()->getName() + " " + dc->getBase2()->getName() +  ")"; 
+            retval += "\ndef " + dc->getName() + " := cmd.classicalAccelerationAssmt \n\t\t(lang.classicalAcceleration.var.mk " + std::to_string(id) + ") \n\t\t(lang.classicalAcceleration.expr.lit (classicalAcceleration.mk " + std::to_string(id-1) + " \n\t\t\t" + this->base_1->getEvalExpr() + " \n\t\t\t" + this->base_2->getEvalExpr() +  "))\n";
             retval += "\n def " + currentEnv + " := cmdEval " + dc->getName() + " " + getLastEnv();
     }
 
@@ -169,6 +189,18 @@ std::string Frame::toString() const {
         }
         else{
             retval += "def " + dc->getName()+"."+f_->getName() + "fr := classicalVelocityFrameExpression.FrameLiteral ( GetClassicalVelocityStandardFrame (EvalclassicalVelocitySpaceExpression " + dc->getName()+"sp))\n";
+    
+        }
+        retval += "def " + dc->getName()+"."+f_->getName() + " := PhysGlobalCommand.GlobalFrame (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";
+    }
+	if(auto dc = dynamic_cast<domain::ClassicalAcceleration*>(f_->getSpace())){
+        found = true;
+        retval += "def " +dc->getName()+"."+f_->getName() + "var : classicalAccelerationFrameVar := (!" + std::to_string(++GLOBAL_INDEX) + ")" + "\n";
+        if(!isStandard){
+            retval += "def " + dc->getName()+"."+f_->getName() + "fr := classicalAccelerationFrameExpression.FrameLiteral ( BuildClassicalAccelerationFrame "+ dc->getName()+"))";
+        }
+        else{
+            retval += "def " + dc->getName()+"."+f_->getName() + "fr := classicalAccelerationFrameExpression.FrameLiteral ( GetClassicalAccelerationStandardFrame (EvalclassicalAccelerationSpaceExpression " + dc->getName()+"sp))\n";
     
         }
         retval += "def " + dc->getName()+"."+f_->getName() + " := PhysGlobalCommand.GlobalFrame (⊢" + dc->getName()+"."+f_->getName() + "var) (⊢" + dc->getName()+"."+f_->getName() + "fr)\n";

@@ -53,6 +53,10 @@ class ClassicalVelocity;
 
 class ClassicalVelocityFrame;
 
+class ClassicalAcceleration;
+
+class ClassicalAccelerationFrame;
+
             
 // Definition for Domain class 
 
@@ -84,6 +88,10 @@ public:
 	std::vector<ClassicalVelocity*> &getClassicalVelocitySpaces() { return ClassicalVelocity_vec; }
 
 	ClassicalVelocityFrame* mkClassicalVelocityFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent);
+	ClassicalAcceleration* mkClassicalAcceleration(std::string key, std::string name_,Space* base1, Space* base2);
+	std::vector<ClassicalAcceleration*> &getClassicalAccelerationSpaces() { return ClassicalAcceleration_vec; }
+
+	ClassicalAccelerationFrame* mkClassicalAccelerationFrame(std::string name, domain::ClassicalAcceleration* space, domain::ClassicalAccelerationFrame* parent);
 private:
 
 	std::unordered_map<std::string, Space*> Space_map;
@@ -91,6 +99,7 @@ private:
 	std::vector<EuclideanGeometry*> EuclideanGeometry_vec;
 	std::vector<ClassicalTime*> ClassicalTime_vec;
 	std::vector<ClassicalVelocity*> ClassicalVelocity_vec;
+	std::vector<ClassicalAcceleration*> ClassicalAcceleration_vec;
 };
 
 
@@ -419,6 +428,31 @@ public:
 	std::string toString() const override {
         std::string parentName = ((ClassicalVelocity*)this->space_)->getName();
 		return "@@ClassicalVelocityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
+	}
+
+private:
+};
+
+
+class ClassicalAcceleration : public DerivedSpace {
+    public:
+	    
+        ClassicalAcceleration(std::string name, Space* base1, Space* base2) : DerivedSpace(name, base1, base2) {};
+        void addFrame(ClassicalAccelerationFrame* frame);
+	    std::string toString() const override {
+		    return "@@ClassicalAcceleration  " + getName()   + "(" + this->base_1->getName() + "," + this->base_2->getName() + ")"; 
+	    }
+
+    private:
+    };
+
+
+class ClassicalAccelerationFrame : public Frame {
+public:
+	ClassicalAccelerationFrame(std::string name,  ClassicalAcceleration* space, ClassicalAccelerationFrame* parent) : Frame(name, space, parent) {};
+	std::string toString() const override {
+        std::string parentName = ((ClassicalAcceleration*)this->space_)->getName();
+		return "@@ClassicalAccelerationFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
 	}
 
 private:
