@@ -10,3 +10,9 @@
 [submodule "lang"]
 	path = lang
 	url = https://github.com/drewjel/lang.git
+[submodule "gen"]
+	path = gen
+	url = https://github.com/kevinsullivan/PeirceGen.git
+[submodule "docker"]
+	path = docker
+	url = https://github.com/kevinsullivan/PeirceDocker.git
