@@ -1,0 +1,8 @@
+prefix=/peirce/ros/initial_feature_tests/devel
+
+Name: annotations
+Description: Description of annotations
+Version: 1.1.1
+Cflags: -I/peirce/ros/initial_feature_tests/src/initial_feature_tests/include
+Libs: -L${prefix}/lib 
+Requires: 

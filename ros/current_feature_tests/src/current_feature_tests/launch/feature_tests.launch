@@ -1,0 +1,9 @@
+<launch>
+
+  <node pkg="current_feature_tests" type="test1-space_creation" name="test1-space_creation" output="screen" />
+  <node pkg="current_feature_tests" type="test2-standard_frame_creation" name="test2-standard_frame_creation" output="screen" />
+  <node pkg="current_feature_tests" type="test3-point_and_vector_creation" name="test3-point_and_vector_creation" output="screen" />
+  <node pkg="current_feature_tests" type="test4-new_frame_creation" name="test4-new_frame_creation" output="screen" />
+  <node pkg="current_feature_tests" type="test5-transformation" name="test5-transformation" output="screen" />
+  
+</launch>
