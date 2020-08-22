@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/peirce",
-            "args": ["ros/ros_cps_errors/src/annotation_test_cases/src/annotate3-parseme.cpp", "-extra-arg=-I/opt/ros/melodic/include/"],
+            "args": ["ros/initial_feature_tests/src/initial_feature_tests/src/annotate3-parseme.cpp", "-extra-arg=-I/opt/ros/melodic/include/"],
             "stopAtEntry": false, 
             "cwd": "${workspaceFolder}",
             "environment": [],
