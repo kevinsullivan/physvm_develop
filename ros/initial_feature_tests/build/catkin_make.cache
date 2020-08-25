@@ -1,0 +1,2 @@
+initial_feature_tests
+-DCATKIN_DEVEL_PREFIX=/peirce/ros/initial_feature_tests/devel -DCMAKE_INSTALL_PREFIX=/peirce/ros/initial_feature_tests/install -G Unix Makefiles

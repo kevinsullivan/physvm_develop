@@ -1,0 +1,8 @@
+prefix=/peirce/ros/current_feature_tests/install
+
+Name: current_feature_tests
+Description: Description of current_feature_tests
+Version: 1.1.1
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: 

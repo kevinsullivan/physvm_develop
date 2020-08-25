@@ -11,10 +11,12 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "test1",
+            "type": "shell",
+            "command": "/peirce/bin/peirce ros/current_feature_tests/src/current_feature_tests/src/test1-space_creation-input.cpp -extra-arg=-I/opt/ros/melodic/include/ < /peirce/ros/current_feature_tests/src/current_feature_tests/src/test1-data.txt && diff /peirce/PeirceOutput.lean /peirce/ros/current_feature_tests/src/current_feature_tests/src/test1-space_creation-output.lean && echo '### SUCCESS: Files Are Identical! ###' || echo '### WARNING: Files Are Different! ###'",
+            "group": "test"
         }
-    ],
-    "group": { 
-        "kind": "build",
-        "isDefault": true
-    }
+    ]
 }

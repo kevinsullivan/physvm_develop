@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /peirce/ros/ros_failure_tests/install/setup.sh

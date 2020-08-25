@@ -1,0 +1,2 @@
+ros_failure_tests
+-DCATKIN_DEVEL_PREFIX=/peirce/ros/ros_failure_tests/devel -DCMAKE_INSTALL_PREFIX=/peirce/ros/ros_failure_tests/install -G Unix Makefiles
