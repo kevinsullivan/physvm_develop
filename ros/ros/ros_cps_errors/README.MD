@@ -1,21 +1,28 @@
 #ROS Demo
 
-This mini-project contains a compile-able and runnable ROS project which demonstrates both physically consistent and physically inconsistent operations in ROS which are potentially of interest in our runtime monitor implementation.
+This /peirce/ros folder contains 3 relevant sub-projects. 
 
-THIS IS OLD AS OF 8/21/20
+"current_feature_tests" describes the 
+small set of ROS programs that we are using to incrementally ensure end-to-end connection for in Peirce. 
+
+"initial_feature_tests" describes the set of programs that we used to introduce ROS to the undergraduates as well as to prototype what we initially envisioned the annotations as looking like.
+
+"ros_failure_tests" describes exploratory working in determining what physically inconsistent can be written in ROS. We may reuse this later on when Peirce is more fleshed out.
 
 ## To Compile
 
 
-cd /peirce/ros/ros_cps_errors
+cd /peirce/ros
 sh compile.sh 
-source devel/setup.bash
 
 ## To Run
 
-In the same directory,
+To run any of the 3 mini-projects,
 
-sh run.sh
+cd %MINI_PROJECT_FOLDER%
+Type sh devel/setup.bash
+cd ..
+sh run_%MINI_PROJECT_NAME%.sh
 
 ## To Stop
 
@@ -23,6 +30,7 @@ Ctrl+C
 
 ## Output
 
+STRICTLY FOR THE "ros_failure_tests" project:
 The program will continuously dump output to the console. Valid physical operations generate GREEN output. Invalid physical operations generate RED output.
 
 
