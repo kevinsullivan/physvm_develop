@@ -8,6 +8,6 @@
 
 # modified environment variables
 export CMAKE_PREFIX_PATH="/peirce/ros/ros_failure_tests/devel:$CMAKE_PREFIX_PATH"
-export PWD="/peirce/ros/ros_failure_tests/build"
-export ROSLISP_PACKAGE_DIRECTORIES="/peirce/ros/ros_failure_tests/devel/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
+export PWD='/peirce/ros/ros_failure_tests/build'
+export ROSLISP_PACKAGE_DIRECTORIES='/peirce/ros/ros_failure_tests/devel/share/common-lisp'
 export ROS_PACKAGE_PATH="/peirce/ros/ros_failure_tests/src:$ROS_PACKAGE_PATH"

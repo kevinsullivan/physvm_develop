@@ -1,8 +1,0 @@
-prefix=/peirce/ros/initial_feature_tests/install
-
-Name: annotations
-Description: Description of annotations
-Version: 1.1.1
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: 

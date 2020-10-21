@@ -31,7 +31,7 @@ add_executable(test2-emptyderived src/test2-emptyderived-input.cpp)
 target_link_libraries(test2-emptyderived ${catkin_LIBRARIES})
 
 add_executable(test3-point_and_vector_creation src/test3-point_and_vector_creation-input.cpp)
-target_link_libraries(test3-point_and_vector_creation-input ${catkin_LIBRARIES})
+target_link_libraries(test3-point_and_vector_creation ${catkin_LIBRARIES})
 
 add_executable(test4-new_frame_creation src/test4-new_frame_creation-input.cpp)
 target_link_libraries(test4-new_frame_creation ${catkin_LIBRARIES})

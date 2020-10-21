@@ -1,8 +1,0 @@
-prefix=/peirce/ros/current_feature_tests/devel
-
-Name: current_feature_tests
-Description: Description of current_feature_tests
-Version: 1.1.1
-Cflags: -I/peirce/ros/current_feature_tests/src/current_feature_tests/include
-Libs: -L${prefix}/lib 
-Requires: 
