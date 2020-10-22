@@ -43,17 +43,16 @@ int main(int argc, char **argv){
     //4 : @@ClassicalAcceleration worldAcceleration = ClassicalAccelerationLiteral(worldGeometry, worldTime)
     //5 : @@ClassicalGeometryFrame stdWorldFrame = worldGeometry.stdFrame
     //6 : @@MeasurementSystem si = SI()
-    //7 : @@MeasurementSystem imp = Imperial()
 
-    //7 : @@EuclideanGeometryPoint tf_start_point = EuclideanGeometryPoint(worldGeometry,Value=<10,10,10>,stdWorldFrame, si)
+    //7 : @@EuclideanGeometryPoint tf_start_point = EuclideanGeometryPoint(worldGeometry,Value=<10,10,10>,worldGeometry.stdFrame, si)
     tf::Point
         tf_start_point = tf::Point(10, 10, 10);
     
-    //8 : @@EuclideanGeometryPoint tf_end_point = EuclideanGeometryPoint(worldGeometry,Value=<20,-2,12>,stdWorldFrame,si)
+    //8 : @@EuclideanGeometryPoint tf_end_point = EuclideanGeometryPoint(worldGeometry,Value=<20,-2,12>, si)
     tf::Point
         tf_end_point = tf::Point(20, -2, 12);
 
-    //9 (ERROR!) : @@EuclideanGeometryVector(worldGeometry,Value=<-10,12,-2>,stdWorldFrame, imp)
-    tf::Vector3 tf_displacement = tf_end_point - tf_start_point;
-
+    //9 : @@EuclideanGeometryPoint = EuclideanGeometryAffineCombination([tf_end_point,tf_start_point],[-100.5,101.5])
+    tf::Point
+        combo = -100.5 * tf_end_point + 101.5 * tf_start_point;
 }

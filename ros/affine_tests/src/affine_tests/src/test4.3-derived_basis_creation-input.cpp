@@ -13,29 +13,33 @@
 #include <cmath>
 
 /*
-Test 2
+Test 4
 
-Name -  Standard Frame Creation
-Description - This test first creates a set of Spaces, then it creates a standard frame variable
-and binds an existing standard frame to it.
-Expected Outcome - worldGeometry.stdFrame will be bound to a variable called stdWorldFrame.
+Name - Derived Frame Creation
+Description - 
+    The purpose of this test is to create a derived frame.
+Expected Outcome - 
+    Several spaces are created. An alias for a standard frame is created.
+    A derived frame is created from the standard frame.
 Implementation Gaps - 
-  -Layer 1 (Parsers) :
+  -Layer 1 (Parsers) : 
   -Layer 2 (Peirce) :
-  -Layer 3 (Lang) : Standard Frame not modelled yet
-  -Layer 4 (Phys) : Standard Frame not modelled yet
-  -Layer 5 (CharlieLayer) : Frame API needs to be prepared for algebraOf
+  -Layer 3 (Lang) : No frame support
+  -Layer 4 (Phys) : No frame support
+  -Layer 5 (CharlieLayer) : Derived frames are not explicitly supported.
 */
 
 int main(int argc, char **argv){
     ros::init(argc, argv, "velocity");
     ros::NodeHandle node;  
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
-    
+
+     // GIVEN
     //1 : @@EuclideanGeometry worldGeometry =  EuclideanGeometryLiteral(3)
     //2 : @@ClassicalTime worldTime = ClassicalTimeLiteral()
     //3 : @@ClassicalVelocity worldVelocity = ClassicalVelocityLiteral(worldGeometry, worldTime)
     //4 : @@ClassicalAcceleration worldAcceleration = ClassicalAccelerationLiteral(worldGeometry, worldTime)
-    //5 : @@ClassicalGeometryFrame stdWorldFrame = worldGeometry.stdFrame
-
+    //5 : @@ClassicalVelocityBasis stdVelBasis = worldVelocity.stdBasis
+    
+    //6 : @@ClassicalVelocityBasis robotVel = ClassicalVelocityBasis(worldVel, stdVelBasis, <basis=<<1,1,1>,<1,1,1>,<1,1,1>>>)
 }
