@@ -101,5 +101,6 @@
         "valarray": "cpp",
         "stack": "cpp",
         "*.ipp": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }
