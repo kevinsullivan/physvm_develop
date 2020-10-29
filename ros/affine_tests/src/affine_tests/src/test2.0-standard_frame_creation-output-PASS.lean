@@ -1,5 +1,6 @@
 /-
-A standard frame for worldTime is created and bound to a variable.
+A worldTime space is created.
+A standard frame for worldTime is referenced, using SI, and bound to a variable.
 
 -/
 

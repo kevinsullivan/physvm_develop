@@ -1,3 +1,11 @@
+/-
+A worldGeometry space is defined.
+The standard frame is referenced and bound to a variable.
+A point and a vector variable are declared and bound to literal values.
+A different point and vector variable are created and assigned to a reference of the previous variables.
+No errors occur.
+-/
+
 import .lang.imperative_DSL.physlang
 
 noncomputable theory

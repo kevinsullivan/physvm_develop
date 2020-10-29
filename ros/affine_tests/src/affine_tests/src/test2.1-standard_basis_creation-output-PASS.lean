@@ -1,3 +1,9 @@
+/-
+A worldTime space is created. A worldGeometry space is created.
+A derived worldVelocity space is created.
+The standard basis of worldVelocity is referenced and bound to a variable
+-/
+
 import .lang.imperative_DSL.physlang
 
 noncomputable theory
@@ -31,7 +37,7 @@ def env12 := cmdEval worldVelocity env11
 
 --def worldVelocity.stdFrame := cmd.classicalVelocityFrameAssmt (lang.classicalVelocity.frame_var.mk 13) (lang.classicalVelocity.getStdFrame (classicalVelocityEval (lang.classicalVelocity.expr.var (lang.classicalVelocity.var.mk 2)) ( env12 )))
 
-def env13 := cmdEval  worldVelocity.stdFrame env12
+def env13 := cmdEval  worldVelocity.stdBasis env12
 
 def INDEX104809424.STMTCOMMAND.B.L97C32.E.L110C1 : cmd :=(cmd.seq worldVelocity cmd.seq(cmd.seq worldTime (cmd.seq worldGeometry worldGeometry.stdFrame)))
 

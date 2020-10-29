@@ -1,3 +1,10 @@
+/-
+A worldTime space is created. A worldGeometry space is created.
+These two spaces are combined to form a worldVelocity space.
+A standard basis on the velocity space is referenced and bound to a variable.
+A derived basis on the velocity space is referenced and bound to a variable.
+-/
+
 import .lang.imperative_DSL.physlang
 
 noncomputable theory

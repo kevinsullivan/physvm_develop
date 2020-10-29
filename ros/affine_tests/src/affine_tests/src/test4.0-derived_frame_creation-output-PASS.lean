@@ -1,3 +1,12 @@
+/-
+A Euclidean Geometry 3-space is created.
+The standard frame on the space is referenced and assigned to a variable.
+A derived frame is created in terms of standard frame.
+A vector is constructed using the derived frame. 
+No errors occur.
+-/
+
+
 import .lang.imperative_DSL.physlang
 
 noncomputable theory

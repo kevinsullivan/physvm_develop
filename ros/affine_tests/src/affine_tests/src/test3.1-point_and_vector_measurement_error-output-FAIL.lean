@@ -1,3 +1,12 @@
+/-
+A Euclidean Geometry 3-Space is constructed.	
+The standard frame on the space is referenced, using SI and bound to a variable.
+The standard frame on the space is referenced, again, using SI, and bound to a variable.
+One point variable is created and is assigned to a literal in the space, using the standard frame
+One vector variable is created and is assigned to a literal in the space, using the standard frame
+These points are subtracted. An error occurs.
+-/
+
 import .lang.imperative_DSL.physlang
 
 noncomputable theory

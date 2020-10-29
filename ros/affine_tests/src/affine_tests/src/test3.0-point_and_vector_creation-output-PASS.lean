@@ -1,3 +1,11 @@
+/-
+A Euclidean Geometry 3-Space is constructed.	
+The standard frame on the space is referenced and bound to a variable.noncomputable.
+One point variable is created and is assigned to a literal in the space, using the standard frame
+One vector variable is created and is assigned to a literal in the space, using the standard frame
+
+-/
+
 import .lang.imperative_DSL.physlang
 
 noncomputable theory

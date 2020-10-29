@@ -6,7 +6,7 @@ A derived frame is created in terms of standard frame.
 A point is constructed using the derived frame. 
 Another point is constructed using the derived frame.
 These points are subtracted one another.
-No errors occur.
+No errors occur since the frames match.
 
 -/
 

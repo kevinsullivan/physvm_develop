@@ -1,3 +1,9 @@
+/-
+A standard frame object is referenced and, using SI, bound to a variable.
+A vector with respect to the standard frame is created
+No errors occur.
+-/
+
 import .lang.imperative_DSL.physlang
 
 noncomputable theory
