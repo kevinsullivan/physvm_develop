@@ -1,6 +1,6 @@
-# Onboarding Overview
+# The Peirce Development Environment
 
-This document contains an abbreviated set of steps to be followed to pepare your local machine for Peirce development.
+This page documents how to configure your local machine to use our Docker-and-VSCode-based Peirce development environment (PDE). If you want to study or contribute to Peirce, you should use PDE to do it. There are important benefits: (1) you avoid weeks of work setting up a complete system yourself; (2) you get access to our continuing stream of updates to the PDE; (3) you avoid encountering or introducing configuration-inconsistency-based bugs into our project; (4) you will be set up to participate in distributed online activities, for which we use functions such as VS Code Live Share. The rest of this document takes you through our *onboarding* set up process. These instructions are compatible with OSX and Windows 10 Pro. They will not work, because Docker doesn't really work, on Windows 10 Home. You can update Windows 10 Home to Windows 10 Pro, should you want or need to do so.    
 
 ## Setup Github
 
