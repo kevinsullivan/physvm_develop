@@ -10,7 +10,7 @@ This document contains an abbreviated set of steps to be followed to pepare your
 git config --global core.autocrlf input
 ```
 
-## Recursively Clone Peirce Repo
+## Recursively Clone Repo
 
 1. Ensure you have an account with Github.
 2. Obtain developer access to https://github.com/kevinsullivan/Peirce, https://github.com/kevinsullivan/phys, https://github.com/drewjel/PeirceDocker, and https://github.com/drewjel/affine_lib, https://github.com/kevinsullivan/PeirceGen. All 5 are owned by Dr. Sullivan, as of 7/23/20.
@@ -30,7 +30,7 @@ This step may fail if git lacks access to any of the required submodules, (for e
 **The clone will not finish for ANY of the 4 subrepositories if you lack access to one. Click on each link and be sure you do not "404." If you do,
 contact Prof. Sullivan for access and be sure to accept any invitations he sends through git by email.**
 
-## Setup VSCode 
+## Set Up VSCode 
 
 1. Download VSCode
 2. You'll need to open a "workspace folder" - select the "peirce" directory comprising your clone of the Peirce repository
@@ -39,7 +39,7 @@ contact Prof. Sullivan for access and be sure to accept any invitations he sends
 **Note that the Peirce code is not meant or to be editable or even to appear error-free in this local VS Code process. Rather, as explained further below, we will launch separate VS Code windows connected to corresponding Docker containers based on our shared Docker image.**
 
 
-## Docker Setup
+## Set Up Docker 
 
 1. Download Docker for your respective platform (https://www.docker.com/products/docker-desktop) and ensure daemon is running. **Note: Windows 10 Home Edition is not suitable for running Docker at the level needed for this project. You will have to update to Windows 10 Pro.**
 
@@ -58,7 +58,7 @@ docker pull andrewe8/peirce_docker
 ```
 A several GB file downloading and unpacking process will ensue. (If you skip this step, the image will be pulled by the next command.)
 
-## Launch Project Docker container
+## Run Container
 
 1. In a terminal start the docker image for the build environment by running the following command. On Windows (10 Pro), use a PowerShell or CMD window, **not** Git Bash. 
 ```shell
@@ -75,9 +75,9 @@ exit
 ```
 command in a terminal window connected to the container.
 
-#### NOTE: It is important that your local Peirce repo directory be mounted on the VM path, /peirce. 
+NOTE: It is important that your local Peirce repo directory be mounted on the VM path, /peirce. 
 
-## Connect VSCode to the running container
+## Connect VSCode to Container
 
 1. Run VSCode and launch Use the Command Palette (Ctrl + Shift + P)
 2. Type in "attach" to trigger auto-complete, then pick *Select ~ "Remote-Containers - Attach to Running Container*"
@@ -90,7 +90,7 @@ command in a terminal window connected to the container.
 ## Running Mathlib within the container
 1. Once you're in the container in vscode, open up a terminal window within VSCode (Terminal -> New Terminal). 
 2. cd into the peirce/deps/phys directory, and switch into the master branch. 
-3. Run *leanpkg configure*, and after that finishes, run *leanpkg build*. This should take a significant amount of time, and will possibly output some errors. Ignore these, and let it run to completion. After this finishes running, you should have a working Mathlib inside of the container. 
+3. Run *leanpkg configure*, and after that finishes, run *leanpkg build*. The build can take a while (up to 30 minutes perhaps), and might produce some error messages. Ignore these and let the build process run to completion. After it finishes, you should have a working Mathlib inside of the container. 
 
 Private note to Kevin: The preceding instructions should specify use of the leanproject command.
 
