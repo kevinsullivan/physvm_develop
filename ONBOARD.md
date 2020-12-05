@@ -87,12 +87,12 @@ NOTE: It is important that your local Peirce repo directory be mounted on the VM
 6. Select the Git panel in VS Code. If you have any pending changes (for the newly cloned directory), use git functions to discard those changes then stop and restart the Docker container. The pending changes should no longer appear. Sorry for this glitch. If things get confusing, ask Prof. Sullivan or another expert for help.
 7. You'll now be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
 
-## Running Mathlib within the container
-1. Once you're in the container in vscode, open up a terminal window within VSCode (Terminal -> New Terminal). 
-2. cd into the peirce/deps/phys directory, and switch into the master branch. 
-3. Run *leanpkg configure*, and after that finishes, run *leanpkg build*. The build can take a while (up to 30 minutes perhaps), and might produce some error messages. Ignore these and let the build process run to completion. After it finishes, you should have a working Mathlib inside of the container. 
+## Install Mathlib
+1. Once you're in the container in VSCode, open a terminal window (Terminal -> New Terminal). 
+2. cd into the peirce/deps/phys directory. Confirm that you're editing or check out the master branch. 
+3. Run *leanpkg configure*, then, after that finishes, run *leanpkg build*. The build can take a while (up to 30 minutes perhaps), and might produce some error messages. Ignore these and let the build process run to completion. After it finishes, you should have a working Mathlib as part of your Lean Prover infrastructure for this project. 
 
-Private note to Kevin: The preceding instructions should specify use of the leanproject command.
+Private note to Kevin: The preceding instructions should specify the correct use of the leanproject command.
 
 
 ## Development Workflow
