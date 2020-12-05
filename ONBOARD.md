@@ -92,7 +92,7 @@ command in a terminal window connected to the container.
 2. cd into the peirce/deps/phys directory, and switch into the master branch. 
 3. Run *leanpkg configure*, and after that finishes, run *leanpkg build*. This should take a significant amount of time, and will possibly output some errors. Ignore these, and let it run to completion. After this finishes running, you should have a working Mathlib inside of the container. 
 
-### Private note to Kevin: The preceding instructions should specify use of the leanproject command.
+Private note to Kevin: The preceding instructions should specify use of the leanproject command.
 
 
 ## Development Workflow
