@@ -86,15 +86,67 @@ public:
                     
 	std::string toString_MAIN_FUNC_DECL_STMTs();
 
+	void mkDECL_REAL1_VAR_REAL1_EXPR(const ast::DECL_REAL1_VAR_REAL1_EXPR * ast ,ast::REAL1_VAR_IDENT* operand1,ast::REAL1_EXPR* operand2);
+                    
+	void mkDECL_REAL3_VAR_REAL3_EXPR(const ast::DECL_REAL3_VAR_REAL3_EXPR * ast ,ast::REAL3_VAR_IDENT* operand1,ast::REAL3_EXPR* operand2);
+                    
+	void mkDECL_REAL1_VAR(const ast::DECL_REAL1_VAR * ast ,ast::REAL1_VAR_IDENT* operand1);
+                    
+	void mkDECL_REAL3_VAR(const ast::DECL_REAL3_VAR * ast ,ast::REAL3_VAR_IDENT* operand1);
+                    
+	std::string toString_DECLAREs();
+
+	std::string toString_REXPRs();
+
+	std::string toString_LEXPRs();
+
+	void mkREF_REAL3_VAR(const ast::REF_REAL3_VAR * ast ,ast::REAL3_VAR_IDENT* operand1,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
+                    
+	void mkADD_REAL3_EXPR_REAL3_EXPR(const ast::ADD_REAL3_EXPR_REAL3_EXPR * ast ,ast::REAL3_EXPR* operand1,ast::REAL3_EXPR* operand2,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
+                    
+	std::string toString_REAL3_EXPRs();
+
+	void mkLREF_REAL3_VAR(const ast::LREF_REAL3_VAR * ast ,ast::REAL3_VAR_IDENT* operand1,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
+                    
+	std::string toString_REAL3_LEXPRs();
+
+	void mkREF_REAL1_VAR(const ast::REF_REAL1_VAR * ast ,ast::REAL1_VAR_IDENT* operand1,std::shared_ptr<float> value0=nullptr);
+                    
+	void mkADD_REAL1_EXPR_REAL1_EXPR(const ast::ADD_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,std::shared_ptr<float> value0=nullptr);
+                    
+	std::string toString_REAL1_EXPRs();
+
+	void mkREAL1_VAR_IDENT(const ast::REAL1_VAR_IDENT * ast ,std::shared_ptr<float> value0=nullptr);
+                    
+	std::string toString_REAL1_VAR_IDENTs();
+
+	void mkREAL3_VAR_IDENT(const ast::REAL3_VAR_IDENT * ast ,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
+                    
+	std::string toString_REAL3_VAR_IDENTs();
+
+	void mkREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,ast::REAL1_EXPR* operand3,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
+                    
+	void mkREAL3_EMPTY(const ast::REAL3_EMPTY * ast ,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
+                    
+	std::string toString_REAL3_LITERALs();
+
+	void mkREAL1_LIT(const ast::REAL1_LIT * ast ,std::shared_ptr<float> value0=nullptr);
+                    
+	std::string toString_REAL1_LITERALs();
+
 	std::string toString_Spaces();
 	std::vector<interp::Space*> getSpaceInterps();
 	std::vector<std::string> getSpaceNames();
+	std::vector<interp::MeasurementSystem*> getMSInterps();std::vector<std::string> getMSNames();
 	std::vector<interp::Frame*> getFrameInterps();
 	std::vector<std::string> getFrameNames();
 	    void buildDefaultSpaces();
 
     void buildSpace();
     void buildFrame();
+
+    void buildMeasurementSystem();
+    void printMeasurementSystems();
 
     //void setAll_Spaces();
     void printSpaces();
@@ -132,7 +184,17 @@ public:
 	std::vector<coords::STMT*> STMT_vec;
 	std::vector<coords::FUNC_DECL*> FUNC_DECL_vec;
 	std::vector<coords::VOID_FUNC_DECL_STMT*> VOID_FUNC_DECL_STMT_vec;
-	std::vector<coords::MAIN_FUNC_DECL_STMT*> MAIN_FUNC_DECL_STMT_vec;	std::vector<coords::SEQ_GLOBALSTMT*> SEQ_GLOBALSTMT_vec;
+	std::vector<coords::MAIN_FUNC_DECL_STMT*> MAIN_FUNC_DECL_STMT_vec;
+	std::vector<coords::DECLARE*> DECLARE_vec;
+	std::vector<coords::REXPR*> REXPR_vec;
+	std::vector<coords::LEXPR*> LEXPR_vec;
+	std::vector<coords::REAL3_EXPR*> REAL3_EXPR_vec;
+	std::vector<coords::REAL3_LEXPR*> REAL3_LEXPR_vec;
+	std::vector<coords::REAL1_EXPR*> REAL1_EXPR_vec;
+	std::vector<coords::REAL1_VAR_IDENT*> REAL1_VAR_IDENT_vec;
+	std::vector<coords::REAL3_VAR_IDENT*> REAL3_VAR_IDENT_vec;
+	std::vector<coords::REAL3_LITERAL*> REAL3_LITERAL_vec;
+	std::vector<coords::REAL1_LITERAL*> REAL1_LITERAL_vec;	std::vector<coords::SEQ_GLOBALSTMT*> SEQ_GLOBALSTMT_vec;
 	std::vector<coords::COMPOUND_STMT*> COMPOUND_STMT_vec;
 
     std::unordered_map<int, coords::Coords*> index2coords_;

@@ -79,9 +79,16 @@ Space* Domain::getSpace(std::string key){
 void Space::addFrame(Frame* frame){
     this->frames_.push_back(frame);
 };
-
+/*
 void Frame::setParent(Frame* parent){
     this->parent_ = parent;
+};*/
+
+void DerivedFrame::setParent(Frame* parent){
+    this->parent_ = parent;
+};
+void AliasedFrame::setAliased(Frame* original){
+    this->original_ = original;
 };
 
 DomainObject* Domain::mkDefaultDomainContainer(){
@@ -95,7 +102,7 @@ DomainObject* Domain::mkDefaultDomainContainer(std::initializer_list<DomainObjec
 DomainObject* Domain::mkDefaultDomainContainer(std::vector<DomainObject*> operands){
     return new domain::DomainContainer(operands);
 };
-
+/*
 Frame* Domain::mkFrame(std::string name, Space* space, Frame* parent){
     
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry*>(space)){
@@ -116,13 +123,41 @@ Frame* Domain::mkFrame(std::string name, Space* space, Frame* parent){
             return child;
         }
     }
-	if(auto dc = dynamic_cast<domain::ClassicalAcceleration*>(space)){
-            if(auto df = dynamic_cast<domain::ClassicalAccelerationFrame*>(parent)){
-            auto child = this->mkClassicalAccelerationFrame(name, dc, df);
-            return child;
-        }
-    }
     return nullptr;
+};
+*/
+/*Frame* Domain::mkFrame(std::string name, Space* space, Frame* parent){
+    
+
+};*/
+/*
+template<Space* sp> 
+Frame<sp>* mkAliasedFrame(std::string name, Frame* aliased){
+    var frm = new domain::AliasedFrame<sp>(name, aliased);
+    sp->addFrame(frm);
+    return frm;
+};
+
+template<Space* sp>
+Frame<sp>* mkDerivedFrame(std::string name, Frame* parent){
+    var frm = new domain::DerivedFrame<sp>(name, parent);
+    sp->addFrame(frm);
+    return frm;
+};
+*/
+
+
+SIMeasurementSystem* Domain::mkSIMeasurementSystem(std::string name){
+    auto si = new SIMeasurementSystem(name);
+    this->measurementSystems.push_back(si);
+    return si;
+};
+
+ImperialMeasurementSystem* Domain::mkImperialMeasurementSystem(std::string name){
+    auto imp = new ImperialMeasurementSystem(name);
+    this->measurementSystems.push_back(imp);
+    return imp;
+
 };
 
 
@@ -133,7 +168,8 @@ MapSpace* Domain::mkMapSpace(Space* space, Frame* dom, Frame* cod){
 
 EuclideanGeometry* Domain::mkEuclideanGeometry(std::string key,std::string name_, int dimension_){
         EuclideanGeometry* s = new EuclideanGeometry(name_, dimension_);
-        s->addFrame(new domain::EuclideanGeometryFrame("Standard", s, nullptr));
+        //s->addFrame(new domain::EuclideanGeometryFrame("Standard", s, nullptr));
+        s->addFrame(new domain::EuclideanGeometryStandardFrame(s));
         this->EuclideanGeometry_vec.push_back(s);
         this->Space_vec.push_back(s);
         this->Space_map[key] = s;
@@ -143,20 +179,31 @@ EuclideanGeometry* Domain::mkEuclideanGeometry(std::string key,std::string name_
 
 //std::vector<EuclideanGeometry*> &Domain::getEuclideanGeometrySpaces() { return EuclideanGeometry_vec; }
 
-EuclideanGeometryFrame* Domain::mkEuclideanGeometryFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* parent){
-    EuclideanGeometryFrame* child = new domain::EuclideanGeometryFrame(name, space, parent);
+EuclideanGeometryAliasedFrame* Domain::mkEuclideanGeometryAliasedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* parent, domain::MeasurementSystem* ms){
+    EuclideanGeometryAliasedFrame* child = new domain::EuclideanGeometryAliasedFrame(name, space, parent,ms);
     space->addFrame(child);
     return child;
 }
             
 
+EuclideanGeometryDerivedFrame* Domain::mkEuclideanGeometryDerivedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* parent){
+    EuclideanGeometryDerivedFrame* child = new domain::EuclideanGeometryDerivedFrame(name, space, parent);
+    space->addFrame(child);
+    return child;
+}
+            
+
+/*void EuclideanGeometry::addFrame(EuclideanGeometryFrame* frame){
+    ((Space*)this)->addFrame(frame);
+}*/
 void EuclideanGeometry::addFrame(EuclideanGeometryFrame* frame){
     ((Space*)this)->addFrame(frame);
 }
 
 ClassicalTime* Domain::mkClassicalTime(std::string key,std::string name_){
         ClassicalTime* s = new ClassicalTime(name_);
-        s->addFrame(new domain::ClassicalTimeFrame("Standard", s, nullptr));
+        //s->addFrame(new domain::ClassicalTimeFrame("Standard", s, nullptr));
+        s->addFrame(new domain::ClassicalTimeStandardFrame(s));
         this->ClassicalTime_vec.push_back(s);
         this->Space_vec.push_back(s);
         this->Space_map[key] = s;
@@ -166,20 +213,30 @@ ClassicalTime* Domain::mkClassicalTime(std::string key,std::string name_){
 
 //std::vector<ClassicalTime*> &Domain::getClassicalTimeSpaces() { return ClassicalTime_vec; }
 
-ClassicalTimeFrame* Domain::mkClassicalTimeFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent){
-    ClassicalTimeFrame* child = new domain::ClassicalTimeFrame(name, space, parent);
+ClassicalTimeAliasedFrame* Domain::mkClassicalTimeAliasedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent, domain::MeasurementSystem* ms){
+    ClassicalTimeAliasedFrame* child = new domain::ClassicalTimeAliasedFrame(name, space, parent,ms);
     space->addFrame(child);
     return child;
 }
             
 
+ClassicalTimeDerivedFrame* Domain::mkClassicalTimeDerivedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent){
+    ClassicalTimeDerivedFrame* child = new domain::ClassicalTimeDerivedFrame(name, space, parent);
+    space->addFrame(child);
+    return child;
+}
+            
+
+/*void ClassicalTime::addFrame(ClassicalTimeFrame* frame){
+    ((Space*)this)->addFrame(frame);
+}*/
 void ClassicalTime::addFrame(ClassicalTimeFrame* frame){
     ((Space*)this)->addFrame(frame);
 }
 
 ClassicalVelocity* Domain::mkClassicalVelocity(std::string key,std::string name_, Space* base1, Space* base2){
         ClassicalVelocity* s = new ClassicalVelocity(name_, base1, base2);
-        s->addFrame(new domain::ClassicalVelocityFrame("Standard", s, nullptr));
+        s->addFrame(new domain::ClassicalVelocityStandardFrame(s));
         this->ClassicalVelocity_vec.push_back(s);
         this->Space_vec.push_back(s);
         this->Space_map[key] = s;
@@ -189,36 +246,23 @@ ClassicalVelocity* Domain::mkClassicalVelocity(std::string key,std::string name_
 
 //std::vector<ClassicalVelocity*> &Domain::getClassicalVelocitySpaces() { return ClassicalVelocity_vec; }
 
-ClassicalVelocityFrame* Domain::mkClassicalVelocityFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent){
-    ClassicalVelocityFrame* child = new domain::ClassicalVelocityFrame(name, space, parent);
+ClassicalVelocityAliasedFrame* Domain::mkClassicalVelocityAliasedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent, domain::MeasurementSystem* ms){
+    ClassicalVelocityAliasedFrame* child = new domain::ClassicalVelocityAliasedFrame(name, space, parent,ms);
     space->addFrame(child);
     return child;
 }
             
 
-void ClassicalVelocity::addFrame(ClassicalVelocityFrame* frame){
+ClassicalVelocityDerivedFrame* Domain::mkClassicalVelocityDerivedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent){
+    ClassicalVelocityDerivedFrame* child = new domain::ClassicalVelocityDerivedFrame(name, space, parent);
+    space->addFrame(child);
+    return child;
+}
+            
+
+/*void ClassicalVelocity::addFrame(ClassicalVelocityFrame* frame){
     ((Space*)this)->addFrame(frame);
-}
-
-ClassicalAcceleration* Domain::mkClassicalAcceleration(std::string key,std::string name_, Space* base1, Space* base2){
-        ClassicalAcceleration* s = new ClassicalAcceleration(name_, base1, base2);
-        s->addFrame(new domain::ClassicalAccelerationFrame("Standard", s, nullptr));
-        this->ClassicalAcceleration_vec.push_back(s);
-        this->Space_vec.push_back(s);
-        this->Space_map[key] = s;
-    
-        return s;
-    };
-
-//std::vector<ClassicalAcceleration*> &Domain::getClassicalAccelerationSpaces() { return ClassicalAcceleration_vec; }
-
-ClassicalAccelerationFrame* Domain::mkClassicalAccelerationFrame(std::string name, domain::ClassicalAcceleration* space, domain::ClassicalAccelerationFrame* parent){
-    ClassicalAccelerationFrame* child = new domain::ClassicalAccelerationFrame(name, space, parent);
-    space->addFrame(child);
-    return child;
-}
-            
-
-void ClassicalAcceleration::addFrame(ClassicalAccelerationFrame* frame){
+}*/
+void ClassicalVelocity::addFrame(ClassicalVelocityFrame* frame){
     ((Space*)this)->addFrame(frame);
 }

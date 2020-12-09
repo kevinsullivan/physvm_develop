@@ -6,7 +6,13 @@
 #include "../Interpretation.h"
 
 #include "ROSStatementMatcher.h"
-
+#include "ROSTFScalarMatcher.h"
+#include "FloatMatcher.h"
+#include "DoubleMatcher.h"
+#include "IntMatcher.h"
+#include "ROSTFVector3Matcher.h"
+#include "ROSTFTimeMatcher.h"
+#include "ROSTFDurationMatcher.h"
 
 #include <string>
 
@@ -125,6 +131,76 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = ((clang::QualType)_expr->getType()).getAsString();
         if(false){}
         
+        else if (typestr.find("ros::Duration") != string::npos){
+            ROSTFDurationMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr.find("tf::Vector3") != string::npos){
+            ROSTFVector3Matcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr.find("ros::Time") != string::npos){
+            ROSTFTimeMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr.find("tfScalar") != string::npos){
+            ROSTFScalarMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr.find("double") != string::npos){
+            DoubleMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr.find("float") != string::npos){
+            FloatMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr.find("int") != string::npos){
+            IntMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
     }*/
 
     if(cmpdStmt_){
@@ -154,6 +230,202 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                 auto typestr = ((clang::QualType)vd->getType()).getAsString();
                 if(false){}
 
+                else if (typestr.find("ros::Duration") != string::npos){
+                    interp_->mkREAL1_VAR_IDENT(vd);
+                    if (vd->hasInit())
+                    {
+                        ROSTFDurationMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr.find("tf::Vector3") != string::npos){
+                    interp_->mkREAL3_VAR_IDENT(vd);
+                    if (vd->hasInit())
+                    {
+                        ROSTFVector3Matcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            interp_->mkDECL_REAL3_VAR_REAL3_EXPR(declStmt, vd, m.getChildExprStore());
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL3_VAR(declStmt, vd);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        interp_->mkDECL_REAL3_VAR(declStmt, vd);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr.find("ros::Time") != string::npos){
+                    interp_->mkREAL1_VAR_IDENT(vd);
+                    if (vd->hasInit())
+                    {
+                        ROSTFTimeMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr.find("tfScalar") != string::npos){
+                    interp_->mkREAL1_VAR_IDENT(vd);
+                    if (vd->hasInit())
+                    {
+                        ROSTFScalarMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr.find("double") != string::npos){
+                    interp_->mkREAL1_VAR_IDENT(vd);
+                    if (vd->hasInit())
+                    {
+                        DoubleMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr.find("float") != string::npos){
+                    interp_->mkREAL1_VAR_IDENT(vd);
+                    if (vd->hasInit())
+                    {
+                        FloatMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr.find("int") != string::npos){
+                    interp_->mkREAL1_VAR_IDENT(vd);
+                    if (vd->hasInit())
+                    {
+                        IntMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
             }
         }
         else
@@ -166,6 +438,160 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     auto typestr = ((clang::QualType)vd->getType()).getAsString();
                     if(false){}
                 
+                    else if(typestr.find("ros::Duration") != string::npos){
+                        interp_->mkREAL1_VAR_IDENT(vd);
+                        if (vd->hasInit())
+                        {
+                            ROSTFDurationMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            }
+                            else
+                            {
+                                interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            }
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr.find("tf::Vector3") != string::npos){
+                        interp_->mkREAL3_VAR_IDENT(vd);
+                        if (vd->hasInit())
+                        {
+                            ROSTFVector3Matcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                interp_->mkDECL_REAL3_VAR_REAL3_EXPR(declStmt, vd, m.getChildExprStore());
+                            }
+                            else
+                            {
+                                interp_->mkDECL_REAL3_VAR(declStmt, vd);
+                            }
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL3_VAR(declStmt, vd);
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr.find("ros::Time") != string::npos){
+                        interp_->mkREAL1_VAR_IDENT(vd);
+                        if (vd->hasInit())
+                        {
+                            ROSTFTimeMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            }
+                            else
+                            {
+                                interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            }
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr.find("tfScalar") != string::npos){
+                        interp_->mkREAL1_VAR_IDENT(vd);
+                        if (vd->hasInit())
+                        {
+                            ROSTFScalarMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            }
+                            else
+                            {
+                                interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            }
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr.find("double") != string::npos){
+                        interp_->mkREAL1_VAR_IDENT(vd);
+                        if (vd->hasInit())
+                        {
+                            DoubleMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            }
+                            else
+                            {
+                                interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            }
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr.find("float") != string::npos){
+                        interp_->mkREAL1_VAR_IDENT(vd);
+                        if (vd->hasInit())
+                        {
+                            FloatMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            }
+                            else
+                            {
+                                interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            }
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr.find("int") != string::npos){
+                        interp_->mkREAL1_VAR_IDENT(vd);
+                        if (vd->hasInit())
+                        {
+                            IntMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                            }
+                            else
+                            {
+                                interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            }
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        }
+                        anyfound = true;
+                    }
                 }
             }
             if (anyfound)
@@ -183,6 +609,69 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
     {
         auto typestr = ((clang::QualType)exprStmt->getType()).getAsString();
         
+        if(typestr.find("ros::Duration") != string::npos){
+            ROSTFDurationMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore())
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+                
+        }
+        if(typestr.find("tf::Vector3") != string::npos){
+            ROSTFVector3Matcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore())
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+                
+        }
+        if(typestr.find("ros::Time") != string::npos){
+            ROSTFTimeMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore())
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+                
+        }
+        if(typestr.find("tfScalar") != string::npos){
+            ROSTFScalarMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore())
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+                
+        }
+        if(typestr.find("double") != string::npos){
+            DoubleMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore())
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+                
+        }
+        if(typestr.find("float") != string::npos){
+            FloatMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore())
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+                
+        }
+        if(typestr.find("int") != string::npos){
+            IntMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore())
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+                
+        }
     }
 
 
