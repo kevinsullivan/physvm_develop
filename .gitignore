@@ -12,3 +12,4 @@ PeirceOutput.lean
 Peircelog.*
 PeirceGen.exe
 .clangd
+compile_commands.json
