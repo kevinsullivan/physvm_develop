@@ -3,6 +3,12 @@
         "coordinatized",
         "gitignore"
     ],
+    "clangd.path": "/usr/bin/clangd-9",
+    "clangd.arguments": ["-log=verbose", "-pretty", "--background-index", "--compile-commands-dir=/peirce/src"],
+    "C_Cpp.autocomplete": "Disabled",
+    "C_Cpp.formatting": "Disabled",
+    "C_Cpp.errorSquiggles": "Disabled",
+    "C_Cpp.intelliSenseEngine": "Disabled",
     "files.associations": {
         "__locale": "cpp",
         "list": "cpp",

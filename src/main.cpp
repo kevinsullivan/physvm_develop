@@ -20,6 +20,7 @@
 //#include "Checker.h"
 
 #include "ros_matchers/ROSFunctionMatcher.h"
+#include "ros_matchers/ROS1ProgramMatcher.h"
 //#include "ASTParse/VectorExprMatcher.h"
 
 /*
@@ -47,7 +48,7 @@ using namespace clang::tooling;
 
 interp::Interpretation* interp_;
 clang::ASTContext *context_;
-ROSFunctionMatcher *programMatcher_;
+ROS1ProgramMatcher *programMatcher_;
 Rewriter* constraintWriter;
 bool rewriteMode;
 
@@ -266,7 +267,21 @@ public:
   MyASTConsumer(){}
   void HandleTranslationUnit(ASTContext &context) override
   {
-    programMatcher_->search();
+    auto tud = context.getTranslationUnitDecl();
+        auto& srcm = context.getSourceManager();
+    for(auto d : tud->decls()){
+            
+            if(auto fn = clang::dyn_cast<clang::FunctionDecl>(d))
+            {
+                auto loc = fn->getLocation();
+
+                auto srcloc = srcm.getFileLoc(loc);
+                auto locstr = srcloc.printToString(srcm);
+                //std::cout<<"HEY"<<locstr<<"\n";
+            }
+    }
+
+    programMatcher_->setup();
     programMatcher_->start();
   }
 };
@@ -292,7 +307,7 @@ public:
     {
       context_ = &CI.getASTContext();
       interp_->setASTContext(context_);
-      programMatcher_ = new ROSFunctionMatcher(context_, interp_);
+      programMatcher_ = new ROS1ProgramMatcher(context_, interp_);
       return llvm::make_unique<MyASTConsumer>(); 
     }
     else{
@@ -326,7 +341,16 @@ static cl::extrahelp MoreHelp("No additional options available for Peirce.");
 int main(int argc, const char **argv)
 {
   CommonOptionsParser op(argc, argv, MyToolCategory);
-  ClangTool Tool(op.getCompilations(), op.getSourcePathList());
+
+  const std::vector<std::string>& srcpaths = op.getSourcePathList();
+
+  for(auto src: srcpaths){
+    std::cout<<"SOURCE::"<<src<<"\n";
+  }
+
+  std::cout<<"SOURCE LENGTH::"<<srcpaths.size()<<"\n";
+
+  ClangTool Tool(op.getCompilations(), srcpaths);
 
   using namespace g3;
   std::string logFile = "Peirce.log";
@@ -336,11 +360,11 @@ int main(int argc, const char **argv)
   g3::initializeLogging(worker.get());
 
   interp_ = new interp::Interpretation();   // default oracle
-  
+  interp_->setSources(srcpaths);
   //interp_->addSpace("_");
   //interp_->addSpace("time");
   //interp_->addSpace("geom");
-  interp_->buildDefaultSpaces();
+  //interp_->buildDefaultSpaces();
 
 
   //creates a "ToolAction" unique pointer object

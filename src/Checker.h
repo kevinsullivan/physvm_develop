@@ -19,7 +19,7 @@ public:
     bool Setup();
 private:
     interp::Interpretation* interp_;
-    aFile* to_check_;
+    //aFile* to_check_;
 };
 
 #endif

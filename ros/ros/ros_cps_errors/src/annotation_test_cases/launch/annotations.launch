@@ -1,0 +1,11 @@
+<launch>
+  
+  <arg name="blank_map" default="/peirce/ros/ros_cps_errors/src/annotation_test_cases/src/blankmap.yaml"/>
+
+  <node pkg="annotations" type="velocity" name="velocity" output="screen" />
+  <node pkg="annotations" type="relative_frames" name="relative_frames" output="screen"/>
+
+  <!-- Run the map server -->
+  <node pkg="map_server" type="map_server" name="blank_map_server"  args="$(arg blank_map)" />
+
+</launch>

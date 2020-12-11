@@ -10,3 +10,5 @@ peirce
 *.tar.gz
 PeirceOutput.lean
 Peircelog.*
+PeirceGen.exe
+.clangd
