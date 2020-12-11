@@ -43,10 +43,13 @@ class REAL1_EXPR;
 class REAL3_LEXPR;
 class REF_REAL3_VAR;
 class ADD_REAL3_EXPR_REAL3_EXPR;
+class LMUL_REAL1_EXPR_REAL3_EXPR;
+class RMUL_REAL3_EXPR_REAL1_EXPR;
 class REAL3_LITERAL;
 class LREF_REAL3_VAR;
 class REF_REAL1_VAR;
 class ADD_REAL1_EXPR_REAL1_EXPR;
+class MUL_REAL1_EXPR_REAL1_EXPR;
 class REAL1_LITERAL;
 class IDENT;
 class IDENT;
@@ -152,6 +155,16 @@ void eraseREF_REAL3_VAR(interp::REF_REAL3_VAR* key, domain::DomainObject* val);
 	interp::ADD_REAL3_EXPR_REAL3_EXPR* getADD_REAL3_EXPR_REAL3_EXPR(domain::DomainObject* d) const;
 void eraseADD_REAL3_EXPR_REAL3_EXPR(interp::ADD_REAL3_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
 
+	void putLMUL_REAL1_EXPR_REAL3_EXPR(interp::LMUL_REAL1_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getLMUL_REAL1_EXPR_REAL3_EXPR(interp::LMUL_REAL1_EXPR_REAL3_EXPR* c) const;
+	interp::LMUL_REAL1_EXPR_REAL3_EXPR* getLMUL_REAL1_EXPR_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseLMUL_REAL1_EXPR_REAL3_EXPR(interp::LMUL_REAL1_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putRMUL_REAL3_EXPR_REAL1_EXPR(interp::RMUL_REAL3_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getRMUL_REAL3_EXPR_REAL1_EXPR(interp::RMUL_REAL3_EXPR_REAL1_EXPR* c) const;
+	interp::RMUL_REAL3_EXPR_REAL1_EXPR* getRMUL_REAL3_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseRMUL_REAL3_EXPR_REAL1_EXPR(interp::RMUL_REAL3_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
 	domain::DomainObject* getREAL3_LEXPR(interp::REAL3_LEXPR* c) const;
 	interp::REAL3_LEXPR* getREAL3_LEXPR(domain::DomainObject* d) const;
 	
@@ -172,6 +185,11 @@ void eraseREF_REAL1_VAR(interp::REF_REAL1_VAR* key, domain::DomainObject* val);
 	domain::DomainObject* getADD_REAL1_EXPR_REAL1_EXPR(interp::ADD_REAL1_EXPR_REAL1_EXPR* c) const;
 	interp::ADD_REAL1_EXPR_REAL1_EXPR* getADD_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
 void eraseADD_REAL1_EXPR_REAL1_EXPR(interp::ADD_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* c) const;
+	interp::MUL_REAL1_EXPR_REAL1_EXPR* getMUL_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
 
 	void putREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* key, domain::DomainObject* val);
 	domain::DomainObject* getREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* c) const;

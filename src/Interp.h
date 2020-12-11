@@ -46,11 +46,14 @@ class LEXPR;
 class REAL3_EXPR;
 class REF_REAL3_VAR;
 class ADD_REAL3_EXPR_REAL3_EXPR;
+class LMUL_REAL1_EXPR_REAL3_EXPR;
+class RMUL_REAL3_EXPR_REAL1_EXPR;
 class REAL3_LEXPR;
 class LREF_REAL3_VAR;
 class REAL1_EXPR;
 class REF_REAL1_VAR;
 class ADD_REAL1_EXPR_REAL1_EXPR;
+class MUL_REAL1_EXPR_REAL1_EXPR;
 class REAL1_VAR_IDENT;
 class REAL3_VAR_IDENT;
 class REAL3_LITERAL;
@@ -362,8 +365,8 @@ class REF_REAL3_VAR : public REAL3_EXPR {
 public:
     REF_REAL3_VAR(coords::REF_REAL3_VAR* coords, domain::DomainObject* dom ,interp::REAL3_VAR_IDENT *operand1 );
     virtual std::string toString() const override ;
-    virtual std::string toEvalString() const; 
-    virtual std::string toAlgebraString() const; 
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
     
     
 protected:
@@ -376,13 +379,43 @@ class ADD_REAL3_EXPR_REAL3_EXPR : public REAL3_EXPR {
 public:
     ADD_REAL3_EXPR_REAL3_EXPR(coords::ADD_REAL3_EXPR_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1,interp::REAL3_EXPR *operand2 );
     virtual std::string toString() const override ;
-    virtual std::string toEvalString() const; 
-    virtual std::string toAlgebraString() const; 
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
     
     
 protected:
 	interp::REAL3_EXPR *operand_1;
 	interp::REAL3_EXPR *operand_2;
+};
+
+
+
+class LMUL_REAL1_EXPR_REAL3_EXPR : public REAL3_EXPR {
+public:
+    LMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL3_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
+    
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL3_EXPR *operand_2;
+};
+
+
+
+class RMUL_REAL3_EXPR_REAL1_EXPR : public REAL3_EXPR {
+public:
+    RMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL3_EXPR *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
+    
+    
+protected:
+	interp::REAL3_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
 };
 
 
@@ -403,8 +436,8 @@ class LREF_REAL3_VAR : public REAL3_LEXPR {
 public:
     LREF_REAL3_VAR(coords::LREF_REAL3_VAR* coords, domain::DomainObject* dom ,interp::REAL3_VAR_IDENT *operand1 );
     virtual std::string toString() const override ;
-    virtual std::string toEvalString() const; 
-    virtual std::string toAlgebraString() const; 
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
     
     
 protected:
@@ -429,8 +462,8 @@ class REF_REAL1_VAR : public REAL1_EXPR {
 public:
     REF_REAL1_VAR(coords::REF_REAL1_VAR* coords, domain::DomainObject* dom ,interp::REAL1_VAR_IDENT *operand1 );
     virtual std::string toString() const override ;
-    virtual std::string toEvalString() const; 
-    virtual std::string toAlgebraString() const; 
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
     
     
 protected:
@@ -443,8 +476,23 @@ class ADD_REAL1_EXPR_REAL1_EXPR : public REAL1_EXPR {
 public:
     ADD_REAL1_EXPR_REAL1_EXPR(coords::ADD_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2 );
     virtual std::string toString() const override ;
-    virtual std::string toEvalString() const; 
-    virtual std::string toAlgebraString() const; 
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
+    
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
+};
+
+
+
+class MUL_REAL1_EXPR_REAL1_EXPR : public REAL1_EXPR {
+public:
+    MUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
     
     
 protected:
@@ -498,8 +546,8 @@ class REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR : public REAL3_LITERAL {
 public:
     REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2,interp::REAL1_EXPR *operand3 );
     virtual std::string toString() const override ;
-    virtual std::string toEvalString() const; 
-    virtual std::string toAlgebraString() const; 
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
     
     
 protected:
@@ -514,8 +562,8 @@ class REAL3_EMPTY : public REAL3_LITERAL {
 public:
     REAL3_EMPTY(coords::REAL3_EMPTY* coords, domain::DomainObject* dom  );
     virtual std::string toString() const override ;
-    virtual std::string toEvalString() const; 
-    virtual std::string toAlgebraString() const; 
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
     
     
 protected:
@@ -540,8 +588,8 @@ class REAL1_LIT : public REAL1_LITERAL {
 public:
     REAL1_LIT(coords::REAL1_LIT* coords, domain::DomainObject* dom  );
     virtual std::string toString() const override ;
-    virtual std::string toEvalString() const; 
-    virtual std::string toAlgebraString() const; 
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
     
     
 protected:

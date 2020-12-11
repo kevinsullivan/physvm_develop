@@ -134,6 +134,20 @@ coords::REAL3_EXPR* ADD_REAL3_EXPR_REAL3_EXPR::getOperand2() { return this->oper
 std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
+LMUL_REAL1_EXPR_REAL3_EXPR::LMUL_REAL1_EXPR_REAL3_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL3_EXPR *operand_2,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) : 
+		REAL3_EXPR( value0, value1, value2),operand1(operand_1),operand2(operand_2){}
+coords::REAL1_EXPR* LMUL_REAL1_EXPR_REAL3_EXPR::getOperand1() { return this->operand1;}
+coords::REAL3_EXPR* LMUL_REAL1_EXPR_REAL3_EXPR::getOperand2() { return this->operand2;}
+std::string LMUL_REAL1_EXPR_REAL3_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+RMUL_REAL3_EXPR_REAL1_EXPR::RMUL_REAL3_EXPR_REAL1_EXPR(coords::REAL3_EXPR *operand_1,coords::REAL1_EXPR *operand_2,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) : 
+		REAL3_EXPR( value0, value1, value2),operand1(operand_1),operand2(operand_2){}
+coords::REAL3_EXPR* RMUL_REAL3_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* RMUL_REAL3_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string RMUL_REAL3_EXPR_REAL1_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
 LREF_REAL3_VAR::LREF_REAL3_VAR(coords::REAL3_VAR_IDENT *operand_1,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) : 
 		REAL3_LEXPR( value0, value1, value2),operand1(operand_1){}
 coords::REAL3_VAR_IDENT* LREF_REAL3_VAR::getOperand1() { return this->operand1;}
@@ -151,6 +165,13 @@ ADD_REAL1_EXPR_REAL1_EXPR::ADD_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand
 coords::REAL1_EXPR* ADD_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
 coords::REAL1_EXPR* ADD_REAL1_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
 std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+MUL_REAL1_EXPR_REAL1_EXPR::MUL_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL1_EXPR *operand_2,std::shared_ptr<float> value0) : 
+		REAL1_EXPR( value0),operand1(operand_1),operand2(operand_2){}
+coords::REAL1_EXPR* MUL_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
+coords::REAL1_EXPR* MUL_REAL1_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
+std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
 std::string REAL1_VAR_IDENT::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}

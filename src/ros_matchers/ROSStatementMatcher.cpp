@@ -11,6 +11,7 @@
 #include "DoubleMatcher.h"
 #include "IntMatcher.h"
 #include "ROSTFVector3Matcher.h"
+#include "ROSTFPointMatcher.h"
 #include "ROSTFTimeMatcher.h"
 #include "ROSTFDurationMatcher.h"
 
@@ -151,6 +152,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
+        else if (typestr.find("tf::Point") != string::npos){
+            ROSTFPointMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
         else if (typestr.find("ros::Time") != string::npos){
             ROSTFTimeMatcher m{ this->context_, this->interp_};
             m.setup();
@@ -263,6 +274,34 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     if (vd->hasInit())
                     {
                         ROSTFVector3Matcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            interp_->mkDECL_REAL3_VAR_REAL3_EXPR(declStmt, vd, m.getChildExprStore());
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL3_VAR(declStmt, vd);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        interp_->mkDECL_REAL3_VAR(declStmt, vd);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr.find("tf::Point") != string::npos){
+                    interp_->mkREAL3_VAR_IDENT(vd);
+                    if (vd->hasInit())
+                    {
+                        ROSTFPointMatcher m{ this->context_, this->interp_};
                         m.setup();
                         m.visit((*vd->getInit()));
                         if (m.getChildExprStore())
@@ -482,6 +521,28 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
+                    else if(typestr.find("tf::Point") != string::npos){
+                        interp_->mkREAL3_VAR_IDENT(vd);
+                        if (vd->hasInit())
+                        {
+                            ROSTFPointMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                interp_->mkDECL_REAL3_VAR_REAL3_EXPR(declStmt, vd, m.getChildExprStore());
+                            }
+                            else
+                            {
+                                interp_->mkDECL_REAL3_VAR(declStmt, vd);
+                            }
+                        }
+                        else
+                        {
+                            interp_->mkDECL_REAL3_VAR(declStmt, vd);
+                        }
+                        anyfound = true;
+                    }
                     else if(typestr.find("ros::Time") != string::npos){
                         interp_->mkREAL1_VAR_IDENT(vd);
                         if (vd->hasInit())
@@ -620,6 +681,15 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         }
         if(typestr.find("tf::Vector3") != string::npos){
             ROSTFVector3Matcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore())
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+                
+        }
+        if(typestr.find("tf::Point") != string::npos){
+            ROSTFPointMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
             if (m.getChildExprStore())

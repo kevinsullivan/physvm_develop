@@ -104,6 +104,10 @@ public:
                     
 	void mkADD_REAL3_EXPR_REAL3_EXPR(const ast::ADD_REAL3_EXPR_REAL3_EXPR * ast ,ast::REAL3_EXPR* operand1,ast::REAL3_EXPR* operand2,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
                     
+	void mkLMUL_REAL1_EXPR_REAL3_EXPR(const ast::LMUL_REAL1_EXPR_REAL3_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL3_EXPR* operand2,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
+                    
+	void mkRMUL_REAL3_EXPR_REAL1_EXPR(const ast::RMUL_REAL3_EXPR_REAL1_EXPR * ast ,ast::REAL3_EXPR* operand1,ast::REAL1_EXPR* operand2,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
+                    
 	std::string toString_REAL3_EXPRs();
 
 	void mkLREF_REAL3_VAR(const ast::LREF_REAL3_VAR * ast ,ast::REAL3_VAR_IDENT* operand1,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
@@ -113,6 +117,8 @@ public:
 	void mkREF_REAL1_VAR(const ast::REF_REAL1_VAR * ast ,ast::REAL1_VAR_IDENT* operand1,std::shared_ptr<float> value0=nullptr);
                     
 	void mkADD_REAL1_EXPR_REAL1_EXPR(const ast::ADD_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,std::shared_ptr<float> value0=nullptr);
+                    
+	void mkMUL_REAL1_EXPR_REAL1_EXPR(const ast::MUL_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,std::shared_ptr<float> value0=nullptr);
                     
 	std::string toString_REAL1_EXPRs();
 

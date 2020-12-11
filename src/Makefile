@@ -35,9 +35,9 @@ LD := clang++
 TAR := tar
 
 # C flags
-CFLAGS := -O0 -g -Wall -Wextra -Wno-unknown-warning-option -Wno-unused-command-line-argument -Wno-unused-private-field -Wno-unused-value -Wno-reorder -Wno-sign-compare -pedantic
+CFLAGS := -O0 -g -Wall -Wextra -Wno-unknown-warning-option -Wno-unused-command-line-argument -Wno-unused-private-field -Wno-unused-value -Wno-reorder -Wno-sign-compare -Wno-unused-variable -pedantic
 # C++ flags
-CXXFLAGS := -O0 -g -Wall -Wextra -Wno-unknown-warning-option -Wno-unused-command-line-argument -Wno-unused-private-field -Wno-unused-value -Wno-reorder -Wno-sign-compare -pedantic
+CXXFLAGS := -O0 -g -Wall -Wextra -Wno-unknown-warning-option -Wno-unused-command-line-argument -Wno-unused-private-field -Wno-unused-value -Wno-reorder -Wno-sign-compare -Wno-unused-variable -pedantic
 # C/C++ flags
 CPPFLAGS := 
 # Clang C++ flags

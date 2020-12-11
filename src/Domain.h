@@ -76,6 +76,9 @@ class EuclideanGeometryCoordinatePoint;
 template<typename ValueType,int ValueCount>
 class EuclideanGeometryCoordinateVector;
 
+template<typename ValueType,int ValueCount>
+class EuclideanGeometryScalar;
+
 class ClassicalTime;
 
 class ClassicalTimeFrame;
@@ -101,6 +104,43 @@ class ClassicalTimeCoordinatePoint;
 template<typename ValueType,int ValueCount>
 class ClassicalTimeCoordinateVector;
 
+template<typename ValueType,int ValueCount>
+class ClassicalTimeScalar;
+
+class EuclideanGeometry3;
+
+class EuclideanGeometry3Frame;
+
+class EuclideanGeometry3StandardFrame;
+
+class EuclideanGeometry3AliasedFrame;
+
+class EuclideanGeometry3DerivedFrame;
+
+class MeasurementSystem;
+
+class SIMeasurementSystem;
+
+class ImperialMeasurementSystem;
+
+template<typename ValueType,int ValueCount>
+class EuclideanGeometry3Rotation;
+
+template<typename ValueType,int ValueCount>
+class EuclideanGeometry3Orientation;
+
+template<typename ValueType,int ValueCount>
+class EuclideanGeometry3FrameChange;
+
+template<typename ValueType,int ValueCount>
+class EuclideanGeometry3CoordinatePoint;
+
+template<typename ValueType,int ValueCount>
+class EuclideanGeometry3CoordinateVector;
+
+template<typename ValueType,int ValueCount>
+class EuclideanGeometry3Scalar;
+
 class ClassicalVelocity;
 
 class ClassicalVelocityFrame;
@@ -119,6 +159,9 @@ class ImperialMeasurementSystem;
 
 template<typename ValueType,int ValueCount>
 class ClassicalVelocityCoordinateVector;
+
+template<typename ValueType,int ValueCount>
+class ClassicalVelocityScalar;
 
             
 // Definition for Domain class 
@@ -281,6 +324,31 @@ EuclideanGeometryCoordinateVector<ValueType,ValueCount>* mkEuclideanGeometryCoor
     return dom_;
 }
 
+
+template <class ValueType, int ValueCount>
+EuclideanGeometryScalar<ValueType,ValueCount>* mkEuclideanGeometryScalar(EuclideanGeometry* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    EuclideanGeometryScalar<ValueType,ValueCount>* dom_ = new EuclideanGeometryScalar<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->EuclideanGeometryScalar_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+EuclideanGeometryScalar<ValueType,ValueCount>* mkEuclideanGeometryScalar(){
+    EuclideanGeometryScalar<ValueType,ValueCount>* dom_ = new EuclideanGeometryScalar<ValueType,ValueCount>({});
+    //this->EuclideanGeometryScalar_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
 	ClassicalTime* mkClassicalTime(std::string key ,std::string name_);
 	std::vector<ClassicalTime*> &getClassicalTimeSpaces() { return ClassicalTime_vec; }
 
@@ -360,6 +428,185 @@ ClassicalTimeCoordinateVector<ValueType,ValueCount>* mkClassicalTimeCoordinateVe
     return dom_;
 }
 
+
+template <class ValueType, int ValueCount>
+ClassicalTimeScalar<ValueType,ValueCount>* mkClassicalTimeScalar(ClassicalTime* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    ClassicalTimeScalar<ValueType,ValueCount>* dom_ = new ClassicalTimeScalar<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->ClassicalTimeScalar_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+ClassicalTimeScalar<ValueType,ValueCount>* mkClassicalTimeScalar(){
+    ClassicalTimeScalar<ValueType,ValueCount>* dom_ = new ClassicalTimeScalar<ValueType,ValueCount>({});
+    //this->ClassicalTimeScalar_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
+	EuclideanGeometry3* mkEuclideanGeometry3(std::string key ,std::string name_);
+	std::vector<EuclideanGeometry3*> &getEuclideanGeometry3Spaces() { return EuclideanGeometry3_vec; }
+
+	EuclideanGeometry3AliasedFrame* mkEuclideanGeometry3AliasedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* aliased, domain::MeasurementSystem* ms);
+	EuclideanGeometry3DerivedFrame* mkEuclideanGeometry3DerivedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* parent);
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3Rotation<ValueType,ValueCount>* mkEuclideanGeometry3Rotation(EuclideanGeometry3* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    EuclideanGeometry3Rotation<ValueType,ValueCount>* dom_ = new EuclideanGeometry3Rotation<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->EuclideanGeometry3Rotation_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3Rotation<ValueType,ValueCount>* mkEuclideanGeometry3Rotation(){
+    EuclideanGeometry3Rotation<ValueType,ValueCount>* dom_ = new EuclideanGeometry3Rotation<ValueType,ValueCount>({});
+    //this->EuclideanGeometry3Rotation_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3Orientation<ValueType,ValueCount>* mkEuclideanGeometry3Orientation(EuclideanGeometry3* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    EuclideanGeometry3Orientation<ValueType,ValueCount>* dom_ = new EuclideanGeometry3Orientation<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->EuclideanGeometry3Orientation_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3Orientation<ValueType,ValueCount>* mkEuclideanGeometry3Orientation(){
+    EuclideanGeometry3Orientation<ValueType,ValueCount>* dom_ = new EuclideanGeometry3Orientation<ValueType,ValueCount>({});
+    //this->EuclideanGeometry3Orientation_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3FrameChange<ValueType,ValueCount>* mkEuclideanGeometry3FrameChange(MapSpace* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    EuclideanGeometry3FrameChange<ValueType,ValueCount>* dom_ = new EuclideanGeometry3FrameChange<ValueType,ValueCount>(sp, {});
+    //((ValueObject<ValueType,ValueCount>)(dom_))->setValues(values);
+    //this->EuclideanGeometry3FrameChange_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3FrameChange<ValueType,ValueCount>* mkEuclideanGeometry3FrameChange(){
+    EuclideanGeometry3FrameChange<ValueType,ValueCount>* dom_ = new EuclideanGeometry3FrameChange<ValueType,ValueCount>({});
+    //this->EuclideanGeometry3FrameChange_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3CoordinatePoint<ValueType,ValueCount>* mkEuclideanGeometry3CoordinatePoint(EuclideanGeometry3* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    EuclideanGeometry3CoordinatePoint<ValueType,ValueCount>* dom_ = new EuclideanGeometry3CoordinatePoint<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->EuclideanGeometry3CoordinatePoint_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3CoordinatePoint<ValueType,ValueCount>* mkEuclideanGeometry3CoordinatePoint(){
+    EuclideanGeometry3CoordinatePoint<ValueType,ValueCount>* dom_ = new EuclideanGeometry3CoordinatePoint<ValueType,ValueCount>({});
+    //this->EuclideanGeometry3CoordinatePoint_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3CoordinateVector<ValueType,ValueCount>* mkEuclideanGeometry3CoordinateVector(EuclideanGeometry3* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    EuclideanGeometry3CoordinateVector<ValueType,ValueCount>* dom_ = new EuclideanGeometry3CoordinateVector<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->EuclideanGeometry3CoordinateVector_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3CoordinateVector<ValueType,ValueCount>* mkEuclideanGeometry3CoordinateVector(){
+    EuclideanGeometry3CoordinateVector<ValueType,ValueCount>* dom_ = new EuclideanGeometry3CoordinateVector<ValueType,ValueCount>({});
+    //this->EuclideanGeometry3CoordinateVector_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3Scalar<ValueType,ValueCount>* mkEuclideanGeometry3Scalar(EuclideanGeometry3* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    EuclideanGeometry3Scalar<ValueType,ValueCount>* dom_ = new EuclideanGeometry3Scalar<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->EuclideanGeometry3Scalar_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+EuclideanGeometry3Scalar<ValueType,ValueCount>* mkEuclideanGeometry3Scalar(){
+    EuclideanGeometry3Scalar<ValueType,ValueCount>* dom_ = new EuclideanGeometry3Scalar<ValueType,ValueCount>({});
+    //this->EuclideanGeometry3Scalar_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
 	ClassicalVelocity* mkClassicalVelocity(std::string key, std::string name_,Space* base1, Space* base2);
 	std::vector<ClassicalVelocity*> &getClassicalVelocitySpaces() { return ClassicalVelocity_vec; }
 
@@ -390,12 +637,38 @@ ClassicalVelocityCoordinateVector<ValueType,ValueCount>* mkClassicalVelocityCoor
     return dom_;
 }
 
+
+template <class ValueType, int ValueCount>
+ClassicalVelocityScalar<ValueType,ValueCount>* mkClassicalVelocityScalar(ClassicalVelocity* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    ClassicalVelocityScalar<ValueType,ValueCount>* dom_ = new ClassicalVelocityScalar<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->ClassicalVelocityScalar_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+ClassicalVelocityScalar<ValueType,ValueCount>* mkClassicalVelocityScalar(){
+    ClassicalVelocityScalar<ValueType,ValueCount>* dom_ = new ClassicalVelocityScalar<ValueType,ValueCount>({});
+    //this->ClassicalVelocityScalar_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
 private:
 
 	std::unordered_map<std::string, Space*> Space_map;
 	std::vector<Space*> Space_vec;
 	std::vector<EuclideanGeometry*> EuclideanGeometry_vec;
 	std::vector<ClassicalTime*> ClassicalTime_vec;
+	std::vector<EuclideanGeometry3*> EuclideanGeometry3_vec;
 	std::vector<ClassicalVelocity*> ClassicalVelocity_vec;
 };
 
@@ -940,6 +1213,30 @@ private:
 };
 
 
+
+
+template <class ValueType, int ValueCount>
+class EuclideanGeometryScalar : public ValueObject<ValueType,ValueCount> {
+public:
+    EuclideanGeometryScalar(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+    EuclideanGeometryScalar(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~EuclideanGeometryScalar(){}
+    std::string toString() override {
+        return "@@EuclideanGeometryScalar(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+    }
+
+    EuclideanGeometry* getSpace() const {return this->space_;};
+    
+    
+private:
+    EuclideanGeometry* space_; 
+    
+    
+};
+
+
 class ClassicalTime : public Space {
     public:
 	    ClassicalTime(std::string name) : Space(name, 1) {};
@@ -1096,6 +1393,258 @@ private:
 };
 
 
+
+
+template <class ValueType, int ValueCount>
+class ClassicalTimeScalar : public ValueObject<ValueType,ValueCount> {
+public:
+    ClassicalTimeScalar(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+    ClassicalTimeScalar(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~ClassicalTimeScalar(){}
+    std::string toString() override {
+        return "@@ClassicalTimeScalar(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+    }
+
+    ClassicalTime* getSpace() const {return this->space_;};
+    
+    
+private:
+    ClassicalTime* space_; 
+    
+    
+};
+
+
+class EuclideanGeometry3 : public Space {
+    public:
+	    EuclideanGeometry3(std::string name) : Space(name, 3) {};
+	    std::string getName() const override { return name_; }; 
+	    
+        void addFrame(EuclideanGeometry3Frame* frame);
+	    std::string toString() const override {
+		    return "@@EuclideanGeometry3  " + getName()   + "(" + ")"; 
+	    }
+
+    private:
+    };
+
+
+class EuclideanGeometry3Frame : public Frame {
+public:
+	EuclideanGeometry3Frame(std::string name,  EuclideanGeometry3* space) : Frame(name, space) {};
+    EuclideanGeometry3Frame(){};
+	/*std::string toString() const override {
+        std::string parentName = ((EuclideanGeometry3*)this->space_)->getName();
+		return "@@EuclideanGeometry3Frame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
+	}*/
+
+private:
+};
+
+
+
+class EuclideanGeometry3StandardFrame : public StandardFrame, public EuclideanGeometry3Frame {
+public:
+	EuclideanGeometry3StandardFrame(EuclideanGeometry3* space) : StandardFrame(space) {};
+	/*std::string toString() const override {
+        std::string parentName = ((EuclideanGeometry3*)this->space_)->getName();
+		return "@@EuclideanGeometry3Frame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
+	}*/
+
+    virtual std::string getName() const override {
+        return StandardFrame::getName();
+    };
+
+    virtual std::string toString() const override {
+        return std::string("EuclideanGeometry3StandardFrame ") + StandardFrame::toString();
+    };
+
+private:
+};
+
+
+
+class EuclideanGeometry3AliasedFrame : public AliasedFrame, public EuclideanGeometry3Frame {
+public:
+	EuclideanGeometry3AliasedFrame(std::string name,  EuclideanGeometry3* space, EuclideanGeometry3Frame* aliased, domain::MeasurementSystem* ms) : AliasedFrame(name, space, aliased,  ms) {};
+	/*std::string toString() const override {
+        std::string parentName = ((EuclideanGeometry3*)this->space_)->getName();
+		return "@@EuclideanGeometry3Frame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
+	}*/
+    virtual std::string toString() const override {
+        return std::string("EuclideanGeometry3AliasedFrame ") + AliasedFrame::toString();
+    };
+
+private:
+};
+
+
+
+class EuclideanGeometry3DerivedFrame : public DerivedFrame, public EuclideanGeometry3Frame {
+public:
+	EuclideanGeometry3DerivedFrame(std::string name,  EuclideanGeometry3* space, EuclideanGeometry3Frame* parent) : DerivedFrame(name, space, parent) {};
+	/*std::string toString() const override {
+        std::string parentName = ((EuclideanGeometry3*)this->space_)->getName();
+		return "@@EuclideanGeometry3Frame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
+	}*/
+    virtual std::string toString() const override {
+        return std::string("EuclideanGeometry3DerivedFrame ") + DerivedFrame::toString();
+    };
+
+private:
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class EuclideanGeometry3Rotation : public ValueObject<ValueType,ValueCount> {
+public:
+    EuclideanGeometry3Rotation(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+    EuclideanGeometry3Rotation(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~EuclideanGeometry3Rotation(){}
+    std::string toString() override {
+        return "@@EuclideanGeometry3Rotation(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+    }
+
+    EuclideanGeometry3* getSpace() const {return this->space_;};
+    
+    
+private:
+    EuclideanGeometry3* space_; 
+    
+    
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class EuclideanGeometry3Orientation : public ValueObject<ValueType,ValueCount> {
+public:
+    EuclideanGeometry3Orientation(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+    EuclideanGeometry3Orientation(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~EuclideanGeometry3Orientation(){}
+    std::string toString() override {
+        return "@@EuclideanGeometry3Orientation(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+    }
+
+    EuclideanGeometry3* getSpace() const {return this->space_;};
+    
+    
+private:
+    EuclideanGeometry3* space_; 
+    
+    
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class EuclideanGeometry3FrameChange : public ValueObject<ValueType,ValueCount> {
+public:
+    EuclideanGeometry3FrameChange(MapSpace* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+    EuclideanGeometry3FrameChange(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~EuclideanGeometry3FrameChange(){}
+    std::string toString() override {
+        return "@@EuclideanGeometry3FrameChange(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+    }
+
+    
+    
+    
+private:
+     
+    
+    MapSpace* space_;
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class EuclideanGeometry3CoordinatePoint : public ValueObject<ValueType,ValueCount> {
+public:
+    EuclideanGeometry3CoordinatePoint(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+    EuclideanGeometry3CoordinatePoint(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~EuclideanGeometry3CoordinatePoint(){}
+    std::string toString() override {
+        return "@@EuclideanGeometry3CoordinatePoint(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString()+","+(frame_?frame_->getName():"") + ")";
+    }
+
+    EuclideanGeometry3* getSpace() const {return this->space_;};
+    EuclideanGeometry3Frame* getFrame() const { return this->frame_; };
+    void setFrame(EuclideanGeometry3Frame* frame){
+            this->frame_ = frame;
+        };
+private:
+    EuclideanGeometry3* space_; 
+    EuclideanGeometry3Frame* frame_;
+    
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class EuclideanGeometry3CoordinateVector : public ValueObject<ValueType,ValueCount> {
+public:
+    EuclideanGeometry3CoordinateVector(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+    EuclideanGeometry3CoordinateVector(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~EuclideanGeometry3CoordinateVector(){}
+    std::string toString() override {
+        return "@@EuclideanGeometry3CoordinateVector(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString()+","+(frame_?frame_->getName():"") + ")";
+    }
+
+    EuclideanGeometry3* getSpace() const {return this->space_;};
+    EuclideanGeometry3Frame* getFrame() const { return this->frame_; };
+    void setFrame(EuclideanGeometry3Frame* frame){
+            this->frame_ = frame;
+        };
+private:
+    EuclideanGeometry3* space_; 
+    EuclideanGeometry3Frame* frame_;
+    
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class EuclideanGeometry3Scalar : public ValueObject<ValueType,ValueCount> {
+public:
+    EuclideanGeometry3Scalar(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+    EuclideanGeometry3Scalar(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~EuclideanGeometry3Scalar(){}
+    std::string toString() override {
+        return "@@EuclideanGeometry3Scalar(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+    }
+
+    EuclideanGeometry3* getSpace() const {return this->space_;};
+    
+    
+private:
+    EuclideanGeometry3* space_; 
+    
+    
+};
+
+
 class ClassicalVelocity : public DerivedSpace {
     public:
 	    
@@ -1197,6 +1746,30 @@ public:
 private:
     ClassicalVelocity* space_; 
     ClassicalVelocityFrame* frame_;
+    
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class ClassicalVelocityScalar : public ValueObject<ValueType,ValueCount> {
+public:
+    ClassicalVelocityScalar(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+    ClassicalVelocityScalar(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~ClassicalVelocityScalar(){}
+    std::string toString() override {
+        return "@@ClassicalVelocityScalar(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+    }
+
+    ClassicalVelocity* getSpace() const {return this->space_;};
+    
+    
+private:
+    ClassicalVelocity* space_; 
+    
     
 };
 

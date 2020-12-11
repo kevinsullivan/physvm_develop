@@ -524,6 +524,72 @@ coords::ADD_REAL3_EXPR_REAL3_EXPR* CoordsToDomain::getADD_REAL3_EXPR_REAL3_EXPR(
     return static_cast<coords::ADD_REAL3_EXPR_REAL3_EXPR*>(coords);
 }
 
+void CoordsToDomain::putLMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* c, domain::DomainObject *d)
+{
+    coords2dom_STMT[(coords::STMT*)c] = d;
+    dom2coords_STMT[d] = (coords::STMT*)c;
+}
+void CoordsToDomain::eraseLMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* c, domain::DomainObject *d)
+{
+    coords2dom_STMT.erase((coords::STMT*)c);
+    dom2coords_STMT.erase(d);
+}
+domain::DomainObject* CoordsToDomain::getLMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* c) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = coords2dom_STMT.at((coords::STMT*)c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+coords::LMUL_REAL1_EXPR_REAL3_EXPR* CoordsToDomain::getLMUL_REAL1_EXPR_REAL3_EXPR(domain::DomainObject* d) const
+{
+    coords::STMT *coords = NULL;
+    try {
+        coords = dom2coords_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::LMUL_REAL1_EXPR_REAL3_EXPR*>(coords);
+}
+
+void CoordsToDomain::putRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* c, domain::DomainObject *d)
+{
+    coords2dom_STMT[(coords::STMT*)c] = d;
+    dom2coords_STMT[d] = (coords::STMT*)c;
+}
+void CoordsToDomain::eraseRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* c, domain::DomainObject *d)
+{
+    coords2dom_STMT.erase((coords::STMT*)c);
+    dom2coords_STMT.erase(d);
+}
+domain::DomainObject* CoordsToDomain::getRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* c) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = coords2dom_STMT.at((coords::STMT*)c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+coords::RMUL_REAL3_EXPR_REAL1_EXPR* CoordsToDomain::getRMUL_REAL3_EXPR_REAL1_EXPR(domain::DomainObject* d) const
+{
+    coords::STMT *coords = NULL;
+    try {
+        coords = dom2coords_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::RMUL_REAL3_EXPR_REAL1_EXPR*>(coords);
+}
+
 coords::REAL3_LEXPR *CoordsToDomain::getREAL3_LEXPR(domain::DomainObject *d) const
     {
         coords::REAL3_LEXPR *coords = NULL;
@@ -667,6 +733,39 @@ coords::ADD_REAL1_EXPR_REAL1_EXPR* CoordsToDomain::getADD_REAL1_EXPR_REAL1_EXPR(
         coords = NULL;
     }
     return static_cast<coords::ADD_REAL1_EXPR_REAL1_EXPR*>(coords);
+}
+
+void CoordsToDomain::putMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* c, domain::DomainObject *d)
+{
+    coords2dom_STMT[(coords::STMT*)c] = d;
+    dom2coords_STMT[d] = (coords::STMT*)c;
+}
+void CoordsToDomain::eraseMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* c, domain::DomainObject *d)
+{
+    coords2dom_STMT.erase((coords::STMT*)c);
+    dom2coords_STMT.erase(d);
+}
+domain::DomainObject* CoordsToDomain::getMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* c) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = coords2dom_STMT.at((coords::STMT*)c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+coords::MUL_REAL1_EXPR_REAL1_EXPR* CoordsToDomain::getMUL_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const
+{
+    coords::STMT *coords = NULL;
+    try {
+        coords = dom2coords_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::MUL_REAL1_EXPR_REAL1_EXPR*>(coords);
 }
 
 void CoordsToDomain::putREAL1_VAR_IDENT(coords::REAL1_VAR_IDENT* c, domain::DomainObject *d)

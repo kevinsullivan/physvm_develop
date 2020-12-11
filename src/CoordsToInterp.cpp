@@ -472,6 +472,62 @@ interp::ADD_REAL3_EXPR_REAL3_EXPR* CoordsToInterp::getADD_REAL3_EXPR_REAL3_EXPR(
     return static_cast<interp::ADD_REAL3_EXPR_REAL3_EXPR*>(interp);
 }
 
+void CoordsToInterp::putLMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* c, interp::LMUL_REAL1_EXPR_REAL3_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::LMUL_REAL1_EXPR_REAL3_EXPR* CoordsToInterp::getLMUL_REAL1_EXPR_REAL3_EXPR(interp::LMUL_REAL1_EXPR_REAL3_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::REAL3_EXPR*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::LMUL_REAL1_EXPR_REAL3_EXPR*>(coo);
+}
+interp::LMUL_REAL1_EXPR_REAL3_EXPR* CoordsToInterp::getLMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::LMUL_REAL1_EXPR_REAL3_EXPR*>(interp);
+}
+
+void CoordsToInterp::putRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* c, interp::RMUL_REAL3_EXPR_REAL1_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::RMUL_REAL3_EXPR_REAL1_EXPR* CoordsToInterp::getRMUL_REAL3_EXPR_REAL1_EXPR(interp::RMUL_REAL3_EXPR_REAL1_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::REAL3_EXPR*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::RMUL_REAL3_EXPR_REAL1_EXPR*>(coo);
+}
+interp::RMUL_REAL3_EXPR_REAL1_EXPR* CoordsToInterp::getRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::RMUL_REAL3_EXPR_REAL1_EXPR*>(interp);
+}
+
 coords::REAL3_LEXPR *CoordsToInterp::getREAL3_LEXPR(interp::REAL3_LEXPR *i) const
     {
         coords::REAL3_LEXPR *coords = NULL;
@@ -600,6 +656,34 @@ interp::ADD_REAL1_EXPR_REAL1_EXPR* CoordsToInterp::getADD_REAL1_EXPR_REAL1_EXPR(
         interp = NULL;
     }
     return static_cast<interp::ADD_REAL1_EXPR_REAL1_EXPR*>(interp);
+}
+
+void CoordsToInterp::putMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* c, interp::MUL_REAL1_EXPR_REAL1_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::MUL_REAL1_EXPR_REAL1_EXPR* CoordsToInterp::getMUL_REAL1_EXPR_REAL1_EXPR(interp::MUL_REAL1_EXPR_REAL1_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::REAL1_EXPR*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::MUL_REAL1_EXPR_REAL1_EXPR*>(coo);
+}
+interp::MUL_REAL1_EXPR_REAL1_EXPR* CoordsToInterp::getMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::MUL_REAL1_EXPR_REAL1_EXPR*>(interp);
 }
 
 void CoordsToInterp::putREAL1_VAR_IDENT(coords::REAL1_VAR_IDENT* c, interp::REAL1_VAR_IDENT* i)

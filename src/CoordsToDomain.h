@@ -106,6 +106,16 @@ void eraseREF_REAL3_VAR(coords::REF_REAL3_VAR* key, domain::DomainObject* val);
 	coords::ADD_REAL3_EXPR_REAL3_EXPR* getADD_REAL3_EXPR_REAL3_EXPR(domain::DomainObject* d) const;
 void eraseADD_REAL3_EXPR_REAL3_EXPR(coords::ADD_REAL3_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
 
+	void putLMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getLMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* c) const;
+	coords::LMUL_REAL1_EXPR_REAL3_EXPR* getLMUL_REAL1_EXPR_REAL3_EXPR(domain::DomainObject* d) const;
+void eraseLMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* key, domain::DomainObject* val);
+
+	void putRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* c) const;
+	coords::RMUL_REAL3_EXPR_REAL1_EXPR* getRMUL_REAL3_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
 	domain::DomainObject* getREAL3_LEXPR(coords::REAL3_LEXPR* c) const;
 	coords::REAL3_LEXPR* getREAL3_LEXPR(domain::DomainObject* d) const;
 
@@ -126,6 +136,11 @@ void eraseREF_REAL1_VAR(coords::REF_REAL1_VAR* key, domain::DomainObject* val);
 	domain::DomainObject* getADD_REAL1_EXPR_REAL1_EXPR(coords::ADD_REAL1_EXPR_REAL1_EXPR* c) const;
 	coords::ADD_REAL1_EXPR_REAL1_EXPR* getADD_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
 void eraseADD_REAL1_EXPR_REAL1_EXPR(coords::ADD_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* c) const;
+	coords::MUL_REAL1_EXPR_REAL1_EXPR* getMUL_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseMUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
 
 	domain::DomainObject* getREAL1_VAR_IDENT(coords::REAL1_VAR_IDENT* c) const;
 	coords::REAL1_VAR_IDENT* getREAL1_VAR_IDENT(domain::DomainObject* d) const;

@@ -39,9 +39,6 @@ void ROSTFTimeMatcher::setup(){
 		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
 		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
 	
-		StatementMatcher cxxTemporaryObjectExpr_=cxxTemporaryObjectExpr().bind("CXXTemporaryObjectExpr");
-		localFinder_.addMatcher(cxxTemporaryObjectExpr_,this);
-	
 		StatementMatcher cxxOperatorCallExpr_=cxxOperatorCallExpr().bind("CXXOperatorCallExpr");
 		localFinder_.addMatcher(cxxOperatorCallExpr_,this);
 };
@@ -64,8 +61,6 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
 	
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
-	
-	auto cxxTemporaryObjectExpr_ = Result.Nodes.getNodeAs<clang::CXXTemporaryObjectExpr>("CXXTemporaryObjectExpr");
 	
 	auto cxxOperatorCallExpr_ = Result.Nodes.getNodeAs<clang::CXXOperatorCallExpr>("CXXOperatorCallExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
@@ -235,17 +230,6 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
                 cxxFunctionalCastExpr_->dump();
             }
 
-    }
-	
-    if(cxxTemporaryObjectExpr_ and cxxTemporaryObjectExpr_->getNumArgs() == 0){
-        if(true ){
-            
-            if(true ){
-                interp_->mkREAL1_LIT(cxxTemporaryObjectExpr_);
-                this->childExprStore_ = (clang::Stmt*)cxxTemporaryObjectExpr_;
-                return;
-            }
-        }
     }
 	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Time"] = [=](std::string typenm){

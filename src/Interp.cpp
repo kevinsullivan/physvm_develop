@@ -51,6 +51,13 @@ std::string Space::toString() const {
             retval += "\ndef " + dc->getName() + " := cmd.classicalTimeAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalTime.spaceExpr.lit(classicalTime.build " + std::to_string(id-1) + ")"")\n";
             retval += "\n def " + getEnvName() + " := cmdEval " + dc->getName() + " " + getLastEnv();
     }
+	if(auto dc = dynamic_cast<domain::EuclideanGeometry3*>(s_)){
+            found = true;
+           // retval += "def " + dc->getName() + "var : lang.euclideanGeometry3.var := lang.euclideanGeometry3.var.mk " + std::to_string(id) + "" + "\n";
+            //retval += "\ndef " + dc->getName() + "sp := lang.euclideanGeometry3.expr.lit (euclideanGeometry3.mk " + std::to_string(id) + ")"; 
+            retval += "\ndef " + dc->getName() + " := cmd.euclideanGeometry3Assmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.euclideanGeometry3.spaceExpr.lit(euclideanGeometry3.build " + std::to_string(id-1) + ")"")\n";
+            retval += "\n def " + getEnvName() + " := cmdEval " + dc->getName() + " " + getLastEnv();
+    }
 
     if(!found){
         //retval = "--Unknown space type - Translation Failed!";
@@ -71,6 +78,12 @@ std::string Space::getVarExpr() const {
             int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
             return "lang.classicalTime.expr.var (lang.classicalTime.spaceVar.mk " + std::to_string(id) + ")";
+
+    }
+	if(auto dc = dynamic_cast<domain::EuclideanGeometry3*>(s_)){
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
+    
+            return "lang.euclideanGeometry3.expr.var (lang.euclideanGeometry3.spaceVar.mk " + std::to_string(id) + ")";
 
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
@@ -96,6 +109,12 @@ std::string Space::getEvalExpr() const {
             int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
     
             return "(classicalTimeEval (lang.classicalTime.spaceExpr.var (lang.classicalTime.spaceVar.mk " + std::to_string(id) + ")) ( " + lastEnv + " ))";
+
+    }
+	if(auto dc = dynamic_cast<domain::EuclideanGeometry3*>(s_)){
+            int id = GLOBAL_IDS.count(const_cast<Space*>(this)) ? GLOBAL_IDS[const_cast<Space*>(this)] : GLOBAL_IDS[const_cast<Space*>(this)] = (GLOBAL_INDEX += 2); 
+    
+            return "(euclideanGeometry3Eval (lang.euclideanGeometry3.spaceExpr.var (lang.euclideanGeometry3.spaceVar.mk " + std::to_string(id) + ")) ( " + lastEnv + " ))";
 
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(s_)){
@@ -165,6 +184,9 @@ std::string Frame::toString() const {
     //if(!isStandard)
     //    return retval;
 
+    if(auto af = dynamic_cast<domain::AliasedFrame*>(f_)){
+
+
 	if(auto dc = dynamic_cast<domain::EuclideanGeometryFrame*>(f_)){
         found = true;
         auto df = dynamic_cast<domain::EuclideanGeometryAliasedFrame*>(f_);
@@ -174,7 +196,13 @@ std::string Frame::toString() const {
 	if(auto dc = dynamic_cast<domain::ClassicalTimeFrame*>(f_)){
         found = true;
         auto df = dynamic_cast<domain::ClassicalTimeAliasedFrame*>(f_);
-        retval += "\ndef " + ((domain::AliasedFrame*)df)->getName() + " := cmd.classicalTimeFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalTime.frameExpr.lit(classicalTimeFrame.interpret (classicalTime.stdFrame (classicalTime.build " + std::to_string(sid-1) + ")) (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + "))"")\n";
+        retval += "\ndef " + ((domain::AliasedFrame*)df)->getName() + " := cmd.classicalTimeFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalTime.frameExpr.lit (classicalTimeFrame.interpret (classicalTime.stdFrame (classicalTime.build " + std::to_string(sid-1) + ")) (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + "))"")\n";
+        retval += "\n def " + getEnvName() + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
+    }
+	if(auto dc = dynamic_cast<domain::EuclideanGeometry3Frame*>(f_)){
+        found = true;
+        auto df = dynamic_cast<domain::EuclideanGeometry3AliasedFrame*>(f_);
+        retval += "\ndef " + ((domain::AliasedFrame*)df)->getName() + " := cmd.euclideanGeometry3FrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.euclideanGeometry3.frameExpr.lit (euclideanGeometry3Frame.interpret (euclideanGeometry3.stdFrame (euclideanGeometry3.build " + std::to_string(sid-1) + ")) (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + "))"")\n";
         retval += "\n def " + getEnvName() + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocityFrame*>(f_)){
@@ -182,6 +210,139 @@ std::string Frame::toString() const {
         auto df = dynamic_cast<domain::ClassicalVelocityAliasedFrame*>(f_);
         retval += "\ndef " + ((domain::AliasedFrame*)df)->getName() + " := cmd.classicalVelocityFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalVelocity.frameExpr.lit(classicalVelocityEval " + std::to_string(sid)  + ")"")\n";
         retval += "\n def " + getEnvName() + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
+    }
+    }
+    else if(auto df = dynamic_cast<domain::DerivedFrame*>(f_)){
+
+
+	if(auto dc = dynamic_cast<domain::EuclideanGeometryFrame*>(f_)){
+        found = true;
+        auto df = (domain::DerivedFrame*)f_;
+        auto interpFr = i2d_->getFrame(df->getParent());
+        int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2); 
+        auto dom_sp = f_->getSpace();    
+        int dim = 1; 
+
+        retval += "\ndef " + ((domain::DerivedFrame*)df)->getName() + " := \n";
+        retval += "    let sp := (classicalGeometryEval (lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) +"⟩⟩) " + getLastEnv() + ") in\n";
+        if(auto std = dynamic_cast<domain::StandardFrame*>(df->getParent())){
+            retval += "    let fr := (classicalGeometry.stdFrame sp in\n";
+        }
+        else{
+            retval += "    let fr := (classicalGeometryFrameEval (lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) +"⟩⟩) " + getLastEnv() + ") in\n";
+        }
+        retval += "    let ms := (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + ")) in";
+        retval += "    cmd.classicalGeometryFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
+        retval += "        lang.classicalGeometry.frameExpr.lit (classicalGeometryFrame.build_derived_from_coords fr \n";
+        retval += "        (";
+        retval += "   (⟨[]";
+        for(auto i = 0; i < dim;i++)
+            retval += std::string("++[") + std::to_string(0) + "]";
+        retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
+        for(auto j = 0; j < dim; j++){
+            retval += "   (⟨[]";
+            for(auto i = 0; i < dim;i++)
+                retval += std::string("++[") + std::to_string(1) + "]";
+            retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
+        }
+        retval += "    ms    ))\n";
+    }
+	if(auto dc = dynamic_cast<domain::ClassicalTimeFrame*>(f_)){
+        found = true;
+        auto df = (domain::DerivedFrame*)f_;
+        auto interpFr = i2d_->getFrame(df->getParent());
+        int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2); 
+        auto dom_sp = f_->getSpace();    
+        int dim = 1; 
+
+        retval += "\ndef " + ((domain::DerivedFrame*)df)->getName() + " := \n";
+        retval += "    let sp := (classicalTimeEval (lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) +"⟩⟩) " + getLastEnv() + ") in\n";
+        if(auto std = dynamic_cast<domain::StandardFrame*>(df->getParent())){
+            retval += "    let fr := (classicalTime.stdFrame sp in\n";
+        }
+        else{
+            retval += "    let fr := (classicalTimeFrameEval (lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) +"⟩⟩) " + getLastEnv() + ") in\n";
+        }
+        retval += "    let ms := (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + ")) in";
+        retval += "    cmd.classicalTimeFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
+        retval += "        lang.classicalTime.frameExpr.lit (classicalTimeFrame.build_derived_from_coords fr \n";
+        retval += "        (";
+        retval += "   (⟨[]";
+        for(auto i = 0; i < dim;i++)
+            retval += std::string("++[") + std::to_string(0) + "]";
+        retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
+        for(auto j = 0; j < dim; j++){
+            retval += "   (⟨[]";
+            for(auto i = 0; i < dim;i++)
+                retval += std::string("++[") + std::to_string(1) + "]";
+            retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
+        }
+        retval += "    ms    ))\n";
+    }
+	if(auto dc = dynamic_cast<domain::EuclideanGeometry3Frame*>(f_)){
+        found = true;
+        auto df = (domain::DerivedFrame*)f_;
+        auto interpFr = i2d_->getFrame(df->getParent());
+        int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2); 
+        auto dom_sp = f_->getSpace();    
+        int dim = 3; 
+
+        retval += "\ndef " + ((domain::DerivedFrame*)df)->getName() + " := \n";
+        retval += "    let sp := (euclideanGeometry3Eval (lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) +"⟩⟩) " + getLastEnv() + ") in\n";
+        if(auto std = dynamic_cast<domain::StandardFrame*>(df->getParent())){
+            retval += "    let fr := (euclideanGeometry3.stdFrame sp in\n";
+        }
+        else{
+            retval += "    let fr := (euclideanGeometry3FrameEval (lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) +"⟩⟩) " + getLastEnv() + ") in\n";
+        }
+        retval += "    let ms := (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + ")) in";
+        retval += "    cmd.euclideanGeometry3FrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
+        retval += "        lang.euclideanGeometry3.frameExpr.lit (euclideanGeometry3Frame.build_derived_from_coords fr \n";
+        retval += "        (";
+        retval += "   (⟨[]";
+        for(auto i = 0; i < dim;i++)
+            retval += std::string("++[") + std::to_string(0) + "]";
+        retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
+        for(auto j = 0; j < dim; j++){
+            retval += "   (⟨[]";
+            for(auto i = 0; i < dim;i++)
+                retval += std::string("++[") + std::to_string(1) + "]";
+            retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
+        }
+        retval += "    ms    ))\n";
+    }
+	if(auto dc = dynamic_cast<domain::ClassicalVelocityFrame*>(f_)){
+        found = true;
+        auto df = (domain::DerivedFrame*)f_;
+        auto interpFr = i2d_->getFrame(df->getParent());
+        int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2); 
+        auto dom_sp = f_->getSpace();    
+        int dim = 1; 
+
+        retval += "\ndef " + ((domain::DerivedFrame*)df)->getName() + " := \n";
+        retval += "    let sp := (classicalVelocityEval (lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) +"⟩⟩) " + getLastEnv() + ") in\n";
+        if(auto std = dynamic_cast<domain::StandardFrame*>(df->getParent())){
+            retval += "    let fr := (classicalVelocity.stdFrame sp in\n";
+        }
+        else{
+            retval += "    let fr := (classicalVelocityFrameEval (lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) +"⟩⟩) " + getLastEnv() + ") in\n";
+        }
+        retval += "    let ms := (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + ")) in";
+        retval += "    cmd.classicalVelocityFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
+        retval += "        lang.classicalVelocity.frameExpr.lit (classicalVelocityFrame.build_derived_from_coords fr \n";
+        retval += "        (";
+        retval += "   (⟨[]";
+        for(auto i = 0; i < dim;i++)
+            retval += std::string("++[") + std::to_string(0) + "]";
+        retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
+        for(auto j = 0; j < dim; j++){
+            retval += "   (⟨[]";
+            for(auto i = 0; i < dim;i++)
+                retval += std::string("++[") + std::to_string(1) + "]";
+            retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
+        }
+        retval += "    ms    ))\n";
+    }
     }
 
     if(!found){
@@ -294,26 +455,26 @@ std::string SEQ_GLOBALSTMT::toStringLinked(
         i = 0;
         for(auto op: framelinks){
             if(prev){ 
-                if((domain::AliasedFrame*)op->f_){
+                if(auto df = dynamic_cast<domain::AliasedFrame*>(op->f_)){
                 retval += "\n" + op->toString() + "\n";
-                auto df = dynamic_cast<domain::AliasedFrame*>(op->f_);
+                ;
                 cmdval = "(" + cmdwrapper + " " + df->getName() + " " + cmdval + ")";
                 i++;
                 }
-                else if((domain::DerivedFrame*)op->f_){
+                else if(auto df = dynamic_cast<domain::DerivedFrame*>(op->f_)){
                 retval += "\n" + op->toString() + "\n";
-                auto df = dynamic_cast<domain::DerivedFrame*>(op->f_);
+                ;
                 cmdval = "(" + cmdwrapper + " " + df->getName() + " " + cmdval + ")";
                 i++;
                 }
             }
             else {
-                if((domain::AliasedFrame*)op->f_){
+                if(auto df = dynamic_cast<domain::AliasedFrame*>(op->f_)){
                 retval += "\n" + op->toString() + "\n";
                 cmdval = framenames[i++];
                 prev = true;
                 }
-                else if((domain::DerivedFrame*)op->f_){
+                else if(auto df = dynamic_cast<domain::DerivedFrame*>(op->f_)){
                 retval += "\n" + op->toString() + "\n";
                 cmdval = framenames[i++];
                 prev = true;
@@ -533,26 +694,26 @@ std::string COMPOUND_STMT::toStringLinked(
         i = 0;
         for(auto op: framelinks){
             if(prev){ 
-                if((domain::AliasedFrame*)op->f_){
+                if(auto df = dynamic_cast<domain::AliasedFrame*>(op->f_)){
                 retval += "\n" + op->toString() + "\n";
-                auto df = dynamic_cast<domain::AliasedFrame*>(op->f_);
+                ;
                 cmdval = "(" + cmdwrapper + " " + df->getName() + " " + cmdval + ")";
                 i++;
                 }
-                else if((domain::DerivedFrame*)op->f_){
+                else if(auto df = dynamic_cast<domain::DerivedFrame*>(op->f_)){
                 retval += "\n" + op->toString() + "\n";
-                auto df = dynamic_cast<domain::DerivedFrame*>(op->f_);
+                ;
                 cmdval = "(" + cmdwrapper + " " + df->getName() + " " + cmdval + ")";
                 i++;
                 }
             }
             else {
-                if((domain::AliasedFrame*)op->f_){
+                if(auto df = dynamic_cast<domain::AliasedFrame*>(op->f_)){
                 retval += "\n" + op->toString() + "\n";
                 cmdval = framenames[i++];
                 prev = true;
                 }
-                else if((domain::DerivedFrame*)op->f_){
+                else if(auto df = dynamic_cast<domain::DerivedFrame*>(op->f_)){
                 retval += "\n" + op->toString() + "\n";
                 cmdval = framenames[i++];
                 prev = true;
@@ -783,6 +944,13 @@ std::string DECL_REAL1_VAR_REAL1_EXPR::toString() const {
             
         retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
     }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->operand_2->dom_)){
+        
+        auto env = getEnvName();
+        retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3CoordinateVectorAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+            
+        retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+    }
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->operand_2->dom_)){
         
         auto env = getEnvName();
@@ -794,6 +962,41 @@ std::string DECL_REAL1_VAR_REAL1_EXPR::toString() const {
         
         auto env = getEnvName();
         retval += "def " + this->coords_->toString() + " := cmd.classicalGeometryCoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+            
+        retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->operand_2->dom_)){
+        
+        auto env = getEnvName();
+        retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3CoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+            
+        retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->operand_2->dom_)){
+        
+        auto env = getEnvName();
+        retval += "def " + this->coords_->toString() + " := cmd.classicalVelocityScalarAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+            
+        retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->operand_2->dom_)){
+        
+        auto env = getEnvName();
+        retval += "def " + this->coords_->toString() + " := cmd.classicalTimeScalarAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+            
+        retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->operand_2->dom_)){
+        
+        auto env = getEnvName();
+        retval += "def " + this->coords_->toString() + " := cmd.classicalGeometryScalarAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+            
+        retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->operand_2->dom_)){
+        
+        auto env = getEnvName();
+        retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3ScalarAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
             
         retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
     }
@@ -818,6 +1021,12 @@ std::string DECL_REAL1_VAR_REAL1_EXPR::toString() const {
                 
                 retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                auto env = getEnvName();
+                retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3CoordinateVectorAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+                
+                retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
                 auto env = getEnvName();
                 retval += "def " + this->coords_->toString() + " := cmd.classicalTimeCoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
@@ -827,6 +1036,36 @@ std::string DECL_REAL1_VAR_REAL1_EXPR::toString() const {
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(cont->getValue())){
                 auto env = getEnvName();
                 retval += "def " + this->coords_->toString() + " := cmd.classicalGeometryCoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+                
+                retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                auto env = getEnvName();
+                retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3CoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+                
+                retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                auto env = getEnvName();
+                retval += "def " + this->coords_->toString() + " := cmd.classicalVelocityScalarAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+                
+                retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                auto env = getEnvName();
+                retval += "def " + this->coords_->toString() + " := cmd.classicalTimeScalarAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+                
+                retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                auto env = getEnvName();
+                retval += "def " + this->coords_->toString() + " := cmd.classicalGeometryScalarAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+                
+                retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                auto env = getEnvName();
+                retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3ScalarAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
                 
                 retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
             }
@@ -888,6 +1127,13 @@ std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const {
             
         retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
     }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->operand_2->dom_)){
+        
+        auto env = getEnvName();
+        retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3CoordinateVectorAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+            
+        retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+    }
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->operand_2->dom_)){
         
         auto env = getEnvName();
@@ -899,6 +1145,13 @@ std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const {
         
         auto env = getEnvName();
         retval += "def " + this->coords_->toString() + " := cmd.classicalGeometryCoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+            
+        retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->operand_2->dom_)){
+        
+        auto env = getEnvName();
+        retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3CoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
             
         retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
     }
@@ -923,6 +1176,12 @@ std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const {
                 
                 retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                auto env = getEnvName();
+                retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3CoordinateVectorAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+                
+                retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 auto env = getEnvName();
                 retval += "def " + this->coords_->toString() + " := cmd.classicalTimeCoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
@@ -932,6 +1191,12 @@ std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const {
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
                 auto env = getEnvName();
                 retval += "def " + this->coords_->toString() + " := cmd.classicalGeometryCoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
+                
+                retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                auto env = getEnvName();
+                retval += "def " + this->coords_->toString() + " := cmd.euclideanGeometry3CoordinatePointAssmt (" + this->operand_1->toString() + ") (" + this->operand_2->toString() +")\n";
                 
                 retval += "def " + env + " := cmdEval " + this->coords_->toString() + " " + getLastEnv();
             }
@@ -1097,6 +1362,13 @@ std::string REF_REAL3_VAR::toEvalString() const {
         retval += this->operand_1->toString();
         retval += ") " + env +")";
     }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        retval += "(euclideanGeometry3CoordinateVectorEval (lang.euclideanGeometry3.CoordinateVectorExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ") " + env +")";
+    }
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
@@ -1108,6 +1380,13 @@ std::string REF_REAL3_VAR::toEvalString() const {
         found = true;
         auto env = getLastEnv();
         retval += "(classicalGeometryCoordinatePointEval (lang.classicalGeometry.CoordinatePointExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ") " + env +")";
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        retval += "(euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var ";
         retval += this->operand_1->toString();
         retval += ") " + env +")";
     }
@@ -1135,6 +1414,13 @@ std::string REF_REAL3_VAR::toEvalString() const {
                 retval += this->operand_1->toString();
                 retval += ") " + env +")";
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                
+                auto env = getLastEnv();
+                retval += "(euclideanGeometry3CoordinateVectorEval (lang.euclideanGeometry3.CoordinateVectorExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ") " + env +")";
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 
                 auto env = getLastEnv();
@@ -1146,6 +1432,13 @@ std::string REF_REAL3_VAR::toEvalString() const {
                 
                 auto env = getLastEnv();
                 retval += "(classicalGeometryCoordinatePointEval (lang.classicalGeometry.CoordinatePointExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ") " + env +")";
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                
+                auto env = getLastEnv();
+                retval += "(euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var ";
                 retval += this->operand_1->toString();
                 retval += ") " + env +")";
             }
@@ -1189,7 +1482,7 @@ std::string REF_REAL3_VAR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -1197,7 +1490,7 @@ std::string REF_REAL3_VAR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -1205,15 +1498,23 @@ std::string REF_REAL3_VAR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
@@ -1221,8 +1522,16 @@ std::string REF_REAL3_VAR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
 
@@ -1233,36 +1542,50 @@ std::string REF_REAL3_VAR::toAlgebraString() const {
             if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL3_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL3_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
         }
@@ -1318,6 +1641,12 @@ std::string REF_REAL3_VAR::toString() const {
         retval += this->operand_1->toString();
         retval += ")";
     }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        retval += "(EuclideanGeometry3CoordinateVectorExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ")";
+    }
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         retval += "(ClassicalTimeCoordinatePointExpr.var ";
@@ -1327,6 +1656,12 @@ std::string REF_REAL3_VAR::toString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         retval += "(EuclideanGeometryCoordinatePointExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ")";
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        retval += "(EuclideanGeometry3CoordinatePointExpr.var ";
         retval += this->operand_1->toString();
         retval += ")";
     }
@@ -1351,6 +1686,12 @@ std::string REF_REAL3_VAR::toString() const {
                 retval += this->operand_1->toString();
                 retval += ")";
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+                retval += "(EuclideanGeometry3CoordinateVectorExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ")";
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
                 retval += "(ClassicalTimeCoordinatePointExpr.var ";
@@ -1360,6 +1701,12 @@ std::string REF_REAL3_VAR::toString() const {
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
                 retval += "(EuclideanGeometryCoordinatePointExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ")";
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+                retval += "(EuclideanGeometry3CoordinatePointExpr.var ";
                 retval += this->operand_1->toString();
                 retval += ")";
             }
@@ -1404,8 +1751,7 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalVelocityCoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -1416,8 +1762,7 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalTimeCoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -1428,10 +1773,20 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
         
     }
@@ -1440,8 +1795,7 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalTimeCoordinatePoint.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -1452,10 +1806,20 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
         
     }
@@ -1466,8 +1830,7 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toEvalString() const {
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalVelocityCoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -1477,8 +1840,7 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalTimeCoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -1488,10 +1850,19 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
         
             }
@@ -1499,8 +1870,7 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalTimeCoordinatePoint.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -1510,10 +1880,19 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
         
             }
@@ -1557,7 +1936,7 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -1565,7 +1944,7 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -1573,15 +1952,23 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
@@ -1589,8 +1976,16 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
 
@@ -1601,36 +1996,50 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toAlgebraString() const {
             if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
         }
@@ -1673,7 +2082,7 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
@@ -1688,7 +2097,7 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
@@ -1703,7 +2112,7 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
@@ -1713,12 +2122,27 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
         
     }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
@@ -1733,13 +2157,28 @@ std::string ADD_REAL3_EXPR_REAL3_EXPR::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
         retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL3_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL3_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
         
     }
@@ -1788,6 +2227,20 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
         
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
@@ -1814,6 +2267,1166 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+        }
+    }
+
+
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
+std::string LMUL_REAL1_EXPR_REAL3_EXPR::toEvalString() const {
+                        std::string retval = "";
+                        bool found = false;
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+        }
+    }
+
+
+    if (!found)
+                                    {
+                                        //ret = "";
+                                        
+    }
+                                    std::replace(retval.begin(), retval.end(), '_', '.');
+                                    std::size_t index;
+                                    string sub_str = ": _";
+                                    string singleperiod = ".a";
+                                    while ((index = retval.find(": .")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find(": ^")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find("..")) != string::npos)
+                                    {
+                                        retval.replace(index, singleperiod.length(), singleperiod);
+                                    }
+
+
+                                    return retval;
+                                }
+                                
+
+std::string LMUL_REAL1_EXPR_REAL3_EXPR::toAlgebraString() const {
+                        std::string retval = "";
+                        bool found = false;
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+LMUL_REAL1_EXPR_REAL3_EXPR::LMUL_REAL1_EXPR_REAL3_EXPR(coords::LMUL_REAL1_EXPR_REAL3_EXPR* c, domain::DomainObject* d,interp::REAL1_EXPR * operand1,interp::REAL3_EXPR * operand2 ) : REAL3_EXPR(c,d)
+   ,operand_1(operand1),operand_2(operand2) {}
+
+std::string LMUL_REAL1_EXPR_REAL3_EXPR::toString() const {
+    bool found = false;
+    std::string retval = "";
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< LMUL_REAL1_EXPR_REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<LMUL_REAL1_EXPR_REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+        }
+    }
+
+
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
+std::string RMUL_REAL3_EXPR_REAL1_EXPR::toEvalString() const {
+                        std::string retval = "";
+                        bool found = false;
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+        }
+    }
+
+
+    if (!found)
+                                    {
+                                        //ret = "";
+                                        
+    }
+                                    std::replace(retval.begin(), retval.end(), '_', '.');
+                                    std::size_t index;
+                                    string sub_str = ": _";
+                                    string singleperiod = ".a";
+                                    while ((index = retval.find(": .")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find(": ^")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find("..")) != string::npos)
+                                    {
+                                        retval.replace(index, singleperiod.length(), singleperiod);
+                                    }
+
+
+                                    return retval;
+                                }
+                                
+
+std::string RMUL_REAL3_EXPR_REAL1_EXPR::toAlgebraString() const {
+                        std::string retval = "";
+                        bool found = false;
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+RMUL_REAL3_EXPR_REAL1_EXPR::RMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* c, domain::DomainObject* d,interp::REAL3_EXPR * operand1,interp::REAL1_EXPR * operand2 ) : REAL3_EXPR(c,d)
+   ,operand_1(operand1),operand_2(operand2) {}
+
+std::string RMUL_REAL3_EXPR_REAL1_EXPR::toString() const {
+    bool found = false;
+    std::string retval = "";
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< RMUL_REAL3_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<RMUL_REAL3_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
         
             }
         }
@@ -2009,6 +3622,13 @@ std::string REF_REAL1_VAR::toEvalString() const {
         retval += this->operand_1->toString();
         retval += ") " + env +")";
     }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        retval += "(euclideanGeometry3CoordinateVectorEval (lang.euclideanGeometry3.CoordinateVectorExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ") " + env +")";
+    }
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
@@ -2020,6 +3640,41 @@ std::string REF_REAL1_VAR::toEvalString() const {
         found = true;
         auto env = getLastEnv();
         retval += "(classicalGeometryCoordinatePointEval (lang.classicalGeometry.CoordinatePointExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ") " + env +")";
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        retval += "(euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ") " + env +")";
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        retval += "(classicalVelocityScalarEval (lang.classicalVelocity.ScalarExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ") " + env +")";
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        retval += "(classicalTimeScalarEval (lang.classicalTime.ScalarExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ") " + env +")";
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        retval += "(classicalGeometryScalarEval (lang.classicalGeometry.ScalarExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ") " + env +")";
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        retval += "(euclideanGeometry3ScalarEval (lang.euclideanGeometry3.ScalarExpr.var ";
         retval += this->operand_1->toString();
         retval += ") " + env +")";
     }
@@ -2047,6 +3702,13 @@ std::string REF_REAL1_VAR::toEvalString() const {
                 retval += this->operand_1->toString();
                 retval += ") " + env +")";
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                
+                auto env = getLastEnv();
+                retval += "(euclideanGeometry3CoordinateVectorEval (lang.euclideanGeometry3.CoordinateVectorExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ") " + env +")";
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
                 
                 auto env = getLastEnv();
@@ -2058,6 +3720,41 @@ std::string REF_REAL1_VAR::toEvalString() const {
                 
                 auto env = getLastEnv();
                 retval += "(classicalGeometryCoordinatePointEval (lang.classicalGeometry.CoordinatePointExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ") " + env +")";
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                
+                auto env = getLastEnv();
+                retval += "(euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ") " + env +")";
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                
+                auto env = getLastEnv();
+                retval += "(classicalVelocityScalarEval (lang.classicalVelocity.ScalarExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ") " + env +")";
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                
+                auto env = getLastEnv();
+                retval += "(classicalTimeScalarEval (lang.classicalTime.ScalarExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ") " + env +")";
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                
+                auto env = getLastEnv();
+                retval += "(classicalGeometryScalarEval (lang.classicalGeometry.ScalarExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ") " + env +")";
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                
+                auto env = getLastEnv();
+                retval += "(euclideanGeometry3ScalarEval (lang.euclideanGeometry3.ScalarExpr.var ";
                 retval += this->operand_1->toString();
                 retval += ") " + env +")";
             }
@@ -2101,7 +3798,7 @@ std::string REF_REAL1_VAR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -2109,7 +3806,7 @@ std::string REF_REAL1_VAR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -2117,15 +3814,23 @@ std::string REF_REAL1_VAR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
@@ -2133,8 +3838,48 @@ std::string REF_REAL1_VAR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
         
     }
 
@@ -2145,36 +3890,78 @@ std::string REF_REAL1_VAR::toAlgebraString() const {
             if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REF_REAL1_VAR*>(this)) ? GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] : GLOBAL_IDS[const_cast<REF_REAL1_VAR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
         
             }
         }
@@ -2230,6 +4017,12 @@ std::string REF_REAL1_VAR::toString() const {
         retval += this->operand_1->toString();
         retval += ")";
     }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        retval += "(EuclideanGeometry3CoordinateVectorExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ")";
+    }
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         retval += "(ClassicalTimeCoordinatePointExpr.var ";
@@ -2239,6 +4032,36 @@ std::string REF_REAL1_VAR::toString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         retval += "(EuclideanGeometryCoordinatePointExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ")";
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        retval += "(EuclideanGeometry3CoordinatePointExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ")";
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        retval += "(ClassicalVelocityScalarExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ")";
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        retval += "(ClassicalTimeScalarExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ")";
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        retval += "(EuclideanGeometryScalarExpr.var ";
+        retval += this->operand_1->toString();
+        retval += ")";
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        retval += "(EuclideanGeometry3ScalarExpr.var ";
         retval += this->operand_1->toString();
         retval += ")";
     }
@@ -2263,6 +4086,12 @@ std::string REF_REAL1_VAR::toString() const {
                 retval += this->operand_1->toString();
                 retval += ")";
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+                retval += "(EuclideanGeometry3CoordinateVectorExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ")";
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
                 retval += "(ClassicalTimeCoordinatePointExpr.var ";
@@ -2272,6 +4101,36 @@ std::string REF_REAL1_VAR::toString() const {
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
                 retval += "(EuclideanGeometryCoordinatePointExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ")";
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                found = true;
+                retval += "(EuclideanGeometry3CoordinatePointExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ")";
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                found = true;
+                retval += "(ClassicalVelocityScalarExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ")";
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                found = true;
+                retval += "(ClassicalTimeScalarExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ")";
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                found = true;
+                retval += "(EuclideanGeometryScalarExpr.var ";
+                retval += this->operand_1->toString();
+                retval += ")";
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                found = true;
+                retval += "(EuclideanGeometry3ScalarExpr.var ";
                 retval += this->operand_1->toString();
                 retval += ")";
             }
@@ -2316,8 +4175,7 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalVelocityCoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -2328,8 +4186,7 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalTimeCoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -2340,10 +4197,20 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
         
     }
@@ -2352,8 +4219,7 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalTimeCoordinatePoint.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -2364,10 +4230,60 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        retval += "(classicalVelocityScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        retval += "(classicalTimeScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        retval += "(classicalGeometryScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        retval += "(euclideanGeometry3Scalar.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
         
     }
@@ -2378,8 +4294,7 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalVelocityCoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -2389,8 +4304,7 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalTimeCoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -2400,10 +4314,19 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
         
             }
@@ -2411,8 +4334,7 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalTimeCoordinatePoint.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
@@ -2422,10 +4344,55 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+        retval += "(classicalVelocityScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+        retval += "(classicalTimeScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+        retval += "(classicalGeometryScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+        retval += "(euclideanGeometry3Scalar.fromalgebra ";
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")";
         
             }
@@ -2469,7 +4436,7 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -2477,7 +4444,7 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -2485,15 +4452,23 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
@@ -2501,8 +4476,48 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
         
     }
 
@@ -2513,36 +4528,78 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const {
             if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
         
             }
         }
@@ -2585,7 +4642,7 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
@@ -2600,7 +4657,7 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
@@ -2615,7 +4672,7 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
@@ -2625,12 +4682,27 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
         
     }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
@@ -2645,13 +4717,84 @@ std::string ADD_REAL1_EXPR_REAL1_EXPR::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
         retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
         retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.classicalVelocity.ScalarExpr.lit \n";
+        retval += "(classicalVelocityScalar.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.classicalTime.ScalarExpr.lit \n";
+        retval += "(classicalTimeScalar.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.classicalGeometry.ScalarExpr.lit \n";
+        retval += "(classicalGeometryScalar.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< ADD_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<ADD_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.euclideanGeometry3.ScalarExpr.lit \n";
+        retval += "(euclideanGeometry3Scalar.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
         
     }
@@ -2700,6 +4843,20 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
         
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
@@ -2726,6 +4883,889 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
         retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.classicalVelocity.ScalarExpr.lit \n";
+        retval += "(classicalVelocityScalar.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.classicalTime.ScalarExpr.lit \n";
+        retval += "(classicalTimeScalar.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.classicalGeometry.ScalarExpr.lit \n";
+        retval += "(classicalGeometryScalar.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.euclideanGeometry3.ScalarExpr.lit \n";
+        retval += "(euclideanGeometry3Scalar.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "+ᵥ" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+        }
+    }
+
+
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
+std::string MUL_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
+                        std::string retval = "";
+                        bool found = false;
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        retval += "(classicalVelocityScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        retval += "(classicalTimeScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        retval += "(classicalGeometryScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        retval += "(euclideanGeometry3Scalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+    }
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+        retval += "(classicalVelocityScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+        retval += "(classicalTimeScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+        retval += "(classicalGeometryScalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+        retval += "(euclideanGeometry3Scalar.fromalgebra ";
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")";
+        
+            }
+        }
+    }
+
+
+    if (!found)
+                                    {
+                                        //ret = "";
+                                        
+    }
+                                    std::replace(retval.begin(), retval.end(), '_', '.');
+                                    std::size_t index;
+                                    string sub_str = ": _";
+                                    string singleperiod = ".a";
+                                    while ((index = retval.find(": .")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find(": ^")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find("..")) != string::npos)
+                                    {
+                                        retval.replace(index, singleperiod.length(), singleperiod);
+                                    }
+
+
+                                    return retval;
+                                }
+                                
+
+std::string MUL_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const {
+                        std::string retval = "";
+                        bool found = false;
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+MUL_REAL1_EXPR_REAL1_EXPR::MUL_REAL1_EXPR_REAL1_EXPR(coords::MUL_REAL1_EXPR_REAL1_EXPR* c, domain::DomainObject* d,interp::REAL1_EXPR * operand1,interp::REAL1_EXPR * operand2 ) : REAL1_EXPR(c,d)
+   ,operand_1(operand1),operand_2(operand2) {}
+
+std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const {
+    bool found = false;
+    std::string retval = "";
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.classicalVelocity.ScalarExpr.lit \n";
+        retval += "(classicalVelocityScalar.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.classicalTime.ScalarExpr.lit \n";
+        retval += "(classicalTimeScalar.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.classicalGeometry.ScalarExpr.lit \n";
+        retval += "(classicalGeometryScalar.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< MUL_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<MUL_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.euclideanGeometry3.ScalarExpr.lit \n";
+        retval += "(euclideanGeometry3Scalar.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+    }
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+        retval += "(classicalVelocityCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+        retval += "(classicalTimeCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+        retval += "(classicalGeometryCoordinateVector.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinateVector.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+        retval += "(classicalTimeCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+        retval += "(classicalGeometryCoordinatePoint.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+        retval += "(euclideanGeometry3CoordinatePoint.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.classicalVelocity.ScalarExpr.lit \n";
+        retval += "(classicalVelocityScalar.fromalgebra ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.classicalTime.ScalarExpr.lit \n";
+        retval += "(classicalTimeScalar.fromalgebra ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.classicalGeometry.ScalarExpr.lit \n";
+        retval += "(classicalGeometryScalar.fromalgebra ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.euclideanGeometry3.ScalarExpr.lit \n";
+        retval += "(euclideanGeometry3Scalar.fromalgebra ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+        retval += std::string("(") + this->operand_1->toAlgebraString() + "•" + this->operand_2->toAlgebraString() + ")))";
         
             }
         }
@@ -2770,7 +5810,7 @@ std::string REAL1_VAR_IDENT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -2778,7 +5818,7 @@ std::string REAL1_VAR_IDENT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -2786,15 +5826,23 @@ std::string REAL1_VAR_IDENT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
@@ -2802,8 +5850,48 @@ std::string REAL1_VAR_IDENT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
         
     }
 
@@ -2814,36 +5902,78 @@ std::string REAL1_VAR_IDENT::toAlgebraString() const {
             if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
         
             }
         }
@@ -2905,6 +6035,14 @@ std::string REAL1_VAR_IDENT::toEvalString() const {
         
     }
 
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3CoordinateVectorEval (lang.euclideanGeometry3.CoordinateVectorExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+    }
+
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
@@ -2918,6 +6056,46 @@ std::string REAL1_VAR_IDENT::toEvalString() const {
         auto env = getLastEnv();
         int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return std::string("(classicalGeometryCoordinatePointEval (lang.classicalGeometry.CoordinatePointExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(classicalVelocityScalarEval (lang.classicalVelocity.ScalarExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(classicalTimeScalarEval (lang.classicalTime.ScalarExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(classicalGeometryScalarEval (lang.classicalGeometry.ScalarExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3ScalarEval (lang.euclideanGeometry3.ScalarExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
         
     }
 
@@ -2946,6 +6124,13 @@ std::string REAL1_VAR_IDENT::toEvalString() const {
         return std::string("(classicalGeometryCoordinateVectorEval (lang.classicalGeometry.CoordinateVectorExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
         
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3CoordinateVectorEval (lang.euclideanGeometry3.CoordinateVectorExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
@@ -2958,6 +6143,41 @@ std::string REAL1_VAR_IDENT::toEvalString() const {
         auto env = getLastEnv();
         int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return std::string("(classicalGeometryCoordinatePointEval (lang.classicalGeometry.CoordinatePointExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(classicalVelocityScalarEval (lang.classicalVelocity.ScalarExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(classicalTimeScalarEval (lang.classicalTime.ScalarExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(classicalGeometryScalarEval (lang.classicalGeometry.ScalarExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL1_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL1_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3ScalarEval (lang.euclideanGeometry3.ScalarExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
         
             }
         }
@@ -3038,7 +6258,7 @@ std::string REAL3_VAR_IDENT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -3046,7 +6266,7 @@ std::string REAL3_VAR_IDENT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -3054,15 +6274,23 @@ std::string REAL3_VAR_IDENT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
@@ -3070,8 +6298,16 @@ std::string REAL3_VAR_IDENT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
 
@@ -3082,36 +6318,50 @@ std::string REAL3_VAR_IDENT::toAlgebraString() const {
             if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
         }
@@ -3173,6 +6423,14 @@ std::string REAL3_VAR_IDENT::toEvalString() const {
         
     }
 
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3CoordinateVectorEval (lang.euclideanGeometry3.CoordinateVectorExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+    }
+
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
@@ -3186,6 +6444,14 @@ std::string REAL3_VAR_IDENT::toEvalString() const {
         auto env = getLastEnv();
         int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return std::string("(classicalGeometryCoordinatePointEval (lang.classicalGeometry.CoordinatePointExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
         
     }
 
@@ -3214,6 +6480,13 @@ std::string REAL3_VAR_IDENT::toEvalString() const {
         return std::string("(classicalGeometryCoordinateVectorEval (lang.classicalGeometry.CoordinateVectorExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
         
             }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3CoordinateVectorEval (lang.euclideanGeometry3.CoordinateVectorExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+            }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
@@ -3226,6 +6499,13 @@ std::string REAL3_VAR_IDENT::toEvalString() const {
         auto env = getLastEnv();
         int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
         return std::string("(classicalGeometryCoordinatePointEval (lang.classicalGeometry.CoordinatePointExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        int id = GLOBAL_IDS.count(const_cast< REAL3_VAR_IDENT*>(this)) ? GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] : GLOBAL_IDS[const_cast<REAL3_VAR_IDENT*>(this)] = (GLOBAL_INDEX += 2); 
+        return std::string("(euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var ") + "⟨⟨" + std::to_string(id) +"⟩⟩) " + getLastEnv() + ")";
         
             }
         }
@@ -3317,9 +6597,10 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalVelocityCoordinateVector.build ";
         retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3334,9 +6615,10 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinateVector.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3351,12 +6633,31 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinateVector.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 3; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -3368,9 +6669,10 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinatePoint.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3385,12 +6687,31 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinatePoint.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 3; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -3404,9 +6725,10 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalVelocityCoordinateVector.build ";
         retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3420,9 +6742,10 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinateVector.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3436,12 +6759,30 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinateVector.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 3; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -3452,9 +6793,10 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinatePoint.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3468,12 +6810,30 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinatePoint.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 3; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -3520,7 +6880,7 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const 
     if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -3528,7 +6888,7 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -3536,15 +6896,23 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const 
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
@@ -3552,8 +6920,16 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const 
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
 
@@ -3564,36 +6940,50 @@ std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const 
             if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
         }
@@ -3631,6 +7021,272 @@ REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL
 std::string REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
     bool found = false;
     std::string retval = "";
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n"; 
+        
+        retval += "(classicalVelocityCoordinateVector.build ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n"; 
+        
+        retval += "(classicalTimeCoordinateVector.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n"; 
+        
+        retval += "(classicalGeometryCoordinateVector.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n"; 
+        
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinatePointExpr.lit \n"; 
+        
+        retval += "(classicalTimeCoordinatePoint.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n"; 
+        
+        retval += "(classicalGeometryCoordinatePoint.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] : GLOBAL_IDS[const_cast<REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n"; 
+        
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+                
+        retval += "(classicalVelocityCoordinateVector.build ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+                
+        retval += "(classicalTimeCoordinateVector.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+                
+        retval += "(classicalGeometryCoordinateVector.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+                
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+                
+        retval += "(classicalTimeCoordinatePoint.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+                
+        retval += "(classicalGeometryCoordinatePoint.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+                
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+        }
+    }
+
+
     //    }
     //}
 
@@ -3668,9 +7324,10 @@ std::string REAL3_EMPTY::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalVelocityCoordinateVector.build ";
         retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3685,9 +7342,10 @@ std::string REAL3_EMPTY::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinateVector.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3702,12 +7360,31 @@ std::string REAL3_EMPTY::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinateVector.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 3; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -3719,9 +7396,10 @@ std::string REAL3_EMPTY::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinatePoint.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3736,12 +7414,31 @@ std::string REAL3_EMPTY::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinatePoint.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 3; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -3755,9 +7452,10 @@ std::string REAL3_EMPTY::toEvalString() const {
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalVelocityCoordinateVector.build ";
         retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3771,9 +7469,10 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinateVector.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3787,12 +7486,30 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinateVector.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 3; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -3803,9 +7520,10 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinatePoint.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -3819,12 +7537,30 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinatePoint.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 3; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -3871,7 +7607,7 @@ std::string REAL3_EMPTY::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -3879,7 +7615,7 @@ std::string REAL3_EMPTY::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -3887,15 +7623,23 @@ std::string REAL3_EMPTY::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
@@ -3903,8 +7647,16 @@ std::string REAL3_EMPTY::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
 
@@ -3915,36 +7667,50 @@ std::string REAL3_EMPTY::toAlgebraString() const {
             if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
         }
@@ -3982,6 +7748,272 @@ REAL3_EMPTY::REAL3_EMPTY(coords::REAL3_EMPTY* c, domain::DomainObject* d ) : REA
 std::string REAL3_EMPTY::toString() const {
     bool found = false;
     std::string retval = "";
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n"; 
+        
+        retval += "(classicalVelocityCoordinateVector.build ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n"; 
+        
+        retval += "(classicalTimeCoordinateVector.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n"; 
+        
+        retval += "(classicalGeometryCoordinateVector.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n"; 
+        
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalTime.CoordinatePointExpr.lit \n"; 
+        
+        retval += "(classicalTimeCoordinatePoint.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n"; 
+        
+        retval += "(classicalGeometryCoordinatePoint.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL3_EMPTY*>(this)) ? GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] : GLOBAL_IDS[const_cast<REAL3_EMPTY*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n"; 
+        
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+    }
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+                
+        retval += "(classicalVelocityCoordinateVector.build ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+                
+        retval += "(classicalTimeCoordinateVector.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+                
+        retval += "(classicalGeometryCoordinateVector.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+                
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+                
+        retval += "(classicalTimeCoordinatePoint.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+                
+        retval += "(classicalGeometryCoordinatePoint.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,3>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL3_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL3_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+                
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 3; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 3)))";
+        
+            }
+        }
+    }
+
+
     //    }
     //}
 
@@ -4031,9 +8063,10 @@ std::string REAL1_LIT::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalVelocityCoordinateVector.build ";
         retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4048,9 +8081,10 @@ std::string REAL1_LIT::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinateVector.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4065,12 +8099,31 @@ std::string REAL1_LIT::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinateVector.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 1; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -4082,9 +8135,10 @@ std::string REAL1_LIT::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinatePoint.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4099,12 +8153,99 @@ std::string REAL1_LIT::toEvalString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-        auto interpFr = i2d_->getFrame(dc->getFrame());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinatePoint.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+
+
+        retval += "(classicalVelocityScalar.build ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+
+
+        retval += "(classicalTimeScalar.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+
+
+        retval += "(classicalGeometryScalar.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+
+
+        retval += "(euclideanGeometry3Scalar.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
             retval += "(⟨[]";
         for (auto i = 0; i < 1; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -4118,9 +8259,10 @@ std::string REAL1_LIT::toEvalString() const {
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalVelocityCoordinateVector.build ";
         retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4134,9 +8276,10 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinateVector.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4150,12 +8293,30 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinateVector.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 1; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -4166,9 +8327,10 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalTimeCoordinatePoint.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4182,12 +8344,94 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 //auto env = getEnvName();
                 //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
                 auto interpSp = i2d_->getSpace(dc->getSpace());
-                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
-                auto interpFr = i2d_->getFrame(dc->getFrame());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
         retval += "(classicalGeometryCoordinatePoint.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+
+
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+
+
+        retval += "(classicalVelocityScalar.build ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+
+
+        retval += "(classicalTimeScalar.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+
+
+        retval += "(classicalGeometryScalar.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);  
+
+
+        retval += "(euclideanGeometry3Scalar.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
             retval += "(⟨[]";
         for (auto i = 0; i < 1; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -4234,7 +8478,7 @@ std::string REAL1_LIT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -4242,7 +8486,7 @@ std::string REAL1_LIT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
@@ -4250,15 +8494,23 @@ std::string REAL1_LIT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
     }
 
     if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
     }
@@ -4266,8 +8518,48 @@ std::string REAL1_LIT::toAlgebraString() const {
     if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(this->dom_)){
         found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+    }
+
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
         
     }
 
@@ -4278,36 +8570,78 @@ std::string REAL1_LIT::toAlgebraString() const {
             if(auto dc = dynamic_cast<domain::ClassicalVelocityCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalVelocityCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinateVector<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinateVectorAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinateVectorAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::ClassicalTimeCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalTimeCoordinatePointAlgebra " + this->toEvalString() + ")";
         
             }
             if(auto dc = dynamic_cast<domain::EuclideanGeometryCoordinatePoint<float,1>*>(cont->getValue())){
                 found = true;
         auto env = getLastEnv();
-        int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         return "(classicalGeometryCoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3CoordinatePointAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalVelocityScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalTimeScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(classicalGeometryScalarAlgebra " + this->toEvalString() + ")";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                found = true;
+        auto env = getLastEnv();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        return "(euclideanGeometry3ScalarAlgebra " + this->toEvalString() + ")";
         
             }
         }
@@ -4350,10 +8684,11 @@ std::string REAL1_LIT::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
-        retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+        retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n"; 
+        
         retval += "(classicalVelocityCoordinateVector.build ";
         retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4368,10 +8703,11 @@ std::string REAL1_LIT::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
-        retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+        retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n"; 
+        
         retval += "(classicalTimeCoordinateVector.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4386,13 +8722,33 @@ std::string REAL1_LIT::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
-        retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+        retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n"; 
+        
         retval += "(classicalGeometryCoordinateVector.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n"; 
+        
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 1; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -4404,10 +8760,11 @@ std::string REAL1_LIT::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
-        retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+        retval += " (lang.classicalTime.CoordinatePointExpr.lit \n"; 
+        
         retval += "(classicalTimeCoordinatePoint.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4422,13 +8779,105 @@ std::string REAL1_LIT::toString() const {
         //auto env = getEnvName();
         //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
         auto interpSp = i2d_->getSpace(dc->getSpace());
-        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
         auto interpFr = i2d_->getFrame(dc->getFrame());
 		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
-        retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+        retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n"; 
+        
         retval += "(classicalGeometryCoordinatePoint.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        auto interpFr = i2d_->getFrame(dc->getFrame());
+		int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+        retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n"; 
+        
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.classicalVelocity.ScalarExpr.lit \n"; 
+        
+        retval += "(classicalVelocityScalar.build ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.classicalTime.ScalarExpr.lit \n"; 
+        
+        retval += "(classicalTimeScalar.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.classicalGeometry.ScalarExpr.lit \n"; 
+        
+        retval += "(classicalGeometryScalar.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+    }
+    if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(this->dom_)){
+        found = true;
+        //auto env = getEnvName();
+        //int id = GLOBAL_IDS.count(const_cast< REAL1_LIT*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] : GLOBAL_IDS[const_cast<REAL1_LIT*>(this)] = (GLOBAL_INDEX += 2); 
+        auto interpSp = i2d_->getSpace(dc->getSpace());
+        int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2);
+        
+        retval += " (lang.euclideanGeometry3.ScalarExpr.lit \n"; 
+        
+        retval += "(euclideanGeometry3Scalar.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
             retval += "(⟨[]";
         for (auto i = 0; i < 1; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -4446,6 +8895,7 @@ std::string REAL1_LIT::toString() const {
                 auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
                 retval += " (lang.classicalVelocity.CoordinateVectorExpr.lit \n";
+                
         retval += "(classicalVelocityCoordinateVector.build ";
         retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalVelocityFrameEval ") + "(lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4463,6 +8913,7 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
                 retval += " (lang.classicalTime.CoordinateVectorExpr.lit \n";
+                
         retval += "(classicalTimeCoordinateVector.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4480,9 +8931,28 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
                 retval += " (lang.classicalGeometry.CoordinateVectorExpr.lit \n";
+                
         retval += "(classicalGeometryCoordinateVector.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinateVector<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinateVectorExpr.lit \n";
+                
+        retval += "(euclideanGeometry3CoordinateVector.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
             retval += "(⟨[]";
         for (auto i = 0; i < 1; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
@@ -4497,6 +8967,7 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
                 retval += " (lang.classicalTime.CoordinatePointExpr.lit \n";
+                
         retval += "(classicalTimeCoordinatePoint.build ";
         retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalTimeFrameEval ") + "(lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
@@ -4514,9 +8985,96 @@ int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast
                 auto interpFr = i2d_->getFrame(dc->getFrame());
 int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
                 retval += " (lang.classicalGeometry.CoordinatePointExpr.lit \n";
+                
         retval += "(classicalGeometryCoordinatePoint.build ";
         retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
         retval += std::string("(classicalGeometryFrameEval ") + "(lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3CoordinatePoint<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                auto interpFr = i2d_->getFrame(dc->getFrame());
+int fid = GLOBAL_IDS.count(const_cast<Frame*>(interpFr)) ? GLOBAL_IDS[const_cast<Frame*>(interpFr)] : GLOBAL_IDS[const_cast<Frame*>(interpFr)] = (GLOBAL_INDEX += 2);
+                retval += " (lang.euclideanGeometry3.CoordinatePointExpr.lit \n";
+                
+        retval += "(euclideanGeometry3CoordinatePoint.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        retval += std::string("(euclideanGeometry3FrameEval ") + "(lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) + "⟩⟩) " + getLastEnv() + ")\n"; 
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalVelocityScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.classicalVelocity.ScalarExpr.lit \n";
+                
+        retval += "(classicalVelocityScalar.build ";
+        retval += std::string("(classicalVelocityEval ") + "(lang.classicalVelocity.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::ClassicalTimeScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.classicalTime.ScalarExpr.lit \n";
+                
+        retval += "(classicalTimeScalar.build ";
+        retval += std::string("(classicalTimeEval ") + "(lang.classicalTime.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometryScalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.classicalGeometry.ScalarExpr.lit \n";
+                
+        retval += "(classicalGeometryScalar.build ";
+        retval += std::string("(classicalGeometryEval ") + "(lang.classicalGeometry.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
+            retval += "(⟨[]";
+        for (auto i = 0; i < 1; i++)
+            retval += "++[" + std::to_string(*dc->getValue(i)) + "]";
+        retval += "\n\t\t,by refl⟩ : vector ℝ 1)))";
+        
+            }
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3Scalar<float,1>*>(cont->getValue())){
+                //auto env = getEnvName();
+                //int id = GLOBAL_IDS.count(const_cast< REAL1_LITERAL*>(this)) ? GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] : GLOBAL_IDS[const_cast<REAL1_LITERAL*>(this)] = (GLOBAL_INDEX += 2); 
+                auto interpSp = i2d_->getSpace(dc->getSpace());
+                int sid = GLOBAL_IDS.count(const_cast<Space*>(interpSp)) ? GLOBAL_IDS[const_cast<Space*>(interpSp)] : GLOBAL_IDS[const_cast<Space*>(interpSp)] = (GLOBAL_INDEX += 2); 
+                
+                retval += " (lang.euclideanGeometry3.ScalarExpr.lit \n";
+                
+        retval += "(euclideanGeometry3Scalar.build ";
+        retval += std::string("(euclideanGeometry3Eval ") + "(lang.euclideanGeometry3.spaceExpr.var ⟨⟨" + std::to_string(sid) + "⟩⟩) " + getLastEnv() + ")\n";
+        
             retval += "(⟨[]";
         for (auto i = 0; i < 1; i++)
             retval += "++[" + std::to_string(*dc->getValue(i)) + "]";

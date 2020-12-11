@@ -117,6 +117,12 @@ Frame* Domain::mkFrame(std::string name, Space* space, Frame* parent){
             return child;
         }
     }
+	if(auto dc = dynamic_cast<domain::EuclideanGeometry3*>(space)){
+            if(auto df = dynamic_cast<domain::EuclideanGeometry3Frame*>(parent)){
+            auto child = this->mkEuclideanGeometry3Frame(name, dc, df);
+            return child;
+        }
+    }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(space)){
             if(auto df = dynamic_cast<domain::ClassicalVelocityFrame*>(parent)){
             auto child = this->mkClassicalVelocityFrame(name, dc, df);
@@ -231,6 +237,40 @@ ClassicalTimeDerivedFrame* Domain::mkClassicalTimeDerivedFrame(std::string name,
     ((Space*)this)->addFrame(frame);
 }*/
 void ClassicalTime::addFrame(ClassicalTimeFrame* frame){
+    ((Space*)this)->addFrame(frame);
+}
+
+EuclideanGeometry3* Domain::mkEuclideanGeometry3(std::string key,std::string name_){
+        EuclideanGeometry3* s = new EuclideanGeometry3(name_);
+        //s->addFrame(new domain::EuclideanGeometry3Frame("Standard", s, nullptr));
+        s->addFrame(new domain::EuclideanGeometry3StandardFrame(s));
+        this->EuclideanGeometry3_vec.push_back(s);
+        this->Space_vec.push_back(s);
+        this->Space_map[key] = s;
+    
+        return s;
+    };
+
+//std::vector<EuclideanGeometry3*> &Domain::getEuclideanGeometry3Spaces() { return EuclideanGeometry3_vec; }
+
+EuclideanGeometry3AliasedFrame* Domain::mkEuclideanGeometry3AliasedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* parent, domain::MeasurementSystem* ms){
+    EuclideanGeometry3AliasedFrame* child = new domain::EuclideanGeometry3AliasedFrame(name, space, parent,ms);
+    space->addFrame(child);
+    return child;
+}
+            
+
+EuclideanGeometry3DerivedFrame* Domain::mkEuclideanGeometry3DerivedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* parent){
+    EuclideanGeometry3DerivedFrame* child = new domain::EuclideanGeometry3DerivedFrame(name, space, parent);
+    space->addFrame(child);
+    return child;
+}
+            
+
+/*void EuclideanGeometry3::addFrame(EuclideanGeometry3Frame* frame){
+    ((Space*)this)->addFrame(frame);
+}*/
+void EuclideanGeometry3::addFrame(EuclideanGeometry3Frame* frame){
     ((Space*)this)->addFrame(frame);
 }
 

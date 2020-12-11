@@ -453,6 +453,50 @@ void Interpretation::mkADD_REAL3_EXPR_REAL3_EXPR(const ast::ADD_REAL3_EXPR_REAL3
 
 } 
 
+void Interpretation::mkLMUL_REAL1_EXPR_REAL3_EXPR(const ast::LMUL_REAL1_EXPR_REAL3_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL3_EXPR* operand2,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL3_EXPR* operand2_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::LMUL_REAL1_EXPR_REAL3_EXPR* coords = ast2coords_->mkLMUL_REAL1_EXPR_REAL3_EXPR(ast, context_ ,operand1_coords,operand2_coords,value0,value1,value2);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL3_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putLMUL_REAL1_EXPR_REAL3_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);;
+	interp::REAL3_EXPR* operand2_interp = coords2interp_->getREAL3_EXPR(operand2_coords);
+
+    interp::LMUL_REAL1_EXPR_REAL3_EXPR* interp = new interp::LMUL_REAL1_EXPR_REAL3_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putLMUL_REAL1_EXPR_REAL3_EXPR(coords, interp);
+    interp2domain_->putLMUL_REAL1_EXPR_REAL3_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkRMUL_REAL3_EXPR_REAL1_EXPR(const ast::RMUL_REAL3_EXPR_REAL1_EXPR * ast ,ast::REAL3_EXPR* operand1,ast::REAL1_EXPR* operand2,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) {
+
+	coords::REAL3_EXPR* operand1_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::RMUL_REAL3_EXPR_REAL1_EXPR* coords = ast2coords_->mkRMUL_REAL3_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords,value0,value1,value2);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL3_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putRMUL_REAL3_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL3_EXPR* operand1_interp = coords2interp_->getREAL3_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::RMUL_REAL3_EXPR_REAL1_EXPR* interp = new interp::RMUL_REAL3_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putRMUL_REAL3_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putRMUL_REAL3_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
 
  std::string Interpretation::toString_REAL3_EXPRs(){ 
     std::vector<interp::REAL3_EXPR*> interps;
@@ -533,6 +577,28 @@ void Interpretation::mkADD_REAL1_EXPR_REAL1_EXPR(const ast::ADD_REAL1_EXPR_REAL1
     interp::ADD_REAL1_EXPR_REAL1_EXPR* interp = new interp::ADD_REAL1_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
     coords2interp_->putADD_REAL1_EXPR_REAL1_EXPR(coords, interp);
     interp2domain_->putADD_REAL1_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL1_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkMUL_REAL1_EXPR_REAL1_EXPR(const ast::MUL_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,std::shared_ptr<float> value0) {
+
+	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL1_EXPR* operand2_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::MUL_REAL1_EXPR_REAL1_EXPR* coords = ast2coords_->mkMUL_REAL1_EXPR_REAL1_EXPR(ast, context_ ,operand1_coords,operand2_coords,value0);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREAL1_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL1_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putMUL_REAL1_EXPR_REAL1_EXPR(coords, dom);
+
+	interp::REAL1_EXPR* operand1_interp = coords2interp_->getREAL1_EXPR(operand1_coords);;
+	interp::REAL1_EXPR* operand2_interp = coords2interp_->getREAL1_EXPR(operand2_coords);
+
+    interp::MUL_REAL1_EXPR_REAL1_EXPR* interp = new interp::MUL_REAL1_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putMUL_REAL1_EXPR_REAL1_EXPR(coords, interp);
+    interp2domain_->putMUL_REAL1_EXPR_REAL1_EXPR(interp, dom); 
 	this->REAL1_EXPR_vec.push_back(coords);
 
 } 
@@ -714,6 +780,13 @@ std::string Interpretation::toString_Spaces() {
         retval.append("\n" + (sp->toString()) + "\n");
     }
             
+	auto EuclideanGeometry3s = domain_->getEuclideanGeometry3Spaces();
+    for (auto it = EuclideanGeometry3s.begin(); it != EuclideanGeometry3s.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        retval.append("\n" + (sp->toString()) + "\n");
+    }
+            
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
     for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
     {
@@ -737,6 +810,13 @@ std::vector<interp::Space*> Interpretation::getSpaceInterps() {
             
 	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
     for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        interps.push_back(sp);
+    }
+            
+	auto EuclideanGeometry3s = domain_->getEuclideanGeometry3Spaces();
+    for (auto it = EuclideanGeometry3s.begin(); it != EuclideanGeometry3s.end(); it++)
     {
         auto sp = interp2domain_->getSpace(*it);
         interps.push_back(sp);
@@ -776,6 +856,13 @@ std::vector<std::string> Interpretation::getSpaceNames() {
             
 	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
     for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+    {
+        //auto sp = interp2domain_->getSpace(*it);
+        names.push_back((*it)->getName());
+    }
+            
+	auto EuclideanGeometry3s = domain_->getEuclideanGeometry3Spaces();
+    for (auto it = EuclideanGeometry3s.begin(); it != EuclideanGeometry3s.end(); it++)
     {
         //auto sp = interp2domain_->getSpace(*it);
         names.push_back((*it)->getName());
@@ -839,6 +926,28 @@ std::vector<interp::Frame*> Interpretation::getFrameInterps() {
                 interps.push_back(intfr);
             }*/
             if(auto dc = dynamic_cast<domain::ClassicalTimeStandardFrame*>(fr)){
+                
+            }
+            else{
+                auto intfr = interp2domain_->getFrame(fr);
+                interps.push_back(intfr);
+                
+            }
+            
+        }
+    }
+            
+	auto EuclideanGeometry3s = domain_->getEuclideanGeometry3Spaces();
+    for (auto it = EuclideanGeometry3s.begin(); it != EuclideanGeometry3s.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            /*if(auto dc = dynamic_cast<domain::EuclideanGeometry3AliasedFrame*>(fr)){
+                auto intfr = interp2domain_->getFrame(fr);
+                interps.push_back(intfr);
+            }*/
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3StandardFrame*>(fr)){
                 
             }
             else{
@@ -921,6 +1030,27 @@ std::vector<std::string> Interpretation::getFrameNames() {
         }
     }
             
+	auto EuclideanGeometry3s = domain_->getEuclideanGeometry3Spaces();
+    for (auto it = EuclideanGeometry3s.begin(); it != EuclideanGeometry3s.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            //if(auto dc = dynamic_cast<domain::EuclideanGeometry3AliasedFrame*>(fr)){
+            //if(!(domain::StandardFrame*)fr){
+                names.push_back((*it)->getName()+"."+fr->getName());
+            //}
+            //}
+            
+            if(auto dc = dynamic_cast<domain::EuclideanGeometry3StandardFrame*>(fr)){
+                
+            }
+            else{
+                names.push_back((*it)->getName()+"."+fr->getName());
+            }
+        }
+    }
+            
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
     for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
     {
@@ -959,7 +1089,7 @@ void Interpretation::buildDefaultSpaces(){
 void Interpretation::buildSpace(){
     int index = 0;
     int choice = 0;
-    int size = 3;
+    int size = 4;
     if (size == 0){
         std::cout<<"Warning: No Available Spaces to Build";
         return;
@@ -968,6 +1098,7 @@ void Interpretation::buildSpace(){
         std::cout<<"Available types of Spaces to build:\n";
         std::cout <<"("<<std::to_string(++index)<<")"<<"EuclideanGeometry\n";
 		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalTime\n";
+		std::cout <<"("<<std::to_string(++index)<<")"<<"EuclideanGeometry3\n";
 		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalVelocity\n";
         std::cin>>choice;
     }
@@ -1009,6 +1140,21 @@ void Interpretation::buildSpace(){
 	
         if(choice==++index){
             std::string name;
+            std::cout<<"Enter Name (string):\n";
+            std::cin>>name;
+            
+            auto sp = this->domain_->mkEuclideanGeometry3(name, name);
+            auto isp = new interp::Space(sp);
+            interp2domain_->putSpace(isp, sp);
+            auto standard_framesp = sp->getFrames()[0];
+            auto interp_framesp = new interp::Frame(standard_framesp, isp);
+            interp2domain_->putFrame(interp_framesp, sp->getFrames()[0]);
+        }
+
+    
+	
+        if(choice==++index){
+            std::string name;
             domain::Space *base1,*base2;
             std::cout<<"Enter Name (string):\n";
             std::cin>>name;
@@ -1023,6 +1169,12 @@ void Interpretation::buildSpace(){
             }
 	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
             for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+            {
+                std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+                index_to_sp[index] = *it;
+            }
+	auto EuclideanGeometry3s = domain_->getEuclideanGeometry3Spaces();
+            for (auto it = EuclideanGeometry3s.begin(); it != EuclideanGeometry3s.end(); it++)
             {
                 std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
                 index_to_sp[index] = *it;
@@ -1125,6 +1277,12 @@ void Interpretation::buildFrame(){
             std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
             index_to_sp[index] = *it;
         }
+	auto EuclideanGeometry3s = domain_->getEuclideanGeometry3Spaces();
+        for (auto it = EuclideanGeometry3s.begin(); it != EuclideanGeometry3s.end(); it++)
+        {
+            std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+            index_to_sp[index] = *it;
+        }
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
         for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
         {
@@ -1196,6 +1354,15 @@ void Interpretation::buildFrame(){
                             interp2domain_->putFrame(interp, child);
                             return;
                         }
+                        if(auto dc = dynamic_cast<domain::EuclideanGeometry3*>(chosen)){
+
+                            auto child = (domain::EuclideanGeometry3Frame*)domain_->mkEuclideanGeometry3AliasedFrame(name, dc, (domain::EuclideanGeometry3Frame*)aliased,cms);
+                            auto isp = interp2domain_->getSpace(dc);
+                            auto ims = interp2domain_->getMeasurementSystem(cms);
+                            interp::Frame* interp = new interp::Frame(child, isp, ims);
+                            interp2domain_->putFrame(interp, child);
+                            return;
+                        }
                         if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(chosen)){
 
                             auto child = (domain::ClassicalVelocityFrame*)domain_->mkClassicalVelocityAliasedFrame(name, dc, (domain::ClassicalVelocityFrame*)aliased,cms);
@@ -1243,6 +1410,14 @@ void Interpretation::buildFrame(){
                             interp2domain_->putFrame(interp, child);
                             return;
                         }
+                        if(auto dc = dynamic_cast<domain::EuclideanGeometry3*>(chosen)){
+
+                            auto child = (domain::EuclideanGeometry3Frame*)domain_->mkEuclideanGeometry3DerivedFrame(name, dc, (domain::EuclideanGeometry3Frame*)parent);
+                            auto isp = interp2domain_->getSpace(dc);
+                            interp::Frame* interp = new interp::Frame(child,isp);
+                            interp2domain_->putFrame(interp, child);
+                            return;
+                        }
                         if(auto dc = dynamic_cast<domain::ClassicalVelocity*>(chosen)){
 
                             auto child = (domain::ClassicalVelocityFrame*)domain_->mkClassicalVelocityDerivedFrame(name, dc, (domain::ClassicalVelocityFrame*)parent);
@@ -1273,6 +1448,11 @@ void Interpretation::printSpaces(){
     {
         std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
     }
+	auto EuclideanGeometry3s = domain_->getEuclideanGeometry3Spaces();
+    for (auto it = EuclideanGeometry3s.begin(); it != EuclideanGeometry3s.end(); it++)
+    {
+        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+    }
 	auto ClassicalVelocitys = domain_->getClassicalVelocitySpaces();
     for (auto it = ClassicalVelocitys.begin(); it != ClassicalVelocitys.end(); it++)
     {
@@ -1295,6 +1475,16 @@ void Interpretation::printFrames(){
     }
 	auto ClassicalTimes = domain_->getClassicalTimeSpaces();
     for (auto it = ClassicalTimes.begin(); it != ClassicalTimes.end(); it++)
+    {
+        std::cout<<"Printing Frames For : " + (*it)->toString() + "\n";
+        auto frs = (*it)->getFrames();
+        index = 0;
+        for(auto fr : frs){
+            std::cout<<"("<<std::to_string(++index)<<")"<<fr->toString() + "\n";
+        }
+    }
+	auto EuclideanGeometry3s = domain_->getEuclideanGeometry3Spaces();
+    for (auto it = EuclideanGeometry3s.begin(); it != EuclideanGeometry3s.end(); it++)
     {
         std::cout<<"Printing Frames For : " + (*it)->toString() + "\n";
         auto frs = (*it)->getFrames();
@@ -1386,6 +1576,18 @@ void Interpretation::printVarTable(){
 
     }
 
+    else if(auto dc = dynamic_cast<coords::LMUL_REAL1_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getLMUL_REAL1_EXPR_REAL3_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::RMUL_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getRMUL_REAL3_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
     else if(auto dc = dynamic_cast<coords::LREF_REAL3_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getLREF_REAL3_VAR(dc);
         std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
@@ -1401,6 +1603,12 @@ void Interpretation::printVarTable(){
     else if(auto dc = dynamic_cast<coords::ADD_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getADD_REAL1_EXPR_REAL1_EXPR(dc);
         std::cout<<"Index: "<<i<<","<<"Addition Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::MUL_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
@@ -1534,6 +1742,40 @@ void Interpretation::updateVarTable(){
                     }
                 }
 
+                else if(auto dc = dynamic_cast<coords::LMUL_REAL1_EXPR_REAL3_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getLMUL_REAL1_EXPR_REAL3_EXPR(dc);
+                    auto interp = this->coords2interp_->getLMUL_REAL1_EXPR_REAL3_EXPR(dc);
+                    //this->coords2dom_->eraseLMUL_REAL1_EXPR_REAL3_EXPR(dc, dom);
+                    //this->interp2domain_->eraseLMUL_REAL1_EXPR_REAL3_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseLMUL_REAL1_EXPR_REAL3_EXPR(dc, dom);
+                        //this->interp2domain_->eraseLMUL_REAL1_EXPR_REAL3_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putLMUL_REAL1_EXPR_REAL3_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putLMUL_REAL1_EXPR_REAL3_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::RMUL_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getRMUL_REAL3_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getRMUL_REAL3_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseRMUL_REAL3_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseRMUL_REAL3_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseRMUL_REAL3_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseRMUL_REAL3_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putRMUL_REAL3_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putRMUL_REAL3_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
                 else if(auto dc = dynamic_cast<coords::LREF_REAL3_VAR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getLREF_REAL3_VAR(dc);
                     auto interp = this->coords2interp_->getLREF_REAL3_VAR(dc);
@@ -1581,6 +1823,23 @@ void Interpretation::updateVarTable(){
                         ((domain::DomainContainer*)dom)->setValue(upd_dom);
                         //this->coords2dom_->putADD_REAL1_EXPR_REAL1_EXPR(dc, upd_dom);
                         //this->interp2domain_->putADD_REAL1_EXPR_REAL1_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::MUL_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
+                    auto interp = this->coords2interp_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
+                    //this->coords2dom_->eraseMUL_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                    //this->interp2domain_->eraseMUL_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseMUL_REAL1_EXPR_REAL1_EXPR(dc, dom);
+                        //this->interp2domain_->eraseMUL_REAL1_EXPR_REAL1_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putMUL_REAL1_EXPR_REAL1_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putMUL_REAL1_EXPR_REAL1_EXPR(interp, upd_dom);
                         //delete dom;
                     }
                 }
