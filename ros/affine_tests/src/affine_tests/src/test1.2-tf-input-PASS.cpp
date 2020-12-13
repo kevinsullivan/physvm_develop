@@ -50,19 +50,21 @@ int main(int argc, char **argv){
     //2 si = SI()
     //3 : timeFrame = worldTime.stdFrame() with si
     //4 : timePoint = ClassicalTimePoint(worldTime,stdFrame,<5>)
-    ros::Time timePoint = ros::Time(5);
+    tf::Point geomPoint = tf::Point(1,1,1);
+    
     //5 : timeVec = ClassicalTimeVector(worldTime,stdFrame,<10>)
-    ros::Duration timeVec = ros::Duration(5);
-    ros::Duration dsum = timeVec + timeVec;
+    
+    tf::Vector3 geomVec = tf::Vector3(2,2,2);
+    tf::Vector3 vec_sum = geomVec+ geomVec;
 
-    ros::Time timead = timePoint + timeVec;
+    tf::Point geom_add = geomPoint + geomVec;
 
-    ros::Duration pretend_this_is_a_point = timeVec + timeVec;
+    tf::Point this_is_bad = geomPoint + geomPoint;
 
     double scalar = 1;
 
-    ros::Duration scaleVec = timeVec*scalar;
-
+    tf::Vector3 scaleVec = geomVec*scalar;
+    
     //ros::Time ptPlusVec = timePoint + timeVec;
     //ros::Time ptPlusPt = timePoint + timePoint;
 }

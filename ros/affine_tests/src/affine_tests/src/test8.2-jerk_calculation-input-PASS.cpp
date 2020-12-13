@@ -45,6 +45,8 @@ int main(int argc, char **argv){
     //7 : @@ClassicalVelocity3Basis stdWorldVelocity = worldVelocity.stdBasis with si
     //8 : @@ClassicalAcceleration3 worldAcceleration = ClassicalAcceleration()
     //9 : @@ClassicalAcceleration3Frame stdWorldAcceleration = worldAcceleration.stdBasis with si
+    //10 : @@ClassicalAcceleration3 worldJerk = ClassicalJerk()
+    //11 : @@ClassicalAcceleration3Frame stdWorldJerk = worldJerk.stdBasis with si
 
 
     //8 : @@ClassicalTimePoint then = ClassicalTimePoint()
@@ -69,4 +71,7 @@ int main(int argc, char **argv){
 
     //14 : @@ClassicalAcceleration3Vector disp_per_second_squared = ClassicalAcceleration3Vector(worldAcceleration,<UNK>,disp_per_second_squared)
     tf::Vector3 disp_per_second_squared = disp_per_second/as_qt
+
+    //15 : @@ClassicalJerk3Vector disp_per_second_squared = ClassicalAcceleration3Vector(worldAcceleration,<UNK>,disp_per_second_squared)
+    tf::Vector3 disp_per_second_cubed = disp_per_second/as_qt
 }

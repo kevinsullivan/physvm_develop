@@ -123,13 +123,13 @@ int main(int argc, char **argv){
 
     @@EuclideanGeometry geometry(dimensions=3);
 
-    abbreviation geometry_3.vec := aff_vec real 3
-    abbreviation geometry_3.pt := aff_pt real 3
+    abbreviation geometry_3.vec := aff_vec_coord_tuple real 3
+    abbreviation geometry_3.pt := aff_pt_coord_tuple real 3
 
     geometry_3.vec
     geometry_3.pt
 
-    def test_pt : aff_pt real 3 := <[1.1, -2.4, 3], sorry, sorry>
+    def test_pt : aff_pt_coord_tuple real 3 := <[1.1, -2.4, 3], sorry, sorry>
     //def test_pt.loc : string := "Scott Stadium"
     
     def frame := (origin = test_pt, origin_name = "Scott Stadium" )
