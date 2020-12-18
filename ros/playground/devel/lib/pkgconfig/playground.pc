@@ -1,0 +1,8 @@
+prefix=/peirce/ros/playground/devel
+
+Name: playground
+Description: Description of playground
+Version: 1.1.1
+Cflags: -I/peirce/ros/playground/src/playground/include
+Libs: -L${prefix}/lib 
+Requires: 

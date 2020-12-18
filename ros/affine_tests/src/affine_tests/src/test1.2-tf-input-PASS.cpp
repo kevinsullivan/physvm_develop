@@ -55,7 +55,8 @@ int main(int argc, char **argv){
     //5 : timeVec = ClassicalTimeVector(worldTime,stdFrame,<10>)
     
     tf::Vector3 geomVec = tf::Vector3(2,2,2);
-    tf::Vector3 vec_sum = geomVec+ geomVec;
+    tf::Vector3 geomVec2 = tf::Vector3(2,2,2);
+    tf::Vector3 vec_sum = geomVec + geomVec2;
 
     tf::Point geom_add = geomPoint + geomVec;
 
@@ -63,7 +64,7 @@ int main(int argc, char **argv){
 
     double scalar = 1;
 
-    tf::Vector3 scaleVec = geomVec*scalar;
+    tf::Vector3 scaleVec = geomVec*scalar; // -> scalar*vector
     
     //ros::Time ptPlusVec = timePoint + timeVec;
     //ros::Time ptPlusPt = timePoint + timePoint;

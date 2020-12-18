@@ -46,24 +46,13 @@ int main(int argc, char **argv){
     ros::NodeHandle node;  
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
 
-    //1 : worldTime = ClassicalTime()
-    //2 si = SI()
-    //3 : timeFrame = worldTime.stdFrame() with si
-    //4 : timePoint = ClassicalTimePoint(worldTime,stdFrame,<5>)
-    ros::Time timePoint = ros::Time(5);
-    //5 : timeVec = ClassicalTimeVector(worldTime,stdFrame,<10>)
-    ros::Duration timeVec = ros::Duration(5);
-    ros::Duration dsum = timeVec + timeVec;
+    //add in two different frames
 
-    ros::Time timead = timePoint + timeVec;
+    //create two vectors in different frames
+    tf::Vector3 vec1 = tf::Vector3(1,1,1);
+    tf::Vector3 vec2 = tf::Vector3(1,1,1);
 
-    ros::Duration pretend_this_is_a_point = timeVec + timeVec;
-
-    double scalar = 1;
-
-    ros::Duration scaleVec = timeVec*scalar;//time.mul(float scalar) VS float scalar.multiply_by_random_ros_object(rosobject)
-
-    //ros::Time ptPlusVec = timePoint + timeVec;
-    //ros::Time ptPlusPt = timePoint + timePoint;
+    //attempt to add them together
+    tf::Vector3 vec3 = vec1 + vec2;
 }
 ///peirce/ros/affine_tests/src/affine_tests/src/test1-space_creation-input-PASS.cpp
