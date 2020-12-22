@@ -338,6 +338,28 @@ void Interpretation::mkDECL_REAL3_VAR_REAL3_EXPR(const ast::DECL_REAL3_VAR_REAL3
 
 } 
 
+void Interpretation::mkDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(const ast::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR * ast ,ast::REALMATRIX4_VAR_IDENT* operand1,ast::REALMATRIX4_EXPR* operand2) {
+
+	coords::REALMATRIX4_VAR_IDENT* operand1_coords = static_cast<coords::REALMATRIX4_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
+	coords::REALMATRIX4_EXPR* operand2_coords = static_cast<coords::REALMATRIX4_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* coords = ast2coords_->mkDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX4_VAR_IDENT(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREALMATRIX4_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords, dom);
+
+	interp::REALMATRIX4_VAR_IDENT* operand1_interp = coords2interp_->getREALMATRIX4_VAR_IDENT(operand1_coords);;
+	interp::REALMATRIX4_EXPR* operand2_interp = coords2interp_->getREALMATRIX4_EXPR(operand2_coords);
+
+    interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* interp = new interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords, interp);
+    interp2domain_->putDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
+
 void Interpretation::mkDECL_REAL1_VAR(const ast::DECL_REAL1_VAR * ast ,ast::REAL1_VAR_IDENT* operand1) {
 
 	coords::REAL1_VAR_IDENT* operand1_coords = static_cast<coords::REAL1_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
@@ -376,6 +398,25 @@ void Interpretation::mkDECL_REAL3_VAR(const ast::DECL_REAL3_VAR * ast ,ast::REAL
 
 } 
 
+void Interpretation::mkDECL_REALMATRIX4_VAR(const ast::DECL_REALMATRIX4_VAR * ast ,ast::REALMATRIX4_VAR_IDENT* operand1) {
+
+	coords::REALMATRIX4_VAR_IDENT* operand1_coords = static_cast<coords::REALMATRIX4_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::DECL_REALMATRIX4_VAR* coords = ast2coords_->mkDECL_REALMATRIX4_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX4_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putDECL_REALMATRIX4_VAR(coords, dom);
+
+	interp::REALMATRIX4_VAR_IDENT* operand1_interp = coords2interp_->getREALMATRIX4_VAR_IDENT(operand1_coords);
+
+    interp::DECL_REALMATRIX4_VAR* interp = new interp::DECL_REALMATRIX4_VAR(coords, dom, operand1_interp);
+    coords2interp_->putDECL_REALMATRIX4_VAR(coords, interp);
+    interp2domain_->putDECL_REALMATRIX4_VAR(interp, dom); 
+	this->DECLARE_vec.push_back(coords);
+
+} 
+
 
  std::string Interpretation::toString_DECLAREs(){ 
     std::vector<interp::DECLARE*> interps;
@@ -405,6 +446,59 @@ void Interpretation::mkDECL_REAL3_VAR(const ast::DECL_REAL3_VAR * ast ,ast::REAL
     std::vector<interp::LEXPR*> interps;
     for(auto coord : this->LEXPR_vec){
         interps.push_back(this->coords2interp_->getLEXPR(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREF_REALMATRIX4_VAR(const ast::REF_REALMATRIX4_VAR * ast ,ast::REALMATRIX4_VAR_IDENT* operand1) {
+
+	coords::REALMATRIX4_VAR_IDENT* operand1_coords = static_cast<coords::REALMATRIX4_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));
+
+    coords::REF_REALMATRIX4_VAR* coords = ast2coords_->mkREF_REALMATRIX4_VAR(ast, context_ ,operand1_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX4_VAR_IDENT(operand1_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom});
+    coords2dom_->putREF_REALMATRIX4_VAR(coords, dom);
+
+	interp::REALMATRIX4_VAR_IDENT* operand1_interp = coords2interp_->getREALMATRIX4_VAR_IDENT(operand1_coords);
+
+    interp::REF_REALMATRIX4_VAR* interp = new interp::REF_REALMATRIX4_VAR(coords, dom, operand1_interp);
+    coords2interp_->putREF_REALMATRIX4_VAR(coords, interp);
+    interp2domain_->putREF_REALMATRIX4_VAR(interp, dom); 
+	this->REALMATRIX4_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(const ast::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR * ast ,ast::REALMATRIX4_EXPR* operand1,ast::REALMATRIX4_EXPR* operand2) {
+
+	coords::REALMATRIX4_EXPR* operand1_coords = static_cast<coords::REALMATRIX4_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REALMATRIX4_EXPR* operand2_coords = static_cast<coords::REALMATRIX4_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* coords = ast2coords_->mkMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX4_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREALMATRIX4_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(coords, dom);
+
+	interp::REALMATRIX4_EXPR* operand1_interp = coords2interp_->getREALMATRIX4_EXPR(operand1_coords);;
+	interp::REALMATRIX4_EXPR* operand2_interp = coords2interp_->getREALMATRIX4_EXPR(operand2_coords);
+
+    interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* interp = new interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(coords, interp);
+    interp2domain_->putMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp, dom); 
+	this->REALMATRIX4_EXPR_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REALMATRIX4_EXPRs(){ 
+    std::vector<interp::REALMATRIX4_EXPR*> interps;
+    for(auto coord : this->REALMATRIX4_EXPR_vec){
+        interps.push_back(this->coords2interp_->getREALMATRIX4_EXPR(coord));
     }
     std::string retval = "";
     for(auto interp_ : interps){
@@ -493,6 +587,28 @@ void Interpretation::mkRMUL_REAL3_EXPR_REAL1_EXPR(const ast::RMUL_REAL3_EXPR_REA
     interp::RMUL_REAL3_EXPR_REAL1_EXPR* interp = new interp::RMUL_REAL3_EXPR_REAL1_EXPR(coords, dom, operand1_interp,operand2_interp);
     coords2interp_->putRMUL_REAL3_EXPR_REAL1_EXPR(coords, interp);
     interp2domain_->putRMUL_REAL3_EXPR_REAL1_EXPR(interp, dom); 
+	this->REAL3_EXPR_vec.push_back(coords);
+
+} 
+
+void Interpretation::mkTMUL_REALMATRIX4_EXPR_REAL3_EXPR(const ast::TMUL_REALMATRIX4_EXPR_REAL3_EXPR * ast ,ast::REALMATRIX4_EXPR* operand1,ast::REAL3_EXPR* operand2,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) {
+
+	coords::REALMATRIX4_EXPR* operand1_coords = static_cast<coords::REALMATRIX4_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::REAL3_EXPR* operand2_coords = static_cast<coords::REAL3_EXPR*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* coords = ast2coords_->mkTMUL_REALMATRIX4_EXPR_REAL3_EXPR(ast, context_ ,operand1_coords,operand2_coords,value0,value1,value2);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getREALMATRIX4_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getREAL3_EXPR(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putTMUL_REALMATRIX4_EXPR_REAL3_EXPR(coords, dom);
+
+	interp::REALMATRIX4_EXPR* operand1_interp = coords2interp_->getREALMATRIX4_EXPR(operand1_coords);;
+	interp::REAL3_EXPR* operand2_interp = coords2interp_->getREAL3_EXPR(operand2_coords);
+
+    interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* interp = new interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putTMUL_REALMATRIX4_EXPR_REAL3_EXPR(coords, interp);
+    interp2domain_->putTMUL_REALMATRIX4_EXPR_REAL3_EXPR(interp, dom); 
 	this->REAL3_EXPR_vec.push_back(coords);
 
 } 
@@ -671,6 +787,34 @@ void Interpretation::mkREAL3_VAR_IDENT(const ast::REAL3_VAR_IDENT * ast ,std::sh
     }
     return retval;
 }
+void Interpretation::mkREALMATRIX4_VAR_IDENT(const ast::REALMATRIX4_VAR_IDENT * ast ) {
+
+
+    coords::REALMATRIX4_VAR_IDENT* coords = ast2coords_->mkREALMATRIX4_VAR_IDENT(ast, context_ );
+
+    domain::DomainObject* dom = domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREALMATRIX4_VAR_IDENT(coords, dom);
+
+
+    interp::REALMATRIX4_VAR_IDENT* interp = new interp::REALMATRIX4_VAR_IDENT(coords, dom);
+    coords2interp_->putREALMATRIX4_VAR_IDENT(coords, interp);
+    interp2domain_->putREALMATRIX4_VAR_IDENT(interp, dom); 
+	this->REALMATRIX4_VAR_IDENT_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REALMATRIX4_VAR_IDENTs(){ 
+    std::vector<interp::REALMATRIX4_VAR_IDENT*> interps;
+    for(auto coord : this->REALMATRIX4_VAR_IDENT_vec){
+        interps.push_back(this->coords2interp_->getREALMATRIX4_VAR_IDENT(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
 void Interpretation::mkREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,ast::REAL1_EXPR* operand3,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) {
 
 	coords::REAL1_EXPR* operand1_coords = static_cast<coords::REAL1_EXPR*>(ast2coords_->getStmtCoords(operand1));;
@@ -745,6 +889,34 @@ void Interpretation::mkREAL1_LIT(const ast::REAL1_LIT * ast ,std::shared_ptr<flo
     std::vector<interp::REAL1_LITERAL*> interps;
     for(auto coord : this->REAL1_LITERAL_vec){
         interps.push_back(this->coords2interp_->getREAL1_LITERAL(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
+void Interpretation::mkREALMATRIX4_EMPTY(const ast::REALMATRIX4_EMPTY * ast ) {
+
+
+    coords::REALMATRIX4_EMPTY* coords = ast2coords_->mkREALMATRIX4_EMPTY(ast, context_ );
+
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({});
+    coords2dom_->putREALMATRIX4_EMPTY(coords, dom);
+
+
+    interp::REALMATRIX4_EMPTY* interp = new interp::REALMATRIX4_EMPTY(coords, dom);
+    coords2interp_->putREALMATRIX4_EMPTY(coords, interp);
+    interp2domain_->putREALMATRIX4_EMPTY(interp, dom); 
+	this->REALMATRIX4_LITERAL_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_REALMATRIX4_LITERALs(){ 
+    std::vector<interp::REALMATRIX4_LITERAL*> interps;
+    for(auto coord : this->REALMATRIX4_LITERAL_vec){
+        interps.push_back(this->coords2interp_->getREALMATRIX4_LITERAL(coord));
     }
     std::string retval = "";
     for(auto interp_ : interps){
@@ -1321,7 +1493,7 @@ void Interpretation::buildFrame(){
                         std::cout<<"Enter Name:\n";
                         std::string name;
                         std::cin>>name;
-                        domain::MeasurementSystem* ms;
+                        //domain::MeasurementSystem* ms;
                         auto mss = this->domain_->getMeasurementSystems();
                         choice = 0;
                         std::unordered_map<int, domain::MeasurementSystem*> index_to_ms;
@@ -1510,6 +1682,12 @@ void Interpretation::mkVarTable(){
     int idx = 0; 
   
 
+    for(auto it = this->REALMATRIX4_EXPR_vec.begin(); it != this->REALMATRIX4_EXPR_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
+    }
+
+	
     for(auto it = this->REAL3_EXPR_vec.begin(); it != this->REAL3_EXPR_vec.end(); it++){
         this->index2coords_[++idx] = *it;
         (*it)->setIndex(idx);
@@ -1540,6 +1718,12 @@ void Interpretation::mkVarTable(){
     }
 
 	
+    for(auto it = this->REALMATRIX4_VAR_IDENT_vec.begin(); it != this->REALMATRIX4_VAR_IDENT_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
+    }
+
+	
     for(auto it = this->REAL3_LITERAL_vec.begin(); it != this->REAL3_LITERAL_vec.end(); it++){
         this->index2coords_[++idx] = *it;
         (*it)->setIndex(idx);
@@ -1547,6 +1731,12 @@ void Interpretation::mkVarTable(){
 
 	
     for(auto it = this->REAL1_LITERAL_vec.begin(); it != this->REAL1_LITERAL_vec.end(); it++){
+        this->index2coords_[++idx] = *it;
+        (*it)->setIndex(idx);
+    }
+
+	
+    for(auto it = this->REALMATRIX4_LITERAL_vec.begin(); it != this->REALMATRIX4_LITERAL_vec.end(); it++){
         this->index2coords_[++idx] = *it;
         (*it)->setIndex(idx);
     }
@@ -1561,8 +1751,20 @@ void Interpretation::printVarTable(){
 
   for(int i = 1; i<=sz;i++)
   {
-    coords::Coords* coords = this->index2coords_[i];
+    //coords::Coords* coords = this->index2coords_[i];
     if(false){}
+
+    else if(auto dc = dynamic_cast<coords::REF_REALMATRIX4_VAR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REALMATRIX4_VAR(dc);
+        std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+
+    }
 
     else if(auto dc = dynamic_cast<coords::REF_REAL3_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REAL3_VAR(dc);
@@ -1584,6 +1786,12 @@ void Interpretation::printVarTable(){
 
     else if(auto dc = dynamic_cast<coords::RMUL_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getRMUL_REAL3_EXPR_REAL1_EXPR(dc);
+        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(dc);
         std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
@@ -1624,6 +1832,12 @@ void Interpretation::printVarTable(){
 
     }
 
+    else if(auto dc = dynamic_cast<coords::REALMATRIX4_VAR_IDENT*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX4_VAR_IDENT(dc);
+        std::cout<<"Index: "<<i<<","<<"4x4 Matrix Variable Identifier,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
     else if(auto dc = dynamic_cast<coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
         std::cout<<"Index: "<<i<<","<<"R3 Literal From 3 R1 Expressions,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
@@ -1639,6 +1853,12 @@ void Interpretation::printVarTable(){
     else if(auto dc = dynamic_cast<coords::REAL1_LIT*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL1_LIT(dc);
         std::cout<<"Index: "<<i<<","<<" Real 1 Literal,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+
+    }
+
+    else if(auto dc = dynamic_cast<coords::REALMATRIX4_EMPTY*>(this->index2coords_[i])){
+        auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX4_EMPTY(dc);
+        std::cout<<"Index: "<<i<<","<<" Real 4x4 Matrix With Empty Constructor,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
     
@@ -1708,9 +1928,43 @@ void Interpretation::updateVarTable(){
             {
                 if(false){}
 
+                else if(auto dc = dynamic_cast<coords::REF_REALMATRIX4_VAR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREF_REALMATRIX4_VAR(dc);
+                    //auto interp = this->coords2interp_->getREF_REALMATRIX4_VAR(dc);
+                    //this->coords2dom_->eraseREF_REALMATRIX4_VAR(dc, dom);
+                    //this->interp2domain_->eraseREF_REALMATRIX4_VAR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX4_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREF_REALMATRIX4_VAR(dc, dom);
+                        //this->interp2domain_->eraseREF_REALMATRIX4_VAR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREF_REALMATRIX4_VAR(dc, upd_dom);
+                        //this->interp2domain_->putREF_REALMATRIX4_VAR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(dc);
+                    //auto interp = this->coords2interp_->getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(dc);
+                    //this->coords2dom_->eraseMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(dc, dom);
+                    //this->interp2domain_->eraseMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX4_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(dc, dom);
+                        //this->interp2domain_->eraseMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
                 else if(auto dc = dynamic_cast<coords::REF_REAL3_VAR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getREF_REAL3_VAR(dc);
-                    auto interp = this->coords2interp_->getREF_REAL3_VAR(dc);
+                    //auto interp = this->coords2interp_->getREF_REAL3_VAR(dc);
                     //this->coords2dom_->eraseREF_REAL3_VAR(dc, dom);
                     //this->interp2domain_->eraseREF_REAL3_VAR(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
@@ -1727,7 +1981,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::ADD_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getADD_REAL3_EXPR_REAL3_EXPR(dc);
-                    auto interp = this->coords2interp_->getADD_REAL3_EXPR_REAL3_EXPR(dc);
+                    //auto interp = this->coords2interp_->getADD_REAL3_EXPR_REAL3_EXPR(dc);
                     //this->coords2dom_->eraseADD_REAL3_EXPR_REAL3_EXPR(dc, dom);
                     //this->interp2domain_->eraseADD_REAL3_EXPR_REAL3_EXPR(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
@@ -1744,7 +1998,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::LMUL_REAL1_EXPR_REAL3_EXPR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getLMUL_REAL1_EXPR_REAL3_EXPR(dc);
-                    auto interp = this->coords2interp_->getLMUL_REAL1_EXPR_REAL3_EXPR(dc);
+                    //auto interp = this->coords2interp_->getLMUL_REAL1_EXPR_REAL3_EXPR(dc);
                     //this->coords2dom_->eraseLMUL_REAL1_EXPR_REAL3_EXPR(dc, dom);
                     //this->interp2domain_->eraseLMUL_REAL1_EXPR_REAL3_EXPR(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
@@ -1761,7 +2015,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::RMUL_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getRMUL_REAL3_EXPR_REAL1_EXPR(dc);
-                    auto interp = this->coords2interp_->getRMUL_REAL3_EXPR_REAL1_EXPR(dc);
+                    //auto interp = this->coords2interp_->getRMUL_REAL3_EXPR_REAL1_EXPR(dc);
                     //this->coords2dom_->eraseRMUL_REAL3_EXPR_REAL1_EXPR(dc, dom);
                     //this->interp2domain_->eraseRMUL_REAL3_EXPR_REAL1_EXPR(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
@@ -1776,9 +2030,26 @@ void Interpretation::updateVarTable(){
                     }
                 }
 
+                else if(auto dc = dynamic_cast<coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(dc);
+                    //auto interp = this->coords2interp_->getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(dc);
+                    //this->coords2dom_->eraseTMUL_REALMATRIX4_EXPR_REAL3_EXPR(dc, dom);
+                    //this->interp2domain_->eraseTMUL_REALMATRIX4_EXPR_REAL3_EXPR(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREAL3_EXPR(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseTMUL_REALMATRIX4_EXPR_REAL3_EXPR(dc, dom);
+                        //this->interp2domain_->eraseTMUL_REALMATRIX4_EXPR_REAL3_EXPR(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putTMUL_REALMATRIX4_EXPR_REAL3_EXPR(dc, upd_dom);
+                        //this->interp2domain_->putTMUL_REALMATRIX4_EXPR_REAL3_EXPR(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
                 else if(auto dc = dynamic_cast<coords::LREF_REAL3_VAR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getLREF_REAL3_VAR(dc);
-                    auto interp = this->coords2interp_->getLREF_REAL3_VAR(dc);
+                    //auto interp = this->coords2interp_->getLREF_REAL3_VAR(dc);
                     //this->coords2dom_->eraseLREF_REAL3_VAR(dc, dom);
                     //this->interp2domain_->eraseLREF_REAL3_VAR(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL3_LEXPR(dc, dom);
@@ -1795,7 +2066,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::REF_REAL1_VAR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getREF_REAL1_VAR(dc);
-                    auto interp = this->coords2interp_->getREF_REAL1_VAR(dc);
+                    //auto interp = this->coords2interp_->getREF_REAL1_VAR(dc);
                     //this->coords2dom_->eraseREF_REAL1_VAR(dc, dom);
                     //this->interp2domain_->eraseREF_REAL1_VAR(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
@@ -1812,7 +2083,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::ADD_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getADD_REAL1_EXPR_REAL1_EXPR(dc);
-                    auto interp = this->coords2interp_->getADD_REAL1_EXPR_REAL1_EXPR(dc);
+                    //auto interp = this->coords2interp_->getADD_REAL1_EXPR_REAL1_EXPR(dc);
                     //this->coords2dom_->eraseADD_REAL1_EXPR_REAL1_EXPR(dc, dom);
                     //this->interp2domain_->eraseADD_REAL1_EXPR_REAL1_EXPR(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
@@ -1829,7 +2100,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::MUL_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
-                    auto interp = this->coords2interp_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
+                    //auto interp = this->coords2interp_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
                     //this->coords2dom_->eraseMUL_REAL1_EXPR_REAL1_EXPR(dc, dom);
                     //this->interp2domain_->eraseMUL_REAL1_EXPR_REAL1_EXPR(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL1_EXPR(dc, dom);
@@ -1846,7 +2117,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getREAL1_VAR_IDENT(dc);
-                    auto interp = this->coords2interp_->getREAL1_VAR_IDENT(dc);
+                    //auto interp = this->coords2interp_->getREAL1_VAR_IDENT(dc);
                     //this->coords2dom_->eraseREAL1_VAR_IDENT(dc, dom);
                     //this->interp2domain_->eraseREAL1_VAR_IDENT(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL1_VAR_IDENT(dc, dom);
@@ -1863,7 +2134,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getREAL3_VAR_IDENT(dc);
-                    auto interp = this->coords2interp_->getREAL3_VAR_IDENT(dc);
+                    //auto interp = this->coords2interp_->getREAL3_VAR_IDENT(dc);
                     //this->coords2dom_->eraseREAL3_VAR_IDENT(dc, dom);
                     //this->interp2domain_->eraseREAL3_VAR_IDENT(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL3_VAR_IDENT(dc, dom);
@@ -1878,9 +2149,26 @@ void Interpretation::updateVarTable(){
                     }
                 }
 
+                else if(auto dc = dynamic_cast<coords::REALMATRIX4_VAR_IDENT*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREALMATRIX4_VAR_IDENT(dc);
+                    //auto interp = this->coords2interp_->getREALMATRIX4_VAR_IDENT(dc);
+                    //this->coords2dom_->eraseREALMATRIX4_VAR_IDENT(dc, dom);
+                    //this->interp2domain_->eraseREALMATRIX4_VAR_IDENT(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX4_VAR_IDENT(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREALMATRIX4_VAR_IDENT(dc, dom);
+                        //this->interp2domain_->eraseREALMATRIX4_VAR_IDENT(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREALMATRIX4_VAR_IDENT(dc, upd_dom);
+                        //this->interp2domain_->putREALMATRIX4_VAR_IDENT(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
                 else if(auto dc = dynamic_cast<coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
-                    auto interp = this->coords2interp_->getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
+                    //auto interp = this->coords2interp_->getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
                     //this->coords2dom_->eraseREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc, dom);
                     //this->interp2domain_->eraseREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL3_LITERAL(dc, dom);
@@ -1897,7 +2185,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::REAL3_EMPTY*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getREAL3_EMPTY(dc);
-                    auto interp = this->coords2interp_->getREAL3_EMPTY(dc);
+                    //auto interp = this->coords2interp_->getREAL3_EMPTY(dc);
                     //this->coords2dom_->eraseREAL3_EMPTY(dc, dom);
                     //this->interp2domain_->eraseREAL3_EMPTY(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL3_LITERAL(dc, dom);
@@ -1914,7 +2202,7 @@ void Interpretation::updateVarTable(){
 
                 else if(auto dc = dynamic_cast<coords::REAL1_LIT*>(this->index2coords_[choice])){
                     auto dom = this->coords2dom_->getREAL1_LIT(dc);
-                    auto interp = this->coords2interp_->getREAL1_LIT(dc);
+                    //auto interp = this->coords2interp_->getREAL1_LIT(dc);
                     //this->coords2dom_->eraseREAL1_LIT(dc, dom);
                     //this->interp2domain_->eraseREAL1_LIT(interp, dom);
                     auto upd_dom = this->oracle_->getInterpretationForREAL1_LITERAL(dc, dom);
@@ -1925,6 +2213,23 @@ void Interpretation::updateVarTable(){
                         ((domain::DomainContainer*)dom)->setValue(upd_dom);
                         //this->coords2dom_->putREAL1_LIT(dc, upd_dom);
                         //this->interp2domain_->putREAL1_LIT(interp, upd_dom);
+                        //delete dom;
+                    }
+                }
+
+                else if(auto dc = dynamic_cast<coords::REALMATRIX4_EMPTY*>(this->index2coords_[choice])){
+                    auto dom = this->coords2dom_->getREALMATRIX4_EMPTY(dc);
+                    //auto interp = this->coords2interp_->getREALMATRIX4_EMPTY(dc);
+                    //this->coords2dom_->eraseREALMATRIX4_EMPTY(dc, dom);
+                    //this->interp2domain_->eraseREALMATRIX4_EMPTY(interp, dom);
+                    auto upd_dom = this->oracle_->getInterpretationForREALMATRIX4_LITERAL(dc, dom);
+                    if(upd_dom){//remap, hopefully everything works fine from here
+                        //this->coords2dom_->eraseREALMATRIX4_EMPTY(dc, dom);
+                        //this->interp2domain_->eraseREALMATRIX4_EMPTY(interp, dom);
+                        //upd_dom->setOperands(dom->getOperands());
+                        ((domain::DomainContainer*)dom)->setValue(upd_dom);
+                        //this->coords2dom_->putREALMATRIX4_EMPTY(dc, upd_dom);
+                        //this->interp2domain_->putREALMATRIX4_EMPTY(interp, upd_dom);
                         //delete dom;
                     }
                 }

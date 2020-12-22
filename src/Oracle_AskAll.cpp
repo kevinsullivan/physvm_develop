@@ -29,7 +29,7 @@ domain::Frame* Oracle_AskAll::getFrameForInterpretation(domain::Space* space){
         int choice = 0;
         std::cin>>choice;
         if(choice > 0 and choice <= sz){
-            return frames[choice-1];
+            return frames[choice];
         }
     }
     return nullptr;
@@ -38,6 +38,10 @@ domain::Frame* Oracle_AskAll::getFrameForInterpretation(domain::Space* space){
 domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords, domain::DomainObject* dom){
 
 	if(false){}
+    else if(auto dc = dynamic_cast<coords::REALMATRIX4_EXPR*>(coords)){
+    
+        return this->getInterpretationForREALMATRIX4_EXPR(dc, dom);
+    }
     else if(auto dc = dynamic_cast<coords::REAL3_EXPR*>(coords)){
     
         return this->getInterpretationForREAL3_EXPR(dc, dom);
@@ -54,6 +58,10 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords, d
     
         return this->getInterpretationForREAL3_VAR_IDENT(dc, dom);
     }
+    else if(auto dc = dynamic_cast<coords::REALMATRIX4_VAR_IDENT*>(coords)){
+    
+        return this->getInterpretationForREALMATRIX4_VAR_IDENT(dc, dom);
+    }
     else if(auto dc = dynamic_cast<coords::REAL3_LITERAL*>(coords)){
     
         return this->getInterpretationForREAL3_LITERAL(dc, dom);
@@ -62,8 +70,239 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords, d
     
         return this->getInterpretationForREAL1_LITERAL(dc, dom);
     }
+    else if(auto dc = dynamic_cast<coords::REALMATRIX4_LITERAL*>(coords)){
+    
+        return this->getInterpretationForREALMATRIX4_LITERAL(dc, dom);
+    }
 	return nullptr;
 }
+
+domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords::REALMATRIX4_EXPR * coords, domain::DomainObject * dom){
+    std::cout << "Provide new interpretation for : " << "";
+    std::cout << "\nExisting interpretation:   ";
+    std::cout << dom->toString();
+    std::cout << "\nAt location:  ";
+    std::cout << coords->getSourceLoc();
+    int choice;
+    choose:
+    std::cout<<"\nAvailable Interpretations (Enter numeral choice) : \n";
+    
+    //return getInterpretation(coords);
+
+                    
+    std::cout<<"(1)"<<"@@ClassicalTimeTransform()\n";
+    std::cout<<"(2)"<<"@@EuclideanGeometryTransform()\n";
+    std::cout<<"(3)"<<"@@EuclideanGeometry3Transform()\n";
+    std::cin>>choice;
+    if(choice < 1 or choice > 3) {
+        goto choose;
+    } else {
+        switch(choice){
+
+            case 1 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::ClassicalTimeFrame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = (domain::ClassicalTimeFrame*)fr;
+                                std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::ClassicalTimeFrame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = (domain::ClassicalTimeFrame*)fr;
+                                std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                                
+
+                                auto ret = this->domain_->mkClassicalTimeTransform<float,1>(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                               // delete[] cp;
+
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 2 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometryFrame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = (domain::EuclideanGeometryFrame*)fr;
+                                std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometryFrame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = (domain::EuclideanGeometryFrame*)fr;
+                                std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                                
+
+                                auto ret = this->domain_->mkEuclideanGeometryTransform<float,1>(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                               // delete[] cp;
+
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 3 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometry3Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = (domain::EuclideanGeometry3Frame*)fr;
+                                std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometry3Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = (domain::EuclideanGeometry3Frame*)fr;
+                                std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                                
+
+                                auto ret = this->domain_->mkEuclideanGeometry3Transform<float,1>(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                               // delete[] cp;
+
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+
+        }
+    }
+  
+
+ return nullptr;}
 
 domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL3_EXPR * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
@@ -137,6 +376,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -157,11 +405,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -222,6 +476,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -242,11 +505,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -307,6 +576,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -327,11 +605,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -392,6 +676,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -412,11 +705,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -477,6 +776,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -497,11 +805,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -562,6 +876,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -582,11 +905,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -647,6 +976,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -667,11 +1005,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -691,7 +1035,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
     }
   
 
-}
+ return nullptr;}
 
 domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LEXPR(coords::REAL3_LEXPR * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
@@ -706,6 +1050,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LEXPR(coords::REA
     //return getInterpretation(coords);
 
                     
+    if(false){choice = 1; goto choose;}
     std::cout<<"None available!\n";
     return this->domain_->mkDefaultDomainContainer();
 }
@@ -787,6 +1132,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -807,11 +1161,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -872,6 +1232,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -892,11 +1261,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -957,6 +1332,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -977,11 +1361,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -1042,6 +1432,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1062,11 +1461,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -1127,6 +1532,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1147,11 +1561,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -1212,6 +1632,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1232,11 +1661,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -1297,6 +1732,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1317,11 +1761,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -1380,6 +1830,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1400,11 +1858,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -1464,6 +1928,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1484,11 +1956,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -1548,6 +2026,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1568,11 +2054,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -1632,6 +2124,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1652,11 +2152,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -1677,7 +2183,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
     }
   
 
-}
+ return nullptr;}
 
 domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords::REAL1_VAR_IDENT * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
@@ -1755,6 +2261,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1775,11 +2290,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -1840,6 +2361,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1860,11 +2390,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -1925,6 +2461,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -1945,11 +2490,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -2010,6 +2561,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2030,11 +2590,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -2095,6 +2661,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2115,11 +2690,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -2180,6 +2761,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2200,11 +2790,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -2265,6 +2861,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2285,11 +2890,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -2348,6 +2959,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2368,11 +2987,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -2432,6 +3057,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2452,11 +3085,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -2516,6 +3155,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2536,11 +3183,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -2600,6 +3253,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2620,11 +3281,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -2645,7 +3312,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
     }
   
 
-}
+ return nullptr;}
 
 domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords::REAL3_VAR_IDENT * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
@@ -2719,6 +3386,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2739,11 +3415,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -2804,6 +3486,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2824,11 +3515,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -2889,6 +3586,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2909,11 +3615,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -2974,6 +3686,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -2994,11 +3715,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3059,6 +3786,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3079,11 +3815,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3144,6 +3886,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3164,11 +3915,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3229,6 +3986,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3249,11 +4015,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3273,7 +4045,234 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
     }
   
 
-}
+ return nullptr;}
+
+domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(coords::REALMATRIX4_VAR_IDENT * coords, domain::DomainObject * dom){
+    std::cout << "Provide new interpretation for : " << "";
+    std::cout << "\nExisting interpretation:   ";
+    std::cout << dom->toString();
+    std::cout << "\nAt location:  ";
+    std::cout << coords->getSourceLoc();
+    int choice;
+    choose:
+    std::cout<<"\nAvailable Interpretations (Enter numeral choice) : \n";
+    
+    //return getInterpretation(coords);
+
+                    
+    std::cout<<"(1)"<<"@@ClassicalTimeTransform()\n";
+    std::cout<<"(2)"<<"@@EuclideanGeometryTransform()\n";
+    std::cout<<"(3)"<<"@@EuclideanGeometry3Transform()\n";
+    std::cin>>choice;
+    if(choice < 1 or choice > 3) {
+        goto choose;
+    } else {
+        switch(choice){
+
+            case 1 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::ClassicalTimeFrame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = (domain::ClassicalTimeFrame*)fr;
+                                std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::ClassicalTimeFrame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = (domain::ClassicalTimeFrame*)fr;
+                                std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                                
+
+                                auto ret = this->domain_->mkClassicalTimeTransform<float,1>(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                               // delete[] cp;
+
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 2 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometryFrame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = (domain::EuclideanGeometryFrame*)fr;
+                                std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometryFrame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = (domain::EuclideanGeometryFrame*)fr;
+                                std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                                
+
+                                auto ret = this->domain_->mkEuclideanGeometryTransform<float,1>(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                               // delete[] cp;
+
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 3 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometry3Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = (domain::EuclideanGeometry3Frame*)fr;
+                                std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometry3Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = (domain::EuclideanGeometry3Frame*)fr;
+                                std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                                
+
+                                auto ret = this->domain_->mkEuclideanGeometry3Transform<float,1>(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                               // delete[] cp;
+
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+
+        }
+    }
+  
+
+ return nullptr;}
 
 domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::REAL3_LITERAL * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
@@ -3347,6 +4346,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3367,11 +4375,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3432,6 +4446,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3452,11 +4475,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3517,6 +4546,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3537,11 +4575,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3602,6 +4646,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3622,11 +4675,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3687,6 +4746,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3707,11 +4775,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3772,6 +4846,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3792,11 +4875,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3857,6 +4946,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3877,11 +4975,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -3901,7 +5005,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
     }
   
 
-}
+ return nullptr;}
 
 domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::REAL1_LITERAL * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
@@ -3979,6 +5083,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -3999,11 +5112,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -4064,6 +5183,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4084,11 +5212,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -4149,6 +5283,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4169,11 +5312,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -4234,6 +5383,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4254,11 +5412,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -4319,6 +5483,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4339,11 +5512,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -4404,6 +5583,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4424,11 +5612,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -4489,6 +5683,15 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4509,11 +5712,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         return ret;
@@ -4572,6 +5781,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4592,11 +5809,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -4656,6 +5879,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4676,11 +5907,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -4740,6 +5977,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4760,11 +6005,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -4824,6 +6075,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     //delete vc;
                                 }
                             }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
                         }
                         catch(std::exception ex){
                             return ret;
@@ -4844,11 +6103,17 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                 }
                                 break;
                             }
-                            else if(vchoice == 0){
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
                                 break;
                             }
-                            else if(vchoice != 0)
-                                continue;
+                            //else if(vchoice != 0)
+                            //    continue;
                         }*/
                         
                         
@@ -4869,4 +6134,231 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
     }
   
 
-}
+ return nullptr;}
+
+domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coords::REALMATRIX4_LITERAL * coords, domain::DomainObject * dom){
+    std::cout << "Provide new interpretation for : " << "";
+    std::cout << "\nExisting interpretation:   ";
+    std::cout << dom->toString();
+    std::cout << "\nAt location:  ";
+    std::cout << coords->getSourceLoc();
+    int choice;
+    choose:
+    std::cout<<"\nAvailable Interpretations (Enter numeral choice) : \n";
+    
+    //return getInterpretation(coords);
+
+                    
+    std::cout<<"(1)"<<"@@ClassicalTimeTransform()\n";
+    std::cout<<"(2)"<<"@@EuclideanGeometryTransform()\n";
+    std::cout<<"(3)"<<"@@EuclideanGeometry3Transform()\n";
+    std::cin>>choice;
+    if(choice < 1 or choice > 3) {
+        goto choose;
+    } else {
+        switch(choice){
+
+            case 1 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::ClassicalTimeFrame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = (domain::ClassicalTimeFrame*)fr;
+                                std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::ClassicalTimeFrame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = (domain::ClassicalTimeFrame*)fr;
+                                std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                                
+
+                                auto ret = this->domain_->mkClassicalTimeTransform<float,1>(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                               // delete[] cp;
+
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 2 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometryFrame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = (domain::EuclideanGeometryFrame*)fr;
+                                std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometryFrame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = (domain::EuclideanGeometryFrame*)fr;
+                                std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                                
+
+                                auto ret = this->domain_->mkEuclideanGeometryTransform<float,1>(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                               // delete[] cp;
+
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 3 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        while(true){
+                            auto frs = sp->getFrames();
+                            std::cout<<"Enter Frame of Transform Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometry3Frame*> index_to_dom;
+                            int dom_index = 0,
+                                cod_index = 0;
+                            int dom_choice = 0, 
+                                cod_choice = 0;
+                            for(auto fr: frs){
+                                index_to_dom[++dom_index] = (domain::EuclideanGeometry3Frame*)fr;
+                                std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>dom_choice;
+
+                        
+                            std::cout<<"Enter Frame of Transform Co-Domain : \n";
+                            std::unordered_map<int, domain::EuclideanGeometry3Frame*> index_to_cod;
+                            for(auto fr: frs){
+                                index_to_cod[++cod_index] = (domain::EuclideanGeometry3Frame*)fr;
+                                std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
+                            }
+                            std::cin>>cod_choice;
+
+                            if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
+                                //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                                
+
+                                auto ret = this->domain_->mkEuclideanGeometry3Transform<float,1>(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
+                               // delete[] cp;
+
+                                return ret;
+
+                            }
+                        
+                        }
+                        
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+
+        }
+    }
+  
+
+ return nullptr;}

@@ -109,6 +109,13 @@ coords::REAL3_EXPR* DECL_REAL3_VAR_REAL3_EXPR::getOperand2() { return this->oper
 std::string DECL_REAL3_VAR_REAL3_EXPR::toString() const{ return operand1->toString();}
 
 
+DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords::REALMATRIX4_VAR_IDENT *operand_1,coords::REALMATRIX4_EXPR *operand_2) : 
+		DECLARE(),operand1(operand_1),operand2(operand_2){}
+coords::REALMATRIX4_VAR_IDENT* DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR::getOperand1() { return this->operand1;}
+coords::REALMATRIX4_EXPR* DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR::getOperand2() { return this->operand2;}
+std::string DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR::toString() const{ return operand1->toString();}
+
+
 DECL_REAL1_VAR::DECL_REAL1_VAR(coords::REAL1_VAR_IDENT *operand_1) : 
 		DECLARE(),operand1(operand_1){}
 coords::REAL1_VAR_IDENT* DECL_REAL1_VAR::getOperand1() { return this->operand1;}
@@ -119,6 +126,25 @@ DECL_REAL3_VAR::DECL_REAL3_VAR(coords::REAL3_VAR_IDENT *operand_1) :
 		DECLARE(),operand1(operand_1){}
 coords::REAL3_VAR_IDENT* DECL_REAL3_VAR::getOperand1() { return this->operand1;}
 std::string DECL_REAL3_VAR::toString() const{ return operand1->toString();}
+
+
+DECL_REALMATRIX4_VAR::DECL_REALMATRIX4_VAR(coords::REALMATRIX4_VAR_IDENT *operand_1) : 
+		DECLARE(),operand1(operand_1){}
+coords::REALMATRIX4_VAR_IDENT* DECL_REALMATRIX4_VAR::getOperand1() { return this->operand1;}
+std::string DECL_REALMATRIX4_VAR::toString() const{ return operand1->toString();}
+
+
+REF_REALMATRIX4_VAR::REF_REALMATRIX4_VAR(coords::REALMATRIX4_VAR_IDENT *operand_1) : 
+		REALMATRIX4_EXPR(),operand1(operand_1){}
+coords::REALMATRIX4_VAR_IDENT* REF_REALMATRIX4_VAR::getOperand1() { return this->operand1;}
+std::string REF_REALMATRIX4_VAR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(coords::REALMATRIX4_EXPR *operand_1,coords::REALMATRIX4_EXPR *operand_2) : 
+		REALMATRIX4_EXPR(),operand1(operand_1),operand2(operand_2){}
+coords::REALMATRIX4_EXPR* MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR::getOperand1() { return this->operand1;}
+coords::REALMATRIX4_EXPR* MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR::getOperand2() { return this->operand2;}
+std::string MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
 REF_REAL3_VAR::REF_REAL3_VAR(coords::REAL3_VAR_IDENT *operand_1,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) : 
@@ -146,6 +172,13 @@ RMUL_REAL3_EXPR_REAL1_EXPR::RMUL_REAL3_EXPR_REAL1_EXPR(coords::REAL3_EXPR *opera
 coords::REAL3_EXPR* RMUL_REAL3_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
 coords::REAL1_EXPR* RMUL_REAL3_EXPR_REAL1_EXPR::getOperand2() { return this->operand2;}
 std::string RMUL_REAL3_EXPR_REAL1_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+TMUL_REALMATRIX4_EXPR_REAL3_EXPR::TMUL_REALMATRIX4_EXPR_REAL3_EXPR(coords::REALMATRIX4_EXPR *operand_1,coords::REAL3_EXPR *operand_2,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) : 
+		REAL3_EXPR( value0, value1, value2),operand1(operand_1),operand2(operand_2){}
+coords::REALMATRIX4_EXPR* TMUL_REALMATRIX4_EXPR_REAL3_EXPR::getOperand1() { return this->operand1;}
+coords::REAL3_EXPR* TMUL_REALMATRIX4_EXPR_REAL3_EXPR::getOperand2() { return this->operand2;}
+std::string TMUL_REALMATRIX4_EXPR_REAL3_EXPR::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
 LREF_REAL3_VAR::LREF_REAL3_VAR(coords::REAL3_VAR_IDENT *operand_1,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) : 
@@ -176,6 +209,7 @@ std::string MUL_REAL1_EXPR_REAL1_EXPR::toString() const{ return std::string("") 
 
 std::string REAL1_VAR_IDENT::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 std::string REAL3_VAR_IDENT::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+std::string REALMATRIX4_VAR_IDENT::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR *operand_1,coords::REAL1_EXPR *operand_2,coords::REAL1_EXPR *operand_3,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) : 
 		REAL3_LITERAL( value0, value1, value2),operand1(operand_1),operand2(operand_2),operand3(operand_3){}
 coords::REAL1_EXPR* REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::getOperand1() { return this->operand1;}
@@ -192,6 +226,11 @@ std::string REAL3_EMPTY::toString() const{ return std::string("") + state_->name
 REAL1_LIT::REAL1_LIT(std::shared_ptr<float> value0) : 
 		REAL1_LITERAL( value0){}
 std::string REAL1_LIT::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+REALMATRIX4_EMPTY::REALMATRIX4_EMPTY() : 
+		REALMATRIX4_LITERAL(){}
+std::string REALMATRIX4_EMPTY::toString() const{ return std::string("") + state_->name_+ ".B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
 
 
 } // namespace codecoords

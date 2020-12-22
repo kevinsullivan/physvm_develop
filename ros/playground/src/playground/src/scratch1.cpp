@@ -19,17 +19,30 @@ int main(int argc, char **argv){
     ros::NodeHandle node;  
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
 
-    ros::Time timePoint = ros::Time(5);
-    //5 : timeVec = ClassicalTimeVector(worldTime,stdFrame,<10>)
-    ros::Duration timeVec = ros::Duration(5);
-    ros::Duration dsum = timeVec + timeVec;
+    //world geom
+    //bind std
+    //der frame 1
+    //der frame 2
 
-    ros::Time timead = timePoint + timeVec;
+    //std -> 1
+    tf::Transform tran1 = tf::Transform();
 
-    ros::Duration pretend_this_is_a_point = timeVec + timeVec;
+    //1 -> 2
+    tf::Transform tran2 = tf::Transform();
 
-    double scalar = 1;
+    //std -> 2
+    tf::Transform tran3 = tf::Transform();
 
-    ros::Duration scaleVec = timeVec*scalar;//time.mul(float scalar) VS float scalar.multiply_by_random_ros_object(rosobject)
+    //std -> 2
+    tf::Transform tran4 = tran1 * tran2;
 
+    //error!
+    tf::Transform tran5 = tran1 * tran3;
+
+    tf::Vector3 inp = tf::Vector3(1,1,1);
+
+    tf::Vector3 out1 = tran1*inp;
+
+    //error!
+    tf::Vector3 out2 = tran2*inp;
 }

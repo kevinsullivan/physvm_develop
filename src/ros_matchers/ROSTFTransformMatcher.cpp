@@ -2,8 +2,7 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 
-#include "ROSTFTimeMatcher.h"
-#include "ROSTFDurationMatcher.h"
+#include "ROSTFTransformMatcher.h"
 
 
 #include <string>
@@ -11,7 +10,7 @@
 #include <functional>
 
 
-void ROSTFTimeMatcher::setup(){
+void ROSTFTransformMatcher::setup(){
 		StatementMatcher cxxConstructExpr_=cxxConstructExpr().bind("CXXConstructExpr");
 		localFinder_.addMatcher(cxxConstructExpr_,this);
 	
@@ -43,7 +42,7 @@ void ROSTFTimeMatcher::setup(){
 		localFinder_.addMatcher(cxxOperatorCallExpr_,this);
 };
 
-void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
+void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
 	auto cxxConstructExpr_ = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
 	
 	auto memberExpr_ = Result.Nodes.getNodeAs<clang::MemberExpr>("MemberExpr");
@@ -71,7 +70,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         auto decl_ = cxxConstructExpr_->getConstructor();
         if(decl_->isCopyOrMoveConstructor())
         {
-            ROSTFTimeMatcher pm{context_, interp_};
+            ROSTFTransformMatcher pm{context_, interp_};
             pm.setup();
             pm.visit(**cxxConstructExpr_->getArgs());
             this->childExprStore_ = pm.getChildExprStore();
@@ -86,17 +85,17 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["memberExpr_ros::Time"] = [=](std::string typenm){
+	arg_decay_exist_predicates["memberExpr_tf::Transform"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm.find("tf::Transform") != string::npos){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr.find("ros::Time") != string::npos){
-            ROSTFTimeMatcher innerm{this->context_,this->interp_};
+        else if(typestr.find("tf::Transform") != string::npos){
+            ROSTFTransformMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
@@ -106,9 +105,9 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["implicitCastExpr_ros::Time"] = [=](std::string typenm){
+	arg_decay_exist_predicates["implicitCastExpr_tf::Transform"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm.find("tf::Transform") != string::npos){ return true; }
         else { return false; } 
     };
 
@@ -118,8 +117,8 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr.find("ros::Time") != string::npos){
-            ROSTFTimeMatcher innerm{this->context_,this->interp_};
+        else if(typestr.find("tf::Transform") != string::npos){
+            ROSTFTransformMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
@@ -133,14 +132,14 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["cxxBindTemporaryExpr_ros::Time"] = [=](std::string typenm){
+	arg_decay_exist_predicates["cxxBindTemporaryExpr_tf::Transform"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm.find("tf::Transform") != string::npos){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
     {
-        ROSTFTimeMatcher exprMatcher{ context_, interp_};
+        ROSTFTransformMatcher exprMatcher{ context_, interp_};
         exprMatcher.setup();
         exprMatcher.visit(*cxxBindTemporaryExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -154,14 +153,14 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["materializeTemporaryExpr_ros::Time"] = [=](std::string typenm){
+	arg_decay_exist_predicates["materializeTemporaryExpr_tf::Transform"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm.find("tf::Transform") != string::npos){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
         {
-            ROSTFTimeMatcher exprMatcher{ context_, interp_};
+            ROSTFTransformMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*materializeTemporaryExpr_->GetTemporaryExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -176,14 +175,14 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["parenExpr_ros::Time"] = [=](std::string typenm){
+	arg_decay_exist_predicates["parenExpr_tf::Transform"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm.find("tf::Transform") != string::npos){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
     {
-        ROSTFTimeMatcher inner{ context_, interp_};
+        ROSTFTransformMatcher inner{ context_, interp_};
         inner.setup();
         inner.visit(*parenExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
@@ -197,7 +196,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if (exprWithCleanups_)
         {
-            ROSTFTimeMatcher exprMatcher{ context_, interp_};
+            ROSTFTransformMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*exprWithCleanups_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -213,7 +212,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if(declRefExpr_){
         if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
-            interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
+            interp_->mkREF_REALMATRIX4_VAR(declRefExpr_, dc);
             this->childExprStore_ = (clang::Stmt*)declRefExpr_;
             return;
 
@@ -223,7 +222,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if (cxxFunctionalCastExpr_)
         {
-            ROSTFTimeMatcher exprMatcher{ context_, interp_};
+            ROSTFTransformMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -237,14 +236,14 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Time"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Transform).*@$.MULtf::Transform"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm.find("tf::Transform") != string::npos){ return true; }
         else { return false; }
     };
-	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Duration"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Transform).*@$.MULtf::Transform"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+		else if(typenm.find("tf::Transform") != string::npos){ return true; }
         else { return false; }
     };
     if(cxxOperatorCallExpr_){
@@ -252,7 +251,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
             auto name = dc->getNameAsString();
 
-            if(name.find("+") != string::npos){
+            if(name.find("*") != string::npos){
                 auto arg0=cxxOperatorCallExpr_->getArg(0);
                 auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
 
@@ -263,26 +262,26 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 
                 clang::Stmt* arg1stmt = nullptr;
               
-                if (arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Time"](arg0str) and 
-                    arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Duration"](arg1str)){
+                if (arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Transform).*@$.MULtf::Transform"](arg0str) and 
+                    arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Transform).*@$.MULtf::Transform"](arg1str)){
                     if(false){}
-                    else if(arg0str.find("ros::Time") != string::npos){
+                    else if(arg0str.find("tf::Transform") != string::npos){
             
-                        ROSTFTimeMatcher arg0m{this->context_,this->interp_};
+                        ROSTFTransformMatcher arg0m{this->context_,this->interp_};
                         arg0m.setup();
                         arg0m.visit(*arg0);
                         arg0stmt = arg0m.getChildExprStore();
                     }
                     if(false){}
-                    else if(arg1str.find("ros::Duration") != string::npos){
+                    else if(arg1str.find("tf::Transform") != string::npos){
             
-                        ROSTFDurationMatcher arg1m{this->context_,this->interp_};
+                        ROSTFTransformMatcher arg1m{this->context_,this->interp_};
                         arg1m.setup();
                         arg1m.visit(*arg1);
                         arg1stmt = arg1m.getChildExprStore();
                     }
                     if(arg0stmt and arg1stmt){
-                        interp_->mkADD_REAL1_EXPR_REAL1_EXPR(cxxOperatorCallExpr_,arg0stmt,arg1stmt);
+                        interp_->mkMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(cxxOperatorCallExpr_,arg0stmt,arg1stmt);
                         
                         this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
                         return;
@@ -294,11 +293,11 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 1){
+    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 0){
         if(true ){
             
             if(true ){
-                interp_->mkREAL1_LIT(cxxConstructExpr_);
+                interp_->mkREALMATRIX4_EMPTY(cxxConstructExpr_);
                 this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
                 return;
             }

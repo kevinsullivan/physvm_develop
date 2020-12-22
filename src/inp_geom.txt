@@ -4,6 +4,9 @@ worldGeom
 -6
 1
 si
+-6
+2
+imp
 -4
 1
 1

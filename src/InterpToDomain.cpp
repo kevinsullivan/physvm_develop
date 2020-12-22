@@ -395,6 +395,39 @@ interp::DECL_REAL3_VAR_REAL3_EXPR* InterpToDomain::getDECL_REAL3_VAR_REAL3_EXPR(
     return static_cast<interp::DECL_REAL3_VAR_REAL3_EXPR*>(interp);
 }
 
+void InterpToDomain::putDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_STMT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* InterpToDomain::getDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(domain::DomainObject* d) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = dom2interp_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR*>(interp);
+}
+
 void InterpToDomain::putDECL_REAL1_VAR(interp::DECL_REAL1_VAR* i, domain::DomainObject* d)
 {
     interp2dom_STMT[i] = d;
@@ -461,6 +494,39 @@ interp::DECL_REAL3_VAR* InterpToDomain::getDECL_REAL3_VAR(domain::DomainObject* 
     return static_cast<interp::DECL_REAL3_VAR*>(interp);
 }
 
+void InterpToDomain::putDECL_REALMATRIX4_VAR(interp::DECL_REALMATRIX4_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseDECL_REALMATRIX4_VAR(interp::DECL_REALMATRIX4_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getDECL_REALMATRIX4_VAR(interp::DECL_REALMATRIX4_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_STMT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::DECL_REALMATRIX4_VAR* InterpToDomain::getDECL_REALMATRIX4_VAR(domain::DomainObject* d) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = dom2interp_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::DECL_REALMATRIX4_VAR*>(interp);
+}
+
 interp::REXPR *InterpToDomain::getREXPR(domain::DomainObject *d) const
     {
         interp::STMT *interp = NULL;
@@ -506,6 +572,95 @@ domain::DomainObject *InterpToDomain::getLEXPR(interp::LEXPR *i) const
         }
         return dom;
     }
+
+interp::REALMATRIX4_EXPR *InterpToDomain::getREALMATRIX4_EXPR(domain::DomainObject *d) const
+    {
+        interp::STMT *interp = NULL;
+        try {
+            interp = dom2interp_STMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REALMATRIX4_EXPR*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREALMATRIX4_EXPR(interp::REALMATRIX4_EXPR *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putREF_REALMATRIX4_VAR(interp::REF_REALMATRIX4_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseREF_REALMATRIX4_VAR(interp::REF_REALMATRIX4_VAR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREF_REALMATRIX4_VAR(interp::REF_REALMATRIX4_VAR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_STMT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REF_REALMATRIX4_VAR* InterpToDomain::getREF_REALMATRIX4_VAR(domain::DomainObject* d) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = dom2interp_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REF_REALMATRIX4_VAR*>(interp);
+}
+
+void InterpToDomain::putMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_STMT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* InterpToDomain::getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(domain::DomainObject* d) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = dom2interp_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR*>(interp);
+}
 
 interp::REAL3_EXPR *InterpToDomain::getREAL3_EXPR(domain::DomainObject *d) const
     {
@@ -660,6 +815,39 @@ interp::RMUL_REAL3_EXPR_REAL1_EXPR* InterpToDomain::getRMUL_REAL3_EXPR_REAL1_EXP
         interp = NULL;
     }
     return static_cast<interp::RMUL_REAL3_EXPR_REAL1_EXPR*>(interp);
+}
+
+void InterpToDomain::putTMUL_REALMATRIX4_EXPR_REAL3_EXPR(interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseTMUL_REALMATRIX4_EXPR_REAL3_EXPR(interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_STMT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* InterpToDomain::getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(domain::DomainObject* d) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = dom2interp_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR*>(interp);
 }
 
 interp::REAL3_LEXPR *InterpToDomain::getREAL3_LEXPR(domain::DomainObject *d) const
@@ -906,6 +1094,39 @@ interp::REAL3_VAR_IDENT* InterpToDomain::getREAL3_VAR_IDENT(domain::DomainObject
     return static_cast<interp::REAL3_VAR_IDENT*>(interp);
 }
 
+void InterpToDomain::putREALMATRIX4_VAR_IDENT(interp::REALMATRIX4_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX4_VAR_IDENT[i] = d;
+    dom2interp_REALMATRIX4_VAR_IDENT[d] = i;
+}
+void InterpToDomain::eraseREALMATRIX4_VAR_IDENT(interp::REALMATRIX4_VAR_IDENT* i, domain::DomainObject* d)
+{
+    interp2dom_REALMATRIX4_VAR_IDENT.erase(i);
+    dom2interp_REALMATRIX4_VAR_IDENT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREALMATRIX4_VAR_IDENT(interp::REALMATRIX4_VAR_IDENT* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_REALMATRIX4_VAR_IDENT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REALMATRIX4_VAR_IDENT* InterpToDomain::getREALMATRIX4_VAR_IDENT(domain::DomainObject* d) const
+{
+    interp::REALMATRIX4_VAR_IDENT *interp = NULL;
+    try {
+        interp = dom2interp_REALMATRIX4_VAR_IDENT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REALMATRIX4_VAR_IDENT*>(interp);
+}
+
 interp::REAL3_LITERAL *InterpToDomain::getREAL3_LITERAL(domain::DomainObject *d) const
     {
         interp::STMT *interp = NULL;
@@ -1049,4 +1270,60 @@ interp::REAL1_LIT* InterpToDomain::getREAL1_LIT(domain::DomainObject* d) const
         interp = NULL;
     }
     return static_cast<interp::REAL1_LIT*>(interp);
+}
+
+interp::REALMATRIX4_LITERAL *InterpToDomain::getREALMATRIX4_LITERAL(domain::DomainObject *d) const
+    {
+        interp::STMT *interp = NULL;
+        try {
+            interp = dom2interp_STMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REALMATRIX4_LITERAL*)interp;
+    }
+domain::DomainObject *InterpToDomain::getREALMATRIX4_LITERAL(interp::REALMATRIX4_LITERAL *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putREALMATRIX4_EMPTY(interp::REALMATRIX4_EMPTY* i, domain::DomainObject* d)
+{
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseREALMATRIX4_EMPTY(interp::REALMATRIX4_EMPTY* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getREALMATRIX4_EMPTY(interp::REALMATRIX4_EMPTY* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_STMT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::REALMATRIX4_EMPTY* InterpToDomain::getREALMATRIX4_EMPTY(domain::DomainObject* d) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = dom2interp_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REALMATRIX4_EMPTY*>(interp);
 }

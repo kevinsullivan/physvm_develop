@@ -166,7 +166,7 @@ public:
     };
 
     std::shared_ptr<ValueType>* getValues() const {
-        return (std::shared_ptr<ValueType>*)this->values_;
+        return const_cast<std::shared_ptr<ValueType>*>(this->values_);
     }
 
 protected:
@@ -189,15 +189,21 @@ class MAIN_FUNC_DECL_STMT;
 class DECLARE;
 class DECL_REAL1_VAR_REAL1_EXPR;
 class DECL_REAL3_VAR_REAL3_EXPR;
+class DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR;
 class DECL_REAL1_VAR;
 class DECL_REAL3_VAR;
+class DECL_REALMATRIX4_VAR;
 class REXPR;
 class LEXPR;
+class REALMATRIX4_EXPR;
+class REF_REALMATRIX4_VAR;
+class MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR;
 class REAL3_EXPR;
 class REF_REAL3_VAR;
 class ADD_REAL3_EXPR_REAL3_EXPR;
 class LMUL_REAL1_EXPR_REAL3_EXPR;
 class RMUL_REAL3_EXPR_REAL1_EXPR;
+class TMUL_REALMATRIX4_EXPR_REAL3_EXPR;
 class REAL3_LEXPR;
 class LREF_REAL3_VAR;
 class REAL1_EXPR;
@@ -206,11 +212,14 @@ class ADD_REAL1_EXPR_REAL1_EXPR;
 class MUL_REAL1_EXPR_REAL1_EXPR;
 class REAL1_VAR_IDENT;
 class REAL3_VAR_IDENT;
+class REALMATRIX4_VAR_IDENT;
 class REAL3_LITERAL;
 class REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
 class REAL3_EMPTY;
 class REAL1_LITERAL;
 class REAL1_LIT;
+class REALMATRIX4_LITERAL;
+class REALMATRIX4_EMPTY;
 
 class PROGRAM : public Coords {
 public:
@@ -392,6 +401,22 @@ protected:
 
 
 
+class DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR : public DECLARE {
+public:
+    DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords::REALMATRIX4_VAR_IDENT * operand_1, coords::REALMATRIX4_EXPR * operand_2);
+    virtual std::string toString() const override;
+    bool operator==(const DECLARE &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REALMATRIX4_VAR_IDENT *getOperand1(); 
+	coords::REALMATRIX4_EXPR *getOperand2(); 
+protected:
+	coords::REALMATRIX4_VAR_IDENT *operand1;
+	coords::REALMATRIX4_EXPR *operand2;
+};
+
+
+
 class DECL_REAL1_VAR : public DECLARE {
 public:
     DECL_REAL1_VAR(coords::REAL1_VAR_IDENT * operand_1);
@@ -416,6 +441,20 @@ public:
 	coords::REAL3_VAR_IDENT *getOperand1(); 
 protected:
 	coords::REAL3_VAR_IDENT *operand1;
+};
+
+
+
+class DECL_REALMATRIX4_VAR : public DECLARE {
+public:
+    DECL_REALMATRIX4_VAR(coords::REALMATRIX4_VAR_IDENT * operand_1);
+    virtual std::string toString() const override;
+    bool operator==(const DECLARE &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REALMATRIX4_VAR_IDENT *getOperand1(); 
+protected:
+	coords::REALMATRIX4_VAR_IDENT *operand1;
 };
 
 
@@ -447,6 +486,50 @@ public:
 };
 
     
+
+class REALMATRIX4_EXPR : public REXPR {
+public:
+    REALMATRIX4_EXPR() : REXPR() {};
+    std::string virtual toString() const override { return "Do not call this"; };
+    bool operator==(const REALMATRIX4_EXPR &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+};
+
+    
+
+class REF_REALMATRIX4_VAR : public REALMATRIX4_EXPR {
+public:
+    REF_REALMATRIX4_VAR(coords::REALMATRIX4_VAR_IDENT * operand_1);
+    virtual std::string toString() const override;
+    bool operator==(const REALMATRIX4_EXPR &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REALMATRIX4_VAR_IDENT *getOperand1(); 
+protected:
+	coords::REALMATRIX4_VAR_IDENT *operand1;
+};
+
+
+
+class MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR : public REALMATRIX4_EXPR {
+public:
+    MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(coords::REALMATRIX4_EXPR * operand_1, coords::REALMATRIX4_EXPR * operand_2);
+    virtual std::string toString() const override;
+    bool operator==(const REALMATRIX4_EXPR &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REALMATRIX4_EXPR *getOperand1(); 
+	coords::REALMATRIX4_EXPR *getOperand2(); 
+protected:
+	coords::REALMATRIX4_EXPR *operand1;
+	coords::REALMATRIX4_EXPR *operand2;
+};
+
+
 
 class REAL3_EXPR : public REXPR, public ValueCoords<float,3> {
 public:
@@ -520,6 +603,22 @@ public:
 protected:
 	coords::REAL3_EXPR *operand1;
 	coords::REAL1_EXPR *operand2;
+};
+
+
+
+class TMUL_REALMATRIX4_EXPR_REAL3_EXPR : public REAL3_EXPR {
+public:
+    TMUL_REALMATRIX4_EXPR_REAL3_EXPR(coords::REALMATRIX4_EXPR * operand_1, coords::REAL3_EXPR * operand_2,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2);
+    virtual std::string toString() const override;
+    bool operator==(const REAL3_EXPR &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REALMATRIX4_EXPR *getOperand1(); 
+	coords::REAL3_EXPR *getOperand2(); 
+protected:
+	coords::REALMATRIX4_EXPR *operand1;
+	coords::REAL3_EXPR *operand2;
 };
 
 
@@ -648,6 +747,24 @@ protected:
 
     
 
+class REALMATRIX4_VAR_IDENT : public Coords {
+public:
+    REALMATRIX4_VAR_IDENT() : Coords()
+        {};
+    std::string virtual toString() const override;
+    
+    bool operator==(const REALMATRIX4_VAR_IDENT &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+protected:
+    
+};
+
+    
+
 class REAL3_LITERAL : public REAL3_EXPR {
 public:
     REAL3_LITERAL(std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2) : REAL3_EXPR({value0,value1,value2}) {};
@@ -713,6 +830,34 @@ public:
     REAL1_LIT(std::shared_ptr<float> value0);
     virtual std::string toString() const override;
     bool operator==(const REAL1_LITERAL &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	
+protected:
+	
+};
+
+
+
+class REALMATRIX4_LITERAL : public REALMATRIX4_EXPR {
+public:
+    REALMATRIX4_LITERAL() : REALMATRIX4_EXPR() {};
+    std::string virtual toString() const override { return "Do not call this"; };
+    bool operator==(const REALMATRIX4_LITERAL &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+};
+
+    
+
+class REALMATRIX4_EMPTY : public REALMATRIX4_LITERAL {
+public:
+    REALMATRIX4_EMPTY();
+    virtual std::string toString() const override;
+    bool operator==(const REALMATRIX4_LITERAL &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;
     };
 	

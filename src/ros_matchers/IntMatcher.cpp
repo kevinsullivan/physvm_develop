@@ -82,6 +82,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["memberExpr_int"] = [=](std::string typenm){
     if(false){return false;}
 		else if(typenm.find("int") != string::npos){ return true; }
+    else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
@@ -101,6 +102,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["implicitCastExpr_int"] = [=](std::string typenm){
         if(false){return false; }
 		else if(typenm.find("int") != string::npos){ return true; }
+        else { return false; } 
     };
 
     if (implicitCastExpr_)
@@ -127,6 +129,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_int"] = [=](std::string typenm){
         if(false){ return false; }
 		else if(typenm.find("int") != string::npos){ return true; }
+        else { return false; }
     };
     if (cxxBindTemporaryExpr_)
     {
@@ -147,6 +150,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["materializeTemporaryExpr_int"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm.find("int") != string::npos){ return true; }
+        else { return false; }
     };
     if (materializeTemporaryExpr_)
         {
@@ -168,6 +172,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["parenExpr_int"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm.find("int") != string::npos){ return true; }
+        else { return false; } 
     };
     if (parenExpr_)
     {

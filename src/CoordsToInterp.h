@@ -53,6 +53,10 @@ public:
 	interp::DECL_REAL3_VAR_REAL3_EXPR* getDECL_REAL3_VAR_REAL3_EXPR(coords::DECL_REAL3_VAR_REAL3_EXPR* c) const;
 	coords::DECL_REAL3_VAR_REAL3_EXPR* getDECL_REAL3_VAR_REAL3_EXPR(interp::DECL_REAL3_VAR_REAL3_EXPR* i) const;
 
+	void putDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* key, interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* val);
+	interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* getDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* c) const;
+	coords::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* getDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* i) const;
+
 	void putDECL_REAL1_VAR(coords::DECL_REAL1_VAR* key, interp::DECL_REAL1_VAR* val);
 	interp::DECL_REAL1_VAR* getDECL_REAL1_VAR(coords::DECL_REAL1_VAR* c) const;
 	coords::DECL_REAL1_VAR* getDECL_REAL1_VAR(interp::DECL_REAL1_VAR* i) const;
@@ -61,11 +65,26 @@ public:
 	interp::DECL_REAL3_VAR* getDECL_REAL3_VAR(coords::DECL_REAL3_VAR* c) const;
 	coords::DECL_REAL3_VAR* getDECL_REAL3_VAR(interp::DECL_REAL3_VAR* i) const;
 
+	void putDECL_REALMATRIX4_VAR(coords::DECL_REALMATRIX4_VAR* key, interp::DECL_REALMATRIX4_VAR* val);
+	interp::DECL_REALMATRIX4_VAR* getDECL_REALMATRIX4_VAR(coords::DECL_REALMATRIX4_VAR* c) const;
+	coords::DECL_REALMATRIX4_VAR* getDECL_REALMATRIX4_VAR(interp::DECL_REALMATRIX4_VAR* i) const;
+
 	interp::REXPR* getREXPR(coords::REXPR* c) const;
 	coords::REXPR* getREXPR(interp::REXPR* i) const;
 
 	interp::LEXPR* getLEXPR(coords::LEXPR* c) const;
 	coords::LEXPR* getLEXPR(interp::LEXPR* i) const;
+
+	interp::REALMATRIX4_EXPR* getREALMATRIX4_EXPR(coords::REALMATRIX4_EXPR* c) const;
+	coords::REALMATRIX4_EXPR* getREALMATRIX4_EXPR(interp::REALMATRIX4_EXPR* i) const;
+
+	void putREF_REALMATRIX4_VAR(coords::REF_REALMATRIX4_VAR* key, interp::REF_REALMATRIX4_VAR* val);
+	interp::REF_REALMATRIX4_VAR* getREF_REALMATRIX4_VAR(coords::REF_REALMATRIX4_VAR* c) const;
+	coords::REF_REALMATRIX4_VAR* getREF_REALMATRIX4_VAR(interp::REF_REALMATRIX4_VAR* i) const;
+
+	void putMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* key, interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* val);
+	interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* c) const;
+	coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* i) const;
 
 	interp::REAL3_EXPR* getREAL3_EXPR(coords::REAL3_EXPR* c) const;
 	coords::REAL3_EXPR* getREAL3_EXPR(interp::REAL3_EXPR* i) const;
@@ -85,6 +104,10 @@ public:
 	void putRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* key, interp::RMUL_REAL3_EXPR_REAL1_EXPR* val);
 	interp::RMUL_REAL3_EXPR_REAL1_EXPR* getRMUL_REAL3_EXPR_REAL1_EXPR(coords::RMUL_REAL3_EXPR_REAL1_EXPR* c) const;
 	coords::RMUL_REAL3_EXPR_REAL1_EXPR* getRMUL_REAL3_EXPR_REAL1_EXPR(interp::RMUL_REAL3_EXPR_REAL1_EXPR* i) const;
+
+	void putTMUL_REALMATRIX4_EXPR_REAL3_EXPR(coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* key, interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* val);
+	interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* c) const;
+	coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* i) const;
 
 	interp::REAL3_LEXPR* getREAL3_LEXPR(coords::REAL3_LEXPR* c) const;
 	coords::REAL3_LEXPR* getREAL3_LEXPR(interp::REAL3_LEXPR* i) const;
@@ -116,6 +139,10 @@ public:
 	interp::REAL3_VAR_IDENT* getREAL3_VAR_IDENT(coords::REAL3_VAR_IDENT* c) const;
 	coords::REAL3_VAR_IDENT* getREAL3_VAR_IDENT(interp::REAL3_VAR_IDENT* i) const;
 
+	void putREALMATRIX4_VAR_IDENT(coords::REALMATRIX4_VAR_IDENT* key, interp::REALMATRIX4_VAR_IDENT* val);
+	interp::REALMATRIX4_VAR_IDENT* getREALMATRIX4_VAR_IDENT(coords::REALMATRIX4_VAR_IDENT* c) const;
+	coords::REALMATRIX4_VAR_IDENT* getREALMATRIX4_VAR_IDENT(interp::REALMATRIX4_VAR_IDENT* i) const;
+
 	interp::REAL3_LITERAL* getREAL3_LITERAL(coords::REAL3_LITERAL* c) const;
 	coords::REAL3_LITERAL* getREAL3_LITERAL(interp::REAL3_LITERAL* i) const;
 
@@ -133,6 +160,13 @@ public:
 	void putREAL1_LIT(coords::REAL1_LIT* key, interp::REAL1_LIT* val);
 	interp::REAL1_LIT* getREAL1_LIT(coords::REAL1_LIT* c) const;
 	coords::REAL1_LIT* getREAL1_LIT(interp::REAL1_LIT* i) const;
+
+	interp::REALMATRIX4_LITERAL* getREALMATRIX4_LITERAL(coords::REALMATRIX4_LITERAL* c) const;
+	coords::REALMATRIX4_LITERAL* getREALMATRIX4_LITERAL(interp::REALMATRIX4_LITERAL* i) const;
+
+	void putREALMATRIX4_EMPTY(coords::REALMATRIX4_EMPTY* key, interp::REALMATRIX4_EMPTY* val);
+	interp::REALMATRIX4_EMPTY* getREALMATRIX4_EMPTY(coords::REALMATRIX4_EMPTY* c) const;
+	coords::REALMATRIX4_EMPTY* getREALMATRIX4_EMPTY(interp::REALMATRIX4_EMPTY* i) const;
 
 private:
 
@@ -163,6 +197,9 @@ private:
 	std::unordered_map <coords::LEXPR*,	interp::LEXPR*	> 	coords2interp_LEXPR;
 	std::unordered_map <interp::LEXPR*,	coords::LEXPR*	> 	interp2coords_LEXPR;
 
+	std::unordered_map <coords::REALMATRIX4_EXPR*,	interp::REALMATRIX4_EXPR*	> 	coords2interp_REALMATRIX4_EXPR;
+	std::unordered_map <interp::REALMATRIX4_EXPR*,	coords::REALMATRIX4_EXPR*	> 	interp2coords_REALMATRIX4_EXPR;
+
 	std::unordered_map <coords::REAL3_EXPR*,	interp::REAL3_EXPR*	> 	coords2interp_REAL3_EXPR;
 	std::unordered_map <interp::REAL3_EXPR*,	coords::REAL3_EXPR*	> 	interp2coords_REAL3_EXPR;
 
@@ -178,11 +215,17 @@ private:
 	std::unordered_map <coords::REAL3_VAR_IDENT*,	interp::REAL3_VAR_IDENT*	> 	coords2interp_REAL3_VAR_IDENT;
 	std::unordered_map <interp::REAL3_VAR_IDENT*,	coords::REAL3_VAR_IDENT*	> 	interp2coords_REAL3_VAR_IDENT;
 
+	std::unordered_map <coords::REALMATRIX4_VAR_IDENT*,	interp::REALMATRIX4_VAR_IDENT*	> 	coords2interp_REALMATRIX4_VAR_IDENT;
+	std::unordered_map <interp::REALMATRIX4_VAR_IDENT*,	coords::REALMATRIX4_VAR_IDENT*	> 	interp2coords_REALMATRIX4_VAR_IDENT;
+
 	std::unordered_map <coords::REAL3_LITERAL*,	interp::REAL3_LITERAL*	> 	coords2interp_REAL3_LITERAL;
 	std::unordered_map <interp::REAL3_LITERAL*,	coords::REAL3_LITERAL*	> 	interp2coords_REAL3_LITERAL;
 
 	std::unordered_map <coords::REAL1_LITERAL*,	interp::REAL1_LITERAL*	> 	coords2interp_REAL1_LITERAL;
 	std::unordered_map <interp::REAL1_LITERAL*,	coords::REAL1_LITERAL*	> 	interp2coords_REAL1_LITERAL;
+
+	std::unordered_map <coords::REALMATRIX4_LITERAL*,	interp::REALMATRIX4_LITERAL*	> 	coords2interp_REALMATRIX4_LITERAL;
+	std::unordered_map <interp::REALMATRIX4_LITERAL*,	coords::REALMATRIX4_LITERAL*	> 	interp2coords_REALMATRIX4_LITERAL;
 };
 
 } // namespace

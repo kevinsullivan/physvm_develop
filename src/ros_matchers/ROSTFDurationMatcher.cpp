@@ -89,6 +89,7 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["memberExpr_ros::Duration"] = [=](std::string typenm){
     if(false){return false;}
 		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+    else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
@@ -108,6 +109,7 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["implicitCastExpr_ros::Duration"] = [=](std::string typenm){
         if(false){return false; }
 		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+        else { return false; } 
     };
 
     if (implicitCastExpr_)
@@ -134,6 +136,7 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_ros::Duration"] = [=](std::string typenm){
         if(false){ return false; }
 		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+        else { return false; }
     };
     if (cxxBindTemporaryExpr_)
     {
@@ -154,6 +157,7 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["materializeTemporaryExpr_ros::Duration"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+        else { return false; }
     };
     if (materializeTemporaryExpr_)
         {
@@ -175,6 +179,7 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["parenExpr_ros::Duration"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+        else { return false; } 
     };
     if (parenExpr_)
     {
@@ -235,10 +240,12 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration,ros::Duration).+@$.ADDros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+        else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration,ros::Duration).+@$.ADDros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+        else { return false; }
     };
     if(cxxOperatorCallExpr_){
         auto decl_ = cxxOperatorCallExpr_->getCalleeDecl();
@@ -252,13 +259,13 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
                 auto arg1=cxxOperatorCallExpr_->getArg(1);
                 auto arg1str = ((clang::QualType)arg1->getType()).getAsString();
 
-                clang::Stmt* arg0stmt;
+                clang::Stmt* arg0stmt = nullptr;
 
-                clang::Stmt* arg1stmt;
+                clang::Stmt* arg1stmt = nullptr;
               
                 if (arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration,ros::Duration).+@$.ADDros::Duration"](arg0str) and 
                     arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration,ros::Duration).+@$.ADDros::Duration"](arg1str)){
-                    if(false){0;}
+                    if(false){}
                     else if(arg0str.find("ros::Duration") != string::npos){
             
                         ROSTFDurationMatcher arg0m{this->context_,this->interp_};
@@ -266,7 +273,7 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
                         arg0m.visit(*arg0);
                         arg0stmt = arg0m.getChildExprStore();
                     }
-                    if(false){1;}
+                    if(false){}
                     else if(arg1str.find("ros::Duration") != string::npos){
             
                         ROSTFDurationMatcher arg1m{this->context_,this->interp_};
@@ -290,10 +297,12 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration,double).*@$.MULros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+        else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration,double).*@$.MULdouble"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm.find("double") != string::npos){ return true; }
+        else { return false; }
     };
     if(cxxOperatorCallExpr_){
         auto decl_ = cxxOperatorCallExpr_->getCalleeDecl();
@@ -307,13 +316,13 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
                 auto arg1=cxxOperatorCallExpr_->getArg(1);
                 auto arg1str = ((clang::QualType)arg1->getType()).getAsString();
 
-                clang::Stmt* arg0stmt;
+                clang::Stmt* arg0stmt = nullptr;
 
-                clang::Stmt* arg1stmt;
+                clang::Stmt* arg1stmt = nullptr;
               
                 if (arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration,double).*@$.MULros::Duration"](arg0str) and 
                     arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration,double).*@$.MULdouble"](arg1str)){
-                    if(false){0;}
+                    if(false){}
                     else if(arg0str.find("ros::Duration") != string::npos){
             
                         ROSTFDurationMatcher arg0m{this->context_,this->interp_};
@@ -321,7 +330,7 @@ void ROSTFDurationMatcher::run(const MatchFinder::MatchResult &Result){
                         arg0m.visit(*arg0);
                         arg0stmt = arg0m.getChildExprStore();
                     }
-                    if(false){1;}
+                    if(false){}
                     else if(arg1str.find("double") != string::npos){
             
                         DoubleMatcher arg1m{this->context_,this->interp_};

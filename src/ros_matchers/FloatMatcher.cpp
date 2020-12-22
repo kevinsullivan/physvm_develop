@@ -82,6 +82,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["memberExpr_float"] = [=](std::string typenm){
     if(false){return false;}
 		else if(typenm.find("float") != string::npos){ return true; }
+    else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
@@ -101,6 +102,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["implicitCastExpr_float"] = [=](std::string typenm){
         if(false){return false; }
 		else if(typenm.find("float") != string::npos){ return true; }
+        else { return false; } 
     };
 
     if (implicitCastExpr_)
@@ -127,6 +129,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_float"] = [=](std::string typenm){
         if(false){ return false; }
 		else if(typenm.find("float") != string::npos){ return true; }
+        else { return false; }
     };
     if (cxxBindTemporaryExpr_)
     {
@@ -147,6 +150,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["materializeTemporaryExpr_float"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm.find("float") != string::npos){ return true; }
+        else { return false; }
     };
     if (materializeTemporaryExpr_)
         {
@@ -168,6 +172,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	arg_decay_exist_predicates["parenExpr_float"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm.find("float") != string::npos){ return true; }
+        else { return false; } 
     };
     if (parenExpr_)
     {

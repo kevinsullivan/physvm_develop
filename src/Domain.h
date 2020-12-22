@@ -68,7 +68,7 @@ template<typename ValueType,int ValueCount>
 class EuclideanGeometryOrientation;
 
 template<typename ValueType,int ValueCount>
-class EuclideanGeometryFrameChange;
+class EuclideanGeometryTransform;
 
 template<typename ValueType,int ValueCount>
 class EuclideanGeometryCoordinatePoint;
@@ -96,7 +96,7 @@ class SIMeasurementSystem;
 class ImperialMeasurementSystem;
 
 template<typename ValueType,int ValueCount>
-class ClassicalTimeFrameChange;
+class ClassicalTimeTransform;
 
 template<typename ValueType,int ValueCount>
 class ClassicalTimeCoordinatePoint;
@@ -130,7 +130,7 @@ template<typename ValueType,int ValueCount>
 class EuclideanGeometry3Orientation;
 
 template<typename ValueType,int ValueCount>
-class EuclideanGeometry3FrameChange;
+class EuclideanGeometry3Transform;
 
 template<typename ValueType,int ValueCount>
 class EuclideanGeometry3CoordinatePoint;
@@ -252,21 +252,21 @@ EuclideanGeometryOrientation<ValueType,ValueCount>* mkEuclideanGeometryOrientati
 
 
 template <class ValueType, int ValueCount>
-EuclideanGeometryFrameChange<ValueType,ValueCount>* mkEuclideanGeometryFrameChange(MapSpace* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    EuclideanGeometryFrameChange<ValueType,ValueCount>* dom_ = new EuclideanGeometryFrameChange<ValueType,ValueCount>(sp, {});
+                        EuclideanGeometryTransform<ValueType,ValueCount>* mkEuclideanGeometryTransform(EuclideanGeometry* sp,EuclideanGeometryFrame* from,EuclideanGeometryFrame* to/*,   std::shared_ptr<ValueType> values[ValueCount]*/){
+    EuclideanGeometryTransform <ValueType,ValueCount>* dom_ = new EuclideanGeometryTransform <ValueType,ValueCount>(sp, from, to, {});
     //((ValueObject<ValueType,ValueCount>)(dom_))->setValues(values);
-    //this->EuclideanGeometryFrameChange_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
+    //this->EuclideanGeometryTransform_vec.push_back(dom_);
+    /*for(int i = 0; i < ValueCount;i++){
         dom_->setValue(values[i],i);
-    }
+    }*/
     return dom_;
 }
                 
 
 template <class ValueType, int ValueCount>
-EuclideanGeometryFrameChange<ValueType,ValueCount>* mkEuclideanGeometryFrameChange(){
-    EuclideanGeometryFrameChange<ValueType,ValueCount>* dom_ = new EuclideanGeometryFrameChange<ValueType,ValueCount>({});
-    //this->EuclideanGeometryFrameChange_vec.push_back(dom_);
+EuclideanGeometryTransform<ValueType,ValueCount>* mkEuclideanGeometryTransform(){
+    EuclideanGeometryTransform<ValueType,ValueCount>* dom_ = new EuclideanGeometryTransform<ValueType,ValueCount>({});
+    //this->EuclideanGeometryTransform_vec.push_back(dom_);
     /*int i = 0;
     for(auto val : values){
         dom_->setValue(values[i],i++);
@@ -356,21 +356,21 @@ EuclideanGeometryScalar<ValueType,ValueCount>* mkEuclideanGeometryScalar(){
 	ClassicalTimeDerivedFrame* mkClassicalTimeDerivedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent);
 
 template <class ValueType, int ValueCount>
-ClassicalTimeFrameChange<ValueType,ValueCount>* mkClassicalTimeFrameChange(MapSpace* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    ClassicalTimeFrameChange<ValueType,ValueCount>* dom_ = new ClassicalTimeFrameChange<ValueType,ValueCount>(sp, {});
+                        ClassicalTimeTransform<ValueType,ValueCount>* mkClassicalTimeTransform(ClassicalTime* sp,ClassicalTimeFrame* from,ClassicalTimeFrame* to/*,   std::shared_ptr<ValueType> values[ValueCount]*/){
+    ClassicalTimeTransform <ValueType,ValueCount>* dom_ = new ClassicalTimeTransform <ValueType,ValueCount>(sp, from, to, {});
     //((ValueObject<ValueType,ValueCount>)(dom_))->setValues(values);
-    //this->ClassicalTimeFrameChange_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
+    //this->ClassicalTimeTransform_vec.push_back(dom_);
+    /*for(int i = 0; i < ValueCount;i++){
         dom_->setValue(values[i],i);
-    }
+    }*/
     return dom_;
 }
                 
 
 template <class ValueType, int ValueCount>
-ClassicalTimeFrameChange<ValueType,ValueCount>* mkClassicalTimeFrameChange(){
-    ClassicalTimeFrameChange<ValueType,ValueCount>* dom_ = new ClassicalTimeFrameChange<ValueType,ValueCount>({});
-    //this->ClassicalTimeFrameChange_vec.push_back(dom_);
+ClassicalTimeTransform<ValueType,ValueCount>* mkClassicalTimeTransform(){
+    ClassicalTimeTransform<ValueType,ValueCount>* dom_ = new ClassicalTimeTransform<ValueType,ValueCount>({});
+    //this->ClassicalTimeTransform_vec.push_back(dom_);
     /*int i = 0;
     for(auto val : values){
         dom_->setValue(values[i],i++);
@@ -510,21 +510,21 @@ EuclideanGeometry3Orientation<ValueType,ValueCount>* mkEuclideanGeometry3Orienta
 
 
 template <class ValueType, int ValueCount>
-EuclideanGeometry3FrameChange<ValueType,ValueCount>* mkEuclideanGeometry3FrameChange(MapSpace* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    EuclideanGeometry3FrameChange<ValueType,ValueCount>* dom_ = new EuclideanGeometry3FrameChange<ValueType,ValueCount>(sp, {});
+                        EuclideanGeometry3Transform<ValueType,ValueCount>* mkEuclideanGeometry3Transform(EuclideanGeometry3* sp,EuclideanGeometry3Frame* from,EuclideanGeometry3Frame* to/*,   std::shared_ptr<ValueType> values[ValueCount]*/){
+    EuclideanGeometry3Transform <ValueType,ValueCount>* dom_ = new EuclideanGeometry3Transform <ValueType,ValueCount>(sp, from, to, {});
     //((ValueObject<ValueType,ValueCount>)(dom_))->setValues(values);
-    //this->EuclideanGeometry3FrameChange_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
+    //this->EuclideanGeometry3Transform_vec.push_back(dom_);
+    /*for(int i = 0; i < ValueCount;i++){
         dom_->setValue(values[i],i);
-    }
+    }*/
     return dom_;
 }
                 
 
 template <class ValueType, int ValueCount>
-EuclideanGeometry3FrameChange<ValueType,ValueCount>* mkEuclideanGeometry3FrameChange(){
-    EuclideanGeometry3FrameChange<ValueType,ValueCount>* dom_ = new EuclideanGeometry3FrameChange<ValueType,ValueCount>({});
-    //this->EuclideanGeometry3FrameChange_vec.push_back(dom_);
+EuclideanGeometry3Transform<ValueType,ValueCount>* mkEuclideanGeometry3Transform(){
+    EuclideanGeometry3Transform<ValueType,ValueCount>* dom_ = new EuclideanGeometry3Transform<ValueType,ValueCount>({});
+    //this->EuclideanGeometry3Transform_vec.push_back(dom_);
     /*int i = 0;
     for(auto val : values){
         dom_->setValue(values[i],i++);
@@ -931,9 +931,9 @@ public:
     }
 
     ~ValueObject() {
-        for(auto v : this->values_){
+        //for(auto v : this->values_){
            // delete v;
-        }
+        //}
     }
 
     ValueObject(ValueType* values...) : DomainObject() {
@@ -1095,7 +1095,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometryRotation : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometryRotation(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometryRotation(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometryRotation(){}
@@ -1106,8 +1106,12 @@ public:
     EuclideanGeometry* getSpace() const {return this->space_;};
     
     
+    
+    
 private:
     EuclideanGeometry* space_; 
+    
+    
     
     
 };
@@ -1119,7 +1123,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometryOrientation : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometryOrientation(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometryOrientation(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometryOrientation(){}
@@ -1130,8 +1134,12 @@ public:
     EuclideanGeometry* getSpace() const {return this->space_;};
     
     
+    
+    
 private:
     EuclideanGeometry* space_; 
+    
+    
     
     
 };
@@ -1140,24 +1148,28 @@ private:
 
 
 template <class ValueType, int ValueCount>
-class EuclideanGeometryFrameChange : public ValueObject<ValueType,ValueCount> {
+class EuclideanGeometryTransform : public ValueObject<ValueType,ValueCount> {
 public:
-    EuclideanGeometryFrameChange(MapSpace* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
-    EuclideanGeometryFrameChange(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometryTransform(EuclideanGeometry* s,EuclideanGeometryFrame* from,EuclideanGeometryFrame* to, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s),from_(from),to_(to)   {}
+    EuclideanGeometryTransform(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~EuclideanGeometryFrameChange(){}
+	virtual ~EuclideanGeometryTransform(){}
     std::string toString() override {
-        return "@@EuclideanGeometryFrameChange(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+        return "@@EuclideanGeometryTransform(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
     }
 
-    
+    EuclideanGeometry* getSpace() const {return this->space_;};
+    EuclideanGeometryFrame* getFrom() const {return this->from_;};
+    EuclideanGeometryFrame* getTo() const {return this->to_;};
     
     
 private:
-     
+    EuclideanGeometry* space_; 
     
-    MapSpace* space_;
+    
+    EuclideanGeometryFrame* from_;
+    EuclideanGeometryFrame* to_;
 };
 
 
@@ -1167,7 +1179,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometryCoordinatePoint : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometryCoordinatePoint(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometryCoordinatePoint(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometryCoordinatePoint(){}
@@ -1176,6 +1188,8 @@ public:
     }
 
     EuclideanGeometry* getSpace() const {return this->space_;};
+    
+    
     EuclideanGeometryFrame* getFrame() const { return this->frame_; };
     void setFrame(EuclideanGeometryFrame* frame){
             this->frame_ = frame;
@@ -1183,6 +1197,8 @@ public:
 private:
     EuclideanGeometry* space_; 
     EuclideanGeometryFrame* frame_;
+    
+    
     
 };
 
@@ -1193,7 +1209,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometryCoordinateVector : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometryCoordinateVector(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometryCoordinateVector(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometryCoordinateVector(){}
@@ -1202,6 +1218,8 @@ public:
     }
 
     EuclideanGeometry* getSpace() const {return this->space_;};
+    
+    
     EuclideanGeometryFrame* getFrame() const { return this->frame_; };
     void setFrame(EuclideanGeometryFrame* frame){
             this->frame_ = frame;
@@ -1209,6 +1227,8 @@ public:
 private:
     EuclideanGeometry* space_; 
     EuclideanGeometryFrame* frame_;
+    
+    
     
 };
 
@@ -1219,7 +1239,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometryScalar : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometryScalar(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometryScalar(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometryScalar(){}
@@ -1230,8 +1250,12 @@ public:
     EuclideanGeometry* getSpace() const {return this->space_;};
     
     
+    
+    
 private:
     EuclideanGeometry* space_; 
+    
+    
     
     
 };
@@ -1320,24 +1344,28 @@ private:
 
 
 template <class ValueType, int ValueCount>
-class ClassicalTimeFrameChange : public ValueObject<ValueType,ValueCount> {
+class ClassicalTimeTransform : public ValueObject<ValueType,ValueCount> {
 public:
-    ClassicalTimeFrameChange(MapSpace* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
-    ClassicalTimeFrameChange(std::initializer_list<DomainObject*> args ) :
+    ClassicalTimeTransform(ClassicalTime* s,ClassicalTimeFrame* from,ClassicalTimeFrame* to, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s),from_(from),to_(to)   {}
+    ClassicalTimeTransform(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~ClassicalTimeFrameChange(){}
+	virtual ~ClassicalTimeTransform(){}
     std::string toString() override {
-        return "@@ClassicalTimeFrameChange(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+        return "@@ClassicalTimeTransform(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
     }
 
-    
+    ClassicalTime* getSpace() const {return this->space_;};
+    ClassicalTimeFrame* getFrom() const {return this->from_;};
+    ClassicalTimeFrame* getTo() const {return this->to_;};
     
     
 private:
-     
+    ClassicalTime* space_; 
     
-    MapSpace* space_;
+    
+    ClassicalTimeFrame* from_;
+    ClassicalTimeFrame* to_;
 };
 
 
@@ -1347,7 +1375,7 @@ template <class ValueType, int ValueCount>
 class ClassicalTimeCoordinatePoint : public ValueObject<ValueType,ValueCount> {
 public:
     ClassicalTimeCoordinatePoint(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     ClassicalTimeCoordinatePoint(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~ClassicalTimeCoordinatePoint(){}
@@ -1356,6 +1384,8 @@ public:
     }
 
     ClassicalTime* getSpace() const {return this->space_;};
+    
+    
     ClassicalTimeFrame* getFrame() const { return this->frame_; };
     void setFrame(ClassicalTimeFrame* frame){
             this->frame_ = frame;
@@ -1363,6 +1393,8 @@ public:
 private:
     ClassicalTime* space_; 
     ClassicalTimeFrame* frame_;
+    
+    
     
 };
 
@@ -1373,7 +1405,7 @@ template <class ValueType, int ValueCount>
 class ClassicalTimeCoordinateVector : public ValueObject<ValueType,ValueCount> {
 public:
     ClassicalTimeCoordinateVector(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     ClassicalTimeCoordinateVector(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~ClassicalTimeCoordinateVector(){}
@@ -1382,6 +1414,8 @@ public:
     }
 
     ClassicalTime* getSpace() const {return this->space_;};
+    
+    
     ClassicalTimeFrame* getFrame() const { return this->frame_; };
     void setFrame(ClassicalTimeFrame* frame){
             this->frame_ = frame;
@@ -1389,6 +1423,8 @@ public:
 private:
     ClassicalTime* space_; 
     ClassicalTimeFrame* frame_;
+    
+    
     
 };
 
@@ -1399,7 +1435,7 @@ template <class ValueType, int ValueCount>
 class ClassicalTimeScalar : public ValueObject<ValueType,ValueCount> {
 public:
     ClassicalTimeScalar(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     ClassicalTimeScalar(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~ClassicalTimeScalar(){}
@@ -1410,8 +1446,12 @@ public:
     ClassicalTime* getSpace() const {return this->space_;};
     
     
+    
+    
 private:
     ClassicalTime* space_; 
+    
+    
     
     
 };
@@ -1503,7 +1543,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometry3Rotation : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometry3Rotation(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometry3Rotation(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometry3Rotation(){}
@@ -1514,8 +1554,12 @@ public:
     EuclideanGeometry3* getSpace() const {return this->space_;};
     
     
+    
+    
 private:
     EuclideanGeometry3* space_; 
+    
+    
     
     
 };
@@ -1527,7 +1571,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometry3Orientation : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometry3Orientation(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometry3Orientation(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometry3Orientation(){}
@@ -1538,8 +1582,12 @@ public:
     EuclideanGeometry3* getSpace() const {return this->space_;};
     
     
+    
+    
 private:
     EuclideanGeometry3* space_; 
+    
+    
     
     
 };
@@ -1548,24 +1596,28 @@ private:
 
 
 template <class ValueType, int ValueCount>
-class EuclideanGeometry3FrameChange : public ValueObject<ValueType,ValueCount> {
+class EuclideanGeometry3Transform : public ValueObject<ValueType,ValueCount> {
 public:
-    EuclideanGeometry3FrameChange(MapSpace* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
-    EuclideanGeometry3FrameChange(std::initializer_list<DomainObject*> args ) :
+    EuclideanGeometry3Transform(EuclideanGeometry3* s,EuclideanGeometry3Frame* from,EuclideanGeometry3Frame* to, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s),from_(from),to_(to)   {}
+    EuclideanGeometry3Transform(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~EuclideanGeometry3FrameChange(){}
+	virtual ~EuclideanGeometry3Transform(){}
     std::string toString() override {
-        return "@@EuclideanGeometry3FrameChange(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+        return "@@EuclideanGeometry3Transform(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
     }
 
-    
+    EuclideanGeometry3* getSpace() const {return this->space_;};
+    EuclideanGeometry3Frame* getFrom() const {return this->from_;};
+    EuclideanGeometry3Frame* getTo() const {return this->to_;};
     
     
 private:
-     
+    EuclideanGeometry3* space_; 
     
-    MapSpace* space_;
+    
+    EuclideanGeometry3Frame* from_;
+    EuclideanGeometry3Frame* to_;
 };
 
 
@@ -1575,7 +1627,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometry3CoordinatePoint : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometry3CoordinatePoint(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometry3CoordinatePoint(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometry3CoordinatePoint(){}
@@ -1584,6 +1636,8 @@ public:
     }
 
     EuclideanGeometry3* getSpace() const {return this->space_;};
+    
+    
     EuclideanGeometry3Frame* getFrame() const { return this->frame_; };
     void setFrame(EuclideanGeometry3Frame* frame){
             this->frame_ = frame;
@@ -1591,6 +1645,8 @@ public:
 private:
     EuclideanGeometry3* space_; 
     EuclideanGeometry3Frame* frame_;
+    
+    
     
 };
 
@@ -1601,7 +1657,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometry3CoordinateVector : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometry3CoordinateVector(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometry3CoordinateVector(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometry3CoordinateVector(){}
@@ -1610,6 +1666,8 @@ public:
     }
 
     EuclideanGeometry3* getSpace() const {return this->space_;};
+    
+    
     EuclideanGeometry3Frame* getFrame() const { return this->frame_; };
     void setFrame(EuclideanGeometry3Frame* frame){
             this->frame_ = frame;
@@ -1617,6 +1675,8 @@ public:
 private:
     EuclideanGeometry3* space_; 
     EuclideanGeometry3Frame* frame_;
+    
+    
     
 };
 
@@ -1627,7 +1687,7 @@ template <class ValueType, int ValueCount>
 class EuclideanGeometry3Scalar : public ValueObject<ValueType,ValueCount> {
 public:
     EuclideanGeometry3Scalar(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     EuclideanGeometry3Scalar(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~EuclideanGeometry3Scalar(){}
@@ -1638,8 +1698,12 @@ public:
     EuclideanGeometry3* getSpace() const {return this->space_;};
     
     
+    
+    
 private:
     EuclideanGeometry3* space_; 
+    
+    
     
     
 };
@@ -1730,7 +1794,7 @@ template <class ValueType, int ValueCount>
 class ClassicalVelocityCoordinateVector : public ValueObject<ValueType,ValueCount> {
 public:
     ClassicalVelocityCoordinateVector(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     ClassicalVelocityCoordinateVector(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~ClassicalVelocityCoordinateVector(){}
@@ -1739,6 +1803,8 @@ public:
     }
 
     ClassicalVelocity* getSpace() const {return this->space_;};
+    
+    
     ClassicalVelocityFrame* getFrame() const { return this->frame_; };
     void setFrame(ClassicalVelocityFrame* frame){
             this->frame_ = frame;
@@ -1746,6 +1812,8 @@ public:
 private:
     ClassicalVelocity* space_; 
     ClassicalVelocityFrame* frame_;
+    
+    
     
 };
 
@@ -1756,7 +1824,7 @@ template <class ValueType, int ValueCount>
 class ClassicalVelocityScalar : public ValueObject<ValueType,ValueCount> {
 public:
     ClassicalVelocityScalar(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)  {}
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
     ClassicalVelocityScalar(std::initializer_list<DomainObject*> args ) :
 	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
 	virtual ~ClassicalVelocityScalar(){}
@@ -1767,8 +1835,12 @@ public:
     ClassicalVelocity* getSpace() const {return this->space_;};
     
     
+    
+    
 private:
     ClassicalVelocity* space_; 
+    
+    
     
     
 };

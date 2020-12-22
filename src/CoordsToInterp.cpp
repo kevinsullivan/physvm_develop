@@ -291,6 +291,34 @@ interp::DECL_REAL3_VAR_REAL3_EXPR* CoordsToInterp::getDECL_REAL3_VAR_REAL3_EXPR(
     return static_cast<interp::DECL_REAL3_VAR_REAL3_EXPR*>(interp);
 }
 
+void CoordsToInterp::putDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* c, interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* CoordsToInterp::getDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::DECLARE*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR*>(coo);
+}
+interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* CoordsToInterp::getDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR*>(interp);
+}
+
 void CoordsToInterp::putDECL_REAL1_VAR(coords::DECL_REAL1_VAR* c, interp::DECL_REAL1_VAR* i)
 {
     coords2interp_STMT[c] = (interp::STMT*)i;
@@ -347,6 +375,34 @@ interp::DECL_REAL3_VAR* CoordsToInterp::getDECL_REAL3_VAR(coords::DECL_REAL3_VAR
     return static_cast<interp::DECL_REAL3_VAR*>(interp);
 }
 
+void CoordsToInterp::putDECL_REALMATRIX4_VAR(coords::DECL_REALMATRIX4_VAR* c, interp::DECL_REALMATRIX4_VAR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::DECL_REALMATRIX4_VAR* CoordsToInterp::getDECL_REALMATRIX4_VAR(interp::DECL_REALMATRIX4_VAR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::DECLARE*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::DECL_REALMATRIX4_VAR*>(coo);
+}
+interp::DECL_REALMATRIX4_VAR* CoordsToInterp::getDECL_REALMATRIX4_VAR(coords::DECL_REALMATRIX4_VAR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::DECL_REALMATRIX4_VAR*>(interp);
+}
+
 coords::REXPR *CoordsToInterp::getREXPR(interp::REXPR *i) const
     {
         coords::STMT *coords = NULL;
@@ -392,6 +448,85 @@ interp::LEXPR *CoordsToInterp::getLEXPR(coords::LEXPR *c) const
         }
         return (interp::LEXPR*)interp;
     }
+
+coords::REALMATRIX4_EXPR *CoordsToInterp::getREALMATRIX4_EXPR(interp::REALMATRIX4_EXPR *i) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = interp2coords_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::REALMATRIX4_EXPR*)coords;
+    }
+interp::REALMATRIX4_EXPR *CoordsToInterp::getREALMATRIX4_EXPR(coords::REALMATRIX4_EXPR *c) const
+    {
+        interp::STMT*interp = NULL;
+        try {
+            interp = coords2interp_STMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REALMATRIX4_EXPR*)interp;
+    }
+
+void CoordsToInterp::putREF_REALMATRIX4_VAR(coords::REF_REALMATRIX4_VAR* c, interp::REF_REALMATRIX4_VAR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::REF_REALMATRIX4_VAR* CoordsToInterp::getREF_REALMATRIX4_VAR(interp::REF_REALMATRIX4_VAR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::REALMATRIX4_EXPR*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::REF_REALMATRIX4_VAR*>(coo);
+}
+interp::REF_REALMATRIX4_VAR* CoordsToInterp::getREF_REALMATRIX4_VAR(coords::REF_REALMATRIX4_VAR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REF_REALMATRIX4_VAR*>(interp);
+}
+
+void CoordsToInterp::putMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* c, interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* CoordsToInterp::getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::REALMATRIX4_EXPR*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR*>(coo);
+}
+interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* CoordsToInterp::getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR*>(interp);
+}
 
 coords::REAL3_EXPR *CoordsToInterp::getREAL3_EXPR(interp::REAL3_EXPR *i) const
     {
@@ -526,6 +661,34 @@ interp::RMUL_REAL3_EXPR_REAL1_EXPR* CoordsToInterp::getRMUL_REAL3_EXPR_REAL1_EXP
         interp = NULL;
     }
     return static_cast<interp::RMUL_REAL3_EXPR_REAL1_EXPR*>(interp);
+}
+
+void CoordsToInterp::putTMUL_REALMATRIX4_EXPR_REAL3_EXPR(coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* c, interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* CoordsToInterp::getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::REAL3_EXPR*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR*>(coo);
+}
+interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* CoordsToInterp::getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::TMUL_REALMATRIX4_EXPR_REAL3_EXPR*>(interp);
 }
 
 coords::REAL3_LEXPR *CoordsToInterp::getREAL3_LEXPR(interp::REAL3_LEXPR *i) const
@@ -742,6 +905,34 @@ interp::REAL3_VAR_IDENT *CoordsToInterp::getREAL3_VAR_IDENT(coords::REAL3_VAR_ID
         return (interp::REAL3_VAR_IDENT*)interp;
     }
 
+void CoordsToInterp::putREALMATRIX4_VAR_IDENT(coords::REALMATRIX4_VAR_IDENT* c, interp::REALMATRIX4_VAR_IDENT* i)
+{
+    coords2interp_REALMATRIX4_VAR_IDENT[c] = (interp::REALMATRIX4_VAR_IDENT*)i;
+    interp2coords_REALMATRIX4_VAR_IDENT[(interp::REALMATRIX4_VAR_IDENT*)i] = c;
+}
+coords::REALMATRIX4_VAR_IDENT *CoordsToInterp::getREALMATRIX4_VAR_IDENT(interp::REALMATRIX4_VAR_IDENT *i) const
+    {
+        coords::REALMATRIX4_VAR_IDENT *coords = NULL;
+        try {
+            coords = interp2coords_REALMATRIX4_VAR_IDENT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::REALMATRIX4_VAR_IDENT*)coords;
+    }
+interp::REALMATRIX4_VAR_IDENT *CoordsToInterp::getREALMATRIX4_VAR_IDENT(coords::REALMATRIX4_VAR_IDENT *c) const
+    {
+        interp::REALMATRIX4_VAR_IDENT*interp = NULL;
+        try {
+            interp = coords2interp_REALMATRIX4_VAR_IDENT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REALMATRIX4_VAR_IDENT*)interp;
+    }
+
 coords::REAL3_LITERAL *CoordsToInterp::getREAL3_LITERAL(interp::REAL3_LITERAL *i) const
     {
         coords::STMT *coords = NULL;
@@ -870,4 +1061,55 @@ interp::REAL1_LIT* CoordsToInterp::getREAL1_LIT(coords::REAL1_LIT* c) const
         interp = NULL;
     }
     return static_cast<interp::REAL1_LIT*>(interp);
+}
+
+coords::REALMATRIX4_LITERAL *CoordsToInterp::getREALMATRIX4_LITERAL(interp::REALMATRIX4_LITERAL *i) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = interp2coords_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::REALMATRIX4_LITERAL*)coords;
+    }
+interp::REALMATRIX4_LITERAL *CoordsToInterp::getREALMATRIX4_LITERAL(coords::REALMATRIX4_LITERAL *c) const
+    {
+        interp::STMT*interp = NULL;
+        try {
+            interp = coords2interp_STMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::REALMATRIX4_LITERAL*)interp;
+    }
+
+void CoordsToInterp::putREALMATRIX4_EMPTY(coords::REALMATRIX4_EMPTY* c, interp::REALMATRIX4_EMPTY* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::REALMATRIX4_EMPTY* CoordsToInterp::getREALMATRIX4_EMPTY(interp::REALMATRIX4_EMPTY* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::REALMATRIX4_LITERAL*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::REALMATRIX4_EMPTY*>(coo);
+}
+interp::REALMATRIX4_EMPTY* CoordsToInterp::getREALMATRIX4_EMPTY(coords::REALMATRIX4_EMPTY* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REALMATRIX4_EMPTY*>(interp);
 }
