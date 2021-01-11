@@ -18,6 +18,11 @@ Contains a list of targeted ROS objects and their respective members/conjugation
 
 - absolute() -> Vector3
 - angle(Vector3) -> tfScalar
+
+```diff 
+- test 
+```
+
 - closestAxis -> int
 - cross(Vector3) -> Vector3
 - distance(Vector3) -> Vector3
@@ -36,6 +41,9 @@ Contains a list of targeted ROS objects and their respective members/conjugation
 - normalize() -> Vector3
 - normalized() -> Vector3
 - rotate(Vector3,tfScalar) -> Vector3
+```diff 
+- rotate(Vector3,tfScalar) -> Vector3
+```
 - setMax(Vector3) -> void
 - setMin(Vector3) -> void
 - setValue(tfScalar,tfScalar,tfScalar) -> void
@@ -83,16 +91,31 @@ Identical to tf::Vector3
 - diagonalize() -> void
 - getColumn(int) -> Vector3
 - getEulerYPR(tfScalar,tfScalar,tfScalar,int) -> void
+```diff 
+- test 
+```
+
 - getEulerZYX(tfScalar,tfScalar,tfScalar,int) -> void
+```diff 
+- test 
+```
+
 - getRotation(Quaternion) -> void
 - getRow(int) -> Vector3
 - getRPY(tfScalar,tfScalar,tfScalar,1) -> void
+```diff 
+- test 
+```
+
 - inverse() -> Matrix3x3
 - scaled(Vector3) -> Matrix3x3
-- setFromOpenGLSubMatrix(tfScalar*) -> void
 - setIdentity() -> void
 - setRotation(Quaternion) -> void
 - setRPY(tfScalar,tfScalar,tfScalar) -> void
+```diff 
+- test 
+```
+
 - setValue(tfScalar,tfScalar,tfScalar,tfScalar,tfScalar,tfScalar,tfScalar,tfScalar,tfScalar) -> void
 - timesTranspose(Matrix3x3) -> Matrix3x3
 - transpose() -> Matrix3x3
@@ -111,11 +134,25 @@ Identical to tf::Vector3
 ## tf::Quaternion
 
 - angle(Quaternion) -> tfScalar
+```diff 
+- test 
+```
+
 - angleShortestPath(Quaternion) -> tfScalar
+```diff 
+- test 
+```
+
 - dot(Quaternion) -> tfScalar
 - farthest(Quaternion) -> Quaternion
 - getAngle() -> tfScalar
+```diff 
+- test 
+```
 - getAngleShortestPath() -> tfScalar
+```diff 
+- test 
+```
 - getAxis() -> Vector3
 - getW() -> tfScalar
 - inverse() -> Quaternion
@@ -125,8 +162,19 @@ Identical to tf::Vector3
 - normalize() -> Quaternion
 - setEuler(tfScalar,tfScalar,tfScalar)
 - setEulerZYX(tfScalar,tfScalar,tfScalar)
+```diff 
+- test 
+```
 - setRotation(Vector3,tfScalar)
+
+```diff 
+- test 
+```
 - setRPY(tfScalar,tfScalar,tfScalar)
+
+```diff 
+- test 
+```
 - slerp(Quaternion,tfScalar)
 
 ### Operators
@@ -191,12 +239,27 @@ Alias for float.
 - transformQuaternion(targetFrame, targetTime, Quaternion in, fixedFrame, Quaternion out)
 - transformVector(targetFrame,Vector3 in, Vector3 out)
 - transformVector(targetFrame, targetTime, Vector3 in, fixedFrame, Vector3 out)
-- lookupTransform(
+- lookupTransform(targetFrame,sourceFrame,time, StampedTransform out)
+- lookupTransform(targetFrame,targetTime, sourceFrame,sourcetime,fixedFrame,StampedTransform out)
+- lookupTwist(trackingFrame, observationFrame, referenceFrame, referencePoint, referencePointFrame, time, averagingInterval, geometry_msgs::Twist out)
+```diff 
+- test 
+```
+- lookupTwist(trackingFrame, observationFrame, time, averagingInterval, geometry_msgs::Twist out)
+```diff 
+- test 
+```
 
 # Miscellany
 
 - angle(Quaternion,Quaternion) -> tfScalar
+```diff 
+- test 
+```
 - angleShortestPath(Quaternion,Quaternion) -> tfScalar
+```diff 
+- test 
+```
 - assertQuaternionValid(Quaternion)
 - assertQuaternionValid(geometry_msgs::Quaternion)
 - createIdentityQuaternion() -> Quaternion
@@ -206,7 +269,13 @@ Alias for float.
 - createQuaternionMsgFromYaw(double) -> geometry_msgs::Quaternion
 - dot(Quaternion,Quaternion) -> tfScalar
 - getYaw(Quaternion) -> double
+```diff 
+- test 
+```
 - getYaw(geometry_msgs::Quaternion) -> double
+```diff 
+- test 
+```
 - inverse(Quaternion) -> Quaternion
 - length(Quaternion) -> tfScalar
 - lerp(Vector3,Vector3,tfScalar) -> Vector3
@@ -268,7 +337,13 @@ Alias for float.
 - Transform
 - TransformStamped
 - Twist
+```diff 
+- test 
+```
 - TwistStamped
+```diff 
+- test 
+```
 - TwistWithCovariance
 - TwistWithCovarianceStamped
 - Vector3
