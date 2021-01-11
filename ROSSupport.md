@@ -5,6 +5,14 @@ Contains a list of targeted ROS objects and their respective members/conjugation
 
 # <span style="color:red">Red means angle implementation is required</span>
 
+```diff
+- text in red
++ text in green
+! text in orange
+# text in gray
+@@ text in purple (and bold)@@
+```
+
 ## tf::Vector3
 
 - absolute() -> Vector3
