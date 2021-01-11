@@ -8,46 +8,83 @@ Contains a list of targeted ROS objects and their respective members/conjugation
 ##tf::Vector3
 
 -absolute() -> Vector3
+
 -angle(Vector3) -> tfScalar
+
 -closestAxis -> int
+
 -cross(Vector3) -> Vector3
+
 -distance(Vector3) -> Vector3
+
 -distance2(Vector3) -> Vector3
+
 -dot(Vector3) -> Vector3
+
 -furthestAxis() -> int
+
 -getX() -> tfScalar
+
 -getY() -> tfScalar
+
 -getZ() -> tfScalar
+
 -isZero() -> bool
+
 -length() -> tfScalar
+
 -length2() -> tfScalar
+
 -lerp(Vector3,tfScalar) -> Vector3
+
 -maxAxis() -> int
+
 -minAxis() -> int
+
 -normalize() -> Vector3
+
 -normalized() -> Vector3
+
 -rotate(Vector3,tfScalar) -> Vector3
+
 -setMax(Vector3) -> void
+
 -setMin(Vector3) -> void
+
 -setValue(tfScalar,tfScalar,tfScalar) -> void
+
 -setW(tfScalar)
+
 -setX(tfScalar)
+
 -setY(tfScalar)
+
 -setZ(tfScalar)
+
 -setZero()
+
 -triple(Vector3,Vector3)
+
 -w() -> tfScalar
+
 -x() -> tfScalar
+
 -y() -> tfScalar
+
 -z() -> tfScalar
 
 ###Operators
 
 -(tfScalar)* -> Vector3
+
 -*=(Vector3) -> Vector3
+
 -+=(Vector3) -> Vector3
+
 --=(Vector3) -> Vector3
+
 -/=(tfScalar) -> Vector3
+
 -==(Vector3) -> bool
 
 ###Constructors
