@@ -7,13 +7,10 @@ Contains a list of targeted ROS objects and their respective members/conjugation
 
 ##tf::Vector3
 
--absolute() -> Vector3
-
--angle(Vector3) -> tfScalar
-
--closestAxis -> int
-
--cross(Vector3) -> Vector3
+- absolute() -> Vector3
+- angle(Vector3) -> tfScalar
+- closestAxis -> int
+- cross(Vector3) -> Vector3
 
 -distance(Vector3) -> Vector3
 
