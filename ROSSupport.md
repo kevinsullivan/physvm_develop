@@ -10,6 +10,7 @@ Contains a list of targeted ROS objects and their respective members/conjugation
 # Gray stub
 @@ Purple stub @@
 ```
+```diff - test ```
 
 ## tf::Vector3
 
