@@ -1,4 +1,11 @@
 
+/*
+The standard ROS/tf tutorial program.
+
+http://wiki.ros.org/navigation/Tutorials/RobotSetup/TF
+
+*/
+
 #include "ros/ros.h"
 #include "geometry_msgs/Vector3Stamped.h"
 #include "geometry_msgs/Vector3.h"
@@ -7,6 +14,7 @@
 #include <tf/transform_datatypes.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <tf/transform_listener.h>
+#include <tf/transform_broadcaster.h>
 //#include "nav_msgs/MapMetaData.h"
 //#include "nav_msgs/OccupancyGrid.h"
 //#include "nav_msgs/GetMap.h"
@@ -19,10 +27,10 @@ int main(int argc, char **argv){
     ros::init(argc, argv, "velocity");
     ros::NodeHandle node;  
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
-    /*
+
     ros::Rate r(100);
    
-     tf::TransformBroadcaster broadcaster;
+    tf::TransformBroadcaster broadcaster;
    
      while(node.ok()){
        broadcaster.sendTransform(
@@ -30,7 +38,8 @@ int main(int argc, char **argv){
            tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0.1, 0.0, 0.2)),
            ros::Time::now(),"base_link", "base_laser"));
        r.sleep();
-     }*/
+     }
+
      tf::TransformListener listener;
      geometry_msgs::PointStamped laser_point;
      laser_point.header.frame_id = "base_laser";
