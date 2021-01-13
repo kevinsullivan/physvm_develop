@@ -1,0 +1,6 @@
+<launch>
+
+  <node pkg="tf_tutorial" type="tf_tutorial" name="tf_tutorial" output="screen" />
+  <node pkg="tf_tutorial" type="sensor_tutorial" name="sensor_tutorial" output="screen" />
+
+</launch>

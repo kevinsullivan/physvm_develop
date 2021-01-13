@@ -24,20 +24,11 @@ include_directories(
   include ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(scratch1 src/scratch1.cpp)
-target_link_libraries(scratch1 ${catkin_LIBRARIES})
+add_executable(sensor_tutorial src/sensor_tutorial.cpp)
+target_link_libraries(sensor_tutorial ${catkin_LIBRARIES})
 
-add_executable(scratch2 src/scratch2.cpp)
-target_link_libraries(scratch2 ${catkin_LIBRARIES})
-
-add_executable(scratch3 src/scratch3.cpp)
-target_link_libraries(scratch3 ${catkin_LIBRARIES})
-
-add_executable(scratch4 src/scratch4.cpp)
-target_link_libraries(scratch4 ${catkin_LIBRARIES})
-
-add_executable(scratch5 src/scratch5.cpp)
-target_link_libraries(scratch5 ${catkin_LIBRARIES})
+add_executable(tf_tutorial src/tf_tutorial.cpp)
+target_link_libraries(tf_tutorial ${catkin_LIBRARIES})
 
 
 ##include_directories(include ${catkin_INCLUDE_DIRS})
