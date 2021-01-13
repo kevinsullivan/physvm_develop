@@ -1756,109 +1756,109 @@ void Interpretation::printVarTable(){
 
     else if(auto dc = dynamic_cast<coords::REF_REALMATRIX4_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REALMATRIX4_VAR(dc);
-        std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Var Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Multiplication Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REF_REAL3_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REAL3_VAR(dc);
-        std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Var Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::ADD_REAL3_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getADD_REAL3_EXPR_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Addition Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Addition Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::LMUL_REAL1_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getLMUL_REAL1_EXPR_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Multiplication Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::RMUL_REAL3_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getRMUL_REAL3_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Multiplication Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::TMUL_REALMATRIX4_EXPR_REAL3_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getTMUL_REALMATRIX4_EXPR_REAL3_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Multiplication Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::LREF_REAL3_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getLREF_REAL3_VAR(dc);
-        std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Var Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REF_REAL1_VAR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREF_REAL1_VAR(dc);
-        std::cout<<"Index: "<<i<<","<<"Var Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Var Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::ADD_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getADD_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Addition Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Addition Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::MUL_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getMUL_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"Multiplication Expression ,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"Multiplication Expression ,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL1_VAR_IDENT*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL1_VAR_IDENT(dc);
-        std::cout<<"Index: "<<i<<","<<"R1 Variable Identifier	,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"R1 Variable Identifier	,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL3_VAR_IDENT*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_VAR_IDENT(dc);
-        std::cout<<"Index: "<<i<<","<<"R3 Variable Identifier,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"R3 Variable Identifier,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REALMATRIX4_VAR_IDENT*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX4_VAR_IDENT(dc);
-        std::cout<<"Index: "<<i<<","<<"4x4 Matrix Variable Identifier,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"4x4 Matrix Variable Identifier,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(dc);
-        std::cout<<"Index: "<<i<<","<<"R3 Literal From 3 R1 Expressions,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<"R3 Literal From 3 R1 Expressions,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL3_EMPTY*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL3_EMPTY(dc);
-        std::cout<<"Index: "<<i<<","<<" Real 3 Literal With Empty Constructor,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<" Real 3 Literal With Empty Constructor,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REAL1_LIT*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREAL1_LIT(dc);
-        std::cout<<"Index: "<<i<<","<<" Real 1 Literal,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<" Real 1 Literal,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
 
     else if(auto dc = dynamic_cast<coords::REALMATRIX4_EMPTY*>(this->index2coords_[i])){
         auto dom = (domain::DomainContainer*)this->coords2dom_->getREALMATRIX4_EMPTY(dc);
-        std::cout<<"Index: "<<i<<","<<" Real 4x4 Matrix With Empty Constructor,"<<dc->toString()<<", SourceLocation:"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
+        std::cout<<"Index: "<<i<<", "<<" Real 4x4 Matrix With Empty Constructor,"<<" \n\t"<<dc->getSourceLoc()<<"\nExisting Interpretation: "<<dom->toString()<<std::endl;
 
     }
     

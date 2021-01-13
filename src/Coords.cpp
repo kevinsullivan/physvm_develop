@@ -62,7 +62,7 @@ std::string Coords::getSourceLoc() const {
     retval += std::to_string(this->state_->begin_line_no_);
     retval +=  ", column ";
     retval +=  std::to_string(this->state_->begin_col_no_);
-    retval += " End: line ";
+    retval += "\nEnd: line ";
     retval += std::to_string(this->state_->end_line_no_);
     retval += ", column ";
     retval += std::to_string(this->state_->end_col_no_);
