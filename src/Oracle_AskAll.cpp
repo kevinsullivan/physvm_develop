@@ -28,6 +28,7 @@ domain::Frame* Oracle_AskAll::getFrameForInterpretation(domain::Space* space){
         }
         int choice = 0;
         std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
         if(choice > 0 and choice <= sz){
             return frames[choice];
         }
@@ -94,6 +95,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
     std::cout<<"(2)"<<"@@EuclideanGeometryTransform()\n";
     std::cout<<"(3)"<<"@@EuclideanGeometry3Transform()\n";
     std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
     if(choice < 1 or choice > 3) {
         goto choose;
     } else {
@@ -116,6 +118,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         while(true){
@@ -131,6 +134,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
                                 std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>dom_choice;
+        choice_buffer->push_back(std::to_string(dom_choice));
 
                         
                             std::cout<<"Enter Frame of Transform Co-Domain : \n";
@@ -140,6 +144,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
                                 std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>cod_choice;
+        choice_buffer->push_back(std::to_string(cod_choice));
 
                             if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
                                 //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
@@ -182,6 +187,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         while(true){
@@ -197,6 +203,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
                                 std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>dom_choice;
+        choice_buffer->push_back(std::to_string(dom_choice));
 
                         
                             std::cout<<"Enter Frame of Transform Co-Domain : \n";
@@ -206,6 +213,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
                                 std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>cod_choice;
+        choice_buffer->push_back(std::to_string(cod_choice));
 
                             if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
                                 //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
@@ -248,6 +256,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         while(true){
@@ -263,6 +272,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
                                 std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>dom_choice;
+        choice_buffer->push_back(std::to_string(dom_choice));
 
                         
                             std::cout<<"Enter Frame of Transform Co-Domain : \n";
@@ -272,6 +282,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
                                 std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>cod_choice;
+        choice_buffer->push_back(std::to_string(cod_choice));
 
                             if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
                                 //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
@@ -304,6 +315,25 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_EXPR(coords
 
  return nullptr;}
 
+domain::DomainObject* Oracle_AskAll::getInterpretationForREAL4_EXPR(coords::REAL4_EXPR * coords, domain::DomainObject * dom){
+    std::cout << "Provide new interpretation for : " << "";
+    std::cout << "\nExisting interpretation:   ";
+    std::cout << dom->toString();
+    std::cout << "\nAt location:  ";
+    std::cout << coords->getSourceLoc();
+    int choice;
+    choose:
+    std::cout<<"\nAvailable Interpretations (Enter numeral choice) : \n";
+    
+    //return getInterpretation(coords);
+
+                    
+    if(false){choice = 1; goto choose;}
+    std::cout<<"None available!\n";
+    return this->domain_->mkDefaultDomainContainer();
+}
+
+
 domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL3_EXPR * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
     std::cout << "\nExisting interpretation:   ";
@@ -325,6 +355,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
     std::cout<<"(6)"<<"@@EuclideanGeometryCoordinatePoint()\n";
     std::cout<<"(7)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
     std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
     if(choice < 1 or choice > 7) {
         goto choose;
     } else {
@@ -347,6 +378,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -364,6 +396,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -371,6 +404,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -394,11 +428,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -447,6 +483,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -464,6 +501,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -471,6 +509,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -494,11 +533,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -547,6 +588,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -564,6 +606,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -571,6 +614,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -594,11 +638,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -647,6 +693,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -664,6 +711,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -671,6 +719,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -694,11 +743,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -747,6 +798,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -764,6 +816,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -771,6 +824,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -794,11 +848,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -847,6 +903,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -864,6 +921,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -871,6 +929,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -894,11 +953,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -947,6 +1008,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -964,6 +1026,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -971,6 +1034,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -994,11 +1058,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1081,6 +1147,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
     std::cout<<"(10)"<<"@@EuclideanGeometryScalar()\n";
     std::cout<<"(11)"<<"@@EuclideanGeometry3Scalar()\n";
     std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
     if(choice < 1 or choice > 11) {
         goto choose;
     } else {
@@ -1103,6 +1170,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -1120,6 +1188,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -1127,6 +1196,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -1150,11 +1220,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1203,6 +1275,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -1220,6 +1293,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -1227,6 +1301,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -1250,11 +1325,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1303,6 +1380,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -1320,6 +1398,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -1327,6 +1406,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -1350,11 +1430,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1403,6 +1485,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -1420,6 +1503,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -1427,6 +1511,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -1450,11 +1535,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1503,6 +1590,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -1520,6 +1608,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -1527,6 +1616,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -1550,11 +1640,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1603,6 +1695,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -1620,6 +1713,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -1627,6 +1721,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -1650,11 +1745,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1703,6 +1800,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -1720,6 +1818,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -1727,6 +1826,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -1750,11 +1850,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1803,6 +1905,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -1818,6 +1921,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -1825,6 +1929,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -1847,11 +1952,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1901,6 +2008,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -1916,6 +2024,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -1923,6 +2032,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -1945,11 +2055,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -1999,6 +2111,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2014,6 +2127,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2021,6 +2135,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2043,11 +2158,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -2097,6 +2214,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2112,6 +2230,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2119,6 +2238,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2141,11 +2261,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -2210,6 +2332,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
     std::cout<<"(10)"<<"@@EuclideanGeometryScalar()\n";
     std::cout<<"(11)"<<"@@EuclideanGeometry3Scalar()\n";
     std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
     if(choice < 1 or choice > 11) {
         goto choose;
     } else {
@@ -2232,6 +2355,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2249,6 +2373,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2256,6 +2381,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2279,11 +2405,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -2332,6 +2460,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2349,6 +2478,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2356,6 +2486,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2379,11 +2510,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -2432,6 +2565,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2449,6 +2583,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2456,6 +2591,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2479,11 +2615,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -2532,6 +2670,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2549,6 +2688,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2556,6 +2696,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2579,11 +2720,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -2632,6 +2775,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2649,6 +2793,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2656,6 +2801,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2679,11 +2825,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -2732,6 +2880,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2749,6 +2898,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2756,6 +2906,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2779,11 +2930,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -2832,6 +2985,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2849,6 +3003,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2856,6 +3011,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2879,11 +3035,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -2932,6 +3090,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -2947,6 +3106,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -2954,6 +3114,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -2976,11 +3137,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3030,6 +3193,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -3045,6 +3209,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -3052,6 +3217,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -3074,11 +3240,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3128,6 +3296,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -3143,6 +3312,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -3150,6 +3320,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -3172,11 +3343,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3226,6 +3399,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -3241,6 +3415,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -3248,6 +3423,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -3270,11 +3446,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3335,6 +3513,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
     std::cout<<"(6)"<<"@@EuclideanGeometryCoordinatePoint()\n";
     std::cout<<"(7)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
     std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
     if(choice < 1 or choice > 7) {
         goto choose;
     } else {
@@ -3357,6 +3536,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -3374,6 +3554,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -3381,6 +3562,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -3404,11 +3586,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3457,6 +3641,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -3474,6 +3659,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -3481,6 +3667,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -3504,11 +3691,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3557,6 +3746,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -3574,6 +3764,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -3581,6 +3772,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -3604,11 +3796,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3657,6 +3851,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -3674,6 +3869,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -3681,6 +3877,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -3704,11 +3901,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3757,6 +3956,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -3774,6 +3974,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -3781,6 +3982,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -3804,11 +4006,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3857,6 +4061,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -3874,6 +4079,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -3881,6 +4087,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -3904,11 +4111,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -3957,6 +4166,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -3974,6 +4184,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -3981,6 +4192,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -4004,11 +4216,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -4047,6 +4261,25 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
 
  return nullptr;}
 
+domain::DomainObject* Oracle_AskAll::getInterpretationForREAL4_VAR_IDENT(coords::REAL4_VAR_IDENT * coords, domain::DomainObject * dom){
+    std::cout << "Provide new interpretation for : " << "";
+    std::cout << "\nExisting interpretation:   ";
+    std::cout << dom->toString();
+    std::cout << "\nAt location:  ";
+    std::cout << coords->getSourceLoc();
+    int choice;
+    choose:
+    std::cout<<"\nAvailable Interpretations (Enter numeral choice) : \n";
+    
+    //return getInterpretation(coords);
+
+                    
+    if(false){choice = 1; goto choose;}
+    std::cout<<"None available!\n";
+    return this->domain_->mkDefaultDomainContainer();
+}
+
+
 domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(coords::REALMATRIX4_VAR_IDENT * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
     std::cout << "\nExisting interpretation:   ";
@@ -4064,6 +4297,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
     std::cout<<"(2)"<<"@@EuclideanGeometryTransform()\n";
     std::cout<<"(3)"<<"@@EuclideanGeometry3Transform()\n";
     std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
     if(choice < 1 or choice > 3) {
         goto choose;
     } else {
@@ -4086,6 +4320,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         while(true){
@@ -4101,6 +4336,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
                                 std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>dom_choice;
+        choice_buffer->push_back(std::to_string(dom_choice));
 
                         
                             std::cout<<"Enter Frame of Transform Co-Domain : \n";
@@ -4110,6 +4346,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
                                 std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>cod_choice;
+        choice_buffer->push_back(std::to_string(cod_choice));
 
                             if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
                                 //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
@@ -4152,6 +4389,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         while(true){
@@ -4167,6 +4405,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
                                 std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>dom_choice;
+        choice_buffer->push_back(std::to_string(dom_choice));
 
                         
                             std::cout<<"Enter Frame of Transform Co-Domain : \n";
@@ -4176,6 +4415,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
                                 std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>cod_choice;
+        choice_buffer->push_back(std::to_string(cod_choice));
 
                             if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
                                 //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
@@ -4218,6 +4458,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         while(true){
@@ -4233,6 +4474,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
                                 std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>dom_choice;
+        choice_buffer->push_back(std::to_string(dom_choice));
 
                         
                             std::cout<<"Enter Frame of Transform Co-Domain : \n";
@@ -4242,6 +4484,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
                                 std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>cod_choice;
+        choice_buffer->push_back(std::to_string(cod_choice));
 
                             if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
                                 //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
@@ -4274,6 +4517,25 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_VAR_IDENT(c
 
  return nullptr;}
 
+domain::DomainObject* Oracle_AskAll::getInterpretationForREAL4_LITERAL(coords::REAL4_LITERAL * coords, domain::DomainObject * dom){
+    std::cout << "Provide new interpretation for : " << "";
+    std::cout << "\nExisting interpretation:   ";
+    std::cout << dom->toString();
+    std::cout << "\nAt location:  ";
+    std::cout << coords->getSourceLoc();
+    int choice;
+    choose:
+    std::cout<<"\nAvailable Interpretations (Enter numeral choice) : \n";
+    
+    //return getInterpretation(coords);
+
+                    
+    if(false){choice = 1; goto choose;}
+    std::cout<<"None available!\n";
+    return this->domain_->mkDefaultDomainContainer();
+}
+
+
 domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::REAL3_LITERAL * coords, domain::DomainObject * dom){
     std::cout << "Provide new interpretation for : " << "";
     std::cout << "\nExisting interpretation:   ";
@@ -4295,6 +4557,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
     std::cout<<"(6)"<<"@@EuclideanGeometryCoordinatePoint()\n";
     std::cout<<"(7)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
     std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
     if(choice < 1 or choice > 7) {
         goto choose;
     } else {
@@ -4317,6 +4580,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -4334,6 +4598,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -4341,6 +4606,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -4364,11 +4630,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -4417,6 +4685,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -4434,6 +4703,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -4441,6 +4711,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -4464,11 +4735,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -4517,6 +4790,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -4534,6 +4808,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -4541,6 +4816,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -4564,11 +4840,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -4617,6 +4895,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -4634,6 +4913,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -4641,6 +4921,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -4664,11 +4945,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -4717,6 +5000,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -4734,6 +5018,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -4741,6 +5026,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -4764,11 +5050,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -4817,6 +5105,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -4834,6 +5123,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -4841,6 +5131,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -4864,11 +5155,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -4917,6 +5210,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[3];
@@ -4934,6 +5228,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 3; i++)
@@ -4941,6 +5236,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -4964,11 +5260,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<3;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5032,6 +5330,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
     std::cout<<"(10)"<<"@@EuclideanGeometryScalar()\n";
     std::cout<<"(11)"<<"@@EuclideanGeometry3Scalar()\n";
     std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
     if(choice < 1 or choice > 11) {
         goto choose;
     } else {
@@ -5054,6 +5353,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5071,6 +5371,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5078,6 +5379,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5101,11 +5403,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5154,6 +5458,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5171,6 +5476,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5178,6 +5484,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5201,11 +5508,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5254,6 +5563,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5271,6 +5581,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5278,6 +5589,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5301,11 +5613,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5354,6 +5668,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5371,6 +5686,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5378,6 +5694,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5401,11 +5718,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5454,6 +5773,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5471,6 +5791,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5478,6 +5799,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5501,11 +5823,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5554,6 +5878,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5571,6 +5896,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5578,6 +5904,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5601,11 +5928,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5654,6 +5983,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5671,6 +6001,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5678,6 +6009,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5701,11 +6033,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5754,6 +6088,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5769,6 +6104,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5776,6 +6112,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5798,11 +6135,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5852,6 +6191,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5867,6 +6207,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5874,6 +6215,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5896,11 +6238,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -5950,6 +6294,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -5965,6 +6310,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -5972,6 +6318,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -5994,11 +6341,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -6048,6 +6397,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         std::shared_ptr<float> cp[1];
@@ -6063,6 +6413,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                         try{
                             int vchoice = 0;
                             std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if (vchoice == 1)
                             {
                                 for (int i = 0; i < 1; i++)
@@ -6070,6 +6421,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     std::cout << "Enter Value " << i << ":\n";
                                     float val = 4;
                                     std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
                                     //float* vc = new float(valvc);
                                     ret->setValue(val, i);
                                     //delete vc;
@@ -6092,11 +6444,13 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                             std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
                             int vchoice = 0;
                             std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
                             if(vchoice == 1){
                                 for(int i = 0; i<1;i++){
                                     std::cout<<"Enter Value "<<i<<":\n";
                                     float valvc;
                                     std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
                                     float* vc;
                                     ret->setValue(vc, i);
                                     delete vc;
@@ -6153,6 +6507,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
     std::cout<<"(2)"<<"@@EuclideanGeometryTransform()\n";
     std::cout<<"(3)"<<"@@EuclideanGeometry3Transform()\n";
     std::cin>>choice;
+        choice_buffer->push_back(std::to_string(choice));
     if(choice < 1 or choice > 3) {
         goto choose;
     } else {
@@ -6175,6 +6530,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         while(true){
@@ -6190,6 +6546,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
                                 std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>dom_choice;
+        choice_buffer->push_back(std::to_string(dom_choice));
 
                         
                             std::cout<<"Enter Frame of Transform Co-Domain : \n";
@@ -6199,6 +6556,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
                                 std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>cod_choice;
+        choice_buffer->push_back(std::to_string(cod_choice));
 
                             if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
                                 //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
@@ -6241,6 +6599,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         while(true){
@@ -6256,6 +6615,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
                                 std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>dom_choice;
+        choice_buffer->push_back(std::to_string(dom_choice));
 
                         
                             std::cout<<"Enter Frame of Transform Co-Domain : \n";
@@ -6265,6 +6625,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
                                 std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>cod_choice;
+        choice_buffer->push_back(std::to_string(cod_choice));
 
                             if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
                                 //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);
@@ -6307,6 +6668,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
                 
                     }
                     std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
                     if(sp_choice >0 and sp_choice <= index){
                         auto sp = index_to_sp[sp_choice];
                         while(true){
@@ -6322,6 +6684,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
                                 std::cout<<"("<<std::to_string(dom_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>dom_choice;
+        choice_buffer->push_back(std::to_string(dom_choice));
 
                         
                             std::cout<<"Enter Frame of Transform Co-Domain : \n";
@@ -6331,6 +6694,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREALMATRIX4_LITERAL(coo
                                 std::cout<<"("<<std::to_string(cod_index)<<") "<<fr->toString()<<"\n";
                             }
                             std::cin>>cod_choice;
+        choice_buffer->push_back(std::to_string(cod_choice));
 
                             if(dom_choice >0 and dom_choice <= dom_index and cod_choice >0 and cod_choice <= cod_index){
                                 //auto mapsp = this->domain_->mkMapSpace(sp, index_to_dom[dom_choice], index_to_cod[cod_choice]);

@@ -1318,6 +1318,46 @@ std::string DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR::toString() const {
                 
 
 
+DECL_REAL4_VAR_REAL4_EXPR::DECL_REAL4_VAR_REAL4_EXPR(coords::DECL_REAL4_VAR_REAL4_EXPR* c, domain::DomainObject* d,interp::REAL4_VAR_IDENT * operand1,interp::REAL4_EXPR * operand2 ) : DECLARE(c,d)
+   ,operand_1(operand1),operand_2(operand2) {}
+
+std::string DECL_REAL4_VAR_REAL4_EXPR::toString() const {
+    bool found = false; if (found) {}
+    std::string retval = "";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->operand_1->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
 DECL_REAL1_VAR::DECL_REAL1_VAR(coords::DECL_REAL1_VAR* c, domain::DomainObject* d,interp::REAL1_VAR_IDENT * operand1 ) : DECLARE(c,d)
    ,operand_1(operand1) {}
 
@@ -1392,6 +1432,41 @@ DECL_REALMATRIX4_VAR::DECL_REALMATRIX4_VAR(coords::DECL_REALMATRIX4_VAR* c, doma
    ,operand_1(operand1) {}
 
 std::string DECL_REALMATRIX4_VAR::toString() const {
+    bool found = false; if (found) {}
+    std::string retval = "";
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
+DECL_REAL4_VAR::DECL_REAL4_VAR(coords::DECL_REAL4_VAR* c, domain::DomainObject* d,interp::REAL4_VAR_IDENT * operand1 ) : DECLARE(c,d)
+   ,operand_1(operand1) {}
+
+std::string DECL_REAL4_VAR::toString() const {
     bool found = false; if (found) {}
     std::string retval = "";
     //    }
@@ -2056,6 +2131,373 @@ int fid2 = GLOBAL_IDS.count(const_cast<Frame*>(interpFr2)) ? GLOBAL_IDS[const_ca
         retval += std::string("(") + this->operand_1->toAlgebraString() + "⬝" + this->operand_2->toAlgebraString() + ")))";
         
             }
+        }
+    }
+
+
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+REAL4_EXPR::REAL4_EXPR(coords::REAL4_EXPR* c, domain::DomainObject* d) : REXPR(c,d) {}
+                    
+std::string REAL4_EXPR::toString() const {
+    std::string retval = "";
+    bool found = false; if (found) {}
+    
+    retval = "Calling toString on a production, rather than a case.";
+    
+    
+    return retval;
+}
+                
+
+std::string REF_REAL4_VAR::toEvalString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+        
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+
+
+    if (!found)
+                                    {
+                                        //ret = "";
+                                        
+    }
+                                    std::replace(retval.begin(), retval.end(), '_', '.');
+                                    std::size_t index;
+                                    string sub_str = ": _";
+                                    string singleperiod = ".a";
+                                    while ((index = retval.find(": .")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find(": ^")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find("..")) != string::npos)
+                                    {
+                                        retval.replace(index, singleperiod.length(), singleperiod);
+                                    }
+
+
+                                    return retval;
+                                }
+                                
+
+std::string REF_REAL4_VAR::toAlgebraString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+REF_REAL4_VAR::REF_REAL4_VAR(coords::REF_REAL4_VAR* c, domain::DomainObject* d,interp::REAL4_VAR_IDENT * operand1 ) : REAL4_EXPR(c,d)
+   ,operand_1(operand1) {}
+
+std::string REF_REAL4_VAR::toString() const {
+    bool found = false; if (found) {}
+    std::string retval = "";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+
+
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
+std::string ADD_REAL4_EXPR_REAL4_EXPR::toEvalString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+
+
+    if (!found)
+                                    {
+                                        //ret = "";
+                                        
+    }
+                                    std::replace(retval.begin(), retval.end(), '_', '.');
+                                    std::size_t index;
+                                    string sub_str = ": _";
+                                    string singleperiod = ".a";
+                                    while ((index = retval.find(": .")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find(": ^")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find("..")) != string::npos)
+                                    {
+                                        retval.replace(index, singleperiod.length(), singleperiod);
+                                    }
+
+
+                                    return retval;
+                                }
+                                
+
+std::string ADD_REAL4_EXPR_REAL4_EXPR::toAlgebraString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+ADD_REAL4_EXPR_REAL4_EXPR::ADD_REAL4_EXPR_REAL4_EXPR(coords::ADD_REAL4_EXPR_REAL4_EXPR* c, domain::DomainObject* d,interp::REAL4_EXPR * operand1,interp::REAL4_EXPR * operand2 ) : REAL4_EXPR(c,d)
+   ,operand_1(operand1),operand_2(operand2) {}
+
+std::string ADD_REAL4_EXPR_REAL4_EXPR::toString() const {
+    bool found = false; if (found) {}
+    std::string retval = "";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+
+
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
+std::string MUL_REAL4_EXPR_REAL4_EXPR::toEvalString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+
+
+    if (!found)
+                                    {
+                                        //ret = "";
+                                        
+    }
+                                    std::replace(retval.begin(), retval.end(), '_', '.');
+                                    std::size_t index;
+                                    string sub_str = ": _";
+                                    string singleperiod = ".a";
+                                    while ((index = retval.find(": .")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find(": ^")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find("..")) != string::npos)
+                                    {
+                                        retval.replace(index, singleperiod.length(), singleperiod);
+                                    }
+
+
+                                    return retval;
+                                }
+                                
+
+std::string MUL_REAL4_EXPR_REAL4_EXPR::toAlgebraString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+MUL_REAL4_EXPR_REAL4_EXPR::MUL_REAL4_EXPR_REAL4_EXPR(coords::MUL_REAL4_EXPR_REAL4_EXPR* c, domain::DomainObject* d,interp::REAL4_EXPR * operand1,interp::REAL4_EXPR * operand2 ) : REAL4_EXPR(c,d)
+   ,operand_1(operand1),operand_2(operand2) {}
+
+std::string MUL_REAL4_EXPR_REAL4_EXPR::toString() const {
+    bool found = false; if (found) {}
+    std::string retval = "";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
         }
     }
 
@@ -9006,6 +9448,124 @@ std::string REAL3_VAR_IDENT::toString() const {
                 
 
 
+std::string REAL4_VAR_IDENT::toAlgebraString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+std::string REAL4_VAR_IDENT::toEvalString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+REAL4_VAR_IDENT::REAL4_VAR_IDENT(coords::REAL4_VAR_IDENT* c, domain::DomainObject* d ) : Interp(c,d)
+    {}
+
+std::string REAL4_VAR_IDENT::toString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+
+                
+                                int id = GLOBAL_IDS.count(const_cast < REAL4_VAR_IDENT *> (this)) ? GLOBAL_IDS[const_cast < REAL4_VAR_IDENT *> (this)] : GLOBAL_IDS[const_cast < REAL4_VAR_IDENT *> (this)] = (GLOBAL_INDEX += 2);
+                                retval += "⟨⟨" + std::to_string(id) + "⟩⟩";
+    
+                                
+
+    if (!found){
+                        //ret = "";
+                        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {
+        retval.replace(index, sub_str.length(), sub_str);
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {
+        retval.replace(index, sub_str.length(), sub_str);
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+
+
+                    return retval;
+                }
+                
+
+
 std::string REALMATRIX4_VAR_IDENT::toAlgebraString() const {
                         std::string retval = "";
                         bool found = false; if (found) {}
@@ -9211,6 +9771,254 @@ std::string REALMATRIX4_VAR_IDENT::toString() const {
 
                     return retval;
                 }
+                
+
+REAL4_LITERAL::REAL4_LITERAL(coords::REAL4_LITERAL* c, domain::DomainObject* d) : Interp(c,d) {}
+                    
+std::string REAL4_LITERAL::toString() const {
+    std::string retval = "";
+    bool found = false; if (found) {}
+    
+    retval = "Calling toString on a production, rather than a case.";
+    
+    
+    return retval;
+}
+                
+
+std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toEvalString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+
+
+    if (!found)
+                                    {
+                                        //ret = "";
+                                        
+    }
+                                    std::replace(retval.begin(), retval.end(), '_', '.');
+                                    std::size_t index;
+                                    string sub_str = ": _";
+                                    string singleperiod = ".a";
+                                    while ((index = retval.find(": .")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find(": ^")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find("..")) != string::npos)
+                                    {
+                                        retval.replace(index, singleperiod.length(), singleperiod);
+                                    }
+
+
+                                    return retval;
+                                }
+                                
+
+std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toAlgebraString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c, domain::DomainObject* d,interp::REAL1_EXPR * operand1,interp::REAL1_EXPR * operand2,interp::REAL1_EXPR * operand3,interp::REAL1_EXPR * operand4 ) : REAL4_LITERAL(c,d)
+   ,operand_1(operand1),operand_2(operand2),operand_3(operand3),operand_4(operand4) {}
+
+std::string REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR::toString() const {
+    bool found = false; if (found) {}
+    std::string retval = "";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+
+
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
+                
+
+
+std::string REAL4_EMPTY::toEvalString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+
+
+    if (!found)
+                                    {
+                                        //ret = "";
+                                        
+    }
+                                    std::replace(retval.begin(), retval.end(), '_', '.');
+                                    std::size_t index;
+                                    string sub_str = ": _";
+                                    string singleperiod = ".a";
+                                    while ((index = retval.find(": .")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find(": ^")) != string::npos)
+                                    {
+                                        retval.replace(index, sub_str.length(), sub_str);
+                                    }
+                                    while ((index = retval.find("..")) != string::npos)
+                                    {
+                                        retval.replace(index, singleperiod.length(), singleperiod);
+                                    }
+
+
+                                    return retval;
+                                }
+                                
+
+std::string REAL4_EMPTY::toAlgebraString() const {
+                        std::string retval = "";
+                        bool found = false; if (found) {}
+
+                        //  ret += "(";
+                        //ret += "def var_" + std::to_string(++GLOBAL_INDEX) + ":= 1";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+
+                        
+        }
+    }
+
+    if(!found){
+        //ret = "";
+        
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod); 
+    }
+    
+    
+    return retval;
+}
+                
+
+REAL4_EMPTY::REAL4_EMPTY(coords::REAL4_EMPTY* c, domain::DomainObject* d ) : REAL4_LITERAL(c,d)
+    {}
+
+std::string REAL4_EMPTY::toString() const {
+    bool found = false; if (found) {}
+    std::string retval = "";
+    if (auto cont = dynamic_cast<domain::DomainContainer*>(this->dom_)){
+        if(cont->hasValue()){
+                        
+        }
+    }
+
+
+    //    }
+    //}
+
+    if(!found){
+        //retval = "";
+    }
+    std::replace(retval.begin(), retval.end(), '_', '.');
+    std::size_t index;
+    string sub_str = ": _";
+    string singleperiod = ".a";
+    while ((index = retval.find(": .")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find(": ^")) != string::npos)
+    {    
+        retval.replace(index, sub_str.length(), sub_str); 
+    }
+    while ((index = retval.find("..")) != string::npos)
+    {    
+        retval.replace(index, singleperiod.length(), singleperiod);
+    }
+    
+
+    return retval;
+}
                 
 
 REAL3_LITERAL::REAL3_LITERAL(coords::REAL3_LITERAL* c, domain::DomainObject* d) : REAL3_EXPR(c,d) {}

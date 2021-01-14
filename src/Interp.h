@@ -40,14 +40,20 @@ class DECLARE;
 class DECL_REAL1_VAR_REAL1_EXPR;
 class DECL_REAL3_VAR_REAL3_EXPR;
 class DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR;
+class DECL_REAL4_VAR_REAL4_EXPR;
 class DECL_REAL1_VAR;
 class DECL_REAL3_VAR;
 class DECL_REALMATRIX4_VAR;
+class DECL_REAL4_VAR;
 class REXPR;
 class LEXPR;
 class REALMATRIX4_EXPR;
 class REF_REALMATRIX4_VAR;
 class MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR;
+class REAL4_EXPR;
+class REF_REAL4_VAR;
+class ADD_REAL4_EXPR_REAL4_EXPR;
+class MUL_REAL4_EXPR_REAL4_EXPR;
 class REAL3_EXPR;
 class REF_REAL3_VAR;
 class ADD_REAL3_EXPR_REAL3_EXPR;
@@ -62,7 +68,11 @@ class ADD_REAL1_EXPR_REAL1_EXPR;
 class MUL_REAL1_EXPR_REAL1_EXPR;
 class REAL1_VAR_IDENT;
 class REAL3_VAR_IDENT;
+class REAL4_VAR_IDENT;
 class REALMATRIX4_VAR_IDENT;
+class REAL4_LITERAL;
+class REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
+class REAL4_EMPTY;
 class REAL3_LITERAL;
 class REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
 class REAL3_EMPTY;
@@ -321,6 +331,21 @@ protected:
 
 
 
+class DECL_REAL4_VAR_REAL4_EXPR : public DECLARE {
+public:
+    DECL_REAL4_VAR_REAL4_EXPR(coords::DECL_REAL4_VAR_REAL4_EXPR* coords, domain::DomainObject* dom ,interp::REAL4_VAR_IDENT *operand1,interp::REAL4_EXPR *operand2 );
+    virtual std::string toString() const override ;
+     
+     
+    
+    
+protected:
+	interp::REAL4_VAR_IDENT *operand_1;
+	interp::REAL4_EXPR *operand_2;
+};
+
+
+
 class DECL_REAL1_VAR : public DECLARE {
 public:
     DECL_REAL1_VAR(coords::DECL_REAL1_VAR* coords, domain::DomainObject* dom ,interp::REAL1_VAR_IDENT *operand1 );
@@ -359,6 +384,20 @@ public:
     
 protected:
 	interp::REALMATRIX4_VAR_IDENT *operand_1;
+};
+
+
+
+class DECL_REAL4_VAR : public DECLARE {
+public:
+    DECL_REAL4_VAR(coords::DECL_REAL4_VAR* coords, domain::DomainObject* dom ,interp::REAL4_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+     
+     
+    
+    
+protected:
+	interp::REAL4_VAR_IDENT *operand_1;
 };
 
 
@@ -424,6 +463,62 @@ public:
 protected:
 	interp::REALMATRIX4_EXPR *operand_1;
 	interp::REALMATRIX4_EXPR *operand_2;
+};
+
+
+
+class REAL4_EXPR : public REXPR {
+public:
+    REAL4_EXPR(coords::REAL4_EXPR* coords, domain::DomainObject* dom);
+    virtual std::string toString() const override;
+
+    //friend class Interp;  
+    virtual std::string toEvalString() const{ return "";}; 
+    virtual std::string toAlgebraString() const{ return "";};             
+};
+
+
+
+class REF_REAL4_VAR : public REAL4_EXPR {
+public:
+    REF_REAL4_VAR(coords::REF_REAL4_VAR* coords, domain::DomainObject* dom ,interp::REAL4_VAR_IDENT *operand1 );
+    virtual std::string toString() const override ;
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
+    
+    
+protected:
+	interp::REAL4_VAR_IDENT *operand_1;
+};
+
+
+
+class ADD_REAL4_EXPR_REAL4_EXPR : public REAL4_EXPR {
+public:
+    ADD_REAL4_EXPR_REAL4_EXPR(coords::ADD_REAL4_EXPR_REAL4_EXPR* coords, domain::DomainObject* dom ,interp::REAL4_EXPR *operand1,interp::REAL4_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
+    
+    
+protected:
+	interp::REAL4_EXPR *operand_1;
+	interp::REAL4_EXPR *operand_2;
+};
+
+
+
+class MUL_REAL4_EXPR_REAL4_EXPR : public REAL4_EXPR {
+public:
+    MUL_REAL4_EXPR_REAL4_EXPR(coords::MUL_REAL4_EXPR_REAL4_EXPR* coords, domain::DomainObject* dom ,interp::REAL4_EXPR *operand1,interp::REAL4_EXPR *operand2 );
+    virtual std::string toString() const override ;
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
+    
+    
+protected:
+	interp::REAL4_EXPR *operand_1;
+	interp::REAL4_EXPR *operand_2;
 };
 
 
@@ -624,6 +719,20 @@ protected:
 
 
 
+class REAL4_VAR_IDENT : public Interp {
+public:
+    REAL4_VAR_IDENT(coords::REAL4_VAR_IDENT* coords, domain::DomainObject* dom  );
+    virtual std::string toString() const;
+    virtual std::string toEvalString() const ; 
+    virtual std::string toAlgebraString() const ; 
+
+    
+protected:
+	
+};
+
+
+
 class REALMATRIX4_VAR_IDENT : public Interp {
 public:
     REALMATRIX4_VAR_IDENT(coords::REALMATRIX4_VAR_IDENT* coords, domain::DomainObject* dom  );
@@ -631,6 +740,49 @@ public:
     virtual std::string toEvalString() const ; 
     virtual std::string toAlgebraString() const ; 
 
+    
+protected:
+	
+};
+
+
+
+class REAL4_LITERAL : public Interp {
+public:
+    REAL4_LITERAL(coords::REAL4_LITERAL* coords, domain::DomainObject* dom);
+    virtual std::string toString() const;
+
+    //friend class Interp;  
+    virtual std::string toEvalString() const{ return "";}; 
+    virtual std::string toAlgebraString() const{ return "";};             
+};
+
+
+
+class REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR : public REAL4_LITERAL {
+public:
+    REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* coords, domain::DomainObject* dom ,interp::REAL1_EXPR *operand1,interp::REAL1_EXPR *operand2,interp::REAL1_EXPR *operand3,interp::REAL1_EXPR *operand4 );
+    virtual std::string toString() const override ;
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
+    
+    
+protected:
+	interp::REAL1_EXPR *operand_1;
+	interp::REAL1_EXPR *operand_2;
+	interp::REAL1_EXPR *operand_3;
+	interp::REAL1_EXPR *operand_4;
+};
+
+
+
+class REAL4_EMPTY : public REAL4_LITERAL {
+public:
+    REAL4_EMPTY(coords::REAL4_EMPTY* coords, domain::DomainObject* dom  );
+    virtual std::string toString() const override ;
+    virtual std::string toEvalString() const override; 
+    virtual std::string toAlgebraString() const override; 
+    
     
 protected:
 	
