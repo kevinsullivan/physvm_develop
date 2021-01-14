@@ -37,6 +37,9 @@ void ROSTFScalarMatcher::setup(){
 	
 		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
 		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
+	
+		StatementMatcher binaryOperator_=binaryOperator().bind("BinaryOperator");
+		localFinder_.addMatcher(binaryOperator_,this);
 };
 
 void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
@@ -57,6 +60,8 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
 	
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
+	
+	auto binaryOperator_ = Result.Nodes.getNodeAs<clang::BinaryOperator>("BinaryOperator");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
     this->childExprStore_ = nullptr;
@@ -231,6 +236,108 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
             }
         }
     
+	
+	arg_decay_exist_predicates["BinaryOperator(tfScalar,tfScalar).+@$.ADDtfScalar"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm.find("tfScalar") != string::npos){ return true; }
+    else { return false; }
+    };
+	arg_decay_exist_predicates["BinaryOperator(tfScalar,tfScalar).+@$.ADDtfScalar"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm.find("tfScalar") != string::npos){ return true; }
+    else { return false; }
+    };
+    if(binaryOperator_){
+        auto bostr = binaryOperator_->getOpcodeStr().str();
+        auto lhs = binaryOperator_->getLHS();
+        auto rhs = binaryOperator_->getRHS();
+        clang::Stmt* lhsstmt;
+        clang::Stmt* rhsstmt;
+            
+
+        if(bostr.find("+") != string::npos){
+            auto lhs = binaryOperator_->getLHS();
+            auto lhsstr = ((clang::QualType)lhs->getType()).getAsString();
+            auto rhs = binaryOperator_->getRHS();
+            auto rhsstr = ((clang::QualType)rhs->getType()).getAsString();
+            clang::Stmt* lhsresult = nullptr;
+            clang::Stmt* rhsresult = nullptr;
+            if(false){}
+            else if(lhsstr.find("tfScalar") != string::npos){
+                ROSTFScalarMatcher lhsm{this->context_,this->interp_};
+                lhsm.setup();
+                lhsm.visit(*lhs);
+                lhsresult = lhsm.getChildExprStore();
+                            
+            }
+            if(false){}
+            
+            else if(rhsstr.find("tfScalar") != string::npos){
+                ROSTFScalarMatcher rhsm{this->context_,this->interp_};
+                rhsm.setup();
+                rhsm.visit(*rhs);
+                rhsresult = rhsm.getChildExprStore();
+                            
+            }
+            if(lhsresult and rhsresult){
+                interp_->mkADD_REAL1_EXPR_REAL1_EXPR(binaryOperator_,lhsresult, rhsresult);
+                this->childExprStore_ = (clang::Stmt*)binaryOperator_;
+                return;
+            }
+        }
+    }
+
+	
+	arg_decay_exist_predicates["BinaryOperator(tfScalar,tfScalar).*@$.MULtfScalar"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm.find("tfScalar") != string::npos){ return true; }
+    else { return false; }
+    };
+	arg_decay_exist_predicates["BinaryOperator(tfScalar,tfScalar).*@$.MULtfScalar"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm.find("tfScalar") != string::npos){ return true; }
+    else { return false; }
+    };
+    if(binaryOperator_){
+        auto bostr = binaryOperator_->getOpcodeStr().str();
+        auto lhs = binaryOperator_->getLHS();
+        auto rhs = binaryOperator_->getRHS();
+        clang::Stmt* lhsstmt;
+        clang::Stmt* rhsstmt;
+            
+
+        if(bostr.find("*") != string::npos){
+            auto lhs = binaryOperator_->getLHS();
+            auto lhsstr = ((clang::QualType)lhs->getType()).getAsString();
+            auto rhs = binaryOperator_->getRHS();
+            auto rhsstr = ((clang::QualType)rhs->getType()).getAsString();
+            clang::Stmt* lhsresult = nullptr;
+            clang::Stmt* rhsresult = nullptr;
+            if(false){}
+            else if(lhsstr.find("tfScalar") != string::npos){
+                ROSTFScalarMatcher lhsm{this->context_,this->interp_};
+                lhsm.setup();
+                lhsm.visit(*lhs);
+                lhsresult = lhsm.getChildExprStore();
+                            
+            }
+            if(false){}
+            
+            else if(rhsstr.find("tfScalar") != string::npos){
+                ROSTFScalarMatcher rhsm{this->context_,this->interp_};
+                rhsm.setup();
+                rhsm.visit(*rhs);
+                rhsresult = rhsm.getChildExprStore();
+                            
+            }
+            if(lhsresult and rhsresult){
+                interp_->mkMUL_REAL1_EXPR_REAL1_EXPR(binaryOperator_,lhsresult, rhsresult);
+                this->childExprStore_ = (clang::Stmt*)binaryOperator_;
+                return;
+            }
+        }
+    }
+
 
 
 };

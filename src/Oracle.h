@@ -13,9 +13,12 @@ class Oracle {
 public:
    // virtual domain::Frame* getFrameInterpretation();
    // virtual domain::Space* getSpaceInterpretation();
+    std::vector<string> *choice_buffer;
 
     
     virtual domain::DomainObject* getInterpretationForREALMATRIX4_EXPR(coords::REALMATRIX4_EXPR* coords, domain::DomainObject* dom) = 0;
+
+    virtual domain::DomainObject* getInterpretationForREAL4_EXPR(coords::REAL4_EXPR* coords, domain::DomainObject* dom) = 0;
 
     virtual domain::DomainObject* getInterpretationForREAL3_EXPR(coords::REAL3_EXPR* coords, domain::DomainObject* dom) = 0;
 
@@ -27,7 +30,11 @@ public:
 
     virtual domain::DomainObject* getInterpretationForREAL3_VAR_IDENT(coords::REAL3_VAR_IDENT* coords, domain::DomainObject* dom) = 0;
 
+    virtual domain::DomainObject* getInterpretationForREAL4_VAR_IDENT(coords::REAL4_VAR_IDENT* coords, domain::DomainObject* dom) = 0;
+
     virtual domain::DomainObject* getInterpretationForREALMATRIX4_VAR_IDENT(coords::REALMATRIX4_VAR_IDENT* coords, domain::DomainObject* dom) = 0;
+
+    virtual domain::DomainObject* getInterpretationForREAL4_LITERAL(coords::REAL4_LITERAL* coords, domain::DomainObject* dom) = 0;
 
     virtual domain::DomainObject* getInterpretationForREAL3_LITERAL(coords::REAL3_LITERAL* coords, domain::DomainObject* dom) = 0;
 
