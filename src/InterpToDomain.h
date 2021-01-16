@@ -19,12 +19,15 @@ class DECLARE;
 class REXPR;
 class LEXPR;
 class REALMATRIX4_EXPR;
+class REAL4_EXPR;
 class REAL3_EXPR;
 class REAL3_LEXPR;
 class REAL1_EXPR;
 class REAL1_VAR_IDENT;
 class REAL3_VAR_IDENT;
+class REAL4_VAR_IDENT;
 class REALMATRIX4_VAR_IDENT;
+class REAL4_LITERAL;
 class REAL3_LITERAL;
 class REAL1_LITERAL;
 class REALMATRIX4_LITERAL;class SEQ_GLOBALSTMT;
@@ -40,16 +43,22 @@ class DECL_STMT;
 class DECL_REAL1_VAR_REAL1_EXPR;
 class DECL_REAL3_VAR_REAL3_EXPR;
 class DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR;
+class DECL_REAL4_VAR_REAL4_EXPR;
 class DECL_REAL1_VAR;
 class DECL_REAL3_VAR;
 class DECL_REALMATRIX4_VAR;
+class DECL_REAL4_VAR;
 class REAL3_EXPR;
 class REAL1_EXPR;
 class REALMATRIX4_EXPR;
+class REAL4_EXPR;
 class REAL3_LEXPR;
 class REF_REALMATRIX4_VAR;
 class MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR;
 class REALMATRIX4_LITERAL;
+class REF_REAL4_VAR;
+class ADD_REAL4_EXPR_REAL4_EXPR;
+class MUL_REAL4_EXPR_REAL4_EXPR;
 class REF_REAL3_VAR;
 class ADD_REAL3_EXPR_REAL3_EXPR;
 class LMUL_REAL1_EXPR_REAL3_EXPR;
@@ -64,6 +73,9 @@ class REAL1_LITERAL;
 class IDENT;
 class IDENT;
 class IDENT;
+class IDENT;
+class REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
+class REAL4_EMPTY;
 class REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
 class REAL3_EMPTY;
 class REAL1_LIT;
@@ -143,6 +155,11 @@ void eraseDECL_REAL3_VAR_REAL3_EXPR(interp::DECL_REAL3_VAR_REAL3_EXPR* key, doma
 	interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* getDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(domain::DomainObject* d) const;
 void eraseDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(interp::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR* key, domain::DomainObject* val);
 
+	void putDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* c) const;
+	interp::DECL_REAL4_VAR_REAL4_EXPR* getDECL_REAL4_VAR_REAL4_EXPR(domain::DomainObject* d) const;
+void eraseDECL_REAL4_VAR_REAL4_EXPR(interp::DECL_REAL4_VAR_REAL4_EXPR* key, domain::DomainObject* val);
+
 	void putDECL_REAL1_VAR(interp::DECL_REAL1_VAR* key, domain::DomainObject* val);
 	domain::DomainObject* getDECL_REAL1_VAR(interp::DECL_REAL1_VAR* c) const;
 	interp::DECL_REAL1_VAR* getDECL_REAL1_VAR(domain::DomainObject* d) const;
@@ -157,6 +174,11 @@ void eraseDECL_REAL3_VAR(interp::DECL_REAL3_VAR* key, domain::DomainObject* val)
 	domain::DomainObject* getDECL_REALMATRIX4_VAR(interp::DECL_REALMATRIX4_VAR* c) const;
 	interp::DECL_REALMATRIX4_VAR* getDECL_REALMATRIX4_VAR(domain::DomainObject* d) const;
 void eraseDECL_REALMATRIX4_VAR(interp::DECL_REALMATRIX4_VAR* key, domain::DomainObject* val);
+
+	void putDECL_REAL4_VAR(interp::DECL_REAL4_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getDECL_REAL4_VAR(interp::DECL_REAL4_VAR* c) const;
+	interp::DECL_REAL4_VAR* getDECL_REAL4_VAR(domain::DomainObject* d) const;
+void eraseDECL_REAL4_VAR(interp::DECL_REAL4_VAR* key, domain::DomainObject* val);
 
 	domain::DomainObject* getREXPR(interp::REXPR* c) const;
 	interp::REXPR* getREXPR(domain::DomainObject* d) const;
@@ -176,6 +198,24 @@ void eraseREF_REALMATRIX4_VAR(interp::REF_REALMATRIX4_VAR* key, domain::DomainOb
 	domain::DomainObject* getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* c) const;
 	interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* getMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(domain::DomainObject* d) const;
 void eraseMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(interp::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREAL4_EXPR(interp::REAL4_EXPR* c) const;
+	interp::REAL4_EXPR* getREAL4_EXPR(domain::DomainObject* d) const;
+	
+	void putREF_REAL4_VAR(interp::REF_REAL4_VAR* key, domain::DomainObject* val);
+	domain::DomainObject* getREF_REAL4_VAR(interp::REF_REAL4_VAR* c) const;
+	interp::REF_REAL4_VAR* getREF_REAL4_VAR(domain::DomainObject* d) const;
+void eraseREF_REAL4_VAR(interp::REF_REAL4_VAR* key, domain::DomainObject* val);
+
+	void putADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* c) const;
+	interp::ADD_REAL4_EXPR_REAL4_EXPR* getADD_REAL4_EXPR_REAL4_EXPR(domain::DomainObject* d) const;
+void eraseADD_REAL4_EXPR_REAL4_EXPR(interp::ADD_REAL4_EXPR_REAL4_EXPR* key, domain::DomainObject* val);
+
+	void putMUL_REAL4_EXPR_REAL4_EXPR(interp::MUL_REAL4_EXPR_REAL4_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getMUL_REAL4_EXPR_REAL4_EXPR(interp::MUL_REAL4_EXPR_REAL4_EXPR* c) const;
+	interp::MUL_REAL4_EXPR_REAL4_EXPR* getMUL_REAL4_EXPR_REAL4_EXPR(domain::DomainObject* d) const;
+void eraseMUL_REAL4_EXPR_REAL4_EXPR(interp::MUL_REAL4_EXPR_REAL4_EXPR* key, domain::DomainObject* val);
 
 	domain::DomainObject* getREAL3_EXPR(interp::REAL3_EXPR* c) const;
 	interp::REAL3_EXPR* getREAL3_EXPR(domain::DomainObject* d) const;
@@ -241,10 +281,28 @@ void eraseREAL1_VAR_IDENT(interp::REAL1_VAR_IDENT* key, domain::DomainObject* va
 	interp::REAL3_VAR_IDENT* getREAL3_VAR_IDENT(domain::DomainObject* d) const;
 void eraseREAL3_VAR_IDENT(interp::REAL3_VAR_IDENT* key, domain::DomainObject* val);
 
+	void putREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* c) const;
+	interp::REAL4_VAR_IDENT* getREAL4_VAR_IDENT(domain::DomainObject* d) const;
+void eraseREAL4_VAR_IDENT(interp::REAL4_VAR_IDENT* key, domain::DomainObject* val);
+
 	void putREALMATRIX4_VAR_IDENT(interp::REALMATRIX4_VAR_IDENT* key, domain::DomainObject* val);
 	domain::DomainObject* getREALMATRIX4_VAR_IDENT(interp::REALMATRIX4_VAR_IDENT* c) const;
 	interp::REALMATRIX4_VAR_IDENT* getREALMATRIX4_VAR_IDENT(domain::DomainObject* d) const;
 void eraseREALMATRIX4_VAR_IDENT(interp::REALMATRIX4_VAR_IDENT* key, domain::DomainObject* val);
+
+	domain::DomainObject* getREAL4_LITERAL(interp::REAL4_LITERAL* c) const;
+	interp::REAL4_LITERAL* getREAL4_LITERAL(domain::DomainObject* d) const;
+	
+	void putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c) const;
+	interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(domain::DomainObject* d) const;
+void eraseREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* key, domain::DomainObject* val);
+
+	void putREAL4_EMPTY(interp::REAL4_EMPTY* key, domain::DomainObject* val);
+	domain::DomainObject* getREAL4_EMPTY(interp::REAL4_EMPTY* c) const;
+	interp::REAL4_EMPTY* getREAL4_EMPTY(domain::DomainObject* d) const;
+void eraseREAL4_EMPTY(interp::REAL4_EMPTY* key, domain::DomainObject* val);
 
 	domain::DomainObject* getREAL3_LITERAL(interp::REAL3_LITERAL* c) const;
 	interp::REAL3_LITERAL* getREAL3_LITERAL(domain::DomainObject* d) const;
@@ -319,6 +377,9 @@ std::unordered_map<domain::Frame*, interp::Frame*> dom2interp_Frames;
 	std::unordered_map <interp::REALMATRIX4_EXPR*,	domain::DomainObject*	> 	interp2dom_REALMATRIX4_EXPR;
 	std::unordered_map <domain::DomainObject*,	interp::REALMATRIX4_EXPR*	> 	dom2interp_REALMATRIX4_EXPR;
 
+	std::unordered_map <interp::REAL4_EXPR*,	domain::DomainObject*	> 	interp2dom_REAL4_EXPR;
+	std::unordered_map <domain::DomainObject*,	interp::REAL4_EXPR*	> 	dom2interp_REAL4_EXPR;
+
 	std::unordered_map <interp::REAL3_EXPR*,	domain::DomainObject*	> 	interp2dom_REAL3_EXPR;
 	std::unordered_map <domain::DomainObject*,	interp::REAL3_EXPR*	> 	dom2interp_REAL3_EXPR;
 
@@ -334,8 +395,14 @@ std::unordered_map<domain::Frame*, interp::Frame*> dom2interp_Frames;
 	std::unordered_map <interp::REAL3_VAR_IDENT*,	domain::DomainObject*	> 	interp2dom_REAL3_VAR_IDENT;
 	std::unordered_map <domain::DomainObject*,	interp::REAL3_VAR_IDENT*	> 	dom2interp_REAL3_VAR_IDENT;
 
+	std::unordered_map <interp::REAL4_VAR_IDENT*,	domain::DomainObject*	> 	interp2dom_REAL4_VAR_IDENT;
+	std::unordered_map <domain::DomainObject*,	interp::REAL4_VAR_IDENT*	> 	dom2interp_REAL4_VAR_IDENT;
+
 	std::unordered_map <interp::REALMATRIX4_VAR_IDENT*,	domain::DomainObject*	> 	interp2dom_REALMATRIX4_VAR_IDENT;
 	std::unordered_map <domain::DomainObject*,	interp::REALMATRIX4_VAR_IDENT*	> 	dom2interp_REALMATRIX4_VAR_IDENT;
+
+	std::unordered_map <interp::REAL4_LITERAL*,	domain::DomainObject*	> 	interp2dom_REAL4_LITERAL;
+	std::unordered_map <domain::DomainObject*,	interp::REAL4_LITERAL*	> 	dom2interp_REAL4_LITERAL;
 
 	std::unordered_map <interp::REAL3_LITERAL*,	domain::DomainObject*	> 	interp2dom_REAL3_LITERAL;
 	std::unordered_map <domain::DomainObject*,	interp::REAL3_LITERAL*	> 	dom2interp_REAL3_LITERAL;

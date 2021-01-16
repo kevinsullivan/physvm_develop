@@ -1,9 +1,0 @@
-<launch>
-
-  <node pkg="playground" type="scratch1" name="scratch1" output="screen" />
-  <node pkg="playground" type="scratch2" name="scratch2" output="screen" />
-  <node pkg="playground" type="scratch3" name="scratch3" output="screen" />
-  <node pkg="playground" type="scratch4" name="scratch4" output="screen" />
-  <node pkg="playground" type="scratch5" name="scratch5" output="screen" />
-
-</launch>

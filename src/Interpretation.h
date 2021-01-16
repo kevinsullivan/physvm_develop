@@ -92,11 +92,15 @@ public:
                     
 	void mkDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(const ast::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR * ast ,ast::REALMATRIX4_VAR_IDENT* operand1,ast::REALMATRIX4_EXPR* operand2);
                     
+	void mkDECL_REAL4_VAR_REAL4_EXPR(const ast::DECL_REAL4_VAR_REAL4_EXPR * ast ,ast::REAL4_VAR_IDENT* operand1,ast::REAL4_EXPR* operand2);
+                    
 	void mkDECL_REAL1_VAR(const ast::DECL_REAL1_VAR * ast ,ast::REAL1_VAR_IDENT* operand1);
                     
 	void mkDECL_REAL3_VAR(const ast::DECL_REAL3_VAR * ast ,ast::REAL3_VAR_IDENT* operand1);
                     
 	void mkDECL_REALMATRIX4_VAR(const ast::DECL_REALMATRIX4_VAR * ast ,ast::REALMATRIX4_VAR_IDENT* operand1);
+                    
+	void mkDECL_REAL4_VAR(const ast::DECL_REAL4_VAR * ast ,ast::REAL4_VAR_IDENT* operand1);
                     
 	std::string toString_DECLAREs();
 
@@ -109,6 +113,14 @@ public:
 	void mkMUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR(const ast::MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR * ast ,ast::REALMATRIX4_EXPR* operand1,ast::REALMATRIX4_EXPR* operand2);
                     
 	std::string toString_REALMATRIX4_EXPRs();
+
+	void mkREF_REAL4_VAR(const ast::REF_REAL4_VAR * ast ,ast::REAL4_VAR_IDENT* operand1,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr,std::shared_ptr<float> value3=nullptr);
+                    
+	void mkADD_REAL4_EXPR_REAL4_EXPR(const ast::ADD_REAL4_EXPR_REAL4_EXPR * ast ,ast::REAL4_EXPR* operand1,ast::REAL4_EXPR* operand2,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr,std::shared_ptr<float> value3=nullptr);
+                    
+	void mkMUL_REAL4_EXPR_REAL4_EXPR(const ast::MUL_REAL4_EXPR_REAL4_EXPR * ast ,ast::REAL4_EXPR* operand1,ast::REAL4_EXPR* operand2,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr,std::shared_ptr<float> value3=nullptr);
+                    
+	std::string toString_REAL4_EXPRs();
 
 	void mkREF_REAL3_VAR(const ast::REF_REAL3_VAR * ast ,ast::REAL3_VAR_IDENT* operand1,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
                     
@@ -142,9 +154,19 @@ public:
                     
 	std::string toString_REAL3_VAR_IDENTs();
 
+	void mkREAL4_VAR_IDENT(const ast::REAL4_VAR_IDENT * ast ,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr,std::shared_ptr<float> value3=nullptr);
+                    
+	std::string toString_REAL4_VAR_IDENTs();
+
 	void mkREALMATRIX4_VAR_IDENT(const ast::REALMATRIX4_VAR_IDENT * ast );
                     
 	std::string toString_REALMATRIX4_VAR_IDENTs();
+
+	void mkREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,ast::REAL1_EXPR* operand3,ast::REAL1_EXPR* operand4,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr,std::shared_ptr<float> value3=nullptr);
+                    
+	void mkREAL4_EMPTY(const ast::REAL4_EMPTY * ast ,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr,std::shared_ptr<float> value3=nullptr);
+                    
+	std::string toString_REAL4_LITERALs();
 
 	void mkREAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,ast::REAL1_EXPR* operand3,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr);
                     
@@ -180,6 +202,7 @@ public:
     void mkVarTable();//make a printable, indexed table of variables that can have their types assigned by a user or oracle
     void printVarTable();//print the indexed variable table for the user
     void updateVarTable();//while loop where user can select a variable by index and provide a physical type for that variable
+    void printChoices();//to replay annotation sessions
     void remap(coords::Coords c, domain::DomainObject newinterp);
 
     /*
@@ -215,12 +238,15 @@ public:
 	std::vector<coords::REXPR*> REXPR_vec;
 	std::vector<coords::LEXPR*> LEXPR_vec;
 	std::vector<coords::REALMATRIX4_EXPR*> REALMATRIX4_EXPR_vec;
+	std::vector<coords::REAL4_EXPR*> REAL4_EXPR_vec;
 	std::vector<coords::REAL3_EXPR*> REAL3_EXPR_vec;
 	std::vector<coords::REAL3_LEXPR*> REAL3_LEXPR_vec;
 	std::vector<coords::REAL1_EXPR*> REAL1_EXPR_vec;
 	std::vector<coords::REAL1_VAR_IDENT*> REAL1_VAR_IDENT_vec;
 	std::vector<coords::REAL3_VAR_IDENT*> REAL3_VAR_IDENT_vec;
+	std::vector<coords::REAL4_VAR_IDENT*> REAL4_VAR_IDENT_vec;
 	std::vector<coords::REALMATRIX4_VAR_IDENT*> REALMATRIX4_VAR_IDENT_vec;
+	std::vector<coords::REAL4_LITERAL*> REAL4_LITERAL_vec;
 	std::vector<coords::REAL3_LITERAL*> REAL3_LITERAL_vec;
 	std::vector<coords::REAL1_LITERAL*> REAL1_LITERAL_vec;
 	std::vector<coords::REALMATRIX4_LITERAL*> REALMATRIX4_LITERAL_vec;	std::vector<coords::SEQ_GLOBALSTMT*> SEQ_GLOBALSTMT_vec;
