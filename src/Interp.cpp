@@ -41,28 +41,41 @@ std::string Space::toString() const {
             found = true;
            // retval += "def " + dc->getName() + "var : lang.classicalGeometry.var := lang.classicalGeometry.var.mk " + std::to_string(id) + "" + "\n";
             //retval += "\ndef " + dc->getName() + "sp := lang.classicalGeometry.expr.lit (classicalGeometry.mk " + std::to_string(id-1) + " " + std::to_string(dc->getDimension()) + ")"; 
-            retval += "\ndef " + dc->getName() + " := cmd.classicalGeometryAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalGeometry.spaceExpr.lit(classicalGeometry.build " + std::to_string(id) + " " + std::to_string(dc->getDimension()) + ")"")\n";
+            //retval += "\ndef " + dc->getName() + " := cmd.classicalGeometryAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalGeometry.spaceExpr.lit(classicalGeometry.build " + std::to_string(id) + " " + std::to_string(dc->getDimension()) + ")"")\n";
+            
             retval += "\ndef " + getEnvName() + " := cmdEval " + dc->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTime*>(s_)){
             found = true;
            // retval += "def " + dc->getName() + "var : lang.classicalTime.var := lang.classicalTime.var.mk " + std::to_string(id) + "" + "\n";
             //retval += "\ndef " + dc->getName() + "sp := lang.classicalTime.expr.lit (classicalTime.mk " + std::to_string(id) + ")"; 
-            retval += "\ndef " + dc->getName() + " := cmd.classicalTimeAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalTime.spaceExpr.lit(classicalTime.build " + std::to_string(id-1) + ")"")\n";
+            //retval += "\ndef " + dc->getName() + " := cmd.classicalTimeAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalTime.spaceExpr.lit(classicalTime.build " + std::to_string(id-1) + ")"")\n";
+            
+            retval += "\ndef " + dc->getName() + " := \n\tlet var := (⟨⟨" + std::to_string(id) + "⟩⟩ : lang.classicalTime.spaceVar) in\n";
+            retval += "\tlet spaceLiteral := lang.classicalTime.spaceExpr.lit(classicalTime.build " + std::to_string(id-1) + ") in\n";
+            retval += "\tvar=spaceLiteral";
             retval += "\ndef " + getEnvName() + " := cmdEval " + dc->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry3*>(s_)){
             found = true;
            // retval += "def " + dc->getName() + "var : lang.euclideanGeometry3.var := lang.euclideanGeometry3.var.mk " + std::to_string(id) + "" + "\n";
             //retval += "\ndef " + dc->getName() + "sp := lang.euclideanGeometry3.expr.lit (euclideanGeometry3.mk " + std::to_string(id) + ")"; 
-            retval += "\ndef " + dc->getName() + " := cmd.euclideanGeometry3Assmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.euclideanGeometry3.spaceExpr.lit(euclideanGeometry3.build " + std::to_string(id-1) + ")"")\n";
+            //retval += "\ndef " + dc->getName() + " := cmd.euclideanGeometry3Assmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.euclideanGeometry3.spaceExpr.lit(euclideanGeometry3.build " + std::to_string(id-1) + ")"")\n";
+            
+            retval += "\ndef " + dc->getName() + " := \n\tlet var := (⟨⟨" + std::to_string(id) + "⟩⟩ : lang.euclideanGeometry3.spaceVar) in\n";
+            retval += "\tlet spaceLiteral := lang.euclideanGeometry3.spaceExpr.lit(euclideanGeometry3.build " + std::to_string(id-1) + ") in\n";
+            retval += "\tvar=spaceLiteral";
             retval += "\ndef " + getEnvName() + " := cmdEval " + dc->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::ClassicalHertz*>(s_)){
             found = true;
            // retval += "def " + dc->getName() + "var : lang.classicalHertz.var := lang.classicalHertz.var.mk " + std::to_string(id) + "" + "\n";
             //retval += "\ndef " + dc->getName() + "sp := lang.classicalHertz.expr.lit (classicalHertz.mk " + std::to_string(id) + ")"; 
-            retval += "\ndef " + dc->getName() + " := cmd.classicalHertzAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalHertz.spaceExpr.lit(classicalHertz.build " + std::to_string(id-1) + ")"")\n";
+            //retval += "\ndef " + dc->getName() + " := cmd.classicalHertzAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalHertz.spaceExpr.lit(classicalHertz.build " + std::to_string(id-1) + ")"")\n";
+            
+            retval += "\ndef " + dc->getName() + " := \n\tlet var := (⟨⟨" + std::to_string(id) + "⟩⟩ : lang.classicalHertz.spaceVar) in\n";
+            retval += "\tlet spaceLiteral := lang.classicalHertz.spaceExpr.lit(classicalHertz.build " + std::to_string(id-1) + ") in\n";
+            retval += "\tvar=spaceLiteral";
             retval += "\ndef " + getEnvName() + " := cmdEval " + dc->getName() + " " + getLastEnv();
     }
 
@@ -186,12 +199,12 @@ std::string MeasurementSystem::toString() const {
     if(((domain::SIMeasurementSystem*)this->ms_)){
         //retval += "def " + this->ms_->getName() + " := cmd.measurementSystemAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.measurementSystem.measureExpr.lit measurementSystem.si_measurement_system)";
         //retval += "\ndef " + getEnvName() + " := cmdEval " + this->ms_->getName() + " " + getLastEnv();
-        retval += "(⟨⟨" + std::to_string(id) + "⟩⟩ : lang.measurementSystem.measureVar)=(lang.measurementSystem.measureExpr.lit measurementSystem.si_measurement_system)";
+        retval += "\tlet var := (⟨⟨" + std::to_string(id) + "⟩⟩ : lang.measurementSystem.measureVar) in\n\tlet measurementSystemLiteral := (lang.measurementSystem.measureExpr.lit measurementSystem.si_measurement_system) in\n\tvar=measurementSystemLiteral";
     }
     else if((domain::ImperialMeasurementSystem*)this->ms_){
         //retval += "def " + this->ms_->getName() + " :=  cmd.measurementSystemAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.measurementSystem.measureExpr.lit measurementSystem.imperial_measurement_system)";
         //retval += "\ndef " + getEnvName() + " := cmdEval " + this->ms_->getName() + " " + getLastEnv();
-        retval += "(⟨⟨" + std::to_string(id) + "⟩⟩ : lang.measurementSystem.measureVar)=(lang.measurementSystem.measureExpr.lit measurementSystem.imperial_measurement_system)";
+        retval += "\tlet var := (⟨⟨" + std::to_string(id) + "⟩⟩ : lang.measurementSystem.measureVar) in\n\tlet measurementSystemLiteral := (lang.measurementSystem.measureExpr.lit measurementSystem.imperial_measurement_system) in\n\tvar=measurementSystemLiteral";
 
     }
         return retval;
@@ -217,18 +230,18 @@ std::string AxisOrientation::toString() const {
     if(((domain::NWUOrientation*)this->ax_)){
         //retval += "def " + this->ax_->getName() + " := cmd.axisOrientationAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.axisOrientation.orientationExpr.lit orientation.NWU)";
         //retval += "\n def " + getEnvName() + " := cmdEval " + this->ax_->getName() + " " + getLastEnv();
-        retval += "(⟨⟨" + std::to_string(id) + "⟩⟩ : lang.axisOrientation.orientationVar)=(lang.axisOrientation.orientationExpr.lit orientation.NWU)";
+        retval += "\n\tlet var := (⟨⟨" + std::to_string(id) + "⟩⟩ : lang.axisOrientation.orientationVar) in\n\tlet axisOrientationLiteral := (lang.axisOrientation.orientationExpr.lit orientation.NWU) in\n\tvar=axisOrientationLiteral";
     }
     else if((domain::NEDOrientation*)this->ax_){
         //retval += "def " + this->ax_->getName() + " := cmd.axisOrientationAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.axisOrientation.orientationExpr.lit orientation.NED)";
         //retval += "\n def " + getEnvName() + " := cmdEval " + this->ax_->getName() + " " + getLastEnv();
-        retval += "(⟨⟨" + std::to_string(id) + "⟩⟩ : lang.axisOrientation.orientationVar)=(lang.axisOrientation.orientationExpr.lit orientation.NED)";
+        retval += "\n\tlet var := (⟨⟨" + std::to_string(id) + "⟩⟩ : lang.axisOrientation.orientationVar) in\n\tlet axisOrientationLiteral := (lang.axisOrientation.orientationExpr.lit orientation.NED) in\n\tvar=axisOrientationLiteral";
 
     }
     else if((domain::ENUOrientation*)this->ax_){
         //retval += "def " + this->ax_->getName() + " := cmd.axisOrientationAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.axisOrientation.orientationExpr.lit orientation.ENU)";
         //retval += "\n def " + getEnvName() + " := cmdEval " + this->ax_->getName() + " " + getLastEnv();
-        retval += "(⟨⟨" + std::to_string(id) + "⟩⟩ : lang.axisOrientation.orientationVar)=(lang.axisOrientation.orientationExpr.lit orientation.ENU)";
+        retval += "\n\tlet var := (⟨⟨" + std::to_string(id) + "⟩⟩ : lang.axisOrientation.orientationVar) in\n\tlet axisOrientationLiteral := (lang.axisOrientation.orientationExpr.lit orientation.ENU) in\n\tvar=axisOrientationLiteral";
 
     }
         return retval;
@@ -280,7 +293,11 @@ std::string Frame::toString() const {
             retval += "    let parent := (classicalGeometryFrameEval (lang.classicalGeometry.frameExpr.var ⟨⟨" + std::to_string(fid) +"⟩⟩) " + getLastEnv() + ") in\n";
         } 
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.classicalGeometryFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalGeometry.frameExpr.lit(classicalGeometryEval " + std::to_string(sid)  + ")"")\n";
+        retval += "    let var : lang.classicalGeometry.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let frame_alias_literal := \n\t\t\tlang.classicalGeometry.frameExpr.lit (classicalGeometryFrame.interpret parent ms axis) in\n";
+        retval += "    var=frame_alias_literal\n";      
+
+
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTimeFrame*>(f_)){
@@ -299,7 +316,11 @@ std::string Frame::toString() const {
             retval += "    let parent := (classicalTimeFrameEval (lang.classicalTime.frameExpr.var ⟨⟨" + std::to_string(fid) +"⟩⟩) " + getLastEnv() + ") in\n";
         } 
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.classicalTimeFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalTime.frameExpr.lit (classicalTimeFrame.interpret parent ms axis)"")\n";
+        retval += "    let var : lang.classicalTime.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let frame_alias_literal := \n\t\t\tlang.classicalTime.frameExpr.lit (classicalTimeFrame.interpret parent ms axis) in\n";
+        retval += "    var=frame_alias_literal\n";      
+
+
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry3Frame*>(f_)){
@@ -318,7 +339,11 @@ std::string Frame::toString() const {
             retval += "    let parent := (euclideanGeometry3FrameEval (lang.euclideanGeometry3.frameExpr.var ⟨⟨" + std::to_string(fid) +"⟩⟩) " + getLastEnv() + ") in\n";
         } 
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.euclideanGeometry3FrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.euclideanGeometry3.frameExpr.lit (euclideanGeometry3Frame.interpret parent ms axis)"")\n";
+        retval += "    let var : lang.euclideanGeometry3.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let frame_alias_literal := \n\t\t\tlang.euclideanGeometry3.frameExpr.lit (euclideanGeometry3Frame.interpret parent ms axis) in\n";
+        retval += "    var=frame_alias_literal\n";      
+
+
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocityFrame*>(f_)){
@@ -337,7 +362,11 @@ std::string Frame::toString() const {
             retval += "    let parent := (classicalVelocityFrameEval (lang.classicalVelocity.frameExpr.var ⟨⟨" + std::to_string(fid) +"⟩⟩) " + getLastEnv() + ") in\n";
         } 
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.classicalVelocityFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalVelocity.frameExpr.lit(classicalVelocityEval " + std::to_string(sid)  + ")"")\n";
+        retval += "    let var : lang.classicalVelocity.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let frame_alias_literal := \n\t\t\tlang.classicalVelocity.frameExpr.lit (classicalVelocityFrame.interpret parent ms axis) in\n";
+        retval += "    var=frame_alias_literal\n";      
+
+
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::ClassicalHertzFrame*>(f_)){
@@ -356,7 +385,11 @@ std::string Frame::toString() const {
             retval += "    let parent := (classicalHertzFrameEval (lang.classicalHertz.frameExpr.var ⟨⟨" + std::to_string(fid) +"⟩⟩) " + getLastEnv() + ") in\n";
         } 
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.classicalHertzFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (lang.classicalHertz.frameExpr.lit (classicalHertzFrame.interpret parent ms axis)"")\n";
+        retval += "    let var : lang.classicalHertz.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let frame_alias_literal := \n\t\t\tlang.classicalHertz.frameExpr.lit (classicalHertzFrame.interpret parent ms axis) in\n";
+        retval += "    var=frame_alias_literal\n";      
+
+
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
     }
@@ -381,10 +414,19 @@ std::string Frame::toString() const {
         }
         retval += "    let ms := (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + ") in\n";
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.classicalGeometryFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
-        retval += "        lang.classicalGeometry.frameExpr.lit (classicalGeometryFrame.build_derived_from_coords fr \n";
-        retval += "        ";
-        retval += "   (⟨[]";
+        retval += "    let var : lang.classicalGeometry.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let o := aff_lib.affine_coord_space.std_origin_vector ℝ " + std::to_string(dim) + " in\n";
+        for(auto i = 0; i < dim;i++)
+            retval += "    let b" + std::to_string(i)+" := aff_lib.affine_coord_space.std_basis_vector ℝ " + std::to_string(dim) + " " + std::to_string(i)+" in\n";
+        //retval += "    cmd.classicalGeometryFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
+        retval += "    let derived_frame_literal := \n\t\t\tlang.classicalGeometry.frameExpr.lit (\n\t\t\t\tclassicalGeometryFrame.build_derived_from_coords fr o ";
+        for(auto i = 0; i < dim;i++)
+            retval += " b" + std::to_string(i) + " ";
+        retval += " ms axis ) in\n";
+        retval += "    var=derived_frame_literal \n";
+        //retval += "        lang.classicalGeometry.frameExpr.lit (classicalGeometryFrame.build_derived_from_coords fr \n";
+        //retval += "        ";
+        /*retval += "   (⟨[]";
         for(auto i = 0; i < dim;i++)
             retval += std::string("++[") + std::to_string(0) + "]";
         retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
@@ -393,8 +435,8 @@ std::string Frame::toString() const {
             for(auto i = 0; i < dim;i++)
                 retval += std::string("++[") + std::to_string(1) + "]";
             retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
-        }
-        retval += "    ms axis   ))\n";
+        }*/
+        //retval += "    ms axis   ))\n";
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::ClassicalTimeDerivedFrame*>(f_)){
@@ -415,10 +457,19 @@ std::string Frame::toString() const {
         }
         retval += "    let ms := (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + ") in\n";
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.classicalTimeFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
-        retval += "        lang.classicalTime.frameExpr.lit (classicalTimeFrame.build_derived_from_coords fr \n";
-        retval += "        ";
-        retval += "   (⟨[]";
+        retval += "    let var : lang.classicalTime.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let o := aff_lib.affine_coord_space.std_origin_vector ℝ " + std::to_string(dim) + " in\n";
+        for(auto i = 0; i < dim;i++)
+            retval += "    let b" + std::to_string(i)+" := aff_lib.affine_coord_space.std_basis_vector ℝ " + std::to_string(dim) + " " + std::to_string(i)+" in\n";
+        //retval += "    cmd.classicalTimeFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
+        retval += "    let derived_frame_literal := \n\t\t\tlang.classicalTime.frameExpr.lit (\n\t\t\t\tclassicalTimeFrame.build_derived_from_coords fr o ";
+        for(auto i = 0; i < dim;i++)
+            retval += " b" + std::to_string(i) + " ";
+        retval += " ms axis ) in\n";
+        retval += "    var=derived_frame_literal \n";
+        //retval += "        lang.classicalTime.frameExpr.lit (classicalTimeFrame.build_derived_from_coords fr \n";
+        //retval += "        ";
+        /*retval += "   (⟨[]";
         for(auto i = 0; i < dim;i++)
             retval += std::string("++[") + std::to_string(0) + "]";
         retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
@@ -427,8 +478,8 @@ std::string Frame::toString() const {
             for(auto i = 0; i < dim;i++)
                 retval += std::string("++[") + std::to_string(1) + "]";
             retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
-        }
-        retval += "    ms axis   ))\n";
+        }*/
+        //retval += "    ms axis   ))\n";
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::EuclideanGeometry3DerivedFrame*>(f_)){
@@ -449,10 +500,19 @@ std::string Frame::toString() const {
         }
         retval += "    let ms := (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + ") in\n";
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.euclideanGeometry3FrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
-        retval += "        lang.euclideanGeometry3.frameExpr.lit (euclideanGeometry3Frame.build_derived_from_coords fr \n";
-        retval += "        ";
-        retval += "   (⟨[]";
+        retval += "    let var : lang.euclideanGeometry3.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let o := aff_lib.affine_coord_space.std_origin_vector ℝ " + std::to_string(dim) + " in\n";
+        for(auto i = 0; i < dim;i++)
+            retval += "    let b" + std::to_string(i)+" := aff_lib.affine_coord_space.std_basis_vector ℝ " + std::to_string(dim) + " " + std::to_string(i)+" in\n";
+        //retval += "    cmd.euclideanGeometry3FrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
+        retval += "    let derived_frame_literal := \n\t\t\tlang.euclideanGeometry3.frameExpr.lit (\n\t\t\t\teuclideanGeometry3Frame.build_derived_from_coords fr o ";
+        for(auto i = 0; i < dim;i++)
+            retval += " b" + std::to_string(i) + " ";
+        retval += " ms axis ) in\n";
+        retval += "    var=derived_frame_literal \n";
+        //retval += "        lang.euclideanGeometry3.frameExpr.lit (euclideanGeometry3Frame.build_derived_from_coords fr \n";
+        //retval += "        ";
+        /*retval += "   (⟨[]";
         for(auto i = 0; i < dim;i++)
             retval += std::string("++[") + std::to_string(0) + "]";
         retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
@@ -461,8 +521,8 @@ std::string Frame::toString() const {
             for(auto i = 0; i < dim;i++)
                 retval += std::string("++[") + std::to_string(1) + "]";
             retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
-        }
-        retval += "    ms axis   ))\n";
+        }*/
+        //retval += "    ms axis   ))\n";
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::ClassicalVelocityDerivedFrame*>(f_)){
@@ -483,10 +543,19 @@ std::string Frame::toString() const {
         }
         retval += "    let ms := (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + ") in\n";
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.classicalVelocityFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
-        retval += "        lang.classicalVelocity.frameExpr.lit (classicalVelocityFrame.build_derived_from_coords fr \n";
-        retval += "        ";
-        retval += "   (⟨[]";
+        retval += "    let var : lang.classicalVelocity.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let o := aff_lib.affine_coord_space.std_origin_vector ℝ " + std::to_string(dim) + " in\n";
+        for(auto i = 0; i < dim;i++)
+            retval += "    let b" + std::to_string(i)+" := aff_lib.affine_coord_space.std_basis_vector ℝ " + std::to_string(dim) + " " + std::to_string(i)+" in\n";
+        //retval += "    cmd.classicalVelocityFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
+        retval += "    let derived_frame_literal := \n\t\t\tlang.classicalVelocity.frameExpr.lit (\n\t\t\t\tclassicalVelocityFrame.build_derived_from_coords fr o ";
+        for(auto i = 0; i < dim;i++)
+            retval += " b" + std::to_string(i) + " ";
+        retval += " ms axis ) in\n";
+        retval += "    var=derived_frame_literal \n";
+        //retval += "        lang.classicalVelocity.frameExpr.lit (classicalVelocityFrame.build_derived_from_coords fr \n";
+        //retval += "        ";
+        /*retval += "   (⟨[]";
         for(auto i = 0; i < dim;i++)
             retval += std::string("++[") + std::to_string(0) + "]";
         retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
@@ -495,8 +564,8 @@ std::string Frame::toString() const {
             for(auto i = 0; i < dim;i++)
                 retval += std::string("++[") + std::to_string(1) + "]";
             retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
-        }
-        retval += "    ms axis   ))\n";
+        }*/
+        //retval += "    ms axis   ))\n";
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
 	if(auto dc = dynamic_cast<domain::ClassicalHertzDerivedFrame*>(f_)){
@@ -517,10 +586,19 @@ std::string Frame::toString() const {
         }
         retval += "    let ms := (measurementSystemEval (lang.measurementSystem.measureExpr.var ⟨⟨" + std::to_string(mid) + "⟩⟩) " + getLastEnv() + ") in\n";
         retval += "    let axis := (axisOrientationEval (lang.axisOrientation.orientationExpr.var ⟨⟨" + std::to_string(aid) + "⟩⟩) " + getLastEnv() + ") in\n";
-        retval += "    cmd.classicalHertzFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
-        retval += "        lang.classicalHertz.frameExpr.lit (classicalHertzFrame.build_derived_from_coords fr \n";
-        retval += "        ";
-        retval += "   (⟨[]";
+        retval += "    let var : lang.classicalHertz.frameVar := (⟨⟨" + std::to_string(id) + "⟩⟩) in\n";
+        retval += "    let o := aff_lib.affine_coord_space.std_origin_vector ℝ " + std::to_string(dim) + " in\n";
+        for(auto i = 0; i < dim;i++)
+            retval += "    let b" + std::to_string(i)+" := aff_lib.affine_coord_space.std_basis_vector ℝ " + std::to_string(dim) + " " + std::to_string(i)+" in\n";
+        //retval += "    cmd.classicalHertzFrameAssmt (⟨⟨" + std::to_string(id) + "⟩⟩) (\n";
+        retval += "    let derived_frame_literal := \n\t\t\tlang.classicalHertz.frameExpr.lit (\n\t\t\t\tclassicalHertzFrame.build_derived_from_coords fr o ";
+        for(auto i = 0; i < dim;i++)
+            retval += " b" + std::to_string(i) + " ";
+        retval += " ms axis ) in\n";
+        retval += "    var=derived_frame_literal \n";
+        //retval += "        lang.classicalHertz.frameExpr.lit (classicalHertzFrame.build_derived_from_coords fr \n";
+        //retval += "        ";
+        /*retval += "   (⟨[]";
         for(auto i = 0; i < dim;i++)
             retval += std::string("++[") + std::to_string(0) + "]";
         retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
@@ -529,8 +607,8 @@ std::string Frame::toString() const {
             for(auto i = 0; i < dim;i++)
                 retval += std::string("++[") + std::to_string(1) + "]";
             retval += std::string("\n\t\t,by refl⟩ : vector ℝ ") + std::to_string(dim) +  ")";
-        }
-        retval += "    ms axis   ))\n";
+        }*/
+        //retval += "    ms axis   ))\n";
         //retval += "\n def " + env + " := cmdEval " + ((domain::AliasedFrame*)df)->getName() + " " + getLastEnv();
     }
     }
@@ -554,7 +632,7 @@ std::string Frame::toDefString() const {
     int mid = GLOBAL_IDS.count(const_cast<MeasurementSystem*>(ms_)) ? GLOBAL_IDS[const_cast<MeasurementSystem*>(ms_)] : GLOBAL_IDS[const_cast<MeasurementSystem*>(ms_)] = (GLOBAL_INDEX += 2); 
         
     int aid = GLOBAL_IDS.count(const_cast<AxisOrientation*>(ax_)) ? GLOBAL_IDS[const_cast<AxisOrientation*>(ax_)] : GLOBAL_IDS[const_cast<AxisOrientation*>(ax_)] = (GLOBAL_INDEX += 2); 
-    if(auto af = dynamic_cast<domain::AliasedFrame*>(f_)){
+    if(auto sf = dynamic_cast<domain::StandardFrame*>(f_)){
         return retval;
     }
     else if(auto af = dynamic_cast<domain::AliasedFrame*>(f_)){
