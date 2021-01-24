@@ -5,7 +5,7 @@ int main(int argc, char** argv){
    ros::init(argc, argv, "laser_scan_publisher");
  
    ros::NodeHandle n;
-   ros::Publisher scan_pub = n.advertise<sensor_msgs::LaserScan>("scan", 50);
+   /*ros::Publisher scan_pub = n.advertise<sensor_msgs::LaserScan>("scan", 50);
  
    unsigned int num_readings = 100;
    double laser_frequency = 40;
@@ -43,5 +43,5 @@ int main(int argc, char** argv){
     scan_pub.publish(scan);
      ++count;
   r.sleep();
-  }
+  }*/
 }
