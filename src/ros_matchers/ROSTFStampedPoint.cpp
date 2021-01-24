@@ -15,7 +15,7 @@
 #include <functional>
 
 
-void ROSTFPointMatcher::setup(){
+void ROSTFStampedPoint::setup(){
 		StatementMatcher cxxConstructExpr_=cxxConstructExpr().bind("CXXConstructExpr");
 		localFinder_.addMatcher(cxxConstructExpr_,this);
 	
@@ -47,7 +47,7 @@ void ROSTFPointMatcher::setup(){
 		localFinder_.addMatcher(cxxOperatorCallExpr_,this);
 };
 
-void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
+void ROSTFStampedPoint::run(const MatchFinder::MatchResult &Result){
 	auto cxxConstructExpr_ = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
 	
 	auto memberExpr_ = Result.Nodes.getNodeAs<clang::MemberExpr>("MemberExpr");
@@ -75,7 +75,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
         auto decl_ = cxxConstructExpr_->getConstructor();
         if(decl_->isCopyOrMoveConstructor())
         {
-            ROSTFPointMatcher pm{context_, interp_};
+            ROSTFStampedPoint pm{context_, interp_};
             pm.setup();
             pm.visit(**cxxConstructExpr_->getArgs());
             this->childExprStore_ = pm.getChildExprStore();
@@ -92,7 +92,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["memberExpr_tf::Point"] = [=](std::string typenm){
+	arg_decay_exist_predicates["memberExpr_tf::Stamped<tf::Point>"] = [=](std::string typenm){
     if(false){return false;}
 		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
 		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
@@ -128,7 +128,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["implicitCastExpr_tf::Point"] = [=](std::string typenm){
+	arg_decay_exist_predicates["implicitCastExpr_tf::Stamped<tf::Point>"] = [=](std::string typenm){
         if(false){return false; }
 		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
 		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
@@ -173,7 +173,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["cxxBindTemporaryExpr_tf::Point"] = [=](std::string typenm){
+	arg_decay_exist_predicates["cxxBindTemporaryExpr_tf::Stamped<tf::Point>"] = [=](std::string typenm){
         if(false){ return false; }
 		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
 		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
@@ -182,7 +182,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
     };
     if (cxxBindTemporaryExpr_)
     {
-        ROSTFPointMatcher exprMatcher{ context_, interp_};
+        ROSTFStampedPoint exprMatcher{ context_, interp_};
         exprMatcher.setup();
         exprMatcher.visit(*cxxBindTemporaryExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -198,7 +198,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["materializeTemporaryExpr_tf::Point"] = [=](std::string typenm){
+	arg_decay_exist_predicates["materializeTemporaryExpr_tf::Stamped<tf::Point>"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
 		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
@@ -207,7 +207,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
     };
     if (materializeTemporaryExpr_)
         {
-            ROSTFPointMatcher exprMatcher{ context_, interp_};
+            ROSTFStampedPoint exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*materializeTemporaryExpr_->GetTemporaryExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -224,7 +224,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["parenExpr_tf::Point"] = [=](std::string typenm){
+	arg_decay_exist_predicates["parenExpr_tf::Stamped<tf::Point>"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
 		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
@@ -233,7 +233,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
     };
     if (parenExpr_)
     {
-        ROSTFPointMatcher inner{ context_, interp_};
+        ROSTFStampedPoint inner{ context_, interp_};
         inner.setup();
         inner.visit(*parenExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
@@ -249,7 +249,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if (exprWithCleanups_)
         {
-            ROSTFPointMatcher exprMatcher{ context_, interp_};
+            ROSTFStampedPoint exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*exprWithCleanups_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -267,7 +267,7 @@ void ROSTFPointMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if (cxxFunctionalCastExpr_)
         {
-            ROSTFPointMatcher exprMatcher{ context_, interp_};
+            ROSTFStampedPoint exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();

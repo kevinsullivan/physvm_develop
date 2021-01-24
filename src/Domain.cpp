@@ -129,6 +129,12 @@ Frame* Domain::mkFrame(std::string name, Space* space, Frame* parent){
             return child;
         }
     }
+	if(auto dc = dynamic_cast<domain::ClassicalHertz*>(space)){
+            if(auto df = dynamic_cast<domain::ClassicalHertzFrame*>(parent)){
+            auto child = this->mkClassicalHertzFrame(name, dc, df);
+            return child;
+        }
+    }
     return nullptr;
 };
 */
@@ -168,6 +174,29 @@ ImperialMeasurementSystem* Domain::mkImperialMeasurementSystem(std::string name)
 
 
 
+
+NWUOrientation* Domain::mkNWUOrientation(std::string name){
+    auto si = new NWUOrientation(name);
+    this->axisOrientations.push_back(si);
+    return si;
+};
+
+NEDOrientation* Domain::mkNEDOrientation(std::string name){
+    auto imp = new NEDOrientation(name);
+    this->axisOrientations.push_back(imp);
+    return imp;
+
+};
+
+ENUOrientation* Domain::mkENUOrientation(std::string name){
+    auto imp = new ENUOrientation(name);
+    this->axisOrientations.push_back(imp);
+    return imp;
+
+};
+
+
+
 MapSpace* Domain::mkMapSpace(Space* space, Frame* dom, Frame* cod){
     return new MapSpace(space, dom, cod);
 };
@@ -185,15 +214,15 @@ EuclideanGeometry* Domain::mkEuclideanGeometry(std::string key,std::string name_
 
 //std::vector<EuclideanGeometry*> &Domain::getEuclideanGeometrySpaces() { return EuclideanGeometry_vec; }
 
-EuclideanGeometryAliasedFrame* Domain::mkEuclideanGeometryAliasedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* parent, domain::MeasurementSystem* ms){
-    EuclideanGeometryAliasedFrame* child = new domain::EuclideanGeometryAliasedFrame(name, space, parent,ms);
+EuclideanGeometryAliasedFrame* Domain::mkEuclideanGeometryAliasedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    EuclideanGeometryAliasedFrame* child = new domain::EuclideanGeometryAliasedFrame(name, space, parent,ms, ax);
     space->addFrame(child);
     return child;
 }
             
 
-EuclideanGeometryDerivedFrame* Domain::mkEuclideanGeometryDerivedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* parent){
-    EuclideanGeometryDerivedFrame* child = new domain::EuclideanGeometryDerivedFrame(name, space, parent);
+EuclideanGeometryDerivedFrame* Domain::mkEuclideanGeometryDerivedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    EuclideanGeometryDerivedFrame* child = new domain::EuclideanGeometryDerivedFrame(name, space, parent, ms, ax);
     space->addFrame(child);
     return child;
 }
@@ -219,15 +248,15 @@ ClassicalTime* Domain::mkClassicalTime(std::string key,std::string name_){
 
 //std::vector<ClassicalTime*> &Domain::getClassicalTimeSpaces() { return ClassicalTime_vec; }
 
-ClassicalTimeAliasedFrame* Domain::mkClassicalTimeAliasedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent, domain::MeasurementSystem* ms){
-    ClassicalTimeAliasedFrame* child = new domain::ClassicalTimeAliasedFrame(name, space, parent,ms);
+ClassicalTimeAliasedFrame* Domain::mkClassicalTimeAliasedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    ClassicalTimeAliasedFrame* child = new domain::ClassicalTimeAliasedFrame(name, space, parent,ms, ax);
     space->addFrame(child);
     return child;
 }
             
 
-ClassicalTimeDerivedFrame* Domain::mkClassicalTimeDerivedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent){
-    ClassicalTimeDerivedFrame* child = new domain::ClassicalTimeDerivedFrame(name, space, parent);
+ClassicalTimeDerivedFrame* Domain::mkClassicalTimeDerivedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    ClassicalTimeDerivedFrame* child = new domain::ClassicalTimeDerivedFrame(name, space, parent, ms, ax);
     space->addFrame(child);
     return child;
 }
@@ -253,15 +282,15 @@ EuclideanGeometry3* Domain::mkEuclideanGeometry3(std::string key,std::string nam
 
 //std::vector<EuclideanGeometry3*> &Domain::getEuclideanGeometry3Spaces() { return EuclideanGeometry3_vec; }
 
-EuclideanGeometry3AliasedFrame* Domain::mkEuclideanGeometry3AliasedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* parent, domain::MeasurementSystem* ms){
-    EuclideanGeometry3AliasedFrame* child = new domain::EuclideanGeometry3AliasedFrame(name, space, parent,ms);
+EuclideanGeometry3AliasedFrame* Domain::mkEuclideanGeometry3AliasedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    EuclideanGeometry3AliasedFrame* child = new domain::EuclideanGeometry3AliasedFrame(name, space, parent,ms, ax);
     space->addFrame(child);
     return child;
 }
             
 
-EuclideanGeometry3DerivedFrame* Domain::mkEuclideanGeometry3DerivedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* parent){
-    EuclideanGeometry3DerivedFrame* child = new domain::EuclideanGeometry3DerivedFrame(name, space, parent);
+EuclideanGeometry3DerivedFrame* Domain::mkEuclideanGeometry3DerivedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    EuclideanGeometry3DerivedFrame* child = new domain::EuclideanGeometry3DerivedFrame(name, space, parent, ms, ax);
     space->addFrame(child);
     return child;
 }
@@ -286,15 +315,15 @@ ClassicalVelocity* Domain::mkClassicalVelocity(std::string key,std::string name_
 
 //std::vector<ClassicalVelocity*> &Domain::getClassicalVelocitySpaces() { return ClassicalVelocity_vec; }
 
-ClassicalVelocityAliasedFrame* Domain::mkClassicalVelocityAliasedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent, domain::MeasurementSystem* ms){
-    ClassicalVelocityAliasedFrame* child = new domain::ClassicalVelocityAliasedFrame(name, space, parent,ms);
+ClassicalVelocityAliasedFrame* Domain::mkClassicalVelocityAliasedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    ClassicalVelocityAliasedFrame* child = new domain::ClassicalVelocityAliasedFrame(name, space, parent,ms, ax);
     space->addFrame(child);
     return child;
 }
             
 
-ClassicalVelocityDerivedFrame* Domain::mkClassicalVelocityDerivedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent){
-    ClassicalVelocityDerivedFrame* child = new domain::ClassicalVelocityDerivedFrame(name, space, parent);
+ClassicalVelocityDerivedFrame* Domain::mkClassicalVelocityDerivedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    ClassicalVelocityDerivedFrame* child = new domain::ClassicalVelocityDerivedFrame(name, space, parent, ms, ax);
     space->addFrame(child);
     return child;
 }
@@ -304,5 +333,39 @@ ClassicalVelocityDerivedFrame* Domain::mkClassicalVelocityDerivedFrame(std::stri
     ((Space*)this)->addFrame(frame);
 }*/
 void ClassicalVelocity::addFrame(ClassicalVelocityFrame* frame){
+    ((Space*)this)->addFrame(frame);
+}
+
+ClassicalHertz* Domain::mkClassicalHertz(std::string key,std::string name_){
+        ClassicalHertz* s = new ClassicalHertz(name_);
+        //s->addFrame(new domain::ClassicalHertzFrame("Standard", s, nullptr));
+        s->addFrame(new domain::ClassicalHertzStandardFrame(s));
+        this->ClassicalHertz_vec.push_back(s);
+        this->Space_vec.push_back(s);
+        this->Space_map[key] = s;
+    
+        return s;
+    };
+
+//std::vector<ClassicalHertz*> &Domain::getClassicalHertzSpaces() { return ClassicalHertz_vec; }
+
+ClassicalHertzAliasedFrame* Domain::mkClassicalHertzAliasedFrame(std::string name, domain::ClassicalHertz* space, domain::ClassicalHertzFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    ClassicalHertzAliasedFrame* child = new domain::ClassicalHertzAliasedFrame(name, space, parent,ms, ax);
+    space->addFrame(child);
+    return child;
+}
+            
+
+ClassicalHertzDerivedFrame* Domain::mkClassicalHertzDerivedFrame(std::string name, domain::ClassicalHertz* space, domain::ClassicalHertzFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    ClassicalHertzDerivedFrame* child = new domain::ClassicalHertzDerivedFrame(name, space, parent, ms, ax);
+    space->addFrame(child);
+    return child;
+}
+            
+
+/*void ClassicalHertz::addFrame(ClassicalHertzFrame* frame){
+    ((Space*)this)->addFrame(frame);
+}*/
+void ClassicalHertz::addFrame(ClassicalHertzFrame* frame){
     ((Space*)this)->addFrame(frame);
 }

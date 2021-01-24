@@ -33,6 +33,8 @@ public:
 
     virtual domain::DomainObject* getInterpretationForREAL1_EXPR(coords::REAL1_EXPR* coords, domain::DomainObject* dom);
 
+    virtual domain::DomainObject* getInterpretationForBOOL_VAR_IDENT(coords::BOOL_VAR_IDENT* coords, domain::DomainObject* dom);
+
     virtual domain::DomainObject* getInterpretationForREAL1_VAR_IDENT(coords::REAL1_VAR_IDENT* coords, domain::DomainObject* dom);
 
     virtual domain::DomainObject* getInterpretationForREAL3_VAR_IDENT(coords::REAL3_VAR_IDENT* coords, domain::DomainObject* dom);
