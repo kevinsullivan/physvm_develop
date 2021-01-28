@@ -2,7 +2,7 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 
-#include "FloatMatcher.h"
+#include "ROSRateMatcher.h"
 
 
 #include <string>
@@ -10,7 +10,7 @@
 #include <functional>
 
 
-void FloatMatcher::setup(){
+void ROSRateMatcher::setup(){
 		StatementMatcher cxxConstructExpr_=cxxConstructExpr().bind("CXXConstructExpr");
 		localFinder_.addMatcher(cxxConstructExpr_,this);
 	
@@ -39,7 +39,7 @@ void FloatMatcher::setup(){
 		localFinder_.addMatcher(declRefExpr_,this);
 };
 
-void FloatMatcher::run(const MatchFinder::MatchResult &Result){
+void ROSRateMatcher::run(const MatchFinder::MatchResult &Result){
 	auto cxxConstructExpr_ = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
 	
 	auto memberExpr_ = Result.Nodes.getNodeAs<clang::MemberExpr>("MemberExpr");
@@ -65,31 +65,34 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         auto decl_ = cxxConstructExpr_->getConstructor();
         if(decl_->isCopyOrMoveConstructor())
         {
-            FloatMatcher pm{context_, interp_};
+            ROSRateMatcher pm{context_, interp_};
             pm.setup();
             pm.visit(**cxxConstructExpr_->getArgs());
             this->childExprStore_ = pm.getChildExprStore();
             if(this->childExprStore_){}
     
             else{
-                this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-                interp_->mkREAL1_LIT((clang::Stmt*)cxxBindTemporaryExpr_);
+                
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                cxxConstructExpr_->dump();
+           
             }
+            return;
         }
     }
 
 	
-	arg_decay_exist_predicates["memberExpr_float"] = [=](std::string typenm){
+	arg_decay_exist_predicates["memberExpr_ros::Rate"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="ros::Rate" or typenm == "const ros::Rate" or typenm == "class ros::Rate"/*typenm.find("ros::Rate") != string::npos*/){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="float" or typestr == "const float" or typestr == "const float"/*typestr.find("float") != string::npos*/){
-            FloatMatcher innerm{this->context_,this->interp_};
+        else if(typestr=="ros::Rate" or typestr == "const ros::Rate" or typestr == "const ros::Rate"/*typestr.find("ros::Rate") != string::npos*/){
+            ROSRateMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
@@ -99,9 +102,9 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["implicitCastExpr_float"] = [=](std::string typenm){
+	arg_decay_exist_predicates["implicitCastExpr_ros::Rate"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="ros::Rate" or typenm == "const ros::Rate" or typenm == "class ros::Rate"/*typenm.find("ros::Rate") != string::npos*/){ return true; }
         else { return false; } 
     };
 
@@ -111,50 +114,54 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="float" or typestr == "const float" or typestr == "class float"/*typestr.find("float") != string::npos*/){
-            FloatMatcher innerm{this->context_,this->interp_};
+        else if(typestr=="ros::Rate" or typestr == "const ros::Rate" or typestr == "class ros::Rate"/*typestr.find("ros::Rate") != string::npos*/){
+            ROSRateMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
             return;
         }
         else{
-            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-            interp_->mkREAL1_LIT((clang::Stmt*)implicitCastExpr_);
+                
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                implicitCastExpr_->dump();
+           
+            }
             return;
-        }
-    }
 
+    }
 	
-	arg_decay_exist_predicates["cxxBindTemporaryExpr_float"] = [=](std::string typenm){
+	arg_decay_exist_predicates["cxxBindTemporaryExpr_ros::Rate"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="ros::Rate" or typenm == "const ros::Rate" or typenm == "class ros::Rate"/*typenm.find("ros::Rate") != string::npos*/){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
     {
-        FloatMatcher exprMatcher{ context_, interp_};
+        ROSRateMatcher exprMatcher{ context_, interp_};
         exprMatcher.setup();
         exprMatcher.visit(*cxxBindTemporaryExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
         if(this->childExprStore_){}
     
         else{
-            this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-            interp_->mkREAL1_LIT((clang::Stmt*)cxxBindTemporaryExpr_);
+                
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                cxxBindTemporaryExpr_->dump();
+           
+            }
             return;
-        }
-    }
 
+    }
 	
-	arg_decay_exist_predicates["materializeTemporaryExpr_float"] = [=](std::string typenm){
+	arg_decay_exist_predicates["materializeTemporaryExpr_ros::Rate"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="ros::Rate" or typenm == "const ros::Rate" or typenm == "class ros::Rate"/*typenm.find("ros::Rate") != string::npos*/){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
         {
-            FloatMatcher exprMatcher{ context_, interp_};
+            ROSRateMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*materializeTemporaryExpr_->GetTemporaryExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -162,21 +169,23 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
-                this->childExprStore_ = (clang::Stmt*)materializeTemporaryExpr_;
-                interp_->mkREAL1_LIT((clang::Stmt*)materializeTemporaryExpr_);
-                return;
+                
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                materializeTemporaryExpr_->dump();
+           
             }
-        }
+            return;
 
+    }
 	
-	arg_decay_exist_predicates["parenExpr_float"] = [=](std::string typenm){
+	arg_decay_exist_predicates["parenExpr_ros::Rate"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="ros::Rate" or typenm == "const ros::Rate" or typenm == "class ros::Rate"/*typenm.find("ros::Rate") != string::npos*/){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
     {
-        FloatMatcher inner{ context_, interp_};
+        ROSRateMatcher inner{ context_, interp_};
         inner.setup();
         inner.visit(*parenExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
@@ -192,7 +201,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if (exprWithCleanups_)
         {
-            FloatMatcher exprMatcher{ context_, interp_};
+            ROSRateMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*exprWithCleanups_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -200,16 +209,17 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
-                this->childExprStore_ = (clang::Stmt*)exprWithCleanups_;
-                interp_->mkREAL1_LIT((clang::Stmt*)exprWithCleanups_);
-                return;
+                
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                exprWithCleanups_->dump();
+           
             }
-        }
-    
+
+    }
 	
     if (cxxFunctionalCastExpr_)
         {
-            FloatMatcher exprMatcher{ context_, interp_};
+            ROSRateMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -217,12 +227,13 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
-                this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
-                interp_->mkREAL1_LIT((clang::Stmt*)cxxFunctionalCastExpr_);
-                return;
+                
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                cxxFunctionalCastExpr_->dump();
+           
             }
-        }
-    
+
+    }
 	
     if(declRefExpr_){
         if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
@@ -233,6 +244,17 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         }
     }
 
+	
+    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 1){
+        if(true ){
+            
+            if(true ){
+                interp_->mkREAL1_LIT(cxxConstructExpr_);
+                this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
+                return;
+            }
+        }
+    }
 
 
 };

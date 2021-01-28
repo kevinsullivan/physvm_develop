@@ -41,7 +41,7 @@ int main(int argc, char **argv){
      }
 
      tf::TransformListener listener;
-     geometry_msgs::PointStamped laser_point;
+     geometry_msgs::PointStamped laser_point; //= geometry_msgs::PointStamped();
      laser_point.header.frame_id = "base_laser";
    
      //we'll just use the most recent transform available for our simple example
@@ -54,13 +54,29 @@ int main(int argc, char **argv){
    
      try{
        geometry_msgs::PointStamped base_point;
-       listener.transformPoint("base_link", laser_point, base_point);
-   
-       ROS_INFO("base_laser: (%.2f, %.2f. %.2f) -----> base_link: (%.2f, %.2f, %.2f) at time %.2f",
-           laser_point.point.x, laser_point.point.y, laser_point.point.z,
-           base_point.point.x, base_point.point.y, base_point.point.z, base_point.header.stamp.toSec());
+
+      listener.transformPoint("base_link", laser_point, base_point); 
+      //base_point = [hiddentransform[from laser to base]]*laser 
+      //tf::StampedTransform laser_to_base;
+      //listener.lookupTransform("base_link", "base_laser", ros::Time(0),laser_to_base);
+      //tf::Stamped<tf::Point> laser_point_tf;
+      //tf::Point laser_point_tf;
+      //tf::pointStampedMsgToTF(laser_point,laser_point_tf);
+      //tf::Stamped<tf::Point> base_point_tf = laser_to_base*laser_point_tf;
+      //tf::Point base_point_tf = laser_to_base*laser_point_tf;
+      //tf::pointStampedTFToMsg(base_point_tf,base_point);
+      /*
+
+      */
+
+
+       //Andrew: Comment this line out, it's very bad (for now)
+       //ROS_INFO("base_laser: (%.2f, %.2f. %.2f) -----> base_link: (%.2f, %.2f, %.2f) at time %.2f",
+       //    laser_point.point.x, laser_point.point.y, laser_point.point.z,
+       //    base_point.point.x, base_point.point.y, base_point.point.z, base_point.header.stamp.toSec());
      }
      catch(tf::TransformException& ex){
-       ROS_ERROR("Received an exception trying to transform a point from \"base_laser\" to \"base_link\": %s", ex.what());
+       //Andrew: Comment this line out, it's very bad (for now)
+      // ROS_ERROR("Received an exception trying to transform a point from \"base_laser\" to \"base_link\": %s", ex.what());
      }
 }

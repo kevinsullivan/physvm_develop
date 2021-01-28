@@ -188,17 +188,29 @@ class COMPOUND_STMT;
 class FUNC_DECL;
 class VOID_FUNC_DECL_STMT;
 class MAIN_FUNC_DECL_STMT;
+class WHILE;
+class WHILE_BOOL_EXPR_STMT;
+class TRY;
+class TRY_STMT;
 class DECLARE;
 class DECL_REAL1_VAR_REAL1_EXPR;
 class DECL_REAL3_VAR_REAL3_EXPR;
 class DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR;
 class DECL_REAL4_VAR_REAL4_EXPR;
+class DECL_BOOL_VAR_BOOL_EXPR;
 class DECL_REAL1_VAR;
 class DECL_REAL3_VAR;
 class DECL_REALMATRIX4_VAR;
 class DECL_REAL4_VAR;
+class DECL_BOOL_VAR;
+class ASSIGN;
+class ASNR1_REAL1_VAR_REAL1_EXPR;
+class ASNR3_REAL3_VAR_REAL3_EXPR;
+class ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR;
 class REXPR;
 class LEXPR;
+class BOOL_EXPR;
+class REF_BOOL_VAR;
 class REALMATRIX4_EXPR;
 class REF_REALMATRIX4_VAR;
 class MUL_REALMATRIX4_EXPR_REALMATRIX4_EXPR;
@@ -218,12 +230,12 @@ class REAL1_EXPR;
 class REF_REAL1_VAR;
 class ADD_REAL1_EXPR_REAL1_EXPR;
 class MUL_REAL1_EXPR_REAL1_EXPR;
+class BOOL_VAR_IDENT;
 class REAL1_VAR_IDENT;
 class REAL3_VAR_IDENT;
 class REAL4_VAR_IDENT;
 class REALMATRIX4_VAR_IDENT;
 class REAL4_LITERAL;
-class REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
 class REAL4_EMPTY;
 class REAL3_LITERAL;
 class REAL3_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR;
@@ -232,6 +244,12 @@ class REAL1_LITERAL;
 class REAL1_LIT;
 class REALMATRIX4_LITERAL;
 class REALMATRIX4_EMPTY;
+class REALMATRIX4_EMPTY2_REALMATRIX4_EXPR;
+class R4R3_LIT_REAL4_EXPR_REAL3_EXPR;
+class SINK;
+class IGNORE;
+class BOOL_LITERAL;
+class BOOL_LIT;
 
 class PROGRAM : public Coords {
 public:
@@ -367,6 +385,64 @@ protected:
 
     
 
+class WHILE : public STMT {
+public:
+    WHILE() : STMT() {};
+    std::string virtual toString() const override { return "Do not call this"; };
+    bool operator==(const WHILE &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+};
+
+    
+
+class WHILE_BOOL_EXPR_STMT : public WHILE {
+public:
+    WHILE_BOOL_EXPR_STMT(coords::BOOL_EXPR * operand_1, coords::STMT * operand_2);
+    virtual std::string toString() const override;
+    bool operator==(const WHILE &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::BOOL_EXPR *getOperand1(); 
+	coords::STMT *getOperand2(); 
+protected:
+	coords::BOOL_EXPR *operand1;
+	coords::STMT *operand2;
+};
+
+
+
+class TRY : public STMT {
+public:
+    TRY() : STMT() {};
+    std::string virtual toString() const override { return "Do not call this"; };
+    bool operator==(const TRY &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+};
+
+    
+
+class TRY_STMT : public TRY {
+public:
+    TRY_STMT(coords::STMT * operand_1);
+    virtual std::string toString() const override;
+    bool operator==(const TRY &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::STMT *getOperand1(); 
+protected:
+	coords::STMT *operand1;
+};
+
+
+
 class DECLARE : public STMT {
 public:
     DECLARE() : STMT() {};
@@ -445,6 +521,22 @@ protected:
 
 
 
+class DECL_BOOL_VAR_BOOL_EXPR : public DECLARE {
+public:
+    DECL_BOOL_VAR_BOOL_EXPR(coords::BOOL_VAR_IDENT * operand_1, coords::BOOL_EXPR * operand_2);
+    virtual std::string toString() const override;
+    bool operator==(const DECLARE &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::BOOL_VAR_IDENT *getOperand1(); 
+	coords::BOOL_EXPR *getOperand2(); 
+protected:
+	coords::BOOL_VAR_IDENT *operand1;
+	coords::BOOL_EXPR *operand2;
+};
+
+
+
 class DECL_REAL1_VAR : public DECLARE {
 public:
     DECL_REAL1_VAR(coords::REAL1_VAR_IDENT * operand_1);
@@ -501,6 +593,82 @@ protected:
 
 
 
+class DECL_BOOL_VAR : public DECLARE {
+public:
+    DECL_BOOL_VAR(coords::BOOL_VAR_IDENT * operand_1);
+    virtual std::string toString() const override;
+    bool operator==(const DECLARE &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::BOOL_VAR_IDENT *getOperand1(); 
+protected:
+	coords::BOOL_VAR_IDENT *operand1;
+};
+
+
+
+class ASSIGN : public STMT {
+public:
+    ASSIGN() : STMT() {};
+    std::string virtual toString() const override { return "Do not call this"; };
+    bool operator==(const ASSIGN &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+};
+
+    
+
+class ASNR1_REAL1_VAR_REAL1_EXPR : public ASSIGN {
+public:
+    ASNR1_REAL1_VAR_REAL1_EXPR(coords::REAL1_VAR_IDENT * operand_1, coords::REAL1_EXPR * operand_2);
+    virtual std::string toString() const override;
+    bool operator==(const ASSIGN &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REAL1_VAR_IDENT *getOperand1(); 
+	coords::REAL1_EXPR *getOperand2(); 
+protected:
+	coords::REAL1_VAR_IDENT *operand1;
+	coords::REAL1_EXPR *operand2;
+};
+
+
+
+class ASNR3_REAL3_VAR_REAL3_EXPR : public ASSIGN {
+public:
+    ASNR3_REAL3_VAR_REAL3_EXPR(coords::REAL3_VAR_IDENT * operand_1, coords::REAL3_EXPR * operand_2);
+    virtual std::string toString() const override;
+    bool operator==(const ASSIGN &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REAL3_VAR_IDENT *getOperand1(); 
+	coords::REAL3_EXPR *getOperand2(); 
+protected:
+	coords::REAL3_VAR_IDENT *operand1;
+	coords::REAL3_EXPR *operand2;
+};
+
+
+
+class ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR : public ASSIGN {
+public:
+    ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords::REALMATRIX4_VAR_IDENT * operand_1, coords::REALMATRIX4_EXPR * operand_2);
+    virtual std::string toString() const override;
+    bool operator==(const ASSIGN &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REALMATRIX4_VAR_IDENT *getOperand1(); 
+	coords::REALMATRIX4_EXPR *getOperand2(); 
+protected:
+	coords::REALMATRIX4_VAR_IDENT *operand1;
+	coords::REALMATRIX4_EXPR *operand2;
+};
+
+
+
 class REXPR : public STMT {
 public:
     REXPR() : STMT() {};
@@ -528,6 +696,34 @@ public:
 };
 
     
+
+class BOOL_EXPR : public REXPR, public ValueCoords<bool,1> {
+public:
+    BOOL_EXPR(std::shared_ptr<bool> value0) : ValueCoords < bool, 1 >::ValueCoords({value0}) {};
+    std::string virtual toString() const override { return "Do not call this"; };
+    bool operator==(const BOOL_EXPR &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return false;
+    }
+};
+
+    
+
+class REF_BOOL_VAR : public BOOL_EXPR {
+public:
+    REF_BOOL_VAR(coords::BOOL_VAR_IDENT * operand_1,std::shared_ptr<bool> value0);
+    virtual std::string toString() const override;
+    bool operator==(const BOOL_EXPR &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::BOOL_VAR_IDENT *getOperand1(); 
+protected:
+	coords::BOOL_VAR_IDENT *operand1;
+};
+
+
 
 class REALMATRIX4_EXPR : public REXPR {
 public:
@@ -813,6 +1009,24 @@ protected:
 
 
 
+class BOOL_VAR_IDENT : public Coords, public ValueCoords<float,1> {
+public:
+    BOOL_VAR_IDENT(std::shared_ptr<float> value0) : ValueCoords < float, 1 >::ValueCoords({value0})
+        {};
+    std::string virtual toString() const override;
+    
+    bool operator==(const BOOL_VAR_IDENT &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+protected:
+    
+};
+
+    
+
 class REAL1_VAR_IDENT : public Coords, public ValueCoords<float,1> {
 public:
     REAL1_VAR_IDENT(std::shared_ptr<float> value0) : ValueCoords < float, 1 >::ValueCoords({value0})
@@ -898,26 +1112,6 @@ public:
 };
 
     
-
-class REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR : public REAL4_LITERAL {
-public:
-    REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL1_EXPR * operand_1, coords::REAL1_EXPR * operand_2, coords::REAL1_EXPR * operand_3, coords::REAL1_EXPR * operand_4,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2,std::shared_ptr<float> value3);
-    virtual std::string toString() const override;
-    bool operator==(const REAL4_LITERAL &other) const {
-        return ((Coords*)this)->state_ == ((Coords)other).state_;
-    };
-	coords::REAL1_EXPR *getOperand1(); 
-	coords::REAL1_EXPR *getOperand2(); 
-	coords::REAL1_EXPR *getOperand3(); 
-	coords::REAL1_EXPR *getOperand4(); 
-protected:
-	coords::REAL1_EXPR *operand1;
-	coords::REAL1_EXPR *operand2;
-	coords::REAL1_EXPR *operand3;
-	coords::REAL1_EXPR *operand4;
-};
-
-
 
 class REAL4_EMPTY : public REAL4_LITERAL {
 public:
@@ -1026,6 +1220,92 @@ public:
     REALMATRIX4_EMPTY();
     virtual std::string toString() const override;
     bool operator==(const REALMATRIX4_LITERAL &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	
+protected:
+	
+};
+
+
+
+class REALMATRIX4_EMPTY2_REALMATRIX4_EXPR : public REALMATRIX4_LITERAL {
+public:
+    REALMATRIX4_EMPTY2_REALMATRIX4_EXPR(coords::REALMATRIX4_EXPR * operand_1);
+    virtual std::string toString() const override;
+    bool operator==(const REALMATRIX4_LITERAL &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REALMATRIX4_EXPR *getOperand1(); 
+protected:
+	coords::REALMATRIX4_EXPR *operand1;
+};
+
+
+
+class R4R3_LIT_REAL4_EXPR_REAL3_EXPR : public REALMATRIX4_LITERAL {
+public:
+    R4R3_LIT_REAL4_EXPR_REAL3_EXPR(coords::REAL4_EXPR * operand_1, coords::REAL3_EXPR * operand_2);
+    virtual std::string toString() const override;
+    bool operator==(const REALMATRIX4_LITERAL &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::REAL4_EXPR *getOperand1(); 
+	coords::REAL3_EXPR *getOperand2(); 
+protected:
+	coords::REAL4_EXPR *operand1;
+	coords::REAL3_EXPR *operand2;
+};
+
+
+
+class SINK : public Coords {
+public:
+    SINK() : Coords() {};
+    std::string virtual toString() const override { return "Do not call this"; };
+    bool operator==(const SINK &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+};
+
+    
+
+class IGNORE : public SINK {
+public:
+    IGNORE();
+    virtual std::string toString() const override;
+    bool operator==(const SINK &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	
+protected:
+	
+};
+
+
+
+class BOOL_LITERAL : public BOOL_EXPR {
+public:
+    BOOL_LITERAL(std::shared_ptr<bool> value0) : BOOL_EXPR({value0}) {};
+    std::string virtual toString() const override { return "Do not call this"; };
+    bool operator==(const BOOL_LITERAL &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+};
+
+    
+
+class BOOL_LIT : public BOOL_LITERAL {
+public:
+    BOOL_LIT(std::shared_ptr<bool> value0);
+    virtual std::string toString() const override;
+    bool operator==(const BOOL_LITERAL &other) const {
         return ((Coords*)this)->state_ == ((Coords)other).state_;
     };
 	

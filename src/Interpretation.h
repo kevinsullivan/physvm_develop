@@ -86,6 +86,14 @@ public:
                     
 	std::string toString_MAIN_FUNC_DECL_STMTs();
 
+	void mkWHILE_BOOL_EXPR_STMT(const ast::WHILE_BOOL_EXPR_STMT * ast ,ast::BOOL_EXPR* operand1,ast::STMT* operand2);
+                    
+	std::string toString_WHILEs();
+
+	void mkTRY_STMT(const ast::TRY_STMT * ast ,ast::STMT* operand1);
+                    
+	std::string toString_TRYs();
+
 	void mkDECL_REAL1_VAR_REAL1_EXPR(const ast::DECL_REAL1_VAR_REAL1_EXPR * ast ,ast::REAL1_VAR_IDENT* operand1,ast::REAL1_EXPR* operand2);
                     
 	void mkDECL_REAL3_VAR_REAL3_EXPR(const ast::DECL_REAL3_VAR_REAL3_EXPR * ast ,ast::REAL3_VAR_IDENT* operand1,ast::REAL3_EXPR* operand2);
@@ -93,6 +101,8 @@ public:
 	void mkDECL_REALMATRIX4_VAR_REALMATRIX4_EXPR(const ast::DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR * ast ,ast::REALMATRIX4_VAR_IDENT* operand1,ast::REALMATRIX4_EXPR* operand2);
                     
 	void mkDECL_REAL4_VAR_REAL4_EXPR(const ast::DECL_REAL4_VAR_REAL4_EXPR * ast ,ast::REAL4_VAR_IDENT* operand1,ast::REAL4_EXPR* operand2);
+                    
+	void mkDECL_BOOL_VAR_BOOL_EXPR(const ast::DECL_BOOL_VAR_BOOL_EXPR * ast ,ast::BOOL_VAR_IDENT* operand1,ast::BOOL_EXPR* operand2);
                     
 	void mkDECL_REAL1_VAR(const ast::DECL_REAL1_VAR * ast ,ast::REAL1_VAR_IDENT* operand1);
                     
@@ -102,11 +112,25 @@ public:
                     
 	void mkDECL_REAL4_VAR(const ast::DECL_REAL4_VAR * ast ,ast::REAL4_VAR_IDENT* operand1);
                     
+	void mkDECL_BOOL_VAR(const ast::DECL_BOOL_VAR * ast ,ast::BOOL_VAR_IDENT* operand1);
+                    
 	std::string toString_DECLAREs();
+
+	void mkASNR1_REAL1_VAR_REAL1_EXPR(const ast::ASNR1_REAL1_VAR_REAL1_EXPR * ast ,ast::REAL1_VAR_IDENT* operand1,ast::REAL1_EXPR* operand2);
+                    
+	void mkASNR3_REAL3_VAR_REAL3_EXPR(const ast::ASNR3_REAL3_VAR_REAL3_EXPR * ast ,ast::REAL3_VAR_IDENT* operand1,ast::REAL3_EXPR* operand2);
+                    
+	void mkASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR(const ast::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR * ast ,ast::REALMATRIX4_VAR_IDENT* operand1,ast::REALMATRIX4_EXPR* operand2);
+                    
+	std::string toString_ASSIGNs();
 
 	std::string toString_REXPRs();
 
 	std::string toString_LEXPRs();
+
+	void mkREF_BOOL_VAR(const ast::REF_BOOL_VAR * ast ,ast::BOOL_VAR_IDENT* operand1,std::shared_ptr<bool> value0=nullptr);
+                    
+	std::string toString_BOOL_EXPRs();
 
 	void mkREF_REALMATRIX4_VAR(const ast::REF_REALMATRIX4_VAR * ast ,ast::REALMATRIX4_VAR_IDENT* operand1);
                     
@@ -146,6 +170,10 @@ public:
                     
 	std::string toString_REAL1_EXPRs();
 
+	void mkBOOL_VAR_IDENT(const ast::BOOL_VAR_IDENT * ast ,std::shared_ptr<float> value0=nullptr);
+                    
+	std::string toString_BOOL_VAR_IDENTs();
+
 	void mkREAL1_VAR_IDENT(const ast::REAL1_VAR_IDENT * ast ,std::shared_ptr<float> value0=nullptr);
                     
 	std::string toString_REAL1_VAR_IDENTs();
@@ -162,8 +190,6 @@ public:
                     
 	std::string toString_REALMATRIX4_VAR_IDENTs();
 
-	void mkREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR * ast ,ast::REAL1_EXPR* operand1,ast::REAL1_EXPR* operand2,ast::REAL1_EXPR* operand3,ast::REAL1_EXPR* operand4,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr,std::shared_ptr<float> value3=nullptr);
-                    
 	void mkREAL4_EMPTY(const ast::REAL4_EMPTY * ast ,std::shared_ptr<float> value0=nullptr,std::shared_ptr<float> value1=nullptr,std::shared_ptr<float> value2=nullptr,std::shared_ptr<float> value3=nullptr);
                     
 	std::string toString_REAL4_LITERALs();
@@ -180,12 +206,25 @@ public:
 
 	void mkREALMATRIX4_EMPTY(const ast::REALMATRIX4_EMPTY * ast );
                     
+	void mkREALMATRIX4_EMPTY2_REALMATRIX4_EXPR(const ast::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR * ast ,ast::REALMATRIX4_EXPR* operand1);
+                    
+	void mkR4R3_LIT_REAL4_EXPR_REAL3_EXPR(const ast::R4R3_LIT_REAL4_EXPR_REAL3_EXPR * ast ,ast::REAL4_EXPR* operand1,ast::REAL3_EXPR* operand2);
+                    
 	std::string toString_REALMATRIX4_LITERALs();
+
+	void mkIGNORE(const ast::IGNORE * ast );
+                    
+	std::string toString_SINKs();
+
+	void mkBOOL_LIT(const ast::BOOL_LIT * ast ,std::shared_ptr<bool> value0=nullptr);
+                    
+	std::string toString_BOOL_LITERALs();
 
 	std::string toString_Spaces();
 	std::vector<interp::Space*> getSpaceInterps();
 	std::vector<std::string> getSpaceNames();
 	std::vector<interp::MeasurementSystem*> getMSInterps();std::vector<std::string> getMSNames();
+	std::vector<interp::AxisOrientation*> getAxisInterps();std::vector<std::string> getAxisNames();
 	std::vector<interp::Frame*> getFrameInterps();
 	std::vector<std::string> getFrameNames();
 	    void buildDefaultSpaces();
@@ -195,6 +234,9 @@ public:
 
     void buildMeasurementSystem();
     void printMeasurementSystems();
+
+    void buildAxisOrientation();
+    void printAxisOrientations();
 
     //void setAll_Spaces();
     void printSpaces();
@@ -234,14 +276,19 @@ public:
 	std::vector<coords::FUNC_DECL*> FUNC_DECL_vec;
 	std::vector<coords::VOID_FUNC_DECL_STMT*> VOID_FUNC_DECL_STMT_vec;
 	std::vector<coords::MAIN_FUNC_DECL_STMT*> MAIN_FUNC_DECL_STMT_vec;
+	std::vector<coords::WHILE*> WHILE_vec;
+	std::vector<coords::TRY*> TRY_vec;
 	std::vector<coords::DECLARE*> DECLARE_vec;
+	std::vector<coords::ASSIGN*> ASSIGN_vec;
 	std::vector<coords::REXPR*> REXPR_vec;
 	std::vector<coords::LEXPR*> LEXPR_vec;
+	std::vector<coords::BOOL_EXPR*> BOOL_EXPR_vec;
 	std::vector<coords::REALMATRIX4_EXPR*> REALMATRIX4_EXPR_vec;
 	std::vector<coords::REAL4_EXPR*> REAL4_EXPR_vec;
 	std::vector<coords::REAL3_EXPR*> REAL3_EXPR_vec;
 	std::vector<coords::REAL3_LEXPR*> REAL3_LEXPR_vec;
 	std::vector<coords::REAL1_EXPR*> REAL1_EXPR_vec;
+	std::vector<coords::BOOL_VAR_IDENT*> BOOL_VAR_IDENT_vec;
 	std::vector<coords::REAL1_VAR_IDENT*> REAL1_VAR_IDENT_vec;
 	std::vector<coords::REAL3_VAR_IDENT*> REAL3_VAR_IDENT_vec;
 	std::vector<coords::REAL4_VAR_IDENT*> REAL4_VAR_IDENT_vec;
@@ -249,7 +296,9 @@ public:
 	std::vector<coords::REAL4_LITERAL*> REAL4_LITERAL_vec;
 	std::vector<coords::REAL3_LITERAL*> REAL3_LITERAL_vec;
 	std::vector<coords::REAL1_LITERAL*> REAL1_LITERAL_vec;
-	std::vector<coords::REALMATRIX4_LITERAL*> REALMATRIX4_LITERAL_vec;	std::vector<coords::SEQ_GLOBALSTMT*> SEQ_GLOBALSTMT_vec;
+	std::vector<coords::REALMATRIX4_LITERAL*> REALMATRIX4_LITERAL_vec;
+	std::vector<coords::SINK*> SINK_vec;
+	std::vector<coords::BOOL_LITERAL*> BOOL_LITERAL_vec;	std::vector<coords::SEQ_GLOBALSTMT*> SEQ_GLOBALSTMT_vec;
 	std::vector<coords::COMPOUND_STMT*> COMPOUND_STMT_vec;
 
     std::unordered_map<int, coords::Coords*> index2coords_;

@@ -20,6 +20,40 @@ using namespace ast2coords;
 
 void ASTToCoords::setASTState(coords::Coords* coords, clang::Stmt* stmt, clang::ASTContext* c)
 {
+    
+    if(auto dc = clang::dyn_cast<clang::CXXUnresolvedConstructExpr>(stmt)){
+
+        auto begin = c->getFullLoc(dc->getLParenLoc());
+        auto end = c->getFullLoc(dc->getRParenLoc());
+        clang::LangOptions lopt;
+        clang::SourceLocation b = c->getSourceManager().getSpellingLoc(dc->getLParenLoc());//(d->getLocStart()), _e(d->getLocEnd());
+        clang::SourceLocation e = c->getSourceManager().getSpellingLoc(dc->getRParenLoc());
+        //auto sm = c->getSourceManager();
+        auto code = std::string(c->getSourceManager().getCharacterData(b),
+        c->getSourceManager().getCharacterData(e)-c->getSourceManager().getCharacterData(b));
+        //std::cout<<code<<"\n";
+        code = code == "" ? "No Source Snip Available" : code;
+
+        if (auto dc = clang::dyn_cast<clang::DeclRefExpr>(stmt))
+        {
+            code = dc->getFoundDecl()->getNameAsString();
+        }
+        
+        code = "INJECTED : " + code;
+
+        coords->state_ = new coords::ASTState(
+            "",
+            "",
+            "",
+            (clang::dyn_cast<clang::DeclRefExpr>(stmt)) ? (clang::dyn_cast<clang::DeclRefExpr>(stmt))->getDecl()->getNameAsString() : "",
+            code,
+            begin.getSpellingLineNumber(),
+            begin.getSpellingColumnNumber(),
+            end.getSpellingLineNumber(),
+            end.getSpellingColumnNumber()
+        );
+        return;
+    }
     auto range = stmt->getSourceRange();
     auto begin = c->getFullLoc(range.getBegin());
     auto end = c->getFullLoc(range.getEnd());
@@ -31,6 +65,12 @@ void ASTToCoords::setASTState(coords::Coords* coords, clang::Stmt* stmt, clang::
         c->getSourceManager().getCharacterData(e)-c->getSourceManager().getCharacterData(b));
     //std::cout<<code<<"\n";
     code = code == "" ? "No Source Snip Available" : code;
+
+    if(auto dc = clang::dyn_cast<clang::DeclRefExpr>(stmt))
+    {
+        code = dc->getFoundDecl()->getNameAsString();
+    }
+
     coords->state_ = new coords::ASTState(
         "",
         "",
@@ -59,8 +99,11 @@ void ASTToCoords::setASTState(coords::Coords* coords, clang::Stmt* stmt, clang::
 }
 
 void ASTToCoords::setASTState(coords::Coords* coords, clang::Decl* decl, clang::ASTContext* c)
-{
-    auto range = decl->getSourceRange();
+{ 
+    auto parent = c->getParents(*decl)[0].get<clang::Stmt>();
+    clang::SourceRange range;
+    if(parent) range = parent->getSourceRange();
+    else range = decl->getSourceRange();
     auto begin = c->getFullLoc(range.getBegin());
     auto end = c->getFullLoc(range.getEnd());
     clang::LangOptions lopt;
@@ -182,6 +225,42 @@ coords::MAIN_FUNC_DECL_STMT* ASTToCoords::mkMAIN_FUNC_DECL_STMT(const ast::MAIN_
     return coord;
 }
 
+coords::WHILE_BOOL_EXPR_STMT* ASTToCoords::mkWHILE_BOOL_EXPR_STMT(const ast::WHILE_BOOL_EXPR_STMT* ast, clang::ASTContext* c,coords::BOOL_EXPR* operand1,coords::STMT* operand2){
+    coords::WHILE_BOOL_EXPR_STMT* coord = new coords::WHILE_BOOL_EXPR_STMT(operand1,operand2);
+    ast::WHILE_BOOL_EXPR_STMT* unconst_ast = const_cast<ast::WHILE_BOOL_EXPR_STMT*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::TRY_STMT* ASTToCoords::mkTRY_STMT(const ast::TRY_STMT* ast, clang::ASTContext* c,coords::STMT* operand1){
+    coords::TRY_STMT* coord = new coords::TRY_STMT(operand1);
+    ast::TRY_STMT* unconst_ast = const_cast<ast::TRY_STMT*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
 coords::DECL_REAL1_VAR_REAL1_EXPR* ASTToCoords::mkDECL_REAL1_VAR_REAL1_EXPR(const ast::DECL_REAL1_VAR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_VAR_IDENT* operand1,coords::REAL1_EXPR* operand2){
     coords::DECL_REAL1_VAR_REAL1_EXPR* coord = new coords::DECL_REAL1_VAR_REAL1_EXPR(operand1,operand2);
     ast::DECL_REAL1_VAR_REAL1_EXPR* unconst_ast = const_cast<ast::DECL_REAL1_VAR_REAL1_EXPR*>(ast);
@@ -254,6 +333,24 @@ coords::DECL_REAL4_VAR_REAL4_EXPR* ASTToCoords::mkDECL_REAL4_VAR_REAL4_EXPR(cons
     return coord;
 }
 
+coords::DECL_BOOL_VAR_BOOL_EXPR* ASTToCoords::mkDECL_BOOL_VAR_BOOL_EXPR(const ast::DECL_BOOL_VAR_BOOL_EXPR* ast, clang::ASTContext* c,coords::BOOL_VAR_IDENT* operand1,coords::BOOL_EXPR* operand2){
+    coords::DECL_BOOL_VAR_BOOL_EXPR* coord = new coords::DECL_BOOL_VAR_BOOL_EXPR(operand1,operand2);
+    ast::DECL_BOOL_VAR_BOOL_EXPR* unconst_ast = const_cast<ast::DECL_BOOL_VAR_BOOL_EXPR*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
 coords::DECL_REAL1_VAR* ASTToCoords::mkDECL_REAL1_VAR(const ast::DECL_REAL1_VAR* ast, clang::ASTContext* c,coords::REAL1_VAR_IDENT* operand1){
     coords::DECL_REAL1_VAR* coord = new coords::DECL_REAL1_VAR(operand1);
     ast::DECL_REAL1_VAR* unconst_ast = const_cast<ast::DECL_REAL1_VAR*>(ast);
@@ -311,6 +408,97 @@ coords::DECL_REALMATRIX4_VAR* ASTToCoords::mkDECL_REALMATRIX4_VAR(const ast::DEC
 coords::DECL_REAL4_VAR* ASTToCoords::mkDECL_REAL4_VAR(const ast::DECL_REAL4_VAR* ast, clang::ASTContext* c,coords::REAL4_VAR_IDENT* operand1){
     coords::DECL_REAL4_VAR* coord = new coords::DECL_REAL4_VAR(operand1);
     ast::DECL_REAL4_VAR* unconst_ast = const_cast<ast::DECL_REAL4_VAR*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::DECL_BOOL_VAR* ASTToCoords::mkDECL_BOOL_VAR(const ast::DECL_BOOL_VAR* ast, clang::ASTContext* c,coords::BOOL_VAR_IDENT* operand1){
+    coords::DECL_BOOL_VAR* coord = new coords::DECL_BOOL_VAR(operand1);
+    ast::DECL_BOOL_VAR* unconst_ast = const_cast<ast::DECL_BOOL_VAR*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::ASNR1_REAL1_VAR_REAL1_EXPR* ASTToCoords::mkASNR1_REAL1_VAR_REAL1_EXPR(const ast::ASNR1_REAL1_VAR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_VAR_IDENT* operand1,coords::REAL1_EXPR* operand2){
+    coords::ASNR1_REAL1_VAR_REAL1_EXPR* coord = new coords::ASNR1_REAL1_VAR_REAL1_EXPR(operand1,operand2);
+    ast::ASNR1_REAL1_VAR_REAL1_EXPR* unconst_ast = const_cast<ast::ASNR1_REAL1_VAR_REAL1_EXPR*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::ASNR3_REAL3_VAR_REAL3_EXPR* ASTToCoords::mkASNR3_REAL3_VAR_REAL3_EXPR(const ast::ASNR3_REAL3_VAR_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_VAR_IDENT* operand1,coords::REAL3_EXPR* operand2){
+    coords::ASNR3_REAL3_VAR_REAL3_EXPR* coord = new coords::ASNR3_REAL3_VAR_REAL3_EXPR(operand1,operand2);
+    ast::ASNR3_REAL3_VAR_REAL3_EXPR* unconst_ast = const_cast<ast::ASNR3_REAL3_VAR_REAL3_EXPR*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* ASTToCoords::mkASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR(const ast::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* ast, clang::ASTContext* c,coords::REALMATRIX4_VAR_IDENT* operand1,coords::REALMATRIX4_EXPR* operand2){
+    coords::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* coord = new coords::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR(operand1,operand2);
+    ast::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* unconst_ast = const_cast<ast::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::REF_BOOL_VAR* ASTToCoords::mkREF_BOOL_VAR(const ast::REF_BOOL_VAR* ast, clang::ASTContext* c,coords::BOOL_VAR_IDENT* operand1,std::shared_ptr<bool> value0){
+    coords::REF_BOOL_VAR* coord = new coords::REF_BOOL_VAR(operand1, value0);
+    ast::REF_BOOL_VAR* unconst_ast = const_cast<ast::REF_BOOL_VAR*>(ast);
+	//coord->setValue(value0,0);
     /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
         clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
         setASTState(coord, unconst_dc, c);
@@ -611,6 +799,27 @@ coords::MUL_REAL1_EXPR_REAL1_EXPR* ASTToCoords::mkMUL_REAL1_EXPR_REAL1_EXPR(cons
     return coord;
 }
 
+coords::BOOL_VAR_IDENT* ASTToCoords::mkBOOL_VAR_IDENT(const ast::BOOL_VAR_IDENT* ast, clang::ASTContext* c,std::shared_ptr<float> value0){
+    coords::BOOL_VAR_IDENT* coord = new coords::BOOL_VAR_IDENT( value0);
+    ast::BOOL_VAR_IDENT* unconst_ast = const_cast<ast::BOOL_VAR_IDENT*>(ast);
+	//coord->setValue(value0,0);
+
+
+    if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }
+    /*if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }*/
+    return coord;
+}
+
 coords::REAL1_VAR_IDENT* ASTToCoords::mkREAL1_VAR_IDENT(const ast::REAL1_VAR_IDENT* ast, clang::ASTContext* c,std::shared_ptr<float> value0){
     coords::REAL1_VAR_IDENT* coord = new coords::REAL1_VAR_IDENT( value0);
     ast::REAL1_VAR_IDENT* unconst_ast = const_cast<ast::REAL1_VAR_IDENT*>(ast);
@@ -696,28 +905,6 @@ coords::REALMATRIX4_VAR_IDENT* ASTToCoords::mkREALMATRIX4_VAR_IDENT(const ast::R
         overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
         overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
     }*/
-    return coord;
-}
-
-coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* ASTToCoords::mkREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(const ast::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_EXPR* operand1,coords::REAL1_EXPR* operand2,coords::REAL1_EXPR* operand3,coords::REAL1_EXPR* operand4,std::shared_ptr<float> value0,std::shared_ptr<float> value1,std::shared_ptr<float> value2,std::shared_ptr<float> value3){
-    coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* coord = new coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(operand1,operand2,operand3,operand4, value0, value1, value2, value3);
-    ast::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* unconst_ast = const_cast<ast::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(ast);
-	//coord->setValue(value0,0);
-	//coord->setValue(value1,1);
-	//coord->setValue(value2,2);
-	//coord->setValue(value3,3);
-    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
-        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
-        setASTState(coord, unconst_dc, c);
-        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
-        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
-    }*/
-    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
-        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
-        setASTState(coord, unconst_dc, c);
-        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
-        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
-    }
     return coord;
 }
 
@@ -807,6 +994,79 @@ coords::REAL1_LIT* ASTToCoords::mkREAL1_LIT(const ast::REAL1_LIT* ast, clang::AS
 coords::REALMATRIX4_EMPTY* ASTToCoords::mkREALMATRIX4_EMPTY(const ast::REALMATRIX4_EMPTY* ast, clang::ASTContext* c){
     coords::REALMATRIX4_EMPTY* coord = new coords::REALMATRIX4_EMPTY();
     ast::REALMATRIX4_EMPTY* unconst_ast = const_cast<ast::REALMATRIX4_EMPTY*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* ASTToCoords::mkREALMATRIX4_EMPTY2_REALMATRIX4_EXPR(const ast::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* ast, clang::ASTContext* c,coords::REALMATRIX4_EXPR* operand1){
+    coords::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* coord = new coords::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR(operand1);
+    ast::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* unconst_ast = const_cast<ast::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* ASTToCoords::mkR4R3_LIT_REAL4_EXPR_REAL3_EXPR(const ast::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL4_EXPR* operand1,coords::REAL3_EXPR* operand2){
+    coords::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* coord = new coords::R4R3_LIT_REAL4_EXPR_REAL3_EXPR(operand1,operand2);
+    ast::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* unconst_ast = const_cast<ast::R4R3_LIT_REAL4_EXPR_REAL3_EXPR*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::IGNORE* ASTToCoords::mkIGNORE(const ast::IGNORE* ast, clang::ASTContext* c){
+    coords::IGNORE* coord = new coords::IGNORE();
+    ast::IGNORE* unconst_ast = const_cast<ast::IGNORE*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::BOOL_LIT* ASTToCoords::mkBOOL_LIT(const ast::BOOL_LIT* ast, clang::ASTContext* c,std::shared_ptr<bool> value0){
+    coords::BOOL_LIT* coord = new coords::BOOL_LIT( value0);
+    ast::BOOL_LIT* unconst_ast = const_cast<ast::BOOL_LIT*>(ast);
+	//coord->setValue(value0,0);
     /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
         clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
         setASTState(coord, unconst_dc, c);
