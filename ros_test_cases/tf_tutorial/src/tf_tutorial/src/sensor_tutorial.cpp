@@ -5,12 +5,13 @@ int main(int argc, char** argv){
    ros::init(argc, argv, "laser_scan_publisher");
  
    ros::NodeHandle n;
-   /*ros::Publisher scan_pub = n.advertise<sensor_msgs::LaserScan>("scan", 50);
+   ros::Publisher scan_pub = n.advertise<sensor_msgs::LaserScan>("scan", 50);
  
-   unsigned int num_readings = 100;
-   double laser_frequency = 40;
+   unsigned int num_readings = 100; // in scalar space?
+   double laser_frequency = 40; // 
    double ranges[num_readings];
    double intensities[num_readings];
+   geometry_msgs::Point pts[5];
  
    int count = 0;
    ros::Rate r(1.0);
@@ -19,6 +20,7 @@ int main(int argc, char** argv){
      for(unsigned int i = 0; i < num_readings; ++i){
        ranges[i] = count;
        intensities[i] = 100 + count;
+       points[i%5] = geometry_msgs::Point();
      }
      ros::Time scan_time = ros::Time::now();
  
@@ -26,7 +28,7 @@ int main(int argc, char** argv){
      sensor_msgs::LaserScan scan;
      scan.header.stamp = scan_time;
      scan.header.frame_id = "laser_frame";
-    scan.angle_min = -1.57;
+     scan.angle_min = -1.57;
      scan.angle_max = 1.57;
      scan.angle_increment = 3.14 / num_readings;
      scan.time_increment = (1 / laser_frequency) / (num_readings);
@@ -43,5 +45,5 @@ int main(int argc, char** argv){
     scan_pub.publish(scan);
      ++count;
   r.sleep();
-  }*/
+  }
 }

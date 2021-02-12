@@ -9,7 +9,7 @@
 
 #include "Domain.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 #ifndef leanInferenceWildcard
 #define leanInferenceWildcard "_"
@@ -132,6 +132,12 @@ Frame* Domain::mkFrame(std::string name, Space* space, Frame* parent){
 	if(auto dc = dynamic_cast<domain::ClassicalHertz*>(space)){
             if(auto df = dynamic_cast<domain::ClassicalHertzFrame*>(parent)){
             auto child = this->mkClassicalHertzFrame(name, dc, df);
+            return child;
+        }
+    }
+	if(auto dc = dynamic_cast<domain::ClassicalLuminousIntensity*>(space)){
+            if(auto df = dynamic_cast<domain::ClassicalLuminousIntensityFrame*>(parent)){
+            auto child = this->mkClassicalLuminousIntensityFrame(name, dc, df);
             return child;
         }
     }
@@ -367,5 +373,39 @@ ClassicalHertzDerivedFrame* Domain::mkClassicalHertzDerivedFrame(std::string nam
     ((Space*)this)->addFrame(frame);
 }*/
 void ClassicalHertz::addFrame(ClassicalHertzFrame* frame){
+    ((Space*)this)->addFrame(frame);
+}
+
+ClassicalLuminousIntensity* Domain::mkClassicalLuminousIntensity(std::string key,std::string name_){
+        ClassicalLuminousIntensity* s = new ClassicalLuminousIntensity(name_);
+        //s->addFrame(new domain::ClassicalLuminousIntensityFrame("Standard", s, nullptr));
+        s->addFrame(new domain::ClassicalLuminousIntensityStandardFrame(s));
+        this->ClassicalLuminousIntensity_vec.push_back(s);
+        this->Space_vec.push_back(s);
+        this->Space_map[key] = s;
+    
+        return s;
+    };
+
+//std::vector<ClassicalLuminousIntensity*> &Domain::getClassicalLuminousIntensitySpaces() { return ClassicalLuminousIntensity_vec; }
+
+ClassicalLuminousIntensityAliasedFrame* Domain::mkClassicalLuminousIntensityAliasedFrame(std::string name, domain::ClassicalLuminousIntensity* space, domain::ClassicalLuminousIntensityFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    ClassicalLuminousIntensityAliasedFrame* child = new domain::ClassicalLuminousIntensityAliasedFrame(name, space, parent,ms, ax);
+    space->addFrame(child);
+    return child;
+}
+            
+
+ClassicalLuminousIntensityDerivedFrame* Domain::mkClassicalLuminousIntensityDerivedFrame(std::string name, domain::ClassicalLuminousIntensity* space, domain::ClassicalLuminousIntensityFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax){
+    ClassicalLuminousIntensityDerivedFrame* child = new domain::ClassicalLuminousIntensityDerivedFrame(name, space, parent, ms, ax);
+    space->addFrame(child);
+    return child;
+}
+            
+
+/*void ClassicalLuminousIntensity::addFrame(ClassicalLuminousIntensityFrame* frame){
+    ((Space*)this)->addFrame(frame);
+}*/
+void ClassicalLuminousIntensity::addFrame(ClassicalLuminousIntensityFrame* frame){
     ((Space*)this)->addFrame(frame);
 }

@@ -222,6 +222,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
+
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
                 interp_->mkREAL1_LIT((clang::Stmt*)cxxFunctionalCastExpr_);
                 return;

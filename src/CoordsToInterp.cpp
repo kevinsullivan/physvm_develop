@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 
 using namespace coords2interp;
@@ -312,6 +312,57 @@ interp::TRY_STMT* CoordsToInterp::getTRY_STMT(coords::TRY_STMT* c) const
         interp = NULL;
     }
     return static_cast<interp::TRY_STMT*>(interp);
+}
+
+coords::FOR *CoordsToInterp::getFOR(interp::FOR *i) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = interp2coords_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::FOR*)coords;
+    }
+interp::FOR *CoordsToInterp::getFOR(coords::FOR *c) const
+    {
+        interp::STMT*interp = NULL;
+        try {
+            interp = coords2interp_STMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::FOR*)interp;
+    }
+
+void CoordsToInterp::putFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* c, interp::FOR_BOOL_EXPR_STMT* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::FOR_BOOL_EXPR_STMT* CoordsToInterp::getFOR_BOOL_EXPR_STMT(interp::FOR_BOOL_EXPR_STMT* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::FOR*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::FOR_BOOL_EXPR_STMT*>(coo);
+}
+interp::FOR_BOOL_EXPR_STMT* CoordsToInterp::getFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::FOR_BOOL_EXPR_STMT*>(interp);
 }
 
 coords::DECLARE *CoordsToInterp::getDECLARE(interp::DECLARE *i) const

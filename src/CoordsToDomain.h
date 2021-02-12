@@ -80,6 +80,14 @@ void eraseWHILE_BOOL_EXPR_STMT(coords::WHILE_BOOL_EXPR_STMT* key, domain::Domain
 	coords::TRY_STMT* getTRY_STMT(domain::DomainObject* d) const;
 void eraseTRY_STMT(coords::TRY_STMT* key, domain::DomainObject* val);
 
+	domain::DomainObject* getFOR(coords::FOR* c) const;
+	coords::FOR* getFOR(domain::DomainObject* d) const;
+
+	void putFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* key, domain::DomainObject* val);
+	domain::DomainObject* getFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* c) const;
+	coords::FOR_BOOL_EXPR_STMT* getFOR_BOOL_EXPR_STMT(domain::DomainObject* d) const;
+void eraseFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* key, domain::DomainObject* val);
+
 	domain::DomainObject* getDECLARE(coords::DECLARE* c) const;
 	coords::DECLARE* getDECLARE(domain::DomainObject* d) const;
 
@@ -368,6 +376,9 @@ private:
 
 	std::unordered_map <coords::TRY*,	domain::DomainObject*	> 	coords2dom_TRY;
 	std::unordered_map <domain::DomainObject*,	coords::TRY*	> 	dom2coords_TRY;
+
+	std::unordered_map <coords::FOR*,	domain::DomainObject*	> 	coords2dom_FOR;
+	std::unordered_map <domain::DomainObject*,	coords::FOR*	> 	dom2coords_FOR;
 
 	std::unordered_map <coords::DECLARE*,	domain::DomainObject*	> 	coords2dom_DECLARE;
 	std::unordered_map <domain::DomainObject*,	coords::DECLARE*	> 	dom2coords_DECLARE;

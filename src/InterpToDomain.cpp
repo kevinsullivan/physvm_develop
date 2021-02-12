@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 using namespace interp2domain;
 
@@ -441,6 +441,62 @@ interp::TRY_STMT* InterpToDomain::getTRY_STMT(domain::DomainObject* d) const
         interp = NULL;
     }
     return static_cast<interp::TRY_STMT*>(interp);
+}
+
+interp::FOR *InterpToDomain::getFOR(domain::DomainObject *d) const
+    {
+        interp::STMT *interp = NULL;
+        try {
+            interp = dom2interp_STMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::FOR*)interp;
+    }
+domain::DomainObject *InterpToDomain::getFOR(interp::FOR *i) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = interp2dom_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void InterpToDomain::putFOR_BOOL_EXPR_STMT(interp::FOR_BOOL_EXPR_STMT* i, domain::DomainObject* d)
+{
+    interp2dom_STMT[i] = d;
+    dom2interp_STMT[d] = i;
+}
+void InterpToDomain::eraseFOR_BOOL_EXPR_STMT(interp::FOR_BOOL_EXPR_STMT* i, domain::DomainObject* d)
+{
+    interp2dom_STMT.erase(i);
+    dom2interp_STMT.erase(d);
+}
+domain::DomainObject* InterpToDomain::getFOR_BOOL_EXPR_STMT(interp::FOR_BOOL_EXPR_STMT* i) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = interp2dom_STMT.at(i);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+interp::FOR_BOOL_EXPR_STMT* InterpToDomain::getFOR_BOOL_EXPR_STMT(domain::DomainObject* d) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = dom2interp_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::FOR_BOOL_EXPR_STMT*>(interp);
 }
 
 interp::DECLARE *InterpToDomain::getDECLARE(domain::DomainObject *d) const

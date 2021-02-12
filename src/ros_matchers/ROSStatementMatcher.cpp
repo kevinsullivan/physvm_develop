@@ -69,6 +69,9 @@ void ROSStatementMatcher::setup(){
         whileStmt_ = whileStmt().bind("WhileStmt");
 
     StatementMatcher
+        forStmt_ = forStmt().bind("ForStmt");
+
+    StatementMatcher
         tryStmt_ = cxxTryStmt().bind("TryStmt");
 
     localFinder_.addMatcher(decl_, this);
@@ -78,6 +81,7 @@ void ROSStatementMatcher::setup(){
     localFinder_.addMatcher(cmpdStmt_, this);
     localFinder_.addMatcher(returnStmt_, this);
     localFinder_.addMatcher(whileStmt_, this);
+    localFinder_.addMatcher(forStmt_, this);
     localFinder_.addMatcher(tryStmt_, this);
 };
 
@@ -101,6 +105,8 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
 
     const auto whileStmt_ = Result.Nodes.getNodeAs<clang::WhileStmt>("WhileStmt");
 
+    const auto forStmt_ = Result.Nodes.getNodeAs<clang::ForStmt>("ForStmt");
+
     const auto tryStmt_ = Result.Nodes.getNodeAs<clang::CXXTryStmt>("TryStmt");
 
     
@@ -113,7 +119,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         condm.visit(*wcond);
 
         if(!condm.getChildExprStore()){
-            std::cout<<"Unable to parse If condition!!\n";
+            std::cout<<"Unable to parse While condition!!\n";
             wcond->dump();
             throw "Broken Parse";
         }
@@ -123,7 +129,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         bodym.visit(*wbody);
 
         if(!bodym.getChildExprStore()){
-            std::cout<<"Unable to parse If block!!\n";
+            std::cout<<"Unable to parse While block!!\n";
             wbody->dump();
             throw "Broken Parse";
         }
@@ -132,6 +138,35 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         this->childExprStore_ = (clang::Stmt*)whileStmt_;
         return;
 
+    }
+
+    if(forStmt_){
+        auto wcond = forStmt_->getCond();
+        auto wbody = forStmt_->getBody();
+        
+        ROSBooleanMatcher condm{ this->context_, this->interp_};
+        condm.setup();
+        condm.visit(*wcond);
+
+        if(!condm.getChildExprStore()){
+            std::cout<<"Unable to parse For condition!!\n";
+            wcond->dump();
+            throw "Broken Parse";
+        }
+
+        ROSStatementMatcher bodym{ this->context_, this->interp_};
+        bodym.setup();
+        bodym.visit(*wbody);
+
+        if(!bodym.getChildExprStore()){
+            std::cout<<"Unable to parse For block!!\n";
+            wbody->dump();
+            throw "Broken Parse";
+        }
+
+        this->interp_->mkFOR_BOOL_EXPR_STMT(forStmt_, condm.getChildExprStore(), bodym.getChildExprStore());
+        this->childExprStore_ = (clang::Stmt*)forStmt_;
+        return;
     }
 
     /*

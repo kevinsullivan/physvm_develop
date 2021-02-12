@@ -1,7 +1,7 @@
 
 #include "Coords.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 #include <memory>
 
 
@@ -46,7 +46,7 @@ bool Coords::operator==(const Coords &other) const {
 }
 
 std::string Coords::toString() const {
-    LOG(FATAL) << "Coords::toString. Error. Should not be called. Abstract.\n";
+    //LOG(FATAL) << "Coords::toString. Error. Should not be called. Abstract.\n";
     return NULL;
 }
 
@@ -107,6 +107,13 @@ TRY_STMT::TRY_STMT(coords::STMT *operand_1) :
 		TRY(),operand1(operand_1){}
 coords::STMT* TRY_STMT::getOperand1() { return this->operand1;}
 std::string TRY_STMT::toString() const{ return std::string("") + state_->name_+ (state_->name_.length() > 0 ? "." : "TRY.") + "B.L"+ std::to_string(state_->begin_line_no_) + "C" + std::to_string(state_->begin_col_no_) + ".E.L" + std::to_string(state_->end_line_no_) + "C" + std::to_string(state_->end_col_no_);}
+
+
+FOR_BOOL_EXPR_STMT::FOR_BOOL_EXPR_STMT(coords::BOOL_EXPR *operand_1,coords::STMT *operand_2) : 
+		FOR(),operand1(operand_1),operand2(operand_2){}
+coords::BOOL_EXPR* FOR_BOOL_EXPR_STMT::getOperand1() { return this->operand1;}
+coords::STMT* FOR_BOOL_EXPR_STMT::getOperand2() { return this->operand2;}
+std::string FOR_BOOL_EXPR_STMT::toString() const{ return "";}
 
 
 DECL_REAL1_VAR_REAL1_EXPR::DECL_REAL1_VAR_REAL1_EXPR(coords::REAL1_VAR_IDENT *operand_1,coords::REAL1_EXPR *operand_2) : 

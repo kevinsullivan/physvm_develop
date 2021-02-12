@@ -192,6 +192,8 @@ class WHILE;
 class WHILE_BOOL_EXPR_STMT;
 class TRY;
 class TRY_STMT;
+class FOR;
+class FOR_BOOL_EXPR_STMT;
 class DECLARE;
 class DECL_REAL1_VAR_REAL1_EXPR;
 class DECL_REAL3_VAR_REAL3_EXPR;
@@ -439,6 +441,36 @@ public:
 	coords::STMT *getOperand1(); 
 protected:
 	coords::STMT *operand1;
+};
+
+
+
+class FOR : public STMT {
+public:
+    FOR() : STMT() {};
+    std::string virtual toString() const override { return "Do not call this"; };
+    bool operator==(const FOR &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+    virtual bool codegen() const override {
+        return true;
+    }
+};
+
+    
+
+class FOR_BOOL_EXPR_STMT : public FOR {
+public:
+    FOR_BOOL_EXPR_STMT(coords::BOOL_EXPR * operand_1, coords::STMT * operand_2);
+    virtual std::string toString() const override;
+    bool operator==(const FOR &other) const {
+        return ((Coords*)this)->state_ == ((Coords)other).state_;
+    };
+	coords::BOOL_EXPR *getOperand1(); 
+	coords::STMT *getOperand2(); 
+protected:
+	coords::BOOL_EXPR *operand1;
+	coords::STMT *operand2;
 };
 
 

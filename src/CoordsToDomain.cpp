@@ -3,7 +3,7 @@
 
 # include <iostream>
 
-# include <g3log/g3log.hpp>
+//# include <g3log/g3log.hpp>
 
 
 
@@ -344,6 +344,62 @@ coords::TRY_STMT* CoordsToDomain::getTRY_STMT(domain::DomainObject* d) const
         coords = NULL;
     }
     return static_cast<coords::TRY_STMT*>(coords);
+}
+
+coords::FOR *CoordsToDomain::getFOR(domain::DomainObject *d) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = dom2coords_STMT.at(d);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::FOR *)coords;
+    }
+domain::DomainObject *CoordsToDomain::getFOR(coords::FOR *c) const
+    {
+        domain::DomainObject *dom = NULL;
+        try {
+            dom = coords2dom_STMT.at((coords::STMT*)c);
+        }
+        catch (std::out_of_range &e) {
+            dom = NULL;
+        }
+        return dom;
+    }
+
+void CoordsToDomain::putFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* c, domain::DomainObject *d)
+{
+    coords2dom_STMT[(coords::STMT*)c] = d;
+    dom2coords_STMT[d] = (coords::STMT*)c;
+}
+void CoordsToDomain::eraseFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* c, domain::DomainObject *d)
+{
+    coords2dom_STMT.erase((coords::STMT*)c);
+    dom2coords_STMT.erase(d);
+}
+domain::DomainObject* CoordsToDomain::getFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* c) const
+{
+    domain::DomainObject* dom = NULL;
+    try {
+        dom = coords2dom_STMT.at((coords::STMT*)c);
+    }
+    catch (std::out_of_range &e) {
+        dom = NULL;
+    }
+    return static_cast<domain::DomainObject*>(dom);
+}
+coords::FOR_BOOL_EXPR_STMT* CoordsToDomain::getFOR_BOOL_EXPR_STMT(domain::DomainObject* d) const
+{
+    coords::STMT *coords = NULL;
+    try {
+        coords = dom2coords_STMT.at(d);
+    }
+    catch (std::out_of_range &e) {
+        coords = NULL;
+    }
+    return static_cast<coords::FOR_BOOL_EXPR_STMT*>(coords);
 }
 
 coords::DECLARE *CoordsToDomain::getDECLARE(domain::DomainObject *d) const

@@ -41,6 +41,8 @@ class WHILE;
 class WHILE_BOOL_EXPR_STMT;
 class TRY;
 class TRY_STMT;
+class FOR;
+class FOR_BOOL_EXPR_STMT;
 class DECLARE;
 class DECL_REAL1_VAR_REAL1_EXPR;
 class DECL_REAL3_VAR_REAL3_EXPR;
@@ -369,6 +371,35 @@ public:
     interp::STMT *getOperand1() const { return operand_1; }; 
 protected:
 	interp::STMT *operand_1;
+};
+
+
+
+class FOR : public STMT {
+public:
+    FOR(coords::FOR* coords, domain::DomainObject* dom);
+    virtual std::string toString() const override;
+    virtual std::string toDefString() const override;
+    //friend class Interp;  
+     
+                 
+};
+
+
+
+class FOR_BOOL_EXPR_STMT : public FOR {
+public:
+    FOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* coords, domain::DomainObject* dom ,interp::BOOL_EXPR *operand1,interp::STMT *operand2 );
+    virtual std::string toString() const override ;
+    virtual std::string toDefString() const override;
+     
+     
+    
+    interp::BOOL_EXPR *getOperand1() const { return operand_1; }; 
+interp::STMT *getOperand2() const { return operand_2; }; 
+protected:
+	interp::BOOL_EXPR *operand_1;
+	interp::STMT *operand_2;
 };
 
 

@@ -381,6 +381,40 @@ void Interpretation::mkTRY_STMT(const ast::TRY_STMT * ast ,ast::STMT* operand1) 
     }
     return retval;
 }
+void Interpretation::mkFOR_BOOL_EXPR_STMT(const ast::FOR_BOOL_EXPR_STMT * ast ,ast::BOOL_EXPR* operand1,ast::STMT* operand2) {
+
+	coords::BOOL_EXPR* operand1_coords = static_cast<coords::BOOL_EXPR*>(ast2coords_->getStmtCoords(operand1));;
+	coords::STMT* operand2_coords = static_cast<coords::STMT*>(ast2coords_->getStmtCoords(operand2));
+
+    coords::FOR_BOOL_EXPR_STMT* coords = ast2coords_->mkFOR_BOOL_EXPR_STMT(ast, context_ ,operand1_coords,operand2_coords);
+
+	domain::DomainObject* operand1_dom = coords2dom_->getBOOL_EXPR(operand1_coords);
+	domain::DomainObject* operand2_dom = coords2dom_->getSTMT(operand2_coords);
+    domain::DomainObject* dom =  domain_->mkDefaultDomainContainer({operand1_dom,operand2_dom});
+    coords2dom_->putFOR_BOOL_EXPR_STMT(coords, dom);
+
+	interp::BOOL_EXPR* operand1_interp = coords2interp_->getBOOL_EXPR(operand1_coords);;
+	interp::STMT* operand2_interp = coords2interp_->getSTMT(operand2_coords);
+
+    interp::FOR_BOOL_EXPR_STMT* interp = new interp::FOR_BOOL_EXPR_STMT(coords, dom, operand1_interp,operand2_interp);
+    coords2interp_->putFOR_BOOL_EXPR_STMT(coords, interp);
+    interp2domain_->putFOR_BOOL_EXPR_STMT(interp, dom); 
+	this->FOR_vec.push_back(coords);
+
+} 
+
+
+ std::string Interpretation::toString_FORs(){ 
+    std::vector<interp::FOR*> interps;
+    for(auto coord : this->FOR_vec){
+        interps.push_back(this->coords2interp_->getFOR(coord));
+    }
+    std::string retval = "";
+    for(auto interp_ : interps){
+        retval += "\n" + interp_->toString() + "\n";
+    }
+    return retval;
+}
 void Interpretation::mkDECL_REAL1_VAR_REAL1_EXPR(const ast::DECL_REAL1_VAR_REAL1_EXPR * ast ,ast::REAL1_VAR_IDENT* operand1,ast::REAL1_EXPR* operand2) {
 
 	coords::REAL1_VAR_IDENT* operand1_coords = static_cast<coords::REAL1_VAR_IDENT*>(ast2coords_->getDeclCoords(operand1));;
@@ -1507,6 +1541,13 @@ std::string Interpretation::toString_Spaces() {
         retval.append("\n" + (sp->toString()) + "\n");
     }
             
+	auto ClassicalLuminousIntensitys = domain_->getClassicalLuminousIntensitySpaces();
+    for (auto it = ClassicalLuminousIntensitys.begin(); it != ClassicalLuminousIntensitys.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        retval.append("\n" + (sp->toString()) + "\n");
+    }
+            
 
     return retval;
 }   
@@ -1544,6 +1585,13 @@ std::vector<interp::Space*> Interpretation::getSpaceInterps() {
             
 	auto ClassicalHertzs = domain_->getClassicalHertzSpaces();
     for (auto it = ClassicalHertzs.begin(); it != ClassicalHertzs.end(); it++)
+    {
+        auto sp = interp2domain_->getSpace(*it);
+        interps.push_back(sp);
+    }
+            
+	auto ClassicalLuminousIntensitys = domain_->getClassicalLuminousIntensitySpaces();
+    for (auto it = ClassicalLuminousIntensitys.begin(); it != ClassicalLuminousIntensitys.end(); it++)
     {
         auto sp = interp2domain_->getSpace(*it);
         interps.push_back(sp);
@@ -1608,6 +1656,13 @@ std::vector<std::string> Interpretation::getSpaceNames() {
             
 	auto ClassicalHertzs = domain_->getClassicalHertzSpaces();
     for (auto it = ClassicalHertzs.begin(); it != ClassicalHertzs.end(); it++)
+    {
+        //auto sp = interp2domain_->getSpace(*it);
+        names.push_back((*it)->getName());
+    }
+            
+	auto ClassicalLuminousIntensitys = domain_->getClassicalLuminousIntensitySpaces();
+    for (auto it = ClassicalLuminousIntensitys.begin(); it != ClassicalLuminousIntensitys.end(); it++)
     {
         //auto sp = interp2domain_->getSpace(*it);
         names.push_back((*it)->getName());
@@ -1751,6 +1806,28 @@ std::vector<interp::Frame*> Interpretation::getFrameInterps() {
         }
     }
             
+	auto ClassicalLuminousIntensitys = domain_->getClassicalLuminousIntensitySpaces();
+    for (auto it = ClassicalLuminousIntensitys.begin(); it != ClassicalLuminousIntensitys.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            /*if(auto dc = dynamic_cast<domain::ClassicalLuminousIntensityAliasedFrame*>(fr)){
+                auto intfr = interp2domain_->getFrame(fr);
+                interps.push_back(intfr);
+            }*/
+            if(auto dc = dynamic_cast<domain::ClassicalLuminousIntensityStandardFrame*>(fr)){
+                
+            }
+            else{
+                auto intfr = interp2domain_->getFrame(fr);
+                interps.push_back(intfr);
+                
+            }
+            
+        }
+    }
+            
 
     return interps;
 }   
@@ -1863,6 +1940,27 @@ std::vector<std::string> Interpretation::getFrameNames() {
         }
     }
             
+	auto ClassicalLuminousIntensitys = domain_->getClassicalLuminousIntensitySpaces();
+    for (auto it = ClassicalLuminousIntensitys.begin(); it != ClassicalLuminousIntensitys.end(); it++)
+    {
+        auto frs = (*it)->getFrames();
+
+        for(auto fr : frs){
+            //if(auto dc = dynamic_cast<domain::ClassicalLuminousIntensityAliasedFrame*>(fr)){
+            //if(!(domain::StandardFrame*)fr){
+                names.push_back((*it)->getName()+"."+fr->getName());
+            //}
+            //}
+            
+            if(auto dc = dynamic_cast<domain::ClassicalLuminousIntensityStandardFrame*>(fr)){
+                
+            }
+            else{
+                names.push_back((*it)->getName()+"."+fr->getName());
+            }
+        }
+    }
+            
 
     return names;
 }
@@ -1880,7 +1978,7 @@ void Interpretation::buildDefaultSpaces(){
 void Interpretation::buildSpace(){
     int index = 0;
     int choice = 0;
-    int size = 5;
+    int size = 6;
     if (size == 0){
         std::cout<<"Warning: No Available Spaces to Build";
         return;
@@ -1892,6 +1990,7 @@ void Interpretation::buildSpace(){
 		std::cout <<"("<<std::to_string(++index)<<")"<<"EuclideanGeometry3\n";
 		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalVelocity\n";
 		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalHertz\n";
+		std::cout <<"("<<std::to_string(++index)<<")"<<"ClassicalLuminousIntensity\n";
         std::cin>>choice;
         choice_buffer->push_back(std::to_string(choice));
     }
@@ -1989,6 +2088,12 @@ void Interpretation::buildSpace(){
                 std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
                 index_to_sp[index] = *it;
             }
+	auto ClassicalLuminousIntensitys = domain_->getClassicalLuminousIntensitySpaces();
+            for (auto it = ClassicalLuminousIntensitys.begin(); it != ClassicalLuminousIntensitys.end(); it++)
+            {
+                std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+                index_to_sp[index] = *it;
+            }
 
             if(index==0){
                 std::cout<<"Unable to Proceed - No Existing Spaces\n";
@@ -2033,6 +2138,22 @@ void Interpretation::buildSpace(){
         choice_buffer->push_back(name);
             
             auto sp = this->domain_->mkClassicalHertz(name, name);
+            auto isp = new interp::Space(sp);
+            interp2domain_->putSpace(isp, sp);
+            auto standard_framesp = sp->getFrames()[0];
+            auto interp_framesp = new interp::Frame(standard_framesp, isp);
+            interp2domain_->putFrame(interp_framesp, sp->getFrames()[0]);
+        }
+
+    
+	
+        if(choice==++index){
+            std::string name;
+            std::cout<<"Enter Name (string):\n";
+            std::cin>>name;
+        choice_buffer->push_back(name);
+            
+            auto sp = this->domain_->mkClassicalLuminousIntensity(name, name);
             auto isp = new interp::Space(sp);
             interp2domain_->putSpace(isp, sp);
             auto standard_framesp = sp->getFrames()[0];
@@ -2174,6 +2295,12 @@ void Interpretation::buildFrame(){
             std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
             index_to_sp[index] = *it;
         }
+		auto ClassicalLuminousIntensitys = domain_->getClassicalLuminousIntensitySpaces();
+        for (auto it = ClassicalLuminousIntensitys.begin(); it != ClassicalLuminousIntensitys.end(); it++)
+        {
+            std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+            index_to_sp[index] = *it;
+        }
         int choice;
         std::cin>>choice;
         choice_buffer->push_back(std::to_string(choice));
@@ -2309,6 +2436,16 @@ void Interpretation::buildFrame(){
                         if(auto dc = dynamic_cast<domain::ClassicalHertz*>(chosen)){
 
                             auto child = (domain::ClassicalHertzFrame*)domain_->mkClassicalHertzAliasedFrame(name, dc, (domain::ClassicalHertzFrame*)aliased,cms,cax);
+                            auto isp = interp2domain_->getSpace(dc);
+                            auto ims = interp2domain_->getMeasurementSystem(cms);
+                            auto iax = interp2domain_->getAxisOrientation(cax);
+                            interp::Frame* interp = new interp::Frame(child, isp, ims, iax);
+                            interp2domain_->putFrame(interp, child);
+                            return;
+                        }
+                        if(auto dc = dynamic_cast<domain::ClassicalLuminousIntensity*>(chosen)){
+
+                            auto child = (domain::ClassicalLuminousIntensityFrame*)domain_->mkClassicalLuminousIntensityAliasedFrame(name, dc, (domain::ClassicalLuminousIntensityFrame*)aliased,cms,cax);
                             auto isp = interp2domain_->getSpace(dc);
                             auto ims = interp2domain_->getMeasurementSystem(cms);
                             auto iax = interp2domain_->getAxisOrientation(cax);
@@ -2474,6 +2611,16 @@ void Interpretation::buildFrame(){
                             interp2domain_->putFrame(interp, child);
                             return;
                         }
+                        if(auto dc = dynamic_cast<domain::ClassicalLuminousIntensity*>(chosen)){
+
+                            auto child = (domain::ClassicalLuminousIntensityFrame*)domain_->mkClassicalLuminousIntensityDerivedFrame(name, dc, (domain::ClassicalLuminousIntensityFrame*)parent, cms, cax);
+                            auto isp = interp2domain_->getSpace(dc);
+                            auto ims = interp2domain_->getMeasurementSystem(cms);
+                            auto iax = interp2domain_->getAxisOrientation(cax);
+                            interp::Frame* interp = new interp::Frame(child, isp, ims, iax);
+                            interp2domain_->putFrame(interp, child);
+                            return;
+                        }
                     }
                 }
             }
@@ -2508,6 +2655,11 @@ void Interpretation::printSpaces(){
     }
 	auto ClassicalHertzs = domain_->getClassicalHertzSpaces();
     for (auto it = ClassicalHertzs.begin(); it != ClassicalHertzs.end(); it++)
+    {
+        std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
+    }
+	auto ClassicalLuminousIntensitys = domain_->getClassicalLuminousIntensitySpaces();
+    for (auto it = ClassicalLuminousIntensitys.begin(); it != ClassicalLuminousIntensitys.end(); it++)
     {
         std::cout<<"("<<std::to_string(++index)<<")"<<(*it)->toString() + "\n";
     }
@@ -2558,6 +2710,16 @@ void Interpretation::printFrames(){
     }
 	auto ClassicalHertzs = domain_->getClassicalHertzSpaces();
     for (auto it = ClassicalHertzs.begin(); it != ClassicalHertzs.end(); it++)
+    {
+        std::cout<<"Printing Frames For : " + (*it)->toString() + "\n";
+        auto frs = (*it)->getFrames();
+        index = 0;
+        for(auto fr : frs){
+            std::cout<<"("<<std::to_string(++index)<<")"<<fr->toString() + "\n";
+        }
+    }
+	auto ClassicalLuminousIntensitys = domain_->getClassicalLuminousIntensitySpaces();
+    for (auto it = ClassicalLuminousIntensitys.begin(); it != ClassicalLuminousIntensitys.end(); it++)
     {
         std::cout<<"Printing Frames For : " + (*it)->toString() + "\n";
         auto frs = (*it)->getFrames();
