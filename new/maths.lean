@@ -32,11 +32,12 @@ def tuple {K : Type} : nat → Type u
 variables 
 {K : Type} [ring K] [inhabited K] 
 {α : Type v} [has_add α]
-(n : ℕ)   -- TODO: change this name from n to dim
+-- (n : ℕ) -- no longer assume fix n in this file
 -- (a b : α) (al bl : list α)
 -- (x y : K) (xl yl : list K)
 
-def tuple_add : Π {n : nat}, @tuple K n → @tuple K n → @tuple K n
+def tuple_add : 
+  Π {n : nat}, @tuple K n → @tuple K n → @tuple K n
 | 0 t1 t2 := uunit.star
 | (n' + 1) (h, t) (h', t') := (h + h', tuple_add t t')
 
@@ -44,48 +45,99 @@ def tuple_scalar_mul : Π {n : nat}, K → @tuple K n → @tuple K n
 | 0 _ _ := uunit.star
 | (n' + 1) k (h,t) := (h*k, tuple_scalar_mul k t)
 
-def zerotuple : Π (n : nat), @tuple K n
+def zero_tuple : Π (n : nat), @tuple K n
 | 0 := uunit.star
-| (n' + 1) := (0, zerotuple n')
+| (n' + 1) := (0, zero_tuple n')
 
 def head : Π {n : nat}, (n > 0) → @tuple K n → K
 | 0 _ _ := 0  -- can't happen
 | (n' + 1) _ (h,t) := h
 
 @[ext]
-structure aff_vec_coord_tuple :=
-(t : @tuple K (n+1))
-(inv : head (by sorry) t = 0)
+structure aff_vec_coord_tuple (n : nat) :=
+(tup : @tuple K (n+1))
+(inv : head (by sorry) tup = 0)
 
 @[ext]
-structure aff_pt_coord_tuple :=
-(t : @tuple K (n+1))
-(inv : head (by sorry) t = 1)
+structure aff_pt_coord_tuple  (n : nat) :=
+(tup : @tuple K (n+1))
+(inv : head (by sorry) tup = 1)
 
+
+def aff_vec_zero_tuple (n : nat) : aff_vec_coord_tuple n :=
+⟨ @zero_tuple K _ _ (n+1), sorry⟩ 
+
+def aff_pt_zero_tuple (n : nat) : aff_pt_coord_tuple n:=
+⟨ (1, @zero_tuple K _ _ n), sorry ⟩ 
+
+
+/-
 variables 
 (x y : @aff_vec_coord_tuple K _ _ n)
 (a b : @aff_pt_coord_tuple K _ _ n)
-
+-/
 
 /-
 Now what we need to prove at the end 
 of the day is that for a given K and n,
 our vector and point coordinate tuples
-for an affine space, which is to say
-that they constitute an "aff_torsor K n."
-
-My approach at this point would be to
-work backwards from this goal, copied
-in just below this comment, brining in
-and adapting the relevant parts of the 
-affine_coordinate_space.lean file, as
-needed (recursively).
+form an affine space, which is to say
+that they form an "aff_torsor K n." I
+think we can prove this for all n by
+induction (which is not what's done
+in our current "production" version.)
 -/
 
+/-
+Vectors add on points by displacing them.
+-/
+def aff_group_action { n : nat } : 
+  @aff_vec_coord_tuple K _ _ n → 
+  @aff_pt_coord_tuple K _ _ n → 
+  @aff_pt_coord_tuple K _ _ n :=
+λ vec pt, 
+  aff_pt_coord_tuple.mk 
+    (tuple_add vec.tup pt.tup)
+    sorry
+
+def aff_group_sub { n : nat } : 
+  @aff_pt_coord_tuple K _ _ n → 
+  @aff_pt_coord_tuple K _ _ n → 
+  @aff_vec_coord_tuple K _ _ n :=
+sorry
+--    λ x y, ⟨ladd x.1 (vecl_neg y.1), sub_len_fixed K n x y, sub_fst_fixed K n x y⟩
+
+instance (n : nat) : 
+  has_vadd (@aff_vec_coord_tuple K _ _ n) (@aff_pt_coord_tuple K _ _ n) :=
+⟨ @aff_group_action K _ _ n ⟩ 
+
+instance (n : nat) : 
+  has_vsub (@aff_vec_coord_tuple K _ _ n) (@aff_pt_coord_tuple K _ _ n) := 
+⟨@aff_group_sub K _ _ n⟩
 
 
-instance aff_coord_is : 
-    affine_space 
-        (@aff_vec_coord_tuple K _ _ n) 
-        (@aff_pt_coord_tuple K _ _ n) := 
-    aff_torsor K n
+lemma aff_zero_sadd { n : nat } : 
+  ∀ x : @aff_pt_coord_tuple K _ _ n, 
+    (@aff_vec_zero_tuple K _ _ n) +ᵥ x = x := sorry
+
+-- still need aff_zero_sadd, aff_add_sadd, aff_vsub_vadd, aff_vadd_vsub
+
+instance aff_torsor (n : nat): 
+  add_torsor 
+    (@aff_vec_coord_tuple K _ _ n) 
+    (@aff_pt_coord_tuple K _ _ n) := 
+⟨
+  aff_group_action, 
+  aff_zero_sadd K n,
+  aff_add_sadd K n,
+  aff_group_sub,
+  aff_vsub_vadd K n, 
+  aff_vadd_vsub K n
+⟩
+
+
+instance aff_coord_is (n : nat) : 
+      affine_space 
+          (@aff_vec_coord_tuple K _ _ n) 
+          (@aff_pt_coord_tuple K _ _ n) := 
+      aff_torsor K n
