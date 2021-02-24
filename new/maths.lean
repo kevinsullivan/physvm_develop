@@ -25,49 +25,61 @@ structure affine_space_type
     [module K V]  
     [affine_space V X]
 
-def tuple {K : Type} : nat → Type u
-| 0 := uunit
-| (n' + 1) := K × (tuple n')
-
 variables 
-{K : Type} [ring K] [inhabited K] 
+(K : Type) [ring K] [inhabited K] 
 {α : Type v} [has_add α]
 -- (n : ℕ) -- no longer assume fix n in this file
 -- (a b : α) (al bl : list α)
 -- (x y : K) (xl yl : list K)
 
+def tuple : nat → Type u
+| 0 := uunit
+| (n' + 1) := K × (tuple n')
+
+/-
+Note: The tuple type builder takes the following
+arguments
+K             -- explicit
+[ring K]      -- implicit
+[inhabited K] -- implicit
+n             -- explicit
+-/
+#check @tuple
+
 def tuple_add : 
-  Π {n : nat}, @tuple K n → @tuple K n → @tuple K n
+  Π {n : nat}, tuple K n → tuple K n → tuple K n
 | 0 t1 t2 := uunit.star
 | (n' + 1) (h, t) (h', t') := (h + h', tuple_add t t')
 
-def tuple_scalar_mul : Π {n : nat}, K → @tuple K n → @tuple K n
+def tuple_scalar_mul : Π {n : nat}, K → tuple K n → tuple K n
 | 0 _ _ := uunit.star
 | (n' + 1) k (h,t) := (h*k, tuple_scalar_mul k t)
 
-def zero_tuple : Π (n : nat), @tuple K n
+def zero_tuple : Π (n : nat), @tuple K _ _ n
 | 0 := uunit.star
 | (n' + 1) := (0, zero_tuple n')
 
-def head : Π {n : nat}, (n > 0) → @tuple K n → K
+def head : Π {n : nat}, (n > 0) → tuple K n → K
 | 0 _ _ := 0  -- can't happen
 | (n' + 1) _ (h,t) := h
 
+#check @head 
+
 @[ext]
 structure aff_vec_coord_tuple (n : nat) :=
-(tup : @tuple K (n+1))
-(inv : head (by sorry) tup = 0)
+(tup : tuple K (n+1))
+(inv : head K (by sorry) tup = 0)
 
 @[ext]
 structure aff_pt_coord_tuple  (n : nat) :=
-(tup : @tuple K (n+1))
-(inv : head (by sorry) tup = 1)
+(tup : tuple K (n+1))
+(inv : head K (by sorry) tup = 1)
 
 
-def aff_vec_zero_tuple (n : nat) : aff_vec_coord_tuple n :=
+def aff_vec_zero_tuple (n : nat) : aff_vec_coord_tuple K n :=
 ⟨ @zero_tuple K _ _ (n+1), sorry⟩ 
 
-def aff_pt_zero_tuple (n : nat) : aff_pt_coord_tuple n:=
+def aff_pt_zero_tuple (n : nat) : aff_pt_coord_tuple K n:=
 ⟨ (1, @zero_tuple K _ _ n), sorry ⟩ 
 
 
@@ -97,7 +109,7 @@ def aff_group_action { n : nat } :
   @aff_pt_coord_tuple K _ _ n :=
 λ vec pt, 
   aff_pt_coord_tuple.mk 
-    (tuple_add vec.tup pt.tup)
+    (tuple_add K vec.tup pt.tup)
     sorry
 
 def aff_group_sub { n : nat } : 
