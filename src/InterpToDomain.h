@@ -18,6 +18,7 @@ class VOID_FUNC_DECL_STMT;
 class MAIN_FUNC_DECL_STMT;
 class WHILE;
 class TRY;
+class FOR;
 class DECLARE;
 class ASSIGN;
 class REXPR;
@@ -46,6 +47,7 @@ class ASSIGN;
 class REXPR;
 class LEXPR;
 class WHILE;
+class FOR;
 class TRY;
 class MAIN_FUNC;
 class VOID_FUNC;
@@ -53,6 +55,7 @@ class DECL_STMT;
 class DECL_STMT;
 class WHILE_BOOL_EXPR_STMT;
 class TRY_STMT;
+class FOR_BOOL_EXPR_STMT;
 class DECL_REAL1_VAR_REAL1_EXPR;
 class DECL_REAL3_VAR_REAL3_EXPR;
 class DECL_REALMATRIX4_VAR_REALMATRIX4_EXPR;
@@ -181,6 +184,14 @@ void eraseWHILE_BOOL_EXPR_STMT(interp::WHILE_BOOL_EXPR_STMT* key, domain::Domain
 	domain::DomainObject* getTRY_STMT(interp::TRY_STMT* c) const;
 	interp::TRY_STMT* getTRY_STMT(domain::DomainObject* d) const;
 void eraseTRY_STMT(interp::TRY_STMT* key, domain::DomainObject* val);
+
+	domain::DomainObject* getFOR(interp::FOR* c) const;
+	interp::FOR* getFOR(domain::DomainObject* d) const;
+	
+	void putFOR_BOOL_EXPR_STMT(interp::FOR_BOOL_EXPR_STMT* key, domain::DomainObject* val);
+	domain::DomainObject* getFOR_BOOL_EXPR_STMT(interp::FOR_BOOL_EXPR_STMT* c) const;
+	interp::FOR_BOOL_EXPR_STMT* getFOR_BOOL_EXPR_STMT(domain::DomainObject* d) const;
+void eraseFOR_BOOL_EXPR_STMT(interp::FOR_BOOL_EXPR_STMT* key, domain::DomainObject* val);
 
 	domain::DomainObject* getDECLARE(interp::DECLARE* c) const;
 	interp::DECLARE* getDECLARE(domain::DomainObject* d) const;
@@ -481,6 +492,9 @@ std::unordered_map<domain::Frame*, interp::Frame*> dom2interp_Frames;
 
 	std::unordered_map <interp::TRY*,	domain::DomainObject*	> 	interp2dom_TRY;
 	std::unordered_map <domain::DomainObject*,	interp::TRY*	> 	dom2interp_TRY;
+
+	std::unordered_map <interp::FOR*,	domain::DomainObject*	> 	interp2dom_FOR;
+	std::unordered_map <domain::DomainObject*,	interp::FOR*	> 	dom2interp_FOR;
 
 	std::unordered_map <interp::DECLARE*,	domain::DomainObject*	> 	interp2dom_DECLARE;
 	std::unordered_map <domain::DomainObject*,	interp::DECLARE*	> 	dom2interp_DECLARE;

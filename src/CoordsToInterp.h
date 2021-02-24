@@ -56,6 +56,13 @@ public:
 	interp::TRY_STMT* getTRY_STMT(coords::TRY_STMT* c) const;
 	coords::TRY_STMT* getTRY_STMT(interp::TRY_STMT* i) const;
 
+	interp::FOR* getFOR(coords::FOR* c) const;
+	coords::FOR* getFOR(interp::FOR* i) const;
+
+	void putFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* key, interp::FOR_BOOL_EXPR_STMT* val);
+	interp::FOR_BOOL_EXPR_STMT* getFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* c) const;
+	coords::FOR_BOOL_EXPR_STMT* getFOR_BOOL_EXPR_STMT(interp::FOR_BOOL_EXPR_STMT* i) const;
+
 	interp::DECLARE* getDECLARE(coords::DECLARE* c) const;
 	coords::DECLARE* getDECLARE(interp::DECLARE* i) const;
 
@@ -297,6 +304,9 @@ private:
 
 	std::unordered_map <coords::TRY*,	interp::TRY*	> 	coords2interp_TRY;
 	std::unordered_map <interp::TRY*,	coords::TRY*	> 	interp2coords_TRY;
+
+	std::unordered_map <coords::FOR*,	interp::FOR*	> 	coords2interp_FOR;
+	std::unordered_map <interp::FOR*,	coords::FOR*	> 	interp2coords_FOR;
 
 	std::unordered_map <coords::DECLARE*,	interp::DECLARE*	> 	coords2interp_DECLARE;
 	std::unordered_map <interp::DECLARE*,	coords::DECLARE*	> 	interp2coords_DECLARE;

@@ -15,7 +15,7 @@ class Checker;
 #include "Oracle.h"
 #include "CoordsToInterp.h"
 #include "InterpToDomain.h"
-#include <g3log/g3log.hpp> 
+//#include <g3log/g3log.hpp> 
 #include <memory>
 
 
@@ -93,6 +93,10 @@ public:
 	void mkTRY_STMT(const ast::TRY_STMT * ast ,ast::STMT* operand1);
                     
 	std::string toString_TRYs();
+
+	void mkFOR_BOOL_EXPR_STMT(const ast::FOR_BOOL_EXPR_STMT * ast ,ast::BOOL_EXPR* operand1,ast::STMT* operand2);
+                    
+	std::string toString_FORs();
 
 	void mkDECL_REAL1_VAR_REAL1_EXPR(const ast::DECL_REAL1_VAR_REAL1_EXPR * ast ,ast::REAL1_VAR_IDENT* operand1,ast::REAL1_EXPR* operand2);
                     
@@ -278,6 +282,7 @@ public:
 	std::vector<coords::MAIN_FUNC_DECL_STMT*> MAIN_FUNC_DECL_STMT_vec;
 	std::vector<coords::WHILE*> WHILE_vec;
 	std::vector<coords::TRY*> TRY_vec;
+	std::vector<coords::FOR*> FOR_vec;
 	std::vector<coords::DECLARE*> DECLARE_vec;
 	std::vector<coords::ASSIGN*> ASSIGN_vec;
 	std::vector<coords::REXPR*> REXPR_vec;

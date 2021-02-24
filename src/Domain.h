@@ -16,7 +16,7 @@
 #include "AST.h"
 #include "Coords.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 
 using namespace std;
@@ -239,6 +239,39 @@ class ClassicalHertzScalar;
 
 template<typename ValueType,int ValueCount>
 class ClassicalHertzQuantity;
+
+class ClassicalLuminousIntensity;
+
+class ClassicalLuminousIntensityFrame;
+
+class ClassicalLuminousIntensityStandardFrame;
+
+class ClassicalLuminousIntensityAliasedFrame;
+
+class ClassicalLuminousIntensityDerivedFrame;
+
+class MeasurementSystem;
+
+class SIMeasurementSystem;
+
+class ImperialMeasurementSystem;
+
+class AxisOrientation;
+
+class NWUOrientation;
+
+class NEDOrientation;
+
+class ENUOrientation;
+
+template<typename ValueType,int ValueCount>
+class ClassicalLuminousIntensityCoordinateVector;
+
+template<typename ValueType,int ValueCount>
+class ClassicalLuminousIntensityScalar;
+
+template<typename ValueType,int ValueCount>
+class ClassicalLuminousIntensityQuantity;
 
             
 // Definition for Domain class 
@@ -935,6 +968,86 @@ ClassicalHertzQuantity<ValueType,ValueCount>* mkClassicalHertzQuantity(){
     return dom_;
 }
 
+	ClassicalLuminousIntensity* mkClassicalLuminousIntensity(std::string key ,std::string name_);
+	std::vector<ClassicalLuminousIntensity*> &getClassicalLuminousIntensitySpaces() { return ClassicalLuminousIntensity_vec; }
+
+	ClassicalLuminousIntensityAliasedFrame* mkClassicalLuminousIntensityAliasedFrame(std::string name, domain::ClassicalLuminousIntensity* space, domain::ClassicalLuminousIntensityFrame* aliased, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
+	ClassicalLuminousIntensityDerivedFrame* mkClassicalLuminousIntensityDerivedFrame(std::string name, domain::ClassicalLuminousIntensity* space, domain::ClassicalLuminousIntensityFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
+
+template <class ValueType, int ValueCount>
+ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>* mkClassicalLuminousIntensityCoordinateVector(ClassicalLuminousIntensity* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->ClassicalLuminousIntensityCoordinateVector_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>* mkClassicalLuminousIntensityCoordinateVector(){
+    ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>({});
+    //this->ClassicalLuminousIntensityCoordinateVector_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
+
+template <class ValueType, int ValueCount>
+ClassicalLuminousIntensityScalar<ValueType,ValueCount>* mkClassicalLuminousIntensityScalar(ClassicalLuminousIntensity* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    ClassicalLuminousIntensityScalar<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityScalar<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->ClassicalLuminousIntensityScalar_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+ClassicalLuminousIntensityScalar<ValueType,ValueCount>* mkClassicalLuminousIntensityScalar(){
+    ClassicalLuminousIntensityScalar<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityScalar<ValueType,ValueCount>({});
+    //this->ClassicalLuminousIntensityScalar_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
+
+template <class ValueType, int ValueCount>
+ClassicalLuminousIntensityQuantity<ValueType,ValueCount>* mkClassicalLuminousIntensityQuantity(ClassicalLuminousIntensity* sp, std::shared_ptr<ValueType> values[ValueCount]){
+    ClassicalLuminousIntensityQuantity<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityQuantity<ValueType,ValueCount>(sp, {});
+    //dom_->setValues(values);
+    //this->ClassicalLuminousIntensityQuantity_vec.push_back(dom_);
+    for(int i = 0; i < ValueCount;i++){
+        dom_->setValue(values[i],i);
+    }
+
+    return dom_;
+}
+                
+
+template <class ValueType, int ValueCount>
+ClassicalLuminousIntensityQuantity<ValueType,ValueCount>* mkClassicalLuminousIntensityQuantity(){
+    ClassicalLuminousIntensityQuantity<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityQuantity<ValueType,ValueCount>({});
+    //this->ClassicalLuminousIntensityQuantity_vec.push_back(dom_);
+    /*int i = 0;
+    for(auto val : values){
+        dom_->setValue(values[i],i++);
+    } */  
+    return dom_;
+}
+
 private:
 
 	std::unordered_map<std::string, Space*> Space_map;
@@ -944,6 +1057,7 @@ private:
 	std::vector<EuclideanGeometry3*> EuclideanGeometry3_vec;
 	std::vector<ClassicalVelocity*> ClassicalVelocity_vec;
 	std::vector<ClassicalHertz*> ClassicalHertz_vec;
+	std::vector<ClassicalLuminousIntensity*> ClassicalLuminousIntensity_vec;
 };
 
 
@@ -2458,6 +2572,178 @@ public:
     
 private:
     ClassicalHertz* space_; 
+    
+    
+    
+    
+};
+
+
+class ClassicalLuminousIntensity : public Space {
+    public:
+	    ClassicalLuminousIntensity(std::string name) : Space(name, 1) {};
+	    std::string getName() const override { return name_; }; 
+	    
+        void addFrame(ClassicalLuminousIntensityFrame* frame);
+	    std::string toString() const override {
+		    return "@@ClassicalLuminousIntensity  " + getName()   + "(" + ")"; 
+	    }
+
+    private:
+    };
+
+
+class ClassicalLuminousIntensityFrame : public Frame {
+public:
+	ClassicalLuminousIntensityFrame(std::string name,  ClassicalLuminousIntensity* space) : Frame(name, space) {};
+    ClassicalLuminousIntensityFrame(){};
+	/*std::string toString() const override {
+        std::string parentName = ((ClassicalLuminousIntensity*)this->space_)->getName();
+		return "@@ClassicalLuminousIntensityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
+	}*/
+
+private:
+};
+
+
+
+class ClassicalLuminousIntensityStandardFrame : public StandardFrame, public ClassicalLuminousIntensityFrame {
+public:
+	ClassicalLuminousIntensityStandardFrame(ClassicalLuminousIntensity* space) : StandardFrame(space) {};
+	/*std::string toString() const override {
+        std::string parentName = ((ClassicalLuminousIntensity*)this->space_)->getName();
+		return "@@ClassicalLuminousIntensityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
+	}*/
+
+    virtual std::string getName() const override {
+        return StandardFrame::getName();
+    };
+
+    virtual std::string toString() const override {
+        return std::string("ClassicalLuminousIntensityStandardFrame ") + StandardFrame::toString();
+    };
+
+private:
+};
+
+
+
+class ClassicalLuminousIntensityAliasedFrame : public AliasedFrame, public ClassicalLuminousIntensityFrame {
+public:
+	ClassicalLuminousIntensityAliasedFrame(std::string name,  ClassicalLuminousIntensity* space, ClassicalLuminousIntensityFrame* aliased, domain::MeasurementSystem* ms, AxisOrientation* ax) : AliasedFrame(name, space, aliased,  ms, ax) {};
+	/*std::string toString() const override {
+        std::string parentName = ((ClassicalLuminousIntensity*)this->space_)->getName();
+		return "@@ClassicalLuminousIntensityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
+	}*/
+    virtual std::string toString() const override {
+        return std::string("ClassicalLuminousIntensityAliasedFrame ") + AliasedFrame::toString();
+    };
+    virtual std::string getName() const override {
+        return AliasedFrame::getName();
+    };
+
+private:
+};
+
+
+
+class ClassicalLuminousIntensityDerivedFrame : public DerivedFrame, public ClassicalLuminousIntensityFrame {
+public:
+	ClassicalLuminousIntensityDerivedFrame(std::string name,  ClassicalLuminousIntensity* space, ClassicalLuminousIntensityFrame* parent, MeasurementSystem* ms, AxisOrientation* ax) : DerivedFrame(name, space, parent, ms, ax) {};
+	/*std::string toString() const override {
+        std::string parentName = ((ClassicalLuminousIntensity*)this->space_)->getName();
+		return "@@ClassicalLuminousIntensityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
+	}*/
+    virtual std::string toString() const override {
+        return std::string("ClassicalLuminousIntensityDerivedFrame ") + DerivedFrame::toString();
+    };
+    virtual std::string getName() const override {
+        return DerivedFrame::getName();
+    };
+
+private:
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class ClassicalLuminousIntensityCoordinateVector : public ValueObject<ValueType,ValueCount> {
+public:
+    ClassicalLuminousIntensityCoordinateVector(ClassicalLuminousIntensity* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
+    ClassicalLuminousIntensityCoordinateVector(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~ClassicalLuminousIntensityCoordinateVector(){}
+    std::string toString() override {
+        return "@@ClassicalLuminousIntensityCoordinateVector(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString()+","+(frame_?frame_->getName():"") + ")";
+    }
+
+    ClassicalLuminousIntensity* getSpace() const {return this->space_;};
+    
+    
+    ClassicalLuminousIntensityFrame* getFrame() const { return this->frame_; };
+    void setFrame(ClassicalLuminousIntensityFrame* frame){
+            this->frame_ = frame;
+        };
+private:
+    ClassicalLuminousIntensity* space_; 
+    ClassicalLuminousIntensityFrame* frame_;
+    
+    
+    
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class ClassicalLuminousIntensityScalar : public ValueObject<ValueType,ValueCount> {
+public:
+    ClassicalLuminousIntensityScalar(ClassicalLuminousIntensity* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
+    ClassicalLuminousIntensityScalar(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~ClassicalLuminousIntensityScalar(){}
+    std::string toString() override {
+        return "@@ClassicalLuminousIntensityScalar(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+    }
+
+    ClassicalLuminousIntensity* getSpace() const {return this->space_;};
+    
+    
+    
+    
+private:
+    ClassicalLuminousIntensity* space_; 
+    
+    
+    
+    
+};
+
+
+
+
+template <class ValueType, int ValueCount>
+class ClassicalLuminousIntensityQuantity : public ValueObject<ValueType,ValueCount> {
+public:
+    ClassicalLuminousIntensityQuantity(ClassicalLuminousIntensity* s, std::initializer_list<DomainObject*> args) : 
+			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
+    ClassicalLuminousIntensityQuantity(std::initializer_list<DomainObject*> args ) :
+	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
+	virtual ~ClassicalLuminousIntensityQuantity(){}
+    std::string toString() override {
+        return "@@ClassicalLuminousIntensityQuantity(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
+    }
+
+    ClassicalLuminousIntensity* getSpace() const {return this->space_;};
+    
+    
+    
+    
+private:
+    ClassicalLuminousIntensity* space_; 
     
     
     

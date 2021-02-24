@@ -1,6 +1,6 @@
 
 #include "ASTToCoords.h"
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 #include <iostream>
 #include <exception>
@@ -246,6 +246,24 @@ coords::WHILE_BOOL_EXPR_STMT* ASTToCoords::mkWHILE_BOOL_EXPR_STMT(const ast::WHI
 coords::TRY_STMT* ASTToCoords::mkTRY_STMT(const ast::TRY_STMT* ast, clang::ASTContext* c,coords::STMT* operand1){
     coords::TRY_STMT* coord = new coords::TRY_STMT(operand1);
     ast::TRY_STMT* unconst_ast = const_cast<ast::TRY_STMT*>(ast);
+    /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
+        clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideDecl2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Decl(coord, dc);     // Use Clang canonical addresses?
+    }*/
+    if (auto dc = clang::dyn_cast<clang::Stmt>(unconst_ast)){
+        clang::Stmt* unconst_dc = const_cast<clang::Stmt*>(dc);
+        setASTState(coord, unconst_dc, c);
+        overrideStmt2Coords(dc, coord);     // Use Clang canonical addresses? 
+        overrideCoords2Stmt(coord, dc);     // Use Clang canonical addresses?  
+    }
+    return coord;
+}
+
+coords::FOR_BOOL_EXPR_STMT* ASTToCoords::mkFOR_BOOL_EXPR_STMT(const ast::FOR_BOOL_EXPR_STMT* ast, clang::ASTContext* c,coords::BOOL_EXPR* operand1,coords::STMT* operand2){
+    coords::FOR_BOOL_EXPR_STMT* coord = new coords::FOR_BOOL_EXPR_STMT(operand1,operand2);
+    ast::FOR_BOOL_EXPR_STMT* unconst_ast = const_cast<ast::FOR_BOOL_EXPR_STMT*>(ast);
     /*if (auto dc = clang::dyn_cast<clang::NamedDecl>(unconst_ast)){
         clang::NamedDecl* unconst_dc = const_cast<clang::NamedDecl*>(dc);
         setASTState(coord, unconst_dc, c);

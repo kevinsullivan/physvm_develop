@@ -6,7 +6,7 @@
 
 # include <string>
 # include <iostream>
-# include <g3log/g3log.hpp>
+//# include <g3log/g3log.hpp>
 # include <vector>
 #include <memory>
 
@@ -814,12 +814,16 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
     std::cout<<"(6)"<<"@@ClassicalTimeCoordinateVector()\n";
     std::cout<<"(7)"<<"@@EuclideanGeometryCoordinateVector()\n";
     std::cout<<"(8)"<<"@@EuclideanGeometry3CoordinateVector()\n";
-    std::cout<<"(9)"<<"@@ClassicalTimeCoordinatePoint()\n";
-    std::cout<<"(10)"<<"@@EuclideanGeometryCoordinatePoint()\n";
-    std::cout<<"(11)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
+    std::cout<<"(9)"<<"@@ClassicalLuminousIntensityCoordinateVector()\n";
+    std::cout<<"(10)"<<"@@ClassicalTimeCoordinateVector()\n";
+    std::cout<<"(11)"<<"@@EuclideanGeometryCoordinateVector()\n";
+    std::cout<<"(12)"<<"@@EuclideanGeometry3CoordinateVector()\n";
+    std::cout<<"(13)"<<"@@ClassicalTimeCoordinatePoint()\n";
+    std::cout<<"(14)"<<"@@EuclideanGeometryCoordinatePoint()\n";
+    std::cout<<"(15)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
     std::cin>>choice;
         choice_buffer->push_back(std::to_string(choice));
-    if(choice < 1 or choice > 11) {
+    if(choice < 1 or choice > 15) {
         goto choose;
     } else {
         switch(choice){
@@ -1698,6 +1702,442 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
             }
             case 9 : 
             {
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalLuminousIntensityCoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalLuminousIntensityFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 10 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalTimeCoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 11 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometryCoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometryFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 12 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometry3CoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 13 : 
+            {
                 std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
@@ -1805,7 +2245,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                     goto choose;
                 }
             }
-            case 10 : 
+            case 14 : 
             {
                 std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
                 while(spaces.size()>0){
@@ -1914,7 +2354,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_EXPR(coords::REAL
                     goto choose;
                 }
             }
-            case 11 : 
+            case 15 : 
             {
                 std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
                 while(spaces.size()>0){
@@ -2070,28 +2510,40 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
     std::cout<<"(6)"<<"@@ClassicalTimeCoordinateVector()\n";
     std::cout<<"(7)"<<"@@EuclideanGeometryCoordinateVector()\n";
     std::cout<<"(8)"<<"@@EuclideanGeometry3CoordinateVector()\n";
-    std::cout<<"(9)"<<"@@ClassicalTimeCoordinatePoint()\n";
-    std::cout<<"(10)"<<"@@EuclideanGeometryCoordinatePoint()\n";
-    std::cout<<"(11)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
-    std::cout<<"(12)"<<"@@ClassicalVelocityScalar()\n";
-    std::cout<<"(13)"<<"@@ClassicalTimeScalar()\n";
-    std::cout<<"(14)"<<"@@EuclideanGeometryScalar()\n";
-    std::cout<<"(15)"<<"@@EuclideanGeometry3Scalar()\n";
-    std::cout<<"(16)"<<"@@ClassicalHertzScalar()\n";
+    std::cout<<"(9)"<<"@@ClassicalLuminousIntensityCoordinateVector()\n";
+    std::cout<<"(10)"<<"@@ClassicalTimeCoordinateVector()\n";
+    std::cout<<"(11)"<<"@@EuclideanGeometryCoordinateVector()\n";
+    std::cout<<"(12)"<<"@@EuclideanGeometry3CoordinateVector()\n";
+    std::cout<<"(13)"<<"@@ClassicalTimeCoordinatePoint()\n";
+    std::cout<<"(14)"<<"@@EuclideanGeometryCoordinatePoint()\n";
+    std::cout<<"(15)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
+    std::cout<<"(16)"<<"@@ClassicalVelocityScalar()\n";
     std::cout<<"(17)"<<"@@ClassicalTimeScalar()\n";
     std::cout<<"(18)"<<"@@EuclideanGeometryScalar()\n";
     std::cout<<"(19)"<<"@@EuclideanGeometry3Scalar()\n";
-    std::cout<<"(20)"<<"@@ClassicalVelocityQuantity()\n";
-    std::cout<<"(21)"<<"@@ClassicalTimeQuantity()\n";
-    std::cout<<"(22)"<<"@@EuclideanGeometryQuantity()\n";
-    std::cout<<"(23)"<<"@@EuclideanGeometry3Quantity()\n";
-    std::cout<<"(24)"<<"@@ClassicalHertzQuantity()\n";
-    std::cout<<"(25)"<<"@@ClassicalTimeQuantity()\n";
-    std::cout<<"(26)"<<"@@EuclideanGeometryQuantity()\n";
-    std::cout<<"(27)"<<"@@EuclideanGeometry3Quantity()\n";
+    std::cout<<"(20)"<<"@@ClassicalHertzScalar()\n";
+    std::cout<<"(21)"<<"@@ClassicalTimeScalar()\n";
+    std::cout<<"(22)"<<"@@EuclideanGeometryScalar()\n";
+    std::cout<<"(23)"<<"@@EuclideanGeometry3Scalar()\n";
+    std::cout<<"(24)"<<"@@ClassicalLuminousIntensityScalar()\n";
+    std::cout<<"(25)"<<"@@ClassicalTimeScalar()\n";
+    std::cout<<"(26)"<<"@@EuclideanGeometryScalar()\n";
+    std::cout<<"(27)"<<"@@EuclideanGeometry3Scalar()\n";
+    std::cout<<"(28)"<<"@@ClassicalVelocityQuantity()\n";
+    std::cout<<"(29)"<<"@@ClassicalTimeQuantity()\n";
+    std::cout<<"(30)"<<"@@EuclideanGeometryQuantity()\n";
+    std::cout<<"(31)"<<"@@EuclideanGeometry3Quantity()\n";
+    std::cout<<"(32)"<<"@@ClassicalHertzQuantity()\n";
+    std::cout<<"(33)"<<"@@ClassicalTimeQuantity()\n";
+    std::cout<<"(34)"<<"@@EuclideanGeometryQuantity()\n";
+    std::cout<<"(35)"<<"@@EuclideanGeometry3Quantity()\n";
+    std::cout<<"(36)"<<"@@ClassicalLuminousIntensityQuantity()\n";
+    std::cout<<"(37)"<<"@@ClassicalTimeQuantity()\n";
+    std::cout<<"(38)"<<"@@EuclideanGeometryQuantity()\n";
+    std::cout<<"(39)"<<"@@EuclideanGeometry3Quantity()\n";
     std::cin>>choice;
         choice_buffer->push_back(std::to_string(choice));
-    if(choice < 1 or choice > 27) {
+    if(choice < 1 or choice > 39) {
         goto choose;
     } else {
         switch(choice){
@@ -2970,6 +3422,442 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
             }
             case 9 : 
             {
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalLuminousIntensityCoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalLuminousIntensityFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 10 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalTimeCoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 11 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometryCoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometryFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 12 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometry3CoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 13 : 
+            {
                 std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
@@ -3077,7 +3965,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                     goto choose;
                 }
             }
-            case 10 : 
+            case 14 : 
             {
                 std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
                 while(spaces.size()>0){
@@ -3186,7 +4074,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                     goto choose;
                 }
             }
-            case 11 : 
+            case 15 : 
             {
                 std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
                 while(spaces.size()>0){
@@ -3295,7 +4183,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                     goto choose;
                 }
             }
-            case 12 : 
+            case 16 : 
             {
                 std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
                 while(spaces.size()>0){
@@ -3392,418 +4280,6 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 }
                 if(spaces.size() == 0){
                     std::cout<<"Invalid Annotation: No Available ClassicalVelocity Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 13 : 
-            {
-                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
-
-                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkClassicalTimeScalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 14 : 
-            {
-                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
-
-                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkEuclideanGeometryScalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 15 : 
-            {
-                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
-
-                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkEuclideanGeometry3Scalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 16 : 
-            {
-                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
-
-                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkClassicalHertzScalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
                     return nullptr;
 
                     std::cout<<"Provide Another Intepretation\n";
@@ -4121,14 +4597,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
             }
             case 20 : 
             {
-                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
                     int index = 0;
 
-                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
 
-                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
 
                     for(auto sp : spaces){
                         index_to_sp[++index] = sp;
@@ -4145,7 +4621,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalVelocityQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalHertzScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -4215,7 +4691,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                     }
                 }
                 if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalVelocity Spaces!\n";
+                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
                     return nullptr;
 
                     std::cout<<"Provide Another Intepretation\n";
@@ -4248,7 +4724,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalTimeScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -4351,7 +4827,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkEuclideanGeometryScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -4454,7 +4930,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkEuclideanGeometry3Quantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkEuclideanGeometry3Scalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -4533,14 +5009,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
             }
             case 24 : 
             {
-                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
                     int index = 0;
 
-                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
 
-                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
 
                     for(auto sp : spaces){
                         index_to_sp[++index] = sp;
@@ -4557,7 +5033,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalHertzQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalLuminousIntensityScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -4627,7 +5103,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                     }
                 }
                 if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
                     return nullptr;
 
                     std::cout<<"Provide Another Intepretation\n";
@@ -4660,7 +5136,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalTimeScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -4763,7 +5239,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkEuclideanGeometryScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -4841,6 +5317,1242 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_EXPR(coords::REAL
                 }
             }
             case 27 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometry3Scalar<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 28 : 
+            {
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalVelocityQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalVelocity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 29 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 30 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 31 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometry3Quantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 32 : 
+            {
+                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalHertzQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 33 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 34 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 35 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometry3Quantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 36 : 
+            {
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalLuminousIntensityQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 37 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 38 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 39 : 
             {
                 std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
                 while(spaces.size()>0){
@@ -4990,28 +6702,40 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
     std::cout<<"(6)"<<"@@ClassicalTimeCoordinateVector()\n";
     std::cout<<"(7)"<<"@@EuclideanGeometryCoordinateVector()\n";
     std::cout<<"(8)"<<"@@EuclideanGeometry3CoordinateVector()\n";
-    std::cout<<"(9)"<<"@@ClassicalTimeCoordinatePoint()\n";
-    std::cout<<"(10)"<<"@@EuclideanGeometryCoordinatePoint()\n";
-    std::cout<<"(11)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
-    std::cout<<"(12)"<<"@@ClassicalVelocityScalar()\n";
-    std::cout<<"(13)"<<"@@ClassicalTimeScalar()\n";
-    std::cout<<"(14)"<<"@@EuclideanGeometryScalar()\n";
-    std::cout<<"(15)"<<"@@EuclideanGeometry3Scalar()\n";
-    std::cout<<"(16)"<<"@@ClassicalHertzScalar()\n";
+    std::cout<<"(9)"<<"@@ClassicalLuminousIntensityCoordinateVector()\n";
+    std::cout<<"(10)"<<"@@ClassicalTimeCoordinateVector()\n";
+    std::cout<<"(11)"<<"@@EuclideanGeometryCoordinateVector()\n";
+    std::cout<<"(12)"<<"@@EuclideanGeometry3CoordinateVector()\n";
+    std::cout<<"(13)"<<"@@ClassicalTimeCoordinatePoint()\n";
+    std::cout<<"(14)"<<"@@EuclideanGeometryCoordinatePoint()\n";
+    std::cout<<"(15)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
+    std::cout<<"(16)"<<"@@ClassicalVelocityScalar()\n";
     std::cout<<"(17)"<<"@@ClassicalTimeScalar()\n";
     std::cout<<"(18)"<<"@@EuclideanGeometryScalar()\n";
     std::cout<<"(19)"<<"@@EuclideanGeometry3Scalar()\n";
-    std::cout<<"(20)"<<"@@ClassicalVelocityQuantity()\n";
-    std::cout<<"(21)"<<"@@ClassicalTimeQuantity()\n";
-    std::cout<<"(22)"<<"@@EuclideanGeometryQuantity()\n";
-    std::cout<<"(23)"<<"@@EuclideanGeometry3Quantity()\n";
-    std::cout<<"(24)"<<"@@ClassicalHertzQuantity()\n";
-    std::cout<<"(25)"<<"@@ClassicalTimeQuantity()\n";
-    std::cout<<"(26)"<<"@@EuclideanGeometryQuantity()\n";
-    std::cout<<"(27)"<<"@@EuclideanGeometry3Quantity()\n";
+    std::cout<<"(20)"<<"@@ClassicalHertzScalar()\n";
+    std::cout<<"(21)"<<"@@ClassicalTimeScalar()\n";
+    std::cout<<"(22)"<<"@@EuclideanGeometryScalar()\n";
+    std::cout<<"(23)"<<"@@EuclideanGeometry3Scalar()\n";
+    std::cout<<"(24)"<<"@@ClassicalLuminousIntensityScalar()\n";
+    std::cout<<"(25)"<<"@@ClassicalTimeScalar()\n";
+    std::cout<<"(26)"<<"@@EuclideanGeometryScalar()\n";
+    std::cout<<"(27)"<<"@@EuclideanGeometry3Scalar()\n";
+    std::cout<<"(28)"<<"@@ClassicalVelocityQuantity()\n";
+    std::cout<<"(29)"<<"@@ClassicalTimeQuantity()\n";
+    std::cout<<"(30)"<<"@@EuclideanGeometryQuantity()\n";
+    std::cout<<"(31)"<<"@@EuclideanGeometry3Quantity()\n";
+    std::cout<<"(32)"<<"@@ClassicalHertzQuantity()\n";
+    std::cout<<"(33)"<<"@@ClassicalTimeQuantity()\n";
+    std::cout<<"(34)"<<"@@EuclideanGeometryQuantity()\n";
+    std::cout<<"(35)"<<"@@EuclideanGeometry3Quantity()\n";
+    std::cout<<"(36)"<<"@@ClassicalLuminousIntensityQuantity()\n";
+    std::cout<<"(37)"<<"@@ClassicalTimeQuantity()\n";
+    std::cout<<"(38)"<<"@@EuclideanGeometryQuantity()\n";
+    std::cout<<"(39)"<<"@@EuclideanGeometry3Quantity()\n";
     std::cin>>choice;
         choice_buffer->push_back(std::to_string(choice));
-    if(choice < 1 or choice > 27) {
+    if(choice < 1 or choice > 39) {
         goto choose;
     } else {
         switch(choice){
@@ -5890,6 +7614,442 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
             }
             case 9 : 
             {
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalLuminousIntensityCoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalLuminousIntensityFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 10 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalTimeCoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 11 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometryCoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometryFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 12 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometry3CoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 13 : 
+            {
                 std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
@@ -5997,7 +8157,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                     goto choose;
                 }
             }
-            case 10 : 
+            case 14 : 
             {
                 std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
                 while(spaces.size()>0){
@@ -6106,7 +8266,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                     goto choose;
                 }
             }
-            case 11 : 
+            case 15 : 
             {
                 std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
                 while(spaces.size()>0){
@@ -6215,7 +8375,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                     goto choose;
                 }
             }
-            case 12 : 
+            case 16 : 
             {
                 std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
                 while(spaces.size()>0){
@@ -6312,418 +8472,6 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 }
                 if(spaces.size() == 0){
                     std::cout<<"Invalid Annotation: No Available ClassicalVelocity Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 13 : 
-            {
-                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
-
-                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkClassicalTimeScalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 14 : 
-            {
-                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
-
-                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkEuclideanGeometryScalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 15 : 
-            {
-                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
-
-                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkEuclideanGeometry3Scalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 16 : 
-            {
-                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
-
-                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkClassicalHertzScalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
                     return nullptr;
 
                     std::cout<<"Provide Another Intepretation\n";
@@ -7041,14 +8789,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
             }
             case 20 : 
             {
-                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
                     int index = 0;
 
-                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
 
-                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
 
                     for(auto sp : spaces){
                         index_to_sp[++index] = sp;
@@ -7065,7 +8813,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalVelocityQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalHertzScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -7135,7 +8883,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                     }
                 }
                 if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalVelocity Spaces!\n";
+                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
                     return nullptr;
 
                     std::cout<<"Provide Another Intepretation\n";
@@ -7168,7 +8916,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalTimeScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -7271,7 +9019,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkEuclideanGeometryScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -7374,7 +9122,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkEuclideanGeometry3Quantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkEuclideanGeometry3Scalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -7453,14 +9201,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
             }
             case 24 : 
             {
-                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
                     int index = 0;
 
-                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
 
-                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
 
                     for(auto sp : spaces){
                         index_to_sp[++index] = sp;
@@ -7477,7 +9225,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalHertzQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalLuminousIntensityScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -7547,7 +9295,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                     }
                 }
                 if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
                     return nullptr;
 
                     std::cout<<"Provide Another Intepretation\n";
@@ -7580,7 +9328,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalTimeScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -7683,7 +9431,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkEuclideanGeometryScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -7761,6 +9509,1242 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_VAR_IDENT(coords:
                 }
             }
             case 27 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometry3Scalar<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 28 : 
+            {
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalVelocityQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalVelocity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 29 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 30 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 31 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometry3Quantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 32 : 
+            {
+                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalHertzQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 33 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 34 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 35 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometry3Quantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 36 : 
+            {
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalLuminousIntensityQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 37 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 38 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 39 : 
             {
                 std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
                 while(spaces.size()>0){
@@ -7891,12 +10875,16 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
     std::cout<<"(6)"<<"@@ClassicalTimeCoordinateVector()\n";
     std::cout<<"(7)"<<"@@EuclideanGeometryCoordinateVector()\n";
     std::cout<<"(8)"<<"@@EuclideanGeometry3CoordinateVector()\n";
-    std::cout<<"(9)"<<"@@ClassicalTimeCoordinatePoint()\n";
-    std::cout<<"(10)"<<"@@EuclideanGeometryCoordinatePoint()\n";
-    std::cout<<"(11)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
+    std::cout<<"(9)"<<"@@ClassicalLuminousIntensityCoordinateVector()\n";
+    std::cout<<"(10)"<<"@@ClassicalTimeCoordinateVector()\n";
+    std::cout<<"(11)"<<"@@EuclideanGeometryCoordinateVector()\n";
+    std::cout<<"(12)"<<"@@EuclideanGeometry3CoordinateVector()\n";
+    std::cout<<"(13)"<<"@@ClassicalTimeCoordinatePoint()\n";
+    std::cout<<"(14)"<<"@@EuclideanGeometryCoordinatePoint()\n";
+    std::cout<<"(15)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
     std::cin>>choice;
         choice_buffer->push_back(std::to_string(choice));
-    if(choice < 1 or choice > 11) {
+    if(choice < 1 or choice > 15) {
         goto choose;
     } else {
         switch(choice){
@@ -8775,6 +11763,442 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
             }
             case 9 : 
             {
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalLuminousIntensityCoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalLuminousIntensityFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 10 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalTimeCoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 11 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometryCoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometryFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 12 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometry3CoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 13 : 
+            {
                 std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
@@ -8882,7 +12306,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                     goto choose;
                 }
             }
-            case 10 : 
+            case 14 : 
             {
                 std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
                 while(spaces.size()>0){
@@ -8991,7 +12415,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_VAR_IDENT(coords:
                     goto choose;
                 }
             }
-            case 11 : 
+            case 15 : 
             {
                 std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
                 while(spaces.size()>0){
@@ -10269,12 +13693,16 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
     std::cout<<"(6)"<<"@@ClassicalTimeCoordinateVector()\n";
     std::cout<<"(7)"<<"@@EuclideanGeometryCoordinateVector()\n";
     std::cout<<"(8)"<<"@@EuclideanGeometry3CoordinateVector()\n";
-    std::cout<<"(9)"<<"@@ClassicalTimeCoordinatePoint()\n";
-    std::cout<<"(10)"<<"@@EuclideanGeometryCoordinatePoint()\n";
-    std::cout<<"(11)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
+    std::cout<<"(9)"<<"@@ClassicalLuminousIntensityCoordinateVector()\n";
+    std::cout<<"(10)"<<"@@ClassicalTimeCoordinateVector()\n";
+    std::cout<<"(11)"<<"@@EuclideanGeometryCoordinateVector()\n";
+    std::cout<<"(12)"<<"@@EuclideanGeometry3CoordinateVector()\n";
+    std::cout<<"(13)"<<"@@ClassicalTimeCoordinatePoint()\n";
+    std::cout<<"(14)"<<"@@EuclideanGeometryCoordinatePoint()\n";
+    std::cout<<"(15)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
     std::cin>>choice;
         choice_buffer->push_back(std::to_string(choice));
-    if(choice < 1 or choice > 11) {
+    if(choice < 1 or choice > 15) {
         goto choose;
     } else {
         switch(choice){
@@ -11153,6 +14581,442 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
             }
             case 9 : 
             {
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalLuminousIntensityCoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalLuminousIntensityFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 10 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalTimeCoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 11 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometryCoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometryFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 12 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[3];
+                                auto vals = ((coords::ValueCoords<float,3>*)coords)->getValues();
+                                for(int idx = 0;idx < 3;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometry3CoordinateVector<float,3>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<3;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 13 : 
+            {
                 std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
@@ -11260,7 +15124,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                     goto choose;
                 }
             }
-            case 10 : 
+            case 14 : 
             {
                 std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
                 while(spaces.size()>0){
@@ -11369,7 +15233,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL3_LITERAL(coords::R
                     goto choose;
                 }
             }
-            case 11 : 
+            case 15 : 
             {
                 std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
                 while(spaces.size()>0){
@@ -11506,28 +15370,40 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
     std::cout<<"(6)"<<"@@ClassicalTimeCoordinateVector()\n";
     std::cout<<"(7)"<<"@@EuclideanGeometryCoordinateVector()\n";
     std::cout<<"(8)"<<"@@EuclideanGeometry3CoordinateVector()\n";
-    std::cout<<"(9)"<<"@@ClassicalTimeCoordinatePoint()\n";
-    std::cout<<"(10)"<<"@@EuclideanGeometryCoordinatePoint()\n";
-    std::cout<<"(11)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
-    std::cout<<"(12)"<<"@@ClassicalVelocityScalar()\n";
-    std::cout<<"(13)"<<"@@ClassicalTimeScalar()\n";
-    std::cout<<"(14)"<<"@@EuclideanGeometryScalar()\n";
-    std::cout<<"(15)"<<"@@EuclideanGeometry3Scalar()\n";
-    std::cout<<"(16)"<<"@@ClassicalHertzScalar()\n";
+    std::cout<<"(9)"<<"@@ClassicalLuminousIntensityCoordinateVector()\n";
+    std::cout<<"(10)"<<"@@ClassicalTimeCoordinateVector()\n";
+    std::cout<<"(11)"<<"@@EuclideanGeometryCoordinateVector()\n";
+    std::cout<<"(12)"<<"@@EuclideanGeometry3CoordinateVector()\n";
+    std::cout<<"(13)"<<"@@ClassicalTimeCoordinatePoint()\n";
+    std::cout<<"(14)"<<"@@EuclideanGeometryCoordinatePoint()\n";
+    std::cout<<"(15)"<<"@@EuclideanGeometry3CoordinatePoint()\n";
+    std::cout<<"(16)"<<"@@ClassicalVelocityScalar()\n";
     std::cout<<"(17)"<<"@@ClassicalTimeScalar()\n";
     std::cout<<"(18)"<<"@@EuclideanGeometryScalar()\n";
     std::cout<<"(19)"<<"@@EuclideanGeometry3Scalar()\n";
-    std::cout<<"(20)"<<"@@ClassicalVelocityQuantity()\n";
-    std::cout<<"(21)"<<"@@ClassicalTimeQuantity()\n";
-    std::cout<<"(22)"<<"@@EuclideanGeometryQuantity()\n";
-    std::cout<<"(23)"<<"@@EuclideanGeometry3Quantity()\n";
-    std::cout<<"(24)"<<"@@ClassicalHertzQuantity()\n";
-    std::cout<<"(25)"<<"@@ClassicalTimeQuantity()\n";
-    std::cout<<"(26)"<<"@@EuclideanGeometryQuantity()\n";
-    std::cout<<"(27)"<<"@@EuclideanGeometry3Quantity()\n";
+    std::cout<<"(20)"<<"@@ClassicalHertzScalar()\n";
+    std::cout<<"(21)"<<"@@ClassicalTimeScalar()\n";
+    std::cout<<"(22)"<<"@@EuclideanGeometryScalar()\n";
+    std::cout<<"(23)"<<"@@EuclideanGeometry3Scalar()\n";
+    std::cout<<"(24)"<<"@@ClassicalLuminousIntensityScalar()\n";
+    std::cout<<"(25)"<<"@@ClassicalTimeScalar()\n";
+    std::cout<<"(26)"<<"@@EuclideanGeometryScalar()\n";
+    std::cout<<"(27)"<<"@@EuclideanGeometry3Scalar()\n";
+    std::cout<<"(28)"<<"@@ClassicalVelocityQuantity()\n";
+    std::cout<<"(29)"<<"@@ClassicalTimeQuantity()\n";
+    std::cout<<"(30)"<<"@@EuclideanGeometryQuantity()\n";
+    std::cout<<"(31)"<<"@@EuclideanGeometry3Quantity()\n";
+    std::cout<<"(32)"<<"@@ClassicalHertzQuantity()\n";
+    std::cout<<"(33)"<<"@@ClassicalTimeQuantity()\n";
+    std::cout<<"(34)"<<"@@EuclideanGeometryQuantity()\n";
+    std::cout<<"(35)"<<"@@EuclideanGeometry3Quantity()\n";
+    std::cout<<"(36)"<<"@@ClassicalLuminousIntensityQuantity()\n";
+    std::cout<<"(37)"<<"@@ClassicalTimeQuantity()\n";
+    std::cout<<"(38)"<<"@@EuclideanGeometryQuantity()\n";
+    std::cout<<"(39)"<<"@@EuclideanGeometry3Quantity()\n";
     std::cin>>choice;
         choice_buffer->push_back(std::to_string(choice));
-    if(choice < 1 or choice > 27) {
+    if(choice < 1 or choice > 39) {
         goto choose;
     } else {
         switch(choice){
@@ -12406,6 +16282,442 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
             }
             case 9 : 
             {
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalLuminousIntensityCoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalLuminousIntensityFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 10 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkClassicalTimeCoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::ClassicalTimeFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 11 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometryCoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometryFrame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 12 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+                    
+
+                        auto ret = this->domain_->mkEuclideanGeometry3CoordinateVector<float,1>(sp,cp);
+                        //delete[] cp;
+                        auto frame = (domain::EuclideanGeometry3Frame*)this->getFrameForInterpretation(sp); 
+                        if(!frame) {
+                            std::cout<<"Missing frame : failed to build interpretation\n";
+                            return nullptr;
+                        }
+                        ret->setFrame(frame);
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 13 : 
+            {
                 std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
@@ -12513,7 +16825,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                     goto choose;
                 }
             }
-            case 10 : 
+            case 14 : 
             {
                 std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
                 while(spaces.size()>0){
@@ -12622,7 +16934,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                     goto choose;
                 }
             }
-            case 11 : 
+            case 15 : 
             {
                 std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
                 while(spaces.size()>0){
@@ -12731,7 +17043,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                     goto choose;
                 }
             }
-            case 12 : 
+            case 16 : 
             {
                 std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
                 while(spaces.size()>0){
@@ -12828,418 +17140,6 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 }
                 if(spaces.size() == 0){
                     std::cout<<"Invalid Annotation: No Available ClassicalVelocity Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 13 : 
-            {
-                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
-
-                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkClassicalTimeScalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 14 : 
-            {
-                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
-
-                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkEuclideanGeometryScalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 15 : 
-            {
-                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
-
-                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkEuclideanGeometry3Scalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
-                    return nullptr;
-
-                    std::cout<<"Provide Another Intepretation\n";
-                    goto choose;
-                }
-            }
-            case 16 : 
-            {
-                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
-                while(spaces.size()>0){
-                    int sp_choice = 0;
-                    int index = 0;
-
-                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
-
-                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
-
-                    for(auto sp : spaces){
-                        index_to_sp[++index] = sp;
-                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
-                
-                    }
-                    std::cin>>sp_choice;
-        choice_buffer->push_back(std::to_string(sp_choice));
-                    if(sp_choice >0 and sp_choice <= index){
-                        auto sp = index_to_sp[sp_choice];
-                        std::shared_ptr<float> cp[1];
-                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
-                                for(int idx = 0;idx < 1;idx++){
-                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
-                                }
-
-                        auto ret = this->domain_->mkClassicalHertzScalar<float,1>(sp,cp); 
-                        //delete[] cp;
-
-                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
-                        try{
-                            int vchoice = 0;
-                            std::cin >> vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if (vchoice == 1)
-                            {
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    std::cout << "Enter Value " << i << ":\n";
-                                    float val = 4;
-                                    std::cin >> val;
-        choice_buffer->push_back(std::to_string(val));
-                                    //float* vc = new float(valvc);
-                                    ret->setValue(val, i);
-                                    //delete vc;
-                                }
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                            }
-                        }
-                        catch(std::exception ex){
-                            return ret;
-                        }
-/*
-    while (true){
-                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
-                            int vchoice = 0;
-                            std::cin>>vchoice;
-        choice_buffer->push_back(std::to_string(vchoice));
-                            if(vchoice == 1){
-                                for(int i = 0; i<1;i++){
-                                    std::cout<<"Enter Value "<<i<<":\n";
-                                    float valvc;
-                                    std::cin>>valvc;
-        choice_buffer->push_back(std::to_string(valvc));
-                                    float* vc;
-                                    ret->setValue(vc, i);
-                                    delete vc;
-                                }
-                                break;
-                            }
-                            else{
-                                for (int i = 0; i < 1; i++)
-                                {
-                                    //float* vc = new float(0);
-                                    ret->setValue(0, i);
-                                    //delete vc;
-                                }
-                                break;
-                            }
-                            //else if(vchoice != 0)
-                            //    continue;
-                        }*/
-                        
-                        
-                        return ret;
-            
-                    }
-                }
-                if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
                     return nullptr;
 
                     std::cout<<"Provide Another Intepretation\n";
@@ -13557,14 +17457,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
             }
             case 20 : 
             {
-                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
                     int index = 0;
 
-                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
 
-                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
 
                     for(auto sp : spaces){
                         index_to_sp[++index] = sp;
@@ -13581,7 +17481,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalVelocityQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalHertzScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -13651,7 +17551,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                     }
                 }
                 if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalVelocity Spaces!\n";
+                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
                     return nullptr;
 
                     std::cout<<"Provide Another Intepretation\n";
@@ -13684,7 +17584,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalTimeScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -13787,7 +17687,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkEuclideanGeometryScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -13890,7 +17790,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkEuclideanGeometry3Quantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkEuclideanGeometry3Scalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -13969,14 +17869,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
             }
             case 24 : 
             {
-                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
                 while(spaces.size()>0){
                     int sp_choice = 0;
                     int index = 0;
 
-                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
 
-                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
 
                     for(auto sp : spaces){
                         index_to_sp[++index] = sp;
@@ -13993,7 +17893,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalHertzQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalLuminousIntensityScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -14063,7 +17963,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                     }
                 }
                 if(spaces.size() == 0){
-                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
                     return nullptr;
 
                     std::cout<<"Provide Another Intepretation\n";
@@ -14096,7 +17996,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkClassicalTimeScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -14199,7 +18099,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                                     cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
                                 }
 
-                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        auto ret = this->domain_->mkEuclideanGeometryScalar<float,1>(sp,cp); 
                         //delete[] cp;
 
                         std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
@@ -14277,6 +18177,1242 @@ domain::DomainObject* Oracle_AskAll::getInterpretationForREAL1_LITERAL(coords::R
                 }
             }
             case 27 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometry3Scalar<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 28 : 
+            {
+                std::vector<domain::ClassicalVelocity*> spaces = this->domain_->getClassicalVelocitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalVelocity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalVelocity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalVelocityQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalVelocity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 29 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 30 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 31 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometry3Quantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 32 : 
+            {
+                std::vector<domain::ClassicalHertz*> spaces = this->domain_->getClassicalHertzSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalHertz*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalHertz Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalHertzQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalHertz Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 33 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 34 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 35 : 
+            {
+                std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry3*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry3 Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometry3Quantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry3 Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 36 : 
+            {
+                std::vector<domain::ClassicalLuminousIntensity*> spaces = this->domain_->getClassicalLuminousIntensitySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalLuminousIntensity*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalLuminousIntensity Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalLuminousIntensityQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalLuminousIntensity Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 37 : 
+            {
+                std::vector<domain::ClassicalTime*> spaces = this->domain_->getClassicalTimeSpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::ClassicalTime*> index_to_sp;
+
+                    std::cout<<"Choose ClassicalTime Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkClassicalTimeQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available ClassicalTime Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 38 : 
+            {
+                std::vector<domain::EuclideanGeometry*> spaces = this->domain_->getEuclideanGeometrySpaces();
+                while(spaces.size()>0){
+                    int sp_choice = 0;
+                    int index = 0;
+
+                    std::unordered_map<int,domain::EuclideanGeometry*> index_to_sp;
+
+                    std::cout<<"Choose EuclideanGeometry Space to Attach to This Annotation : \n";
+
+                    for(auto sp : spaces){
+                        index_to_sp[++index] = sp;
+                        std::cout<<"("<<std::to_string(index)<<") "<<sp->toString()<<"\n";
+                
+                    }
+                    std::cin>>sp_choice;
+        choice_buffer->push_back(std::to_string(sp_choice));
+                    if(sp_choice >0 and sp_choice <= index){
+                        auto sp = index_to_sp[sp_choice];
+                        std::shared_ptr<float> cp[1];
+                                auto vals = ((coords::ValueCoords<float,1>*)coords)->getValues();
+                                for(int idx = 0;idx < 1;idx++){
+                                    cp[idx] = vals[idx] ? std::make_shared<float>(*vals[idx]) : nullptr;
+                                }
+
+                        auto ret = this->domain_->mkEuclideanGeometryQuantity<float,1>(sp,cp); 
+                        //delete[] cp;
+
+                        std::cout<<"Provide Values For Interpretation? (1) Yes(2) No\n";
+                        try{
+                            int vchoice = 0;
+                            std::cin >> vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if (vchoice == 1)
+                            {
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    std::cout << "Enter Value " << i << ":\n";
+                                    float val = 4;
+                                    std::cin >> val;
+        choice_buffer->push_back(std::to_string(val));
+                                    //float* vc = new float(valvc);
+                                    ret->setValue(val, i);
+                                    //delete vc;
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                            }
+                        }
+                        catch(std::exception ex){
+                            return ret;
+                        }
+/*
+    while (true){
+                            std::cout<<"Provide Values For Interpretation? (1) Yes (2) No\n";
+                            int vchoice = 0;
+                            std::cin>>vchoice;
+        choice_buffer->push_back(std::to_string(vchoice));
+                            if(vchoice == 1){
+                                for(int i = 0; i<1;i++){
+                                    std::cout<<"Enter Value "<<i<<":\n";
+                                    float valvc;
+                                    std::cin>>valvc;
+        choice_buffer->push_back(std::to_string(valvc));
+                                    float* vc;
+                                    ret->setValue(vc, i);
+                                    delete vc;
+                                }
+                                break;
+                            }
+                            else{
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    //float* vc = new float(0);
+                                    ret->setValue(0, i);
+                                    //delete vc;
+                                }
+                                break;
+                            }
+                            //else if(vchoice != 0)
+                            //    continue;
+                        }*/
+                        
+                        
+                        return ret;
+            
+                    }
+                }
+                if(spaces.size() == 0){
+                    std::cout<<"Invalid Annotation: No Available EuclideanGeometry Spaces!\n";
+                    return nullptr;
+
+                    std::cout<<"Provide Another Intepretation\n";
+                    goto choose;
+                }
+            }
+            case 39 : 
             {
                 std::vector<domain::EuclideanGeometry3*> spaces = this->domain_->getEuclideanGeometry3Spaces();
                 while(spaces.size()>0){

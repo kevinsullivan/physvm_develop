@@ -67,6 +67,8 @@ public:
 
 	coords::TRY_STMT* mkTRY_STMT(const ast::TRY_STMT* ast, clang::ASTContext* c,coords::STMT* operand1);
 
+	coords::FOR_BOOL_EXPR_STMT* mkFOR_BOOL_EXPR_STMT(const ast::FOR_BOOL_EXPR_STMT* ast, clang::ASTContext* c,coords::BOOL_EXPR* operand1,coords::STMT* operand2);
+
 	coords::DECL_REAL1_VAR_REAL1_EXPR* mkDECL_REAL1_VAR_REAL1_EXPR(const ast::DECL_REAL1_VAR_REAL1_EXPR* ast, clang::ASTContext* c,coords::REAL1_VAR_IDENT* operand1,coords::REAL1_EXPR* operand2);
 
 	coords::DECL_REAL3_VAR_REAL3_EXPR* mkDECL_REAL3_VAR_REAL3_EXPR(const ast::DECL_REAL3_VAR_REAL3_EXPR* ast, clang::ASTContext* c,coords::REAL3_VAR_IDENT* operand1,coords::REAL3_EXPR* operand2);
