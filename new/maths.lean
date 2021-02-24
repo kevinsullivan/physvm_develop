@@ -77,11 +77,10 @@ structure aff_pt_coord_tuple  (n : nat) :=
 
 
 def aff_vec_zero_tuple (n : nat) : aff_vec_coord_tuple K n :=
-⟨ @zero_tuple K _ _ (n+1), sorry⟩ 
+⟨ zero_tuple K (n+1), sorry⟩ 
 
 def aff_pt_zero_tuple (n : nat) : aff_pt_coord_tuple K n:=
-⟨ (1, @zero_tuple K _ _ n), sorry ⟩ 
-
+⟨ (1, zero_tuple K n), sorry ⟩ 
 
 /-
 variables 
@@ -104,47 +103,51 @@ in our current "production" version.)
 Vectors add on points by displacing them.
 -/
 def aff_group_action { n : nat } : 
-  @aff_vec_coord_tuple K _ _ n → 
-  @aff_pt_coord_tuple K _ _ n → 
-  @aff_pt_coord_tuple K _ _ n :=
+  aff_vec_coord_tuple K n → 
+  aff_pt_coord_tuple K n → 
+  aff_pt_coord_tuple K n :=
 λ vec pt, 
   aff_pt_coord_tuple.mk 
     (tuple_add K vec.tup pt.tup)
     sorry
 
 def aff_group_sub { n : nat } : 
-  @aff_pt_coord_tuple K _ _ n → 
-  @aff_pt_coord_tuple K _ _ n → 
-  @aff_vec_coord_tuple K _ _ n :=
+  aff_pt_coord_tuple K n → 
+  aff_pt_coord_tuple K n → 
+  aff_vec_coord_tuple K n :=
 sorry
 --    λ x y, ⟨ladd x.1 (vecl_neg y.1), sub_len_fixed K n x y, sub_fst_fixed K n x y⟩
 
 instance (n : nat) : 
-  has_vadd (@aff_vec_coord_tuple K _ _ n) (@aff_pt_coord_tuple K _ _ n) :=
-⟨ @aff_group_action K _ _ n ⟩ 
+  has_vadd (aff_vec_coord_tuple K n) (aff_pt_coord_tuple K n) :=
+⟨ aff_group_action K ⟩ 
 
 instance (n : nat) : 
-  has_vsub (@aff_vec_coord_tuple K _ _ n) (@aff_pt_coord_tuple K _ _ n) := 
-⟨@aff_group_sub K _ _ n⟩
+  has_vsub (aff_vec_coord_tuple K n) (aff_pt_coord_tuple K n) := 
+⟨aff_group_sub K⟩
 
 
 lemma aff_zero_sadd { n : nat } : 
   ∀ x : @aff_pt_coord_tuple K _ _ n, 
     (@aff_vec_zero_tuple K _ _ n) +ᵥ x = x := sorry
 
+lemma aff_add_sadd { n : nat } : 
+  ∀ x y : aff_vec_coord_tuple K n, 
+  ∀ a : aff_pt_coord_tuple K n, x +ᵥ (y +ᵥ a) = x + y +ᵥ a :=
+
 -- still need aff_zero_sadd, aff_add_sadd, aff_vsub_vadd, aff_vadd_vsub
 
 instance aff_torsor (n : nat): 
   add_torsor 
-    (@aff_vec_coord_tuple K _ _ n) 
-    (@aff_pt_coord_tuple K _ _ n) := 
+    (aff_vec_coord_tuple K n) 
+    (aff_pt_coord_tuple K n) := 
 ⟨
   aff_group_action K, 
-  aff_zero_sadd K n,
-  aff_add_sadd K n,
+  aff_zero_sadd K,
+  aff_add_sadd K,
   aff_group_sub K,
-  aff_vsub_vadd K n, 
-  aff_vadd_vsub K n
+  aff_vsub_vadd K, 
+  aff_vadd_vsub K
 ⟩
 
 
