@@ -139,10 +139,10 @@ instance aff_torsor (n : nat):
     (@aff_vec_coord_tuple K _ _ n) 
     (@aff_pt_coord_tuple K _ _ n) := 
 ⟨
-  aff_group_action, 
+  aff_group_action K, 
   aff_zero_sadd K n,
   aff_add_sadd K n,
-  aff_group_sub,
+  aff_group_sub K,
   aff_vsub_vadd K n, 
   aff_vadd_vsub K n
 ⟩
