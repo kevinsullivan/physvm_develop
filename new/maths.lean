@@ -61,6 +61,9 @@ def tuple_scalar_mul : Π {n : nat}, K → tuple K n → tuple K n
 | 0 _ _ := uunit.star
 | (n' + 1) k (h,t) := (h*k, tuple_scalar_mul k t)
 
+def tuple_negate : Π {n : nat}, tuple K n → tuple K n
+| _ t := tuple_scalar_mul K (-1:K) t
+
 def tuple_zero : Π (n : nat), @tuple K _ _ n
 | 0 := uunit.star
 | (n' + 1) := (0, tuple_zero n')
@@ -203,7 +206,10 @@ def aff_group_sub :
   aff_pt_coord_tuple K n → 
   aff_pt_coord_tuple K n → 
   aff_vec_coord_tuple K n :=
-sorry
+λ pt2 pt1, 
+  aff_vec_coord_tuple.mk 
+    (tuple_add K pt2.tup (tuple_negate K pt1.tup))
+    sorry
 --    λ x y, ⟨ladd x.1 (vecl_neg y.1), sub_len_fixed K n x y, sub_fst_fixed K n x y⟩
 
 /-
