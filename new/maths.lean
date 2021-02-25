@@ -214,13 +214,13 @@ instance :
   has_vadd 
     (aff_vec_coord_tuple K n) 
     (aff_pt_coord_tuple K n) :=
-⟨aff_group_action K⟩ 
+⟨aff_group_action K n⟩ 
 
 instance : 
   has_vsub 
     (aff_vec_coord_tuple K n) 
     (aff_pt_coord_tuple K n) := 
-⟨aff_group_sub K⟩
+⟨aff_group_sub K n⟩
 
 lemma aff_zero_sadd : 
   ∀ x : aff_pt_coord_tuple K n, 
