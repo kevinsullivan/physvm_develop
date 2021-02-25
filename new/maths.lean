@@ -95,7 +95,7 @@ structure aff_pt_coord_tuple :=
 
 def vec_scalar_mul : K → aff_vec_coord_tuple K n → aff_vec_coord_tuple K n
   | k t := aff_vec_coord_tuple.mk (tuple_scalar_mul K k t.tup) sorry 
-instance (n : nat): has_scalar K (aff_vec_coord_tuple K n) := ⟨vec_scalar_mul K n⟩
+instance : has_scalar K (aff_vec_coord_tuple K n) := ⟨vec_scalar_mul K n⟩
 
 
 /-! ### abelian group operations -/
@@ -108,46 +108,46 @@ def vec_add :
   (aff_vec_coord_tuple.mk t2 _) := 
     aff_vec_coord_tuple.mk (tuple_add K t1 t2) sorry
 
-def aff_vec_tuple_zero (n : nat) : aff_vec_coord_tuple K n :=
+def aff_vec_tuple_zero : aff_vec_coord_tuple K n :=
 ⟨ tuple_zero K (n+1), sorry⟩ 
-def vec_zero (n : nat): aff_vec_coord_tuple K n := aff_vec_tuple_zero K n
+def vec_zero : aff_vec_coord_tuple K n := aff_vec_tuple_zero K n
 
 
-def vec_neg (n : nat) (v : aff_vec_coord_tuple K n) : aff_vec_coord_tuple K n :=
+def vec_neg (v : aff_vec_coord_tuple K n) : aff_vec_coord_tuple K n :=
 vec_scalar_mul K n (-1:K) v
 -- used to be ...
 -- | ⟨l, len, fst⟩ := ⟨vecl_neg l, vec_len_neg K n ⟨l, len, fst⟩, head_neg_0 K n ⟨l, len, fst⟩⟩
 
 /-! ### type class instances for the abelian group operations -/
-instance (n : nat) : has_add (aff_vec_coord_tuple K n) := ⟨vec_add K n⟩
-instance (n : nat) : has_zero (aff_vec_coord_tuple K n) := ⟨vec_zero K n⟩
-instance (n : nat) : has_neg (aff_vec_coord_tuple K n) := ⟨vec_neg K n⟩
+instance : has_add (aff_vec_coord_tuple K n) := ⟨vec_add K n⟩
+instance : has_zero (aff_vec_coord_tuple K n) := ⟨vec_zero K n⟩
+instance : has_neg (aff_vec_coord_tuple K n) := ⟨vec_neg K n⟩
 
 /- More Stuff -/
 
-lemma vec_add_assoc (n : nat) : 
+lemma vec_add_assoc : 
 ∀ (x y z : aff_vec_coord_tuple K n), 
   x + y + z = x + (y + z) := sorry
 
-lemma vec_zero_add (n : nat) : 
+lemma vec_zero_add : 
 ∀ (x : aff_vec_coord_tuple K n), 
   0 + x = x := sorry
 
-lemma vec_add_zero (n : nat) : 
+lemma vec_add_zero : 
 ∀ (x : aff_vec_coord_tuple K n), 
   x + 0 = x := sorry
 
-lemma vec_add_left_neg (n : nat) : 
+lemma vec_add_left_neg : 
 ∀ (x : aff_vec_coord_tuple K n), 
   -x + x = 0 := sorry
 
-lemma vec_add_comm (n : nat) : 
+lemma vec_add_comm : 
 ∀ (x y : aff_vec_coord_tuple K n), 
   x + y = y + x := sorry
 
 
 /-! ### Type class instance for abelian group -/
-instance aff_comm_group (n : nat) : 
+instance aff_comm_group : 
   add_comm_group (aff_vec_coord_tuple K n) :=
 begin
 split,
@@ -190,7 +190,7 @@ NEXT
 /-
 Vectors add on points by displacing them.
 -/
-def aff_group_action { n : nat } : 
+def aff_group_action : 
   aff_vec_coord_tuple K n → 
   aff_pt_coord_tuple K n → 
   aff_pt_coord_tuple K n :=
@@ -199,7 +199,7 @@ def aff_group_action { n : nat } :
     (tuple_add K vec.tup pt.tup)
     sorry
 
-def aff_group_sub { n : nat } : 
+def aff_group_sub : 
   aff_pt_coord_tuple K n → 
   aff_pt_coord_tuple K n → 
   aff_vec_coord_tuple K n :=
@@ -210,23 +210,23 @@ sorry
 instance : has_vadd (aff_vec_coord_tuple K n) (aff_pt_coord_tuple K n) := ⟨aff_group_action K n⟩
 instance : has_vsub (aff_vec_coord_tuple K n) (aff_pt_coord_tuple K n) := ⟨aff_group_sub K n⟩
 -/
-instance (n : nat) : 
+instance : 
   has_vadd 
     (aff_vec_coord_tuple K n) 
     (aff_pt_coord_tuple K n) :=
 ⟨aff_group_action K⟩ 
 
-instance (n : nat) : 
+instance : 
   has_vsub 
     (aff_vec_coord_tuple K n) 
     (aff_pt_coord_tuple K n) := 
 ⟨aff_group_sub K⟩
 
-lemma aff_zero_sadd { n : nat } : 
+lemma aff_zero_sadd : 
   ∀ x : aff_pt_coord_tuple K n, 
     (aff_vec_tuple_zero K n) +ᵥ x = x := sorry
 
-lemma aff_add_sadd { n : nat } : 
+lemma aff_add_sadd : 
   ∀ x y : aff_vec_coord_tuple K n, 
   ∀ a : aff_pt_coord_tuple K n, 
     x +ᵥ (y +ᵥ a) = x + y +ᵥ a := sorry
@@ -245,7 +245,7 @@ lemma aff_vadd_vsub :
   ∀ (x : aff_vec_coord_tuple K n) (a : aff_pt_coord_tuple K n), 
     x +ᵥ a -ᵥ a = x := sorry
 
-lemma aff_vsub_vadd ( n : nat ) : 
+lemma aff_vsub_vadd : 
   ∀ (a b : aff_pt_coord_tuple K n), 
     (a -ᵥ b) +ᵥ b = a := sorry
 
@@ -255,14 +255,14 @@ lemma aff_vsub_vadd ( n : nat ) :
 NON-EMPTY
 -/
 
-def aff_pt_tuple_zero (n : nat) : aff_pt_coord_tuple K n:=
+def aff_pt_tuple_zero : aff_pt_coord_tuple K n:=
 ⟨ (1, tuple_zero K n), sorry ⟩ 
 
 instance : nonempty (aff_pt_coord_tuple K n) := ⟨aff_pt_tuple_zero K n⟩
 
 -- still need aff_zero_sadd, aff_add_sadd, aff_vsub_vadd, aff_vadd_vsub
 
-instance aff_torsor (n : nat): 
+instance aff_torsor : 
   add_torsor 
     (aff_vec_coord_tuple K n) 
     (aff_pt_coord_tuple K n) := 
@@ -276,7 +276,7 @@ instance aff_torsor (n : nat):
 ⟩
 
 
-instance aff_coord_is (n : nat) : 
+instance aff_coord_is : 
       affine_space 
           (aff_vec_coord_tuple K n) 
           (aff_pt_coord_tuple K n) := 
