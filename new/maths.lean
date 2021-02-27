@@ -76,6 +76,31 @@ def tuple_tail : Π {n : nat}, (n > 0) → tuple K n → tuple K (n-1)
 | 0 _ _ := uunit.star  -- can't happen
 | (n' + 1) _ (h,t) := t
 
+lemma tuple_heads_add_to_head : ∀ (h k : K) (n : nat) (t1 t2 : tuple K n) (gtz : n > 0),
+  tuple_head K gtz t1 = h → 
+  tuple_head K gtz t2 = k → 
+  tuple_head K gtz (tuple_add K t1 t2) = (h + k) :=
+begin
+  intros h k n t1 t2 gtz t1h t2k,
+  cases n,
+  cases gtz,
+  cases t1 with t1h t1t,
+  cases t2 with t2h t2t,
+  simp [tuple_head] at t1h,
+  simp [tuple_head] at t2k,
+  rw t1h,
+  rw t2k,
+  simp [tuple_add],
+  simp [tuple_head],
+end
+
+lemma tuple_zero_heads_add_to_zero_head : ∀ (n : nat) (t1 t2 : tuple K n) (gtz : n > 0),
+  tuple_head K gtz t1 = 0 → 
+  tuple_head K gtz t2 = 0 → 
+  tuple_head K gtz (tuple_add K t1 t2) = 0 + 0 :=
+begin
+apply tuple_heads_add_to_head K 0 0,
+end
 
 /-
     AFFINE COORDINATE TUPLE MODULE
@@ -86,12 +111,12 @@ variable (n : nat)
 @[ext]
 structure aff_vec_coord_tuple :=
   (tup : tuple K (n+1))
-  (inv : tuple_head K (by sorry) tup = 0)
+  (inv : tuple_head K (by simp) tup = 0)
 
 @[ext]
 structure aff_pt_coord_tuple :=
   (tup : tuple K (n+1))
-  (inv : tuple_head K (by sorry) tup = 1)
+  (inv : tuple_head K (by simp) tup = 1)
 
 
 /-! ### scalar action -/
@@ -107,12 +132,24 @@ def vec_add :
   aff_vec_coord_tuple K n → 
   aff_vec_coord_tuple K n → 
   aff_vec_coord_tuple K n
-| (aff_vec_coord_tuple.mk t1 _)
-  (aff_vec_coord_tuple.mk t2 _) := 
-    aff_vec_coord_tuple.mk (tuple_add K t1 t2) sorry
+| (aff_vec_coord_tuple.mk t1 fstz1)
+  (aff_vec_coord_tuple.mk t2 fstz2) := 
+    aff_vec_coord_tuple.mk 
+      (tuple_add K t1 t2)
+      begin
+        cases t1,
+        cases t2,
+        simp [tuple_head] at fstz1,
+        simp [tuple_head] at fstz2,
+        simp [tuple_add],
+        rw fstz1,
+        rw fstz2,
+        simp [tuple_head],
+      end
+      
 
 def aff_vec_tuple_zero : aff_vec_coord_tuple K n :=
-⟨ tuple_zero K (n+1), sorry⟩ 
+⟨ tuple_zero K (n+1), rfl ⟩ 
 def vec_zero : aff_vec_coord_tuple K n := aff_vec_tuple_zero K n
 
 
