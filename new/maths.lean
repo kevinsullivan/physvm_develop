@@ -129,22 +129,15 @@ instance : has_scalar K (aff_vec_coord_tuple K n) := ⟨vec_scalar_mul K n⟩
 /-! ### abelian group operations -/
 
 def vec_add : 
-  aff_vec_coord_tuple K n → 
-  aff_vec_coord_tuple K n → 
-  aff_vec_coord_tuple K n
-| (aff_vec_coord_tuple.mk t1 fstz1)
-  (aff_vec_coord_tuple.mk t2 fstz2) := 
+  aff_vec_coord_tuple K n → aff_vec_coord_tuple K n → aff_vec_coord_tuple K n
+| (aff_vec_coord_tuple.mk t1 fstz1) (aff_vec_coord_tuple.mk t2 fstz2) := 
     aff_vec_coord_tuple.mk 
       (tuple_add K t1 t2)
       begin
-        cases t1,
-        cases t2,
-        simp [tuple_head] at fstz1,
-        simp [tuple_head] at fstz2,
-        simp [tuple_add],
-        rw fstz1,
-        rw fstz2,
-        simp [tuple_head],
+        cases t1, cases t2,
+        simp [tuple_head] at fstz1; rw fstz1,
+        simp [tuple_head] at fstz2; rw fstz2,
+        simp [tuple_add, tuple_head]
       end
       
 
