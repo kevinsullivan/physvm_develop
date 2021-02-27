@@ -10,7 +10,6 @@ A version of the unit type that can
 live in any type universe. Adds type
 universe parameter to usual unit type.
 -/
-
 inductive uunit : Type u
 | star
 
@@ -28,29 +27,29 @@ structure affine_space_type
 variables 
 (K : Type) [ring K] [inhabited K] 
 {α : Type v} [has_add α]
--- (n : ℕ) -- no longer assume fix n in this file
--- (a b : α) (al bl : list α)
--- (x y : K) (xl yl : list K)
+
 
 
 /- 
-      TUPLE MODULE
+      N-DIMENSIONAL K-TUPLES
 -/
 
+-- DATA TYPE
 
 def tuple : nat → Type u
 | 0 := uunit
 | (n' + 1) := K × (tuple n')
 
 /-
-Note: The tuple type builder takes the following
-arguments
+Note: tuple takes the following arguments:
 K             -- explicit
 [ring K]      -- implicit
 [inhabited K] -- implicit
 n             -- explicit
 -/
 #check @tuple
+
+-- OPERATIONS
 
 def tuple_add : 
   Π {n : nat}, tuple K n → tuple K n → tuple K n
@@ -75,6 +74,9 @@ def tuple_head : Π {n : nat}, (n > 0) → tuple K n → K
 def tuple_tail : Π {n : nat}, (n > 0) → tuple K n → tuple K (n-1)
 | 0 _ _ := uunit.star  -- can't happen
 | (n' + 1) _ (h,t) := t
+
+
+-- PROPERTIES
 
 lemma tuple_heads_add_to_head : ∀ (h k : K) (n : nat) (t1 t2 : tuple K n) (gtz : n > 0),
   tuple_head K gtz t1 = h → 
@@ -102,9 +104,15 @@ begin
 apply tuple_heads_add_to_head K 0 0,
 end
 
+
+
 /-
-    AFFINE COORDINATE TUPLE MODULE
+    n-DIMENSIONAL AFFINE K-COORDINATE TUPLE
+    represented as (n+1)-dimensional tuple
 -/
+
+
+-- TYPES
 
 variable (n : nat)
 
@@ -119,15 +127,21 @@ structure aff_pt_coord_tuple :=
   (inv : tuple_head K (by simp) tup = 1)
 
 
-/-! ### scalar action -/
+-- CONSTANTS
 
+def aff_vec_tuple_zero : aff_vec_coord_tuple K n :=
+⟨ tuple_zero K (n+1), rfl ⟩ 
+def vec_zero : aff_vec_coord_tuple K n := aff_vec_tuple_zero K n
+
+-- OPERATIONS
+
+/-! ### scalar action -/
 def vec_scalar_mul : K → aff_vec_coord_tuple K n → aff_vec_coord_tuple K n
   | k t := aff_vec_coord_tuple.mk (tuple_scalar_mul K k t.tup) sorry 
 instance : has_scalar K (aff_vec_coord_tuple K n) := ⟨vec_scalar_mul K n⟩
 
 
 /-! ### abelian group operations -/
-
 def vec_add : 
   aff_vec_coord_tuple K n → aff_vec_coord_tuple K n → aff_vec_coord_tuple K n
 | (aff_vec_coord_tuple.mk t1 fstz1) (aff_vec_coord_tuple.mk t2 fstz2) := 
@@ -141,22 +155,23 @@ def vec_add :
       end
       
 
-def aff_vec_tuple_zero : aff_vec_coord_tuple K n :=
-⟨ tuple_zero K (n+1), rfl ⟩ 
-def vec_zero : aff_vec_coord_tuple K n := aff_vec_tuple_zero K n
-
-
 def vec_neg (v : aff_vec_coord_tuple K n) : aff_vec_coord_tuple K n :=
 vec_scalar_mul K n (-1:K) v
--- used to be ...
--- | ⟨l, len, fst⟩ := ⟨vecl_neg l, vec_len_neg K n ⟨l, len, fst⟩, head_neg_0 K n ⟨l, len, fst⟩⟩
+/-
+used to be ...
+| ⟨l, len, fst⟩ := ⟨vecl_neg l, vec_len_neg K n ⟨l, len, fst⟩, head_neg_0 K n ⟨l, len, fst⟩⟩
+-/
+
+
+-- OVERLOADED OPERATORS
 
 /-! ### type class instances for the abelian group operations -/
 instance : has_add (aff_vec_coord_tuple K n) := ⟨vec_add K n⟩
 instance : has_zero (aff_vec_coord_tuple K n) := ⟨vec_zero K n⟩
 instance : has_neg (aff_vec_coord_tuple K n) := ⟨vec_neg K n⟩
 
-/- More Stuff -/
+
+-- PROPERTIES
 
 lemma vec_add_assoc : 
 ∀ (x y z : aff_vec_coord_tuple K n), 
@@ -178,7 +193,6 @@ lemma vec_add_comm :
 ∀ (x y : aff_vec_coord_tuple K n), 
   x + y = y + x := sorry
 
-
 /-! ### Type class instance for abelian group -/
 instance aff_comm_group : 
   add_comm_group (aff_vec_coord_tuple K n) :=
@@ -191,7 +205,6 @@ exact vec_zero_add K n,
 exact vec_add_zero K n,
 end
 
-/- Stuff -/
 
 variable (x : aff_vec_coord_tuple K n)
 lemma vec_one_smul : (1 : K) • x = x := sorry
@@ -214,7 +227,6 @@ instance aff_semimod : semimodule K (aff_vec_coord_tuple K n) :=
   ⟨vec_add_smul K n, vec_zero_smul K n⟩
 instance aff_module : module K (aff_vec_coord_tuple K n) := 
   aff_semimod K n
-
 
 /-
 NEXT
@@ -268,23 +280,26 @@ lemma aff_add_sadd :
     x +ᵥ (y +ᵥ a) = x + y +ᵥ a := sorry
 
 instance : add_action (aff_vec_coord_tuple K n) (aff_pt_coord_tuple K n) :=
-   ⟨aff_group_action K, aff_zero_sadd K, aff_add_sadd K⟩
+   ⟨aff_group_action K n, aff_zero_sadd K n, aff_add_sadd K n⟩
 
-lemma aff_add_trans : ∀ (a b : aff_pt_coord_tuple K n), 
+lemma aff_add_trans : 
+∀ (a b : aff_pt_coord_tuple K n), 
   ∃ x : aff_vec_coord_tuple K n, x +ᵥ a = b := sorry
 
 lemma aff_add_free : 
-  ∀ (a : aff_pt_coord_tuple K n) (g h : aff_vec_coord_tuple K n), 
-    g +ᵥ a = h +ᵥ a → g = h := sorry
+∀ (a : aff_pt_coord_tuple K n) (g h : aff_vec_coord_tuple K n), 
+  g +ᵥ a = h +ᵥ a → g = h := sorry
 
+-- TODO: Fix problem with -ᵥ notation
 lemma aff_vadd_vsub : 
-  ∀ (x : aff_vec_coord_tuple K n) (a : aff_pt_coord_tuple K n), 
-    x +ᵥ a -ᵥ a = x := sorry
+∀ (a b : aff_pt_coord_tuple K n), 
+  aff_group_action K n (aff_group_sub K n b a) b = a := sorry
+  --a -ᵥ b +ᵥ b = a := sorry
 
-lemma aff_vsub_vadd : 
-  ∀ (a b : aff_pt_coord_tuple K n), 
-    (a -ᵥ b) +ᵥ b = a := sorry
-
+/-
+lemma aff_vadd_vsub : 
+  ∀ (a b : aff_pt_coord_tuple K n), (a -ᵥ b) +ᵥ b = a  := sorry
+-/
 
 
 /-
