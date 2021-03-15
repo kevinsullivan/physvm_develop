@@ -16,7 +16,7 @@
 #include "AST.h"
 #include "Coords.h"
 
-//#include <g3log/g3log.hpp>
+#include <g3log/g3log.hpp>
 
 
 using namespace std;
@@ -61,14 +61,6 @@ class SIMeasurementSystem;
 
 class ImperialMeasurementSystem;
 
-class AxisOrientation;
-
-class NWUOrientation;
-
-class NEDOrientation;
-
-class ENUOrientation;
-
 template<typename ValueType,int ValueCount>
 class EuclideanGeometryRotation;
 
@@ -87,9 +79,6 @@ class EuclideanGeometryCoordinateVector;
 template<typename ValueType,int ValueCount>
 class EuclideanGeometryScalar;
 
-template<typename ValueType,int ValueCount>
-class EuclideanGeometryQuantity;
-
 class ClassicalTime;
 
 class ClassicalTimeFrame;
@@ -106,14 +95,6 @@ class SIMeasurementSystem;
 
 class ImperialMeasurementSystem;
 
-class AxisOrientation;
-
-class NWUOrientation;
-
-class NEDOrientation;
-
-class ENUOrientation;
-
 template<typename ValueType,int ValueCount>
 class ClassicalTimeTransform;
 
@@ -125,9 +106,6 @@ class ClassicalTimeCoordinateVector;
 
 template<typename ValueType,int ValueCount>
 class ClassicalTimeScalar;
-
-template<typename ValueType,int ValueCount>
-class ClassicalTimeQuantity;
 
 class EuclideanGeometry3;
 
@@ -144,14 +122,6 @@ class MeasurementSystem;
 class SIMeasurementSystem;
 
 class ImperialMeasurementSystem;
-
-class AxisOrientation;
-
-class NWUOrientation;
-
-class NEDOrientation;
-
-class ENUOrientation;
 
 template<typename ValueType,int ValueCount>
 class EuclideanGeometry3Rotation;
@@ -171,9 +141,6 @@ class EuclideanGeometry3CoordinateVector;
 template<typename ValueType,int ValueCount>
 class EuclideanGeometry3Scalar;
 
-template<typename ValueType,int ValueCount>
-class EuclideanGeometry3Quantity;
-
 class ClassicalVelocity;
 
 class ClassicalVelocityFrame;
@@ -190,88 +157,11 @@ class SIMeasurementSystem;
 
 class ImperialMeasurementSystem;
 
-class AxisOrientation;
-
-class NWUOrientation;
-
-class NEDOrientation;
-
-class ENUOrientation;
-
 template<typename ValueType,int ValueCount>
 class ClassicalVelocityCoordinateVector;
 
 template<typename ValueType,int ValueCount>
 class ClassicalVelocityScalar;
-
-template<typename ValueType,int ValueCount>
-class ClassicalVelocityQuantity;
-
-class ClassicalHertz;
-
-class ClassicalHertzFrame;
-
-class ClassicalHertzStandardFrame;
-
-class ClassicalHertzAliasedFrame;
-
-class ClassicalHertzDerivedFrame;
-
-class MeasurementSystem;
-
-class SIMeasurementSystem;
-
-class ImperialMeasurementSystem;
-
-class AxisOrientation;
-
-class NWUOrientation;
-
-class NEDOrientation;
-
-class ENUOrientation;
-
-template<typename ValueType,int ValueCount>
-class ClassicalHertzCoordinateVector;
-
-template<typename ValueType,int ValueCount>
-class ClassicalHertzScalar;
-
-template<typename ValueType,int ValueCount>
-class ClassicalHertzQuantity;
-
-class ClassicalLuminousIntensity;
-
-class ClassicalLuminousIntensityFrame;
-
-class ClassicalLuminousIntensityStandardFrame;
-
-class ClassicalLuminousIntensityAliasedFrame;
-
-class ClassicalLuminousIntensityDerivedFrame;
-
-class MeasurementSystem;
-
-class SIMeasurementSystem;
-
-class ImperialMeasurementSystem;
-
-class AxisOrientation;
-
-class NWUOrientation;
-
-class NEDOrientation;
-
-class ENUOrientation;
-
-template<typename ValueType,int ValueCount>
-class ClassicalLuminousIntensityCoordinateVector;
-
-template<typename ValueType,int ValueCount>
-class ClassicalLuminousIntensityScalar;
-
-template<typename ValueType,int ValueCount>
-class ClassicalLuminousIntensityQuantity;
 
             
 // Definition for Domain class 
@@ -305,27 +195,11 @@ public:
     std::vector<MeasurementSystem*> getMeasurementSystems() const{return measurementSystems;};
 
 
-
-
-    NWUOrientation* mkNWUOrientation(string name);
-
-
-    ENUOrientation* mkENUOrientation(string name);
-
-
-    NEDOrientation* mkNEDOrientation(string name);
-
-
-
-    std::vector<AxisOrientation*> axisOrientations;
-    std::vector<AxisOrientation*> getAxisOrientations() const {return axisOrientations;};
-
-
 	EuclideanGeometry* mkEuclideanGeometry(std::string key ,std::string name_, int dimension_);
 	std::vector<EuclideanGeometry*> &getEuclideanGeometrySpaces() { return EuclideanGeometry_vec; }
 
-	EuclideanGeometryAliasedFrame* mkEuclideanGeometryAliasedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* aliased, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
-	EuclideanGeometryDerivedFrame* mkEuclideanGeometryDerivedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
+	EuclideanGeometryAliasedFrame* mkEuclideanGeometryAliasedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* aliased, domain::MeasurementSystem* ms);
+	EuclideanGeometryDerivedFrame* mkEuclideanGeometryDerivedFrame(std::string name, domain::EuclideanGeometry* space, domain::EuclideanGeometryFrame* parent);
 
 template <class ValueType, int ValueCount>
 EuclideanGeometryRotation<ValueType,ValueCount>* mkEuclideanGeometryRotation(EuclideanGeometry* sp, std::shared_ptr<ValueType> values[ValueCount]){
@@ -475,36 +349,11 @@ EuclideanGeometryScalar<ValueType,ValueCount>* mkEuclideanGeometryScalar(){
     return dom_;
 }
 
-
-template <class ValueType, int ValueCount>
-EuclideanGeometryQuantity<ValueType,ValueCount>* mkEuclideanGeometryQuantity(EuclideanGeometry* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    EuclideanGeometryQuantity<ValueType,ValueCount>* dom_ = new EuclideanGeometryQuantity<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->EuclideanGeometryQuantity_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-EuclideanGeometryQuantity<ValueType,ValueCount>* mkEuclideanGeometryQuantity(){
-    EuclideanGeometryQuantity<ValueType,ValueCount>* dom_ = new EuclideanGeometryQuantity<ValueType,ValueCount>({});
-    //this->EuclideanGeometryQuantity_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
 	ClassicalTime* mkClassicalTime(std::string key ,std::string name_);
 	std::vector<ClassicalTime*> &getClassicalTimeSpaces() { return ClassicalTime_vec; }
 
-	ClassicalTimeAliasedFrame* mkClassicalTimeAliasedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* aliased, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
-	ClassicalTimeDerivedFrame* mkClassicalTimeDerivedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
+	ClassicalTimeAliasedFrame* mkClassicalTimeAliasedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* aliased, domain::MeasurementSystem* ms);
+	ClassicalTimeDerivedFrame* mkClassicalTimeDerivedFrame(std::string name, domain::ClassicalTime* space, domain::ClassicalTimeFrame* parent);
 
 template <class ValueType, int ValueCount>
                         ClassicalTimeTransform<ValueType,ValueCount>* mkClassicalTimeTransform(ClassicalTime* sp,ClassicalTimeFrame* from,ClassicalTimeFrame* to/*,   std::shared_ptr<ValueType> values[ValueCount]*/){
@@ -604,36 +453,11 @@ ClassicalTimeScalar<ValueType,ValueCount>* mkClassicalTimeScalar(){
     return dom_;
 }
 
-
-template <class ValueType, int ValueCount>
-ClassicalTimeQuantity<ValueType,ValueCount>* mkClassicalTimeQuantity(ClassicalTime* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    ClassicalTimeQuantity<ValueType,ValueCount>* dom_ = new ClassicalTimeQuantity<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->ClassicalTimeQuantity_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-ClassicalTimeQuantity<ValueType,ValueCount>* mkClassicalTimeQuantity(){
-    ClassicalTimeQuantity<ValueType,ValueCount>* dom_ = new ClassicalTimeQuantity<ValueType,ValueCount>({});
-    //this->ClassicalTimeQuantity_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
 	EuclideanGeometry3* mkEuclideanGeometry3(std::string key ,std::string name_);
 	std::vector<EuclideanGeometry3*> &getEuclideanGeometry3Spaces() { return EuclideanGeometry3_vec; }
 
-	EuclideanGeometry3AliasedFrame* mkEuclideanGeometry3AliasedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* aliased, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
-	EuclideanGeometry3DerivedFrame* mkEuclideanGeometry3DerivedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
+	EuclideanGeometry3AliasedFrame* mkEuclideanGeometry3AliasedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* aliased, domain::MeasurementSystem* ms);
+	EuclideanGeometry3DerivedFrame* mkEuclideanGeometry3DerivedFrame(std::string name, domain::EuclideanGeometry3* space, domain::EuclideanGeometry3Frame* parent);
 
 template <class ValueType, int ValueCount>
 EuclideanGeometry3Rotation<ValueType,ValueCount>* mkEuclideanGeometry3Rotation(EuclideanGeometry3* sp, std::shared_ptr<ValueType> values[ValueCount]){
@@ -783,36 +607,11 @@ EuclideanGeometry3Scalar<ValueType,ValueCount>* mkEuclideanGeometry3Scalar(){
     return dom_;
 }
 
-
-template <class ValueType, int ValueCount>
-EuclideanGeometry3Quantity<ValueType,ValueCount>* mkEuclideanGeometry3Quantity(EuclideanGeometry3* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    EuclideanGeometry3Quantity<ValueType,ValueCount>* dom_ = new EuclideanGeometry3Quantity<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->EuclideanGeometry3Quantity_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-EuclideanGeometry3Quantity<ValueType,ValueCount>* mkEuclideanGeometry3Quantity(){
-    EuclideanGeometry3Quantity<ValueType,ValueCount>* dom_ = new EuclideanGeometry3Quantity<ValueType,ValueCount>({});
-    //this->EuclideanGeometry3Quantity_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
 	ClassicalVelocity* mkClassicalVelocity(std::string key, std::string name_,Space* base1, Space* base2);
 	std::vector<ClassicalVelocity*> &getClassicalVelocitySpaces() { return ClassicalVelocity_vec; }
 
-	ClassicalVelocityAliasedFrame* mkClassicalVelocityAliasedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* aliased, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
-	ClassicalVelocityDerivedFrame* mkClassicalVelocityDerivedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
+	ClassicalVelocityAliasedFrame* mkClassicalVelocityAliasedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* aliased, domain::MeasurementSystem* ms);
+	ClassicalVelocityDerivedFrame* mkClassicalVelocityDerivedFrame(std::string name, domain::ClassicalVelocity* space, domain::ClassicalVelocityFrame* parent);
 
 template <class ValueType, int ValueCount>
 ClassicalVelocityCoordinateVector<ValueType,ValueCount>* mkClassicalVelocityCoordinateVector(ClassicalVelocity* sp, std::shared_ptr<ValueType> values[ValueCount]){
@@ -863,191 +662,6 @@ ClassicalVelocityScalar<ValueType,ValueCount>* mkClassicalVelocityScalar(){
     return dom_;
 }
 
-
-template <class ValueType, int ValueCount>
-ClassicalVelocityQuantity<ValueType,ValueCount>* mkClassicalVelocityQuantity(ClassicalVelocity* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    ClassicalVelocityQuantity<ValueType,ValueCount>* dom_ = new ClassicalVelocityQuantity<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->ClassicalVelocityQuantity_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-ClassicalVelocityQuantity<ValueType,ValueCount>* mkClassicalVelocityQuantity(){
-    ClassicalVelocityQuantity<ValueType,ValueCount>* dom_ = new ClassicalVelocityQuantity<ValueType,ValueCount>({});
-    //this->ClassicalVelocityQuantity_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
-	ClassicalHertz* mkClassicalHertz(std::string key ,std::string name_);
-	std::vector<ClassicalHertz*> &getClassicalHertzSpaces() { return ClassicalHertz_vec; }
-
-	ClassicalHertzAliasedFrame* mkClassicalHertzAliasedFrame(std::string name, domain::ClassicalHertz* space, domain::ClassicalHertzFrame* aliased, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
-	ClassicalHertzDerivedFrame* mkClassicalHertzDerivedFrame(std::string name, domain::ClassicalHertz* space, domain::ClassicalHertzFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
-
-template <class ValueType, int ValueCount>
-ClassicalHertzCoordinateVector<ValueType,ValueCount>* mkClassicalHertzCoordinateVector(ClassicalHertz* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    ClassicalHertzCoordinateVector<ValueType,ValueCount>* dom_ = new ClassicalHertzCoordinateVector<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->ClassicalHertzCoordinateVector_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-ClassicalHertzCoordinateVector<ValueType,ValueCount>* mkClassicalHertzCoordinateVector(){
-    ClassicalHertzCoordinateVector<ValueType,ValueCount>* dom_ = new ClassicalHertzCoordinateVector<ValueType,ValueCount>({});
-    //this->ClassicalHertzCoordinateVector_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
-
-template <class ValueType, int ValueCount>
-ClassicalHertzScalar<ValueType,ValueCount>* mkClassicalHertzScalar(ClassicalHertz* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    ClassicalHertzScalar<ValueType,ValueCount>* dom_ = new ClassicalHertzScalar<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->ClassicalHertzScalar_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-ClassicalHertzScalar<ValueType,ValueCount>* mkClassicalHertzScalar(){
-    ClassicalHertzScalar<ValueType,ValueCount>* dom_ = new ClassicalHertzScalar<ValueType,ValueCount>({});
-    //this->ClassicalHertzScalar_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
-
-template <class ValueType, int ValueCount>
-ClassicalHertzQuantity<ValueType,ValueCount>* mkClassicalHertzQuantity(ClassicalHertz* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    ClassicalHertzQuantity<ValueType,ValueCount>* dom_ = new ClassicalHertzQuantity<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->ClassicalHertzQuantity_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-ClassicalHertzQuantity<ValueType,ValueCount>* mkClassicalHertzQuantity(){
-    ClassicalHertzQuantity<ValueType,ValueCount>* dom_ = new ClassicalHertzQuantity<ValueType,ValueCount>({});
-    //this->ClassicalHertzQuantity_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
-	ClassicalLuminousIntensity* mkClassicalLuminousIntensity(std::string key ,std::string name_);
-	std::vector<ClassicalLuminousIntensity*> &getClassicalLuminousIntensitySpaces() { return ClassicalLuminousIntensity_vec; }
-
-	ClassicalLuminousIntensityAliasedFrame* mkClassicalLuminousIntensityAliasedFrame(std::string name, domain::ClassicalLuminousIntensity* space, domain::ClassicalLuminousIntensityFrame* aliased, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
-	ClassicalLuminousIntensityDerivedFrame* mkClassicalLuminousIntensityDerivedFrame(std::string name, domain::ClassicalLuminousIntensity* space, domain::ClassicalLuminousIntensityFrame* parent, domain::MeasurementSystem* ms, domain::AxisOrientation* ax);
-
-template <class ValueType, int ValueCount>
-ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>* mkClassicalLuminousIntensityCoordinateVector(ClassicalLuminousIntensity* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->ClassicalLuminousIntensityCoordinateVector_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>* mkClassicalLuminousIntensityCoordinateVector(){
-    ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityCoordinateVector<ValueType,ValueCount>({});
-    //this->ClassicalLuminousIntensityCoordinateVector_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
-
-template <class ValueType, int ValueCount>
-ClassicalLuminousIntensityScalar<ValueType,ValueCount>* mkClassicalLuminousIntensityScalar(ClassicalLuminousIntensity* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    ClassicalLuminousIntensityScalar<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityScalar<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->ClassicalLuminousIntensityScalar_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-ClassicalLuminousIntensityScalar<ValueType,ValueCount>* mkClassicalLuminousIntensityScalar(){
-    ClassicalLuminousIntensityScalar<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityScalar<ValueType,ValueCount>({});
-    //this->ClassicalLuminousIntensityScalar_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
-
-template <class ValueType, int ValueCount>
-ClassicalLuminousIntensityQuantity<ValueType,ValueCount>* mkClassicalLuminousIntensityQuantity(ClassicalLuminousIntensity* sp, std::shared_ptr<ValueType> values[ValueCount]){
-    ClassicalLuminousIntensityQuantity<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityQuantity<ValueType,ValueCount>(sp, {});
-    //dom_->setValues(values);
-    //this->ClassicalLuminousIntensityQuantity_vec.push_back(dom_);
-    for(int i = 0; i < ValueCount;i++){
-        dom_->setValue(values[i],i);
-    }
-
-    return dom_;
-}
-                
-
-template <class ValueType, int ValueCount>
-ClassicalLuminousIntensityQuantity<ValueType,ValueCount>* mkClassicalLuminousIntensityQuantity(){
-    ClassicalLuminousIntensityQuantity<ValueType,ValueCount>* dom_ = new ClassicalLuminousIntensityQuantity<ValueType,ValueCount>({});
-    //this->ClassicalLuminousIntensityQuantity_vec.push_back(dom_);
-    /*int i = 0;
-    for(auto val : values){
-        dom_->setValue(values[i],i++);
-    } */  
-    return dom_;
-}
-
 private:
 
 	std::unordered_map<std::string, Space*> Space_map;
@@ -1056,8 +670,6 @@ private:
 	std::vector<ClassicalTime*> ClassicalTime_vec;
 	std::vector<EuclideanGeometry3*> EuclideanGeometry3_vec;
 	std::vector<ClassicalVelocity*> ClassicalVelocity_vec;
-	std::vector<ClassicalHertz*> ClassicalHertz_vec;
-	std::vector<ClassicalLuminousIntensity*> ClassicalLuminousIntensity_vec;
 };
 
 
@@ -1112,39 +724,6 @@ public:
     virtual std::string toString() override { return "@@Imperial " + this->name_; };
 };
 
-class AxisOrientation {
-public:
-    AxisOrientation(std::string name) : name_(name) {};
-    virtual ~AxisOrientation() {};
-    virtual std::string toString() = 0;
-
-    virtual std::string getName() const { return this->name_; };
-
-protected :
-    std::string name_;
-};
-
-class NWUOrientation : public AxisOrientation {
-public:
-    NWUOrientation(std::string name) : AxisOrientation(name) {};
-    //virtual ~NWUOrientation() {};
-    virtual std::string toString() override { return "@@NWU " + this->name_; };
-};
-
-class NEDOrientation : public AxisOrientation {
-public:
-    NEDOrientation(std::string name) : AxisOrientation(name) {};
-    //virtual ~NEDOrientation() {};
-    virtual std::string toString() override { return "@@NED " + this->name_; };
-};
-
-class ENUOrientation : public AxisOrientation {
-public:
-    ENUOrientation(std::string name) : AxisOrientation(name) {};
-    //virtual ~ENUOrientation() {};
-    virtual std::string toString() override { return "@@ENU " + this->name_; };
-};
-
 class Frame {
 public:
     Frame(std::string name, Space* sp) : name_(name), sp_(sp) {};
@@ -1184,7 +763,7 @@ protected:
 
 class AliasedFrame : public Frame {
 public:
-    AliasedFrame(std::string name, Space* sp, Frame* original, domain::MeasurementSystem* ms, AxisOrientation* ax) : Frame(name, sp), original_(original), units_(ms), orient_(ax) {};
+    AliasedFrame(std::string name, Space* sp, Frame* original, domain::MeasurementSystem* ms) : Frame(name, sp), original_(original), units_(ms) {};
     AliasedFrame() {};
     virtual ~AliasedFrame(){};
     virtual std::string toString() const {
@@ -1193,7 +772,6 @@ public:
 
     Frame* getAliased() const{ return original_; };
     MeasurementSystem* getUnits() const { return units_; };
-    AxisOrientation* getOrientation() const { return orient_; };
     void setAliased(Frame* original);
 
     std::string getName() const { return name_; };
@@ -1203,13 +781,12 @@ public:
 protected:
     Frame* original_;
     MeasurementSystem* units_;
-    AxisOrientation* orient_;
     //std::string name_;
 };
 
 class DerivedFrame : public Frame {
 public:
-    DerivedFrame(std::string name, domain::Space* sp, Frame* parent, MeasurementSystem* ms, AxisOrientation* ax) : Frame(name, sp), parent_(parent), units_(ms), orient_(ax) {};
+    DerivedFrame(std::string name, domain::Space* sp, Frame* parent) : Frame(name, sp), parent_(parent) {};
     DerivedFrame() {};
     virtual ~DerivedFrame(){};
     virtual std::string toString() const override {
@@ -1218,14 +795,12 @@ public:
 
     Frame* getParent() const{ return parent_; };
     MeasurementSystem* getUnits() const { return units_; };
-    AxisOrientation* getOrientation() const { return orient_; };
     void setParent(Frame* parent);
 
     //std::string getName() const { return name_; };
 protected:
     Frame* parent_;
     MeasurementSystem* units_;
-    AxisOrientation* orient_;
 };
 
 class DerivedSpace : public Space {
@@ -1485,16 +1060,13 @@ private:
 
 class EuclideanGeometryAliasedFrame : public AliasedFrame, public EuclideanGeometryFrame {
 public:
-	EuclideanGeometryAliasedFrame(std::string name,  EuclideanGeometry* space, EuclideanGeometryFrame* aliased, domain::MeasurementSystem* ms, AxisOrientation* ax) : AliasedFrame(name, space, aliased,  ms, ax) {};
+	EuclideanGeometryAliasedFrame(std::string name,  EuclideanGeometry* space, EuclideanGeometryFrame* aliased, domain::MeasurementSystem* ms) : AliasedFrame(name, space, aliased,  ms) {};
 	/*std::string toString() const override {
         std::string parentName = ((EuclideanGeometry*)this->space_)->getName();
 		return "@@EuclideanGeometryFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
 	}*/
     virtual std::string toString() const override {
         return std::string("EuclideanGeometryAliasedFrame ") + AliasedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return AliasedFrame::getName();
     };
 
 private:
@@ -1504,16 +1076,13 @@ private:
 
 class EuclideanGeometryDerivedFrame : public DerivedFrame, public EuclideanGeometryFrame {
 public:
-	EuclideanGeometryDerivedFrame(std::string name,  EuclideanGeometry* space, EuclideanGeometryFrame* parent, MeasurementSystem* ms, AxisOrientation* ax) : DerivedFrame(name, space, parent, ms, ax) {};
+	EuclideanGeometryDerivedFrame(std::string name,  EuclideanGeometry* space, EuclideanGeometryFrame* parent) : DerivedFrame(name, space, parent) {};
 	/*std::string toString() const override {
         std::string parentName = ((EuclideanGeometry*)this->space_)->getName();
 		return "@@EuclideanGeometryFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
 	}*/
     virtual std::string toString() const override {
         return std::string("EuclideanGeometryDerivedFrame ") + DerivedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return DerivedFrame::getName();
     };
 
 private:
@@ -1692,34 +1261,6 @@ private:
 };
 
 
-
-
-template <class ValueType, int ValueCount>
-class EuclideanGeometryQuantity : public ValueObject<ValueType,ValueCount> {
-public:
-    EuclideanGeometryQuantity(EuclideanGeometry* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    EuclideanGeometryQuantity(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~EuclideanGeometryQuantity(){}
-    std::string toString() override {
-        return "@@EuclideanGeometryQuantity(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
-    }
-
-    EuclideanGeometry* getSpace() const {return this->space_;};
-    
-    
-    
-    
-private:
-    EuclideanGeometry* space_; 
-    
-    
-    
-    
-};
-
-
 class ClassicalTime : public Space {
     public:
 	    ClassicalTime(std::string name) : Space(name, 1) {};
@@ -1771,16 +1312,13 @@ private:
 
 class ClassicalTimeAliasedFrame : public AliasedFrame, public ClassicalTimeFrame {
 public:
-	ClassicalTimeAliasedFrame(std::string name,  ClassicalTime* space, ClassicalTimeFrame* aliased, domain::MeasurementSystem* ms, AxisOrientation* ax) : AliasedFrame(name, space, aliased,  ms, ax) {};
+	ClassicalTimeAliasedFrame(std::string name,  ClassicalTime* space, ClassicalTimeFrame* aliased, domain::MeasurementSystem* ms) : AliasedFrame(name, space, aliased,  ms) {};
 	/*std::string toString() const override {
         std::string parentName = ((ClassicalTime*)this->space_)->getName();
 		return "@@ClassicalTimeFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
 	}*/
     virtual std::string toString() const override {
         return std::string("ClassicalTimeAliasedFrame ") + AliasedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return AliasedFrame::getName();
     };
 
 private:
@@ -1790,16 +1328,13 @@ private:
 
 class ClassicalTimeDerivedFrame : public DerivedFrame, public ClassicalTimeFrame {
 public:
-	ClassicalTimeDerivedFrame(std::string name,  ClassicalTime* space, ClassicalTimeFrame* parent, MeasurementSystem* ms, AxisOrientation* ax) : DerivedFrame(name, space, parent, ms, ax) {};
+	ClassicalTimeDerivedFrame(std::string name,  ClassicalTime* space, ClassicalTimeFrame* parent) : DerivedFrame(name, space, parent) {};
 	/*std::string toString() const override {
         std::string parentName = ((ClassicalTime*)this->space_)->getName();
 		return "@@ClassicalTimeFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
 	}*/
     virtual std::string toString() const override {
         return std::string("ClassicalTimeDerivedFrame ") + DerivedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return DerivedFrame::getName();
     };
 
 private:
@@ -1922,34 +1457,6 @@ private:
 };
 
 
-
-
-template <class ValueType, int ValueCount>
-class ClassicalTimeQuantity : public ValueObject<ValueType,ValueCount> {
-public:
-    ClassicalTimeQuantity(ClassicalTime* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    ClassicalTimeQuantity(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~ClassicalTimeQuantity(){}
-    std::string toString() override {
-        return "@@ClassicalTimeQuantity(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
-    }
-
-    ClassicalTime* getSpace() const {return this->space_;};
-    
-    
-    
-    
-private:
-    ClassicalTime* space_; 
-    
-    
-    
-    
-};
-
-
 class EuclideanGeometry3 : public Space {
     public:
 	    EuclideanGeometry3(std::string name) : Space(name, 3) {};
@@ -2001,16 +1508,13 @@ private:
 
 class EuclideanGeometry3AliasedFrame : public AliasedFrame, public EuclideanGeometry3Frame {
 public:
-	EuclideanGeometry3AliasedFrame(std::string name,  EuclideanGeometry3* space, EuclideanGeometry3Frame* aliased, domain::MeasurementSystem* ms, AxisOrientation* ax) : AliasedFrame(name, space, aliased,  ms, ax) {};
+	EuclideanGeometry3AliasedFrame(std::string name,  EuclideanGeometry3* space, EuclideanGeometry3Frame* aliased, domain::MeasurementSystem* ms) : AliasedFrame(name, space, aliased,  ms) {};
 	/*std::string toString() const override {
         std::string parentName = ((EuclideanGeometry3*)this->space_)->getName();
 		return "@@EuclideanGeometry3Frame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
 	}*/
     virtual std::string toString() const override {
         return std::string("EuclideanGeometry3AliasedFrame ") + AliasedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return AliasedFrame::getName();
     };
 
 private:
@@ -2020,16 +1524,13 @@ private:
 
 class EuclideanGeometry3DerivedFrame : public DerivedFrame, public EuclideanGeometry3Frame {
 public:
-	EuclideanGeometry3DerivedFrame(std::string name,  EuclideanGeometry3* space, EuclideanGeometry3Frame* parent, MeasurementSystem* ms, AxisOrientation* ax) : DerivedFrame(name, space, parent, ms, ax) {};
+	EuclideanGeometry3DerivedFrame(std::string name,  EuclideanGeometry3* space, EuclideanGeometry3Frame* parent) : DerivedFrame(name, space, parent) {};
 	/*std::string toString() const override {
         std::string parentName = ((EuclideanGeometry3*)this->space_)->getName();
 		return "@@EuclideanGeometry3Frame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
 	}*/
     virtual std::string toString() const override {
         return std::string("EuclideanGeometry3DerivedFrame ") + DerivedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return DerivedFrame::getName();
     };
 
 private:
@@ -2208,34 +1709,6 @@ private:
 };
 
 
-
-
-template <class ValueType, int ValueCount>
-class EuclideanGeometry3Quantity : public ValueObject<ValueType,ValueCount> {
-public:
-    EuclideanGeometry3Quantity(EuclideanGeometry3* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    EuclideanGeometry3Quantity(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~EuclideanGeometry3Quantity(){}
-    std::string toString() override {
-        return "@@EuclideanGeometry3Quantity(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
-    }
-
-    EuclideanGeometry3* getSpace() const {return this->space_;};
-    
-    
-    
-    
-private:
-    EuclideanGeometry3* space_; 
-    
-    
-    
-    
-};
-
-
 class ClassicalVelocity : public DerivedSpace {
     public:
 	    
@@ -2286,16 +1759,13 @@ private:
 
 class ClassicalVelocityAliasedFrame : public AliasedFrame, public ClassicalVelocityFrame {
 public:
-	ClassicalVelocityAliasedFrame(std::string name,  ClassicalVelocity* space, ClassicalVelocityFrame* aliased, domain::MeasurementSystem* ms, AxisOrientation* ax) : AliasedFrame(name, space, aliased,  ms, ax) {};
+	ClassicalVelocityAliasedFrame(std::string name,  ClassicalVelocity* space, ClassicalVelocityFrame* aliased, domain::MeasurementSystem* ms) : AliasedFrame(name, space, aliased,  ms) {};
 	/*std::string toString() const override {
         std::string parentName = ((ClassicalVelocity*)this->space_)->getName();
 		return "@@ClassicalVelocityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
 	}*/
     virtual std::string toString() const override {
         return std::string("ClassicalVelocityAliasedFrame ") + AliasedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return AliasedFrame::getName();
     };
 
 private:
@@ -2305,16 +1775,13 @@ private:
 
 class ClassicalVelocityDerivedFrame : public DerivedFrame, public ClassicalVelocityFrame {
 public:
-	ClassicalVelocityDerivedFrame(std::string name,  ClassicalVelocity* space, ClassicalVelocityFrame* parent, MeasurementSystem* ms, AxisOrientation* ax) : DerivedFrame(name, space, parent, ms, ax) {};
+	ClassicalVelocityDerivedFrame(std::string name,  ClassicalVelocity* space, ClassicalVelocityFrame* parent) : DerivedFrame(name, space, parent) {};
 	/*std::string toString() const override {
         std::string parentName = ((ClassicalVelocity*)this->space_)->getName();
 		return "@@ClassicalVelocityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
 	}*/
     virtual std::string toString() const override {
         return std::string("ClassicalVelocityDerivedFrame ") + DerivedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return DerivedFrame::getName();
     };
 
 private:
@@ -2372,378 +1839,6 @@ public:
     
 private:
     ClassicalVelocity* space_; 
-    
-    
-    
-    
-};
-
-
-
-
-template <class ValueType, int ValueCount>
-class ClassicalVelocityQuantity : public ValueObject<ValueType,ValueCount> {
-public:
-    ClassicalVelocityQuantity(ClassicalVelocity* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    ClassicalVelocityQuantity(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~ClassicalVelocityQuantity(){}
-    std::string toString() override {
-        return "@@ClassicalVelocityQuantity(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
-    }
-
-    ClassicalVelocity* getSpace() const {return this->space_;};
-    
-    
-    
-    
-private:
-    ClassicalVelocity* space_; 
-    
-    
-    
-    
-};
-
-
-class ClassicalHertz : public Space {
-    public:
-	    ClassicalHertz(std::string name) : Space(name, 1) {};
-	    std::string getName() const override { return name_; }; 
-	    
-        void addFrame(ClassicalHertzFrame* frame);
-	    std::string toString() const override {
-		    return "@@ClassicalHertz  " + getName()   + "(" + ")"; 
-	    }
-
-    private:
-    };
-
-
-class ClassicalHertzFrame : public Frame {
-public:
-	ClassicalHertzFrame(std::string name,  ClassicalHertz* space) : Frame(name, space) {};
-    ClassicalHertzFrame(){};
-	/*std::string toString() const override {
-        std::string parentName = ((ClassicalHertz*)this->space_)->getName();
-		return "@@ClassicalHertzFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
-	}*/
-
-private:
-};
-
-
-
-class ClassicalHertzStandardFrame : public StandardFrame, public ClassicalHertzFrame {
-public:
-	ClassicalHertzStandardFrame(ClassicalHertz* space) : StandardFrame(space) {};
-	/*std::string toString() const override {
-        std::string parentName = ((ClassicalHertz*)this->space_)->getName();
-		return "@@ClassicalHertzFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
-	}*/
-
-    virtual std::string getName() const override {
-        return StandardFrame::getName();
-    };
-
-    virtual std::string toString() const override {
-        return std::string("ClassicalHertzStandardFrame ") + StandardFrame::toString();
-    };
-
-private:
-};
-
-
-
-class ClassicalHertzAliasedFrame : public AliasedFrame, public ClassicalHertzFrame {
-public:
-	ClassicalHertzAliasedFrame(std::string name,  ClassicalHertz* space, ClassicalHertzFrame* aliased, domain::MeasurementSystem* ms, AxisOrientation* ax) : AliasedFrame(name, space, aliased,  ms, ax) {};
-	/*std::string toString() const override {
-        std::string parentName = ((ClassicalHertz*)this->space_)->getName();
-		return "@@ClassicalHertzFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
-	}*/
-    virtual std::string toString() const override {
-        return std::string("ClassicalHertzAliasedFrame ") + AliasedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return AliasedFrame::getName();
-    };
-
-private:
-};
-
-
-
-class ClassicalHertzDerivedFrame : public DerivedFrame, public ClassicalHertzFrame {
-public:
-	ClassicalHertzDerivedFrame(std::string name,  ClassicalHertz* space, ClassicalHertzFrame* parent, MeasurementSystem* ms, AxisOrientation* ax) : DerivedFrame(name, space, parent, ms, ax) {};
-	/*std::string toString() const override {
-        std::string parentName = ((ClassicalHertz*)this->space_)->getName();
-		return "@@ClassicalHertzFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
-	}*/
-    virtual std::string toString() const override {
-        return std::string("ClassicalHertzDerivedFrame ") + DerivedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return DerivedFrame::getName();
-    };
-
-private:
-};
-
-
-
-
-template <class ValueType, int ValueCount>
-class ClassicalHertzCoordinateVector : public ValueObject<ValueType,ValueCount> {
-public:
-    ClassicalHertzCoordinateVector(ClassicalHertz* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    ClassicalHertzCoordinateVector(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~ClassicalHertzCoordinateVector(){}
-    std::string toString() override {
-        return "@@ClassicalHertzCoordinateVector(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString()+","+(frame_?frame_->getName():"") + ")";
-    }
-
-    ClassicalHertz* getSpace() const {return this->space_;};
-    
-    
-    ClassicalHertzFrame* getFrame() const { return this->frame_; };
-    void setFrame(ClassicalHertzFrame* frame){
-            this->frame_ = frame;
-        };
-private:
-    ClassicalHertz* space_; 
-    ClassicalHertzFrame* frame_;
-    
-    
-    
-};
-
-
-
-
-template <class ValueType, int ValueCount>
-class ClassicalHertzScalar : public ValueObject<ValueType,ValueCount> {
-public:
-    ClassicalHertzScalar(ClassicalHertz* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    ClassicalHertzScalar(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~ClassicalHertzScalar(){}
-    std::string toString() override {
-        return "@@ClassicalHertzScalar(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
-    }
-
-    ClassicalHertz* getSpace() const {return this->space_;};
-    
-    
-    
-    
-private:
-    ClassicalHertz* space_; 
-    
-    
-    
-    
-};
-
-
-
-
-template <class ValueType, int ValueCount>
-class ClassicalHertzQuantity : public ValueObject<ValueType,ValueCount> {
-public:
-    ClassicalHertzQuantity(ClassicalHertz* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    ClassicalHertzQuantity(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~ClassicalHertzQuantity(){}
-    std::string toString() override {
-        return "@@ClassicalHertzQuantity(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
-    }
-
-    ClassicalHertz* getSpace() const {return this->space_;};
-    
-    
-    
-    
-private:
-    ClassicalHertz* space_; 
-    
-    
-    
-    
-};
-
-
-class ClassicalLuminousIntensity : public Space {
-    public:
-	    ClassicalLuminousIntensity(std::string name) : Space(name, 1) {};
-	    std::string getName() const override { return name_; }; 
-	    
-        void addFrame(ClassicalLuminousIntensityFrame* frame);
-	    std::string toString() const override {
-		    return "@@ClassicalLuminousIntensity  " + getName()   + "(" + ")"; 
-	    }
-
-    private:
-    };
-
-
-class ClassicalLuminousIntensityFrame : public Frame {
-public:
-	ClassicalLuminousIntensityFrame(std::string name,  ClassicalLuminousIntensity* space) : Frame(name, space) {};
-    ClassicalLuminousIntensityFrame(){};
-	/*std::string toString() const override {
-        std::string parentName = ((ClassicalLuminousIntensity*)this->space_)->getName();
-		return "@@ClassicalLuminousIntensityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
-	}*/
-
-private:
-};
-
-
-
-class ClassicalLuminousIntensityStandardFrame : public StandardFrame, public ClassicalLuminousIntensityFrame {
-public:
-	ClassicalLuminousIntensityStandardFrame(ClassicalLuminousIntensity* space) : StandardFrame(space) {};
-	/*std::string toString() const override {
-        std::string parentName = ((ClassicalLuminousIntensity*)this->space_)->getName();
-		return "@@ClassicalLuminousIntensityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
-	}*/
-
-    virtual std::string getName() const override {
-        return StandardFrame::getName();
-    };
-
-    virtual std::string toString() const override {
-        return std::string("ClassicalLuminousIntensityStandardFrame ") + StandardFrame::toString();
-    };
-
-private:
-};
-
-
-
-class ClassicalLuminousIntensityAliasedFrame : public AliasedFrame, public ClassicalLuminousIntensityFrame {
-public:
-	ClassicalLuminousIntensityAliasedFrame(std::string name,  ClassicalLuminousIntensity* space, ClassicalLuminousIntensityFrame* aliased, domain::MeasurementSystem* ms, AxisOrientation* ax) : AliasedFrame(name, space, aliased,  ms, ax) {};
-	/*std::string toString() const override {
-        std::string parentName = ((ClassicalLuminousIntensity*)this->space_)->getName();
-		return "@@ClassicalLuminousIntensityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
-	}*/
-    virtual std::string toString() const override {
-        return std::string("ClassicalLuminousIntensityAliasedFrame ") + AliasedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return AliasedFrame::getName();
-    };
-
-private:
-};
-
-
-
-class ClassicalLuminousIntensityDerivedFrame : public DerivedFrame, public ClassicalLuminousIntensityFrame {
-public:
-	ClassicalLuminousIntensityDerivedFrame(std::string name,  ClassicalLuminousIntensity* space, ClassicalLuminousIntensityFrame* parent, MeasurementSystem* ms, AxisOrientation* ax) : DerivedFrame(name, space, parent, ms, ax) {};
-	/*std::string toString() const override {
-        std::string parentName = ((ClassicalLuminousIntensity*)this->space_)->getName();
-		return "@@ClassicalLuminousIntensityFrame  " + this->getName() + "(" + parentName + (this->parent_? "," + parentName + "." + this->parent_->getName() : "") + ")";
-	}*/
-    virtual std::string toString() const override {
-        return std::string("ClassicalLuminousIntensityDerivedFrame ") + DerivedFrame::toString();
-    };
-    virtual std::string getName() const override {
-        return DerivedFrame::getName();
-    };
-
-private:
-};
-
-
-
-
-template <class ValueType, int ValueCount>
-class ClassicalLuminousIntensityCoordinateVector : public ValueObject<ValueType,ValueCount> {
-public:
-    ClassicalLuminousIntensityCoordinateVector(ClassicalLuminousIntensity* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    ClassicalLuminousIntensityCoordinateVector(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~ClassicalLuminousIntensityCoordinateVector(){}
-    std::string toString() override {
-        return "@@ClassicalLuminousIntensityCoordinateVector(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString()+","+(frame_?frame_->getName():"") + ")";
-    }
-
-    ClassicalLuminousIntensity* getSpace() const {return this->space_;};
-    
-    
-    ClassicalLuminousIntensityFrame* getFrame() const { return this->frame_; };
-    void setFrame(ClassicalLuminousIntensityFrame* frame){
-            this->frame_ = frame;
-        };
-private:
-    ClassicalLuminousIntensity* space_; 
-    ClassicalLuminousIntensityFrame* frame_;
-    
-    
-    
-};
-
-
-
-
-template <class ValueType, int ValueCount>
-class ClassicalLuminousIntensityScalar : public ValueObject<ValueType,ValueCount> {
-public:
-    ClassicalLuminousIntensityScalar(ClassicalLuminousIntensity* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    ClassicalLuminousIntensityScalar(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~ClassicalLuminousIntensityScalar(){}
-    std::string toString() override {
-        return "@@ClassicalLuminousIntensityScalar(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
-    }
-
-    ClassicalLuminousIntensity* getSpace() const {return this->space_;};
-    
-    
-    
-    
-private:
-    ClassicalLuminousIntensity* space_; 
-    
-    
-    
-    
-};
-
-
-
-
-template <class ValueType, int ValueCount>
-class ClassicalLuminousIntensityQuantity : public ValueObject<ValueType,ValueCount> {
-public:
-    ClassicalLuminousIntensityQuantity(ClassicalLuminousIntensity* s, std::initializer_list<DomainObject*> args) : 
-			ValueObject<ValueType,ValueCount>::ValueObject(args), space_(s)   {}
-    ClassicalLuminousIntensityQuantity(std::initializer_list<DomainObject*> args ) :
-	 		ValueObject<ValueType,ValueCount>::ValueObject(args) {}
-	virtual ~ClassicalLuminousIntensityQuantity(){}
-    std::string toString() override {
-        return "@@ClassicalLuminousIntensityQuantity(" + (space_?space_->getName():"Missing Space")+","+ValueObject<ValueType,ValueCount>::toString() + ")";
-    }
-
-    ClassicalLuminousIntensity* getSpace() const {return this->space_;};
-    
-    
-    
-    
-private:
-    ClassicalLuminousIntensity* space_; 
     
     
     

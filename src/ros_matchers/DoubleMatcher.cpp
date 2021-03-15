@@ -32,11 +32,11 @@ void DoubleMatcher::setup(){
 		StatementMatcher exprWithCleanups_=exprWithCleanups().bind("ExprWithCleanups");
 		localFinder_.addMatcher(exprWithCleanups_,this);
 	
-		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
-		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
-	
 		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
 		localFinder_.addMatcher(declRefExpr_,this);
+	
+		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
+		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
 };
 
 void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
@@ -54,9 +54,9 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	auto exprWithCleanups_ = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanups");
 	
-	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
-	
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+	
+	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
     this->childExprStore_ = nullptr;
@@ -81,14 +81,14 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_double"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm.find("double") != string::npos){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="double" or typestr == "const double" or typestr == "const double"/*typestr.find("double") != string::npos*/){
+        else if(typestr.find("double") != string::npos){
             DoubleMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -101,7 +101,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_double"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm.find("double") != string::npos){ return true; }
         else { return false; } 
     };
 
@@ -111,7 +111,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="double" or typestr == "const double" or typestr == "class double"/*typestr.find("double") != string::npos*/){
+        else if(typestr.find("double") != string::npos){
             DoubleMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -128,7 +128,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_double"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm.find("double") != string::npos){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -149,7 +149,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_double"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm.find("double") != string::npos){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -171,7 +171,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_double"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm.find("double") != string::npos){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -182,11 +182,9 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
         if(this->childExprStore_){}
         else{
-                
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                parenExpr_->dump();
-           
-            }
+            std::cout<<"WARNING: Capture Escaping! Dump :\n";
+            parenExpr_->dump();
+        }
         return;
     }
 	
@@ -207,6 +205,16 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
         }
     
 	
+    if(declRefExpr_){
+        if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
+            interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
+            this->childExprStore_ = (clang::Stmt*)declRefExpr_;
+            return;
+
+        }
+    }
+
+	
     if (cxxFunctionalCastExpr_)
         {
             DoubleMatcher exprMatcher{ context_, interp_};
@@ -217,23 +225,12 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
-
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
                 interp_->mkREAL1_LIT((clang::Stmt*)cxxFunctionalCastExpr_);
                 return;
             }
         }
     
-	
-    if(declRefExpr_){
-        if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
-            interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
-            this->childExprStore_ = (clang::Stmt*)declRefExpr_;
-            return;
-
-        }
-    }
-
 
 
 };

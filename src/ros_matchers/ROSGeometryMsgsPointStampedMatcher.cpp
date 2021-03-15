@@ -32,11 +32,11 @@ void ROSGeometryMsgsPointStampedMatcher::setup(){
 		StatementMatcher exprWithCleanups_=exprWithCleanups().bind("ExprWithCleanups");
 		localFinder_.addMatcher(exprWithCleanups_,this);
 	
-		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
-		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
-	
 		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
 		localFinder_.addMatcher(declRefExpr_,this);
+	
+		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
+		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
 };
 
 void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Result){
@@ -54,9 +54,9 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
 	
 	auto exprWithCleanups_ = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanups");
 	
-	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
-	
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+	
+	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
     this->childExprStore_ = nullptr;
@@ -72,10 +72,8 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
             if(this->childExprStore_){}
     
             else{
-                
                 std::cout<<"WARNING: Capture Escaping! Dump : \n";
                 cxxConstructExpr_->dump();
-           
             }
             return;
         }
@@ -84,14 +82,14 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
 	
 	arg_decay_exist_predicates["memberExpr_geometry_msgs::PointStamped"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="geometry_msgs::PointStamped" or typenm == "const geometry_msgs::PointStamped" or typenm == "class geometry_msgs::PointStamped"/*typenm.find("geometry_msgs::PointStamped") != string::npos*/){ return true; }
+		else if(typenm.find("geometry_msgs::PointStamped") != string::npos){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="geometry_msgs::PointStamped" or typestr == "const geometry_msgs::PointStamped" or typestr == "const geometry_msgs::PointStamped"/*typestr.find("geometry_msgs::PointStamped") != string::npos*/){
+        else if(typestr.find("geometry_msgs::PointStamped") != string::npos){
             ROSGeometryMsgsPointStampedMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -104,7 +102,7 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
 	
 	arg_decay_exist_predicates["implicitCastExpr_geometry_msgs::PointStamped"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="geometry_msgs::PointStamped" or typenm == "const geometry_msgs::PointStamped" or typenm == "class geometry_msgs::PointStamped"/*typenm.find("geometry_msgs::PointStamped") != string::npos*/){ return true; }
+		else if(typenm.find("geometry_msgs::PointStamped") != string::npos){ return true; }
         else { return false; } 
     };
 
@@ -114,7 +112,7 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="geometry_msgs::PointStamped" or typestr == "const geometry_msgs::PointStamped" or typestr == "class geometry_msgs::PointStamped"/*typestr.find("geometry_msgs::PointStamped") != string::npos*/){
+        else if(typestr.find("geometry_msgs::PointStamped") != string::npos){
             ROSGeometryMsgsPointStampedMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -122,18 +120,16 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
             return;
         }
         else{
-                
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                implicitCastExpr_->dump();
-           
-            }
+            std::cout<<"WARNING: Capture Escaping! Dump : \n";
+            implicitCastExpr_->dump();
+        }
             return;
 
     }
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_geometry_msgs::PointStamped"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="geometry_msgs::PointStamped" or typenm == "const geometry_msgs::PointStamped" or typenm == "class geometry_msgs::PointStamped"/*typenm.find("geometry_msgs::PointStamped") != string::npos*/){ return true; }
+		else if(typenm.find("geometry_msgs::PointStamped") != string::npos){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -145,18 +141,16 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
         if(this->childExprStore_){}
     
         else{
-                
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                cxxBindTemporaryExpr_->dump();
-           
-            }
+            std::cout<<"WARNING: Capture Escaping! Dump : \n";
+            cxxBindTemporaryExpr_->dump();
+        }
             return;
 
     }
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_geometry_msgs::PointStamped"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="geometry_msgs::PointStamped" or typenm == "const geometry_msgs::PointStamped" or typenm == "class geometry_msgs::PointStamped"/*typenm.find("geometry_msgs::PointStamped") != string::npos*/){ return true; }
+		else if(typenm.find("geometry_msgs::PointStamped") != string::npos){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -169,10 +163,8 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
             if(this->childExprStore_){}
         
             else{
-                
                 std::cout<<"WARNING: Capture Escaping! Dump : \n";
                 materializeTemporaryExpr_->dump();
-           
             }
             return;
 
@@ -180,7 +172,7 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
 	
 	arg_decay_exist_predicates["parenExpr_geometry_msgs::PointStamped"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="geometry_msgs::PointStamped" or typenm == "const geometry_msgs::PointStamped" or typenm == "class geometry_msgs::PointStamped"/*typenm.find("geometry_msgs::PointStamped") != string::npos*/){ return true; }
+		else if(typenm.find("geometry_msgs::PointStamped") != string::npos){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -191,11 +183,9 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
         if(this->childExprStore_){}
         else{
-                
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                parenExpr_->dump();
-           
-            }
+            std::cout<<"WARNING: Capture Escaping! Dump :\n";
+            parenExpr_->dump();
+        }
         return;
     }
 	
@@ -209,28 +199,8 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
             if(this->childExprStore_){}
         
             else{
-                
                 std::cout<<"WARNING: Capture Escaping! Dump : \n";
                 exprWithCleanups_->dump();
-           
-            }
-
-    }
-	
-    if (cxxFunctionalCastExpr_)
-        {
-            ROSGeometryMsgsPointStampedMatcher exprMatcher{ context_, interp_};
-            exprMatcher.setup();
-            exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
-            this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
-        
-            if(this->childExprStore_){}
-        
-            else{
-                
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                cxxFunctionalCastExpr_->dump();
-           
             }
 
     }
@@ -244,6 +214,22 @@ void ROSGeometryMsgsPointStampedMatcher::run(const MatchFinder::MatchResult &Res
         }
     }
 
+	
+    if (cxxFunctionalCastExpr_)
+        {
+            ROSGeometryMsgsPointStampedMatcher exprMatcher{ context_, interp_};
+            exprMatcher.setup();
+            exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
+            this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
+        
+            if(this->childExprStore_){}
+        
+            else{
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                cxxFunctionalCastExpr_->dump();
+            }
+
+    }
 	
     if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 0){
         if(true ){

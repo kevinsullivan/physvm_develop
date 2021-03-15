@@ -35,9 +35,9 @@ namespace std
     }
 }
 
-//#include <memory>
-//#include <g3log/g3log.hpp>
-//#include <g3log/logworker.hpp>
+#include <memory>
+#include <g3log/g3log.hpp>
+#include <g3log/logworker.hpp>
 
 using namespace std;
 using namespace llvm;
@@ -302,7 +302,7 @@ public:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
-    //LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
+    LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
     if(!rewriteMode)
     {
       context_ = &CI.getASTContext();
@@ -352,12 +352,12 @@ int main(int argc, const char **argv)
 
   ClangTool Tool(op.getCompilations(), srcpaths);
 
-  //using namespace g3;
+  using namespace g3;
   std::string logFile = "Peirce.log";
   std::string logDir = ".";
-  //auto worker = LogWorker::createLogWorker();
-  //auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
-  //g3::initializeLogging(worker.get());
+  auto worker = LogWorker::createLogWorker();
+  auto defaultHandler = worker->addDefaultLogger(logFile, logDir);
+  g3::initializeLogging(worker.get());
 
   interp_ = new interp::Interpretation();   // default oracle
   interp_->setSources(srcpaths);

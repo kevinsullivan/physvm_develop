@@ -1,4 +1,4 @@
-import .point1
+import .space1
 
 -- Now talk in terms of spaces. Here are some examples
 

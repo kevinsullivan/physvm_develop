@@ -1,4 +1,4 @@
-import .product_space
+import .space_standard
 
 universes u 
 variables 
@@ -51,3 +51,5 @@ def framed_space := (Σ f : (@fm K _ _), (@spc K _ _ f ))
 -- WEAK TYPING HERE -- YIKES -- HMM
 def frmd_std : @framed_space K _ _ := ⟨ frame_std, space_new ⟩ 
 def frmd_new : @framed_space K _ _ := ⟨ frame_new, space_x ⟩ 
+
+-- My really cool new space is a product space of space_x and space_x

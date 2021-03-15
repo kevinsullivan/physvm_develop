@@ -2,10 +2,8 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 
-#include "ROSTFStampedPoint.h"
 #include "ROSTFVector3Matcher.h"
 #include "ROSTFPointMatcher.h"
-#include "ROSTFStampedTransform.h"
 #include "ROSTFTransformMatcher.h"
 #include "DoubleMatcher.h"
 
@@ -37,11 +35,11 @@ void ROSTFVector3Matcher::setup(){
 		StatementMatcher exprWithCleanups_=exprWithCleanups().bind("ExprWithCleanups");
 		localFinder_.addMatcher(exprWithCleanups_,this);
 	
-		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
-		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
-	
 		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
 		localFinder_.addMatcher(declRefExpr_,this);
+	
+		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
+		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
 	
 		StatementMatcher cxxOperatorCallExpr_=cxxOperatorCallExpr().bind("CXXOperatorCallExpr");
 		localFinder_.addMatcher(cxxOperatorCallExpr_,this);
@@ -62,9 +60,9 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	auto exprWithCleanups_ = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanups");
 	
-	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
-	
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+	
+	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
 	
 	auto cxxOperatorCallExpr_ = Result.Nodes.getNodeAs<clang::CXXOperatorCallExpr>("CXXOperatorCallExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
@@ -82,10 +80,8 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
     
             else{
-                
                 std::cout<<"WARNING: Capture Escaping! Dump : \n";
                 cxxConstructExpr_->dump();
-           
             }
             return;
         }
@@ -94,30 +90,22 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_tf::Vector3"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="tf::Stamped<tf::Point>" or typestr == "const tf::Stamped<tf::Point>" or typestr == "const tf::Stamped<tf::Point>"/*typestr.find("tf::Stamped<tf::Point>") != string::npos*/){
-            ROSTFStampedPoint innerm{this->context_,this->interp_};
-            innerm.setup();
-            innerm.visit(*inner);
-            this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
-            return;
-        }
-		else if(typestr=="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "const tf::Vector3"/*typestr.find("tf::Vector3") != string::npos*/){
+        else if(typestr.find("tf::Vector3") != string::npos){
             ROSTFVector3Matcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
             return;
         }
-		else if(typestr=="tf::Point" or typestr == "const tf::Point" or typestr == "const tf::Point"/*typestr.find("tf::Point") != string::npos*/){
+		else if(typestr.find("tf::Point") != string::npos){
             ROSTFPointMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -130,9 +118,8 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_tf::Vector3"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
         else { return false; } 
     };
 
@@ -142,21 +129,14 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="tf::Stamped<tf::Point>" or typestr == "const tf::Stamped<tf::Point>" or typestr == "class tf::Stamped<tf::Point>"/*typestr.find("tf::Stamped<tf::Point>") != string::npos*/){
-            ROSTFStampedPoint innerm{this->context_,this->interp_};
-            innerm.setup();
-            innerm.visit(*inner);
-            this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
-            return;
-        }
-		else if(typestr=="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3"/*typestr.find("tf::Vector3") != string::npos*/){
+        else if(typestr.find("tf::Vector3") != string::npos){
             ROSTFVector3Matcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
             return;
         }
-		else if(typestr=="tf::Point" or typestr == "const tf::Point" or typestr == "class tf::Point"/*typestr.find("tf::Point") != string::npos*/){
+		else if(typestr.find("tf::Point") != string::npos){
             ROSTFPointMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -164,20 +144,17 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
         else{
-                
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                implicitCastExpr_->dump();
-           
-            }
+            std::cout<<"WARNING: Capture Escaping! Dump : \n";
+            implicitCastExpr_->dump();
+        }
             return;
 
     }
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_tf::Vector3"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -189,20 +166,17 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
         if(this->childExprStore_){}
     
         else{
-                
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                cxxBindTemporaryExpr_->dump();
-           
-            }
+            std::cout<<"WARNING: Capture Escaping! Dump : \n";
+            cxxBindTemporaryExpr_->dump();
+        }
             return;
 
     }
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_tf::Vector3"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -215,10 +189,8 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
-                
                 std::cout<<"WARNING: Capture Escaping! Dump : \n";
                 materializeTemporaryExpr_->dump();
-           
             }
             return;
 
@@ -226,9 +198,8 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_tf::Vector3"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -239,11 +210,9 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
         if(this->childExprStore_){}
         else{
-                
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                parenExpr_->dump();
-           
-            }
+            std::cout<<"WARNING: Capture Escaping! Dump :\n";
+            parenExpr_->dump();
+        }
         return;
     }
 	
@@ -257,28 +226,8 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
-                
                 std::cout<<"WARNING: Capture Escaping! Dump : \n";
                 exprWithCleanups_->dump();
-           
-            }
-
-    }
-	
-    if (cxxFunctionalCastExpr_)
-        {
-            ROSTFVector3Matcher exprMatcher{ context_, interp_};
-            exprMatcher.setup();
-            exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
-            this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
-        
-            if(this->childExprStore_){}
-        
-            else{
-                
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                cxxFunctionalCastExpr_->dump();
-           
             }
 
     }
@@ -293,17 +242,31 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
+    if (cxxFunctionalCastExpr_)
+        {
+            ROSTFVector3Matcher exprMatcher{ context_, interp_};
+            exprMatcher.setup();
+            exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
+            this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
+        
+            if(this->childExprStore_){}
+        
+            else{
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                cxxFunctionalCastExpr_->dump();
+            }
+
+    }
+	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Vector3).*@$.TMULtf::Transform"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="tf::StampedTransform" or typenm == "const tf::StampedTransform" or typenm == "class tf::StampedTransform"/*typenm.find("tf::StampedTransform") != string::npos*/){ return true; }
-		else if(typenm=="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform"/*typenm.find("tf::Transform") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Transform") != string::npos){ return true; }
         else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Vector3).*@$.TMULtf::Vector3"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
         else { return false; }
     };
     if(cxxOperatorCallExpr_){
@@ -311,7 +274,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
         if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
             auto name = dc->getNameAsString();
 
-            if(name=="*" or name=="const *" or name=="class *"/*name.find("*") != string::npos*/){
+            if(name.find("*") != string::npos){
                 auto arg0=cxxOperatorCallExpr_->getArg(0);
                 auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
 
@@ -325,14 +288,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
                 if (arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Vector3).*@$.TMULtf::Transform"](arg0str) and 
                     arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Vector3).*@$.TMULtf::Vector3"](arg1str)){
                     if(false){}
-                    else if(arg0str=="tf::StampedTransform" or arg0str=="const tf::StampedTransform" or arg0str=="class tf::StampedTransform"/*arg0str.find("tf::StampedTransform") != string::npos*/){
-            
-                        ROSTFStampedTransform arg0m{this->context_,this->interp_};
-                        arg0m.setup();
-                        arg0m.visit(*arg0);
-                        arg0stmt = arg0m.getChildExprStore();
-                    }
-                    else if(arg0str=="tf::Transform" or arg0str=="const tf::Transform" or arg0str=="class tf::Transform"/*arg0str.find("tf::Transform") != string::npos*/){
+                    else if(arg0str.find("tf::Transform") != string::npos){
             
                         ROSTFTransformMatcher arg0m{this->context_,this->interp_};
                         arg0m.setup();
@@ -340,21 +296,14 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
                         arg0stmt = arg0m.getChildExprStore();
                     }
                     if(false){}
-                    else if(arg1str=="tf::Stamped<tf::Point>" or arg1str=="const tf::Stamped<tf::Point>" or arg1str=="class tf::Stamped<tf::Point>"/*arg1str.find("tf::Stamped<tf::Point>") != string::npos*/){
-            
-                        ROSTFStampedPoint arg1m{this->context_,this->interp_};
-                        arg1m.setup();
-                        arg1m.visit(*arg1);
-                        arg1stmt = arg1m.getChildExprStore();
-                    }
-                    else if(arg1str=="tf::Vector3" or arg1str=="const tf::Vector3" or arg1str=="class tf::Vector3"/*arg1str.find("tf::Vector3") != string::npos*/){
+                    else if(arg1str.find("tf::Vector3") != string::npos){
             
                         ROSTFVector3Matcher arg1m{this->context_,this->interp_};
                         arg1m.setup();
                         arg1m.visit(*arg1);
                         arg1stmt = arg1m.getChildExprStore();
                     }
-                    else if(arg1str=="tf::Point" or arg1str=="const tf::Point" or arg1str=="class tf::Point"/*arg1str.find("tf::Point") != string::npos*/){
+                    else if(arg1str.find("tf::Point") != string::npos){
             
                         ROSTFPointMatcher arg1m{this->context_,this->interp_};
                         arg1m.setup();
@@ -376,16 +325,14 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3,tf::Vector3).+@$.ADDtf::Vector3"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
         else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3,tf::Vector3).+@$.ADDtf::Vector3"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
         else { return false; }
     };
     if(cxxOperatorCallExpr_){
@@ -393,7 +340,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
         if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
             auto name = dc->getNameAsString();
 
-            if(name=="+" or name=="const +" or name=="class +"/*name.find("+") != string::npos*/){
+            if(name.find("+") != string::npos){
                 auto arg0=cxxOperatorCallExpr_->getArg(0);
                 auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
 
@@ -407,21 +354,14 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
                 if (arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3,tf::Vector3).+@$.ADDtf::Vector3"](arg0str) and 
                     arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3,tf::Vector3).+@$.ADDtf::Vector3"](arg1str)){
                     if(false){}
-                    else if(arg0str=="tf::Stamped<tf::Point>" or arg0str=="const tf::Stamped<tf::Point>" or arg0str=="class tf::Stamped<tf::Point>"/*arg0str.find("tf::Stamped<tf::Point>") != string::npos*/){
-            
-                        ROSTFStampedPoint arg0m{this->context_,this->interp_};
-                        arg0m.setup();
-                        arg0m.visit(*arg0);
-                        arg0stmt = arg0m.getChildExprStore();
-                    }
-                    else if(arg0str=="tf::Vector3" or arg0str=="const tf::Vector3" or arg0str=="class tf::Vector3"/*arg0str.find("tf::Vector3") != string::npos*/){
+                    else if(arg0str.find("tf::Vector3") != string::npos){
             
                         ROSTFVector3Matcher arg0m{this->context_,this->interp_};
                         arg0m.setup();
                         arg0m.visit(*arg0);
                         arg0stmt = arg0m.getChildExprStore();
                     }
-                    else if(arg0str=="tf::Point" or arg0str=="const tf::Point" or arg0str=="class tf::Point"/*arg0str.find("tf::Point") != string::npos*/){
+                    else if(arg0str.find("tf::Point") != string::npos){
             
                         ROSTFPointMatcher arg0m{this->context_,this->interp_};
                         arg0m.setup();
@@ -429,21 +369,14 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
                         arg0stmt = arg0m.getChildExprStore();
                     }
                     if(false){}
-                    else if(arg1str=="tf::Stamped<tf::Point>" or arg1str=="const tf::Stamped<tf::Point>" or arg1str=="class tf::Stamped<tf::Point>"/*arg1str.find("tf::Stamped<tf::Point>") != string::npos*/){
-            
-                        ROSTFStampedPoint arg1m{this->context_,this->interp_};
-                        arg1m.setup();
-                        arg1m.visit(*arg1);
-                        arg1stmt = arg1m.getChildExprStore();
-                    }
-                    else if(arg1str=="tf::Vector3" or arg1str=="const tf::Vector3" or arg1str=="class tf::Vector3"/*arg1str.find("tf::Vector3") != string::npos*/){
+                    else if(arg1str.find("tf::Vector3") != string::npos){
             
                         ROSTFVector3Matcher arg1m{this->context_,this->interp_};
                         arg1m.setup();
                         arg1m.visit(*arg1);
                         arg1stmt = arg1m.getChildExprStore();
                     }
-                    else if(arg1str=="tf::Point" or arg1str=="const tf::Point" or arg1str=="class tf::Point"/*arg1str.find("tf::Point") != string::npos*/){
+                    else if(arg1str.find("tf::Point") != string::npos){
             
                         ROSTFPointMatcher arg1m{this->context_,this->interp_};
                         arg1m.setup();
@@ -465,14 +398,13 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3,double).*@$.RMULtf::Vector3"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
         else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3,double).*@$.RMULdouble"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm.find("double") != string::npos){ return true; }
         else { return false; }
     };
     if(cxxOperatorCallExpr_){
@@ -480,7 +412,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
         if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
             auto name = dc->getNameAsString();
 
-            if(name=="*" or name=="const *" or name=="class *"/*name.find("*") != string::npos*/){
+            if(name.find("*") != string::npos){
                 auto arg0=cxxOperatorCallExpr_->getArg(0);
                 auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
 
@@ -494,21 +426,14 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
                 if (arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3,double).*@$.RMULtf::Vector3"](arg0str) and 
                     arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3,double).*@$.RMULdouble"](arg1str)){
                     if(false){}
-                    else if(arg0str=="tf::Stamped<tf::Point>" or arg0str=="const tf::Stamped<tf::Point>" or arg0str=="class tf::Stamped<tf::Point>"/*arg0str.find("tf::Stamped<tf::Point>") != string::npos*/){
-            
-                        ROSTFStampedPoint arg0m{this->context_,this->interp_};
-                        arg0m.setup();
-                        arg0m.visit(*arg0);
-                        arg0stmt = arg0m.getChildExprStore();
-                    }
-                    else if(arg0str=="tf::Vector3" or arg0str=="const tf::Vector3" or arg0str=="class tf::Vector3"/*arg0str.find("tf::Vector3") != string::npos*/){
+                    else if(arg0str.find("tf::Vector3") != string::npos){
             
                         ROSTFVector3Matcher arg0m{this->context_,this->interp_};
                         arg0m.setup();
                         arg0m.visit(*arg0);
                         arg0stmt = arg0m.getChildExprStore();
                     }
-                    else if(arg0str=="tf::Point" or arg0str=="const tf::Point" or arg0str=="class tf::Point"/*arg0str.find("tf::Point") != string::npos*/){
+                    else if(arg0str.find("tf::Point") != string::npos){
             
                         ROSTFPointMatcher arg0m{this->context_,this->interp_};
                         arg0m.setup();
@@ -516,7 +441,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
                         arg0stmt = arg0m.getChildExprStore();
                     }
                     if(false){}
-                    else if(arg1str=="double" or arg1str=="const double" or arg1str=="class double"/*arg1str.find("double") != string::npos*/){
+                    else if(arg1str.find("double") != string::npos){
             
                         DoubleMatcher arg1m{this->context_,this->interp_};
                         arg1m.setup();
@@ -538,14 +463,13 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(double,tf::Vector3).*@$.LMULdouble"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm.find("double") != string::npos){ return true; }
         else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(double,tf::Vector3).*@$.LMULtf::Vector3"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+		else if(typenm.find("tf::Vector3") != string::npos){ return true; }
+		else if(typenm.find("tf::Point") != string::npos){ return true; }
         else { return false; }
     };
     if(cxxOperatorCallExpr_){
@@ -553,7 +477,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
         if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
             auto name = dc->getNameAsString();
 
-            if(name=="*" or name=="const *" or name=="class *"/*name.find("*") != string::npos*/){
+            if(name.find("*") != string::npos){
                 auto arg0=cxxOperatorCallExpr_->getArg(0);
                 auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
 
@@ -567,7 +491,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
                 if (arg_decay_exist_predicates["CXXOperatorCallExpr(double,tf::Vector3).*@$.LMULdouble"](arg0str) and 
                     arg_decay_exist_predicates["CXXOperatorCallExpr(double,tf::Vector3).*@$.LMULtf::Vector3"](arg1str)){
                     if(false){}
-                    else if(arg0str=="double" or arg0str=="const double" or arg0str=="class double"/*arg0str.find("double") != string::npos*/){
+                    else if(arg0str.find("double") != string::npos){
             
                         DoubleMatcher arg0m{this->context_,this->interp_};
                         arg0m.setup();
@@ -575,21 +499,14 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
                         arg0stmt = arg0m.getChildExprStore();
                     }
                     if(false){}
-                    else if(arg1str=="tf::Stamped<tf::Point>" or arg1str=="const tf::Stamped<tf::Point>" or arg1str=="class tf::Stamped<tf::Point>"/*arg1str.find("tf::Stamped<tf::Point>") != string::npos*/){
-            
-                        ROSTFStampedPoint arg1m{this->context_,this->interp_};
-                        arg1m.setup();
-                        arg1m.visit(*arg1);
-                        arg1stmt = arg1m.getChildExprStore();
-                    }
-                    else if(arg1str=="tf::Vector3" or arg1str=="const tf::Vector3" or arg1str=="class tf::Vector3"/*arg1str.find("tf::Vector3") != string::npos*/){
+                    else if(arg1str.find("tf::Vector3") != string::npos){
             
                         ROSTFVector3Matcher arg1m{this->context_,this->interp_};
                         arg1m.setup();
                         arg1m.visit(*arg1);
                         arg1stmt = arg1m.getChildExprStore();
                     }
-                    else if(arg1str=="tf::Point" or arg1str=="const tf::Point" or arg1str=="class tf::Point"/*arg1str.find("tf::Point") != string::npos*/){
+                    else if(arg1str.find("tf::Point") != string::npos){
             
                         ROSTFPointMatcher arg1m{this->context_,this->interp_};
                         arg1m.setup();

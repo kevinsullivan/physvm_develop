@@ -13,10 +13,6 @@
 /*
 Test 1
 
-Test case := pair <input, expected-output>
-Input := <program, annotations>
-Output := physlang object
-
 Name -  Zero Line Program For Space Creation
 Description - The purpose of this test is to demonstrate the creation of ClassicalTime and ClassicalGeometry Spaces.
 Expected Outcome - Two "World Spaces" will have been created
@@ -29,7 +25,7 @@ Implementation Gaps - NONE
 */
 
 
-// Input 
+
 #include <cmath>
 
 int main(int argc, char **argv){
@@ -37,15 +33,6 @@ int main(int argc, char **argv){
     ros::NodeHandle node;  
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
 
-<<<<<<< HEAD:ros/ros_cps_errors/src/newtests/test1-empty.cpp
-    //1 : @@EuclideanGeometry wg = worldGeometry("worldGeometry", 3)
-    //2 : @@ClassicalTime wt = worldTime("worldTime")
-    //3 : @@ClassicalVelocity wv = worldVelocity(worldGeometry, worldTime)
-}
-
-// Output physlang object.
-=======
     //1 : @@EuclideanGeometry worldGeometry("worldGeometry", 3)
     //2 : @@ClassicalTime worldTime("worldTime")
 }
->>>>>>> a4c2cdaca30bd0d2eae32ef04cefd4b467cebca0:ros/ros/ros_cps_errors/src/newtests/test1-empty.cpp

@@ -1,8 +1,8 @@
-prefix=/peirce/ros_test_cases/tf_tutorial/devel
+prefix=/peirce/ros/tf_tutorial/devel
 
 Name: tf_tutorial
 Description: Description of tf_tutorial
 Version: 1.1.1
-Cflags: -I/peirce/ros_test_cases/tf_tutorial/src/tf_tutorial/include
+Cflags: -I/peirce/ros/tf_tutorial/src/tf_tutorial/include
 Libs: -L${prefix}/lib 
 Requires: 
