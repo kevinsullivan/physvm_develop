@@ -50,7 +50,7 @@ Instantiate affine_space typeclass
 open_locale affine
 section old_structure_cmd
 set_option old_structure_cmd true
-
+/--/
 instance : inhabited (pt K) := ⟨ pt_zero K ⟩ 
 instance : has_zero (vec K) := ⟨ vec_zero K ⟩ 
 instance : has_vadd (vec K) (pt K) := ⟨ add_vec_pt K ⟩ 
@@ -82,7 +82,74 @@ aff_vadd_vsub K
 ⟩
 
 instance my_affine_space : affine_space (vec K) (pt K) :=  
-aff_torsor K 
+aff_torsor K -/
+
+instance : has_add (vec K) := ⟨λv1 v2, ⟨v1.1,v1.2,v1.coord + v2.coord⟩⟩
+instance : has_zero (vec K) := ⟨vec_zero K⟩
+instance : has_neg (vec K) := ⟨λv, ⟨v.1,v.2,-v.3⟩⟩
+
+/-! ### Type class instance for abelian group -/
+instance aff_comm_group : add_comm_group (vec K) :=
+sorry
+
+
+/-! ### Scalar action -/
+
+
+@[ext]
+def vec_scalar : K → vec K → vec K :=
+    λ a x, ⟨x.1,x.2,a*x.3⟩
+
+instance : has_scalar K (vec K) := ⟨vec_scalar K⟩
+
+instance : mul_action K (vec K) := ⟨sorry, sorry⟩
+
+instance : distrib_mul_action K (vec K) := ⟨sorry,sorry⟩
+
+instance aff_semimod : semimodule K (vec K) := ⟨sorry, sorry⟩
+
+instance aff_module : module K (vec K) := aff_semimod K
+
+/-! ### group action of aff_vec_coord_tuple on aff_pt_coord_tuple -/
+
+
+def aff_group_action : vec K → pt K → pt K :=
+    λ x y, ⟨y.1,y.2,x.3+y.3⟩
+
+
+def aff_group_sub : pt K → pt K → vec K :=
+    λ x y, ⟨x.1-y.1,sorry,x.3-y.3⟩
+
+#check add_action
+
+instance : has_vadd (vec K) (pt K) := ⟨aff_group_action K⟩
+
+instance : has_vsub (vec K) (pt K) := ⟨aff_group_sub K⟩
+
+instance : add_action (vec K) (pt K) := ⟨
+    aff_group_action K, 
+    sorry, 
+    sorry⟩
+
+
+instance : nonempty (pt K) := ⟨pt_zero K⟩
+
+instance aff_torsor : add_torsor (vec K) (pt K) := 
+⟨sorry,
+sorry,
+sorry,
+sorry,
+sorry,
+sorry⟩
+
+
+instance aff_coord_is : 
+    affine_space 
+        (vec K) 
+        (pt K) := 
+    aff_torsor K
+
+
 
 end old_structure_cmd
 

@@ -1,4 +1,7 @@
 import .space_unframed
+import linear_algebra.affine_space.basic
+
+open_locale affine
 
 /-
 Framed points, vectors, frames
@@ -95,4 +98,71 @@ aff_torsor K
 
 end old_structure_cmd
 -/
+
+variables {f : fm K} { s : spc K f}
+
+instance : has_add (vectr K s) := ⟨λv1 v2, ⟨⟨v1.1.1,v1.1.2,v1.coord + v2.coord⟩⟩⟩
+instance : has_zero (vectr K s) := ⟨⟨vec_zero K⟩⟩
+instance : has_neg (vectr K s) := ⟨λv, ⟨⟨v.1.1,v.1.2,-v.1.3⟩⟩⟩
+
+/-! ### Type class instance for abelian group -/
+instance aff_comm_group_framed : add_comm_group (vectr K s) :=
+sorry
+
+
+/-! ### Scalar action -/
+
+
+@[ext]
+def vec_scalar_framed : K → vectr K s → vectr K s :=
+    λ a x, ⟨⟨x.1.1,x.1.2,a*x.1.3⟩⟩
+
+instance : has_scalar K (vectr K s) := ⟨vec_scalar_framed K⟩
+
+instance : mul_action K (vectr K s) := ⟨sorry, sorry⟩
+
+instance : distrib_mul_action K (vectr K s) := ⟨sorry,sorry⟩
+
+instance aff_semimod_framed : semimodule K (vectr K s) := ⟨sorry, sorry⟩
+
+instance aff_module_framed : module K (vectr K s) := aff_semimod_framed K
+
+/-! ### group action of aff_vec_coord_tuple on aff_pt_coord_tuple -/
+
+
+def aff_group_action_framed : vectr K s → point K s → point K s :=
+    λ x y, ⟨⟨y.1.1,y.1.2,x.1.3+y.1.3⟩⟩
+
+
+def aff_group_sub_framed : point K s → point K s → vectr K s :=
+    λ x y, ⟨⟨x.1.1-y.1.1,sorry,x.1.3-y.1.3⟩⟩
+
+#check add_action
+
+instance : has_vadd (vectr K s) (point K s) := ⟨aff_group_action_framed K⟩
+
+instance : has_vsub (vectr K s) (point K s) := ⟨aff_group_sub_framed K⟩
+
+instance : add_action (vectr K s) (point K s) := ⟨
+    aff_group_action_framed K, 
+    sorry, 
+    sorry⟩
+
+
+instance : nonempty (point K s) := ⟨⟨pt_zero K⟩⟩
+
+instance aff_torsor_framed : add_torsor (vectr K s) (point K s) := 
+⟨sorry,
+sorry,
+sorry,
+sorry,
+sorry,
+sorry⟩
+
+
+instance aff_coord_is_framed : 
+    affine_space
+        (vectr K s) 
+        (point K s) := 
+    aff_torsor_framed K
 
