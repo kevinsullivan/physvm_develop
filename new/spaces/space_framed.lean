@@ -117,10 +117,17 @@ The following notation is uninterpretable:
 Please leave explanation here of what this 
 term is/means. Use identifer rather than
 numeric projections with good names.
+
+FIX THIS CODE. IT'S TERRIBLE. See unframed file for template.
 -/
 instance : has_add (vectr K s) := ⟨λv1 v2, ⟨⟨v1.1.1,v1.1.2,v1.coord + v2.coord⟩⟩⟩
 instance : has_zero (vectr K s) := ⟨⟨vec_zero K⟩⟩
 instance : has_neg (vectr K s) := ⟨λv, ⟨⟨v.1.1,v.1.2,-v.1.3⟩⟩⟩
+/-
+Keep this copy.
+instance : has_add (vectr K s) := ⟨λv1 v2, ⟨⟨v1.1.1,v1.1.2,v1.coord + v2.coord⟩⟩⟩
+instance : has_zero (vectr K s) := ⟨⟨vec_zero K⟩⟩
+instance : has_neg (vectr K s) := ⟨λv, ⟨⟨v.1.1,v.1.2,-v.1.3⟩⟩⟩-/
 
 /-! ### Type class instance for abelian group -/
 instance aff_comm_group_framed : add_comm_group (vectr K s) :=
