@@ -60,6 +60,23 @@ instance : has_neg (vectr K s) := ⟨λv, ⟨⟨v.1.1,v.1.2,-v.1.3⟩⟩⟩
 instance : has_add (vectr K s) := ⟨add_vectr_vectr K⟩
 instance : has_zero (vectr K s) := ⟨vectr_zero K s⟩
 instance : has_neg (vectr K s) := ⟨neg_vectr K⟩
+
+instance : has_vadd (vectr K s) (point K s) := ⟨ add_vectr_point K⟩ 
+instance : has_vsub (vectr K s) (point K s) := ⟨ sub_point_point K⟩ 
+
+/-
+Lemmas needed to implement affine space API
+-/
+lemma aff_zero_sadd : ∀ p : point K s, (0 : vectr K s) +ᵥ p = p := sorry
+lemma aff_add_sadd: ∀ g1 g2 : vectr K s, ∀ p : point K s, g1 +ᵥ (g2 +ᵥ p) = g1 + g2 +ᵥ p := sorry   -- problem here
+lemma aff_vsub_vadd : ∀ a b : point K s, (a -ᵥ b) +ᵥ b = a := sorry
+lemma aff_vadd_vsub : ∀ (x : vec K) (a : pt K), x +ᵥ a -ᵥ a = x := sorry
+
+
+/-
+Affine space API
+-/
+
 instance aff_comm_group_framed : add_comm_group (vectr K s) := sorry
 @[ext]
 def vec_scalar_framed : K → vectr K s → vectr K s :=
@@ -77,11 +94,9 @@ instance : has_vadd (vectr K s) (point K s) := ⟨aff_group_action_framed K⟩
 instance : has_vsub (vectr K s) (point K s) := ⟨aff_group_sub_framed K⟩
 instance : add_action (vectr K s) (point K s) := ⟨
     aff_group_action_framed K, 
-    sorry, 
-    sorry⟩
+aff_zero_sadd K, 
+aff_add_sadd K⟩
 instance : nonempty (point K s) := ⟨⟨pt_zero K⟩⟩
-
-
 instance aff_torsor_framed : add_torsor (vectr K s) (point K s) := 
 ⟨sorry,
 sorry,
@@ -89,8 +104,6 @@ sorry,
 sorry,
 sorry,
 sorry⟩
-
-
 instance aff_coord_is_framed : 
     affine_space
         (vectr K s) 
