@@ -41,12 +41,9 @@ def std_pt : pt K    := pt_zero K
 def std_vec : vec K  := vec_one K
 
 
--- Implement affine_space API (Seoarate file?)
-
-open_locale affine
-
---section old_structure_cmd
---set_option old_structure_cmd true
+/-
+Affine_space API
+-/
 
 instance : has_add (vec K) := ⟨ add_vec_vec K ⟩  -- Ick: ⟨λv1 v2, ⟨v1.1, v1.2, v1.to_prod.2 + v2.to_prod.2⟩⟩
 instance : has_zero (vec K) := ⟨vec_zero K⟩
@@ -74,6 +71,7 @@ sorry,
 sorry,
 sorry,
 sorry⟩
+open_locale affine
 instance : affine_space (vec K) (pt K) := aff_torsor K
 
 
