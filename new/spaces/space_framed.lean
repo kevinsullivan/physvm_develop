@@ -23,15 +23,18 @@ structure spc (f : fm K) : Type u
 structure point {f : fm K} (s : spc K f ) extends pt K
 structure vectr {f : fm K} (s : spc K f ) extends vec K
 
+-- makes low-level frame
 def mk_frame {parent : fm K} {s : spc K parent}  (p : point K s) (v : vectr K s) :=
 fm.deriv (p.to_pt, v.to_vec) parent   -- make sure v ≠ 0
 
+-- higher-level objects still have lower-level frames
 def mk_point {f : fm K} (s : spc K f ) (k : K) : point K s :=
 point.mk (mk_pt K k)  
 
 def mk_vectr {f : fm K} (s : spc K f ) (k : K) : vectr K s :=
 vectr.mk (mk_vec K k)  
 
+-- space are also induced by these lower-level frames
 def mk_space (f : fm K) :=
   @spc.mk K _ _ f
 
@@ -101,6 +104,20 @@ end old_structure_cmd
 
 variables {f : fm K} { s : spc K f}
 
+variable v : vectr K s
+#check v        -- v : vectr K s
+#check v.1      -- v.to_vec : vec K
+#check v.1.1    -- v.to_vec.isPt : K
+#check v.1.2    -- v.to_vec.inv : v.to_vec.isPt = 0
+#check vec
+
+/-
+The following notation is uninterpretable:
+λv1 v2, ⟨⟨v1.1.1,v1.1.2,v1.coord + v2.coord⟩⟩
+Please leave explanation here of what this 
+term is/means. Use identifer rather than
+numeric projections with good names.
+-/
 instance : has_add (vectr K s) := ⟨λv1 v2, ⟨⟨v1.1.1,v1.1.2,v1.coord + v2.coord⟩⟩⟩
 instance : has_zero (vectr K s) := ⟨⟨vec_zero K⟩⟩
 instance : has_neg (vectr K s) := ⟨λv, ⟨⟨v.1.1,v.1.2,-v.1.3⟩⟩⟩
