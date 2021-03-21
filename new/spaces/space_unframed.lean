@@ -37,12 +37,12 @@ def lin2 := prod K K
 def lin2_add : lin2 K → lin2 K → lin2 K
 | (f1,s1) (f2,s2) := ⟨ f1 + f2, s1 + s2 ⟩ 
 
-def lin2_mul : K → lin2 K → lin2 K
+def lin2_scale : K → lin2 K → lin2 K
 | a (f,s) := ⟨ a * f, a * s ⟩ 
 
 instance : has_add (lin2 K) := ⟨ lin2_add K ⟩ 
 instance : has_zero (lin2 K) := ⟨ (0,0) ⟩ 
-instance : has_scalar K (lin2 K) := ⟨ lin2_mul K ⟩ 
+instance : has_scalar K (lin2 K) := ⟨ lin2_scale K ⟩ 
 
 
 --      Affine 1 space
