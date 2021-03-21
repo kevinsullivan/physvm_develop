@@ -15,45 +15,40 @@ variables
 inductive fm : Type u
 | base : fm
 | deriv (self : prod (pt K) (vec K)) (parent : fm) : fm
-
 def mk_fm (p : pt K) (v : vec K) (f : fm K): fm K := fm.deriv (p, v) f 
-def std_fm : fm K    := fm.base  
+-- def std_fm : fm K    := fm.base  
 
-structure spc (f : fm K) : Type u 
+structure spc (f : fm K) : Type u
+def mk_space (f : fm K) :=
+  @spc.mk K _ _ f
+
 structure point {f : fm K} (s : spc K f ) extends pt K
-structure vectr {f : fm K} (s : spc K f ) extends vec K
-
--- makes low-level frame
-def mk_frame {parent : fm K} {s : spc K parent}  (p : point K s) (v : vectr K s) :=
-fm.deriv (p.to_pt, v.to_vec) parent   -- make sure v ≠ 0
-
--- higher-level objects still have lower-level frames
 def mk_point {f : fm K} (s : spc K f ) (k : K) : point K s :=
 point.mk (mk_pt K k)  
 
+structure vectr {f : fm K} (s : spc K f ) extends vec K
 def mk_vectr {f : fm K} (s : spc K f ) (k : K) : vectr K s :=
 vectr.mk (mk_vec K k)  
 
--- space are also induced by these lower-level frames
-def mk_space (f : fm K) :=
-  @spc.mk K _ _ f
+def mk_frame {parent : fm K} {s : spc K parent}  (p : point K s) (v : vectr K s) :=
+fm.deriv (p.to_pt, v.to_vec) parent   -- TODO: make sure v ≠ 0
 
 /-
 Operations
 -/
 
-/-
+
 /-
 Affine space operations
 -/
-def mul_vectr (k : K) (v : vec K) [has_mul K] : vec K := mk_vec K (k * v.coord)
-def neg_vectr (k : K) (v : vec K) [has_mul K] : vec K := mk_vec K (-1 * v.coord)
-def add_vectr_vectr (k : K) (v1 v2 : vec K) [has_add K] : vec K := mk_vec K (v1.coord + v2.coord)
-def add_point_vectr (k : K) (p : pt K) (v : vec K) [has_add K] : pt K := mk_pt K (p.coord + v.coord)
-def add_vectr_point (v : vec K) (p : pt K) : pt K := mk_pt K (p.coord + v.coord)
-def sub_pt_pt (p1 p2 : pt K) : vec K := mk_vec K (p2.coord - p1.coord)
+def mul_vectr {f : fm K} {s : spc K f } (k : K) (v : vectr K s) : vectr K s := mk_vectr K s (k * v.to_vec.to_prod.2) -- yuck
+def neg_vectr {f : fm K} {s : spc K f } (k : K) (v : vectr K s) : vec K := mk_vec K (-1 * v.to_vec.to_prod.2)
+def add_vectr_vectr {f : fm K} {s : spc K f } (k : K) (v1 v2 : vectr K s) : vec K := mk_vec K (v1.to_vec.to_prod.2 + v2.to_vec.to_prod.2)
+def add_point_vectr {f : fm K} {s : spc K f } (k : K) (p : point K s) (v : vectr K s) : point K s := mk_point K s (p.to_pt.to_prod.2 + v.to_vec.to_prod.2)
+def add_vectr_point {f : fm K} {s : spc K f } (v : vectr K s) (p : point K s) : point K s := mk_point K s (v.to_vec.to_prod.2 + p.to_pt.to_prod.2)
+def sub_point_point {f : fm K} {s : spc K f } (p1 p2 : point K s) : vectr K s := mk_vectr K s (p2.to_pt.to_prod.2 - p1.to_pt.to_prod.2)
 
-
+/-
 
 /-
  Make it an affine space
