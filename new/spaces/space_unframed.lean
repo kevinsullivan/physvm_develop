@@ -45,7 +45,7 @@ def std_vec : vec K  := vec_one K
 Affine_space API
 -/
 
-instance : has_add (vec K) := ⟨ add_vec_vec K ⟩  -- Ick: ⟨λv1 v2, ⟨v1.1, v1.2, v1.to_prod.2 + v2.to_prod.2⟩⟩
+instance : has_add (vec K) := ⟨ add_vec_vec K ⟩  -- Ick! ⟨λv1 v2, ⟨v1.1, v1.2, v1.to_prod.2 + v2.to_prod.2⟩⟩
 instance : has_zero (vec K) := ⟨vec_zero K⟩
 instance : has_neg (vec K) := ⟨neg_vec K⟩
 instance : add_comm_group (vec K) := sorry
