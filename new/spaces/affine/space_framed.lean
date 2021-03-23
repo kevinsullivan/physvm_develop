@@ -43,6 +43,8 @@ def add_point_vectr {f : fm K} {s : spc K f } (p : point K s) (v : vectr K s) : 
 def add_vectr_point {f : fm K} {s : spc K f } (v : vectr K s) (p : point K s) : point K s := mk_point K s (v.to_vec.to_prod.2 + p.to_pt.to_prod.2)
 def sub_point_point {f : fm K} {s : spc K f } (p1 p2 : point K s) : vectr K s := mk_vectr K s (p2.to_pt.to_prod.2 - p1.to_pt.to_prod.2)
 
+-- Notation??
+
 /-
 Constants
 -/
