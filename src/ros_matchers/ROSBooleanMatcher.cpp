@@ -2,7 +2,7 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 
-#include "IntMatcher.h"
+#include "ROSBooleanMatcher.h"
 
 
 #include <string>
@@ -10,7 +10,7 @@
 #include <functional>
 
 
-void IntMatcher::setup(){
+void ROSBooleanMatcher::setup(){
 		StatementMatcher cxxConstructExpr_=cxxConstructExpr().bind("CXXConstructExpr");
 		localFinder_.addMatcher(cxxConstructExpr_,this);
 	
@@ -37,9 +37,15 @@ void IntMatcher::setup(){
 	
 		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
 		localFinder_.addMatcher(declRefExpr_,this);
+	
+		StatementMatcher cxxMemberCallExpr_=cxxMemberCallExpr().bind("CXXMemberCallExpr");
+		localFinder_.addMatcher(cxxMemberCallExpr_,this);
+	
+		StatementMatcher cxxBoolLiteralExpr_=cxxBoolLiteral().bind("CXXBoolLiteralExpr");
+		localFinder_.addMatcher(cxxBoolLiteralExpr_,this);
 };
 
-void IntMatcher::run(const MatchFinder::MatchResult &Result){
+void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
 	auto cxxConstructExpr_ = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
 	
 	auto memberExpr_ = Result.Nodes.getNodeAs<clang::MemberExpr>("MemberExpr");
@@ -57,6 +63,10 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
 	
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+	
+	auto cxxMemberCallExpr_ = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("CXXMemberCallExpr");
+	
+	auto cxxBoolLiteralExpr_ = Result.Nodes.getNodeAs<clang::CXXBoolLiteralExpr>("CXXBoolLiteralExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
     this->childExprStore_ = nullptr;
@@ -65,7 +75,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
         auto decl_ = cxxConstructExpr_->getConstructor();
         if(decl_->isCopyOrMoveConstructor())
         {
-            IntMatcher pm{context_, interp_};
+            ROSBooleanMatcher pm{context_, interp_};
             pm.setup();
             pm.visit(**cxxConstructExpr_->getArgs());
             this->childExprStore_ = pm.getChildExprStore();
@@ -73,23 +83,23 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
     
             else{
                 this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-                interp_->mkREAL1_LIT((clang::Stmt*)cxxBindTemporaryExpr_);
+                interp_->mkBOOL_LIT((clang::Stmt*)cxxBindTemporaryExpr_);
             }
         }
     }
 
 	
-	arg_decay_exist_predicates["memberExpr_int"] = [=](std::string typenm){
+	arg_decay_exist_predicates["memberExpr_bool"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="int" or typenm == "const int" or typenm == "class int"/*typenm.find("int") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="int" or typestr == "const int" or typestr == "const int"/*typestr.find("int") != string::npos*/){
-            IntMatcher innerm{this->context_,this->interp_};
+        else if(typestr=="bool" or typestr == "const bool" or typestr == "const bool"/*typestr.find("bool") != string::npos*/){
+            ROSBooleanMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
@@ -99,9 +109,9 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["implicitCastExpr_int"] = [=](std::string typenm){
+	arg_decay_exist_predicates["implicitCastExpr_bool"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="int" or typenm == "const int" or typenm == "class int"/*typenm.find("int") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
         else { return false; } 
     };
 
@@ -111,8 +121,8 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="int" or typestr == "const int" or typestr == "class int"/*typestr.find("int") != string::npos*/){
-            IntMatcher innerm{this->context_,this->interp_};
+        else if(typestr=="bool" or typestr == "const bool" or typestr == "class bool"/*typestr.find("bool") != string::npos*/){
+            ROSBooleanMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
@@ -120,20 +130,20 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
         }
         else{
             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-            interp_->mkREAL1_LIT((clang::Stmt*)implicitCastExpr_);
+            interp_->mkBOOL_LIT((clang::Stmt*)implicitCastExpr_);
             return;
         }
     }
 
 	
-	arg_decay_exist_predicates["cxxBindTemporaryExpr_int"] = [=](std::string typenm){
+	arg_decay_exist_predicates["cxxBindTemporaryExpr_bool"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="int" or typenm == "const int" or typenm == "class int"/*typenm.find("int") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
     {
-        IntMatcher exprMatcher{ context_, interp_};
+        ROSBooleanMatcher exprMatcher{ context_, interp_};
         exprMatcher.setup();
         exprMatcher.visit(*cxxBindTemporaryExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -141,20 +151,20 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
     
         else{
             this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-            interp_->mkREAL1_LIT((clang::Stmt*)cxxBindTemporaryExpr_);
+            interp_->mkBOOL_LIT((clang::Stmt*)cxxBindTemporaryExpr_);
             return;
         }
     }
 
 	
-	arg_decay_exist_predicates["materializeTemporaryExpr_int"] = [=](std::string typenm){
+	arg_decay_exist_predicates["materializeTemporaryExpr_bool"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="int" or typenm == "const int" or typenm == "class int"/*typenm.find("int") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
         {
-            IntMatcher exprMatcher{ context_, interp_};
+            ROSBooleanMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*materializeTemporaryExpr_->GetTemporaryExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -163,20 +173,20 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)materializeTemporaryExpr_;
-                interp_->mkREAL1_LIT((clang::Stmt*)materializeTemporaryExpr_);
+                interp_->mkBOOL_LIT((clang::Stmt*)materializeTemporaryExpr_);
                 return;
             }
         }
 
 	
-	arg_decay_exist_predicates["parenExpr_int"] = [=](std::string typenm){
+	arg_decay_exist_predicates["parenExpr_bool"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="int" or typenm == "const int" or typenm == "class int"/*typenm.find("int") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
     {
-        IntMatcher inner{ context_, interp_};
+        ROSBooleanMatcher inner{ context_, interp_};
         inner.setup();
         inner.visit(*parenExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
@@ -192,7 +202,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if (exprWithCleanups_)
         {
-            IntMatcher exprMatcher{ context_, interp_};
+            ROSBooleanMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*exprWithCleanups_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -201,7 +211,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)exprWithCleanups_;
-                interp_->mkREAL1_LIT((clang::Stmt*)exprWithCleanups_);
+                interp_->mkBOOL_LIT((clang::Stmt*)exprWithCleanups_);
                 return;
             }
         }
@@ -209,7 +219,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if (cxxFunctionalCastExpr_)
         {
-            IntMatcher exprMatcher{ context_, interp_};
+            ROSBooleanMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -219,7 +229,7 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
             else{
 
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
-                interp_->mkREAL1_LIT((clang::Stmt*)cxxFunctionalCastExpr_);
+                interp_->mkBOOL_LIT((clang::Stmt*)cxxFunctionalCastExpr_);
                 return;
             }
         }
@@ -227,13 +237,45 @@ void IntMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if(declRefExpr_){
         if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
-            interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
+            interp_->mkREF_BOOL_VAR(declRefExpr_, dc);
             this->childExprStore_ = (clang::Stmt*)declRefExpr_;
             return;
 
         }
     }
 
+	
+    if(cxxMemberCallExpr_){
+        auto decl_ = cxxMemberCallExpr_->getMethodDecl();
+        if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
+            auto name = dc->getNameAsString();
+            
+
+            if(true/*name.find("IGNORE") != string::npos*/){            
+                if (true ){
+                    if(true ){
+                        interp_->mkBOOL_LIT(cxxMemberCallExpr_);
+                        this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
+                        return;
+                    }
+            
+                }
+            }
+        }
+    }
+
+	
+	arg_decay_exist_predicates["cxxBoolLiteralExpr__bool"] = [=](std::string typenm){
+        if(false){return false;}
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
+        else { return false; }
+    };
+    if (cxxBoolLiteralExpr_)
+    {
+        interp_->mkBOOL_LIT(cxxBoolLiteralExpr_);
+        this->childExprStore_ = (clang::Stmt*)cxxBoolLiteralExpr_;
+        return;
+    }
 
 
 };

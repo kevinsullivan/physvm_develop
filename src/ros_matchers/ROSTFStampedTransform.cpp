@@ -15,7 +15,7 @@
 #include <functional>
 
 
-void ROSTFTransformMatcher::setup(){
+void ROSTFStampedTransform::setup(){
 		StatementMatcher cxxConstructExpr_=cxxConstructExpr().bind("CXXConstructExpr");
 		localFinder_.addMatcher(cxxConstructExpr_,this);
 	
@@ -47,7 +47,7 @@ void ROSTFTransformMatcher::setup(){
 		localFinder_.addMatcher(cxxOperatorCallExpr_,this);
 };
 
-void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
+void ROSTFStampedTransform::run(const MatchFinder::MatchResult &Result){
 	auto cxxConstructExpr_ = Result.Nodes.getNodeAs<clang::CXXConstructExpr>("CXXConstructExpr");
 	
 	auto memberExpr_ = Result.Nodes.getNodeAs<clang::MemberExpr>("MemberExpr");
@@ -75,7 +75,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
         auto decl_ = cxxConstructExpr_->getConstructor();
         if(decl_->isCopyOrMoveConstructor())
         {
-            ROSTFTransformMatcher pm{context_, interp_};
+            ROSTFStampedTransform pm{context_, interp_};
             pm.setup();
             pm.visit(**cxxConstructExpr_->getArgs());
             this->childExprStore_ = pm.getChildExprStore();
@@ -92,7 +92,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["memberExpr_tf::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["memberExpr_tf::StampedTransform"] = [=](std::string typenm){
     if(false){return false;}
 		else if(typenm=="tf::StampedTransform" or typenm == "const tf::StampedTransform" or typenm == "class tf::StampedTransform"/*typenm.find("tf::StampedTransform") != string::npos*/){ return true; }
 		else if(typenm=="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform"/*typenm.find("tf::Transform") != string::npos*/){ return true; }
@@ -120,7 +120,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["implicitCastExpr_tf::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["implicitCastExpr_tf::StampedTransform"] = [=](std::string typenm){
         if(false){return false; }
 		else if(typenm=="tf::StampedTransform" or typenm == "const tf::StampedTransform" or typenm == "class tf::StampedTransform"/*typenm.find("tf::StampedTransform") != string::npos*/){ return true; }
 		else if(typenm=="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform"/*typenm.find("tf::Transform") != string::npos*/){ return true; }
@@ -157,7 +157,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["cxxBindTemporaryExpr_tf::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["cxxBindTemporaryExpr_tf::StampedTransform"] = [=](std::string typenm){
         if(false){ return false; }
 		else if(typenm=="tf::StampedTransform" or typenm == "const tf::StampedTransform" or typenm == "class tf::StampedTransform"/*typenm.find("tf::StampedTransform") != string::npos*/){ return true; }
 		else if(typenm=="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform"/*typenm.find("tf::Transform") != string::npos*/){ return true; }
@@ -165,7 +165,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
     };
     if (cxxBindTemporaryExpr_)
     {
-        ROSTFTransformMatcher exprMatcher{ context_, interp_};
+        ROSTFStampedTransform exprMatcher{ context_, interp_};
         exprMatcher.setup();
         exprMatcher.visit(*cxxBindTemporaryExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -181,7 +181,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["materializeTemporaryExpr_tf::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["materializeTemporaryExpr_tf::StampedTransform"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm=="tf::StampedTransform" or typenm == "const tf::StampedTransform" or typenm == "class tf::StampedTransform"/*typenm.find("tf::StampedTransform") != string::npos*/){ return true; }
 		else if(typenm=="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform"/*typenm.find("tf::Transform") != string::npos*/){ return true; }
@@ -189,7 +189,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
     };
     if (materializeTemporaryExpr_)
         {
-            ROSTFTransformMatcher exprMatcher{ context_, interp_};
+            ROSTFStampedTransform exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*materializeTemporaryExpr_->GetTemporaryExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -206,7 +206,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
 
     }
 	
-	arg_decay_exist_predicates["parenExpr_tf::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["parenExpr_tf::StampedTransform"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm=="tf::StampedTransform" or typenm == "const tf::StampedTransform" or typenm == "class tf::StampedTransform"/*typenm.find("tf::StampedTransform") != string::npos*/){ return true; }
 		else if(typenm=="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform"/*typenm.find("tf::Transform") != string::npos*/){ return true; }
@@ -214,7 +214,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
     };
     if (parenExpr_)
     {
-        ROSTFTransformMatcher inner{ context_, interp_};
+        ROSTFStampedTransform inner{ context_, interp_};
         inner.setup();
         inner.visit(*parenExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
@@ -230,7 +230,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if (exprWithCleanups_)
         {
-            ROSTFTransformMatcher exprMatcher{ context_, interp_};
+            ROSTFStampedTransform exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*exprWithCleanups_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -248,7 +248,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if (cxxFunctionalCastExpr_)
         {
-            ROSTFTransformMatcher exprMatcher{ context_, interp_};
+            ROSTFStampedTransform exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -273,6 +273,86 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
         }
     }
 
+	
+    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 0){
+        if(true ){
+            
+            if(true ){
+                interp_->mkREALMATRIX4_EMPTY(cxxConstructExpr_);
+                this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
+                return;
+            }
+        }
+    }
+	
+	arg_decay_exist_predicates["CXXConstructExpr(tf::Quaternion,tf::Vector3)@REALMATRIX4_LITERAL.R4R3_LITtf::Quaternion"] = [=](std::string typenm){
+        if(false){return false;}
+    
+		else if(typenm=="tf::Quaternion" or typenm == "const tf::Quaternion" or typenm == "class tf::Quaternion"/*typenm.find("tf::Quaternion") != string::npos*/){ return true; }
+        else { return false;}
+    };
+	arg_decay_exist_predicates["CXXConstructExpr(tf::Quaternion,tf::Vector3)@REALMATRIX4_LITERAL.R4R3_LITtf::Vector3"] = [=](std::string typenm){
+        if(false){return false;}
+    
+		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
+		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
+        else { return false;}
+    };
+    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 2){
+        clang::Stmt* arg0stmt = nullptr;
+
+        clang::Stmt* arg1stmt = nullptr;
+
+        auto arg0=cxxConstructExpr_->getArg(0);
+        auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
+
+        auto arg1=cxxConstructExpr_->getArg(1);
+        auto arg1str = ((clang::QualType)arg1->getType()).getAsString();
+
+        if(true  and arg_decay_exist_predicates["CXXConstructExpr(tf::Quaternion,tf::Vector3)@REALMATRIX4_LITERAL.R4R3_LITtf::Quaternion"](arg0str) and 
+            arg_decay_exist_predicates["CXXConstructExpr(tf::Quaternion,tf::Vector3)@REALMATRIX4_LITERAL.R4R3_LITtf::Vector3"](arg1str)){
+            
+            if(false){}
+            else if(arg0str=="tf::Quaternion" or arg0str == "const tf::Quaternion" or arg0str == "class tf::Quaternion"/*arg0str.find("tf::Quaternion") != string::npos*/){
+            ROSTFQuaternionMatcher 
+                arg0m{this->context_,this->interp_};
+                arg0m.setup();
+                arg0m.visit(*arg0);
+                arg0stmt = arg0m.getChildExprStore();
+            }
+
+            if(false){}
+            else if(arg1str=="tf::Stamped<tf::Point>" or arg1str == "const tf::Stamped<tf::Point>" or arg1str == "class tf::Stamped<tf::Point>"/*arg1str.find("tf::Stamped<tf::Point>") != string::npos*/){
+            ROSTFStampedPoint 
+                arg1m{this->context_,this->interp_};
+                arg1m.setup();
+                arg1m.visit(*arg1);
+                arg1stmt = arg1m.getChildExprStore();
+            }
+            
+            else if(arg1str=="tf::Vector3" or arg1str == "const tf::Vector3" or arg1str == "class tf::Vector3"/*arg1str.find("tf::Vector3") != string::npos*/){
+            ROSTFVector3Matcher 
+                arg1m{this->context_,this->interp_};
+                arg1m.setup();
+                arg1m.visit(*arg1);
+                arg1stmt = arg1m.getChildExprStore();
+            }
+            
+            else if(arg1str=="tf::Point" or arg1str == "const tf::Point" or arg1str == "class tf::Point"/*arg1str.find("tf::Point") != string::npos*/){
+            ROSTFPointMatcher 
+                arg1m{this->context_,this->interp_};
+                arg1m.setup();
+                arg1m.visit(*arg1);
+                arg1stmt = arg1m.getChildExprStore();
+            }
+            if(true  and arg0stmt and arg1stmt){
+                interp_->mkR4R3_LIT_REAL4_EXPR_REAL3_EXPR(cxxConstructExpr_ , arg0stmt,arg1stmt);
+                this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
+                return;
+            }
+        }
+    }
 	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Transform).*@$.MULtf::Transform"] = [=](std::string typenm){
         if(false){ return false;}
@@ -347,76 +427,7 @@ void ROSTFTransformMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["CXXConstructExpr(tf::Quaternion,tf::Vector3)@REALMATRIX4_LITERAL.R4R3_LITtf::Quaternion"] = [=](std::string typenm){
-        if(false){return false;}
-    
-		else if(typenm=="tf::Quaternion" or typenm == "const tf::Quaternion" or typenm == "class tf::Quaternion"/*typenm.find("tf::Quaternion") != string::npos*/){ return true; }
-        else { return false;}
-    };
-	arg_decay_exist_predicates["CXXConstructExpr(tf::Quaternion,tf::Vector3)@REALMATRIX4_LITERAL.R4R3_LITtf::Vector3"] = [=](std::string typenm){
-        if(false){return false;}
-    
-		else if(typenm=="tf::Stamped<tf::Point>" or typenm == "const tf::Stamped<tf::Point>" or typenm == "class tf::Stamped<tf::Point>"/*typenm.find("tf::Stamped<tf::Point>") != string::npos*/){ return true; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
-		else if(typenm=="tf::Point" or typenm == "const tf::Point" or typenm == "class tf::Point"/*typenm.find("tf::Point") != string::npos*/){ return true; }
-        else { return false;}
-    };
-    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 2){
-        clang::Stmt* arg0stmt = nullptr;
-
-        clang::Stmt* arg1stmt = nullptr;
-
-        auto arg0=cxxConstructExpr_->getArg(0);
-        auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
-
-        auto arg1=cxxConstructExpr_->getArg(1);
-        auto arg1str = ((clang::QualType)arg1->getType()).getAsString();
-
-        if(true  and arg_decay_exist_predicates["CXXConstructExpr(tf::Quaternion,tf::Vector3)@REALMATRIX4_LITERAL.R4R3_LITtf::Quaternion"](arg0str) and 
-            arg_decay_exist_predicates["CXXConstructExpr(tf::Quaternion,tf::Vector3)@REALMATRIX4_LITERAL.R4R3_LITtf::Vector3"](arg1str)){
-            
-            if(false){}
-            else if(arg0str=="tf::Quaternion" or arg0str == "const tf::Quaternion" or arg0str == "class tf::Quaternion"/*arg0str.find("tf::Quaternion") != string::npos*/){
-            ROSTFQuaternionMatcher 
-                arg0m{this->context_,this->interp_};
-                arg0m.setup();
-                arg0m.visit(*arg0);
-                arg0stmt = arg0m.getChildExprStore();
-            }
-
-            if(false){}
-            else if(arg1str=="tf::Stamped<tf::Point>" or arg1str == "const tf::Stamped<tf::Point>" or arg1str == "class tf::Stamped<tf::Point>"/*arg1str.find("tf::Stamped<tf::Point>") != string::npos*/){
-            ROSTFStampedPoint 
-                arg1m{this->context_,this->interp_};
-                arg1m.setup();
-                arg1m.visit(*arg1);
-                arg1stmt = arg1m.getChildExprStore();
-            }
-            
-            else if(arg1str=="tf::Vector3" or arg1str == "const tf::Vector3" or arg1str == "class tf::Vector3"/*arg1str.find("tf::Vector3") != string::npos*/){
-            ROSTFVector3Matcher 
-                arg1m{this->context_,this->interp_};
-                arg1m.setup();
-                arg1m.visit(*arg1);
-                arg1stmt = arg1m.getChildExprStore();
-            }
-            
-            else if(arg1str=="tf::Point" or arg1str == "const tf::Point" or arg1str == "class tf::Point"/*arg1str.find("tf::Point") != string::npos*/){
-            ROSTFPointMatcher 
-                arg1m{this->context_,this->interp_};
-                arg1m.setup();
-                arg1m.visit(*arg1);
-                arg1stmt = arg1m.getChildExprStore();
-            }
-            if(true  and arg0stmt and arg1stmt){
-                interp_->mkR4R3_LIT_REAL4_EXPR_REAL3_EXPR(cxxConstructExpr_ , arg0stmt,arg1stmt);
-                this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
-                return;
-            }
-        }
-    }
-	
-    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 0){
+    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 4){
         if(true ){
             
             if(true ){

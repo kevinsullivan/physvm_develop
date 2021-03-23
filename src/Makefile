@@ -52,7 +52,7 @@ LLVM_LDFLAGS := `llvm-config --ldflags --libs --system-libs`
 DEPFLAGS = -MT $@ -MD -MP -MF $(DEPDIR)/$*.Td
 
 # linker libraries
-LDLIBS = -lg3log
+LDLIBS = #-lg3log
 
 # List of Clang libraries to link. The proper -L will be provided by the
 # call to llvm-config

@@ -32,11 +32,11 @@ void ROSTFScalarMatcher::setup(){
 		StatementMatcher exprWithCleanups_=exprWithCleanups().bind("ExprWithCleanups");
 		localFinder_.addMatcher(exprWithCleanups_,this);
 	
-		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
-		localFinder_.addMatcher(declRefExpr_,this);
-	
 		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
 		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
+	
+		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
+		localFinder_.addMatcher(declRefExpr_,this);
 	
 		StatementMatcher binaryOperator_=binaryOperator().bind("BinaryOperator");
 		localFinder_.addMatcher(binaryOperator_,this);
@@ -57,9 +57,9 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	auto exprWithCleanups_ = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanups");
 	
-	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-	
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
+	
+	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
 	
 	auto binaryOperator_ = Result.Nodes.getNodeAs<clang::BinaryOperator>("BinaryOperator");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
@@ -86,14 +86,14 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_tfScalar"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm.find("tfScalar") != string::npos){ return true; }
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar"/*typenm.find("tfScalar") != string::npos*/){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr.find("tfScalar") != string::npos){
+        else if(typestr=="tfScalar" or typestr == "const tfScalar" or typestr == "const tfScalar"/*typestr.find("tfScalar") != string::npos*/){
             ROSTFScalarMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -106,7 +106,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_tfScalar"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm.find("tfScalar") != string::npos){ return true; }
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar"/*typenm.find("tfScalar") != string::npos*/){ return true; }
         else { return false; } 
     };
 
@@ -116,7 +116,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr.find("tfScalar") != string::npos){
+        else if(typestr=="tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar"/*typestr.find("tfScalar") != string::npos*/){
             ROSTFScalarMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -133,7 +133,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_tfScalar"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm.find("tfScalar") != string::npos){ return true; }
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar"/*typenm.find("tfScalar") != string::npos*/){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -154,7 +154,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_tfScalar"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm.find("tfScalar") != string::npos){ return true; }
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar"/*typenm.find("tfScalar") != string::npos*/){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -176,7 +176,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_tfScalar"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm.find("tfScalar") != string::npos){ return true; }
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar"/*typenm.find("tfScalar") != string::npos*/){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -187,9 +187,11 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
         if(this->childExprStore_){}
         else{
-            std::cout<<"WARNING: Capture Escaping! Dump :\n";
-            parenExpr_->dump();
-        }
+                
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                parenExpr_->dump();
+           
+            }
         return;
     }
 	
@@ -210,16 +212,6 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
         }
     
 	
-    if(declRefExpr_){
-        if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
-            interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
-            this->childExprStore_ = (clang::Stmt*)declRefExpr_;
-            return;
-
-        }
-    }
-
-	
     if (cxxFunctionalCastExpr_)
         {
             ROSTFScalarMatcher exprMatcher{ context_, interp_};
@@ -230,6 +222,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
+
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
                 interp_->mkREAL1_LIT((clang::Stmt*)cxxFunctionalCastExpr_);
                 return;
@@ -237,14 +230,24 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
         }
     
 	
+    if(declRefExpr_){
+        if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
+            interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
+            this->childExprStore_ = (clang::Stmt*)declRefExpr_;
+            return;
+
+        }
+    }
+
+	
 	arg_decay_exist_predicates["BinaryOperator(tfScalar,tfScalar).+@$.ADDtfScalar"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm.find("tfScalar") != string::npos){ return true; }
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar"/*typenm.find("tfScalar") != string::npos*/){ return true; }
     else { return false; }
     };
 	arg_decay_exist_predicates["BinaryOperator(tfScalar,tfScalar).+@$.ADDtfScalar"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm.find("tfScalar") != string::npos){ return true; }
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar"/*typenm.find("tfScalar") != string::npos*/){ return true; }
     else { return false; }
     };
     if(binaryOperator_){
@@ -255,7 +258,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
         clang::Stmt* rhsstmt;
             
 
-        if(bostr.find("+") != string::npos){
+        if(bostr=="+" or bostr == "const +" or bostr == "class +"/*bostr.find("+") != string::npos*/){
             auto lhs = binaryOperator_->getLHS();
             auto lhsstr = ((clang::QualType)lhs->getType()).getAsString();
             auto rhs = binaryOperator_->getRHS();
@@ -263,7 +266,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
             clang::Stmt* lhsresult = nullptr;
             clang::Stmt* rhsresult = nullptr;
             if(false){}
-            else if(lhsstr.find("tfScalar") != string::npos){
+            else if(lhsstr=="tfScalar" or lhsstr=="const tfScalar" or lhsstr=="class tfScalar"/*lhsstr.find("tfScalar") != string::npos*/){
                 ROSTFScalarMatcher lhsm{this->context_,this->interp_};
                 lhsm.setup();
                 lhsm.visit(*lhs);
@@ -272,7 +275,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
             }
             if(false){}
             
-            else if(rhsstr.find("tfScalar") != string::npos){
+            else if(rhsstr=="tfScalar" or rhsstr=="const tfScalar" or rhsstr=="class tfScalar"/*rhsstr.find("tfScalar") != string::npos*/){
                 ROSTFScalarMatcher rhsm{this->context_,this->interp_};
                 rhsm.setup();
                 rhsm.visit(*rhs);
@@ -290,12 +293,12 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["BinaryOperator(tfScalar,tfScalar).*@$.MULtfScalar"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm.find("tfScalar") != string::npos){ return true; }
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar"/*typenm.find("tfScalar") != string::npos*/){ return true; }
     else { return false; }
     };
 	arg_decay_exist_predicates["BinaryOperator(tfScalar,tfScalar).*@$.MULtfScalar"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm.find("tfScalar") != string::npos){ return true; }
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar"/*typenm.find("tfScalar") != string::npos*/){ return true; }
     else { return false; }
     };
     if(binaryOperator_){
@@ -306,7 +309,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
         clang::Stmt* rhsstmt;
             
 
-        if(bostr.find("*") != string::npos){
+        if(bostr=="*" or bostr == "const *" or bostr == "class *"/*bostr.find("*") != string::npos*/){
             auto lhs = binaryOperator_->getLHS();
             auto lhsstr = ((clang::QualType)lhs->getType()).getAsString();
             auto rhs = binaryOperator_->getRHS();
@@ -314,7 +317,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
             clang::Stmt* lhsresult = nullptr;
             clang::Stmt* rhsresult = nullptr;
             if(false){}
-            else if(lhsstr.find("tfScalar") != string::npos){
+            else if(lhsstr=="tfScalar" or lhsstr=="const tfScalar" or lhsstr=="class tfScalar"/*lhsstr.find("tfScalar") != string::npos*/){
                 ROSTFScalarMatcher lhsm{this->context_,this->interp_};
                 lhsm.setup();
                 lhsm.visit(*lhs);
@@ -323,7 +326,7 @@ void ROSTFScalarMatcher::run(const MatchFinder::MatchResult &Result){
             }
             if(false){}
             
-            else if(rhsstr.find("tfScalar") != string::npos){
+            else if(rhsstr=="tfScalar" or rhsstr=="const tfScalar" or rhsstr=="class tfScalar"/*rhsstr.find("tfScalar") != string::npos*/){
                 ROSTFScalarMatcher rhsm{this->context_,this->interp_};
                 rhsm.setup();
                 rhsm.visit(*rhs);

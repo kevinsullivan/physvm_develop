@@ -32,11 +32,11 @@ void FloatMatcher::setup(){
 		StatementMatcher exprWithCleanups_=exprWithCleanups().bind("ExprWithCleanups");
 		localFinder_.addMatcher(exprWithCleanups_,this);
 	
-		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
-		localFinder_.addMatcher(declRefExpr_,this);
-	
 		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
 		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
+	
+		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
+		localFinder_.addMatcher(declRefExpr_,this);
 };
 
 void FloatMatcher::run(const MatchFinder::MatchResult &Result){
@@ -54,9 +54,9 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	auto exprWithCleanups_ = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanups");
 	
-	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-	
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
+	
+	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
     this->childExprStore_ = nullptr;
@@ -81,14 +81,14 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_float"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm.find("float") != string::npos){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr.find("float") != string::npos){
+        else if(typestr=="float" or typestr == "const float" or typestr == "const float"/*typestr.find("float") != string::npos*/){
             FloatMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -101,7 +101,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_float"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm.find("float") != string::npos){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
         else { return false; } 
     };
 
@@ -111,7 +111,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr.find("float") != string::npos){
+        else if(typestr=="float" or typestr == "const float" or typestr == "class float"/*typestr.find("float") != string::npos*/){
             FloatMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -128,7 +128,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_float"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm.find("float") != string::npos){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -149,7 +149,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_float"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm.find("float") != string::npos){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -171,7 +171,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_float"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm.find("float") != string::npos){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -182,9 +182,11 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
         if(this->childExprStore_){}
         else{
-            std::cout<<"WARNING: Capture Escaping! Dump :\n";
-            parenExpr_->dump();
-        }
+                
+                std::cout<<"WARNING: Capture Escaping! Dump : \n";
+                parenExpr_->dump();
+           
+            }
         return;
     }
 	
@@ -205,16 +207,6 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         }
     
 	
-    if(declRefExpr_){
-        if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
-            interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
-            this->childExprStore_ = (clang::Stmt*)declRefExpr_;
-            return;
-
-        }
-    }
-
-	
     if (cxxFunctionalCastExpr_)
         {
             FloatMatcher exprMatcher{ context_, interp_};
@@ -225,12 +217,23 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
+
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
                 interp_->mkREAL1_LIT((clang::Stmt*)cxxFunctionalCastExpr_);
                 return;
             }
         }
     
+	
+    if(declRefExpr_){
+        if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
+            interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
+            this->childExprStore_ = (clang::Stmt*)declRefExpr_;
+            return;
+
+        }
+    }
+
 
 
 };
