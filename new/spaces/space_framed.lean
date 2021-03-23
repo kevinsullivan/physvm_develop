@@ -48,6 +48,7 @@ def sub_point_point {f : fm K} {s : spc K f } (p1 p2 : point K s) : vectr K s :=
 Constants
 -/
 def vectr_zero {f : fm K} (s : spc K f ) := mk_vectr K s 0
+def point_zero {f : fm K} (s : spc K f ) := mk_point K s 0
 
 variables {f : fm K} { s : spc K f}
 
@@ -60,18 +61,18 @@ instance : has_neg (vectr K s) := ⟨λv, ⟨⟨v.1.1,v.1.2,-v.1.3⟩⟩⟩
 instance : has_add (vectr K s) := ⟨add_vectr_vectr K⟩
 instance : has_zero (vectr K s) := ⟨vectr_zero K s⟩
 instance : has_neg (vectr K s) := ⟨neg_vectr K⟩
-
 instance : has_vadd (vectr K s) (point K s) := ⟨ add_vectr_point K⟩ 
 instance : has_vsub (vectr K s) (point K s) := ⟨ sub_point_point K⟩ 
+instance : inhabited (point K s) := ⟨ point_zero K s⟩ 
 
 /-
 Lemmas needed to implement affine space API
 -/
+
 lemma aff_zero_sadd : ∀ p : point K s, (0 : vectr K s) +ᵥ p = p := sorry
 lemma aff_add_sadd: ∀ g1 g2 : vectr K s, ∀ p : point K s, g1 +ᵥ (g2 +ᵥ p) = g1 + g2 +ᵥ p := sorry   -- problem here
 lemma aff_vsub_vadd : ∀ a b : point K s, (a -ᵥ b) +ᵥ b = a := sorry
 lemma aff_vadd_vsub : ∀ (x : vec K) (a : pt K), x +ᵥ a -ᵥ a = x := sorry
-
 
 /-
 Affine space API
@@ -90,12 +91,9 @@ def aff_group_action_framed : vectr K s → point K s → point K s :=
     add_vectr_point K
 def aff_group_sub_framed : point K s → point K s → vectr K s :=
     sub_point_point K
-instance : has_vadd (vectr K s) (point K s) := ⟨aff_group_action_framed K⟩
-instance : has_vsub (vectr K s) (point K s) := ⟨aff_group_sub_framed K⟩
-instance : add_action (vectr K s) (point K s) := ⟨
-    aff_group_action_framed K, 
-aff_zero_sadd K, 
-aff_add_sadd K⟩
+instance aff_has_vadd: has_vadd (vectr K s) (point K s) := ⟨aff_group_action_framed K⟩
+instance aff_has_vsub: has_vsub (vectr K s) (point K s) := ⟨aff_group_sub_framed K⟩
+instance : add_action (vectr K s) (point K s) := ⟨aff_group_action_framed K, aff_zero_sadd K, aff_add_sadd K⟩
 instance : nonempty (point K s) := ⟨⟨pt_zero K⟩⟩
 instance aff_torsor_framed : add_torsor (vectr K s) (point K s) := 
 ⟨sorry,
