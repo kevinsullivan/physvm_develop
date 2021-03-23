@@ -8,6 +8,9 @@ variables
 /-
 Standard space: 1-d affine with standard frame
 -/
+
+def std_fm : fm K    := fm.base  
+
 def std_spc : spc K (@std_fm K _ _) := @mk_space K _ _ (std_fm K)
 
 /-
@@ -20,7 +23,6 @@ def vectr_one := mk_vectr K (std_spc K) 1
 Zero values for points and vectrs 
 -/
 def point_zero := mk_point K (std_spc K) 0
-def vectr_zero := mk_vectr K (std_spc K) 0 
 
 /-
 Standard point, vector, frame, space
