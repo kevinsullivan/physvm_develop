@@ -12,11 +12,15 @@ variables
 Objects
 -/
 
--- point and vector data types
+-- 1-D point and vector data types represented as 2D vectors
 structure pt extends K × K := (inv : fst = 1)
 def mk_pt (k : K) : pt K  := pt.mk 1 rfl
 structure vec extends K × K := (inv : fst = 0)
 def mk_vec (k : K) : vec K := vec.mk 0 rfl
+
+-- Clean up code
+def pt_coord (p : pt K) := p.to_prod.2
+def vec_coord (v : vec K) := v.to_prod.2
 
 /-
 Operations
@@ -73,40 +77,3 @@ sorry,
 sorry⟩
 open_locale affine
 instance : affine_space (vec K) (pt K) := aff_torsor K
-
-
-/-
-instance : inhabited (pt K) := ⟨ pt_zero K ⟩ 
-instance : has_zero (vec K) := ⟨ vec_zero K ⟩ 
-instance : has_vadd (vec K) (pt K) := ⟨ add_vec_pt K ⟩ 
-instance : has_vsub (vec K) (pt K) := ⟨ sub_pt_pt K ⟩ 
-instance : add_comm_group (vec K) := sorry
-
-/-
-Lemmas needed to prove we've got an affine space
--/
-lemma aff_zero_sadd : ∀ p : pt K, (0 : vec K) +ᵥ p = p := sorry
-lemma aff_add_sadd: ∀ g1 g2 : vec K, ∀ p : pt K, g1 +ᵥ (g2 +ᵥ p) = g1 + g2 +ᵥ p := sorry   -- problem here
-lemma aff_vsub_vadd : ∀ a b : pt K, (a -ᵥ b) +ᵥ b = a := sorry
-lemma aff_vadd_vsub : ∀ (x : vec K) (a : pt K), x +ᵥ a -ᵥ a = x := sorry
-
-instance : add_action (vec K) (pt K) := 
-⟨
-add_vec_pt K,    -- aff_group_action
-aff_zero_sadd K, 
-aff_add_sadd K
-⟩
-
-instance aff_torsor : add_torsor (vec K) (pt K) := 
-⟨add_vec_pt K, 
-aff_zero_sadd K,
-aff_add_sadd K,
-sub_pt_pt K,
-aff_vsub_vadd K, 
-aff_vadd_vsub K
-⟩
-
-instance my_affine_space : affine_space (vec K) (pt K) :=  
-aff_torsor K 
--/
-
