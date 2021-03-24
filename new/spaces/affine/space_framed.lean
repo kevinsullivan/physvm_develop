@@ -16,7 +16,6 @@ inductive fm : Type u
 | base : fm
 | deriv (self : prod (pt K) (vec K)) (parent : fm) : fm
 def mk_fm (p : pt K) (v : vec K) (f : fm K): fm K := fm.deriv (p, v) f 
--- def std_fm : fm K    := fm.base  
 
 structure spc (f : fm K) : Type u
 def mk_space (f : fm K) :=
@@ -44,6 +43,8 @@ def add_point_vectr {f : fm K} {s : spc K f } (p : point K s) (v : vectr K s) : 
 def add_vectr_point {f : fm K} {s : spc K f } (v : vectr K s) (p : point K s) : point K s := mk_point K s (v.to_vec.to_prod.2 + p.to_pt.to_prod.2)
 def sub_point_point {f : fm K} {s : spc K f } (p1 p2 : point K s) : vectr K s := mk_vectr K s (p2.to_pt.to_prod.2 - p1.to_pt.to_prod.2)
 
+-- Notation??
+
 /-
 Constants
 -/
@@ -60,7 +61,6 @@ instance : has_neg (vectr K s) := ⟨λv, ⟨⟨v.1.1,v.1.2,-v.1.3⟩⟩⟩
 instance : has_add (vectr K s) := ⟨add_vectr_vectr K⟩
 instance : has_zero (vectr K s) := ⟨vectr_zero K s⟩
 instance : has_neg (vectr K s) := ⟨neg_vectr K⟩
-
 instance : has_vadd (vectr K s) (point K s) := ⟨ add_vectr_point K⟩ 
 instance : has_vsub (vectr K s) (point K s) := ⟨ sub_point_point K⟩ 
 
@@ -104,57 +104,8 @@ sorry,
 sorry,
 sorry,
 sorry⟩
-instance aff_coord_is_framed : 
+instance : 
     affine_space
         (vectr K s) 
         (point K s) := 
     aff_torsor_framed K
-/-
-
-/-
- Make it an affine space
--/
-
-/-
-Instantiate affine_space typeclass 
--/
-open_locale affine
-section old_structure_cmd
-set_option old_structure_cmd true
-
-instance : inhabited (point K) := ⟨ pt_zero K ⟩ 
-instance : has_zero (vectr K) := ⟨ vec_zero K ⟩ 
-instance : has_vadd (vectr K) (point K) := ⟨ add_vectr_point K ⟩ 
-instance : has_vsub (vectr K) (point K) := ⟨ sub_pt_pt K ⟩ 
-instance : add_comm_group (vectr K) := sorry
-
-/-
-Lemmas needed to prove we've got an affine space
--/
-lemma aff_zero_sadd : ∀ p : pt K, (0 : vec K) +ᵥ p = p := sorry
-lemma aff_add_sadd: ∀ g1 g2 : vec K, ∀ p : pt K, g1 +ᵥ (g2 +ᵥ p) = g1 + g2 +ᵥ p := sorry   -- problem here
-lemma aff_vsub_vadd : ∀ a b : pt K, (a -ᵥ b) +ᵥ b = a := sorry
-lemma aff_vadd_vsub : ∀ (x : vec K) (a : pt K), x +ᵥ a -ᵥ a = x := sorry
-
-instance : add_action (vec K) (pt K) := 
-⟨
-add_vectr_point K,    -- aff_group_action
-aff_zero_sadd K, 
-aff_add_sadd K
-⟩
-
-instance aff_torsor : add_torsor (vec K) (pt K) := 
-⟨add_vectr_point K, 
-aff_zero_sadd K,
-aff_add_sadd K,
-sub_pt_pt K,
-aff_vsub_vadd K, 
-aff_vadd_vsub K
-⟩
-
-instance my_affine_space : affine_space (vec K) (pt K) :=  
-aff_torsor K 
--/
-
-
-

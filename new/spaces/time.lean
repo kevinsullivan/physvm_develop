@@ -1,19 +1,14 @@
-import ..space_framed
-import ..space_standard
-import .measurement
+import .space_standard
 import .dimension
 import linear_algebra.affine_space.basic
-import data.real.basic
 
---open framed
---open standard
-open measurement
-
-open_locale affine
-
-namespace classical_time
+namespace time
 
 variables {K : Type*} [inhabited K] [field K] --[affine_space (framed.poi)]
+
+-- physical space
+
+-- 
 
 structure time_spc (f : fm K) extends spc K f 
 structure time_point {f : fm K} (s : time_spc f) extends point K s.to_spc
@@ -154,4 +149,4 @@ variables
 -/
 
 
-end classical_time
+end time

@@ -27,33 +27,6 @@ instance : has_neg (linear2 K) := ⟨ lin2_neg K ⟩
 instance : has_sub (linear2 K) := ⟨ lin2_sub K ⟩
 instance : add_comm_group (linear2 K) := sorry
 instance : module K (linear2 K) := sorry
+-- instance : 2D vector_space ...
 
-
-/-  ANDREW ...
-
-I replaced these structures with
-structures that extend from K ⨯ K
-by adding the invariants field.
-
-structure vec :=
-(isPt  : K)
-(inv : isPt = (0:K))
-(coord : K)
-
-structure pt :=
-(isPt  : K)
-(inv : isPt = (1:K))
-(coord : K)
-
-The result of this little rewrite
-led to a simple linear 2 space library. 
-Here it is. We'll take it as a basis
-for representing Affine 1 space. And 
-from there we'll use direct sums.
--/
-
-
-/-
-Linear 2 space
--/
 
