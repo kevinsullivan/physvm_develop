@@ -4,7 +4,7 @@ import algebra.module.basic
 universes u 
 
 variables 
-(K : Type u) [ring K] [inhabited K]
+(K : Type u) [ring K] [inhabited K] [field K] --added field for vector space
 
 def linear2 := prod K K
 
@@ -27,6 +27,8 @@ instance : has_neg (linear2 K) := ⟨ lin2_neg K ⟩
 instance : has_sub (linear2 K) := ⟨ lin2_sub K ⟩
 instance : add_comm_group (linear2 K) := sorry
 instance : module K (linear2 K) := sorry
+--instance : field K := sorry
+instance : vector_space K (linear2 K) := sorry
 -- instance : 2D vector_space ...
 
 

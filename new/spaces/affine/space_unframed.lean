@@ -19,19 +19,39 @@ structure vec extends K × K := (inv : fst = 0)
 def mk_vec (k : K) : vec K := vec.mk 0 rfl
 
 -- Clean up code
-def pt_coord (p : pt K) := p.to_prod.2
-def vec_coord (v : vec K) := v.to_prod.2
+attribute [reducible]
+def pt.coords 
+    {K : Type u} [ring K] [inhabited K]
+    (p : pt K) := p.to_prod.2
+attribute [reducible]
+def vec.coords 
+    {K : Type u} [ring K] [inhabited K]
+    (v : vec K)
+    := v.to_prod.2
+
+
+attribute [reducible]
+def pt.pf
+    {K : Type u} [ring K] [inhabited K]
+    (p : pt K) := p.inv
+attribute [reducible]
+def vec.pf
+    {K : Type u} [ring K] [inhabited K]
+    (v : vec K)
+    := v.inv
+
+variables (v : vec K)
 
 /-
 Operations
 -/
 
-def mul_vec [has_mul K] (k : K) (v : vec K) : vec K := mk_vec K (k * v.to_prod.2)
-def neg_vec  [has_mul K] (v : vec K) : vec K := mk_vec K (-1 * v.to_prod.2)
-def add_vec_vec [has_add K] (v1 v2 : vec K) : vec K := mk_vec K (v1.to_prod.2 + v2.to_prod.2)
-def sub_pt_pt (p1 p2 : pt K) : vec K := mk_vec K (p2.to_prod.2 - p1.to_prod.2)
-def add_pt_vec [has_add K] (p : pt K) (v : vec K) : pt K := mk_pt K (p.to_prod.2 + v.to_prod.2)
-def add_vec_pt (v : vec K) (p : pt K) : pt K := mk_pt K (p.to_prod.2 + v.to_prod.2)
+def mul_vec [has_mul K] (k : K) (v : vec K) : vec K := mk_vec K (k * (v.coords))
+def neg_vec  [has_mul K] (v : vec K) : vec K := mk_vec K (-1 * v.coords)
+def add_vec_vec [has_add K] (v1 v2 : vec K) : vec K := mk_vec K (v1.coords + v2.coords)
+def sub_pt_pt (p1 p2 : pt K) : vec K := mk_vec K (p1.coords - p2.coords)
+def add_pt_vec [has_add K] (p : pt K) (v : vec K) : pt K := mk_pt K (p.coords + v.coords)
+def add_vec_pt (v : vec K) (p : pt K) : pt K := mk_pt K (p.coords + v.coords)
 -- add affine combination operation here 
 
 /-
@@ -62,7 +82,7 @@ instance aff_module : module K (vec K) := aff_semimod K
 def aff_group_action : vec K → pt K → pt K := add_vec_pt K
 def aff_group_sub : pt K → pt K → vec K := sub_pt_pt K
 instance : has_vadd (vec K) (pt K) := ⟨aff_group_action K⟩
-instance : has_vsub (vec K) (pt K) := ⟨aff_group_sub K
+instance : has_vsub (vec K) (pt K) := ⟨aff_group_sub K⟩
 instance : add_action (vec K) (pt K) := ⟨
     aff_group_action K, 
     sorry, 

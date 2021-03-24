@@ -1,8 +1,10 @@
-import .space_standard
+import .affine.space_standard
 import .dimension
 import linear_algebra.affine_space.basic
 
 namespace time
+
+open_locale affine
 
 variables {K : Type*} [inhabited K] [field K] --[affine_space (framed.poi)]
 
@@ -20,9 +22,9 @@ def std_time : time_spc (std_frame K) := ⟨std_space K⟩
 
 variables {f : fm K} { s : time_spc f}
 
-instance : has_add (time_vectr s) := ⟨λv1 v2, ⟨⟨⟨v1.1.1.1,v1.1.1.2,v1.coord + v2.coord⟩⟩⟩⟩
+instance : has_add (time_vectr s) := ⟨λv1 v2, ⟨v1.to_vectr +ᵥ v2.to_vectr⟩⟩--⟨⟨⟨(v1.to_vectr.to_vec.fst,v1.to_vectr.to_vec.coords + v2.to_vectr.to_vec.coords), v1.to_vectr.to_vec.pf⟩⟩⟩⟩
 instance : has_zero (time_vectr s) := ⟨⟨⟨vec_zero K⟩⟩⟩
-instance : has_neg (time_vectr s) := ⟨λv, ⟨⟨⟨v.1.1.1,v.1.1.2,-v.1.1.3⟩⟩⟩⟩
+instance : has_neg (time_vectr s) := ⟨λv, ⟨-v.to_vectr⟩⟩
 
 /-! ### Type class instance for abelian group -/
 instance aff_comm_group_time : add_comm_group (time_vectr s) :=
@@ -34,8 +36,7 @@ sorry
 
 @[ext]
 def vec_scalar_time : K → time_vectr s → time_vectr s :=
-    λ a x, ⟨⟨⟨x.1.1.1,x.1.1.2,a*x.1.1.3⟩⟩⟩
-
+    λ a x, ⟨a•x.to_vectr⟩
 instance : has_scalar K (time_vectr s) := ⟨vec_scalar_time⟩
 
 instance : mul_action K (time_vectr s) := ⟨sorry, sorry⟩
@@ -49,12 +50,10 @@ instance aff_module_time : module K (time_vectr s) := ⟨sorry, sorry⟩
 
 
 def aff_group_action_time : time_vectr s → time_point s → time_point s :=
-    λ x y, ⟨⟨⟨y.1.1.1,y.1.1.2,x.1.1.3+y.1.1.3⟩⟩⟩
-
+    λ x y, ⟨x.to_vectr +ᵥ y.to_point⟩
 
 def aff_group_sub_time : time_point s → time_point s → time_vectr s :=
-    λ x y, ⟨⟨⟨x.1.1.1-y.1.1.1,sorry,x.1.1.3-y.1.1.3⟩⟩⟩
-
+    λ x y, ⟨x.to_point -ᵥ y.to_point⟩
 #check add_action
 
 instance : has_vadd (time_vectr s) (time_point s) := ⟨aff_group_action_time⟩
@@ -88,65 +87,6 @@ sorry,
 sorry,
 sorry,
 sorry⟩
-
-
-
-
-/-
-UNUSED AS OF 3/20
-
-
-structure ClassicalTime {fr : fm K} extends 
-
-  spc K fr :=
-  mk::
-  (id : ℕ)
-
-structure ClassicalTimeFrame 
-  {fr : fm K}
-  --{sp : spc K fr} 
-  (ct : @ClassicalTime K _ _ fr)
-  (m : MeasurementSystem)
-  :=
-  mk::
-
-structure ClassicalTimeVector
-  {fr : fm K}
-  {sp : spc K fr}
-  {ct : ClassicalTime sp}
-  {m : MeasurementSystem}
-  (f : ClassicalTimeFrame ct m)
- -- (v: framed.framed_vector sp)
-  extends framed.vectr sp
-  :=
-  mk::
-
-
-
-
-
-structure ClassicalTimePoint
-  {fr : fm K}
-  {sp : spc K fr}
-  {ct : ClassicalTime sp}
-  {m : MeasurementSystem}
-  (f : ClassicalTimeFrame ct m)
-  extends framed.point sp
-  :=
-  mk::
-
-
-variables
-  {fr : fm K}
-  {sp : spc K fr}
-  {ct : ClassicalTime sp}
-  {m : MeasurementSystem}
-  {f : ClassicalTimeFrame ct m}
-  (p1 : ClassicalTimeVector f)
-  (p2 : ClassicalTimeVector f)
-
-#check p1.1 +ᵥ p2.1
--/
 
 
 end time
