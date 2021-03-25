@@ -29,8 +29,6 @@ def mk_vec' (p : K × K) (i : p.1 = 0): vec K := @vec.mk K _ _ p i -- private
 def mk_vec (k : K) : vec K := @vec.mk K _ _ (0, k) rfl            -- exported
 
 
-
-
 /-
     ********************
     *** Vector space ***
@@ -172,8 +170,8 @@ class distrib_mul_action (α : Type u) (β : Type v) [monoid α] [add_monoid β]
 (smul_add : ∀(r : α) (x y : β), r • (x + y) = r • x + r • y)
 (smul_zero : ∀(r : α), r • (0 : β) = 0)
 -/
-lemma smul_add_vec : ∀(r : K) (x y : vec K), r • (x + y) = r • x + r • y := sorry
-lemma smul_zero_vec : ∀(r : K), r • (0 : vec K) = 0 := sorry
+lemma smul_add_vec : ∀ (r : K) (x y : vec K), r • (x + y) = r • x + r • y := sorry
+lemma smul_zero_vec : ∀ (r : K), r • (0 : vec K) = 0 := sorry
 instance distrib_mul_action_K_vecK : distrib_mul_action K (vec K) := ⟨
 smul_add_vec K,
 smul_zero_vec K,

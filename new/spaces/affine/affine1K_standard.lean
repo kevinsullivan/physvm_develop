@@ -29,9 +29,9 @@ frame (fm) objects.
 /-
 One values for points and vectrs 
 -/
-def point_zero := mk_point K (std_spc K) 0
-def vectr_one := mk_vectr K (std_spc K) 1 
-def std_frame := mk_frame K (point_zero K) (vectr_one K) 
+def point_zero := mk_point (std_spc K) 0
+def vectr_one := mk_vectr (std_spc K) 1 
+def std_frame := mk_frame (point_zero K) (vectr_one K) 
 def std_space := mk_space K (std_frame K)
 
 -- Exports: 
