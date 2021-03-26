@@ -40,7 +40,7 @@ noncomputable def t3 := 5 • d1 +ᵥ t1                                        
 -- new frame with origin at t=0 + 1hr and unit duration of 1 minute
 noncomputable def t1' : time (std_space K) := mk_time (std_space K) 3600      -- t=0 + 1hr
 noncomputable def d1' := 60 • (mk_duration (std_space K) 1)                                             -- one minute
-noncomputable def new_fm := mk_frame t1'.to_point d1'.to_vectr                -- 
+noncomputable def new_fm := mk_frame t1'.to_point d1'.to_vectr                -- TODO: fix
 noncomputable def new_space := mk_space K new_fm
 
 -- create some points and vectors in new space
@@ -50,19 +50,19 @@ noncomputable def d1'' := t2'' -ᵥ t1''                                        
 noncomputable def t3'' := 5 • d1'' +ᵥ t1''                                    -- 11 in the new space, what old?
 
 -- check for type errors across difference coordinate systems on time
-noncomputable def d_good := t1' -ᵥ t1   -- time - time = duration
-noncomputable def t_good := d1' +ᵥ t1   -- duration + time = time
-noncomputable def d_bad := t1'' -ᵥ t1   -- but not if arguments are in different frames/spaces
-noncomputable def t_bad := d1'' +ᵥ t1   -- but not if arguments are in different frames/spaces
+noncomputable def d_good := t1' -ᵥ t1     -- time - time = duration
+noncomputable def t_good := 8 • d1' +ᵥ t1   -- scalar * duration + time = time
+noncomputable def d_bad := t1'' -ᵥ t1     -- error: type mismatch in aff coord spaces
+noncomputable def t_bad := 8 • d1'' +ᵥ t1 -- error: no impl of +ᵥ across aff coord spaces
 
 /-
-Thoughts
+Afterthoughts
 -/
 
--- time.lean really belongs to phys layer
--- fill in the proofs (low risk, low priority)
--- get transforms working in this design
--- support end-to-end in Peirce
+-- time belongs to phys layer; refactor in file system
+-- fill in the proofs (low risk, low priority; postpone)
+-- get transforms working in this design (design proposal needed)
+-- support end-to-end in Peirce (schedule discussion for lang-level design)
 
 -- predefine a std_time space?
 -- add helper functions to access coordinates directly
