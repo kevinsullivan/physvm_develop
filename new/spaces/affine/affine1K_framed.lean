@@ -175,13 +175,11 @@ instance add_comm_group_vectr : add_comm_group (vectr s) := ⟨
 
 instance : vector_space K (vectr s) := semimodule_K_vectrK s
 
-
 /-
     ********************
     *** Affine space ***
     ********************
 -/
-
 
 /-
 Affine operations
@@ -218,14 +216,16 @@ lemma point_vadd_vsub_a1 : ∀ (g : vectr s) (p : point s), g +ᵥ p -ᵥ p = g 
 instance aff_point_torsor : add_torsor (vectr s) (point s) := 
 ⟨ 
     aff_vectr_group_action s,
-    zero_vectr_vadd'_a1 s,    -- add_action
-    vectr_add_assoc'_a1 s,   -- add_action
-    aff_point_group_sub s,    -- has_vsub
-    point_vsub_vadd_a1 s,     -- add_torsor
-    point_vadd_vsub_a1 s,     -- add_torsor
+    zero_vectr_vadd'_a1 s,    -- from add_action
+    vectr_add_assoc'_a1 s,    -- from add_action
+    aff_point_group_sub s,    -- from has_vsub
+    point_vsub_vadd_a1 s,     -- from add_torsor
+    point_vadd_vsub_a1 s,     -- from add_torsor
 ⟩
 
 open_locale affine
 instance : affine_space (vectr s) (point s) := aff_point_torsor s
 
 end implicitK
+
+-- TODO: clean up naming in this file
