@@ -145,6 +145,10 @@ instance add_comm_group_vectr : add_comm_group (translation s) := ⟨
     add_comm_vectr,
 ⟩
 
+/-
+upshot : inherited vector space properties, with overloaded operations and notations
+-/
+
 instance : vector_space K (translation s) := @geom.semimodule_K_durationK K _ _ f s
 
 
@@ -200,6 +204,9 @@ instance aff_point_torsor : add_torsor (translation s) (position s) :=
 
 open_locale affine
 
+/-
+upshot : inherited affine space properties with overloaded operations and notations
+-/
 instance : affine_space (translation s) (position s) := @geom.aff_point_torsor K _ _ f s
 
 end geom
