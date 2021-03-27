@@ -1,6 +1,6 @@
 namespace dimension
 
-inductive Dimension : Type 
+inductive BasicDimension : Type 
 | length
 | mass 
 | time 

@@ -1,5 +1,5 @@
 import linear_algebra.affine_space.basic
-import ..math.aff1Kcoord.aff1Kcoord_std
+import ...math.aff1Kcoord.aff1Kcoord_std
 
 open_locale affine
 
