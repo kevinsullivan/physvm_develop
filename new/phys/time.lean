@@ -1,5 +1,5 @@
-import .affine1K_framed
 import linear_algebra.affine_space.basic
+import ..math.aff1Kcoord.aff1Kcoord_std
 
 open_locale affine
 
@@ -19,14 +19,12 @@ structure time {f : fm K} (s : spc K f ) extends point s
 def mk_time' {f : fm K} (s : spc K f ) (p : point s) : time s := time.mk p  
 def mk_time {f : fm K} (s : spc K f ) (k : K) : time s := time.mk (mk_point s k) 
 
-
-
 structure duration {f : fm K} (s : spc K f ) extends vectr s 
 def mk_duration' {f : fm K} (s : spc K f ) (v : vectr s) : duration s := duration.mk v
 def mk_duration  {f : fm K} (s : spc K f ) (k : K) : duration s := duration.mk (mk_vectr s k) 
 
 -- note that we don't extend fm
-def mk_time_frame {parent : fm K} {s : spc K parent}  (p : time s) (v : duration s) :=
+def mk_time_frame {parent : fm K} {s : spc K parent} (p : time s) (v : duration s) :=
 fm.deriv (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠ 0
 
 

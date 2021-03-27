@@ -1,4 +1,3 @@
-import .affine1K_standard
 import data.real.basic
 import .time
 
@@ -29,7 +28,7 @@ Progress this week:
     - next steps: discuss after presentation
 -/
 
-abbreviation K := ℝ 
+abbreviation K := ℝ   -- or try ℚ for a computable version (but no square roots)
 
 -- assume unit vector is one second in standard time space
 noncomputable def t1 : time (std_space K) := mk_time (std_space K) 1          -- t=0 + 1 second
@@ -59,12 +58,10 @@ noncomputable def t_bad := 8 • d1'' +ᵥ t1 -- error: no impl of +ᵥ across a
 Afterthoughts
 -/
 
--- time belongs to phys layer; refactor in file system
 -- fill in the proofs (low risk, low priority; postpone)
 -- get transforms working in this design (design proposal needed)
 -- support end-to-end in Peirce (schedule discussion for lang-level design)
 
--- predefine a std_time space?
 -- add helper functions to access coordinates directly
 -- get affine combinations working (not high priority)
--- think about how this work might enable re-imagining tf-like API
+-- re-imagine a tf-like API based on work in this style
