@@ -1,5 +1,5 @@
 import linear_algebra.affine_space.basic
-import .linear2K
+import ..lin2Kcoord.lin2Kcoord
 
 
 universes u 

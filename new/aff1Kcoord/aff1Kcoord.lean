@@ -1,4 +1,4 @@
-import .affine1K_unframed
+import .aff1K
 
 open_locale affine
 
