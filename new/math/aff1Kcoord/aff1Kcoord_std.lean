@@ -27,7 +27,7 @@ frame (fm) objects.
 -/
 
 /-
-One values for points and vectrs 
+Basic values for points and vectrs 
 -/
 def point_zero := mk_point (std_spc K) 0
 def vectr_one := mk_vectr (std_spc K) 1 
