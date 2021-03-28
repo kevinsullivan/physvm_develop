@@ -12,7 +12,7 @@ variables
 (K : Type u) [field K] [inhabited K] 
 
 /-
-Is this where we root distinctions between affine spaces independent of coordinatizations?
+Is this where we root distinctions between affine spaces for different dimensionss?
 -/
 inductive fm : Type u
 | base : fm
