@@ -1,6 +1,6 @@
-# The Affine1K Library
+# 1 K Affine Space
 
-To use this library, import aff1Kcoord_std. This module provides a 1-D affine K coordinate space with points and vectors respectively each having their single (1-D) coordinates from a field, K.
+To use this library, import aff1Kcoord_std. This module provides an abstraction of 1-D affine K coordinate spaces, rooted at a std_space, with points and vectors respectively each having their single (1-D) coordinates from an arbitrary field, K.
 
 - (std_space K) is a 1-D affine space with K vectors and K points.
 - instantiate points in std_space using (mk_point (std_spc K) k)

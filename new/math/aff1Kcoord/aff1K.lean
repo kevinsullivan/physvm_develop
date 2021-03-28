@@ -217,6 +217,11 @@ vector_space :
 -/
 instance : vector_space K (vec K) := semimodule_K_vecK K 
 
+
+
+
+
+
 /-
     ********************
     *** Affine space ***

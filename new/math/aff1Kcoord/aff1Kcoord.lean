@@ -1,21 +1,19 @@
 import .aff1K
 
-open_locale affine
-
 /-
 Framed points, vectors, frames
 -/
 
-universes u --v w
+universes u 
 
 section explicitK
+
 variables 
 (K : Type u) [field K] [inhabited K] 
 
 /-
-Add frames and (coordinate) spaces based on frames
+Is this where we root distinctions between affine spaces independent of coordinatizations?
 -/
-
 inductive fm : Type u
 | base : fm
 | deriv (self : prod (pt K) (vec K)) (parent : fm) : fm
@@ -24,8 +22,6 @@ def mk_fm (p : pt K) (v : vec K) (f : fm K): fm K := fm.deriv (p, v) f
 structure spc (f : fm K ) : Type u
 def mk_space (f : fm K) :=
   @spc.mk K _ _ f
-
-variables {f : fm K} { s : spc K f}
 
 end explicitK
 
@@ -53,7 +49,7 @@ def mk_vectr (k : K) : vectr s := vectr.mk (mk_vec K k)
 
 -- note that we don't extend fm
 def mk_frame {parent : fm K} {s : spc K parent}  (p : point s) (v : vectr s) :=
-fm.deriv (p.to_pt, v.to_vec) parent   -- TODO: make sure v ≠ 0
+fm.deriv (p.to_pt, v.to_vec) parent   -- TODO: make sure v ≠ 0 (erasing tyoe info)
 
 
 /-
