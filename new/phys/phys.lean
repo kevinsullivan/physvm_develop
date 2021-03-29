@@ -7,6 +7,16 @@ The client is responsible for indexing dimensions. For convenience
 we provide indexing by the usual LTM&t dimensions.
 -/
 
-def TIME := 0
-def LENGTH := 1
-def MASS := 3
+import .time.time
+import data.real.basic 
+
+universes u
+variables 
+(K : Type u) [field K] [inhabited K] 
+
+#check @time_std_frame ℝ 
+
+
+#check @mk_time
+
+def t0 := mk_time K

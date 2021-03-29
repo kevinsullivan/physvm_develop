@@ -1,4 +1,4 @@
-import ..global_dimensions
+import .phys_dimensions
 import linear_algebra.affine_space.basic
 import ...math.aff1Kcoord.aff1Kcoord_std
 
@@ -8,6 +8,8 @@ open_locale affine
 Framed points, vectors, frames
 -/
 
+section foo 
+
 universes u --v w
 variables 
 {K : Type u} [field K] [inhabited K] 
@@ -16,10 +18,13 @@ variables
 Add frames and (coordinate) spaces based on frames
 -/
 
+
+-- points in time
 structure time {f : fm K TIME} (s : spc K f ) extends point s 
 def mk_time' {f : fm K TIME} (s : spc K f ) (p : point s) : time s := time.mk p  
 def mk_time {f : fm K TIME} (s : spc K f ) (k : K) : time s := time.mk (mk_point s k) 
 
+-- intervals in time
 structure duration {f : fm K TIME} (s : spc K f ) extends vectr s 
 def mk_duration' {f : fm K TIME} (s : spc K f ) (v : vectr s) : duration s := duration.mk v
 def mk_duration  {f : fm K TIME} (s : spc K f ) (k : K) : duration s := duration.mk (mk_vectr s k) 
@@ -28,7 +33,24 @@ def mk_duration  {f : fm K TIME} (s : spc K f ) (k : K) : duration s := duration
 def mk_time_frame {parent : fm K TIME} {s : spc K parent} (p : time s) (v : duration s) :=
 fm.deriv TIME (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠ 0
 
+end foo
 
+section bar 
+
+universes u --v w
+variables 
+(K : Type u) [field K] [inhabited K] 
+
+def time_std_frame : fm K TIME := fm.base TIME
+
+#check mk_space
+def time_std_space := mk_space K (time_std_frame K)
+
+end bar
+
+universes u --v w
+variables 
+{K : Type u} [field K] [inhabited K] 
 /-
     *************************************
     Instantiate vector_space K (vector K)
