@@ -1,32 +1,36 @@
 import .aff1K
 import linear_algebra.affine_space.affine_equiv
 
-open_locale affine
-
 /-
 Framed points, vectors, frames
 -/
 
-universes u --v w
+universes u 
 
 section explicitK
+
 variables 
 (K : Type u) [field K] [inhabited K] 
 
 /-
-Add frames and (coordinate) spaces based on frames
+Is this where we root distinctions between affine spaces for different dimensionss?
+-/
+inductive fm : nat → Type u
+| base : Π n, fm n
+| deriv : Π n, (prod (pt K) (vec K)) → fm n → fm n  -- TODO: curry all of these args
+
+/-
+inductive fm : nat → Type u
+| base : ∀ (n : nat), fm n
+| deriv : ∀ (n : nat), (prod (pt K) (vec K)) → fm n → fm n
 -/
 
-inductive fm : Type u
-| base : fm
-| deriv (self : prod (pt K) (vec K)) (parent : fm) : fm
-def mk_fm (p : pt K) (v : vec K) (f : fm K): fm K := fm.deriv (p, v) f 
+def mk_fm  {n : nat } (p : pt K) (v : vec K) (f : fm K n): fm K n := fm.deriv n (p, v) f 
 
-structure spc (f : fm K ) : Type u
-def mk_space (f : fm K) :=
-  @spc.mk K _ _ f
+structure spc {n : nat} (f : fm K n) : Type u       -- interesting specimen, here, btw
 
-variables {f : fm K} { s : spc K f}
+def mk_space {n : nat} (f : fm K n) :=
+  @spc.mk K _ _ n f 
 
 end explicitK
 
@@ -34,7 +38,7 @@ section implicitK
 
 variables 
 {K : Type u} [field K] [inhabited K] 
-{f : fm K} (s : spc K f)
+{n : nat} {f : fm K n} (s : spc K f)
 
 /-
 Augment pt and vec types with spaces and frames and
@@ -42,19 +46,20 @@ then make operations apply only for objects in same
 space (and thus frame).
 -/
 
-structure point {f : fm K} (s : @spc K _ _ f ) extends pt K
+structure point {f : fm K n} (s : @spc K _ _ n f ) extends pt K
 def mk_point' (p : pt K) : point s := point.mk p  
 def mk_point (k : K) : point s := point.mk (mk_pt K k)  
 
 def p := mk_point s (3:K)
 
-structure vectr {f : fm K} (s : spc K f ) extends vec K
+structure vectr {f : fm K n} (s : spc K f ) extends vec K
 def mk_vectr' (v : vec K) : vectr s := vectr.mk v
 def mk_vectr (k : K) : vectr s := vectr.mk (mk_vec K k)  
 
 -- note that we don't extend fm
-def mk_frame {parent : fm K} {s : spc K parent}  (p : point s) (v : vectr s) :=
-fm.deriv (p.to_pt, v.to_vec) parent   -- TODO: make sure v ≠ 0
+def mk_frame {parent : fm K n} {s : spc K parent}  (p : point s) (v : vectr s) :=
+fm.deriv n (p.to_pt, v.to_vec) parent   -- TODO: make sure v ≠ 0 (erasing tyoe info)
+                                      -- TODO: snd arg is really a basis for the vs
 
 
 /-
@@ -63,7 +68,7 @@ fm.deriv (p.to_pt, v.to_vec) parent   -- TODO: make sure v ≠ 0
     *************************************
 -/
 
-variables v1 v2 : @vectr K _ _ f s
+variables v1 v2 : @vectr K _ _ n f s
 #check v1.to_vec
 #check v2.to_vec + v1.to_vec
 
@@ -78,7 +83,7 @@ instance has_add_vectr : has_add (vectr s) := ⟨add_vectr_vectr s⟩
 lemma add_assoc_vectr : ∀ a b c : vectr s, a + b + c = a + (b + c) := sorry
 instance add_semigroup_vectr : add_semigroup (vectr s) := ⟨ add_vectr_vectr s, add_assoc_vectr s⟩ 
 
-def vectr_zero := @mk_vectr K _ _ f s (0:K)
+def vectr_zero := @mk_vectr K _ _ n f s (0:K)
 instance has_zero_vectr : has_zero (vectr s) := ⟨vectr_zero s⟩
 
 lemma zero_add_vectr : ∀ a : vectr s, 0 + a = a := sorry
@@ -194,9 +199,9 @@ Lemmas needed to implement affine space API
 -/
 
 def sub_point_point (p1 p2 : point s) : vectr s := mk_vectr' s (p2.to_pt -ᵥ p1.to_pt)
-def add_point_vectr {f : fm K} {s : spc K f } (p : point s) (v : vectr s) : point s := 
+def add_point_vectr {f : fm K n} {s : spc K f } (p : point s) (v : vectr s) : point s := 
     mk_point' s (v.to_vec +ᵥ p.to_pt) -- reorder assumes order is irrelevant
-def add_vectr_point {f : fm K} {s : spc K f } (v : vectr s) (p : point s) : point s := 
+def add_vectr_point {f : fm K n} {s : spc K f } (v : vectr s) (p : point s) : point s := 
     mk_point' s (v.to_vec +ᵥ p.to_pt)
 
 def aff_vectr_group_action : vectr s → point s → point s := add_vectr_point

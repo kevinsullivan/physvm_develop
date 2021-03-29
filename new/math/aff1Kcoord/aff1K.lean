@@ -19,7 +19,7 @@ with vector_space K (vec K) = semimodule K (vec K).
 Objects
 -/
 
--- 1-D affine K jects obrep by 2-D linear K vectors
+-- 1-D *affine* K pt and vec objects rep'd by 2-D linear K tuples
 
 structure pt extends K × K := (inv : fst = 1)
 def mk_pt' (p : K × K) (i : p.1 = 1): pt K := @pt.mk K _ _ p i    -- private
@@ -217,6 +217,11 @@ vector_space :
     semimodule R M      -- a vector space R M is a semimodule R M
 -/
 instance : vector_space K (vec K) := semimodule_K_vecK K 
+
+
+
+
+
 
 /-
     ********************

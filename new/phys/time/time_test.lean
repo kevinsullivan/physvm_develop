@@ -31,14 +31,17 @@ Progress this week:
 abbreviation K := ℝ   -- or try ℚ for a computable version (but no square roots)
 
 -- assume unit vector is one second in standard time space
-noncomputable def t1 : time (std_space K) := mk_time (std_space K) 1          -- t=0 + 1 second
-noncomputable def t2 := mk_time (std_space K) 3                               -- t=0 + 3 seconds
-noncomputable def d1 : duration (std_space K) := t2 -ᵥ t1                     -- 2 seconds
+#check time_std_space K
+
+
+noncomputable def t1 : time (time_std_space K) :=  mk_time (time_std_space K)  1          -- t=0 + 1 second
+noncomputable def t2 := mk_time (time_std_space K) 3                             -- t=0 + 3 seconds
+noncomputable def d1 : duration (time_std_space K) := t2 -ᵥ t1                     -- 2 seconds
 noncomputable def t3 := 5 • d1 +ᵥ t1                                          -- t=0 + 11 seconds
 
 -- new frame with origin at t=0 + 1hr and unit duration of 1 minute
-noncomputable def t1' : time (std_space K) := mk_time (std_space K) 3600      -- t=0 + 1hr
-noncomputable def d1' := 60 • (mk_duration (std_space K) 1)                                             -- one minute
+noncomputable def t1' := mk_time (time_std_space K) 3600      -- t=0 + 1hr
+noncomputable def d1' := 60 • (mk_duration (time_std_space K) 1)                                             -- one minute
 noncomputable def new_fm := mk_frame t1'.to_point d1'.to_vectr                -- TODO: fix
 noncomputable def new_space := mk_space K new_fm
 

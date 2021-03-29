@@ -2,7 +2,7 @@ import ..environment.environment_with_assign
 
 universes u
 
-variables (K : Type u) [field K] [inhabited K] {f : fm K} {sp : spc K f} 
+variables (K : Type u) [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} 
 
 inductive cmd : Type u
 | skip 
@@ -22,7 +22,7 @@ def cmd_eval : env.env K → @cmd K _ _ f sp → @env.env K _ _ f sp
 
 universes u
 
-variables (K : Type u) [field K] [inhabited K] {f : fm K} {sp : spc K f} 
+variables (K : Type u) [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} 
 
 inductive cmd : Type u
 | skip 
@@ -34,7 +34,7 @@ inductive cmd : Type u
 def cmdEval : @env.env K _ _ f sp → @cmd K _ _ f sp → @env.env K _ _ f sp
 | e (cmd.skip) := e
 | i (cmd.assign_spc v e) := @assign_spc K _ _ f sp i v e
-| i (cmd.assign_fm v e) := @assign_fm K _ _ f sp i v e
+| i (cmd.assign_fm v e) := @assign_fm K TIME _ _ f sp i v e
 | i (cmd.assign_duration v e) := @assign_duration K _ _ f sp i v e
 | i (cmd.assign_time v e) := @assign_time K _ _ f sp i v e
 -/

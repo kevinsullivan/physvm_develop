@@ -1,6 +1,6 @@
 import ..environment.environment
 
-variables {K : Type*} [field K] [inhabited K]{f : fm K} (sp : spc K f)
+variables {K : Type*} [field K] [inhabited K]{f : fm K TIME} (sp : spc K f)
 
 open lang.time
 

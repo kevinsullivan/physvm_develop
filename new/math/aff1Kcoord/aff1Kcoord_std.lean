@@ -9,16 +9,15 @@ variables
 Standard K affine 1-space
 -/
 
-
 /-
 Represent standard frame with fm.base
 -/
-def std_fm : fm K    := fm.base  
+def std_fm (n : nat) : fm K n   := fm.base n
 
 /-
 Build std_spc on this farme
 -/
-def std_spc : spc K (std_fm K) := mk_space K (std_fm K)
+def std_spc (n : nat) : spc K (std_fm K n) := mk_space K (std_fm K n) 
 
 /-
 Now we can build point and vectr objects in terms
@@ -27,12 +26,12 @@ frame (fm) objects.
 -/
 
 /-
-One values for points and vectrs 
+Basic values for points and vectrs 
 -/
-def point_zero := mk_point (std_spc K) 0
-def vectr_one := mk_vectr (std_spc K) 1 
-def std_frame := mk_frame (point_zero K) (vectr_one K) 
-def std_space := mk_space K (std_frame K)
+def point_zero (n : nat) := mk_point (std_spc K n) 0
+def vectr_one  (n : nat) := mk_vectr (std_spc K n) 1 
+def std_frame  (n : nat) := mk_frame (point_zero K n) (vectr_one K n) 
+def std_space  (n : nat) := mk_space K (std_frame K n) 
 
 -- Exports: 
 

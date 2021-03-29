@@ -3,7 +3,7 @@ import ..expressions.time_expr
 
 namespace env
 
-variables (K : Type*) [field K] [inhabited K]{f : fm K} {sp : spc K f} 
+variables (K : Type*) [field K] [inhabited K]{f : fm K TIME} {sp : spc K f} 
 
 /-
 SINGLE ENVIRONMENT FOR FRAME AND SPACE
@@ -27,7 +27,7 @@ import ..expressions.time_expr
 
 namespace env
 
-variables (K : Type*) [field K] [inhabited K]{f : fm K} {sp : spc K f} 
+variables (K : Type*) [field K] [inhabited K]{f : fm K TIME} {sp : spc K f} 
 
 /-
 SINGLE ENVIRONMENT FOR FRAME AND SPACE

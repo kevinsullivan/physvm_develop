@@ -1,12 +1,12 @@
 import ..environment.environment
 
-variables {K : Type*} [field K] [inhabited K]{f : fm K} (sp : spc K f)
+variables {K : Type*} [field K] [inhabited K]{f : fm K TIME} (sp : spc K f)
 
 open lang.math
 
 namespace lang.math_eval
 
-def fm_eval {K : Type*} [field K] [inhabited K] (f : fm K) : env K f → fm_expr K → fm K 
+def fm_eval {K : Type*} [field K] [inhabited K] (f : fm K TIME) : env K f → fm_expr K → fm K TIME 
 | e (fm_expr.lit f) := f
 | e (fm_expr.var v) := e.f v
 

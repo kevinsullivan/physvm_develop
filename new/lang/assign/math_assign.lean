@@ -1,6 +1,6 @@
 import ..eval.math_eval
 
-variables {K : Type*} [field K] [inhabited K] {f : fm K} (sp : spc K f)
+variables {K : Type*} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f)
 
 open lang.math
 
@@ -16,7 +16,7 @@ def assign_fm : @env.env K _ _ f sp → fm_var → fm_expr K  →  env.env K
   }
 
 --space not inferrable from context, so we need a space to assign a space
-def assign_spc {K : Type*} [field K] [inhabited K] {f : fm K} (sp : spc K f) : @env.env K _ _ f sp → sp_var f → sp_expr f  →  env.env K
+def assign_spc {K : Type*} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) : @env.env K _ _ f sp → sp_var f → sp_expr f  →  env.env K
 | i v e := 
   {
     m := {
