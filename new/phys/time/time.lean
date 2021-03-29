@@ -1,4 +1,4 @@
-import .phys_dimensions
+import ..phys_dimensions
 import linear_algebra.affine_space.basic
 import ...math.aff1Kcoord.aff1Kcoord_std
 
