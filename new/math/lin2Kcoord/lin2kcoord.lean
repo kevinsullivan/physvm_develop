@@ -1,4 +1,5 @@
 import algebra.module.basic
+import linear_algebra.affine_space.affine_equiv
 
 universes u 
 
@@ -27,7 +28,10 @@ def smul : K → K × K → K × K
 class has_scalar (α : Type u) (γ : Type v) := (smul : α → γ → γ)
 infixr ` • `:73 := has_scalar.smul
 -/
-instance : has_scalar K (K × K) := ⟨ smul K ⟩ 
+/-
+3/27 Andrew commented out, duplicate
+-/
+--instance : has_scalar K (K × K) := ⟨ smul K ⟩ 
 
 /-
 class mul_action (α : Type u) (β : Type v) [monoid α] extends has_scalar α β :=

@@ -1,4 +1,5 @@
 import .aff1K
+import linear_algebra.affine_space.affine_equiv
 
 open_locale affine
 
@@ -225,6 +226,75 @@ instance aff_point_torsor : add_torsor (vectr s) (point s) :=
 
 open_locale affine
 instance : affine_space (vectr s) (point s) := aff_point_torsor s
+
+variables {f1 : fm K} {f2 : fm K} (s1 : spc K f1) (s2 : spc K f2)
+
+abbreviation raw_tr := (pt K) ≃ᵃ[K] (pt K)
+abbreviation fm_tr := (point s1) ≃ᵃ[K] (point s2)
+
+def to_base_helper' : fm K → @raw_tr K _ _
+| (fm.base) := ⟨
+            ⟨
+                (λ p, p),
+                (λ p, p),
+                sorry,
+                sorry
+            ⟩,
+            ⟨
+                (λ v, v),
+                sorry,
+               -- (λ v, ⟨v.to_vec⟩),
+                sorry,
+                (λ v, v),
+                sorry,
+                sorry
+            ⟩,
+            sorry
+        ⟩
+| (fm.deriv c parent) := (⟨
+            ⟨/-.1 and .2 only refer to K coordinates-/
+                λp, ⟨(p.to_prod.1*c.snd.to_prod.1 +  p.to_prod.2*c.fst.to_prod.1, p.to_prod.1*c.snd.to_prod.2 + p.to_prod.2*c.snd.to_prod.2),sorry⟩,
+                sorry,
+                sorry,
+                sorry
+            ⟩,
+            ⟨
+                λv, ⟨(v.to_prod.1*c.snd.to_prod.1, 0),sorry⟩,
+                sorry,
+                sorry,
+                sorry,
+                sorry,
+                sorry
+            ⟩,
+            sorry
+        ⟩ : @raw_tr K _ _).trans (to_base_helper' parent)
+
+--def to_base_helper : spc K f1 → @raw_tr K _ _
+ 
+
+def spc.to_base (s1 : spc K f1) : @raw_tr K _ _ := to_base_helper' f1
+
+
+def spc.tr (s1 : spc K f1) : fm_tr s1 s2 := 
+    let rawtr : @raw_tr K _ _ := s1.to_base.trans s2.to_base.symm in
+                ⟨
+            ⟨
+                (λ p : point s1, (⟨(rawtr p.1 : pt K)⟩ : point s2)),
+                (λ p : point s2, (⟨(rawtr p.1 : pt K)⟩ : point s1)),
+                sorry,
+                sorry
+            ⟩,
+            ⟨
+                (λv : vectr s1, (⟨(rawtr.linear v.1 : vec K)⟩ : vectr s2)),
+                sorry,
+               -- (λ v, ⟨v.to_vec⟩),
+                sorry,
+                (λv : vectr s2, (⟨(rawtr.linear v.1 : vec K)⟩ : vectr s1)),
+                sorry,
+                sorry
+            ⟩,
+            sorry
+        ⟩
 
 end implicitK
 

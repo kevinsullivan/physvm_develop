@@ -1,5 +1,6 @@
-import linear_algebra.affine_space.basic
+--import linear_algebra.affine_space.basic
 import ..lin2Kcoord.lin2kcoord
+import linear_algebra.affine_space.affine_equiv
 
 
 universes u 

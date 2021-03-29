@@ -27,7 +27,6 @@ def mk_duration  {f : fm K} (s : spc K f ) (k : K) : duration s := duration.mk (
 def mk_time_frame {parent : fm K} {s : spc K parent} (p : time s) (v : duration s) :=
 fm.deriv (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠ 0
 
-
 /-
     *************************************
     Instantiate vector_space K (vector K)
@@ -201,5 +200,12 @@ instance aff_point_torsor : add_torsor (duration s) (time s) :=
 open_locale affine
 
 instance : affine_space (duration s) (time s) := @time.aff_point_torsor K _ _ f s
+
+
+#check fm_tr
+
+--extends does not work with abbreviation or def, so the type is ugly.
+structure time_transform {K : Type u} [field K] [inhabited K] {f1 : fm K} {f2 : fm K} (sp1 : spc K f1) (sp2 : spc K f2)
+  extends ((time sp1) ≃ᵃ[K] (time sp2))
 
 end time -- ha ha

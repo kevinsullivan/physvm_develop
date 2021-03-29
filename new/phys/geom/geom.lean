@@ -21,11 +21,11 @@ def mk_position' {f : fm K} (s : spc K f ) (p : point s) : position s := positio
 def mk_position {f : fm K} (s : spc K f ) (k : K) : position s := position.mk (mk_point s k) 
 
 structure translation {f : fm K} (s : spc K f ) extends vectr s 
-def mk_duration' {f : fm K} (s : spc K f ) (v : vectr s) : translation s := translation.mk v
-def mk_duration  {f : fm K} (s : spc K f ) (k : K) : translation s := translation.mk (mk_vectr s k) 
+def mk_translation' {f : fm K} (s : spc K f ) (v : vectr s) : translation s := translation.mk v
+def mk_translation  {f : fm K} (s : spc K f ) (k : K) : translation s := translation.mk (mk_vectr s k) 
 
 -- note that we don't extend fm
-def mk_time_frame {parent : fm K} {s : spc K parent} (p : position s) (v : translation s) :=
+def mk_geom_frame {parent : fm K} {s : spc K parent} (p : position s) (v : translation s) :=
 fm.deriv (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠ 0
 
 
