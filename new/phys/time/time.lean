@@ -1,3 +1,4 @@
+import ..global_dimensions
 import linear_algebra.affine_space.basic
 import ...math.aff1Kcoord.aff1Kcoord_std
 
@@ -15,17 +16,17 @@ variables
 Add frames and (coordinate) spaces based on frames
 -/
 
-structure time {f : fm K} (s : spc K f ) extends point s 
-def mk_time' {f : fm K} (s : spc K f ) (p : point s) : time s := time.mk p  
-def mk_time {f : fm K} (s : spc K f ) (k : K) : time s := time.mk (mk_point s k) 
+structure time {f : fm K TIME} (s : spc K f ) extends point s 
+def mk_time' {f : fm K TIME} (s : spc K f ) (p : point s) : time s := time.mk p  
+def mk_time {f : fm K TIME} (s : spc K f ) (k : K) : time s := time.mk (mk_point s k) 
 
-structure duration {f : fm K} (s : spc K f ) extends vectr s 
-def mk_duration' {f : fm K} (s : spc K f ) (v : vectr s) : duration s := duration.mk v
-def mk_duration  {f : fm K} (s : spc K f ) (k : K) : duration s := duration.mk (mk_vectr s k) 
+structure duration {f : fm K TIME} (s : spc K f ) extends vectr s 
+def mk_duration' {f : fm K TIME} (s : spc K f ) (v : vectr s) : duration s := duration.mk v
+def mk_duration  {f : fm K TIME} (s : spc K f ) (k : K) : duration s := duration.mk (mk_vectr s k) 
 
 -- note that we don't extend fm
-def mk_time_frame {parent : fm K} {s : spc K parent} (p : time s) (v : duration s) :=
-fm.deriv (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠ 0
+def mk_time_frame {parent : fm K TIME} {s : spc K parent} (p : time s) (v : duration s) :=
+fm.deriv TIME (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠ 0
 
 
 /-
@@ -35,7 +36,7 @@ fm.deriv (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠
 -/
 
 namespace time
-variables {f : fm K} {s : spc K f } 
+variables {f : fm K TIME} {s : spc K f } 
 
 def add_vectr_vectr (v1 v2 : duration s) : duration s := 
     mk_duration' s (v1.to_vectr + v2.to_vectr)
@@ -166,11 +167,11 @@ instance : has_neg (duration s) := ⟨neg_vectr⟩
 Lemmas needed to implement affine space API
 -/
 
-def sub_point_point {f : fm K} {s : spc K f } (p1 p2 : time s) : duration s := 
+def sub_point_point {f : fm K TIME} {s : spc K f } (p1 p2 : time s) : duration s := 
     mk_duration' s (p2.to_point -ᵥ p1.to_point)
-def add_point_vectr {f : fm K} {s : spc K f } (p : time s) (v : duration s) : time s := 
+def add_point_vectr {f : fm K TIME} {s : spc K f } (p : time s) (v : duration s) : time s := 
     mk_time' s (v.to_vectr +ᵥ p.to_point) -- reorder assumes order is irrelevant
-def add_vectr_point {f : fm K} {s : spc K f } (v : duration s) (p : time s) : time s := 
+def add_vectr_point {f : fm K TIME} {s : spc K f } (v : duration s) (p : time s) : time s := 
     mk_time' s (v.to_vectr +ᵥ p.to_point)
 
 def aff_vectr_group_action : duration s → time s → time s := add_vectr_point

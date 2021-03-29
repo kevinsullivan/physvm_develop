@@ -21,6 +21,12 @@ Proposed: Each affine-structured physical dimension is represented by a unique, 
 
 We need distinct replicas of std_spce, one for each physical dimension.
 
-So what is the 
+## Layered Architecture
 
-
+- peirce
+- lang
+- time (location, translation), geometry (point-in-time, interval)
+- affine physical space
+- point, vectr, frame, space    : 
+- vec, pt                       : x=0, x=1, resp
+- (x, y)                        : K x K, lin 2 K
