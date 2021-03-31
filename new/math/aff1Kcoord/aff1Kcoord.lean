@@ -392,6 +392,7 @@ instance : affine_space (vectr s) (point s) := aff_point_torsor s
 
 variables {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)
 
+--not usable?
 abbreviation raw_tr := (pt K) ≃ᵃ[K] (pt K)
 abbreviation fm_tr := (point s1) ≃ᵃ[K] (point s2)
 
@@ -437,16 +438,25 @@ def to_base_helper' : fm K n → @raw_tr K _ _
         ⟩
 | (fm.deriv n c parent) := (⟨
             ⟨/-.1 and .2 only refer to K coordinates-/
-                λp, ⟨(p.to_prod.1*c.snd.to_prod.1 +  p.to_prod.2*c.fst.to_prod.1, p.to_prod.1*c.snd.to_prod.2 + p.to_prod.2*c.snd.to_prod.2),sorry⟩,
-                sorry,
+                λp, ⟨(p.to_prod.1*c.snd.to_prod.1 +  p.to_prod.2*c.fst.to_prod.1, 
+                        p.to_prod.1*c.snd.to_prod.2 + p.to_prod.2*c.fst.to_prod.2),sorry⟩,
+                let det := c.snd.to_prod.1*c.fst.to_prod.2 - c.snd.to_prod.2*c.fst.to_prod.1 in
+                    λp, (⟨(p.to_prod.1*c.fst.to_prod.2/det - p.to_prod.2*c.fst.to_prod.1/det, 
+                            -p.to_prod.1*c.snd.to_prod.2/det + p.to_prod.2*c.snd.to_prod.1/det),sorry⟩),
                 sorry,
                 sorry
             ⟩,
             ⟨
-                λv, ⟨(v.to_prod.1*c.snd.to_prod.1, v.to_prod.2*c.snd.to_prod.2),sorry⟩,
+                λv, ⟨(v.to_prod.1, v.to_prod.2*c.snd.to_prod.2),begin 
+                    cases v,
+                    simp *,
+                end⟩,
                 sorry,
                 sorry,
-                λv, ⟨(v.to_prod.1*c.snd.to_prod.1, v.to_prod.2*c.snd.to_prod.2),sorry⟩,
+                λv, ⟨(v.to_prod.1, v.to_prod.2*c.snd.to_prod.2),begin 
+                    cases v,
+                    simp *,
+                end⟩,
                 sorry,
                 sorry
             ⟩,
@@ -459,12 +469,13 @@ def to_base_helper' : fm K n → @raw_tr K _ _
 def spc.to_base (s1 : spc K f1) : @raw_tr K _ _ := to_base_helper' f1
 
 
-def spc.tr (s1 : spc K f1) : (point s2) ≃ᵃ[K] (point s1) := 
+def spc.tr (s1 : spc K f1) {f2 : fm K n} : Π (s2 : spc K f2), (point s1) ≃ᵃ[K] (point s2) := 
+    λ s2,
     let rawtr : @raw_tr K _ _ := s1.to_base.trans s2.to_base.symm in
                 ⟨
             ⟨
-                (λ p : point s2, (⟨(rawtr p.1 : pt K)⟩ : point s1)),
-                (λ p : point s1, (⟨(rawtr p.1 : pt K)⟩ : point s2)),
+                (λ p : point _, (⟨(rawtr p.1 : pt K)⟩ : point _)),
+                (λ p : point _, (⟨(rawtr p.1 : pt K)⟩ : point _)),
                 sorry,
                 sorry
             ⟩,

@@ -379,14 +379,12 @@ structure env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f
 
 open time
 
---improve this
-#check spc.time_tr K sp sp2
 
 def env.init : env sp :=
   ⟨
     (λv, ⟨mk_vectr sp 1⟩),
     (λv, ⟨mk_point sp 0⟩),
-    (λv, ⟨spc.time_tr K sp sp2⟩)
+    (λv, sp.time_tr sp2)
   ⟩
 
 structure eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) {f2 : fm K TIME} {sp2 : spc K f2} :=
@@ -398,6 +396,6 @@ def eval.init : eval sp :=
   ⟨ 
     (λenv_,λexpr_, ⟨mk_vectr sp 1⟩),
     (λenv_,λexpr_, ⟨mk_point sp 0⟩),
-    (λenv_,λexpr_, ⟨spc.time_tr K sp sp2⟩),
+    (λenv_,λexpr_, sp.time_tr sp2),
   ⟩
 end lang.time

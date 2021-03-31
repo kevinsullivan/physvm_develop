@@ -38,7 +38,7 @@ def env_tr := @env.init ℚ _ _ fr sp time_frame mission_time
 def eval_tr := @eval.init ℚ _ _ fr sp time_frame mission_time
 
 --build a transform
-def std_to_mission :=       transform_expr.lit ⟨(spc.time_tr ℚ sp mission_time)⟩
+def std_to_mission :=       transform_expr.lit (sp.time_tr mission_time)
 
 --transform original launch_time point in std_space to mission space
 def launch_time_in_time_frame := 
