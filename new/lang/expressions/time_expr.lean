@@ -1,17 +1,12 @@
 import .expr_base
---import ...math.aff1Kcoord.aff1Kcoord_std
 import ...phys.time.time
 
-
 namespace lang.time
-universes u
 
+universes u
 variables 
   (K : Type u) [field K] [inhabited K] 
   {f : fm K TIME} {sp : spc K f} 
-  --{f1 : fm K TIME} {f2 : fm K TIME}
--- {K : Type u} [field K] [inhabited K] {f : fm K TIME}
-
 
 /-
 Duration
@@ -70,6 +65,7 @@ Overall environment
 
 --omitting transforms from environment for now, which will make
 --env.env, cmd, and etc. , even more complicated in terms of types
+-- TODO: Go ahead and complete the environment. Thanks! --Kevin
 
 structure env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) :=
   (d : duration_env sp )
