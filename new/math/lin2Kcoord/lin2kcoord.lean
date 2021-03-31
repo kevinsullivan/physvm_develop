@@ -18,6 +18,7 @@ Operations
 #print prod.has_add
 
 -- scalar multiplication scales each component
+@[ext]
 def smul : K → K × K → K × K
 | a (f,s) := ⟨ a * f, a * s ⟩ 
 
@@ -38,8 +39,27 @@ class mul_action (α : Type u) (β : Type v) [monoid α] extends has_scalar α �
 (one_smul : ∀ b : β, (1 : α) • b = b)
 (mul_smul : ∀ (x y : α) (b : β), (x * y) • b = x • y • b)
 -/
-lemma one_smul_l2 : ∀ v : K × K, (1 : K) • v = v := sorry
-lemma mul_smul_l2 : ∀ (x y : K) (b : K × K), (x * y) • b = x • y • b := sorry
+
+#check one_mul
+#check mul_assoc
+
+lemma one_smul_l2 : ∀ v : K × K, (1 : K) • v = v := 
+begin
+  intros,
+  cases v,
+  ext,
+  simp *,
+  simp *
+end
+lemma mul_smul_l2 : ∀ (x y : K) (b : K × K), (x * y) • b = x • y • b := 
+begin
+  intros,
+  ext,
+  simp *,
+  exact mul_assoc x y _,
+  simp *,
+  exact mul_assoc x y _,
+end
 instance : mul_action K (K × K) := ⟨ one_smul_l2 K, mul_smul_l2 K ⟩ 
 
 
@@ -50,8 +70,20 @@ class distrib_mul_action (α : Type u) (β : Type v) [monoid α] [add_monoid β]
 (smul_add : ∀(r : α) (x y : β), r • (x + y) = r • x + r • y)
 (smul_zero : ∀(r : α), r • (0 : β) = 0)
 -/
-lemma smul_add_l2 : ∀(r : K) (x y : K × K), r • (x + y) = r • x + r • y := sorry
-lemma smul_zero_l2 : ∀ (r : K), r • (0 : K × K) = 0 := sorry
+lemma smul_add_l2 : ∀(r : K) (x y : K × K), r • (x + y) = r • x + r • y := 
+begin
+  intros,
+  ext,
+  simp *,
+  simp *,
+end
+lemma smul_zero_l2 : ∀ (r : K), r • (0 : K × K) = 0 := 
+begin
+  intros,
+  ext,
+  simp *,
+  simp *
+end
 instance : distrib_mul_action K (K × K) := ⟨ smul_add_l2 K, smul_zero_l2 K⟩ 
 
 
@@ -63,8 +95,22 @@ class semimodule (R : Type u) (M : Type v) [semiring R]
 (zero_smul : ∀x : M, (0 : R) • x = 0)
 -/
 #check semimodule
-lemma add_smul_l2 : ∀ (r s : K) (x : K × K), (r + s) • x = r • x + s • x := sorry
-lemma zero_smul_l2 : ∀ (x : K × K), (0 : K) • x = 0 := sorry
+lemma add_smul_l2 : ∀ (r s : K) (x : K × K), (r + s) • x = r • x + s • x := 
+begin
+  intros,
+  ext,
+  simp *,
+  exact right_distrib r s _,
+  simp *,
+  exact right_distrib r s _,
+end
+lemma zero_smul_l2 : ∀ (x : K × K), (0 : K) • x = 0 := 
+begin
+  intros,
+  ext,
+  simp *,
+  simp *
+end
 instance semimodule_K_KxK : semimodule K (K × K) := ⟨ add_smul_l2 K, zero_smul_l2 K ⟩ 
 
 
