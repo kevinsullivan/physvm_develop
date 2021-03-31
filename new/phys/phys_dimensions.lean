@@ -12,8 +12,9 @@ in the list as well? (Yet, its algebra isn't affine.)
 -/
 
 /-
-Indices to disjoint 1-D "standard" affine spaces.
+Indices to disjoint 1-D "standard" affine spaces, and
+thus modeling distinct affine spaces of the physical
+world (construed classically).
 -/
 def TIME := 0
 def LENGTH := 1
-def MASS := 2

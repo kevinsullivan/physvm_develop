@@ -42,8 +42,6 @@ variables
 (K : Type u) [field K] [inhabited K] 
 
 def time_std_frame : fm K TIME := fm.base TIME
-
-#check mk_space
 def time_std_space := mk_space K (time_std_frame K)
 
 /-
