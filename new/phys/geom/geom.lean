@@ -1,5 +1,6 @@
 import linear_algebra.affine_space.basic
 import ...math.aff1Kcoord.aff1Kcoord_std
+import ..phys_dimensions
 
 open_locale affine
 
@@ -16,17 +17,17 @@ variables
 Add frames and (coordinate) spaces based on frames
 -/
 
-structure position {f : fm K} (s : spc K f ) extends point s 
-def mk_position' {f : fm K} (s : spc K f ) (p : point s) : position s := position.mk p  
-def mk_position {f : fm K} (s : spc K f ) (k : K) : position s := position.mk (mk_point s k) 
+structure position {f : fm K LENGTH } (s : spc K f ) extends point s 
+def mk_position' {f : fm K LENGTH} (s : spc K f ) (p : point s) : position s := position.mk p  
+def mk_position {f : fm K LENGTH} (s : spc K f ) (k : K) : position s := position.mk (mk_point s k) 
 
-structure translation {f : fm K} (s : spc K f ) extends vectr s 
-def mk_translation' {f : fm K} (s : spc K f ) (v : vectr s) : translation s := translation.mk v
-def mk_translation  {f : fm K} (s : spc K f ) (k : K) : translation s := translation.mk (mk_vectr s k) 
+structure translation {f : fm K LENGTH} (s : spc K f ) extends vectr s 
+def mk_translation' {f : fm K LENGTH} (s : spc K f ) (v : vectr s) : translation s := translation.mk v
+def mk_translation  {f : fm K LENGTH} (s : spc K f ) (k : K) : translation s := translation.mk (mk_vectr s k) 
 
 -- note that we don't extend fm
-def mk_geom_frame {parent : fm K} {s : spc K parent} (p : position s) (v : translation s) :=
-fm.deriv (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠ 0
+def mk_geom_frame {parent : fm K LENGTH} {s : spc K parent} (p : position s) (v : translation s) :=
+fm.deriv LENGTH (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠ 0
 
 
 /-
@@ -35,14 +36,14 @@ fm.deriv (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠
     *************************************
 -/
 
-variables {f : fm K} {s : spc K f } 
+variables {f : fm K LENGTH} {s : spc K f } 
 
 def add_vectr_vectr (v1 v2 : translation s) : translation s := 
-    mk_duration' s (v1.to_vectr + v2.to_vectr)
+    mk_translation' s (v1.to_vectr + v2.to_vectr)
 def smul_vectr (k : K) (v : translation s) : translation s := 
-    mk_duration' s (k • v.to_vectr)
+    mk_translation' s (k • v.to_vectr)
 def neg_vectr (v : translation s) : translation s := 
-    mk_duration' s ((-1 : K) • v.to_vectr)
+    mk_translation' s ((-1 : K) • v.to_vectr)
 def sub_vectr_vectr (v1 v2 : translation s) : translation s :=    -- v1-v2
     add_vectr_vectr v1 (neg_vectr v2)
 
@@ -52,7 +53,7 @@ instance has_add_vectr : has_add (translation s) := ⟨ add_vectr_vectr ⟩
 lemma add_assoc_vectr : ∀ a b c : translation s, a + b + c = a + (b + c) := sorry
 instance add_semigroup_vectr : add_semigroup (translation s) := ⟨ add_vectr_vectr, add_assoc_vectr ⟩ 
 
-def vectr_zero  := mk_duration s 0
+def vectr_zero  := mk_translation s 0
 instance has_zero_vectr : has_zero (translation s) := ⟨vectr_zero⟩
 
 lemma zero_add_vectr : ∀ a : translation s, 0 + a = a := sorry
@@ -170,11 +171,11 @@ instance : has_neg (translation s) := ⟨neg_vectr⟩
 Lemmas needed to implement affine space API
 -/
 
-def sub_point_point {f : fm K} {s : spc K f } (p1 p2 : position s) : translation s := 
-    mk_duration' s (p2.to_point -ᵥ p1.to_point)
-def add_point_vectr {f : fm K} {s : spc K f } (p : position s) (v : translation s) : position s := 
+def sub_point_point {f : fm K LENGTH} {s : spc K f } (p1 p2 : position s) : translation s := 
+    mk_translation' s (p2.to_point -ᵥ p1.to_point)
+def add_point_vectr {f : fm K LENGTH} {s : spc K f } (p : position s) (v : translation s) : position s := 
     mk_position' s (v.to_vectr +ᵥ p.to_point) -- reorder assumes order is irrelevant
-def add_vectr_point {f : fm K} {s : spc K f } (v : translation s) (p : position s) : position s := 
+def add_vectr_point {f : fm K LENGTH} {s : spc K f } (v : translation s) (p : position s) : position s := 
     mk_position' s (v.to_vectr +ᵥ p.to_point)
 
 def aff_vectr_group_action : translation s → position s → position s := add_vectr_point
