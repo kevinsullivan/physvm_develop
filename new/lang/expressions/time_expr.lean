@@ -41,6 +41,19 @@ abbreviation time_eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp 
 
 
 /-
++  : d s -> d s -> d s
+•  : K -> d s -> d s
++ᵥ : d s -> t s -> t s 
+-ᵥ : t s -> t s -> d s
+
+Here s is an affine coordinate 
+space on TIME. Otherwise we've
+got time points and durations,
+within, but not across, spaces.
+-/
+
+
+/-
 Transform
 -/
 structure transform_var {K : Type u} [field K] [inhabited K] 
@@ -61,12 +74,11 @@ abbreviation transform_eval  {K : Type u} [field K] [inhabited K]
 
 /-
 Overall environment
--/
 
 --omitting transforms from environment for now, which will make
 --env.env, cmd, and etc. , even more complicated in terms of types
--- TODO: Go ahead and complete the environment. Thanks! --Kevin
-
+--TODO: Go ahead and complete the environment. Thanks! --Kevin
+-/
 structure env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) :=
   (d : duration_env sp )
   (t : time_env sp )
