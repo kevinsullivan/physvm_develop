@@ -158,8 +158,6 @@ instance has_neg_vec : has_neg (vec K) := ⟨neg_vec K⟩
 instance has_sub_vec : has_sub (vec K) := ⟨ sub_vec_vec K ⟩ 
 lemma sub_eq_add_neg_vec : ∀ a b : vec K, a - b = a + -b := begin
     intros,
-    cases a,
-    cases b,
     ext,
     refl,
     refl
@@ -515,11 +513,6 @@ lemma pt_vsub_vadd_a1 : ∀ (p1 p2 : (pt K)), (p1 -ᵥ p2) +ᵥ p2 = p1 := begin
     dsimp [has_add.add, add_vec_vec, mk_vec', add_semigroup.add, add_monoid.add, sub_neg_monoid.add, add_group.add, add_comm_group.add, distrib.add, ring.add, has_sub.sub, sub_neg_monoid.sub, add_group.sub, add_comm_group.sub, ring.sub, division_ring.sub, division_ring.add] at h5,
     simp [h5] at h4,
     exact h4
-    /-
-    THE GOAL IS INCORRECT - CAUSE WAS INCORRECT SUBTRACTION FUNCTION
-
-    field.add p2__to_prod_snd (field.sub p2__to_prod_snd p1__to_prod_snd) = p1__to_prod_snd
-    -/
     
 end
 lemma pt_vadd_vsub_a1 : ∀ (g : vec K) (p : pt K), g +ᵥ p -ᵥ p = g := begin
@@ -555,9 +548,6 @@ lemma pt_vadd_vsub_a1 : ∀ (g : vec K) (p : pt K), g +ᵥ p -ᵥ p = g := begin
     dsimp [has_add.add, add_vec_vec, mk_vec', add_semigroup.add, add_monoid.add, sub_neg_monoid.add, add_group.add, add_comm_group.add, distrib.add, ring.add, has_sub.sub, sub_neg_monoid.sub, add_group.sub, add_comm_group.sub, ring.sub, division_ring.sub, division_ring.add] at h4,
 
     cc
-    /-
-    again, an incorrect goal - TURNS OUT THIS WAS FROM INCORRECT SUBTRACTION
-    -/
 end
 instance aff_pt_torsor : add_torsor (vec K) (pt K) := 
 ⟨ 
