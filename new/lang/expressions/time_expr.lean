@@ -8,6 +8,10 @@ universes u
 
 variables (K : Type u) [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} {f1 : fm K TIME} {f2 : fm K TIME}
 -- {K : Type u} [field K] [inhabited K] {f : fm K TIME}
+
+/-
+Duration
+-/
 structure duration_var {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) extends var 
 
 inductive duration_expr {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) : Type u
@@ -20,6 +24,10 @@ abbreviation duration_env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (
 abbreviation duration_eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f)  := 
   duration_env sp → duration_var sp → duration sp
 
+
+/-
+Time
+-/
 structure time_var {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) extends var
 
 inductive time_expr {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) : Type u
@@ -32,6 +40,10 @@ abbreviation time_env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp :
 abbreviation time_eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f)  := 
   time_env sp → time_var sp → time sp
 
+
+/-
+Transform
+-/
 structure transform_var {K : Type u} [field K] [inhabited K] 
   {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) extends var
 
@@ -47,6 +59,10 @@ abbreviation transform_env {K : Type u} [field K] [inhabited K]
 abbreviation transform_eval  {K : Type u} [field K] [inhabited K] 
   {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) := 
   transform_env sp1 sp2 → transform_var sp1 sp2 → time.time_transform sp1 sp2
+
+/-
+Overall environment
+-/
 
 --omitting transforms from environment for now, which will make
 --env.env, cmd, and etc. , even more complicated in terms of types
