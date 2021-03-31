@@ -220,11 +220,35 @@ open_locale affine
 
 instance : affine_space (duration s) (time s) := @time.aff_point_torsor K _ _ f s
 
+end time -- ha ha
+
+
 --extends does not work with abbreviation or def, so the type is ugly.
 structure time_transform {K : Type u} [field K] [inhabited K] {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2)
   extends ((time sp1) ≃ᵃ[K] (time sp2))
+variables {f1 : fm K TIME} {f2 : fm K TIME}  (s2 : spc K f2)
+def spc.time_tr (s1 : spc K f1)  : (time s2) ≃ᵃ[K] (time s1) := 
 
+    let pointtr : (point s1) ≃ᵃ[K] (point s2)  := s1.tr s2 in
+                ⟨
+            ⟨
+                (λ p : time s2, (⟨(pointtr.symm p.to_point : point s1)⟩ : time s1)),
+                (λ p : time s1, (⟨(pointtr p.to_point : point s2)⟩ : time s2)),
+                sorry,
+                sorry
+            ⟩,
+            ⟨
+                (λv : duration _, (⟨(pointtr.symm.linear v.1 : vectr _)⟩ : duration _)),
+                sorry,
+               -- (λ v, ⟨v.to_vec⟩),
+                sorry,
+                (λv : duration _, (⟨(pointtr.linear v.1 : vectr _)⟩ : duration _)),
+                sorry,
+                sorry
+            ⟩,
+            sorry
+        ⟩
 
-end time -- ha ha
+#check spc.time_tr
 
 end bar

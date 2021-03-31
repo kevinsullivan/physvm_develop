@@ -13,31 +13,37 @@ Duration
 -/
 structure duration_var {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) extends var 
 
-inductive duration_expr {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) : Type u
-| lit (v : duration sp) : duration_expr
-| var (v : duration_var sp) : duration_expr
-
-abbreviation duration_env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) := 
-  duration_var sp → duration sp
-
-abbreviation duration_eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f)  := 
-  duration_env sp → duration_var sp → duration sp
-
-
 /-
 Time
 -/
 structure time_var {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) extends var
 
-inductive time_expr {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) : Type u
+mutual inductive duration_expr, time_expr {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) 
+with duration_expr : Type u
+| lit (v : duration sp) : duration_expr
+| var (v : duration_var sp) : duration_expr
+| add_dur_dur (d1 : duration_expr) (d2 : duration_expr) : duration_expr
+| neg_dur (d : duration_expr) : duration_expr
+| sub_dur_dur (d1 : duration_expr) (d2 : duration_expr) : duration_expr
+| sub_time_time (t1 : time_expr) (t2 : time_expr) : duration_expr
+| smul_dur (k : K) (d : duration_expr) : duration_expr
+with time_expr : Type u
 | lit (p : time sp) : time_expr
 | var (v : time_var sp) : time_expr
+| add_dur_time (d : duration_expr) (t : time_expr) : time_expr
+
+
+abbreviation duration_env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) := 
+  duration_var sp → duration sp
+
+abbreviation duration_eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f)  := 
+  duration_env sp → duration_expr sp → duration sp
 
 abbreviation time_env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f)  := 
   time_var sp → time sp
 
 abbreviation time_eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f)  := 
-  time_env sp → time_var sp → time sp
+  time_env sp → time_expr sp → time sp
 
 /-
 ANDREW:
@@ -47,7 +53,9 @@ FUNCTION_NAME' (added ') is the suggested implementation version discussed earli
 -/
 
 def add_dur_expr_dur_expr (v1 v2 : duration_expr sp) : duration_expr sp := 
-  sorry
+  duration_expr.add_dur_dur v1 v2
+/-
+FROM TUESDAY - REMOVE SOON
 
 def add_dur_expr_dur_expr' {ev : duration_env sp} (v1 v2 : duration_expr sp) : duration_expr sp := 
   begin
@@ -83,12 +91,13 @@ def smul_dur_expr' {ev : duration_env sp} (k : K) (v : duration_expr sp) : durat
       exact duration_expr.lit(ev v)
     }
 
-  end
-def smul_dur_expr (k : K) (v : duration_expr sp) : duration_expr sp := sorry
+  end-/
+def smul_dur_expr (k : K) (v : duration_expr sp) : duration_expr sp := 
+    duration_expr.smul_dur k v
 
 def neg_dur_expr (v : duration_expr sp) : duration_expr sp := 
-    sorry
-
+    duration_expr.neg_dur v
+/-
 def neg_dur_expr' {ev : duration_env sp} (v : duration_expr sp) : duration_expr sp := 
 begin
     intros,
@@ -101,10 +110,10 @@ begin
     }
 
 end
-
+-/
 def sub_dur_expr_dur_expr (v1 v2 : duration_expr sp) : duration_expr sp :=    -- v1-v2
-    sorry
-
+    duration_expr.sub_dur_dur v1 v2
+/-
 def sub_dur_expr_dur_expr' {ev : duration_env sp} (v1 v2 : duration_expr sp) : duration_expr sp :=    -- v1-v2
 begin
     intros,
@@ -128,7 +137,7 @@ begin
       }
     }
 
-end
+end-/
 -- See unframed file for template for proving vector_space
 
 instance has_add_dur_expr : has_add (duration_expr sp) := ⟨ add_dur_expr_dur_expr K ⟩
@@ -231,7 +240,7 @@ instance add_comm_group_dur_expr : add_comm_group (duration_expr sp) := ⟨
 ⟩
 
 
-instance : vector_space K (duration s) := @time.semimodule_K_durationK K _ _ f s
+instance : vector_space K (duration_expr sp) := sorry
 
 
 /-
@@ -244,44 +253,50 @@ instance : vector_space K (duration s) := @time.semimodule_K_durationK K _ _ f s
 /-
 Affine operations
 -/
-instance : has_add (duration s) := ⟨add_vectr_vectr K⟩
-instance : has_zero (duration s) := ⟨vectr_zero K⟩
-instance : has_neg (duration s) := ⟨neg_vectr K⟩
+instance : has_add (duration_expr sp) := ⟨add_dur_expr_dur_expr K⟩
+instance : has_zero (duration_expr sp) := ⟨dur_expr_zero K⟩
+instance : has_neg (duration_expr sp) := ⟨neg_dur_expr K⟩
 
 /-
 Lemmas needed to implement affine space API
 -/
+/-
+kernel failed to type check declaration 'sub_time_expr_time_expr' this is usually due to a 
+buggy tactic or a bug in the builtin elaborator
 
-def sub_point_point {f : fm K TIME} {s : spc K f } (p1 p2 : time s) : duration s := 
-    mk_duration' s (p2.to_point -ᵥ p1.to_point)
-def add_point_vectr {f : fm K TIME} {s : spc K f } (p : time s) (v : duration s) : time s := 
-    mk_time' s (v.to_vectr +ᵥ p.to_point) -- reorder assumes order is irrelevant
-def add_vectr_point {f : fm K TIME} {s : spc K f } (v : duration s) (p : time s) : time s := 
-    mk_time' s (v.to_vectr +ᵥ p.to_point)
+ANDREW - THIS LOOKS VERY BAD!
+-/
 
-def aff_vectr_group_action : duration s → time s → time s := add_vectr_point K
-instance : has_vadd (duration s) (time s) := ⟨aff_vectr_group_action K⟩
+def sub_time_expr_time_expr {f : fm K TIME} {s : spc K f } (p1 p2 : time_expr sp) : duration_expr sp := 
+    duration_expr.sub_time_time p1 p2
+def add_time_expr_dur_expr {f : fm K TIME} {s : spc K f } (p : time_expr sp) (v : duration_expr sp) : time_expr sp := 
+    time_expr.add_dur_time v p
+def add_dur_expr_time_expr {f : fm K TIME} {s : spc K f } (v : duration_expr sp) (p : time_expr sp) : time_expr sp := 
+    time_expr.add_dur_time v p
 
-lemma zero_vectr_vadd'_a1 : ∀ p : time s, (0 : duration s) +ᵥ p = p := sorry
-lemma vectr_add_assoc'_a1 : ∀ (g1 g2 : duration s) (p : time s), g1 +ᵥ (g2 +ᵥ p) = (g1 + g2) +ᵥ p := sorry
-instance vectr_add_action: add_action (duration s) (time s) := 
-⟨ aff_vectr_group_action K, zero_vectr_vadd'_a1 K, vectr_add_assoc'_a1  K⟩ 
+def aff_dur_expr_group_action : duration_expr sp → time_expr sp → time_expr sp := add_dur_expr_time_expr K
+instance : has_vadd (duration_expr sp) (time_expr sp) := ⟨aff_dur_expr_group_action K⟩
 
-def aff_point_group_sub : time s → time s → duration s := sub_point_point K
-instance point_has_vsub : has_vsub (duration s) (time s) := ⟨ aff_point_group_sub K ⟩ 
+lemma zero_dur_expr_vadd'_a1 : ∀ p : time_expr sp, (0 : duration_expr sp) +ᵥ p = p := sorry
+lemma dur_expr_add_assoc'_a1 : ∀ (g1 g2 : duration_expr sp) (p : time_expr sp), g1 +ᵥ (g2 +ᵥ p) = (g1 + g2) +ᵥ p := sorry
+instance dur_expr_add_action: add_action (duration_expr sp) (time_expr sp) := 
+⟨ aff_dur_expr_group_action K, zero_dur_expr_vadd'_a1 K, dur_expr_add_assoc'_a1  K⟩ 
 
-instance : nonempty (time s) := ⟨mk_time s 0⟩
+def aff_time_expr_group_sub : time_expr sp → time_expr sp → duration_expr sp := sub_time_expr_time_expr K
+instance time_expr_has_vsub : has_vsub (duration_expr sp) (time_expr sp) := ⟨ aff_time_expr_group_sub K ⟩ 
 
-lemma point_vsub_vadd_a1 : ∀ (p1 p2 : (time s)), (p1 -ᵥ p2) +ᵥ p2 = p1 := sorry
-lemma point_vadd_vsub_a1 : ∀ (g : duration s) (p : time s), g +ᵥ p -ᵥ p = g := sorry
-instance aff_point_torsor : add_torsor (duration s) (time s) := 
+instance : nonempty (time_expr sp) := ⟨mk_time_expr sp 0⟩
+
+lemma time_expr_vsub_vadd_a1 : ∀ (p1 p2 : (time_expr sp)), (p1 -ᵥ p2) +ᵥ p2 = p1 := sorry
+lemma time_expr_vadd_vsub_a1 : ∀ (g : duration_expr sp) (p : time_expr sp), g +ᵥ p -ᵥ p = g := sorry
+instance aff_time_expr_torsor : add_torsor (duration_expr sp) (time_expr sp) := 
 ⟨ 
-    aff_vectr_group_action K,
-    zero_vectr_vadd'_a1 K,    -- add_action
-    vectr_add_assoc'_a1 K,   -- add_action
-    aff_point_group_sub K,    -- has_vsub
-    point_vsub_vadd_a1 K,     -- add_torsor
-    point_vadd_vsub_a1 K,     -- add_torsor
+    aff_dur_expr_group_action K,
+    zero_dur_expr_vadd'_a1 K,    -- add_action
+    dur_expr_add_assoc'_a1 K,   -- add_action
+    aff_time_expr_group_sub K,    -- has_vsub
+    time_expr_vsub_vadd_a1 K,     -- add_torsor
+    time_expr_vadd_vsub_a1 K,     -- add_torsor
 ⟩
 
 
@@ -306,16 +321,16 @@ structure transform_var {K : Type u} [field K] [inhabited K]
 
 inductive transform_expr {K : Type u} [field K] [inhabited K] 
   {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) : Type u
-| lit (p : time.time_transform sp1 sp2) : transform_expr
+| lit (p : time_transform sp1 sp2) : transform_expr
 | var (v : transform_var sp1 sp2) : transform_expr
 
 abbreviation transform_env {K : Type u} [field K] [inhabited K] 
   {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2)  := 
-  transform_var sp1 sp2 → time.time_transform sp1 sp2
+  transform_var sp1 sp2 → time_transform sp1 sp2
 
 abbreviation transform_eval  {K : Type u} [field K] [inhabited K] 
   {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) := 
-  transform_env sp1 sp2 → transform_var sp1 sp2 → time.time_transform sp1 sp2
+  transform_env sp1 sp2 → transform_expr sp1 sp2 → time_transform sp1 sp2
 
 /-
 Overall environment
@@ -324,14 +339,37 @@ Overall environment
 --env.env, cmd, and etc. , even more complicated in terms of types
 --TODO: Go ahead and complete the environment. Thanks! --Kevin
 -/
-structure env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) :=
+
+variables {f2 : fm K TIME} (sp2 : spc K f2)
+
+structure env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) {f2 : fm K TIME} {sp2 : spc K f2} :=
   (d : duration_env sp )
   (t : time_env sp )
+  (tr : transform_env sp sp2)
+
+#check sp.tr sp2
+
+open time
+
+--improve this
+#check spc.time_tr K sp sp2
 
 def env.init : env sp :=
   ⟨
     (λv, ⟨mk_vectr sp 1⟩),
-    (λv, ⟨mk_point sp 0⟩)
+    (λv, ⟨mk_point sp 0⟩),
+    (λv, ⟨spc.time_tr K sp sp2⟩)
   ⟩
 
+structure eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) {f2 : fm K TIME} {sp2 : spc K f2} :=
+  (d : duration_eval sp )
+  (t : time_eval sp )
+  (tr : transform_eval sp sp2)
+
+def eval.init : eval sp := 
+  ⟨ 
+    (λenv_,λexpr_, ⟨mk_vectr sp 1⟩),
+    (λenv_,λexpr_, ⟨mk_point sp 0⟩),
+    (λenv_,λexpr_, ⟨spc.time_tr K sp sp2⟩),
+  ⟩
 end lang.time
