@@ -395,7 +395,7 @@ variables {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)
 abbreviation raw_tr := (pt K) ≃ᵃ[K] (pt K)
 abbreviation fm_tr := (point s1) ≃ᵃ[K] (point s2)
 
-#check function.left_inverse
+#check @function.left_inverse
 def to_base_helper' : fm K n → @raw_tr K _ _
 | (fm.base n) := ⟨
             ⟨

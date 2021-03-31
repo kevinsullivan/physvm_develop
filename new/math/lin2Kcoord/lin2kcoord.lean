@@ -16,12 +16,17 @@ Operations
 
 -- component-wise pair add already defined
 #print prod.has_add
+/-
+  @[instance]
+  protected def prod.has_add : Π {M : Type u_5} {N : Type u_6} [_inst_1 : has_add M] [_inst_2 : has_add N], has_add (M × N) :=
+  λ {M : Type u_5} {N : Type u_6} [_inst_1 : has_add M] [_inst_2 : has_add N],
+    {add := λ (p q : M × N), (p.fst + q.fst, p.snd + q.snd)}
+-/
 
 -- scalar multiplication scales each component
 @[ext]
 def smul : K → K × K → K × K
 | a (f,s) := ⟨ a * f, a * s ⟩ 
-
 
 
 /-
