@@ -14,3 +14,7 @@ noncomputable def p2 : pt ℝ := mk_pt ℝ 3
 noncomputable def p3 := p1 -ᵥ p2
 noncomputable def p4 := v4 +ᵥ p2
 
+-- get coordinate of pt
+noncomputable def p4c : ℝ := pt_coord ℝ p4
+
+
