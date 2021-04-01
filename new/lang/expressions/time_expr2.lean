@@ -354,11 +354,11 @@ inductive transform_expr {K : Type u} [field K] [inhabited K]
   --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
  -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
   : Π {f1 : fm K TIME} (sp1 : spc K f1), Π {f2 : fm K TIME} (sp2 : spc K f2), Type u
-| lit {f1 : fm K TIME} (sp1 : spc K f1) {f2 : fm K TIME} (sp2 : spc K f2) (p : time_transform sp1 sp2) : transform_expr sp1 sp2
-| var {f1 : fm K TIME} (sp1 : spc K f1) {f2 : fm K TIME} (sp2 : spc K f2) (v : transform_var sp1 sp2) : transform_expr sp1 sp2
-| apply_duration {f1 : fm K TIME} (sp1 : spc K f1) {f2 : fm K TIME} (sp2 : spc K f2) (v : transform_expr sp1 sp2) (d : duration_expr sp1) : transform_expr sp1 sp2
-| compose_lit {f1 : fm K TIME} (sp1 : spc K f1) {f2 : fm K TIME} (sp2 : spc K f2) (v : time_transform sp1 sp2) 
-  {f3 : fm K TIME} (sp3 : spc K f3)  (v : time_transform sp2 sp3) : transform_expr sp1 sp3
+| lit {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} (p : time_transform sp1 sp2) : transform_expr sp1 sp2
+| var {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} (v : transform_var sp1 sp2) : transform_expr sp1 sp2
+| apply_duration {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} (v : transform_expr sp1 sp2) (d : duration_expr sp1) : transform_expr sp1 sp2
+| compose_lit {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} (v : time_transform sp1 sp2) 
+  {f3 : fm K TIME} {sp3 : spc K f3}  (v : time_transform sp2 sp3) : transform_expr sp1 sp3
 
 /-
 
@@ -398,7 +398,7 @@ structure env {K : Type u} [field K] [inhabited K]
   :=
   (d : Π {f : fm K TIME}, Π (sp : spc K f), duration_env sp )
   (t : Π {f : fm K TIME}, Π (sp : spc K f), time_env sp )
-  (tr : Π {f : fm K TIME}, Π (sp1 : spc K f), Π (sp2 : spc K f), transform_env sp1 sp2)
+  (tr : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_env sp1 sp2)
 
 #check sp.tr sp2
 
@@ -414,18 +414,18 @@ def env.init (K : Type u) [field K] [inhabited K]  : env :=
   ⟨
     (λf: fm K TIME, λsp, λv, ⟨mk_vectr sp 1⟩),
     (λf: fm K TIME, λsp, λv, ⟨mk_point sp 0⟩),
-    (λf: fm K TIME, λsp1, λsp2, (λv, sp1.time_tr sp2))
+    (λf: fm K TIME, λsp1, λf2, λsp2, (λv, sp1.time_tr sp2))
   ⟩
 
 structure eval {K : Type u} [field K] [inhabited K] :=
   (d : Π {f : fm K TIME}, Π (sp : spc K f), duration_eval sp )
   (t : Π {f : fm K TIME}, Π (sp : spc K f), time_eval sp )
-  (tr : Π {f : fm K TIME}, Π (sp1 : spc K f), Π (sp2 : spc K f), transform_eval sp1 sp2)
+  (tr : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_eval sp1 sp2)
 
 def eval.init (K : Type u) [field K] [inhabited K] : eval := 
   ⟨ 
     (λf: fm K TIME, λsp, λenv_,λexpr_, ⟨mk_vectr sp 1⟩),
     (λf: fm K TIME, λsp, λenv_,λexpr_, ⟨mk_point sp 0⟩),
-    (λf: fm K TIME, λsp1, λsp2, (λenv_,λexpr_, sp1.time_tr sp2 : transform_eval sp1 sp2)),
+    (λf: fm K TIME, λsp1, λf2, λsp2, (λenv_,λexpr_, sp1.time_tr sp2 : transform_eval sp1 sp2)),
   ⟩
 end lang.time

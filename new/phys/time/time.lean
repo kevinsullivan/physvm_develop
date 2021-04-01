@@ -230,6 +230,10 @@ variables
 
 
 --extends does not work with abbreviation or def, so the type is ugly.
+
+/-
+Older version (3/31)
+
 structure time_transform {K : Type u} [field K] [inhabited K] {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2)
   extends ((time sp1) ≃ᵃ[K] (time sp2))
 variables {f1 : fm K TIME} {f2 : fm K TIME}  (s2 : spc K f2)
@@ -254,5 +258,55 @@ def spc.time_tr (s1 : spc K f1) {f2 : fm K TIME} : Π(s2 : spc K f2), time_trans
             ⟩,
             sorry
         ⟩⟩
+-/
 
-#check s2.time_tr s2
+/-
+Newer version
+Tradeoff - Does not directly extend from affine equiv. Base class is an equiv on points and vectrs
+
+Extension methods are provided to directly transform Times and Duration between frames
+-/
+structure time_transform {K : Type u} [field K] [inhabited K] {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2)
+  extends fm_tr sp1 sp2
+
+
+def spc.time_tr {f1 : fm K TIME} (s1 : spc K f1) : Π {f2 : fm K TIME} (s2 : spc K f2), 
+        time_transform s1 s2 := --(time s2) ≃ᵃ[K] (time s1) := 
+    λ f2 s2,
+        ⟨s1.fm_tr s2⟩
+        
+variables 
+     {f1 : fm K TIME} {s1 : spc K f1}
+     {f2 : fm K TIME} {s2 : spc K f2}
+/-
+
+def fm_tr.transform_point (tr:fm_tr s1 s2 ) : point s1 → point s2 :=
+    λp,
+    tr.to_equiv p
+
+def fm_tr.transform_vectr (tr:fm_tr s1 s2 ) : vectr s1 → vectr s2 :=
+    λv,
+    let as_pt : point s1 := (⟨⟨(1,v.to_vec.to_prod.2),rfl⟩⟩) in
+    let tr_pt := (tr.to_equiv as_pt) in
+    ⟨⟨(0, tr_pt.to_pt.to_prod.2),rfl⟩⟩
+
+-/
+
+def time_transform.transform_time 
+    (tr: time_transform s1 s2 ) : time s1 → time s2 :=
+    λt,
+    ⟨tr.to_fm_tr.to_equiv t.to_point⟩
+
+def time_transform.transform_duration
+    (tr: time_transform s1 s2 ) : duration s1 → duration s2 :=
+    λd,
+    let as_pt : point s1 := (⟨⟨(1,d.to_vectr.to_vec.to_prod.2),rfl⟩⟩) in
+    let tr_pt := (tr.to_equiv as_pt) in
+    ⟨⟨⟨(0, tr_pt.to_pt.to_prod.2),rfl⟩⟩⟩
+
+
+def stdsp := time_std_space ℚ
+variables (myd : duration stdsp) (myt : time stdsp)
+
+#check (stdsp.fm_tr stdsp).transform_vectr myd.1
+#check (stdsp.time_tr stdsp).transform_time myt
