@@ -301,19 +301,6 @@ instance aff_time_expr_torsor : add_torsor (duration_expr sp) (time_expr sp) :=
 
 
 /-
-+  : d s -> d s -> d s
-•  : K -> d s -> d s
-+ᵥ : d s -> t s -> t s 
--ᵥ : t s -> t s -> d s
-
-Here s is an affine coordinate 
-space on TIME. Otherwise we've
-got time points and durations,
-within, but not across, spaces.
--/
-
-
-/-
 Transform
 -/
 structure transform_var {K : Type u} [field K] [inhabited K] 
@@ -331,6 +318,47 @@ abbreviation transform_env {K : Type u} [field K] [inhabited K]
 abbreviation transform_eval  {K : Type u} [field K] [inhabited K] 
   {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) := 
   transform_env sp1 sp2 → transform_expr sp1 sp2 → time_transform sp1 sp2
+
+
+/-
+We need a notation of a space 
+expression, rooted at TIME but
+enabling the imposition of any
+affine coordinatization on it,
+these rooted at TIME.std_frame.
+Thus we also need a notation of
+frames.
+-/
+
+/-
+TIME
+std_space [TIME]
+FRAME [ TIME ], STD_FRAME [ TIME ]
+SPACE [ FRAME [ TIME ] ]
+Point_lit [acspace] coord
+Duration_lit [acspace] coord
+Point_var [acspace] pvar
+Duration_var [acspace] dvar
+
++  : d s -> d s -> d s
+•  : K -> d s -> d s
++ᵥ : d s -> t s -> t s 
+-ᵥ : t s -> t s -> d s
+
+Here s is an affine coordinate 
+space on TIME. Otherwise we've
+got time points and durations,
+within, but not across, spaces.
+-/
+
+
+
+
+
+
+
+
+
 
 /-
 Overall environment
