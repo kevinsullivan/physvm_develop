@@ -403,7 +403,7 @@ FIX THIS LATER
 
 def to_base_helper' : fm K n → @raw_tr K _ _
 | (fm.base n) := ⟨
-            ⟨
+            ⟨   /-base case -/
                 (λ p, p),
                 (λ p, p),
                 begin
@@ -441,7 +441,7 @@ def to_base_helper' : fm K n → @raw_tr K _ _
             end
         ⟩
 | (fm.deriv n c parent) := (⟨
-            ⟨/-.1 and .2 only refer to K coordinates-/
+            ⟨/-transform from current->parent-/
                 λp, ⟨(p.to_prod.1*c.snd.to_prod.1 +  p.to_prod.2*c.fst.to_prod.1, 
                         p.to_prod.1*c.snd.to_prod.2 + p.to_prod.2*c.fst.to_prod.2),sorry⟩,
                 let det := c.snd.to_prod.1*c.fst.to_prod.2 - c.snd.to_prod.2*c.fst.to_prod.1 in
@@ -464,14 +464,22 @@ def to_base_helper' : fm K n → @raw_tr K _ _
                 sorry,
                 sorry
             ⟩,
-            sorry
+            sorry /-invert to parent->current and append to current->base-/
         ⟩ : @raw_tr K _ _).trans (to_base_helper' parent)
 
---def to_base_helper : spc K f1 → @raw_tr K _ _
  
-
+--change this to standard space
 def spc.to_base (s1 : spc K f1) : @raw_tr K _ _ := to_base_helper' f1
 
+/-
+s1 
+
+    i1              s2
+
+        i2      i3
+            b
+
+-/
 
 def spc.tr (s1 : spc K f1) {f2 : fm K n} : Π (s2 : spc K f2), (point s1) ≃ᵃ[K] (point s2) := 
     λ s2,
@@ -495,7 +503,15 @@ def spc.tr (s1 : spc K f1) {f2 : fm K n} : Π (s2 : spc K f2), (point s1) ≃ᵃ
             sorry
         ⟩
 
-#check s1.tr s2
+variables (p1 : point s1) (v_1 : vectr s1)
+
+def mytr := s1.tr s2
+
+#check ((mytr s1 s2) p1) --point s2
+#check (mytr s1 s2).linear v_1--matrix * [vec] //+- vec
+#check 
+#check
+
 
 
 end implicitK

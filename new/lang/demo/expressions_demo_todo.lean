@@ -1,4 +1,4 @@
-import ..expressions.time_expr
+import ..expressions.time_expr2
 
 
 
@@ -18,24 +18,26 @@ Using transform requires adding in a second space argument for right now. This i
 Use env and eval to extract literals to construct new frames and spaces, etc
 -/
 
-def env_ := @env.init ℚ _ _ fr sp fr sp
-def eval_ := @eval.init ℚ _ _ fr sp fr sp
+def env_ := env.init ℚ 
+def eval_ := eval.init ℚ 
 
-def time_frame  := mk_frame (eval_.t env_.t launch_time).to_point (eval_.d env_.d one_second).to_vectr
+#check eval_.t sp
+def evt := eval_.t sp
+#check (evt (env_.t sp) launch_time)
+
+def time_frame  := 
+    let time_sp_eval := eval_.t sp in
+    let time_sp_env := env_.t sp in
+    let dur_sp_eval := eval_.d sp in
+    let dur_sp_env := env_.d sp in
+    mk_frame (time_sp_eval time_sp_env launch_time).to_point (dur_sp_eval dur_sp_env one_second).to_vectr
 def mission_time  := mk_space ℚ (time_frame)
-
-def env_m := @env.init ℚ _ _ time_frame mission_time time_frame mission_time
-def eval_m := @eval.init ℚ _ _ time_frame mission_time time_frame mission_time
-
 
 def ego_launch_time     := time_expr.lit (mk_time mission_time 0)
 def t_plus_one_minute   := mk_time mission_time 60
 def one_minute          := duration_expr.lit (mk_duration mission_time 60)
 def t_plus_one_minute'  := one_minute +ᵥ ego_launch_time     -- coordinate free in coordinate space
 def t_plus_one_second   := one_second +ᵥ ego_launch_time     -- frame error
-
-def env_tr := @env.init ℚ _ _ fr sp time_frame mission_time
-def eval_tr := @eval.init ℚ _ _ fr sp time_frame mission_time
 
 --build a transform
 def std_to_mission :=       transform_expr.lit (sp.time_tr mission_time)
