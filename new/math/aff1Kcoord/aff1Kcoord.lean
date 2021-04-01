@@ -390,12 +390,21 @@ instance aff_point_torsor : add_torsor (vectr s) (point s) :=
 open_locale affine
 instance : affine_space (vectr s) (point s) := aff_point_torsor s
 
+
+
+/-
+And now for transforms
+-/
+
 variables {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)
 
 --not usable?
 abbreviation raw_tr := (pt K) ≃ᵃ[K] (pt K)
 abbreviation fm_tr := (point s1) ≃ᵃ[K] (point s2)
 
+/-
+TODO: This material needs inspection, verification
+-/
 #check @function.left_inverse
 def to_base_helper' : fm K n → @raw_tr K _ _
 | (fm.base n) := ⟨
@@ -465,9 +474,7 @@ def to_base_helper' : fm K n → @raw_tr K _ _
 
 --def to_base_helper : spc K f1 → @raw_tr K _ _
  
-
 def spc.to_base (s1 : spc K f1) : @raw_tr K _ _ := to_base_helper' f1
-
 
 def spc.tr (s1 : spc K f1) {f2 : fm K n} : Π (s2 : spc K f2), (point s1) ≃ᵃ[K] (point s2) := 
     λ s2,
@@ -491,8 +498,10 @@ def spc.tr (s1 : spc K f1) {f2 : fm K n} : Π (s2 : spc K f2), (point s1) ≃ᵃ
             sorry
         ⟩
 
-#check s1.tr s2
-
+/-
+DEMO: transform generation between arbitrary affine coordinate spaces on physical dimension
+-/
+#check s1.tr s2     -- Yay!
 
 end implicitK
 
