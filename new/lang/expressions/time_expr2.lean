@@ -267,11 +267,11 @@ buggy tactic or a bug in the builtin elaborator
 ANDREW - THIS LOOKS VERY BAD!
 -/
 
-def sub_time_expr_time_expr {f : fm K TIME} {s : spc K f } (p1 p2 : time_expr sp) : duration_expr sp := 
-    sorry--duration_expr.sub_time_time p1 p2
-def add_time_expr_dur_expr {f : fm K TIME} {s : spc K f } (p : time_expr sp) (v : duration_expr sp) : time_expr sp := 
+def sub_time_expr_time_expr {f : fm K TIME} {sp : spc K f } (p1 p2 : time_expr sp) : duration_expr sp := 
+    duration_expr.sub_time_time p1 p2
+def add_time_expr_dur_expr {f : fm K TIME} {sp : spc K f } (p : time_expr sp) (v : duration_expr sp) : time_expr sp := 
     time_expr.add_dur_time v p
-def add_dur_expr_time_expr {f : fm K TIME} {s : spc K f } (v : duration_expr sp) (p : time_expr sp) : time_expr sp := 
+def add_dur_expr_time_expr {f : fm K TIME} {sp : spc K f } (v : duration_expr sp) (p : time_expr sp) : time_expr sp := 
     time_expr.add_dur_time v p
 
 def aff_dur_expr_group_action : duration_expr sp → time_expr sp → time_expr sp := add_dur_expr_time_expr K
@@ -285,7 +285,8 @@ instance dur_expr_add_action: add_action (duration_expr sp) (time_expr sp) :=
 def aff_time_expr_group_sub : time_expr sp → time_expr sp → duration_expr sp := sub_time_expr_time_expr K
 instance time_expr_has_vsub : has_vsub (duration_expr sp) (time_expr sp) := ⟨ aff_time_expr_group_sub K ⟩ 
 
-instance : nonempty (time_expr sp) := ⟨mk_time_expr sp 0⟩
+
+instance : nonempty (time_expr sp) := ⟨time_expr.lit (mk_time sp  1)⟩
 
 lemma time_expr_vsub_vadd_a1 : ∀ (p1 p2 : (time_expr sp)), (p1 -ᵥ p2) +ᵥ p2 = p1 := sorry
 lemma time_expr_vadd_vsub_a1 : ∀ (g : duration_expr sp) (p : time_expr sp), g +ᵥ p -ᵥ p = g := sorry
@@ -301,45 +302,6 @@ instance aff_time_expr_torsor : add_torsor (duration_expr sp) (time_expr sp) :=
 
 
 /-
-Transform
--/
-structure transform_var {K : Type u} [field K] [inhabited K] 
-  {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) extends var
-
-inductive transform_expr {K : Type u} [field K] [inhabited K] 
-  {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) : Type u
-| lit (p : time_transform sp1 sp2) : transform_expr
-| var (v : transform_var sp1 sp2) : transform_expr
-
-abbreviation transform_env {K : Type u} [field K] [inhabited K] 
-  {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2)  := 
-  transform_var sp1 sp2 → time_transform sp1 sp2
-
-abbreviation transform_eval  {K : Type u} [field K] [inhabited K] 
-  {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) := 
-  transform_env sp1 sp2 → transform_expr sp1 sp2 → time_transform sp1 sp2
-
-
-/-
-We need a notation of a space 
-expression, rooted at TIME but
-enabling the imposition of any
-affine coordinatization on it,
-these rooted at TIME.std_frame.
-Thus we also need a notation of
-frames.
--/
-
-/-
-TIME
-std_space [TIME]
-FRAME [ TIME ], STD_FRAME [ TIME ]
-SPACE [ FRAME [ TIME ] ]
-Point_lit [acspace] coord
-Duration_lit [acspace] coord
-Point_var [acspace] pvar
-Duration_var [acspace] dvar
-
 +  : d s -> d s -> d s
 •  : K -> d s -> d s
 +ᵥ : d s -> t s -> t s 
@@ -352,13 +314,74 @@ within, but not across, spaces.
 -/
 
 
+/-
+Transform
+-/
+structure transform_var {K : Type u} [field K] [inhabited K] 
+  {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) extends var
+/-
+inductive transform_expr {K : Type u} [field K] [inhabited K] 
+  --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
+ -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
+  : Π {f1 : fm K TIME} (sp1 : spc K f1), Π {f2 : fm K TIME} (sp2 : spc K f2), Type u
+| lit {f1 : fm K TIME} (sp1 : spc K f1) {f2 : fm K TIME} (sp2 : spc K f2) (p : time_transform sp1 sp2) : transform_expr sp1 sp2
+| var (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_var sp1.2 sp2.2) : transform_expr sp1 sp2
+| apply_duration (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_expr sp1 sp2) (d : duration_expr sp1.2) : transform_expr sp1 sp2
+| compose (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2)  (v : time_transform sp1.2 sp2.2) 
+  (sp3 : Σf3 : fm K TIME, spc K f3)  (v : time_transform sp1 sp2) : transform_expr sp1 sp3
+-/
+/-
+invalid occurrence of recursive arg#7 of 'lang.time.transform_expr.compose', the body of the functional type depends on it.
+All Messages (28)
+
+PROBLEM WITH TRANSFORM EXPRESSIONS
+-/
+inductive transform_expr' {K : Type u} [field K] [inhabited K] 
+  --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
+ -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
+  : Π {f1 : fm K TIME} (sp1 : spc K f1), Π {f2 : fm K TIME} (sp2 : spc K f2), Type u
+| lit {f1 : fm K TIME} (sp1 : spc K f1) {f2 : fm K TIME} (sp2 : spc K f2) (p : time_transform sp1 sp2) : transform_expr' sp1 sp2
+| var (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_var sp1.2 sp2.2) : transform_expr' sp1.2 sp2.2
+| apply_duration (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_expr' sp1.2 sp2.2) (d : duration_expr sp1.2) : transform_expr' sp1.2 sp2.2
+| compose (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2)  (v : transform_expr' sp1.2 sp2.2) 
+  (sp3 : Σf3 : fm K TIME, spc K f3)  (v : transform_expr' sp2.2 sp3.2) : transform_expr' sp1.2 sp3.2
+
+/-
+invalid occurrence of recursive arg#7 of 'lang.time.transform_expr.compose', the body of the functional type depends on it.
+All Messages (28)
+-/
+inductive transform_expr {K : Type u} [field K] [inhabited K] 
+  --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
+ -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
+  : Π {f1 : fm K TIME} (sp1 : spc K f1), Π {f2 : fm K TIME} (sp2 : spc K f2), Type u
+| lit {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} (p : time_transform sp1 sp2) : transform_expr sp1 sp2
+| var {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} (v : transform_var sp1 sp2) : transform_expr sp1 sp2
+| apply_duration {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} (v : transform_expr sp1 sp2) (d : duration_expr sp1) : transform_expr sp1 sp2
+| compose_lit {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} (v : time_transform sp1 sp2) 
+  {f3 : fm K TIME} {sp3 : spc K f3}  (v : time_transform sp2 sp3) : transform_expr sp1 sp3
+
+/-
+
+inductive transform_expr {K : Type u} [field K] [inhabited K] 
+  --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
+ -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
+  : Σf1 : fm K TIME, spc K f1 → Σf2 : fm K TIME, spc K f2 → Type u
+| lit (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (p : time_transform sp1.1 sp1.2) : transform_expr
+--| var (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_var sp1.1 sp1.2) : transform_expr sp1 sp2
+--| apply_duration (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_expr ) (d : duration_expr sp) : transform_expr sp1 sp2
+--| compose (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2)  (v : transform_expr sp1 sp2) 
+ -- (sp3 : Σf3 : fm K TIME, spc K f3)  (v : transform_expr sp2 sp3) : transform_expr sp1 sp3
 
 
+-/
 
+abbreviation transform_env {K : Type u} [field K] [inhabited K] 
+  {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2)  := 
+  transform_var sp1 sp2 → time_transform sp1 sp2
 
-
-
-
+abbreviation transform_eval  {K : Type u} [field K] [inhabited K] 
+  {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) := 
+  transform_env sp1 sp2 → transform_expr sp1 sp2 → time_transform sp1 sp2
 
 /-
 Overall environment
@@ -371,32 +394,38 @@ Overall environment
 variables {f2 : fm K TIME} (sp2 : spc K f2)
 
 structure env {K : Type u} [field K] [inhabited K] 
-        {f : fm K TIME} (sp : spc K f) {f2 : fm K TIME} {sp2 : spc K f2} :=
-  (d : duration_env sp )
-  (t : time_env sp )
-  (tr : transform_env sp sp2)
+  --      {f : fm K TIME} (sp : spc K f) {f2 : fm K TIME} {sp2 : spc K f2} :=
+  :=
+  (d : Π {f : fm K TIME}, Π (sp : spc K f), duration_env sp )
+  (t : Π {f : fm K TIME}, Π (sp : spc K f), time_env sp )
+  (tr : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_env sp1 sp2)
 
 #check sp.tr sp2
 
 open time
 
+def p : Π {f : fm K TIME}, Π (sp : spc K f), duration_env sp :=
+  λf,λsp, λv,⟨mk_vectr sp 1⟩
 
-def env.init : env sp :=
+#check p
+
+#check transform_env
+def env.init (K : Type u) [field K] [inhabited K]  : env :=
   ⟨
-    (λv, ⟨mk_vectr sp 1⟩),
-    (λv, ⟨mk_point sp 0⟩),
-    (λv, sp.time_tr sp2)
+    (λf: fm K TIME, λsp, λv, ⟨mk_vectr sp 1⟩),
+    (λf: fm K TIME, λsp, λv, ⟨mk_point sp 0⟩),
+    (λf: fm K TIME, λsp1, λf2, λsp2, (λv, sp1.time_tr sp2))
   ⟩
 
-structure eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) {f2 : fm K TIME} {sp2 : spc K f2} :=
-  (d : duration_eval sp )
-  (t : time_eval sp )
-  (tr : transform_eval sp sp2)
+structure eval {K : Type u} [field K] [inhabited K] :=
+  (d : Π {f : fm K TIME}, Π (sp : spc K f), duration_eval sp )
+  (t : Π {f : fm K TIME}, Π (sp : spc K f), time_eval sp )
+  (tr : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_eval sp1 sp2)
 
-def eval.init : eval sp := 
+def eval.init (K : Type u) [field K] [inhabited K] : eval := 
   ⟨ 
-    (λenv_,λexpr_, ⟨mk_vectr sp 1⟩),
-    (λenv_,λexpr_, ⟨mk_point sp 0⟩),
-    (λenv_,λexpr_, sp.time_tr sp2),
+    (λf: fm K TIME, λsp, λenv_,λexpr_, ⟨mk_vectr sp 1⟩),
+    (λf: fm K TIME, λsp, λenv_,λexpr_, ⟨mk_point sp 0⟩),
+    (λf: fm K TIME, λsp1, λf2, λsp2, (λenv_,λexpr_, sp1.time_tr sp2 : transform_eval sp1 sp2)),
   ⟩
 end lang.time

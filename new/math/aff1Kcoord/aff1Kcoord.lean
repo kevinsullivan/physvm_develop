@@ -396,11 +396,13 @@ instance : affine_space (vectr s) (point s) := aff_point_torsor s
 And now for transforms
 -/
 
-variables {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)
+--variables {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)
 
 --not usable?
 abbreviation raw_tr := (pt K) ≃ᵃ[K] (pt K)
-abbreviation fm_tr := (point s1) ≃ᵃ[K] (point s2)
+--abbreviation fm_tr := (point s1) ≃ᵃ[K] (point s2)
+
+structure fm_tr {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)  extends (point s1) ≃ᵃ[K] (point s2)
 
 /-
 TODO: This material needs inspection, verification
@@ -408,7 +410,7 @@ TODO: This material needs inspection, verification
 #check @function.left_inverse
 def to_base_helper' : fm K n → @raw_tr K _ _
 | (fm.base n) := ⟨
-            ⟨
+            ⟨   /-base case -/
                 (λ p, p),
                 (λ p, p),
                 begin
@@ -446,7 +448,7 @@ def to_base_helper' : fm K n → @raw_tr K _ _
             end
         ⟩
 | (fm.deriv n c parent) := (⟨
-            ⟨/-.1 and .2 only refer to K coordinates-/
+            ⟨/-transform from current->parent-/
                 λp, ⟨(p.to_prod.1*c.snd.to_prod.1 +  p.to_prod.2*c.fst.to_prod.1, 
                         p.to_prod.1*c.snd.to_prod.2 + p.to_prod.2*c.fst.to_prod.2),sorry⟩,
                 let det := c.snd.to_prod.1*c.fst.to_prod.2 - c.snd.to_prod.2*c.fst.to_prod.1 in
@@ -469,15 +471,18 @@ def to_base_helper' : fm K n → @raw_tr K _ _
                 sorry,
                 sorry
             ⟩,
-            sorry
+            sorry /-invert to parent->current and append to current->base-/
         ⟩ : @raw_tr K _ _).trans (to_base_helper' parent)
 
---def to_base_helper : spc K f1 → @raw_tr K _ _
  
-def spc.to_base (s1 : spc K f1) : @raw_tr K _ _ := to_base_helper' f1
+def spc.to_base {f1 : fm K n} (s1 : spc K f1) : @raw_tr K _ _ := to_base_helper' f1
 
-def spc.tr (s1 : spc K f1) {f2 : fm K n} : Π (s2 : spc K f2), (point s1) ≃ᵃ[K] (point s2) := 
+def spc.fm_tr {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) : Π (s2 : spc K f2),
+    fm_tr s1 s2 
+    := 
+     --(point s1) ≃ᵃ[K] (point s2) := 
     λ s2,
+    ⟨
     let rawtr : @raw_tr K _ _ := s1.to_base.trans s2.to_base.symm in
                 ⟨
             ⟨
@@ -497,11 +502,29 @@ def spc.tr (s1 : spc K f1) {f2 : fm K n} : Π (s2 : spc K f2), (point s1) ≃ᵃ
             ⟩,
             sorry
         ⟩
+    ⟩
+
+def fm_tr.transform_point  {f1 : fm K n} {f2 : fm K n} {s1 : spc K f1} {s2 : spc K f2} (tr:fm_tr s1 s2 ) : point s1 → point s2 :=
+    λp,
+    tr.to_equiv p
+
+def fm_tr.transform_vectr  {f1 : fm K n} {f2 : fm K n} {s1 : spc K f1} {s2 : spc K f2} (tr:fm_tr s1 s2 ) : vectr s1 → vectr s2 :=
+    λv,
+    let as_pt : point s1 := (⟨⟨(1,v.to_vec.to_prod.2),rfl⟩⟩) in
+    let tr_pt := (tr.to_equiv as_pt) in
+    ⟨⟨(0, tr_pt.to_pt.to_prod.2),rfl⟩⟩
+
 
 /-
 DEMO: transform generation between arbitrary affine coordinate spaces on physical dimension
 -/
-#check s1.tr s2     -- Yay!
+variables {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)
+
+#check s1.fm_tr s2     -- Yay!
+
+variables (my_vec : vectr s1)
+
+#check ((s1.fm_tr s2).transform_vectr) my_vec
 
 end implicitK
 
