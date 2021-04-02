@@ -442,7 +442,7 @@ def to_base_helper' : fm K n → @raw_tr K _ _
                 end,
             ⟩,
             begin
-                admit
+                admit   -- TODO: What's this?
             end
         ⟩
 | (fm.deriv n c parent) := (⟨
