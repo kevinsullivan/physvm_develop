@@ -51,7 +51,7 @@ with time_expr : Π(K : Type u) [field K] [inhabited K], Type (u+1)
 | var {f : fm K TIME} {sp : spc K f} (v : time_var sp) : time_expr K
 | add_dur_time (d : duration_expr) (t : time_expr K) : time_expr K
 -/
---set_option trace.app_builder true
+set_option trace.app_builder true
 --set_option pp.raw true
 --set_option pp.raw.maxDepth 10
 --set_option pp.universes true
@@ -74,10 +74,33 @@ with duration_expr : Type (u+1)
 with time_expr  : Type (u+1)
 | lit {K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} (p : time sp) : time_expr
 -/
-mutual inductive duration_expr, time_expr -- (K : Type u) [field K] [inhabited K]
+
+/-
+
+[app_builder] failed to create an 'sizeof'-application, 
+failed to solve unification constraint for #1 argument (?x_0 =?= fm K TIME)
+-/
+/-
+mutual inductive duration_expr, time_expr --(K : Type u) [field K] [inhabited K]
 with duration_expr : Type (u+1)
 | zero : /-Π (K : Type u) [field K] [inhabited K],-/ duration_expr
 | one : /-Π (K : Type u) [field K] [inhabited K],-/ duration_expr
+| lit : Π /-{K : Type u} [field K] [inhabited K]-/ {f : fm K TIME} {sp : spc K f} (d : duration sp), duration_expr
+| var : Π /-{K : Type u} [field K] [inhabited K]-/ {f : fm K TIME} {sp : spc K f}, Π (v : duration_var sp), duration_expr
+| add_dur_dur : Π (d1 d2 : duration_expr), duration_expr 
+| neg_dur : Π (d : duration_expr), duration_expr
+| sub_dur_dur : Π (d1 d2 : duration_expr), duration_expr
+| sub_time_time : Π (t1 t2 : time_expr), duration_expr
+| smul_dur : /-Π {K : Type u} [field K] [inhabited K],-/ Π (k : K), Π (d : duration_expr), duration_expr
+with time_expr  : Type (u+1)
+| lit : Π/-{K : Type u} [field K] [inhabited K]-/ {f : fm K TIME} {sp : spc K f} (t : time sp), time_expr
+| var : Π/-{K : Type u} [field K] [inhabited K]-/ {f : fm K TIME} {sp : spc K f} (v : time_var sp),  time_expr
+| add_dur_time : Π (d : duration_expr) (t : time_expr), time_expr
+-/
+mutual inductive duration_expr, time_expr --(K : Type u) [field K] [inhabited K]
+with duration_expr : Type (u+1)
+| zero : Π (K : Type u) [field K] [inhabited K], duration_expr
+| one : Π (K : Type u) [field K] [inhabited K], duration_expr
 | lit : Π {K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} (d : duration sp), duration_expr
 | var : Π {K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f}, Π (v : duration_var sp), duration_expr
 | add_dur_dur : Π (d1 d2 : duration_expr), duration_expr 
@@ -89,7 +112,6 @@ with time_expr  : Type (u+1)
 | lit : Π{K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} (t : time sp), time_expr
 | var : Π{K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} (v : time_var sp),  time_expr
 | add_dur_time : Π (d : duration_expr) (t : time_expr), time_expr
-
 --def d11 := duration_expr1.lit K f
 
 def mt : ∀k : duration_expr, Type :=
@@ -184,8 +206,25 @@ def stdlit := duration_expr.lit (mk_duration (time_std_space K) 1)
 #check duration_expr.smul_dur (1:K) (stdlit K)
 #check duration_expr
 
-def smul_dur_expr (k : K) (v : duration_expr) : duration_expr := 
+def smul_dur_expr {K : Type u} [field K] [inhabited K] (k : K) (v : duration_expr) : duration_expr := 
     duration_expr.smul_dur k v
+
+variables (my_expr : duration_expr) (kk : K)
+
+/-
+type mismatch at application
+  smul_dur_expr kk my_expr
+term
+  my_expr
+has type
+  lang.time.duration_expr.{u_2} : Type (u_2+1)
+but is expected to have type
+  lang.time.duration_expr.{u} : Type (u+1)
+All Messages (76)
+-/
+
+#check smul_dur_expr kk my_expr
+
 
 def neg_dur_expr (v : duration_expr) : duration_expr := 
     duration_expr.neg_dur v

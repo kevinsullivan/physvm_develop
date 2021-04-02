@@ -520,11 +520,13 @@ DEMO: transform generation between arbitrary affine coordinate spaces on physica
 -/
 variables {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)
 
-#check s1.fm_tr s2     -- Yay!
+def s1_to_s2 : _ := s1.fm_tr s2     -- Yay!
+
+#check s1_to_s2 s1 s2
 
 variables (my_vec : vectr s1)
 
-#check ((s1.fm_tr s2).transform_vectr) my_vec
+#check ((s1_to_s2 s1 s2).transform_vectr) (((s1_to_s2 s1 s2).transform_vectr) my_vec)
 
 end implicitK
 

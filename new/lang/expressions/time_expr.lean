@@ -267,11 +267,11 @@ buggy tactic or a bug in the builtin elaborator
 ANDREW - THIS LOOKS VERY BAD!
 -/
 
-def sub_time_expr_time_expr {f : fm K TIME} {s : spc K f } (p1 p2 : time_expr sp) : duration_expr sp := 
+def sub_time_expr_time_expr {f : fm K TIME} {sp : spc K f } (p1 p2 : time_expr sp) : duration_expr sp := 
     sorry--duration_expr.sub_time_time p1 p2
-def add_time_expr_dur_expr {f : fm K TIME} {s : spc K f } (p : time_expr sp) (v : duration_expr sp) : time_expr sp := 
+def add_time_expr_dur_expr {f : fm K TIME} {sp : spc K f } (p : time_expr sp) (v : duration_expr sp) : time_expr sp := 
     time_expr.add_dur_time v p
-def add_dur_expr_time_expr {f : fm K TIME} {s : spc K f } (v : duration_expr sp) (p : time_expr sp) : time_expr sp := 
+def add_dur_expr_time_expr {f : fm K TIME} {sp : spc K f } (v : duration_expr sp) (p : time_expr sp) : time_expr sp := 
     time_expr.add_dur_time v p
 
 def aff_dur_expr_group_action : duration_expr sp → time_expr sp → time_expr sp := add_dur_expr_time_expr K
@@ -285,7 +285,7 @@ instance dur_expr_add_action: add_action (duration_expr sp) (time_expr sp) :=
 def aff_time_expr_group_sub : time_expr sp → time_expr sp → duration_expr sp := sub_time_expr_time_expr K
 instance time_expr_has_vsub : has_vsub (duration_expr sp) (time_expr sp) := ⟨ aff_time_expr_group_sub K ⟩ 
 
-instance : nonempty (time_expr sp) := ⟨mk_time_expr sp 0⟩
+instance : nonempty (time_expr sp) := ⟨time_expr.lit (mk_time sp  0)⟩
 
 lemma time_expr_vsub_vadd_a1 : ∀ (p1 p2 : (time_expr sp)), (p1 -ᵥ p2) +ᵥ p2 = p1 := sorry
 lemma time_expr_vadd_vsub_a1 : ∀ (g : duration_expr sp) (p : time_expr sp), g +ᵥ p -ᵥ p = g := sorry

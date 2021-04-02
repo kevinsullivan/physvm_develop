@@ -286,11 +286,11 @@ def aff_time_expr_group_sub : time_expr sp → time_expr sp → duration_expr sp
 instance time_expr_has_vsub : has_vsub (duration_expr sp) (time_expr sp) := ⟨ aff_time_expr_group_sub K ⟩ 
 
 
-instance : nonempty (time_expr sp) := ⟨time_expr.lit (mk_time sp  1)⟩
+instance : nonempty (time_expr sp) := ⟨time_expr.lit (mk_time sp  0)⟩
 
 lemma time_expr_vsub_vadd_a1 : ∀ (p1 p2 : (time_expr sp)), (p1 -ᵥ p2) +ᵥ p2 = p1 := sorry
 lemma time_expr_vadd_vsub_a1 : ∀ (g : duration_expr sp) (p : time_expr sp), g +ᵥ p -ᵥ p = g := sorry
-instance aff_time_expr_torsor : add_torsor (duration_expr sp) (time_expr sp) := 
+instance aff_time_expr_torsor : add_torsor (duration_expr sp) (time_expr sp) := --affine space! 
 ⟨ 
     aff_dur_expr_group_action K,
     zero_dur_expr_vadd'_a1 K,    -- add_action
@@ -340,11 +340,15 @@ inductive transform_expr' {K : Type u} [field K] [inhabited K]
   --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
  -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
   : Π {f1 : fm K TIME} (sp1 : spc K f1), Π {f2 : fm K TIME} (sp2 : spc K f2), Type u
-| lit {f1 : fm K TIME} (sp1 : spc K f1) {f2 : fm K TIME} (sp2 : spc K f2) (p : time_transform sp1 sp2) : transform_expr' sp1 sp2
-| var (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_var sp1.2 sp2.2) : transform_expr' sp1.2 sp2.2
-| apply_duration (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_expr' sp1.2 sp2.2) (d : duration_expr sp1.2) : transform_expr' sp1.2 sp2.2
+| lit {f1 : fm K TIME} (sp1 : spc K f1) {f2 : fm K TIME} (sp2 : spc K f2) (p : time_transform sp1 sp2) 
+    : transform_expr' sp1 sp2
+| var (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_var sp1.2 sp2.2) 
+    : transform_expr' sp1.2 sp2.2
+| apply_duration (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_expr' sp1.2 sp2.2) (d : duration_expr sp1.2) 
+    : transform_expr' sp1.2 sp2.2
 | compose (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2)  (v : transform_expr' sp1.2 sp2.2) 
-  (sp3 : Σf3 : fm K TIME, spc K f3)  (v : transform_expr' sp2.2 sp3.2) : transform_expr' sp1.2 sp3.2
+  (sp3 : Σf3 : fm K TIME, spc K f3)  (v : transform_expr' sp2.2 sp3.2) 
+    : transform_expr' sp1.2 sp3.2
 
 /-
 invalid occurrence of recursive arg#7 of 'lang.time.transform_expr.compose', the body of the functional type depends on it.

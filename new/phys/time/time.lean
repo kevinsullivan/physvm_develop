@@ -294,7 +294,7 @@ def fm_tr.transform_vectr (tr:fm_tr s1 s2 ) : vectr s1 → vectr s2 :=
 
 def time_transform.transform_time 
     (tr: time_transform s1 s2 ) : time s1 → time s2 :=
-    λt,
+    λt : time s1,
     ⟨tr.to_fm_tr.to_equiv t.to_point⟩
 
 def time_transform.transform_duration
