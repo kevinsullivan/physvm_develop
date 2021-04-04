@@ -263,8 +263,8 @@ instance add_semigroup_dur_expr : add_semigroup (duration_expr) := ⟨ add_dur_e
 def dur_expr_zero  := duration_expr.zero
 instance has_zero_dur_expr : has_zero (duration_expr) := ⟨dur_expr_zero K⟩
 
---optin class.instance_max_depth
---set_option trace.class_instances true
+--option class.instance_max_depth
+set_option trace.class_instances true
 
 
 lemma zero_add_dur_expr : ∀ a : duration_expr, (0 : duration_expr) + a = a := sorry
