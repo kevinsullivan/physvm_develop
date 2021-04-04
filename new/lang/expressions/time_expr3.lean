@@ -9,9 +9,8 @@ variables
   {f : fm K TIME} {sp : spc K f} 
 
 /-
-Duration
-This space parameter still needs to be here for now
-Any environment function needs to know 
+Concern? This space parameter still needs to be here for now. Any environment function needs to know.
+Response: It's ok. Consistent with the system design and operation.
 -/
 structure duration_var {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) extends var 
 
@@ -19,6 +18,11 @@ structure duration_var {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp 
 Time
 -/
 structure time_var {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) extends var
+
+/-
+Begin: Earlier attempts at induction and time expressions, revealing some interesting situations.
+-/
+
 /-
 mutual inductive duration_expr, time_expr {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) 
 with duration_expr : Type u
@@ -34,6 +38,7 @@ with time_expr : Type u
 | var (v : time_var sp) : time_expr
 | add_dur_time (d : duration_expr) (t : time_expr) : time_expr
 -/
+
 /-
 mutual inductive duration_expr, time_expr
 with duration_expr : Π(K : Type u) [field K] [inhabited K], Type (u+1)
@@ -51,6 +56,7 @@ with time_expr : Π(K : Type u) [field K] [inhabited K], Type (u+1)
 | var {f : fm K TIME} {sp : spc K f} (v : time_var sp) : time_expr K
 | add_dur_time (d : duration_expr) (t : time_expr K) : time_expr K
 -/
+
 set_option trace.app_builder true
 --set_option pp.raw true
 --set_option pp.raw.maxDepth 10
@@ -61,11 +67,12 @@ set_option trace.app_builder true
 --set_option trace.type_context.unification_hint true
 --set_option trace.inductive.unify true
 --help options
-/-
 
+/-
 [app_builder] failed to create an 'sizeof'-application, 
 failed to solve unification constraint for #1 argument (?x_0 =?= fm K TIME)
--//-
+-/
+/-
 mutual inductive duration_expr, time_expr --(K : Type u) [field K] [inhabited K]
 with duration_expr : Type (u+1)
 | zero : duration_expr
@@ -76,7 +83,6 @@ with time_expr  : Type (u+1)
 -/
 
 /-
-
 [app_builder] failed to create an 'sizeof'-application, 
 failed to solve unification constraint for #1 argument (?x_0 =?= fm K TIME)
 -/
@@ -96,6 +102,10 @@ with time_expr  : Type (u+1)
 | lit : Π/-{K : Type u} [field K] [inhabited K]-/ {f : fm K TIME} {sp : spc K f} (t : time sp), time_expr
 | var : Π/-{K : Type u} [field K] [inhabited K]-/ {f : fm K TIME} {sp : spc K f} (v : time_var sp),  time_expr
 | add_dur_time : Π (d : duration_expr) (t : time_expr), time_expr
+-/
+
+/-
+Current attempt. Still with some blockers below. 
 -/
 mutual inductive duration_expr, time_expr --(K : Type u) [field K] [inhabited K]
 with duration_expr : Type (u+1)
@@ -123,6 +133,9 @@ begin
   }
 end
 
+/-
+Another attempt?
+-/
 /-
 mutual inductive duration_expr, time_expr
 with duration_expr : Π(K : Type u) [field K] [inhabited K], Type (u+1)
@@ -155,52 +168,18 @@ abbreviation time_eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp 
 
 /-
 ANDREW:
-
 FUNCTION_NAME' (added ') is the suggested implementation version discussed earlier.
+-/
 
+/-
+Duration expressions: add dur dur, smul scal dur
 -/
 
 def add_dur_expr_dur_expr (v1 v2 : duration_expr) : duration_expr := 
   duration_expr.add_dur_dur v1 v2
-/-
-FROM TUESDAY - REMOVE SOON
 
-def add_dur_expr_dur_expr' {ev : duration_env sp} (v1 v2 : duration_expr) : duration_expr := 
-  begin
-    cases v1,
-    { 
-      cases v2,
-      {
-        exact (duration_expr.lit (v1 +ᵥ v2))
-      },
-      {
-        exact (duration_expr.lit ((ev v2) +ᵥ v1))
-      }
-    },
-    { 
-      cases v2,
-      {
-        exact (duration_expr.lit ((ev v1) +ᵥ v2))
-      },
-      {
-        exact (duration_expr.lit ((ev v1) +ᵥ (ev v2)))
-      }
-    }
+variables {T : Type u} [field T] [inhabited T] (k : T) (dd : duration_expr)
 
-  end
-def smul_dur_expr' {ev : duration_env sp} (k : K) (v : duration_expr) : duration_expr := 
-  begin
-    intros,
-    induction v,
-    case duration_expr.lit : l {
-      exact duration_expr.lit(k•l)
-    },
-    case duration_expr.var : v {
-      exact duration_expr.lit(ev v)
-    }
-
-  end-/
-  variables {T : Type u} [field T] [inhabited T] (k : T) (dd : duration_expr)
 #check (λx:ℕ, dd)
 def stdlit := duration_expr.lit (mk_duration (time_std_space K) 1)
 #check duration_expr.smul_dur (1:K) (stdlit K)
@@ -223,8 +202,14 @@ but is expected to have type
 All Messages (76)
 -/
 
-#check smul_dur_expr kk my_expr
-
+#check my_expr        -- duration_expr
+#check @duration_expr  -- Type (u_3+1)
+#check @smul_dur_expr 
+/- 
+Π {K : Type u} [_inst_5 : field K] [_inst_6 : inhabited K], 
+   K → duration_expr → duration_expr
+-/
+#check smul_dur_expr _ my_expr
 
 def neg_dur_expr (v : duration_expr) : duration_expr := 
     duration_expr.neg_dur v
@@ -276,7 +261,7 @@ lemma add_assoc_dur_expr : ∀ a b c : duration_expr, a + b + c = a + (b + c) :=
 instance add_semigroup_dur_expr : add_semigroup (duration_expr) := ⟨ add_dur_expr_dur_expr, add_assoc_dur_expr⟩ 
 
 def dur_expr_zero  := duration_expr.zero
-instance has_zero_dur_expr : has_zero (duration_expr) := ⟨dur_expr_zero⟩
+instance has_zero_dur_expr : has_zero (duration_expr) := ⟨dur_expr_zero K⟩
 
 --optin class.instance_max_depth
 --set_option trace.class_instances true
