@@ -63,7 +63,7 @@ noncomputable def pt3 := pt2 -ᵥ pt1
 
 /-
 -/
-noncomputable def fr_1' : fm ℝ 1 := mk_frame p_2 v_2        -- error 
+noncomputable def fr_1' : fm ℝ 1 := mk_frame p_2 v_2        -- expect error 
 noncomputable def space2' := mk_space ℝ fr_1'
 noncomputable def v_3' : vectr space2' := mk_vectr space2' 3
 
