@@ -1,7 +1,7 @@
 import ..expressions.time_expr_wip
 
---set up math and phys literals to 
-
+--set up math and phys literals 
+--assume the default interpretation is in seconds for now (in lieu of measurement system)
 def world_time := time_std_space ℚ
 def world_time_std := time_std_frame ℚ
 
@@ -35,3 +35,9 @@ def zero_years := duration_expr.zero ℚ
 def still_zero_years := duration_expr.smul_dur (10000000:ℚ) zero_years
 
 def zero_years_as_time_sub := duration_expr.sub_time_time now now
+
+
+def duration_standard : duration_expr := duration_expr.lit (mk_duration world_time 1)
+
+
+def invalid_expression_different_spaces := duration_expr.add_dur_dur duration_standard one_year
