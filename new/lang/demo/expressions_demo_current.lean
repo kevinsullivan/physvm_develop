@@ -10,15 +10,6 @@ open lang.time
 def std_fr : time_frame_expr ℚ := [(time_std_frame ℚ)] --(std_frame ℚ TIME)
 def std_sp : time_space_expr std_fr.value :=  [(time_std_space ℚ)] --(std_space ℚ TIME)
 
-/-
-Use env and eval to extract literals to construct new frames and spaces, etc
-
-No space argument is provided anymore, but you need to provide the environment with types
-to specify exactly what you expect to receive from it. Can make these implicit, but as shown below,
-can we assume they can be provided by context?
--/
-def env_ : env := env.init ℚ 
-def eval_ : eval := eval.init ℚ 
 
 /-
 Use of new notation
