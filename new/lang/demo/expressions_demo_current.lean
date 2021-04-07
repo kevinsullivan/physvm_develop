@@ -1,4 +1,4 @@
-import ..expressions.time_expr_current
+import ..eval.time_expr_current
 
 /-
 Adapted from Dr Sullivan's phys/demo/demo.lean to highlight differences from phys and lang
@@ -8,7 +8,7 @@ open lang.time
 
 --Alias std time frame and space
 def std_fr : time_frame_expr ℚ := [(time_std_frame ℚ)] --(std_frame ℚ TIME)
-def std_sp : time_space_expr ℚ :=  [(time_std_space ℚ)] --(std_space ℚ TIME)
+def std_sp : time_space_expr std_fr.value :=  [(time_std_space ℚ)] --(std_space ℚ TIME)
 
 /-
 Use env and eval to extract literals to construct new frames and spaces, etc
@@ -19,26 +19,17 @@ can we assume they can be provided by context?
 -/
 def env_ : env := env.init ℚ 
 def eval_ : eval := eval.init ℚ 
+
 /-
 Use of new notation
 -/
 def launch_time : 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  time_expr std_lit 
-  := 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  [(mk_time std_lit 0)]
+  time_expr std_sp.value
+  :=
+  [(mk_time std_sp.value 0)]
 
-def one_second : 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  duration_expr std_lit 
-  := 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  [(mk_duration std_lit 1)]
+def one_second := 
+  [(mk_duration std_sp.value 1)]
 
 -- TODO: Introduce concrete syntax notations
 
@@ -57,22 +48,8 @@ def mission_time := mk_space ℚ (time_frame)
 Space definition updated with embedding into expression
 -/
 
-def mission_space : time_space_expr ℚ :=
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  [(mk_space ℚ frame_lit)]
-
-/-
-Alternative definition
--/
-def mission_space' : time_space_expr ℚ :=
-  mk_time_space_expr ℚ mission_frame
-def mission_space'' : time_space_expr ℚ :=
-  time_space_expr.mk mission_frame--mk_time_space_expr ℚ mission_frame
-
-/-
-
--/
-
+def mission_space :=
+  [(mk_space ℚ mission_frame.value)]
 
 
 /-
@@ -81,22 +58,14 @@ demonstrate
 -/
 
 def ego_launch_time : 
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in
-  time_expr mission_lit  
+  time_expr mission_space.value
   :=
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in 
-  time_expr.lit (mk_time mission_lit 0)
+  [(mk_time mission_space.value 0)]
 
 def one_minute : 
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in
-  duration_expr mission_lit 
+  duration_expr mission_space.value
   := 
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in
-  duration_expr.lit (mk_duration mission_lit 60)
+  [(mk_duration mission_space.value 60)]
 
 def t_plus_one_minute' : _ := 
   one_minute +ᵥ ego_launch_time     -- coordinate free in coordinate space
@@ -106,51 +75,24 @@ def t_plus_one_second : _  := one_second +ᵥ ego_launch_time     -- frame error
 
 --build a transform
 def std_to_mission : 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in
-  transform_expr std_lit mission_lit  --type
-  := 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in      
-  transform_expr.lit (std_lit.time_tr mission_lit) --value
+  transform_expr std_sp.value mission_space.value  --type
+  :=    
+  let std_lit := std_sp.value in
+  let mission_lit := mission_space.value in
+  [(std_lit.time_tr mission_lit)] --value
 
 --transform original launch_time point in std_space to mission space
 def launch_time_in_time_frame : 
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in
-  time_expr mission_lit := 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in    
-  let std_to_mission_lit :=   (eval_.transform_eval std_lit mission_lit) (env_.transform_env std_lit mission_lit) std_to_mission in
-  let launch_time_lit :=      (eval_.time_eval std_lit) (env_.time_env std_lit) launch_time in
-    time_expr.lit (std_to_mission_lit.transform_time launch_time_lit)
+  time_expr mission_space.value 
+  := 
+    [(std_to_mission.value.transform_time launch_time.value)]
 
 
 def mission_to_std : 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in
-  transform_expr mission_lit std_lit 
+  transform_expr mission_space.value std_sp.value 
   := 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in
-  transform_expr.lit (mission_lit.time_tr std_lit)
+  [(mission_space.value.time_tr std_sp.value)]
 
 --cannot deeply embed this due to type limitations
 def std_to_std_compose := 
-  let frame_lit := (eval_.frame_eval env_.frame_env std_fr) in
-  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) std_sp) in
-  let frame_lit := (eval_.frame_eval env_.frame_env mission_frame) in
-  let mission_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) mission_space) in
-  let std_to_mission_lit :=   (eval_.transform_eval std_lit mission_lit) (env_.transform_env std_lit mission_lit) std_to_mission in
-  let mission_to_std_lit :=   (eval_.transform_eval mission_lit std_lit) (env_.transform_env mission_lit std_lit) mission_to_std in
-  transform_expr.compose_lit std_to_mission_lit mission_to_std_lit
+  transform_expr.compose_lit std_to_mission.value mission_to_std.value

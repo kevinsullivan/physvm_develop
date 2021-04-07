@@ -56,11 +56,11 @@ I have varying opinions on what exactly the parameters to the derived constructo
 -/
 | derived {f : fm K TIME} {sp : spc K f} (o : time_expr sp) (b : duration_expr sp) : time_frame_expr
 
-structure time_space_var (K : Type u) [field K] [inhabited K] extends var
+structure time_space_var {K : Type u} [field K] [inhabited K] (f : fm K TIME) extends var
 
-inductive time_space_expr (K : Type u) [field K] [inhabited K] : Type (u+1)
-| lit {f : fm K TIME} (sp : spc K f) : time_space_expr
-| var (v : time_space_var K) : time_space_expr
+inductive time_space_expr {K : Type u} [field K] [inhabited K] (f : fm K TIME) : Type (u+1)
+| lit (sp : spc K f) : time_space_expr
+| var (v : time_space_var f) : time_space_expr
 | mk (f : time_frame_expr K) : time_space_expr
 
 abbreviation time_frame_env (K : Type u) [field K] [inhabited K]  :=
@@ -73,9 +73,9 @@ a hint about the expected return type
 which does trivialize the point of the environment in a way, since parameterized spc types only 
 have a single value per frame-/
 abbreviation time_space_env {K : Type u} [field K] [inhabited K] (f : fm K TIME)  :=
-  time_space_var K → spc K f
+  time_space_var f → spc K f
 abbreviation time_space_eval {K : Type u} [field K] [inhabited K] (f : fm K TIME) :=
-  time_space_env f → time_space_expr K → spc K f
+  time_space_env f → time_space_expr f → spc K f
 
 
 
@@ -111,7 +111,7 @@ instance time_frame_lit {K : Type u} [field K] [inhabited K] : time_frame_has_li
   ⟨λf, time_frame_expr.lit f⟩
 
 class time_space_has_lit {K : Type u} [field K] [inhabited K] (f : fm K TIME) := 
-  (cast : spc K f → time_space_expr K)
+  (cast : spc K f → time_space_expr f)
 notation `[`slit`]` := time_space_has_lit.cast slit
 
 instance time_space_lit {K : Type u} [field K] [inhabited K] {f : fm K TIME} : time_space_has_lit f := 
@@ -126,7 +126,12 @@ Analogous methods provided at math layer
 #check mk_frame
 def mk_time_frame_expr {f : fm K TIME} {sp : spc K f} (o : time_expr sp) (b : duration_expr sp) : time_frame_expr K :=
   time_frame_expr.derived o b
-
+/-
+4/7
+WRITE THIS FUNCTION LATER. 
+YOU NEED TO GET THE VALUE OUT OF THE f PARAMETER TO INCLUDE IT IN THE TYPE
+AND THEN USE IT IN THE CONSTRUCTOR
+-/
 #check mk_space 
 def mk_time_space_expr (K : Type u) [field K] [inhabited K] (f : time_frame_expr K) : time_space_expr K :=
   time_space_expr.mk f
@@ -364,6 +369,17 @@ inductive transform_expr {K : Type u} [field K] [inhabited K]
 | compose_lit {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} (v : time_transform sp1 sp2) 
   {f3 : fm K TIME} {sp3 : spc K f3}  (v : time_transform sp2 sp3) : transform_expr sp1 sp3
 
+
+class time_transform_has_lit {K : Type u} [field K] [inhabited K] 
+  {f1 : fm K TIME} (sp1 : spc K f1) {f2 : fm K TIME} (sp2 : spc K f2) := 
+  (cast : time_transform sp1 sp2 → transform_expr sp1 sp2)
+notation `[`tlit`]` := time_transform_has_lit.cast tlit
+
+instance time_transform_lit {K : Type u} [field K] [inhabited K] 
+  {f1 : fm K TIME} {sp1 : spc K f1} {f2 : fm K TIME} {sp2 : spc K f2} : time_transform_has_lit sp1 sp2 := 
+  ⟨λt, transform_expr.lit t⟩
+
+
 /-
 
 inductive transform_expr {K : Type u} [field K] [inhabited K] 
@@ -392,11 +408,11 @@ variables {f2 : fm K TIME} (sp2 : spc K f2)
 structure env {K : Type u} [field K] [inhabited K] 
   --      {f : fm K TIME} (sp : spc K f) {f2 : fm K TIME} {sp2 : spc K f2} :=
   :=
-  (duration_env : Π {f : fm K TIME}, Π (sp : spc K f), duration_env sp )
-  (time_env : Π {f : fm K TIME}, Π (sp : spc K f), time_env sp )
-  (transform_env : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_env sp1 sp2)
-  (frame_env : time_frame_env K)
-  (space_env : Π (f : fm K TIME), time_space_env f)
+  (duration : Π {f : fm K TIME}, Π (sp : spc K f), duration_env sp )
+  (time : Π {f : fm K TIME}, Π (sp : spc K f), time_env sp )
+  (transform : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_env sp1 sp2)
+  (frame : time_frame_env K)
+  (space : Π (f : fm K TIME), time_space_env f)
 
 def env.init (K : Type u) [field K] [inhabited K]  : env :=
   ⟨
@@ -408,11 +424,11 @@ def env.init (K : Type u) [field K] [inhabited K]  : env :=
   ⟩
 
 structure eval {K : Type u} [field K] [inhabited K] :=
-  (duration_eval : Π {f : fm K TIME}, Π (sp : spc K f), duration_eval sp )
-  (time_eval : Π {f : fm K TIME}, Π (sp : spc K f), time_eval sp )
-  (transform_eval : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_eval sp1 sp2)
-  (frame_eval : time_frame_eval K)
-  (space_eval : Π (f : fm K TIME), time_space_eval f)
+  (duration : Π {f : fm K TIME}, Π (sp : spc K f), duration_eval sp )
+  (time : Π {f : fm K TIME}, Π (sp : spc K f), time_eval sp )
+  (transform : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_eval sp1 sp2)
+  (frame : time_frame_eval K)
+  (space : Π (f : fm K TIME), time_space_eval f)
 
 def eval.init (K : Type u) [field K] [inhabited K] : eval := 
   ⟨ 
