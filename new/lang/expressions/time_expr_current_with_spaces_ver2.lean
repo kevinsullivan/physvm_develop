@@ -32,6 +32,9 @@ with time_expr : Type u
 | var (v : time_var sp) : time_expr
 | add_dur_time (d : duration_expr) (t : time_expr) : time_expr
 
+notation `[`dlit`]` := duration_expr.lit dlit
+notation `[`tlit`]` := time_expr.lit tlit
+
 
 abbreviation duration_env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) := 
   duration_var sp → duration sp
@@ -45,106 +48,99 @@ abbreviation time_env {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp :
 abbreviation time_eval {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f)  := 
   time_env sp → time_expr sp → time sp
 
-structure time_frame_var (K : Type u) [field K] [inhabited K] extends var 
-
-
-inductive time_frame_expr (K : Type u) [field K] [inhabited K] : Type u --{f : fm K T}
-| lit (f : fm K TIME) : time_frame_expr
-| var (v : time_frame_var K) : time_frame_expr
 /-
-I have varying opinions on what exactly the parameters to the derived constructor should be.
+ANDREW:
+
+FUNCTION_NAME' (added ') is the suggested implementation version discussed earlier.
+
 -/
-| derived {f : fm K TIME} {sp : spc K f} (o : time_expr sp) (b : duration_expr sp) : time_frame_expr
-
-structure time_space_var (K : Type u) [field K] [inhabited K] extends var
-
-inductive time_space_expr (K : Type u) [field K] [inhabited K] : Type (u+1)
-| lit {f : fm K TIME} (sp : spc K f) : time_space_expr
-| var (v : time_space_var K) : time_space_expr
-| mk (f : time_frame_expr K) : time_space_expr
-
-abbreviation time_frame_env (K : Type u) [field K] [inhabited K]  :=
-  time_frame_var K → fm K TIME
-abbreviation time_frame_eval (K : Type u) [field K] [inhabited K]  :=
-  time_frame_env K → time_frame_expr K → fm K TIME
-
-/-You need to indicate explicitly what type of frame you think the space has, because the environment needs
-a hint about the expected return type
-which does trivialize the point of the environment in a way, since parameterized spc types only 
-have a single value per frame-/
-abbreviation time_space_env {K : Type u} [field K] [inhabited K] (f : fm K TIME)  :=
-  time_space_var K → spc K f
-abbreviation time_space_eval {K : Type u} [field K] [inhabited K] (f : fm K TIME) :=
-  time_space_env f → time_space_expr K → spc K f
-
-
-
---not working -- lean doesn't play nice with notation and dependent types
---notation `[`flit`]` := time_frame_expr.lit flit
---notation `[`slit`]` := time_space_expr.lit slit
---instance {K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} : has_coe (time sp) (time_expr sp) := ⟨λt, time_expr.lit t⟩
---instance {K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} : has_coe (duration sp) (duration_expr sp) := ⟨λt, duration_expr.lit t⟩
---instance {K : Type u} [field K] [inhabited K] : has_coe (fm K TIME) (time_frame_expr K) := ⟨λf, time_frame_expr.lit f⟩
---instance {K : Type u} [field K] [inhabited K] {f : fm K TIME} : has_coe (spc K f) (time_space_expr K) := ⟨λs, time_space_expr.lit s⟩
-
-#check has_add
-
-class time_has_lit {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) := 
-  (cast : time sp → time_expr sp)
-notation `[`tlit`]` := time_has_lit.cast tlit
-
-instance time_lit {K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} : time_has_lit  sp := 
-  ⟨λt : time sp, time_expr.lit t⟩
-
-class duration_has_lit {K : Type u} [field K] [inhabited K] {f : fm K TIME} (sp : spc K f) := 
-  (cast : duration sp → duration_expr sp)
-notation `[`tlit`]` := duration_has_lit.cast tlit
-
-instance duration_lit {K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} : duration_has_lit  sp := 
-  ⟨λt : duration sp, duration_expr.lit t⟩
-
-class time_frame_has_lit (K : Type u) [field K] [inhabited K] := 
-  (cast : fm K TIME → time_frame_expr K)
-notation `[`flit`]` := time_frame_has_lit.cast flit
-
-instance time_frame_lit {K : Type u} [field K] [inhabited K] : time_frame_has_lit K := 
-  ⟨λf, time_frame_expr.lit f⟩
-
-class time_space_has_lit {K : Type u} [field K] [inhabited K] (f : fm K TIME) := 
-  (cast : spc K f → time_space_expr K)
-notation `[`slit`]` := time_space_has_lit.cast slit
-
-instance time_space_lit {K : Type u} [field K] [inhabited K] {f : fm K TIME} : time_space_has_lit f := 
-  ⟨λs, time_space_expr.lit s⟩
-
-
-
-
-/-
-Analogous methods provided at math layer
--/
-#check mk_frame
-def mk_time_frame_expr {f : fm K TIME} {sp : spc K f} (o : time_expr sp) (b : duration_expr sp) : time_frame_expr K :=
-  time_frame_expr.derived o b
-
-#check mk_space 
-def mk_time_space_expr (K : Type u) [field K] [inhabited K] (f : time_frame_expr K) : time_space_expr K :=
-  time_space_expr.mk f
-
-
 
 def add_dur_expr_dur_expr (v1 v2 : duration_expr sp) : duration_expr sp := 
   duration_expr.add_dur_dur v1 v2
+/-
+FROM TUESDAY - REMOVE SOON
 
+def add_dur_expr_dur_expr' {ev : duration_env sp} (v1 v2 : duration_expr sp) : duration_expr sp := 
+  begin
+    cases v1,
+    { 
+      cases v2,
+      {
+        exact (duration_expr.lit (v1 +ᵥ v2))
+      },
+      {
+        exact (duration_expr.lit ((ev v2) +ᵥ v1))
+      }
+    },
+    { 
+      cases v2,
+      {
+        exact (duration_expr.lit ((ev v1) +ᵥ v2))
+      },
+      {
+        exact (duration_expr.lit ((ev v1) +ᵥ (ev v2)))
+      }
+    }
+
+  end
+def smul_dur_expr' {ev : duration_env sp} (k : K) (v : duration_expr sp) : duration_expr sp := 
+  begin
+    intros,
+    induction v,
+    case duration_expr.lit : l {
+      exact duration_expr.lit(k•l)
+    },
+    case duration_expr.var : v {
+      exact duration_expr.lit(ev v)
+    }
+
+  end-/
 def smul_dur_expr (k : K) (v : duration_expr sp) : duration_expr sp := 
     duration_expr.smul_dur k v
 
 def neg_dur_expr (v : duration_expr sp) : duration_expr sp := 
     duration_expr.neg_dur v
+/-
+def neg_dur_expr' {ev : duration_env sp} (v : duration_expr sp) : duration_expr sp := 
+begin
+    intros,
+    induction v,
+    case duration_expr.lit : l {
+      exact duration_expr.lit(-l)
+    },
+    case duration_expr.var : v {
+      exact duration_expr.lit(-ev v)
+    }
 
+end
+-/
 def sub_dur_expr_dur_expr (v1 v2 : duration_expr sp) : duration_expr sp :=    -- v1-v2
     duration_expr.sub_dur_dur v1 v2
+/-
+def sub_dur_expr_dur_expr' {ev : duration_env sp} (v1 v2 : duration_expr sp) : duration_expr sp :=    -- v1-v2
+begin
+    intros,
+    cases v1,
+    {
+      cases v2,
+      {
+        exact (duration_expr.lit (v1 -ᵥ v2))
+      },
+      {
+        exact (duration_expr.lit (v1 -ᵥ ev v2))
+      }
+    },
+    { 
+      cases v2,
+      {
+        exact (duration_expr.lit ((ev v1) -ᵥ v2))
+      },
+      {
+        exact (duration_expr.lit ((ev v1) -ᵥ (ev v2)))
+      }
+    }
 
+end-/
 -- See unframed file for template for proving vector_space
 
 instance has_add_dur_expr : has_add (duration_expr sp) := ⟨ add_dur_expr_dur_expr K ⟩
@@ -267,6 +263,12 @@ instance : has_neg (duration_expr sp) := ⟨neg_dur_expr K⟩
 /-
 Lemmas needed to implement affine space API
 -/
+/-
+kernel failed to type check declaration 'sub_time_expr_time_expr' this is usually due to a 
+buggy tactic or a bug in the builtin elaborator
+
+ANDREW - THIS LOOKS VERY BAD!
+-/
 
 def sub_time_expr_time_expr {f : fm K TIME} {sp : spc K f } (p1 p2 : time_expr sp) : duration_expr sp := 
     duration_expr.sub_time_time p1 p2
@@ -337,7 +339,6 @@ All Messages (28)
 
 PROBLEM WITH TRANSFORM EXPRESSIONS
 -/
-/-
 inductive transform_expr' {K : Type u} [field K] [inhabited K] 
   --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
  -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
@@ -351,9 +352,11 @@ inductive transform_expr' {K : Type u} [field K] [inhabited K]
 | compose (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2)  (v : transform_expr' sp1.2 sp2.2) 
   (sp3 : Σf3 : fm K TIME, spc K f3)  (v : transform_expr' sp2.2 sp3.2) 
     : transform_expr' sp1.2 sp3.2
+
+/-
+invalid occurrence of recursive arg#7 of 'lang.time.transform_expr.compose', the body of the functional type depends on it.
+All Messages (28)
 -/
-
-
 inductive transform_expr {K : Type u} [field K] [inhabited K] 
   --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
  -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
@@ -387,39 +390,49 @@ abbreviation transform_eval  {K : Type u} [field K] [inhabited K]
   {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2) := 
   transform_env sp1 sp2 → transform_expr sp1 sp2 → time_transform sp1 sp2
 
+/-
+Overall environment
+
+--omitting transforms from environment for now, which will make
+--env.env, cmd, and etc. , even more complicated in terms of types
+--TODO: Go ahead and complete the environment. Thanks! --Kevin
+-/
+
 variables {f2 : fm K TIME} (sp2 : spc K f2)
 
 structure env {K : Type u} [field K] [inhabited K] 
   --      {f : fm K TIME} (sp : spc K f) {f2 : fm K TIME} {sp2 : spc K f2} :=
   :=
-  (duration_env : Π {f : fm K TIME}, Π (sp : spc K f), duration_env sp )
-  (time_env : Π {f : fm K TIME}, Π (sp : spc K f), time_env sp )
-  (transform_env : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_env sp1 sp2)
-  (frame_env : time_frame_env K)
-  (space_env : Π (f : fm K TIME), time_space_env f)
+  (d : Π {f : fm K TIME}, Π (sp : spc K f), duration_env sp )
+  (t : Π {f : fm K TIME}, Π (sp : spc K f), time_env sp )
+  (tr : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_env sp1 sp2)
 
+#check sp.tr sp2
+
+open time
+
+def p : Π {f : fm K TIME}, Π (sp : spc K f), duration_env sp :=
+  λf,λsp, λv,⟨mk_vectr sp 1⟩
+
+#check p
+
+#check transform_env
 def env.init (K : Type u) [field K] [inhabited K]  : env :=
   ⟨
     (λf: fm K TIME, λsp, λv, ⟨mk_vectr sp 1⟩),
     (λf: fm K TIME, λsp, λv, ⟨mk_point sp 0⟩),
-    (λf: fm K TIME, λsp1, λf2, λsp2, (λv, sp1.time_tr sp2)),
-    (λv, time_std_frame K),
-    (λf, (λv, mk_space K f))
+    (λf: fm K TIME, λsp1, λf2, λsp2, (λv, sp1.time_tr sp2))
   ⟩
 
 structure eval {K : Type u} [field K] [inhabited K] :=
-  (duration_eval : Π {f : fm K TIME}, Π (sp : spc K f), duration_eval sp )
-  (time_eval : Π {f : fm K TIME}, Π (sp : spc K f), time_eval sp )
-  (transform_eval : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_eval sp1 sp2)
-  (frame_eval : time_frame_eval K)
-  (space_eval : Π (f : fm K TIME), time_space_eval f)
+  (d : Π {f : fm K TIME}, Π (sp : spc K f), duration_eval sp )
+  (t : Π {f : fm K TIME}, Π (sp : spc K f), time_eval sp )
+  (tr : Π {f1 : fm K TIME}, Π (sp1 : spc K f1), Π {f2 : fm K TIME}, Π (sp2 : spc K f2), transform_eval sp1 sp2)
 
 def eval.init (K : Type u) [field K] [inhabited K] : eval := 
   ⟨ 
     (λf: fm K TIME, λsp, λenv_,λexpr_, ⟨mk_vectr sp 1⟩),
     (λf: fm K TIME, λsp, λenv_,λexpr_, ⟨mk_point sp 0⟩),
     (λf: fm K TIME, λsp1, λf2, λsp2, (λenv_,λexpr_, sp1.time_tr sp2 : transform_eval sp1 sp2)),
-    (λenv_, λexpr_, time_std_frame K),
-    (λf, λenv_, λexpr_, mk_space K f)
   ⟩
 end lang.time

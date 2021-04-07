@@ -1,18 +1,33 @@
 import ..expressions.time_expr_wip
 
+open lang.time
+
+def env_ := env.init
+def eval_ := eval.init
+
 --set up math and phys literals 
 --assume the default interpretation is in seconds for now (in lieu of measurement system)
-def world_time := time_std_space ℚ
-def world_time_std := time_std_frame ℚ
+def world_time : time_space_expr := [(time_std_space ℚ)]
+def world_time_std := [(time_std_frame ℚ)]
 
 --using frame as measurement unit as discussed
 #check mk_space
-def year_fm := mk_frame (mk_point world_time 0) (mk_vectr world_time (60*60*24*365))
-def year_space := mk_space ℚ year_fm
 
---lang test
+def year_origin : time_expr := 
+  let frame_lit := (eval_.frame_eval env_.frame_env world_time_std) in
+  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) world_time) in
+  [(mk_time std_lit 0)]
 
-open lang.time
+def year_basis : duration_expr := 
+  let frame_lit := (eval_.frame_eval env_.frame_env world_time_std) in
+  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) world_time) in
+  [(mk_duration std_lit 0)]
+
+def year_fm := mk_time_frame_expr year_origin year_basis
+def year_space := 
+  let frame_lit := (eval_.frame_eval env_.frame_env world_time_std) in
+  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) world_time) in
+  mk_time_space_expr ℚ year_fm
 
 /-
 Tests out various constructors of time and duration_expression.
@@ -21,9 +36,15 @@ Here, spc is only referenced in the construction of literal expressions.
 -/
 
 
-def now : time_expr := time_expr.lit ( mk_time year_space 0 ) 
+def now : time_expr := 
+  let frame_lit := (eval_.frame_eval env_.frame_env year_fm) in
+  let year_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) year_space) in
+  [(mk_time year_lit 0)] 
 
-def one_year : duration_expr := duration_expr.lit (mk_duration year_space 1)
+def one_year : duration_expr := 
+  let frame_lit := (eval_.frame_eval env_.frame_env year_fm) in
+  let year_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) year_space) in
+  [(mk_duration year_lit 1)]
 
 
 def two_years : duration_expr := 2•one_year
@@ -39,35 +60,56 @@ def still_zero_years := duration_expr.smul_dur (10000000:ℕ) zero_years
 def zero_years_as_time_sub := now -ᵥ now +ᵥ zero_years +ᵥ still_zero_years
 
 
-def duration_standard : duration_expr := duration_expr.lit (mk_duration world_time 1)
+def duration_standard : duration_expr := 
+  let frame_lit := (eval_.frame_eval env_.frame_env world_time_std) in
+  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) world_time) in
+  [(mk_duration std_lit 1)]
 
 --Does not type check adding together durations in different spaces/frames
 def invalid_expression_different_spaces : duration_expr := duration_standard +ᵥ one_year
 
-def myenv := env.init
-#check myenv
-def myeval := eval.init
 
 --You still need the expected space to get the result
---Unfortunately this type checks
+--Unfortunately this type checks 
+--Updated comment 4/6 - unfortunately "current" version 
+--with more explicit typing is susceptible to very similar weak typing errors as well
+--Thus, while it's a problem, it's not exclusive to this version of lang
 def does_not_enforce_type_check := 
-  let year_env := myenv.d year_space in
-  let year_eval := myeval.d year_space in
+  let frame_lit := (eval_.frame_eval env_.frame_env year_fm) in
+  let year_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) year_space) in
+  let year_env := env_.duration_env year_lit in
+  let year_eval := eval_.duration_eval year_lit in
   year_eval year_env invalid_expression_different_spaces
 
 #eval does_not_enforce_type_check
 
 
-def should_type_check : time year_space := 
-  let year_env := myenv.t year_space in
-  let year_eval := myeval.t year_space in
+def should_type_check : 
+  let frame_lit := (eval_.frame_eval env_.frame_env year_fm) in
+  let year_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) year_space) in
+  time year_lit := 
+  let frame_lit := (eval_.frame_eval env_.frame_env year_fm) in
+  let year_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) year_space) in
+  let year_env := env_.time_env year_lit in
+  let year_eval := eval_.time_eval year_lit in
   year_eval year_env three_years_in_future
 
 #eval pt_coord ℚ should_type_check.1.1 --well, eval not implemented yet
 
-def tr_from_seconds_to_years := transform_expr.lit (world_time.time_tr year_space)
+def tr_from_seconds_to_years := 
+  let year_frame_lit := (eval_.frame_eval env_.frame_env year_fm) in
+  let year_lit := ((eval_.space_eval year_frame_lit) (env_.space_env year_frame_lit) year_space) in
+  let frame_lit := (eval_.frame_eval env_.frame_env world_time_std) in
+  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) world_time) in
+  
+  transform_expr.lit (std_lit.time_tr year_lit)
 
-def tr_from_years_to_seconds := transform_expr.lit (year_space.time_tr world_time)
+def tr_from_years_to_seconds := 
+  let year_frame_lit := (eval_.frame_eval env_.frame_env year_fm) in
+  let year_lit := ((eval_.space_eval year_frame_lit) (env_.space_env year_frame_lit) year_space) in
+  let frame_lit := (eval_.frame_eval env_.frame_env world_time_std) in
+  let std_lit := ((eval_.space_eval frame_lit) (env_.space_env frame_lit) world_time) in
+  transform_expr.lit (year_lit.time_tr std_lit)
 
 def tr_from_Seconds_to_seconds := transform_expr.compose tr_from_seconds_to_years tr_from_years_to_seconds
 
