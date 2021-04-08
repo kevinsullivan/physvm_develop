@@ -266,6 +266,7 @@ Tradeoff - Does not directly extend from affine equiv. Base class is an equiv on
 
 Extension methods are provided to directly transform Times and Duration between frames
 -/
+@[ext]
 structure time_transform {K : Type u} [field K] [inhabited K] {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2)
   extends fm_tr sp1 sp2
 

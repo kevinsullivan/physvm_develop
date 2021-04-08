@@ -1,14 +1,14 @@
 import ..expressions.time_expr_current_alternate
 
-/-
-Adapted from Dr Sullivan's phys/demo/demo.lean to highlight differences from phys and lang
--/
 
 open lang.time
 
---K is now an abbreviation 
-def std_fr : time_frame_expr := [(time_std_frame K)] 
-def std_sp : time_space_expr std_fr :=  [(time_std_space K)] 
+--K is now an abbreviation - set to ℚ
+def std_fr : time_frame_expr := [time_std_frame K] 
+--def std_sp : time_space_expr std_fr :=  [mk_space K std_fr.value] --issue with has_lit type class
+def std_sp : time_space_expr std_fr :=  [time_std_space K]
+
+lemma p1 : std_sp.value = time_std_space K := rfl
 
 
 /-
@@ -68,9 +68,7 @@ def t_plus_one_second : _  := one_second +ᵥ ego_launch_time     -- frame error
 def std_to_mission : 
   transform_expr std_sp mission_space  --type
   :=    
-  let std_lit := std_sp.value in
-  let mission_lit := mission_space.value in
-  [(std_lit.time_tr mission_lit)] --value
+  [(std_sp.value.time_tr mission_space.value)] --value
 
 #check std_to_mission.value
 
