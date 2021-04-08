@@ -91,7 +91,15 @@ inductive transform_expr
 | compose_lit {f1 : time_frame_expr} {sp1 : time_space_expr f1} {f2 : fm K TIME} {sp2 : spc K f2} (t1 : time_transform sp1.value sp2) 
   {f3 : time_frame_expr} {sp3 : time_space_expr f3}  (t2 : time_transform sp2 sp3.value) : transform_expr sp1 sp3
 | inv_lit {f1 : time_frame_expr} {sp1 : time_space_expr f1} {f2 : time_frame_expr} {sp2 : time_space_expr f2} (t : time_transform sp2.value sp1.value) : transform_expr sp1 sp2
-
+| compose 
+  {f1 : time_frame_expr} {sp1 : time_space_expr f1}
+  {f2 : time_frame_expr} {sp2 : time_space_expr f2}
+  {f3 : time_frame_expr} {sp3 : time_space_expr f3}
+  (t1 : transform_expr sp1 sp3) (t2 : transform_expr sp3 sp2) : transform_expr sp1 sp2
+| inv
+  {f1 : time_frame_expr} {sp1 : time_space_expr f1}
+  {f2 : time_frame_expr} {sp2 : time_space_expr f2}
+  (tr : transform_expr sp2 sp1) : transform_expr sp1 sp2
 
 class time_transform_has_lit 
   {f1 : time_frame_expr} (sp1 : time_space_expr f1) {f2 : time_frame_expr} (sp2 : time_space_expr f2) := 
@@ -141,11 +149,11 @@ def static_transform_eval
 | env_ (transform_expr.var v) := env_ v
 | env_ (transform_expr.compose_lit t1 t2) := ⟨⟨t1.1.1.trans t2.1.1⟩⟩
 | env_ (transform_expr.inv_lit t) := ⟨⟨(t.1.1).symm⟩⟩
-
+| env_ expr_ := default_transform_eval sp1 sp2 (default_transform_env sp1 sp2) expr_
 
 def transform_expr.value {f1 : time_frame_expr} {sp1 : time_space_expr f1} {f2 : time_frame_expr} {sp2 : time_space_expr f2}
   (expr_ : transform_expr sp1 sp2) : time_transform sp1.value sp2.value :=
-  ((default_transform_eval sp1 sp2) (default_transform_env sp1 sp2) expr_)
+  ((static_transform_eval sp1 sp2) (default_transform_env sp1 sp2) expr_)
 
 
 --INVERSE CANNOT BE DEEPLY EMBEDDED - IT HAS A DIFFERENT TYPE
@@ -224,19 +232,19 @@ with time_expr : Type 1
 abbreviation duration_env {f : time_frame_expr} (sp : time_space_expr f) := 
   duration_var sp → duration sp.value
 
-abbreviation duration_eval := Π{f : time_frame_expr} (sp : time_space_expr f),
-  duration_env sp → duration_expr sp → duration sp.value
-
 attribute [elab_as_eliminator] 
 abbreviation time_env {f : time_frame_expr} (sp : time_space_expr f) :=
   time_var sp → time sp.value
 
+abbreviation duration_eval := Π{f : time_frame_expr} (sp : time_space_expr f),
+  time_env sp → duration_env sp → duration_expr sp → duration sp.value
+
 abbreviation time_eval := Π{f : time_frame_expr} (sp : time_space_expr f), 
-  time_env sp → time_expr sp → time sp.value
+  time_env sp → duration_env sp → time_expr sp → time sp.value
 
 def default_duration_env {f : time_frame_expr} (sp : time_space_expr f) : duration_env sp := λv, (mk_duration sp.value 1)
 def default_duration_eval : duration_eval  
-  := λf sp, λenv_, λexpr_, 
+  := λf sp, λtenv_, λdenv_, λexpr_, 
   begin
     --cases expr_,
     --exact expr_,
@@ -253,24 +261,24 @@ def default_time_env {f : time_frame_expr} (sp : time_space_expr f) : time_env s
 set_option eqn_compiler.max_steps 8192
 mutual def static_duration_eval, static_time_eval 
 with static_duration_eval : duration_eval 
-| f sp env_ (duration_expr.zero) := 0
-| f sp env_ (duration_expr.one) := mk_duration sp.value 1
-| f sp env_ (duration_expr.lit d) := d
-| f sp env_ (duration_expr.var v) := env_ v
-| f sp env_ (duration_expr.add_dur_dur d1 d2) := (static_duration_eval sp env_ d1) +ᵥ (static_duration_eval sp env_ d2)
-| f sp env_ (duration_expr.neg_dur d) := -(static_duration_eval sp env_ d)
-| f sp env_ (duration_expr.sub_dur_dur d1 d2) := (static_duration_eval sp env_ d1) -ᵥ (static_duration_eval sp env_ d2)
-| f sp env_ (duration_expr.sub_time_time t1 t2) := (static_time_eval sp (default_time_env sp) t1) -ᵥ (static_time_eval sp (default_time_env sp) t2)
-| f sp env_ (duration_expr.smul_dur s d) := s•(static_duration_eval sp env_ d)
-| f sp env_ (duration_expr.apply_duration_lit t d) := t.value.transform_duration d
+| f sp tenv_ denv_ (duration_expr.zero) := 0
+| f sp tenv_ denv_ (duration_expr.one) := mk_duration sp.value 1
+| f sp tenv_ denv_ (duration_expr.lit d) := d
+| f sp tenv_ denv_ (duration_expr.var v) := denv_ v
+| f sp tenv_ denv_ (duration_expr.add_dur_dur d1 d2) := (static_duration_eval sp tenv_ denv_ d1) +ᵥ (static_duration_eval sp tenv_ denv_ d2)
+| f sp tenv_ denv_ (duration_expr.neg_dur d) := -(static_duration_eval sp tenv_ denv_ d)
+| f sp tenv_ denv_ (duration_expr.sub_dur_dur d1 d2) := (static_duration_eval sp tenv_ denv_ d1) -ᵥ (static_duration_eval sp tenv_ denv_ d2)
+| f sp tenv_ denv_ (duration_expr.sub_time_time t1 t2) := (static_time_eval sp tenv_ denv_ t1) -ᵥ (static_time_eval sp tenv_ denv_ t2)
+| f sp tenv_ denv_ (duration_expr.smul_dur s d) := s•(static_duration_eval sp tenv_ denv_ d)
+| f sp tenv_ denv_ (duration_expr.apply_duration_lit t d) := t.value.transform_duration d
 with static_time_eval : time_eval
-| f sp env_ (time_expr.lit p) := p
-| f sp env_ (time_expr.var v) := env_ v
-| f sp env_ (time_expr.add_dur_time d t) := (static_duration_eval sp (default_duration_env sp) d) +ᵥ (static_time_eval sp env_ t)
-| f sp env_ (time_expr.apply_time_lit tr t) := tr.value.transform_time t
+| f sp tenv_ denv_ (time_expr.lit p) := p
+| f sp tenv_ denv_ (time_expr.var v) := tenv_ v
+| f sp tenv_ denv_ (time_expr.add_dur_time d t) := (static_duration_eval sp tenv_ denv_ d) +ᵥ (static_time_eval sp tenv_ denv_ t)
+| f sp tenv_ denv_ (time_expr.apply_time_lit tr t) := tr.value.transform_time t
 
 
-def default_time_eval : time_eval := λf sp, λenv_, λexpr_, 
+def default_time_eval : time_eval := λf sp, λtenv_, λdenv_, λexpr_, 
   begin
     cases expr_,
     exact expr_,
@@ -282,10 +290,10 @@ def default_time_eval : time_eval := λf sp, λenv_, λexpr_,
 #check default_time_env
 
 def time_expr.value {f : time_frame_expr} {sp : time_space_expr f} (expr_ : time_expr sp) : time sp.value :=
-  (default_time_eval sp) (default_time_env sp) expr_
+  (static_time_eval sp) (default_time_env sp) (default_duration_env sp) expr_
 
 def duration_expr.value {f : time_frame_expr} {sp : time_space_expr f} (expr_ : duration_expr sp) : duration sp.value :=
-  (default_duration_eval sp) (default_duration_env sp) expr_
+  (static_duration_eval sp) (default_time_env sp) (default_duration_env sp) expr_
 
 
 --not working -- lean doesn't play nice with notation and dependent types

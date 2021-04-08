@@ -42,7 +42,6 @@ def mission_frame : time_frame_expr  :=
 def mission_space :=
   mk_time_space_expr mission_frame --(mk_space ℚ mission_frame.value)
 
-
 --move on to durations and times
 def dur_zero : duration_expr std_sp := 0 --duration.zero
 def dur_one : duration_expr std_sp := 1 --duration.one
