@@ -1,4 +1,4 @@
-import ..expressions.time_expr_current_alternate
+import ..expressions.time_expr_current
 
 
 open lang.time
@@ -17,7 +17,7 @@ Use of new notation
 def launch_time : 
   time_expr std_sp
   :=
-  [(mk_time std_sp.value 0)]
+  [(mk_time (time_std_space K) 0)]
 
 def one_second := 
   [(mk_duration std_sp.value 1)]

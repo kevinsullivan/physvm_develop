@@ -1,4 +1,4 @@
-import ..expressions.time_expr_current_alternate
+import ..expressions.time_expr_current
 
 open lang.time
 /-
