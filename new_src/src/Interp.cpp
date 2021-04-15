@@ -39,7 +39,6 @@ std::string Interp::toString(){
             /*
                 Move this into config as well
             */
-            std::cout<<this->domain->toString()<<"\n";
             retval += "[(";
             if(auto astime = dynamic_cast<domain::Time*>(this->domain->getValue())){
                 retval+= std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]);
@@ -81,7 +80,6 @@ std::string Interp::getType(){
             Probably right thing to do is a config to translate a domain type to a lean type/and or constructor function
         */
         //std::cout<<this->domain->getValue()<<"\n";
-        std::cout<<this->domain->toString()<<"\n";
         if(auto astime = dynamic_cast<domain::Time*>(this->domain->getValue())){
             return "time_expr " + astime->getSpace()->getName();
         }

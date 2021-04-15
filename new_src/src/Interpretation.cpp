@@ -173,23 +173,14 @@ void Interpretation::interpretProgram(){
                 auto coords_ = this->captureCache[choice-4];
                 domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
                 auto new_dom = this->oracle_->getInterpretation(coords_);
-                if(dom_cont->hasValue()){
-                    std::cout<<"replacing vlaue...\n"<<dom_cont->getValue()->toString()<<"\n";
-                }
+                
                 if(new_dom){
-                    std::cout<<"replacing with\n"<<new_dom->toString();
 
                     dom_cont->setValue(new_dom);
-                if(dom_cont->hasValue()){
-                    std::cout<<"replaceddd vlaue...\n"<<dom_cont->getValue()->toString()<<"\n";
-                }
 
                     for(auto link_ : coords_->getLinks()){
                         domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
                         link_cont->setValue(new_dom);
-                if(dom_cont->hasValue()){
-                    std::cout<<"linkeddd vlaue...\n"<<link_cont->getValue()->toString()<<"\n";
-                }
                     }
                 }
             };
