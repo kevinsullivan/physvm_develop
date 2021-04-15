@@ -1,0 +1,7 @@
+[
+{
+    "key": "alt+y",
+    "command": "workbench.action.tasks.runTask",
+    "args": "test1"
+}
+]

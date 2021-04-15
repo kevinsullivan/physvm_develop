@@ -5,7 +5,7 @@ namespace lang.time
 
 universes u
 
-
+@[protected]
 abbreviation K := ℚ
 
 
@@ -544,5 +544,7 @@ instance aff_time_expr_torsor : add_torsor (duration_expr sp) (time_expr sp) := 
     time_expr_vsub_vadd_a1,     -- add_torsor
     time_expr_vadd_vsub_a1,     -- add_torsor
 ⟩
+
+notation t+ᵥv := add_dur_expr_time_expr v t
 
 end lang.time
