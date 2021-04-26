@@ -37,10 +37,6 @@ ASTState::ASTState(
 //Coords::Coords(){
 //}
 
-void Coords::setIndex(int index){
-    this->index_ = index;
-}
-
 bool Coords::operator==(const Coords &other) const {
     return this->state_ == other.state_;
 }
@@ -72,7 +68,7 @@ std::string Coords::getSourceLoc() const {
 }
 
 void addLink(coords::Coords* co){
-    
+
 }
 
 /*************************************************************

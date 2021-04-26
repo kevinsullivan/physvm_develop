@@ -14,6 +14,7 @@ class Checker;
 #include "maps/CoordsToDomain.h"
 #include "oracles/Oracle.h"
 #include "oracles/Oracle_AskAll.h"//need this one for now
+#include "oracles/Oracle_LeanInference.h"
 #include "maps/CoordsToInterp.h"
 #include "maps/InterpToDomain.h"
 #include <g3log/g3log.hpp> 
@@ -146,6 +147,7 @@ public:
     //void printChoices();//to replay annotation sessions
 
 	void printVarTable();
+    void printErrors();
 	void interpretProgram();//central loop to interact with human
 
     /*
@@ -164,6 +166,7 @@ public:
 // TODO: Make private
     domain::Domain *domain_;
     oracle::Oracle_AskAll *oracle_;
+    oracle::Oracle_LeanInference *oracle_infer_;
     clang::ASTContext *context_;
     coords2domain::CoordsToDomain *coords2dom_;
     ast2coords::ASTToCoords *ast2coords_;

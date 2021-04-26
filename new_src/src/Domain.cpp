@@ -30,10 +30,12 @@ void DomainObject::setOperands(std::vector<DomainObject*> operands) { this->oper
 
 DomainContainer::DomainContainer(std::initializer_list<DomainObject*> operands) : DomainObject(operands) {
     this->inner_ = nullptr;
+    this->as_ = AnnotationState::Unannotated;
 };
 
 DomainContainer::DomainContainer(std::vector<DomainObject*> operands) : DomainObject(operands) {
     this->inner_ = nullptr;
+    this->as_ = AnnotationState::Unannotated;
 };
 DomainContainer::DomainContainer(std::initializer_list<DomainContainer*> operands) {
     for(auto dom : operands){
@@ -41,6 +43,7 @@ DomainContainer::DomainContainer(std::initializer_list<DomainContainer*> operand
     }
     operand_count = this->operands_.size();
     this->inner_ = nullptr;
+    this->as_ = AnnotationState::Unannotated;
 };
 
 DomainContainer::DomainContainer(std::vector<DomainContainer*> operands) {
@@ -49,6 +52,7 @@ DomainContainer::DomainContainer(std::vector<DomainContainer*> operands) {
     }
     operand_count = this->operands_.size();
     this->inner_ = nullptr;
+    this->as_ = AnnotationState::Unannotated;
 };
 
 

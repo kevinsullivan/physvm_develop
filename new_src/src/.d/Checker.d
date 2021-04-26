@@ -470,8 +470,8 @@
   /usr/include/g3log/moveoncopy.hpp \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread \
   maps/ASTToCoords.h maps/CoordsToDomain.h oracles/Oracle.h \
-  oracles/Oracle_AskAll.h maps/CoordsToInterp.h maps/../Interp.h \
-  maps/InterpToDomain.h
+  oracles/Oracle_AskAll.h oracles/Oracle_LeanInference.h \
+  oracles/../Interp.h maps/CoordsToInterp.h maps/InterpToDomain.h
 
 /usr/include/stdio.h:
 
@@ -1473,8 +1473,10 @@ oracles/Oracle.h:
 
 oracles/Oracle_AskAll.h:
 
-maps/CoordsToInterp.h:
+oracles/Oracle_LeanInference.h:
 
-maps/../Interp.h:
+oracles/../Interp.h:
+
+maps/CoordsToInterp.h:
 
 maps/InterpToDomain.h:

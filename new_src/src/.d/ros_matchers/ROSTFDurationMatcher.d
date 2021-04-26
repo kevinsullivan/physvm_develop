@@ -476,7 +476,9 @@
   ros_matchers/../maps/ASTToCoords.h \
   ros_matchers/../maps/CoordsToDomain.h ros_matchers/../oracles/Oracle.h \
   ros_matchers/../oracles/Oracle_AskAll.h \
-  ros_matchers/../maps/CoordsToInterp.h ros_matchers/../maps/../Interp.h \
+  ros_matchers/../oracles/Oracle_LeanInference.h \
+  ros_matchers/../oracles/../Interp.h \
+  ros_matchers/../maps/CoordsToInterp.h \
   ros_matchers/../maps/InterpToDomain.h ros_matchers/DoubleMatcher.h
 
 /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchFinder.h:
@@ -1483,9 +1485,11 @@ ros_matchers/../oracles/Oracle.h:
 
 ros_matchers/../oracles/Oracle_AskAll.h:
 
-ros_matchers/../maps/CoordsToInterp.h:
+ros_matchers/../oracles/Oracle_LeanInference.h:
 
-ros_matchers/../maps/../Interp.h:
+ros_matchers/../oracles/../Interp.h:
+
+ros_matchers/../maps/CoordsToInterp.h:
 
 ros_matchers/../maps/InterpToDomain.h:
 

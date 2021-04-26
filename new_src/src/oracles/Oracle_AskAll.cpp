@@ -6,7 +6,6 @@
 
 # include <string>
 # include <iostream>
-# include <g3log/g3log.hpp>
 # include <vector>
 #include <memory>
 
@@ -86,6 +85,7 @@ domain::CoordinateSpace* Oracle_AskAll::selectSpace(std::vector<SpaceType*> opti
         return nullptr;
     }
     redo:
+    std::cout<<"Select Space : \n";
     for(auto i = 0;i<options.size();i++){
 
         std::cout<<(i+1)<<" - "<<options[i]->toString()<<"\n";//yay templates?

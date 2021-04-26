@@ -39,19 +39,22 @@ std::string Interp::toString(){
             /*
                 Move this into config as well
             */
-            retval += "[(";
+            retval += "[";
             if(auto astime = dynamic_cast<domain::Time*>(this->domain->getValue())){
                 retval+= std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]);
             }
             else if(auto asdur = dynamic_cast<domain::Duration*>(this->domain->getValue())){
                 retval+= std::string("mk_duration ") + asdur->getSpace()->getName() + ".value " + std::to_string(asdur->getValue()[0]);
             }
-            retval += ")]";
+            retval += "]";
         }
         else{
             return "_";
         }
     } 
+    else if(nodeType == "IDENT_R1") {
+        retval += this->coords->getName();
+    }
     else if(nodeType == "REF_R1") {
         retval += this->coords->getLinked()->getName();
         //if(this->domain->hasValue())
@@ -107,8 +110,8 @@ std::string Interp::toStringLinked(std::vector<domain::CoordinateSpace*> spaces)
             auto originData = dc->getOrigin();
             auto basisData = dc->getBasis();
             retval += "def " + space->getName() + "_fr : time_frame_expr := \n";
-            retval += " let origin := [(mk_time " + parentName + ".value " + std::to_string(originData[0]) + ")] in\n";
-            retval += " let basis := [(mk_duration " + parentName + ".value " + std::to_string(basisData[0][0]) + ")] in\n";
+            retval += " let origin := [mk_time " + parentName + ".value " + std::to_string(originData[0]) + "] in\n";
+            retval += " let basis := [mk_duration " + parentName + ".value " + std::to_string(basisData[0][0]) + "] in\n";
             retval += " mk_time_frame_expr origin basis\n";
             retval += "def " + space->getName() + " : time_space_expr " + space->getName() + "_fr := mk_time_space_expr " + space->getName() + "_fr\n\n";
         }

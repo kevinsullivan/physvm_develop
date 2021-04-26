@@ -20,6 +20,7 @@ Establish interpretations for AST nodes:
 #include "maps/InterpToDomain.h"
 #include "maps/ASTToCoords.h"
 #include "oracles/Oracle_AskAll.h"    // default oracle
+#include "oracles/Oracle_LeanInference.h"
 //#include "Space.h"
 #include "Checker.h"
 
@@ -34,9 +35,11 @@ std::vector<string> *choice_buffer;
 
 Interpretation::Interpretation() { 
     domain_ = new domain::Domain();
+    //REPLACE WITH A MULTI-ORACLE
     oracle_ = new oracle::Oracle_AskAll(domain_); 
-    choice_buffer = new std::vector<string>();
-    oracle_->choice_buffer = choice_buffer;
+    oracle_infer_ = new oracle::Oracle_LeanInference(domain_);
+    //choice_buffer = new std::vector<string>();
+    //oracle_->choice_buffer = choice_buffer;
     /* 
     context_ can only be set later, once Clang starts parse
     */
@@ -68,6 +71,7 @@ std::string Interpretation::toString_AST(){
 /*
 Simple implementation for all nodes - configuration can handle how to differentiate between add and mul nodes, etc.
 */
+int global_index = 0; //auto increment for each AST Coords
 void Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast::NodeContainer> astNode, bool capture, bool isAST){
     std::vector<coords::Coords*> operand_coords;
     std::vector<domain::DomainContainer*> operand_domains;
@@ -82,6 +86,7 @@ void Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast::NodeConta
     }
 
     coords::Coords* coords_ = new coords::Coords(nodeType, operand_coords);
+    coords_->setIndex(global_index++);
     this->ast2coords_->put(astNode, coords_);
     this->ast2coords_->setASTState(coords_,astNode,context_);
     domain::DomainContainer* domain__ = this->domain_->mkDefaultDomainContainer(operand_domains);
@@ -122,37 +127,65 @@ void Interpretation::printChoices(){
     delete f;
 };
 
+int optionSize = 5;
 void Interpretation::printVarTable(){
-    int i = 4;//move to "menu offset" global variable
+    int i = optionSize+1;//move to "menu offset" global variable
     for(auto coords_ : this->captureCache)
     {
         auto dom_ = this->coords2dom_->getDomain(coords_);
-        std::cout<<"Index: "<<i++<<",Node Type : "<<coords_->getNodeType()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
-            <<"\nExisting Interpretation: "<<dom_->toString()<<std::endl;
+        std::cout<<"Index: "<<i++<<", Node Type : "<<coords_->getNodeType()<<", Annotation State : "<<dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
+            <<"\n\tExisting Interpretation: "<<dom_->toString()<<std::endl<<std::endl;
     }
 };
 
+void Interpretation::printErrors(){
+    int i = optionSize+1;//move to "menu offset" global variable
+    for(auto coords_ : this->captureCache)
+    {
+        auto dom_ = this->coords2dom_->getDomain(coords_);
+
+        std::string error_str_ = "No Error Detected";
+        if(dom_->hasValue()){
+            if(auto dc = dynamic_cast<domain::ErrorObject*>(dom_->getValue())){
+                error_str_ = dc->toErrorString();
+            }
+        }
+
+        std::cout<<"Index: "<<i++<<",Node Type : "<<coords_->getNodeType()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
+            <<"\n\tError Message: "<<error_str_<<std::endl;
+    }
+};
+
+
 void Interpretation::interpretProgram(){
     bool continue_ = true;
+    std::vector<interp::Interp*> ordered_nodes;
+    for(auto coords_ : this->captureCache) 
+        ordered_nodes.push_back(this->coords2interp_->getInterp(coords_));
+
+    oracle_infer_->setNodes(ordered_nodes);
     while(continue_)
     {
         checker_->CheckPoll();
+
         this->printChoices();
         std::cout << "********************************************\n";
         std::cout << "See type-checking output in "<<"/peirce/PeirceOutput.lean"<<"\n";
         std::cout << "Annotations stored in " <<"/peirce/annotations.txt"<<"\n";
         std::cout << "********************************************\n";
 
-        int menuSize = 4+this->captureCache.size();
+        int menuSize = optionSize+this->captureCache.size();
         std::string menu = std::string("Options:\n")
             +"0 - Print Variable Table\n"
             +"1 - Print Available Coordinate Spaces\n"
             +"2 - Create Coordinate Space\n"
-            +"3 - Exit and Finish Type Checking\n";
+            +"3 - Exit and Finish Type Checking\n"
+            +"4 - Perform Lean Inference\n"
+            +"5 - Print Detected Lean Errors\n";
         if(this->captureCache.size()>0){
-            menu = menu+"4-"+std::to_string(menuSize-1)+" - Annotate Node\n";
+            menu = menu+(std::to_string(optionSize+1))+"-"+std::to_string(menuSize)+" - Annotate Node\n";
         }
-        int choice = oracle_->getValidChoice(0, menuSize, menu);
+        int choice = oracle_->getValidChoice(0, menuSize+1, menu);
         switch(choice)
         {
             case 0:{
@@ -169,8 +202,43 @@ void Interpretation::interpretProgram(){
             case 3:{
                 continue_ = false;
             } break;
+            case 4:{
+                
+                /*
+                move this somewhere maybe
+                Organize loop better
+                */
+                oracle_infer_->buildInterpretations("PeirceOutput");//move to configuration or method
+                for(auto coords_ : this->captureCache){
+                    /*
+                    What is the update logic? Very difficult question to answer.
+                    */
+                    auto dom_cont = this->coords2dom_->getDomain(coords_);
+                    auto infer_dom = oracle_infer_->getInterpretation(coords_);
+
+                    switch(dom_cont->getAnnotationState()){
+                        case domain::AnnotationState::Manual : {
+                            //dont overwrite manual annotations
+                        } break;
+                        default : {
+                            if(infer_dom){
+                                dom_cont->setValue(infer_dom);
+
+                                if(auto dc = dynamic_cast<domain::ErrorObject*>(infer_dom))
+                                    dom_cont->setAnnotationState(domain::AnnotationState::Error);
+                                else 
+                                    dom_cont->setAnnotationState(domain::AnnotationState::Inferred);
+
+                            }
+                        }
+                    }
+                }
+            } break;
+            case 5: {
+                this->printErrors();
+            } break;
             default:{
-                auto coords_ = this->captureCache[choice-4];
+                auto coords_ = this->captureCache[choice-optionSize-1];
                 domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
                 auto new_dom = this->oracle_->getInterpretation(coords_);
                 
@@ -181,6 +249,7 @@ void Interpretation::interpretProgram(){
                     for(auto link_ : coords_->getLinks()){
                         domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
                         link_cont->setValue(new_dom);
+                        link_cont->setAnnotationState(domain::AnnotationState::Manual);
                     }
                 }
             };

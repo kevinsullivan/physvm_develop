@@ -88,12 +88,15 @@ class Coords
 public:
     Coords(std::string nodeType_, std::vector<coords::Coords*> operands_) 
         : nodeType(nodeType_), operands(operands_), linked(nullptr) {};
+    Coords(std::string nodeType_, std::vector<coords::Coords*> operands_, int index_) 
+        : nodeType(nodeType_), operands(operands_), linked(nullptr), index(index_) {};
 
     virtual bool operator ==(const Coords &other) const;
     virtual std::string toString() const;
     virtual std::string getSourceLoc() const;
-    int getIndex() const { return index_; };
-    void setIndex(int index);
+    void setIndex(int index_){
+        this->index = index_;
+    }
     virtual bool codegen() const {
         return false;
     }
@@ -130,9 +133,13 @@ public:
         return this->state_->name_;
     };
 
+    int getIndex() const {
+        return index;
+    }
+
     ASTState* state_; //maybe  change this to a constructor argument 
 protected:
-    int index_;//4-11 don't remember what this is for...?
+    int index;//4-11 don't remember what this is for...?
     std::vector<coords::Coords*> operands;
     std::vector<coords::Coords*> links;
     coords::Coords* linked;

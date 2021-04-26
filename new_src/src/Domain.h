@@ -104,10 +104,29 @@ protected:
     std::string name;
 };
 
+class ErrorObject : public DomainObject {
+public:
+    ErrorObject() : DomainObject() {};
+    ErrorObject(std::string error_str_) : DomainObject(), error_str(error_str_) {};
+    virtual std::string toString() const override {
+        return std::string("Error Detected");
+    }
+
+    virtual std::string toErrorString() const {
+        return std::string("") + error_str;
+    }
+
+private:
+    std::string error_str;
+};
+
+enum class AnnotationState { Unannotated =1, Manual=2, Inferred=3, Error=4 };
+
+
 class DomainContainer : public DomainObject{
 public:
-        DomainContainer() : DomainObject(), inner_(nullptr) {};
-        DomainContainer(DomainObject* inner) : inner_(inner) {};
+        DomainContainer() : DomainObject(), inner_(nullptr), as_(AnnotationState::Unannotated) {};
+        DomainContainer(DomainObject* inner) : inner_(inner), as_(AnnotationState::Unannotated) {};
         DomainContainer(std::initializer_list<DomainObject*> operands);
         DomainContainer(std::vector<DomainObject*> operands);
         DomainContainer(std::initializer_list<DomainContainer*> operands);
@@ -116,10 +135,24 @@ public:
         DomainObject* getValue() const { return this->inner_; }
         void setValue(DomainObject* obj);
         bool hasValue() const;
-        
+        void setAnnotationState(AnnotationState as){
+            this->as_ = as;
+        };
+        AnnotationState getAnnotationState(){
+            return this->as_;
+        }
+
+        std::string getAnnotationStateStr(){
+            return 
+                this->as_ == AnnotationState::Unannotated ? "Unannotated" :
+                   this->as_ == AnnotationState::Manual ? "Manual" :
+                    this->as_ == AnnotationState::Inferred ? "Inferred" :
+                    this->as_ == AnnotationState::Error ? "Error" : "";
+        };
 
 private:
     DomainObject* inner_;
+    AnnotationState as_;
 };
 
 class CoordinateSpace : public DomainObject {
