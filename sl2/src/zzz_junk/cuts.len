@@ -1,0 +1,100 @@
+/-
+Note: In contrast to arrays, in which 
+all values are of the same type, records
+can have fields of different types, as 
+we see in the following example. You
+should have strong intuition for product
+types, as they crop up all the time in
+imperative programming: as struct in C;
+as multiple data fields of classes in OO
+languages, such as C++, Java, Python; 
+and as fields of records in relational
+databases.
+-/
+
+/-
+Think about a Java class: it basically
+defines a record/structure/product type 
+then gathers around it a set of operations
+on instances of such structures. (There's
+more to OOP than that, namely dynamic types
+and dispatch, but that's another matter).
+-/
+
+/-
+Let's start with an example. The prod_nat_string.mk
+constructor takes a ℕ value, n, and a string value,
+s, and puts them together into a pair, (n, s). The
+mk function can thus be viewed as a prod_nat_string
+introduction rule.
+
+Now suppose we're given such a pair, (n, s), and 
+we want to consume/use it to obtain a value of type
+string (namely the string value that constitutes the
+second element of the pair). 
+
+To get at the elements of pair, (mk n s), constructed 
+from some ℕ, n, and some string, s, we *destructure*
+the pair by "pattern matching" on its constructor name
+and by giving names to the values from which it was
+constructed. This is like "breaking open the box and
+giving names to the contents." Once we've done that we
+can used the named contents in computing and returning
+a desired value.
+
+Here we use destructuring to define "field accessor"
+functions for nat-string pairs. We refer to the first
+field of a pair as "fst" and the second as "snd". We
+also call such accessors "projection functions."
+-/
+
+def fst_nat_string : prod_nat_string → nat
+| (prod_nat_string.mk n s) := n
+
+def snd_nat_string : prod_nat_string → string
+| (prod_nat_string.mk x y) := y
+
+#eval fst_nat_string (prod_nat_string.mk 1 "Hello")
+#eval snd_nat_string (prod_nat_string.mk 1 "Hello")
+
+-- structures auto-generate projection functions
+
+/-
+Recall
+
+structure prod_nat_string''' := 
+(fst : ℕ) (snd : string)
+
+-/
+def p := prod_nat_string'''.mk 1 "Hello"
+#eval (prod_nat_string'''.fst p)
+#eval (p.fst)     -- dot notation for projection
+#eval (p.snd)     -- aka accessor functions
+
+
+
+/-
+Polymorphic Types!
+-/
+
+universe u
+
+structure box (α : Type u) : Type u :=
+(val : α)
+
+-- test 
+def boxed_nat := box.mk 3
+def boxed_string := box.mk "Hello"
+#eval boxed_nat.val
+#eval boxed_string.val
+
+
+structure prod (α β : Type u) : Type u :=
+(fst : α) (snd : β)
+
+-- test
+
+def ns_pair := prod.mk 1 "Hi, Lean!"
+#eval ns_pair.fst
+#eval ns_pair.snd
+

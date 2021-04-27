@@ -10,6 +10,8 @@ Duration, Time, Transforms
 Type error demonstrations on bottom
 -/
 
+def 
+
 --check frame API
 def std_fr : time_frame_expr := [time_std_frame K] 
 def fr_var : time_frame_var := ⟨⟨"std"⟩⟩ --hide with function?

@@ -1,5 +1,6 @@
 import .aff1K
 import linear_algebra.affine_space.affine_equiv
+import linear_algebra.matrix
 
 /-
 Framed points, vectors, frames
@@ -404,6 +405,34 @@ abbreviation raw_tr := (pt K) ≃ᵃ[K] (pt K)
 
 structure fm_tr {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)  extends (point s1) ≃ᵃ[K] (point s2)
 
+#check (fin 2)
+/-
+inductive fm : nat → Type u
+| base : Π n, fm n
+| deriv : Π n, (prod (pt K) (vec K)) → fm n → fm n 
+-/
+/-
+@[simp]
+def fm.to_coords_matrix (f : fm K n) : matrix (fin 2) (fin 2) K
+    := 
+    match f with 
+    | (fm.base n) := λ i j, 
+        if i = 0 ∧ j = 0 then 1 else 
+        (if i = 0 ∧ j = 1 then 0 else (
+            if i = 1 ∧ j = 0 then 0 else
+                (if i = 1 ∧ j = 1 then 1 else 0)
+        ))
+    | (fm.deriv n c parent) := λ i j,
+        if i = 0 ∧ j = 0 then c. else 
+        (if i = 0 ∧ j = 1 then 0 else (
+            if i = 1 ∧ j = 0 then 0 else
+                (if i = 1 ∧ j = 1 then 1 else 0)
+        ))
+    end
+-/
+
+
+
 /-
 TODO: This material needs inspection, verification
 -/
@@ -444,13 +473,18 @@ def to_base_helper' : fm K n → @raw_tr K _ _
                 end,
             ⟩,
             begin
-                admit   -- TODO: What's this?
+                simp *,
+                --admit   -- TODO: What's this?
             end
         ⟩
 | (fm.deriv n c parent) := (⟨
             ⟨/-transform from current->parent-/
                 λp, ⟨(p.to_prod.1*c.snd.to_prod.1 +  p.to_prod.2*c.fst.to_prod.1, 
-                        p.to_prod.1*c.snd.to_prod.2 + p.to_prod.2*c.fst.to_prod.2),sorry⟩,
+                        p.to_prod.1*c.snd.to_prod.2 + p.to_prod.2*c.fst.to_prod.2),
+                        begin
+                            cases p,
+                            
+                        end⟩,
                 let det := c.snd.to_prod.1*c.fst.to_prod.2 - c.snd.to_prod.2*c.fst.to_prod.1 in
                     λp, (⟨(p.to_prod.1*c.fst.to_prod.2/det - p.to_prod.2*c.fst.to_prod.1/det, 
                             -p.to_prod.1*c.snd.to_prod.2/det + p.to_prod.2*c.snd.to_prod.1/det),sorry⟩),

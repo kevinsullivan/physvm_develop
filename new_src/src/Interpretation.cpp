@@ -245,11 +245,11 @@ void Interpretation::interpretProgram(){
                 if(new_dom){
 
                     dom_cont->setValue(new_dom);
-
+                    dom_cont->setAnnotationState(domain::AnnotationState::Manual);
                     for(auto link_ : coords_->getLinks()){
                         domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
                         link_cont->setValue(new_dom);
-                        link_cont->setAnnotationState(domain::AnnotationState::Manual);
+                        link_cont->setAnnotationState(domain::AnnotationState::Inferred);
                     }
                 }
             };

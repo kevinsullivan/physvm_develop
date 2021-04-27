@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 
 using namespace coords2interp;
@@ -212,6 +212,159 @@ interp::MAIN_FUNC_DECL_STMT *CoordsToInterp::getMAIN_FUNC_DECL_STMT(coords::MAIN
         return (interp::MAIN_FUNC_DECL_STMT*)interp;
     }
 
+coords::WHILE *CoordsToInterp::getWHILE(interp::WHILE *i) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = interp2coords_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::WHILE*)coords;
+    }
+interp::WHILE *CoordsToInterp::getWHILE(coords::WHILE *c) const
+    {
+        interp::STMT*interp = NULL;
+        try {
+            interp = coords2interp_STMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::WHILE*)interp;
+    }
+
+void CoordsToInterp::putWHILE_BOOL_EXPR_STMT(coords::WHILE_BOOL_EXPR_STMT* c, interp::WHILE_BOOL_EXPR_STMT* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::WHILE_BOOL_EXPR_STMT* CoordsToInterp::getWHILE_BOOL_EXPR_STMT(interp::WHILE_BOOL_EXPR_STMT* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::WHILE*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::WHILE_BOOL_EXPR_STMT*>(coo);
+}
+interp::WHILE_BOOL_EXPR_STMT* CoordsToInterp::getWHILE_BOOL_EXPR_STMT(coords::WHILE_BOOL_EXPR_STMT* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::WHILE_BOOL_EXPR_STMT*>(interp);
+}
+
+coords::TRY *CoordsToInterp::getTRY(interp::TRY *i) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = interp2coords_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::TRY*)coords;
+    }
+interp::TRY *CoordsToInterp::getTRY(coords::TRY *c) const
+    {
+        interp::STMT*interp = NULL;
+        try {
+            interp = coords2interp_STMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::TRY*)interp;
+    }
+
+void CoordsToInterp::putTRY_STMT(coords::TRY_STMT* c, interp::TRY_STMT* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::TRY_STMT* CoordsToInterp::getTRY_STMT(interp::TRY_STMT* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::TRY*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::TRY_STMT*>(coo);
+}
+interp::TRY_STMT* CoordsToInterp::getTRY_STMT(coords::TRY_STMT* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::TRY_STMT*>(interp);
+}
+
+coords::FOR *CoordsToInterp::getFOR(interp::FOR *i) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = interp2coords_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::FOR*)coords;
+    }
+interp::FOR *CoordsToInterp::getFOR(coords::FOR *c) const
+    {
+        interp::STMT*interp = NULL;
+        try {
+            interp = coords2interp_STMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::FOR*)interp;
+    }
+
+void CoordsToInterp::putFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* c, interp::FOR_BOOL_EXPR_STMT* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::FOR_BOOL_EXPR_STMT* CoordsToInterp::getFOR_BOOL_EXPR_STMT(interp::FOR_BOOL_EXPR_STMT* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::FOR*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::FOR_BOOL_EXPR_STMT*>(coo);
+}
+interp::FOR_BOOL_EXPR_STMT* CoordsToInterp::getFOR_BOOL_EXPR_STMT(coords::FOR_BOOL_EXPR_STMT* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::FOR_BOOL_EXPR_STMT*>(interp);
+}
+
 coords::DECLARE *CoordsToInterp::getDECLARE(interp::DECLARE *i) const
     {
         coords::STMT *coords = NULL;
@@ -347,6 +500,34 @@ interp::DECL_REAL4_VAR_REAL4_EXPR* CoordsToInterp::getDECL_REAL4_VAR_REAL4_EXPR(
     return static_cast<interp::DECL_REAL4_VAR_REAL4_EXPR*>(interp);
 }
 
+void CoordsToInterp::putDECL_BOOL_VAR_BOOL_EXPR(coords::DECL_BOOL_VAR_BOOL_EXPR* c, interp::DECL_BOOL_VAR_BOOL_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::DECL_BOOL_VAR_BOOL_EXPR* CoordsToInterp::getDECL_BOOL_VAR_BOOL_EXPR(interp::DECL_BOOL_VAR_BOOL_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::DECLARE*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::DECL_BOOL_VAR_BOOL_EXPR*>(coo);
+}
+interp::DECL_BOOL_VAR_BOOL_EXPR* CoordsToInterp::getDECL_BOOL_VAR_BOOL_EXPR(coords::DECL_BOOL_VAR_BOOL_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::DECL_BOOL_VAR_BOOL_EXPR*>(interp);
+}
+
 void CoordsToInterp::putDECL_REAL1_VAR(coords::DECL_REAL1_VAR* c, interp::DECL_REAL1_VAR* i)
 {
     coords2interp_STMT[c] = (interp::STMT*)i;
@@ -459,6 +640,141 @@ interp::DECL_REAL4_VAR* CoordsToInterp::getDECL_REAL4_VAR(coords::DECL_REAL4_VAR
     return static_cast<interp::DECL_REAL4_VAR*>(interp);
 }
 
+void CoordsToInterp::putDECL_BOOL_VAR(coords::DECL_BOOL_VAR* c, interp::DECL_BOOL_VAR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::DECL_BOOL_VAR* CoordsToInterp::getDECL_BOOL_VAR(interp::DECL_BOOL_VAR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::DECLARE*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::DECL_BOOL_VAR*>(coo);
+}
+interp::DECL_BOOL_VAR* CoordsToInterp::getDECL_BOOL_VAR(coords::DECL_BOOL_VAR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::DECL_BOOL_VAR*>(interp);
+}
+
+coords::ASSIGN *CoordsToInterp::getASSIGN(interp::ASSIGN *i) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = interp2coords_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::ASSIGN*)coords;
+    }
+interp::ASSIGN *CoordsToInterp::getASSIGN(coords::ASSIGN *c) const
+    {
+        interp::STMT*interp = NULL;
+        try {
+            interp = coords2interp_STMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::ASSIGN*)interp;
+    }
+
+void CoordsToInterp::putASNR1_REAL1_VAR_REAL1_EXPR(coords::ASNR1_REAL1_VAR_REAL1_EXPR* c, interp::ASNR1_REAL1_VAR_REAL1_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::ASNR1_REAL1_VAR_REAL1_EXPR* CoordsToInterp::getASNR1_REAL1_VAR_REAL1_EXPR(interp::ASNR1_REAL1_VAR_REAL1_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::ASSIGN*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::ASNR1_REAL1_VAR_REAL1_EXPR*>(coo);
+}
+interp::ASNR1_REAL1_VAR_REAL1_EXPR* CoordsToInterp::getASNR1_REAL1_VAR_REAL1_EXPR(coords::ASNR1_REAL1_VAR_REAL1_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::ASNR1_REAL1_VAR_REAL1_EXPR*>(interp);
+}
+
+void CoordsToInterp::putASNR3_REAL3_VAR_REAL3_EXPR(coords::ASNR3_REAL3_VAR_REAL3_EXPR* c, interp::ASNR3_REAL3_VAR_REAL3_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::ASNR3_REAL3_VAR_REAL3_EXPR* CoordsToInterp::getASNR3_REAL3_VAR_REAL3_EXPR(interp::ASNR3_REAL3_VAR_REAL3_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::ASSIGN*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::ASNR3_REAL3_VAR_REAL3_EXPR*>(coo);
+}
+interp::ASNR3_REAL3_VAR_REAL3_EXPR* CoordsToInterp::getASNR3_REAL3_VAR_REAL3_EXPR(coords::ASNR3_REAL3_VAR_REAL3_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::ASNR3_REAL3_VAR_REAL3_EXPR*>(interp);
+}
+
+void CoordsToInterp::putASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* c, interp::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* CoordsToInterp::getASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR(interp::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::ASSIGN*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR*>(coo);
+}
+interp::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* CoordsToInterp::getASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR(coords::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::ASNM4_REALMATRIX4_VAR_REALMATRIX4_EXPR*>(interp);
+}
+
 coords::REXPR *CoordsToInterp::getREXPR(interp::REXPR *i) const
     {
         coords::STMT *coords = NULL;
@@ -504,6 +820,57 @@ interp::LEXPR *CoordsToInterp::getLEXPR(coords::LEXPR *c) const
         }
         return (interp::LEXPR*)interp;
     }
+
+coords::BOOL_EXPR *CoordsToInterp::getBOOL_EXPR(interp::BOOL_EXPR *i) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = interp2coords_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::BOOL_EXPR*)coords;
+    }
+interp::BOOL_EXPR *CoordsToInterp::getBOOL_EXPR(coords::BOOL_EXPR *c) const
+    {
+        interp::STMT*interp = NULL;
+        try {
+            interp = coords2interp_STMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::BOOL_EXPR*)interp;
+    }
+
+void CoordsToInterp::putREF_BOOL_VAR(coords::REF_BOOL_VAR* c, interp::REF_BOOL_VAR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::REF_BOOL_VAR* CoordsToInterp::getREF_BOOL_VAR(interp::REF_BOOL_VAR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::BOOL_EXPR*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::REF_BOOL_VAR*>(coo);
+}
+interp::REF_BOOL_VAR* CoordsToInterp::getREF_BOOL_VAR(coords::REF_BOOL_VAR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REF_BOOL_VAR*>(interp);
+}
 
 coords::REALMATRIX4_EXPR *CoordsToInterp::getREALMATRIX4_EXPR(interp::REALMATRIX4_EXPR *i) const
     {
@@ -1012,6 +1379,34 @@ interp::MUL_REAL1_EXPR_REAL1_EXPR* CoordsToInterp::getMUL_REAL1_EXPR_REAL1_EXPR(
     return static_cast<interp::MUL_REAL1_EXPR_REAL1_EXPR*>(interp);
 }
 
+void CoordsToInterp::putBOOL_VAR_IDENT(coords::BOOL_VAR_IDENT* c, interp::BOOL_VAR_IDENT* i)
+{
+    coords2interp_BOOL_VAR_IDENT[c] = (interp::BOOL_VAR_IDENT*)i;
+    interp2coords_BOOL_VAR_IDENT[(interp::BOOL_VAR_IDENT*)i] = c;
+}
+coords::BOOL_VAR_IDENT *CoordsToInterp::getBOOL_VAR_IDENT(interp::BOOL_VAR_IDENT *i) const
+    {
+        coords::BOOL_VAR_IDENT *coords = NULL;
+        try {
+            coords = interp2coords_BOOL_VAR_IDENT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::BOOL_VAR_IDENT*)coords;
+    }
+interp::BOOL_VAR_IDENT *CoordsToInterp::getBOOL_VAR_IDENT(coords::BOOL_VAR_IDENT *c) const
+    {
+        interp::BOOL_VAR_IDENT*interp = NULL;
+        try {
+            interp = coords2interp_BOOL_VAR_IDENT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::BOOL_VAR_IDENT*)interp;
+    }
+
 void CoordsToInterp::putREAL1_VAR_IDENT(coords::REAL1_VAR_IDENT* c, interp::REAL1_VAR_IDENT* i)
 {
     coords2interp_REAL1_VAR_IDENT[c] = (interp::REAL1_VAR_IDENT*)i;
@@ -1146,34 +1541,6 @@ interp::REAL4_LITERAL *CoordsToInterp::getREAL4_LITERAL(coords::REAL4_LITERAL *c
         }
         return (interp::REAL4_LITERAL*)interp;
     }
-
-void CoordsToInterp::putREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c, interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i)
-{
-    coords2interp_REAL4_LITERAL[c] = (interp::REAL4_LITERAL*)i;
-    interp2coords_REAL4_LITERAL[(interp::REAL4_LITERAL*)i] = c;
-}
-coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* CoordsToInterp::getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* i) const
-{
-    coords::REAL4_LITERAL* coo = NULL;
-    try {
-        coo = interp2coords_REAL4_LITERAL.at((interp::REAL4_LITERAL*)i);
-    }
-    catch (std::out_of_range &e) {
-        coo = NULL;
-    }
-    return static_cast<coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(coo);
-}
-interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* CoordsToInterp::getREAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR(coords::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR* c) const
-{
-    interp::REAL4_LITERAL *interp = NULL;
-    try {
-        interp = coords2interp_REAL4_LITERAL.at(c);
-    }
-    catch (std::out_of_range &e) {
-        interp = NULL;
-    }
-    return static_cast<interp::REAL4_LIT_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR_REAL1_EXPR*>(interp);
-}
 
 void CoordsToInterp::putREAL4_EMPTY(coords::REAL4_EMPTY* c, interp::REAL4_EMPTY* i)
 {
@@ -1382,4 +1749,162 @@ interp::REALMATRIX4_EMPTY* CoordsToInterp::getREALMATRIX4_EMPTY(coords::REALMATR
         interp = NULL;
     }
     return static_cast<interp::REALMATRIX4_EMPTY*>(interp);
+}
+
+void CoordsToInterp::putREALMATRIX4_EMPTY2_REALMATRIX4_EXPR(coords::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* c, interp::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* CoordsToInterp::getREALMATRIX4_EMPTY2_REALMATRIX4_EXPR(interp::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::REALMATRIX4_LITERAL*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR*>(coo);
+}
+interp::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* CoordsToInterp::getREALMATRIX4_EMPTY2_REALMATRIX4_EXPR(coords::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::REALMATRIX4_EMPTY2_REALMATRIX4_EXPR*>(interp);
+}
+
+void CoordsToInterp::putR4R3_LIT_REAL4_EXPR_REAL3_EXPR(coords::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* c, interp::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* CoordsToInterp::getR4R3_LIT_REAL4_EXPR_REAL3_EXPR(interp::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::REALMATRIX4_LITERAL*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::R4R3_LIT_REAL4_EXPR_REAL3_EXPR*>(coo);
+}
+interp::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* CoordsToInterp::getR4R3_LIT_REAL4_EXPR_REAL3_EXPR(coords::R4R3_LIT_REAL4_EXPR_REAL3_EXPR* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::R4R3_LIT_REAL4_EXPR_REAL3_EXPR*>(interp);
+}
+
+coords::SINK *CoordsToInterp::getSINK(interp::SINK *i) const
+    {
+        coords::SINK *coords = NULL;
+        try {
+            coords = interp2coords_SINK.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::SINK*)coords;
+    }
+interp::SINK *CoordsToInterp::getSINK(coords::SINK *c) const
+    {
+        interp::SINK*interp = NULL;
+        try {
+            interp = coords2interp_SINK.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::SINK*)interp;
+    }
+
+void CoordsToInterp::putIGNORE(coords::IGNORE* c, interp::IGNORE* i)
+{
+    coords2interp_SINK[c] = (interp::SINK*)i;
+    interp2coords_SINK[(interp::SINK*)i] = c;
+}
+coords::IGNORE* CoordsToInterp::getIGNORE(interp::IGNORE* i) const
+{
+    coords::SINK* coo = NULL;
+    try {
+        coo = interp2coords_SINK.at((interp::SINK*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::IGNORE*>(coo);
+}
+interp::IGNORE* CoordsToInterp::getIGNORE(coords::IGNORE* c) const
+{
+    interp::SINK *interp = NULL;
+    try {
+        interp = coords2interp_SINK.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::IGNORE*>(interp);
+}
+
+coords::BOOL_LITERAL *CoordsToInterp::getBOOL_LITERAL(interp::BOOL_LITERAL *i) const
+    {
+        coords::STMT *coords = NULL;
+        try {
+            coords = interp2coords_STMT.at(i);
+        }
+        catch (std::out_of_range &e) {
+            coords = NULL;
+        }
+        return (coords::BOOL_LITERAL*)coords;
+    }
+interp::BOOL_LITERAL *CoordsToInterp::getBOOL_LITERAL(coords::BOOL_LITERAL *c) const
+    {
+        interp::STMT*interp = NULL;
+        try {
+            interp = coords2interp_STMT.at(c);
+        }
+        catch (std::out_of_range &e) {
+            interp = NULL;
+        }
+        return (interp::BOOL_LITERAL*)interp;
+    }
+
+void CoordsToInterp::putBOOL_LIT(coords::BOOL_LIT* c, interp::BOOL_LIT* i)
+{
+    coords2interp_STMT[c] = (interp::STMT*)i;
+    interp2coords_STMT[(interp::STMT*)i] = c;
+}
+coords::BOOL_LIT* CoordsToInterp::getBOOL_LIT(interp::BOOL_LIT* i) const
+{
+    coords::STMT* coo = NULL;
+    try {
+        coo = interp2coords_STMT.at((interp::BOOL_LITERAL*)i);
+    }
+    catch (std::out_of_range &e) {
+        coo = NULL;
+    }
+    return static_cast<coords::BOOL_LIT*>(coo);
+}
+interp::BOOL_LIT* CoordsToInterp::getBOOL_LIT(coords::BOOL_LIT* c) const
+{
+    interp::STMT *interp = NULL;
+    try {
+        interp = coords2interp_STMT.at(c);
+    }
+    catch (std::out_of_range &e) {
+        interp = NULL;
+    }
+    return static_cast<interp::BOOL_LIT*>(interp);
 }

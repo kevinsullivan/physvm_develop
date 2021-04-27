@@ -33,11 +33,11 @@ void ROSTFTimeMatcher::setup(){
 		StatementMatcher exprWithCleanups_=exprWithCleanups().bind("ExprWithCleanups");
 		localFinder_.addMatcher(exprWithCleanups_,this);
 	
-		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
-		localFinder_.addMatcher(declRefExpr_,this);
-	
 		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
 		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
+	
+		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
+		localFinder_.addMatcher(declRefExpr_,this);
 	
 		StatementMatcher cxxOperatorCallExpr_=cxxOperatorCallExpr().bind("CXXOperatorCallExpr");
 		localFinder_.addMatcher(cxxOperatorCallExpr_,this);
@@ -58,9 +58,9 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	auto exprWithCleanups_ = Result.Nodes.getNodeAs<clang::ExprWithCleanups>("ExprWithCleanups");
 	
-	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
-	
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
+	
+	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
 	
 	auto cxxOperatorCallExpr_ = Result.Nodes.getNodeAs<clang::CXXOperatorCallExpr>("CXXOperatorCallExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
@@ -78,8 +78,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
     
             else{
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                cxxConstructExpr_->dump();
+                
             }
             return;
         }
@@ -88,14 +87,14 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_ros::Time"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr.find("ros::Time") != string::npos){
+        else if(typestr=="ros::Time" or typestr == "const ros::Time" or typestr == "const ros::Time"/*typestr.find("ros::Time") != string::npos*/){
             ROSTFTimeMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -108,7 +107,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_ros::Time"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
         else { return false; } 
     };
 
@@ -118,7 +117,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr.find("ros::Time") != string::npos){
+        else if(typestr=="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time"/*typestr.find("ros::Time") != string::npos*/){
             ROSTFTimeMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -126,16 +125,15 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
         else{
-            std::cout<<"WARNING: Capture Escaping! Dump : \n";
-            implicitCastExpr_->dump();
-        }
+                
+            }
             return;
 
     }
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_ros::Time"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -147,16 +145,15 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         if(this->childExprStore_){}
     
         else{
-            std::cout<<"WARNING: Capture Escaping! Dump : \n";
-            cxxBindTemporaryExpr_->dump();
-        }
+                
+            }
             return;
 
     }
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_ros::Time"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -169,8 +166,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                materializeTemporaryExpr_->dump();
+                
             }
             return;
 
@@ -178,7 +174,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_ros::Time"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -189,9 +185,8 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
         if(this->childExprStore_){}
         else{
-            std::cout<<"WARNING: Capture Escaping! Dump :\n";
-            parenExpr_->dump();
-        }
+                
+            }
         return;
     }
 	
@@ -205,8 +200,22 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             if(this->childExprStore_){}
         
             else{
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                exprWithCleanups_->dump();
+                
+            }
+
+    }
+	
+    if (cxxFunctionalCastExpr_)
+        {
+            ROSTFTimeMatcher exprMatcher{ context_, interp_};
+            exprMatcher.setup();
+            exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
+            this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
+        
+            if(this->childExprStore_){}
+        
+            else{
+                
             }
 
     }
@@ -221,30 +230,14 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-    if (cxxFunctionalCastExpr_)
-        {
-            ROSTFTimeMatcher exprMatcher{ context_, interp_};
-            exprMatcher.setup();
-            exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
-            this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
-        
-            if(this->childExprStore_){}
-        
-            else{
-                std::cout<<"WARNING: Capture Escaping! Dump : \n";
-                cxxFunctionalCastExpr_->dump();
-            }
-
-    }
-	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Time"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm.find("ros::Time") != string::npos){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
         else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm.find("ros::Duration") != string::npos){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
         else { return false; }
     };
     if(cxxOperatorCallExpr_){
@@ -252,7 +245,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
             auto name = dc->getNameAsString();
 
-            if(name.find("+") != string::npos){
+            if(name=="+" or name=="const +" or name=="class +"/*name.find("+") != string::npos*/){
                 auto arg0=cxxOperatorCallExpr_->getArg(0);
                 auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
 
@@ -266,7 +259,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
                 if (arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Time"](arg0str) and 
                     arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Duration"](arg1str)){
                     if(false){}
-                    else if(arg0str.find("ros::Time") != string::npos){
+                    else if(arg0str=="ros::Time" or arg0str=="const ros::Time" or arg0str=="class ros::Time"/*arg0str.find("ros::Time") != string::npos*/){
             
                         ROSTFTimeMatcher arg0m{this->context_,this->interp_};
                         arg0m.setup();
@@ -274,7 +267,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
                         arg0stmt = arg0m.getChildExprStore();
                     }
                     if(false){}
-                    else if(arg1str.find("ros::Duration") != string::npos){
+                    else if(arg1str=="ros::Duration" or arg1str=="const ros::Duration" or arg1str=="class ros::Duration"/*arg1str.find("ros::Duration") != string::npos*/){
             
                         ROSTFDurationMatcher arg1m{this->context_,this->interp_};
                         arg1m.setup();

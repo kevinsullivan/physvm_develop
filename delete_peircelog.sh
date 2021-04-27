@@ -1,0 +1,1 @@
+rm -rf /peirce/Peircelog.g3*

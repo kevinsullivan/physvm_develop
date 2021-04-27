@@ -386,7 +386,42 @@ def sub_dur_expr_dur_expr (v1 v2 : duration_expr sp) : duration_expr sp :=    --
 instance has_one_dur_expr : has_one (duration_expr sp) := ⟨duration_expr.one⟩
 
 instance has_add_dur_expr : has_add (duration_expr sp) := ⟨ add_dur_expr_dur_expr ⟩
-lemma add_assoc_dur_expr : ∀ a b c : duration_expr sp, a + b + c = a + (b + c) := sorry
+lemma add_assoc_dur_expr : ∀ a b c : duration_expr sp, a + b + c = a + (b + c) :=
+begin
+    intros,
+    cases a,
+    { 
+
+    },
+    { 
+
+    },
+    { 
+
+    },
+    { 
+
+    },
+    { 
+
+    },
+    { 
+
+    },
+    { 
+
+    },
+    { 
+
+    },
+    { 
+
+    },
+    { 
+      
+    }
+end
+
 instance add_semigroup_dur_expr : add_semigroup (duration_expr sp) := ⟨ add_dur_expr_dur_expr, add_assoc_dur_expr⟩ 
 
 def dur_expr_zero : duration_expr sp := duration_expr.zero--duration_expr.lit (mk_duration sp.value 0)
@@ -546,5 +581,6 @@ instance aff_time_expr_torsor : add_torsor (duration_expr sp) (time_expr sp) := 
 ⟩
 
 notation t+ᵥv := add_dur_expr_time_expr v t
+notation d•k :=  smul_dur_expr k d
 
 end lang.time

@@ -1,0 +1,483 @@
+/peirce/math/affine/list_as_k_tuple.lean:126:0: warning: declaration 'vecl.ladd_assoc' uses sorry
+/peirce/math/affine/list_as_k_tuple.lean:259:0: warning: declaration 'vecl.ladd_comm' uses sorry
+zip_with : (?M_1 → ?M_2 → ?M_3) → list ?M_1 → list ?M_2 → list ?M_3
+/peirce/math/affine/affine_coordinate_space.lean:2:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/math/affine/list_as_k_tuple.lean:276:58: error: unknown identifier 'a'
+state:
+2 goals
+case nat.zero
+k : Type u,
+_inst_1 : ring k,
+_inst_2 : inhabited k,
+x y : list k,
+ᾰ_1 : x.length = y.length,
+ᾰ : x.length + y.length = 0
+⊢ ladd x y = ladd y x
+
+case nat.succ
+k : Type u,
+_inst_1 : ring k,
+_inst_2 : inhabited k,
+x y : list k,
+ᾰ_1 : x.length = y.length,
+n_n : ℕ,
+n_ih : x.length + y.length = n_n → ladd x y = ladd y x,
+ᾰ : x.length + y.length = n_n.succ
+⊢ ladd x y = ladd y x
+/peirce/math/affine/affine_coordinate_space.lean:169:0: warning: declaration 'pt_zero_len' uses sorry
+@[ancestor id.{1} (list.{0} name) (Prop add_group add_comm_monoid), class, protect_proj list.nil.{0} name]
+structure add_comm_group : Type u → Type u
+fields:
+add_comm_group.add : Π {G : Type u} [c : add_comm_group G], G → G → G
+add_comm_group.add_assoc : ∀ {G : Type u} [c : add_comm_group G] (a b c_1 : G), a + b + c_1 = a + (b + c_1)
+add_comm_group.zero : Π {G : Type u} [c : add_comm_group G], G
+add_comm_group.zero_add : ∀ {G : Type u} [c : add_comm_group G] (a : G), 0 + a = a
+add_comm_group.add_zero : ∀ {G : Type u} [c : add_comm_group G] (a : G), a + 0 = a
+add_comm_group.neg : Π {G : Type u} [c : add_comm_group G], G → G
+add_comm_group.add_left_neg : ∀ {G : Type u} [c : add_comm_group G] (a : G), -a + a = 0
+add_comm_group.add_comm : ∀ {G : Type u} [c : add_comm_group G] (a b : G), a + b = b + a
+/peirce/phys/metrology/dimensions.lean:118:0: warning: declaration 'dimension.dimensionIsAbelianGroup' uses sorry
+/peirce/phys/metrology/dimensions.lean:134:37: error: unknown identifier 'real_affine.Algebra'
+/peirce/phys/metrology/dimensions.lean:135:34: error: unknown identifier 'real_affine.Algebra.aff_space'
+/peirce/phys/metrology/dimensions.lean:135:65: error: unknown identifier 'real_affine.to_affine'
+/peirce/phys/metrology/dimensions.lean:134:0: warning: declaration 'dimension.algebraOfDimension' uses sorry
+/peirce/phys/metrology/measurement.lean:2:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:203:0: error: get_local tactic failed, unknown 'a_1' local
+state:
+2 goals
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+n_1 : ℕ,
+a : K,
+ᾰ : a ∈ (vec_zero K n + {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}).l.nth n_1
+⊢ a ∈ {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}.l.nth n_1
+
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+n_1 : ℕ,
+a : K
+⊢ a ∈ {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}.l.nth n_1 →
+  a ∈ (vec_zero K n + {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}).l.nth n_1
+/peirce/math/affine/affine_coordinate_space.lean:191:0: error: get_local tactic failed, unknown 'a_1' local
+state:
+2 goals
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+y_l : list K,
+y_len_fixed : y_l.length = n + 1,
+y_fst_zero : y_l.head = 0,
+z_l : list K,
+z_len_fixed : z_l.length = n + 1,
+z_fst_zero : z_l.head = 0,
+n_1 : ℕ,
+a : K,
+ᾰ : a ∈ {l := ladd (ladd x_l y_l) z_l, len_fixed := _, fst_zero := _}.l.nth n_1
+⊢ a ∈ {l := ladd x_l (ladd y_l z_l), len_fixed := _, fst_zero := _}.l.nth n_1
+
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+y_l : list K,
+y_len_fixed : y_l.length = n + 1,
+y_fst_zero : y_l.head = 0,
+z_l : list K,
+z_len_fixed : z_l.length = n + 1,
+z_fst_zero : z_l.head = 0,
+n_1 : ℕ,
+a : K
+⊢ a ∈ {l := ladd x_l (ladd y_l z_l), len_fixed := _, fst_zero := _}.l.nth n_1 →
+  a ∈ {l := ladd (ladd x_l y_l) z_l, len_fixed := _, fst_zero := _}.l.nth n_1
+/peirce/math/affine/affine_coordinate_space.lean:223:0: error: get_local tactic failed, unknown 'a_1' local
+state:
+2 goals
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+n_1 : ℕ,
+a : K,
+ᾰ : a ∈ ({l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero} + vec_zero K n).l.nth n_1
+⊢ a ∈ {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}.l.nth n_1
+
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+n_1 : ℕ,
+a : K
+⊢ a ∈ {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}.l.nth n_1 →
+  a ∈ ({l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero} + vec_zero K n).l.nth n_1
+/peirce/math/affine/affine_coordinate_space.lean:244:0: error: get_local tactic failed, unknown 'a_1' local
+state:
+2 goals
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+n_1 : ℕ,
+a : K,
+ᾰ :
+  a ∈
+    (-{l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero} +
+       {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}).l.nth
+      n_1
+⊢ a ∈ (zero_vector K n).nth n_1
+
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+n_1 : ℕ,
+a : K
+⊢ a ∈ (vec_zero K n).l.nth n_1 →
+  a ∈
+    (-{l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero} +
+       {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}).l.nth
+      n_1
+semimodule : Π (R : Type u_1) (M : Type u_2) [_inst_1 : semiring R] [_inst_2 : add_comm_monoid M], Type (max u_1 u_2)
+distrib_mul_action :
+  Π (α : Type u_1) (β : Type u_2) [_inst_1 : monoid α] [_inst_2 : add_monoid β], Type (max u_1 u_2)
+/peirce/math/affine/affine_coordinate_space.lean:268:0: error: get_local tactic failed, unknown 'a_1' local
+state:
+2 goals
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+y_l : list K,
+y_len_fixed : y_l.length = n + 1,
+y_fst_zero : y_l.head = 0,
+n_1 : ℕ,
+a : K,
+ᾰ :
+  a ∈
+    ({l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero} +
+       {l := y_l, len_fixed := y_len_fixed, fst_zero := y_fst_zero}).l.nth
+      n_1
+⊢ a ∈ (ladd y_l x_l).nth n_1
+
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+y_l : list K,
+y_len_fixed : y_l.length = n + 1,
+y_fst_zero : y_l.head = 0,
+n_1 : ℕ,
+a : K
+⊢ a ∈
+    ({l := y_l, len_fixed := y_len_fixed, fst_zero := y_fst_zero} +
+       {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}).l.nth
+      n_1 →
+  a ∈
+    ({l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero} +
+       {l := y_l, len_fixed := y_len_fixed, fst_zero := y_fst_zero}).l.nth
+      n_1
+/peirce/math/affine/affine_coordinate_space.lean:331:0: warning: declaration 'vec_mul_smul' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:335:0: warning: declaration 'vec_smul_add' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:337:0: warning: declaration 'vec_smul_zero' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:341:0: warning: declaration 'vec_add_smul' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:343:0: warning: declaration 'vec_zero_smul' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:321:0: error: get_local tactic failed, unknown 'a_1' local
+state:
+2 goals
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+n_1 : ℕ,
+a : K,
+ᾰ : a ∈ (1 • {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}).l.nth n_1
+⊢ a ∈ {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}.l.nth n_1
+
+K : Type v,
+n : ℕ,
+_inst_1 : inhabited K,
+_inst_2 : field K,
+x_l : list K,
+x_len_fixed : x_l.length = n + 1,
+x_fst_zero : x_l.head = 0,
+n_1 : ℕ,
+a : K
+⊢ a ∈ {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}.l.nth n_1 →
+  a ∈ (1 • {l := x_l, len_fixed := x_len_fixed, fst_zero := x_fst_zero}).l.nth n_1
+/peirce/math/affine/affine_coordinate_space.lean:351:0: warning: declaration 'aff_group_action' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:354:0: warning: declaration 'aff_group_sub' uses sorry
+add_action : Π (G : Type u_1), Type u_2 → Π [_inst_1 : add_monoid G], Type (max u_1 u_2)
+/peirce/math/affine/affine_coordinate_space.lean:363:0: warning: declaration 'aff_zero_sadd' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:365:0: warning: declaration 'aff_add_sadd' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:369:0: warning: declaration 'aff_add_trans' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:371:0: warning: declaration 'aff_add_free' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:373:0: warning: declaration 'aff_vadd_vsub' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:375:0: warning: declaration 'aff_torsor' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:386:4: error: unknown identifier 'affine_space'
+/peirce/math/affine/affine_coordinate_space.lean:385:0: warning: declaration 'aff_coord_is' uses sorry
+/peirce/math/affine/affine_coordinate_space.lean:385:9: error: class expected, expression is not a constant
+/peirce/math/affine/affine_coordinate_framed_space.lean:4:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/expressions/measurementSystem.lean:1:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:4:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/expressions/measurementSystem.lean:26:18: warning: definition 'init' was incorrectly marked as noncomputable
+/peirce/math/affine/affine_coordinate_framed_space.lean:100:0: warning: declaration 'aff_fr.vec_scalar_coord' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:103:0: warning: declaration 'aff_fr.aff_comm_group_coord' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:109:0: warning: declaration 'aff_fr.vec_mul_smul_coord' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:112:0: warning: declaration 'aff_fr.aff_coord_vec.mul_action' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:115:0: warning: declaration 'aff_fr.aff_coord_vec.distrib_mul_action' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:117:0: warning: declaration 'aff_fr.aff_semimod_coord' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:125:0: warning: declaration 'aff_fr.aff_group_action_coord' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:128:0: warning: declaration 'aff_fr.aff_group_sub_coord' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:137:0: warning: declaration 'aff_fr.aff_coord_pt.add_action' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space.lean:204:0: warning: declaration 'aff_fr.prf' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:4:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:4:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:4:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:86:0: warning: declaration 'aff_lib.len_basis_vec_fixed' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:88:0: warning: declaration 'aff_lib.head_basis_vec_fixed' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:93:0: warning: declaration 'aff_lib.affine_coord_frame.standard' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:215:0: warning: declaration 'aff_lib.affine_coord_space.mk_coord_point' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:227:0: warning: declaration 'aff_lib.affine_coord_space.mk_coord_vec' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:239:0: warning: declaration 'aff_lib.affine_coord_space.mk_point' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:251:0: warning: declaration 'aff_lib.affine_coord_space.mk_vec' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:285:0: warning: declaration 'aff_lib.affine_coord_space.mk_frame' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:299:0: warning: declaration 'aff_lib.affine_coord_space.mk_tuple_frame' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:313:0: warning: declaration 'aff_lib.affine_coord_space.mk_derived' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:327:0: warning: declaration 'aff_lib.coord_helper' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:404:0: warning: declaration 'aff_lib.affine_coord_frame.get_coords' uses sorry
+/peirce/math/affine/affine_coordinate_framed_space_lib.lean:414:0: warning: declaration 'aff_lib.affine_coord_space.mk_derived_from_coords' uses sorry
+/peirce/phys/src/classical_geometry.lean:4:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/phys/src/classical_geometry.lean:4:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/phys/src/classical_geometry.lean:4:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:2:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/phys/src/classical_geometry.lean:4:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/phys/src/classical_geometry.lean:4:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:144:0: warning: declaration 'col_matrix.as_list' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:157:0: warning: declaration 'affine_coord_pt.from_matrix' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:169:0: warning: declaration 'affine_coord_vec.from_matrix' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:249:0: warning: declaration 'affine_coord_frame.to_homogeneous_matrix' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:267:0: warning: declaration 'affine_coord_vec.to_homogeneous_matrix' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:283:0: warning: declaration 'affine_coord_pt.to_homogeneous_matrix' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:300:0: warning: declaration 'affine_coord_pt.from_homogeneous_matrix' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:312:0: warning: declaration 'affine_coord_vec.from_homogeneous_matrix' uses sorry
+/peirce/math/affine/affine_coordinate_transform.lean:418:14: warning: declaration 'affine_coord_space.build_transform' uses sorry
+/peirce/phys/src/classical_time.lean:5:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/phys/src/classical_time.lean:5:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/phys/src/classical_time.lean:5:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/expressions/classical_geometry.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/expressions/classical_geometry.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/expressions/classical_geometry.lean:1:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/phys/src/classical_time.lean:5:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/expressions/classical_geometry.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/phys/src/classical_time.lean:5:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/phys/src/classical_time.lean:5:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/expressions/classical_geometry.lean:1:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/expressions/classical_time.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/expressions/classical_time.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/expressions/classical_time.lean:1:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/expressions/classical_time.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/expressions/classical_time.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/lang/expressions/classical_time.lean:1:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/imperative_DSL/environment.lean:5:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/imperative_DSL/environment.lean:5:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/imperative_DSL/environment.lean:5:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/imperative_DSL/environment.lean:5:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/imperative_DSL/environment.lean:5:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/imperative_DSL/environment.lean:5:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/lang/eval/timeEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/eval/timeEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/eval/timeEval.lean:1:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/eval/geometryEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/eval/geometryEval.lean:1:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/eval/geometryEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/eval/measurementEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/eval/measurementEval.lean:1:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/eval/measurementEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/eval/timeEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/eval/measurementEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/eval/geometryEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/eval/timeEval.lean:1:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/eval/timeEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/lang/eval/measurementEval.lean:1:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/eval/measurementEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/lang/eval/geometryEval.lean:1:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/eval/geometryEval.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/lang/override/timeOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/override/timeOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/override/timeOverride.lean:2:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/override/measurementSystemOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/override/measurementSystemOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/override/measurementSystemOverride.lean:2:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/override/geomOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/override/geomOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/override/geomOverride.lean:2:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/override/timeOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/override/measurementSystemOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/override/geomOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/override/timeOverride.lean:2:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/override/measurementSystemOverride.lean:2:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/override/timeOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/lang/override/measurementSystemOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/lang/override/geomOverride.lean:2:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/override/geomOverride.lean:2:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/lang/override/measurementSystemOverride.lean:9:20: error: type mismatch at application
+  measureVarEq v r
+term
+  r
+has type
+  lang.euclideanGeometry3.spaceVar
+but is expected to have type
+  measureVar
+Additional information:
+/peirce/lang/override/measurementSystemOverride.lean:9:20: context: switched to simple application elaboration procedure because failed to use expected type to elaborate it, error message
+  type mismatch, term
+    measureVarEq ?m_1 ?m_2
+  has type
+    bool
+  but is expected to have type
+    Prop
+/peirce/lang/override/measurementSystemOverride.lean:9:16: error: type mismatch at application
+  ite ⁇ (measurementSystemEval e i)
+term
+  measurementSystemEval e i
+has type
+  measurementSystem.MeasurementSystem
+but is expected to have type
+  euclideanGeometry3
+/peirce/lang/override/measurementSystemOverride.lean:11:26: error: type mismatch at application
+  i.ms.ms r
+term
+  r
+has type
+  lang.euclideanGeometry3.spaceVar
+but is expected to have type
+  measureVar
+Additional information:
+/peirce/lang/override/measurementSystemOverride.lean:11:26: context: switched to simple application elaboration procedure because failed to use expected type to elaborate it, error message
+  type mismatch, term
+    i.ms.ms ?m_1
+  has type
+    measurementSystem.MeasurementSystem
+  but is expected to have type
+    euclideanGeometry3
+/peirce/lang/imperative_DSL/physlang.lean:16:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/lang/imperative_DSL/physlang.lean:16:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/lang/imperative_DSL/physlang.lean:16:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/lang/imperative_DSL/physlang.lean:16:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/lang/imperative_DSL/physlang.lean:16:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/lang/imperative_DSL/physlang.lean:16:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/lang/imperative_DSL/physlang.lean:16:0: warning: imported file '/peirce/lang/override/measurementSystemOverride.lean' uses sorry
+/peirce/PeirceOutput2.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space_lib.lean' uses sorry
+/peirce/PeirceOutput2.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_framed_space.lean' uses sorry
+/peirce/PeirceOutput2.lean:1:0: warning: imported file '/peirce/math/affine/list_as_k_tuple.lean' uses sorry
+/peirce/PeirceOutput2.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_space.lean' uses sorry
+/peirce/PeirceOutput2.lean:1:0: warning: imported file '/peirce/phys/metrology/dimensions.lean' uses sorry
+/peirce/PeirceOutput2.lean:1:0: warning: imported file '/peirce/math/affine/affine_coordinate_transform.lean' uses sorry
+/peirce/PeirceOutput2.lean:1:0: warning: imported file '/peirce/lang/override/measurementSystemOverride.lean' uses sorry
+/peirce/PeirceOutput2.lean:48:147: error: don't know how to synthesize placeholder
+context:
+⊢ Type ?
+/peirce/PeirceOutput2.lean:48:147: error: don't know how to synthesize placeholder
+context:
+⊢ Type ?
+/peirce/PeirceOutput2.lean:48:147: error: don't know how to synthesize placeholder
+context:
+⊢ Type ?
+/peirce/PeirceOutput2.lean:54:147: error: none of the overloads are applicable
+error for aff_fr.pt_plus_vec
+type mismatch at application
+  euclideanGeometry3CoordinatePointAlgebra
+      (euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var {to_var := {num := 12}})
+         env171)+ᵥ euclideanGeometry3CoordinatePointAlgebra
+      (euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var {to_var := {num := 12}})
+         env171)
+term
+  euclideanGeometry3CoordinatePointAlgebra
+    (euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var {to_var := {num := 12}})
+       env171)
+has type
+  aff_fr.aff_coord_pt ℝ 3
+    (euclideanGeometry3FrameAlgebra
+       (euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var {to_var := {num := 12}})
+          env171).frame)
+but is expected to have type
+  aff_fr.aff_coord_vec ℝ 3
+    (euclideanGeometry3FrameAlgebra
+       (euclideanGeometry3CoordinatePointEval (lang.euclideanGeometry3.CoordinatePointExpr.var {to_var := {num := 12}})
+          env171).frame)
+
+error for has_vadd.vadd
+failed to synthesize type class instance for
+⊢ has_vadd
+    (aff_fr.aff_coord_pt ℝ 3
+       (euclideanGeometry3FrameAlgebra
+          (euclideanGeometry3CoordinatePointEval
+             (lang.euclideanGeometry3.CoordinatePointExpr.var {to_var := {num := 12}})
+             env171).frame))
+    (aff_fr.aff_coord_pt ℝ 3
+       (euclideanGeometry3FrameAlgebra
+          (euclideanGeometry3CoordinatePointEval
+             (lang.euclideanGeometry3.CoordinatePointExpr.var {to_var := {num := 12}})
+             env171).frame))
+Additional information:
+/peirce/PeirceOutput2.lean:54:147: context: switched to basic overload resolution where arguments are elaborated without any information about the expected type because it failed to disambiguate overload using the expected type
+  aff_fr.aff_coord_pt ℝ 3 ?m_1
+the following overloaded terms were applicable
+  aff_fr.pt_plus_vec
+  has_vadd.vadd
+/peirce/PeirceOutput2.lean:52:1: error: don't know how to synthesize placeholder
+context:
+⊢ aff_fr.affine_coord_frame ℝ 3
+/peirce/PeirceOutput2.lean:66:150: error: don't know how to synthesize placeholder
+context:
+⊢ Type ?
+/peirce/PeirceOutput2.lean:66:150: error: don't know how to synthesize placeholder
+context:
+⊢ Type ?
+/peirce/PeirceOutput2.lean:66:150: error: don't know how to synthesize placeholder
+context:
+⊢ Type ?
+/peirce/PeirceOutput2.lean:69:108: error: unknown identifier 'this_is_bad.B.L62C5.E.L62C41'
+/peirce/PeirceOutput2.lean:69:146: error: unknown identifier 'geom_add.B.L60C5.E.L60C38'
+/peirce/PeirceOutput2.lean:69:181: error: unknown identifier 'vec_sum.B.L58C5.E.L58C36'
+/peirce/PeirceOutput2.lean:69:0: warning: declaration 'INDEX91768528.STMT' uses sorry
