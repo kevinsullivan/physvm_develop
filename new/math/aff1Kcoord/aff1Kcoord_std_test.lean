@@ -5,68 +5,59 @@ import data.real.basic
 Make a frame from points and vectors in 
 std_space, then induce a new coordinate
 space, space2, around it.
+ℚ 
 -/
 
-axioms p1 p2 : point (std_space ℝ 0)
-#check 3 • (p2 -ᵥ p1)
-#check 3 • (p2 -ᵥ p1) +ᵥ p2
-
-#check p1
-
-noncomputable def p_1 : point (std_space ℝ 0) := mk_point (std_space ℝ 0) 1 
-noncomputable def p_2 : point (std_space ℝ 0) := mk_point (std_space ℝ 0) 2 
-noncomputable def v_2 : vectr (std_space ℝ 0) := mk_vectr (std_space ℝ 0) 2
-
-#check p_1
-#check v_2
-#check p_2 -ᵥ p_1
-#check (p_2 -ᵥ p_1) +ᵥ p_2
-#check v_2 +ᵥ p_2
+def p_1 : point (std_space ℚ 0) := mk_point (std_space ℚ 0) 1 
+def v_1 : vectr (std_space ℚ 0) := mk_vectr (std_space ℚ 0) 2
 
 
-def s_2 : ℝ := 2  -- add 1 1 in field K
-noncomputable def fr_1 : fm ℝ 0 := mk_frame p_2 v_2  
-noncomputable def space2 := mk_space ℝ fr_1 
+def p_2 : point (std_space ℚ 0) := mk_point (std_space ℚ 0) 5 
+def v_2 : vectr (std_space ℚ 0) := mk_vectr (std_space ℚ 0) 7
 
-
-/-
-Make a frame from points and vectors in 
-space2, then induce a new coordinate
-space, space3, around it.
--/
-noncomputable def p_3 := mk_point space2 3    -- at 8?
-noncomputable def p_3' := mk_point space2 3    -- at 8?
-noncomputable def v_3 : vectr space2 := mk_vectr space2 3    -- 3x
-noncomputable def fr_2 : fm ℝ 0 := mk_frame p_3 v_3
-noncomputable def space3 := mk_space ℝ fr_2
-
-/-
-Vector space operations
--/
-noncomputable def v_v_add : vectr (std_space ℝ 0) := v_2 + v_2
-noncomputable def v_sub : vectr (std_space ℝ 0) := v_2 - v_2
-noncomputable def v_neg : vectr (std_space ℝ 0) := -v_2
-noncomputable def v_smul : vectr (std_space ℝ 0) := 3 • v_2
-
-/-
-Affine operations
--/
-noncomputable def v_p_add : point (std_space ℝ 0) := v_2 +ᵥ p_2
-noncomputable def p_p_sub : vectr (std_space ℝ 0) := p_2 -ᵥ p_2
-
-/-
-Operations down in pt/vec
--/
-noncomputable def pt1 := p_1.to_pt
-noncomputable def pt2 := p_2.to_pt
-noncomputable def pt3 := pt2 -ᵥ pt1
+ def fr_1 : fm ℚ 0 := mk_frame p_2 v_2  
+ def space2 := mk_space ℚ fr_1 
+ def p_3 := mk_point space2 1    -- at 8?
+ def p_3' := mk_point space2 3    -- at 8?
+ def v_3 : vectr space2 := mk_vectr space2 2    -- 3x
+ def fr_2 : fm ℚ 0 := mk_frame p_3 v_3
+ def space3 := mk_space ℚ fr_2
 
 /-
 -/
-noncomputable def fr_1' : fm ℝ 1 := mk_frame p_2 v_2        -- expect error 
-noncomputable def space2' := mk_space ℝ fr_1'
-noncomputable def v_3' : vectr space2' := mk_vectr space2' 3
+ def fr_1' : fm ℚ 0 := mk_frame p_2 v_1        -- expect error 
+ def space2' := mk_space ℚ fr_1'
 
+
+def mytr := space2.fm_tr space2'
+def mytr2 := space2.fm_tr (std_space ℚ 0)
+
+
+def ltr : point space2 → ℚ × ℚ    :=
+  λp, (1, 
+                        p.to_prod.2*v_2.to_prod.2 + p_2.to_prod.2)
+
+#eval v_2.to_prod
+#eval p_2.to_prod
+
+def vtr : vectr space2 → ℚ × ℚ    :=
+  λp, (0, 
+                        p.to_prod.2*v_2.to_prod.2 + p_2.to_prod.2)
+
+#eval p_3.to_pt.to_prod
+#eval v_3.to_vec.to_prod
+#eval (mytr2.transform_vectr v_3).to_vec.to_prod
+#eval (mytr2.transform_point p_3).to_pt.to_prod
+#eval vtr v_3
+#eval ltr p_3
+
+
+
+def vtr2 : ℚ × ℚ → ℚ × ℚ    :=
+  λp, (0, 
+                        (p.2 - p_2.to_prod.2)/v_2.to_prod.2)
+
+#eval vtr2 (vtr v_3)
 /-
 TODO: Add examples of definitions and
 applications of transformations between

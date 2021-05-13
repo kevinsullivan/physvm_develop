@@ -24,7 +24,7 @@ std::string Interp::toString(){
             retval+= op->toString() + "\n";
         }
     } 
-    else if(nodeType == "DECL_VAR_R1_EXPR_R1") {
+    else if(nodeType == "DECL_INIT_R1") {
         auto var_ = (this->operands[0]);
         auto expr_ = (this->operands[1]);
         auto vardom_ = var_->getDomain();
@@ -46,6 +46,14 @@ std::string Interp::toString(){
             else if(auto asdur = dynamic_cast<domain::Duration*>(this->domain->getValue())){
                 retval+= std::string("mk_duration ") + asdur->getSpace()->getName() + ".value " + std::to_string(asdur->getValue()[0]);
             }
+            else if(auto asscalar = dynamic_cast<domain::Scalar*>(this->domain->getValue())){
+                retval+= std::string("(") + std::to_string(asscalar->getValue()[0]) + " : F)";
+            }
+            else if(auto astrans = dynamic_cast<domain::TimeTransform*>(this->domain->getValue())){
+                auto dom_ = astrans->getDomain();
+                auto cod_ = astrans->getCodomain();
+                retval+= dom_->getName() + ".value.mk_time_transform_to " + cod_->getName() + ".value";
+            }
             retval += "]";
         }
         else{
@@ -64,6 +72,24 @@ std::string Interp::toString(){
         auto lhs_ = (this->operands[0]);
         auto rhs_ = (this->operands[1]);
         retval += lhs_->toString() + "+ᵥ" + rhs_->toString();
+    }
+    else if(nodeType == "MUL_R1_R1") {
+        auto lhs_ = (this->operands[0]);
+        auto rhs_ = (this->operands[1]);
+
+        if(lhs_->getDomain()->hasValue()){
+            
+            if(auto astrans = dynamic_cast<domain::TimeTransform*>(lhs_->getDomain()->getValue())){
+                retval += lhs_->toString() + "⬝" + rhs_->toString() + ".value";
+            }
+            else{
+                retval += lhs_->toString() + "•" + rhs_->toString();
+            }
+        }
+        else{
+                retval += lhs_->toString() + "•" + rhs_->toString();
+        }
+
     }
 
     return retval;
@@ -88,6 +114,14 @@ std::string Interp::getType(){
         }
         else if(auto asdur = dynamic_cast<domain::Duration*>(this->domain->getValue())){
             return std::string("duration_expr ") + asdur->getSpace()->getName();
+        }
+        else if(auto asscalar = dynamic_cast<domain::Scalar*>(this->domain->getValue())){
+            return std::string("scalar_expr");
+        }
+        else if(auto astrans = dynamic_cast<domain::TimeTransform*>(this->domain->getValue())){
+            auto dom_ = astrans->getDomain();
+            auto cod_ = astrans->getCodomain();
+            return std::string("time_transform_expr ") + dom_->getName() + " " + cod_->getName(); 
         }
     }
     else return "_";

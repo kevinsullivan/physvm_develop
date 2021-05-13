@@ -3,6 +3,7 @@
 #include "clang/ASTMatchers/ASTMatchers.h"
 
 #include "ROSTFTimeMatcher.h"
+#include "ROSTFTimeMatcher.h"
 #include "ROSTFDurationMatcher.h"
 
 
@@ -75,12 +76,13 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             pm.setup();
             pm.visit(**cxxConstructExpr_->getArgs());
             this->childExprStore_ = pm.getChildExprStore();
-            if(this->childExprStore_){}
+            if(this->childExprStore_){return;}
     
             else{
-                
+                this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
+                //interp_->mkR1((clang::Stmt*)cxxBindTemporaryExpr_);
+                interp_->mkNode("LIT_R1",(clang::Stmt*)cxxBindTemporaryExpr_,true);
             }
-            return;
         }
     }
 
@@ -125,11 +127,13 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
         else{
-                
-            }
+            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+            //interp_->mkR1((clang::Stmt*)implicitCastExpr_);
+            interp_->mkNode("LIT_R1",(clang::Stmt*)implicitCastExpr_,true);
             return;
-
+        }
     }
+
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_ros::Time"] = [=](std::string typenm){
         if(false){ return false; }
@@ -142,14 +146,16 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         exprMatcher.setup();
         exprMatcher.visit(*cxxBindTemporaryExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
-        if(this->childExprStore_){}
+        if(this->childExprStore_){return;}
     
         else{
-                
-            }
+            this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
+            //interp_->mkR1((clang::Stmt*)cxxBindTemporaryExpr_);
+            interp_->mkNode("LIT_R1",(clang::Stmt*)cxxBindTemporaryExpr_,true);
             return;
-
+        }
     }
+
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_ros::Time"] = [=](std::string typenm){
         if(false){return false;}
@@ -163,14 +169,16 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.visit(*materializeTemporaryExpr_->GetTemporaryExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
         
-            if(this->childExprStore_){}
+            if(this->childExprStore_){return;}
         
             else{
-                
+                this->childExprStore_ = (clang::Stmt*)materializeTemporaryExpr_;
+                //interp_->mkR1((clang::Stmt*)materializeTemporaryExpr_);
+                interp_->mkNode("LIT_R1",(clang::Stmt*)materializeTemporaryExpr_,true);
+                return;
             }
-            return;
+        }
 
-    }
 	
 	arg_decay_exist_predicates["parenExpr_ros::Time"] = [=](std::string typenm){
         if(false){return false;}
@@ -183,7 +191,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         inner.setup();
         inner.visit(*parenExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
-        if(this->childExprStore_){}
+        if(this->childExprStore_){return;}
         else{
                 
             }
@@ -197,13 +205,15 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.visit(*exprWithCleanups_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
         
-            if(this->childExprStore_){}
+            if(this->childExprStore_){return;}
         
             else{
-                
+                this->childExprStore_ = (clang::Stmt*)exprWithCleanups_;
+                //interp_->mkR1((clang::Stmt*)exprWithCleanups_);
+                return;
             }
-
-    }
+        }
+    
 	
     if (cxxFunctionalCastExpr_)
         {
@@ -212,20 +222,21 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
         
-            if(this->childExprStore_){}
+            if(this->childExprStore_){return;}
         
             else{
-                
-            }
 
-    }
+                this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
+               // interp_->mkR1((clang::Stmt*)cxxFunctionalCastExpr_);
+                return;
+            }
+        }
+    
 	
     if(declRefExpr_){
         if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
-            //interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
-            //interp_->buffer_operand(declRefExpr_);
             interp_->buffer_link(dc);
-            interp_->mkNode("REF_R1", declRefExpr_, true);
+            interp_->mkNode("REF_R1",declRefExpr_);
             this->childExprStore_ = (clang::Stmt*)declRefExpr_;
             return;
 
@@ -233,12 +244,12 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Time"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time?FORCE,ros::Duration?FORCE).+@$.ADDros::Time"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
         else { return false; }
     };
-	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Duration"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time?FORCE,ros::Duration?FORCE).+@$.ADDros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
         else { return false; }
@@ -259,29 +270,32 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 
                 clang::Stmt* arg1stmt = nullptr;
               
-                if (true){//arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Time"](arg0str) and 
-                    //arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time,ros::Duration).+@$.ADDros::Duration"](arg1str)){
+                if (true and 
+                    true){
                     if(false){}
-                    else if(true){//arg0str=="ros::Time" or arg0str=="const ros::Time" or arg0str=="class ros::Time"/*arg0str.find("ros::Time") != string::npos*/){
-            
-                        ROSTFTimeMatcher arg0m{this->context_,this->interp_};
+                    
+                    else if(true){
+                    ROSTFTimeMatcher arg0m{ this->context_,this->interp_};
                         arg0m.setup();
                         arg0m.visit(*arg0);
                         arg0stmt = arg0m.getChildExprStore();
                     }
+                    
                     if(false){}
-                    else if(true){//arg1str=="ros::Duration" or arg1str=="const ros::Duration" or arg1str=="class ros::Duration"/*arg1str.find("ros::Duration") != string::npos*/){
-            
-                        ROSTFDurationMatcher arg1m{this->context_,this->interp_};
+                    
+                    else if(true){
+                    ROSTFDurationMatcher arg1m{ this->context_,this->interp_};
                         arg1m.setup();
                         arg1m.visit(*arg1);
                         arg1stmt = arg1m.getChildExprStore();
                     }
+                    
                     if(arg0stmt and arg1stmt){
-                        //interp_->mkADD_REAL1_EXPR_REAL1_EXPR(cxxOperatorCallExpr_,arg0stmt,arg1stmt);
+                        //interp_->mk(cxxOperatorCallExpr_,arg0stmt,arg1stmt);
+                        
                         interp_->buffer_operand(arg0stmt);
                         interp_->buffer_operand(arg1stmt);
-                        interp_->mkNode("ADD_R1_R1", cxxOperatorCallExpr_,true);
+                        interp_->mkNode("ADD_R1_R1",cxxOperatorCallExpr_, true);
                         this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
                         return;
                     }
@@ -296,8 +310,9 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         if(true ){
             
             if(true ){
-                //interp_->mkREAL1_LIT(cxxConstructExpr_);
-                interp_->mkNode("LIT_R1", cxxConstructExpr_, true);
+                //interp_->mk(cxxConstructExpr_);
+                
+                interp_->mkNode("LIT_R1",cxxConstructExpr_, true);
                 this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
                 return;
             }

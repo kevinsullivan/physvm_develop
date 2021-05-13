@@ -129,3 +129,13 @@ Time* Domain::mkTime(std::string name, TimeCoordinateSpace* parent, float* value
     return time;
 }
 
+
+Scalar* Domain::mkScalar(std::string name, float* value){
+    auto scalar = new Scalar(name, value);
+    return scalar;
+}
+
+TimeTransform* Domain::mkTimeTransform(std::string name, TimeCoordinateSpace* domain_, TimeCoordinateSpace* codomain_){
+    auto ttransform = new TimeTransform(name, domain_, codomain_);
+    return ttransform;
+}

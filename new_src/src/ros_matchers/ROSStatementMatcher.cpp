@@ -6,6 +6,7 @@
 #include "../Interpretation.h"
 
 #include "ROSStatementMatcher.h"
+#include "ROSBooleanMatcher.h"
 #include "FloatMatcher.h"
 #include "DoubleMatcher.h"
 #include "ROSTFTimeMatcher.h"
@@ -18,7 +19,7 @@
 
 #include <memory>
 
-//#include "../maps/ASTToCoords.h"
+#include "../maps/ASTToCoords.h"
 /*
 This manages all statements in Clang.
 */
@@ -95,7 +96,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
 
     const auto tryStmt_ = Result.Nodes.getNodeAs<clang::CXXTryStmt>("TryStmt");
 
-    /*
+    
     if(whileStmt_){
         auto wcond = whileStmt_->getCond();
         auto wbody = whileStmt_->getBody();
@@ -120,13 +121,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             throw "Broken Parse";
         }
 
-        this->interp_->mkWHILE_BOOL_EXPR_STMT(whileStmt_, condm.getChildExprStore(), bodym.getChildExprStore());
+        //this->interp_->mkWHILE_BOOL_EXPR_STMT(whileStmt_, condm.getChildExprStore(), bodym.getChildExprStore());
+        interp_->buffer_operand(condm.getChildExprStore());
+        interp_->buffer_operand(bodym.getChildExprStore());
+        interp_->mkNode("WHILE_STMT", whileStmt_, false);
+        
         this->childExprStore_ = (clang::Stmt*)whileStmt_;
         return;
 
     }
-    */
-    /*
+
     if(forStmt_){
         auto wcond = forStmt_->getCond();
         auto wbody = forStmt_->getBody();
@@ -151,11 +155,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             throw "Broken Parse";
         }
 
-        this->interp_->mkFOR_BOOL_EXPR_STMT(forStmt_, condm.getChildExprStore(), bodym.getChildExprStore());
+        //this->interp_->mkFOR_BOOL_EXPR_STMT(forStmt_, condm.getChildExprStore(), bodym.getChildExprStore());
+        interp_->buffer_operand(condm.getChildExprStore());
+        interp_->buffer_operand(bodym.getChildExprStore());
+        interp_->mkNode("FOR_STMT",forStmt_,false); 
         this->childExprStore_ = (clang::Stmt*)forStmt_;
         return;
     }
-    */
+
     /*
     if(returnStmt_){
         auto _expr = returnStmt_->getRetValue();
@@ -194,6 +201,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
         else if (typestr == "float" or typestr == "const float"  or typestr == "class float" /*typestr.find("float") != string::npos) != string::npos){
             FloatMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr == "bool" or typestr == "const bool"  or typestr == "class bool" /*typestr.find("bool") != string::npos) != string::npos){
+            ROSBooleanMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
@@ -293,13 +310,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
         }
         //this->interp_->mkCOMPOUND_STMT(cmpdStmt_, stmts);
-        this->interp_->buffer_operands(stmts);
-        this->interp_->mkNode("COMPOUND_STMT",cmpdStmt_,false);
+        interp_->buffer_operands(stmts);
+        interp_->mkNode("COMPOUND_STMT", cmpdStmt_);
         this->childExprStore_ = (clang::Stmt*)cmpdStmt_;
         return;
         
     }
-    
+
     
     if (declStmt)
     {
@@ -312,7 +329,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
 
                 else if (typestr == "ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration"/*typestr.find("ros::Duration") != string::npos*/){
                     //interp_->mkREAL1_VAR_IDENT(vd);
-                    interp_->mkNode("IDENT_R1",vd,true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         ROSTFDurationMatcher m{ this->context_, this->interp_};
@@ -323,27 +340,24 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            //(*vd->getInit()).dump();
-                            //m.getChildExprStore()->dump();
-                            interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
                         else
                         {
-                            interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
                             //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
                     }
                     else
                     {
-                        
-                        interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
                         //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                        interp_->buffer_operand(vd);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -351,20 +365,18 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time"/*typestr.find("ros::Time") != string::npos*/){
                     //interp_->mkREAL1_VAR_IDENT(vd);
-                    interp_->mkNode("IDENT_R1",vd,true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         ROSTFTimeMatcher m{ this->context_, this->interp_};
                         m.setup();
                         m.visit((*vd->getInit()));
-                            //(*vd->getInit()).dump();
-                            //m.getChildExprStore()->dump();
                         if (m.getChildExprStore())
                         {
                             //interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -372,7 +384,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mkDECL_REAL1_VAR(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -381,7 +393,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mkDECL_REAL1_VAR(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -389,7 +401,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "double" or typestr == "const double" or typestr == "class double"/*typestr.find("double") != string::npos*/){
                     //interp_->mkREAL1_VAR_IDENT(vd);
-                    interp_->mkNode("IDENT_R1",vd,true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         DoubleMatcher m{ this->context_, this->interp_};
@@ -400,7 +412,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -408,7 +420,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mkDECL_REAL1_VAR(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -417,7 +429,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mkDECL_REAL1_VAR(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -425,7 +437,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "float" or typestr == "const float" or typestr == "class float"/*typestr.find("float") != string::npos*/){
                     //interp_->mkREAL1_VAR_IDENT(vd);
-                    interp_->mkNode("IDENT_R1",vd,true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         FloatMatcher m{ this->context_, this->interp_};
@@ -436,7 +448,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -444,7 +456,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mkDECL_REAL1_VAR(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -453,7 +465,43 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mkDECL_REAL1_VAR(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_VAR_R1_EXPR_R1",declStmt,false);
+                        interp_->mkNode("DECL_R1", declStmt);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr == "bool" or typestr == "const bool" or typestr == "class bool"/*typestr.find("bool") != string::npos*/){
+                    //interp_->mkBOOL_VAR_IDENT(vd);
+                    interp_->mkNode("IDENT_BOOL",vd, true);
+                    if (vd->hasInit())
+                    {
+                        ROSBooleanMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            //interp_->mkDECL_BOOL_VAR_BOOL_EXPR(declStmt, vd, m.getChildExprStore());
+                            interp_->buffer_operand(vd);
+                            interp_->buffer_operand(m.getChildExprStore());
+                            interp_->mkNode("DECL_INIT_BOOL", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            //interp_->mkDECL_BOOL_VAR(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_BOOL", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //interp_->mkDECL_BOOL_VAR(declStmt, vd);
+                        interp_->buffer_operand(vd);
+                        interp_->mkNode("DECL_BOOL", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -461,12 +509,254 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
             }
         }
+        else
+        {
+            bool anyfound = false;
+            for (auto it = declStmt->decl_begin(); it != declStmt->decl_end(); it++)
+            {
+                if (auto vd = clang::dyn_cast<clang::VarDecl>(declStmt->getSingleDecl()))
+                {
+                    auto typestr = ((clang::QualType)vd->getType()).getAsString();
+                    if(false){}
+                
+                    else if(typestr == "ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration"/*typestr.find("ros::Duration") != string::npos*/){
+                        //interp_->mkREAL1_VAR_IDENT(vd);
+                        
+                        interp_->mkNode("IDENT_R1",vd, true);
+                        if (vd->hasInit())
+                        {
+                            ROSTFDurationMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr == "ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time"/*typestr.find("ros::Time") != string::npos*/){
+                        //interp_->mkREAL1_VAR_IDENT(vd);
+                        
+                        interp_->mkNode("IDENT_R1",vd, true);
+                        if (vd->hasInit())
+                        {
+                            ROSTFTimeMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr == "double" or typestr == "const double" or typestr == "class double"/*typestr.find("double") != string::npos*/){
+                        //interp_->mkREAL1_VAR_IDENT(vd);
+                        
+                        interp_->mkNode("IDENT_R1",vd, true);
+                        if (vd->hasInit())
+                        {
+                            DoubleMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr == "float" or typestr == "const float" or typestr == "class float"/*typestr.find("float") != string::npos*/){
+                        //interp_->mkREAL1_VAR_IDENT(vd);
+                        
+                        interp_->mkNode("IDENT_R1",vd, true);
+                        if (vd->hasInit())
+                        {
+                            FloatMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mkDECL_REAL1_VAR_REAL1_EXPR(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mkDECL_REAL1_VAR(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr == "bool" or typestr == "const bool" or typestr == "class bool"/*typestr.find("bool") != string::npos*/){
+                        //interp_->mkBOOL_VAR_IDENT(vd);
+                        
+                        interp_->mkNode("IDENT_BOOL",vd, true);
+                        if (vd->hasInit())
+                        {
+                            ROSBooleanMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mkDECL_BOOL_VAR_BOOL_EXPR(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_BOOL", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mkDECL_BOOL_VAR(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_BOOL", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mkDECL_BOOL_VAR(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_BOOL", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                }
+            }
+            if (anyfound)
+            {
+                this->childExprStore_ = const_cast<clang::DeclStmt*>(declStmt);
+                return;
+            }
+        }
     }
     else if (assignStmt)
     {
         //not implemented!!
     }
-    /*
+    else if (exprStmt)
+    {
+        auto typestr = ((clang::QualType)exprStmt->getType()).getAsString();
+        
+        if(typestr == "ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration"/*typestr.find("ros::Duration") != string::npos*/){
+            ROSTFDurationMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+        if(typestr == "ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time"/*typestr.find("ros::Time") != string::npos*/){
+            ROSTFTimeMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+        if(typestr == "double" or typestr == "const double" or typestr == "class double"/*typestr.find("double") != string::npos*/){
+            DoubleMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+        if(typestr == "float" or typestr == "const float" or typestr == "class float"/*typestr.find("float") != string::npos*/){
+            FloatMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+        if(typestr == "bool" or typestr == "const bool" or typestr == "class bool"/*typestr.find("bool") != string::npos*/){
+            ROSBooleanMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+    }
     else if(tryStmt_){
         auto tryBlock = tryStmt_->getTryBlock();
         ROSStatementMatcher innerMatcher{ this->context_, this->interp_};
@@ -474,12 +764,12 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         innerMatcher.visit(*tryBlock);
         if (innerMatcher.getChildExprStore()){
             this->childExprStore_ = (clang::Stmt*)tryStmt_;//const_cast<clang::Stmt*>(innerMatcher.getChildExprStore());
-            interp_->mkTRY_STMT(tryStmt_,innerMatcher.getChildExprStore());
+            interp_->buffer_operand(innerMatcher.getChildExprStore());
+            interp_->mkNode("TRY_STMT",tryStmt_);//,innerMatcher.getChildExprStore());
             return;
         }
     }
-    */
-    if (exprWithCleanupsDiscard)
+    else if (exprWithCleanupsDiscard)
     {//matches fluff node to discard
         ROSStatementMatcher innerMatcher{ this->context_, this->interp_};
         innerMatcher.setup();

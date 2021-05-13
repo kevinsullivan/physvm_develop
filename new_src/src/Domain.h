@@ -71,8 +71,8 @@ public:
 
     Duration* mkDuration(string name, TimeCoordinateSpace* parent, float* value);
     Time* mkTime(string name, TimeCoordinateSpace* parent, float* value);
-    //Scalar* mkScalar();
-    TimeTransform* mkTimeTransform(); 
+    Scalar* mkScalar(string name, float* value);
+    TimeTransform* mkTimeTransform(string name, TimeCoordinateSpace* domain_, TimeCoordinateSpace* codomain_); 
 
     std::vector<TimeCoordinateSpace*> getTimeSpaces() const {return timeSpaces;};
     std::vector<CoordinateSpace*> getSpaces() const {return spaces;};
@@ -258,6 +258,15 @@ private:
     //--TimeCoordinateSpace* parentSpace;
 };
 
+class CoordinateSpaceTransform : public DomainObject {
+public:
+    CoordinateSpaceTransform(std::string name, CoordinateSpace* domain_, CoordinateSpace* codomain_)
+        : DomainObject(name), domain(domain_), codomain(codomain_) {};
+protected:
+    CoordinateSpace* domain;
+    CoordinateSpace* codomain;
+};
+
 class Duration : public DomainObject {
 public:
     Duration(std::string name_, TimeCoordinateSpace* sp, float* value_) 
@@ -288,15 +297,30 @@ private:
 
 class Scalar : public DomainObject {
 public:
+    Scalar(std::string name_, float* value_)
+        : DomainObject(name_), value(value_) {};
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string("Scalar(") + std::to_string(value[0]) + ")"; 
+    };
+    virtual float* getValue() const { return value; };
 private:
-    float value;
+    float* value;
 };
 
-class TimeTransform : public DomainObject {
+class TimeTransform : public CoordinateSpaceTransform {
 public:
+    TimeTransform(std::string name, CoordinateSpace* domain, CoordinateSpace* codomain)
+        : CoordinateSpaceTransform(name, domain, codomain) {};
+    TimeCoordinateSpace* getDomain() const {
+        return static_cast<TimeCoordinateSpace*>(domain);
+    };
+    TimeCoordinateSpace* getCodomain() const {
+        return static_cast<TimeCoordinateSpace*>(codomain);
+    };
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string("TimeTransform(") + this->getDomain()->getName() + "," + this->getCodomain()->getName() + ")"; 
+    }
 private:
-    TimeCoordinateSpace* domain;
-    TimeCoordinateSpace* codomain;
 };
 
 } // end namespace

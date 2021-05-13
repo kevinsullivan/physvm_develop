@@ -151,9 +151,11 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
     std::string menu = std::string("Choose Interpretation:\n")+
         "1 - Select Existing Interpretation\n"+
         "2 - Duration\n"+
-        "3 - Time\n";
+        "3 - Time\n"+
+        "4 - Scalar\n"+
+        "5 - Time Transform\n";
     redo:
-    int choice = this->getValidChoice(1,4,menu);
+    int choice = this->getValidChoice(1,6,menu);
 
     //std::cin>>choice;
     switch(choice)
@@ -170,8 +172,12 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
         case 2:{
             auto name = coords->hasName() ? coords->getName() : this->getName();
             auto sp =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            if(!sp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
             auto value = this->getValueVector<1>();
-            if(!sp or !value){
+            if(!value){
                 std::cout<<"Interpretation building failed\n";
                 return nullptr;
             }
@@ -183,12 +189,45 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
         case 3:{
             auto name = coords->hasName() ? coords->getName() : this->getName();
             auto sp =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            if(!sp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
             auto value = this->getValueVector<1>();
-            if(!sp or !value){
+            if(!value){
                 std::cout<<"Interpretation building failed\n";
                 return nullptr;
             }
             auto interpretation_ = this->domain_->mkTime(name, sp, value);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 4:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            auto value = this->getValueVector<1>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto interpretation_ = this->domain_->mkScalar(name, value);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 5:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            std::cout<<"Annotate Domain:\n";
+            auto tdom_ =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            if(!tdom_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Annotate Codomain:\n";
+            auto tcod_ =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            if(!tcod_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto interpretation_ = this->domain_->mkTimeTransform(name, tdom_, tcod_);
             this->existing_interpretations.push_back(interpretation_);
             return interpretation_;
         } break;
@@ -229,6 +268,10 @@ domain::DomainObject* Oracle_AskAll::selectExisting(){
         if(auto dc = dynamic_cast<domain::Time*>(interp_))
             menu += std::to_string(i++) + " - " + dc->toString() + "\n";
         else if(auto dc = dynamic_cast<domain::Duration*>(interp_))
+            menu += std::to_string(i++) + " - " + dc->toString() + "\n";
+        else if(auto dc = dynamic_cast<domain::Scalar*>(interp_))
+            menu += std::to_string(i++) + " - " + dc->toString() + "\n";
+        else if(auto dc = dynamic_cast<domain::TimeTransform*>(interp_))
             menu += std::to_string(i++) + " - " + dc->toString() + "\n";
     }
     int choice = getValidChoice(1, this->existing_interpretations.size()+1,menu)-1;

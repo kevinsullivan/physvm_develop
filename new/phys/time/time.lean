@@ -436,7 +436,7 @@ structure time_transform {K : Type u} [field K] [inhabited K] {f1 : fm K TIME} {
   extends fm_tr sp1 sp2
 
 
-def spc.time_tr {f1 : fm K TIME} (s1 : spc K f1) : Π {f2 : fm K TIME} (s2 : spc K f2), 
+def spc.mk_time_transform_to {f1 : fm K TIME} (s1 : spc K f1) : Π {f2 : fm K TIME} (s2 : spc K f2), 
         time_transform s1 s2 := --(time s2) ≃ᵃ[K] (time s1) := 
     λ f2 s2,
         ⟨s1.fm_tr s2⟩
@@ -473,6 +473,14 @@ def time_transform.transform_duration
 
 def stdsp := time_std_space ℚ
 variables (myd : duration stdsp) (myt : time stdsp)
+
+
+def p_2 : point (std_space ℚ 0) := mk_point (std_space ℚ 0) 5 
+def v_2 : vectr (std_space ℚ 0) := mk_vectr (std_space ℚ 0) 7
+
+def fr_1 : fm ℚ 0 := mk_frame p_2 v_2  
+def space2 := mk_space ℚ fr_1 
+
 
 #check (stdsp.fm_tr stdsp).transform_vectr myd.1
 #check (stdsp.time_tr stdsp).transform_time myt

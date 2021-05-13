@@ -480,8 +480,9 @@
   ros_matchers/../maps/CoordsToInterp.h \
   ros_matchers/../maps/InterpToDomain.h \
   ros_matchers/ROSStatementMatcher.h ros_matchers/../BaseMatcher.h \
-  ros_matchers/FloatMatcher.h ros_matchers/DoubleMatcher.h \
-  ros_matchers/ROSTFTimeMatcher.h ros_matchers/ROSTFDurationMatcher.h
+  ros_matchers/ROSBooleanMatcher.h ros_matchers/FloatMatcher.h \
+  ros_matchers/DoubleMatcher.h ros_matchers/ROSTFTimeMatcher.h \
+  ros_matchers/ROSTFDurationMatcher.h
 
 /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchFinder.h:
 
@@ -1494,6 +1495,8 @@ ros_matchers/../maps/InterpToDomain.h:
 ros_matchers/ROSStatementMatcher.h:
 
 ros_matchers/../BaseMatcher.h:
+
+ros_matchers/ROSBooleanMatcher.h:
 
 ros_matchers/FloatMatcher.h:
 

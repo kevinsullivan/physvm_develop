@@ -107,9 +107,9 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
         std::string checkType = check_[0];
         std::string evalResult = eval_.size() > 0 ? eval_[0] : "sorry";
         //std::cout<<checkType<<"\n";
-        std::cout<<i++<<"\n";
+        //std::cout<<i++<<"\n";
         for(auto ln:check_){
-            std::cout<<ln<<"\n";
+            //std::cout<<ln<<"\n";
         }
 
         if(checkType.find("error:") != string::npos || checkType.find("type mismatch") != string::npos){
@@ -121,6 +121,8 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
 
     std::string tstr("lang.time.time_expr");
     std::string dstr("lang.time.duration_expr");
+    std::string sstr(": F");
+    std::string trstr("lang.time.time_transform_expr");
 
     if(evalResult.find("sorry") != string::npos){
         return nullptr;
@@ -161,6 +163,35 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
         default_value[0] = 0;
         return domain_->mkDuration("INFERRED", sp,default_value);
 
+    }
+    else if(checkType.find(sstr) != string::npos){
+        //return nullptr;
+        auto typesub = checkType.substr(checkType.find(sstr));
+        //std::cout<<"TYPE SUB : "<<typesub<<"\n";
+        auto spaces = domain_->getTimeSpaces();
+        auto default_value = new float[1];
+        default_value[0] = 0;
+        return domain_->mkScalar("INFERRED", default_value);
+
+    }
+    else if(checkType.find(trstr) != string::npos){
+        //return nullptr;
+        /*auto typesub = checkType.substr(checkType.find(dstr));
+        //std::cout<<"TYPE SUB : "<<typesub<<"\n";
+        auto spaces = domain_->getTimeSpaces();
+        auto domsp = spaces[0]; //fairly safely assume it's not empty
+        auto spname = trim(typesub.substr(std::string(dstr).length()));
+        //std::cout<<"TYPE SUB : "<<spname<<"\n";
+        for(auto sp_ : spaces){
+            if(sp_->getName() == spname){
+                sp = sp_;
+                break;
+            }
+        }
+        auto default_value = new float[1];
+        default_value[0] = 0;
+        return domain_->mkDuration("INFERRED", sp,default_value);
+        */
     }
     //std::cout<<"leaving method";
     return nullptr;

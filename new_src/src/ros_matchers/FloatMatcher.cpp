@@ -3,6 +3,10 @@
 #include "clang/ASTMatchers/ASTMatchers.h"
 
 #include "FloatMatcher.h"
+#include "FloatMatcher.h"
+#include "FloatMatcher.h"
+#include "FloatMatcher.h"
+#include "FloatMatcher.h"
 
 
 #include <string>
@@ -37,6 +41,9 @@ void FloatMatcher::setup(){
 	
 		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
 		localFinder_.addMatcher(declRefExpr_,this);
+	
+		StatementMatcher binaryOperator_=binaryOperator().bind("BinaryOperator");
+		localFinder_.addMatcher(binaryOperator_,this);
 };
 
 void FloatMatcher::run(const MatchFinder::MatchResult &Result){
@@ -57,6 +64,8 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
 	
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+	
+	auto binaryOperator_ = Result.Nodes.getNodeAs<clang::BinaryOperator>("BinaryOperator");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
     this->childExprStore_ = nullptr;
@@ -69,12 +78,12 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
             pm.setup();
             pm.visit(**cxxConstructExpr_->getArgs());
             this->childExprStore_ = pm.getChildExprStore();
-            if(this->childExprStore_){}
+            if(this->childExprStore_){return;}
     
             else{
                 this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-                //interp_->mkREAL1_LIT((clang::Stmt*)cxxBindTemporaryExpr_);
-                interp_->mkNode("R1_LIT",(clang::Stmt*)cxxBindTemporaryExpr_,true);
+                //interp_->mkR1((clang::Stmt*)cxxBindTemporaryExpr_);
+                interp_->mkNode("LIT_R1",(clang::Stmt*)cxxBindTemporaryExpr_,true);
             }
         }
     }
@@ -121,8 +130,8 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         }
         else{
             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-            //interp_->mkREAL1_LIT((clang::Stmt*)implicitCastExpr_);
-            interp_->mkNode("R1_LIT",(clang::Stmt*)implicitCastExpr_,true);
+            //interp_->mkR1((clang::Stmt*)implicitCastExpr_);
+            interp_->mkNode("LIT_R1",(clang::Stmt*)implicitCastExpr_,true);
             return;
         }
     }
@@ -139,12 +148,12 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         exprMatcher.setup();
         exprMatcher.visit(*cxxBindTemporaryExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
-        if(this->childExprStore_){}
+        if(this->childExprStore_){return;}
     
         else{
             this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-            //interp_->mkREAL1_LIT((clang::Stmt*)cxxBindTemporaryExpr_);
-            interp_->mkNode("R1_LIT",(clang::Stmt*)cxxBindTemporaryExpr_,true);
+            //interp_->mkR1((clang::Stmt*)cxxBindTemporaryExpr_);
+            interp_->mkNode("LIT_R1",(clang::Stmt*)cxxBindTemporaryExpr_,true);
             return;
         }
     }
@@ -162,12 +171,12 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.visit(*materializeTemporaryExpr_->GetTemporaryExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
         
-            if(this->childExprStore_){}
+            if(this->childExprStore_){return;}
         
             else{
                 this->childExprStore_ = (clang::Stmt*)materializeTemporaryExpr_;
-                //interp_->mkREAL1_LIT((clang::Stmt*)materializeTemporaryExpr_);
-                interp_->mkNode("R1_LIT",(clang::Stmt*)materializeTemporaryExpr_,true);
+                //interp_->mkR1((clang::Stmt*)materializeTemporaryExpr_);
+                interp_->mkNode("LIT_R1",(clang::Stmt*)materializeTemporaryExpr_,true);
                 return;
             }
         }
@@ -184,7 +193,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         inner.setup();
         inner.visit(*parenExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
-        if(this->childExprStore_){}
+        if(this->childExprStore_){return;}
         else{
                 
                 std::cout<<"WARNING: Capture Escaping! Dump : \n";
@@ -201,12 +210,11 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.visit(*exprWithCleanups_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
         
-            if(this->childExprStore_){}
+            if(this->childExprStore_){return;}
         
             else{
                 this->childExprStore_ = (clang::Stmt*)exprWithCleanups_;
-                //interp_->mkREAL1_LIT((clang::Stmt*)exprWithCleanups_);
-                interp_->mkNode("R1_LIT",(clang::Stmt*)exprWithCleanups_,true);
+                //interp_->mkR1((clang::Stmt*)exprWithCleanups_);
                 return;
             }
         }
@@ -219,13 +227,12 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
             exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
         
-            if(this->childExprStore_){}
+            if(this->childExprStore_){return;}
         
             else{
 
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
-                //interp_->mkREAL1_LIT((clang::Stmt*)cxxFunctionalCastExpr_);
-                interp_->mkNode("R1_LIT",(clang::Stmt*)cxxFunctionalCastExpr_,true);
+               // interp_->mkR1((clang::Stmt*)cxxFunctionalCastExpr_);
                 return;
             }
         }
@@ -233,12 +240,134 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
     if(declRefExpr_){
         if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
-            //interp_->mkREF_REAL1_VAR(declRefExpr_, dc);
             interp_->buffer_link(dc);
-            interp_->mkNode("R1_LIT",declRefExpr_,true);
+            interp_->mkNode("REF_R1",declRefExpr_);
             this->childExprStore_ = (clang::Stmt*)declRefExpr_;
             return;
 
+        }
+    }
+
+	
+    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 1){
+        if(true ){
+            
+            if(true ){
+                //interp_->mk(cxxConstructExpr_);
+                
+                interp_->mkNode("LIT_R1",cxxConstructExpr_, true);
+                this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
+                return;
+            }
+        }
+    }
+	
+	arg_decay_exist_predicates["BinaryOperator(float?FORCE,float?FORCE).+@$.ADDfloat"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+    else { return false; }
+    };
+	arg_decay_exist_predicates["BinaryOperator(float?FORCE,float?FORCE).+@$.ADDfloat"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+    else { return false; }
+    };
+    if(binaryOperator_){
+        auto bostr = binaryOperator_->getOpcodeStr().str();
+        auto lhs = binaryOperator_->getLHS();
+        auto rhs = binaryOperator_->getRHS();
+        clang::Stmt* lhsstmt;
+        clang::Stmt* rhsstmt;
+            
+
+        if(bostr=="+" or bostr == "const +" or bostr == "class +"/*bostr.find("+") != string::npos*/){
+            auto lhs = binaryOperator_->getLHS();
+            auto lhsstr = ((clang::QualType)lhs->getType()).getAsString();
+            auto rhs = binaryOperator_->getRHS();
+            auto rhsstr = ((clang::QualType)rhs->getType()).getAsString();
+            clang::Stmt* lhsresult = nullptr;
+            clang::Stmt* rhsresult = nullptr;
+            if(false){}
+            
+            else if(true){
+                FloatMatcher lhsm{this->context_,this->interp_};
+                lhsm.setup();
+                lhsm.visit(*lhs);
+                lhsresult = lhsm.getChildExprStore();
+            }
+
+            if(false){}
+            
+            else if(true){
+                FloatMatcher rhsm{this->context_,this->interp_};
+                rhsm.setup();
+                rhsm.visit(*rhs);
+                rhsresult = rhsm.getChildExprStore();
+            }
+
+            if(lhsresult and rhsresult){
+                //interp_->mk(binaryOperator_,lhsresult, rhsresult);
+                interp_->buffer_operand(lhsresult);
+                interp_->buffer_operand(rhsresult);
+                interp_->mkNode("ADD_R1_R1",binaryOperator_, true);
+                this->childExprStore_ = (clang::Stmt*)binaryOperator_;
+                return;
+            }
+        }
+    }
+
+	
+	arg_decay_exist_predicates["BinaryOperator(float?FORCE,float?FORCE).*@$.MULfloat"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+    else { return false; }
+    };
+	arg_decay_exist_predicates["BinaryOperator(float?FORCE,float?FORCE).*@$.MULfloat"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+    else { return false; }
+    };
+    if(binaryOperator_){
+        auto bostr = binaryOperator_->getOpcodeStr().str();
+        auto lhs = binaryOperator_->getLHS();
+        auto rhs = binaryOperator_->getRHS();
+        clang::Stmt* lhsstmt;
+        clang::Stmt* rhsstmt;
+            
+
+        if(bostr=="*" or bostr == "const *" or bostr == "class *"/*bostr.find("*") != string::npos*/){
+            auto lhs = binaryOperator_->getLHS();
+            auto lhsstr = ((clang::QualType)lhs->getType()).getAsString();
+            auto rhs = binaryOperator_->getRHS();
+            auto rhsstr = ((clang::QualType)rhs->getType()).getAsString();
+            clang::Stmt* lhsresult = nullptr;
+            clang::Stmt* rhsresult = nullptr;
+            if(false){}
+            
+            else if(true){
+                FloatMatcher lhsm{this->context_,this->interp_};
+                lhsm.setup();
+                lhsm.visit(*lhs);
+                lhsresult = lhsm.getChildExprStore();
+            }
+
+            if(false){}
+            
+            else if(true){
+                FloatMatcher rhsm{this->context_,this->interp_};
+                rhsm.setup();
+                rhsm.visit(*rhs);
+                rhsresult = rhsm.getChildExprStore();
+            }
+
+            if(lhsresult and rhsresult){
+                //interp_->mk(binaryOperator_,lhsresult, rhsresult);
+                interp_->buffer_operand(lhsresult);
+                interp_->buffer_operand(rhsresult);
+                interp_->mkNode("MUL_R1_R1",binaryOperator_, true);
+                this->childExprStore_ = (clang::Stmt*)binaryOperator_;
+                return;
+            }
         }
     }
 

@@ -85,18 +85,20 @@ void ROS1ProgramMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         
                             //this->interp_->mkCOMPOUND_STMT(cmpd, stmts);
-                            this->interp_->buffer_operands(stmts);
-                            this->interp_->mkNode("COMPOUND_STMT",cmpd,false);
 
                             if(fn->isMain())
                             {//s
                                 //this->interp_->mkINT_FUNC_IDENT_STMT(fn, cmpd);
 
                                 //this->interp_->mkMAIN_FUNC_DECL_STMT(fn, cmpd);
+                                this->interp_->buffer_operands(stmts);
+                                this->interp_->mkNode("COMPOUND_STMT",cmpd,false, true);
                                 this->interp_->buffer_operand(cmpd);
-                                this->interp_->mkNode("FUNC_MAIN",fn,false,true);
+                                this->interp_->mkNode("FUNC_MAIN",fn,false);
                             }
                             else{
+                                this->interp_->buffer_operands(stmts);
+                                this->interp_->mkNode("COMPOUND_STMT",cmpd,false);
                                 //this->interp_->mkFUNCTION_STMT(fn, cmpd);
                             }
 

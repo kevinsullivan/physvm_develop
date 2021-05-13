@@ -28,34 +28,37 @@ Progress this week:
     - next steps: discuss after presentation
 -/
 
-abbreviation K := ℝ   -- or try ℚ for a computable version (but no square roots)
+abbreviation K :=ℚ   -- or try ℚ for a computable version (but no square roots)
 
 -- assume unit vector is one second in standard time space
 #check time_std_space K
 
 
-noncomputable def t1 : time (time_std_space K) :=  mk_time (time_std_space K)  1          -- t=0 + 1 second
-noncomputable def t2 := mk_time (time_std_space K) 3                             -- t=0 + 3 seconds
-noncomputable def d1 : duration (time_std_space K) := t2 -ᵥ t1                     -- 2 seconds
-noncomputable def t3 := 5 • d1 +ᵥ t1                                          -- t=0 + 11 seconds
+ def t1 : time (time_std_space K) :=  mk_time (time_std_space K)  1          -- t=0 + 1 second
+ def t2 := mk_time (time_std_space K) 3                             -- t=0 + 3 seconds
+ def d1 : duration (time_std_space K) := t2 -ᵥ t1                     -- 2 seconds
+ def t3 := 5 • d1 +ᵥ t1                                          -- t=0 + 11 seconds
 
 -- new frame with origin at t=0 + 1hr and unit duration of 1 minute
-noncomputable def t1' := mk_time (time_std_space K) 3600      -- t=0 + 1hr
-noncomputable def d1' := 60 • (mk_duration (time_std_space K) 1)                                             -- one minute
-noncomputable def new_fm := mk_frame t1'.to_point d1'.to_vectr                -- TODO: fix
-noncomputable def new_space := mk_space K new_fm
+ def t1' := mk_time (time_std_space K) 3600      -- t=0 + 1hr
+ def d1' := 60 • (mk_duration (time_std_space K) 1)                                             -- one minute
+ def new_fm := mk_frame t1'.to_point d1'.to_vectr                -- TODO: fix
+ def new_space := mk_space K new_fm
 
 -- create some points and vectors in new space
-noncomputable def t1'' : time new_space := mk_time new_space 1                -- t=0 + 1 second (3660)
-noncomputable def t2'' := mk_time new_space 3                                 -- t=0 + 3 seconds (3600 + 180)
-noncomputable def d1'' := t2'' -ᵥ t1''                                        -- 2 seconds
-noncomputable def t3'' := 5 • d1'' +ᵥ t1''                                    -- 11 in the new space, what old?
+ def t1'' : time new_space := mk_time new_space 1                -- t=0 + 1 second (3660)
+ def t2'' := mk_time new_space 3                                 -- t=0 + 3 seconds (3600 + 180)
 
--- check for type errors across difference coordinate systems on time
-noncomputable def d_good := t1' -ᵥ t1     -- time - time = duration
-noncomputable def t_good := 8 • d1' +ᵥ t1   -- scalar * duration + time = time
-noncomputable def d_bad := t1'' -ᵥ t1     -- error: type mismatch in aff coord spaces
-noncomputable def t_bad := 8 • d1'' +ᵥ t1 -- error: no impl of +ᵥ across aff coord spaces
+def t3'' := mk_duration new_space 5
+
+def mytr := (time_std_space K).time_tr new_space
+def ftr := (new_space).time_tr (time_std_space K)
+
+#check ftr
+#eval (mytr.transform_time t1).to_point.to_pt.to_prod
+
+
+
 
 /-
 Afterthoughts

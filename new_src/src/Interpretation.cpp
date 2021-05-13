@@ -55,7 +55,7 @@ std::string Interpretation::toString_AST(){
     //4/13 - nope move this 
     std::string math = "";
 
-    math += "import .new.lang.expressions.time_expr_current\n\n";
+    math += "import .new.lang.expressions.time_expr\n\n";
     math += "open lang.time\nabbreviation F := lang.time.K\n\n";
     //math += "noncomputable theory\n\n";
     //math += "def " + interp::getEnvName() + " := environment.init_env";
@@ -223,6 +223,12 @@ void Interpretation::interpretProgram(){
                         default : {
                             if(infer_dom){
                                 dom_cont->setValue(infer_dom);
+                                
+                                for(auto link_ : coords_->getLinks()){
+                                    domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
+                                    link_cont->setValue(infer_dom);
+                                    link_cont->setAnnotationState(domain::AnnotationState::Inferred);
+                                }
 
                                 if(auto dc = dynamic_cast<domain::ErrorObject*>(infer_dom))
                                     dom_cont->setAnnotationState(domain::AnnotationState::Error);

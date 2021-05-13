@@ -479,26 +479,25 @@ def to_base_helper' : fm K n → @raw_tr K _ _
         ⟩
 | (fm.deriv n c parent) := (⟨
             ⟨/-transform from current->parent-/
-                λp, ⟨(p.to_prod.1*c.snd.to_prod.1 +  p.to_prod.2*c.fst.to_prod.1, 
-                        p.to_prod.1*c.snd.to_prod.2 + p.to_prod.2*c.fst.to_prod.2),
+                λp, ⟨(1, 
+                        p.to_prod.2*c.snd.to_prod.2 + c.fst.to_prod.2),
                         begin
                             cases p,
                             
                         end⟩,
-                let det := c.snd.to_prod.1*c.fst.to_prod.2 - c.snd.to_prod.2*c.fst.to_prod.1 in
-                    λp, (⟨(p.to_prod.1*c.fst.to_prod.2/det - p.to_prod.2*c.fst.to_prod.1/det, 
-                            -p.to_prod.1*c.snd.to_prod.2/det + p.to_prod.2*c.snd.to_prod.1/det),sorry⟩),
+                    λp, (⟨(1, 
+                        (p.to_prod.2 - c.fst.to_prod.2 )/c.snd.to_prod.2),sorry⟩),
                 sorry,
                 sorry
             ⟩,
             ⟨
-                λv, ⟨(v.to_prod.1, v.to_prod.2*c.snd.to_prod.2),begin 
+                λv, ⟨(0, v.to_prod.2*c.snd.to_prod.2),begin 
                     cases v,
                     simp *,
                 end⟩,
                 sorry,
                 sorry,
-                λv, ⟨(v.to_prod.1, v.to_prod.2*c.snd.to_prod.2),begin 
+                λv, ⟨(0, v.to_prod.2/c.snd.to_prod.2),begin 
                     cases v,
                     simp *,
                 end⟩,
