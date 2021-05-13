@@ -42,4 +42,8 @@ int main(int argc, char **argv){
     //Annotate as a Time in the "world_time_in_years" Space to demonstrate a failed type check
     ros::Duration two_years = one_second + one_second;
 
+    float seconds_to_years = .001;
+    float five_seconds = 5;
+    float five_secs_in_years = seconds_to_years*five_seconds;
+
 }
