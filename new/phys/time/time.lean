@@ -1,6 +1,8 @@
 import ..phys_dimensions
 import linear_algebra.affine_space.basic
 import ...math.aff1Kcoord.aff1Kcoord_std
+import ..scalar
+
 
 open_locale affine
 
@@ -11,8 +13,8 @@ Framed points, vectors, frames
 section foo 
 
 universes u --v w
-variables 
-{K : Type u} [field K] [inhabited K] 
+--variables 
+--{scalar : Type u} [field scalar] [inhabited scalar] 
 
 /-
 Add frames and (coordinate) spaces based on frames
@@ -20,8 +22,8 @@ Add frames and (coordinate) spaces based on frames
 
 
 -- points in time
-structure time {f : fm K TIME} (s : spc K f ) extends point s
-@[ext] lemma time.ext : ∀  {f : fm K TIME} {s : spc K f } (x y : time s),
+structure time {f : fm scalar TIME} (s : spc _ f ) extends point s
+@[ext] lemma time.ext : ∀  {f : fm scalar TIME} {s : spc scalar f } (x y : time s),
     x.to_point = y.to_point → x = y :=
     begin
         intros f s x y e,
@@ -33,14 +35,17 @@ structure time {f : fm K TIME} (s : spc K f ) extends point s
         exact e 
     end
 
+def time.coords {f : fm scalar TIME} {s : spc scalar f } (t :time s) :=
+    t.to_point.to_pt.to_prod
+
 @[simp]
-def mk_time' {f : fm K TIME} (s : spc K f ) (p : point s) : time s := time.mk p  
+def mk_time' {f : fm scalar TIME} (s : spc scalar f ) (p : point s) : time s := time.mk p  
 @[simp]
-def mk_time {f : fm K TIME} (s : spc K f ) (k : K) : time s := time.mk (mk_point s k) 
+def mk_time {f : fm scalar TIME} (s : spc scalar f ) (k : scalar) : time s := time.mk (mk_point s k) 
 
 -- intervals in time
-structure duration {f : fm K TIME} (s : spc K f ) extends vectr s 
-@[ext] lemma duration.ext : ∀  {f : fm K TIME} {s : spc K f } (x y : duration s),
+structure duration {f : fm scalar TIME} (s : spc scalar f ) extends vectr s 
+@[ext] lemma duration.ext : ∀  {f : fm scalar TIME} {s : spc scalar f } (x y : duration s),
     x.to_vectr = y.to_vectr → x = y :=
     begin
         intros f s x y e,
@@ -51,51 +56,56 @@ structure duration {f : fm K TIME} (s : spc K f ) extends vectr s
         simp [h₁] at e,
         exact e 
     end
+
+
+def duration.coords {f : fm scalar TIME} {s : spc scalar f } (d :duration s) :=
+    d.to_vectr.to_vec.to_prod
+
 @[simp]
-def mk_duration' {f : fm K TIME} (s : spc K f ) (v : vectr s) : duration s := duration.mk v
+def mk_duration' {f : fm scalar TIME} (s : spc scalar f ) (v : vectr s) : duration s := duration.mk v
 @[simp]
-def mk_duration  {f : fm K TIME} (s : spc K f ) (k : K) : duration s := duration.mk (mk_vectr s k) 
+def mk_duration  {f : fm scalar TIME} (s : spc scalar f ) (k : scalar) : duration s := duration.mk (mk_vectr s k) 
 
 -- note that we don't extend fm
 @[simp]
-def mk_time_frame {parent : fm K TIME} {s : spc K parent} (p : time s) (v : duration s) :=
+def mk_time_frame {parent : fm scalar TIME} {s : spc scalar parent} (p : time s) (v : duration s) :=
 fm.deriv TIME (p.to_point.to_pt, v.to_vectr.to_vec) parent   -- TODO: make sure v ≠ 0
 
 end foo
 
 section bar 
 
-universes u --v w
-variables 
-(K : Type u) [field K] [inhabited K] 
+--universes u --v w
+--variables 
+--(scalar : Type u) [field scalar] [inhabited scalar] 
 
-def time_std_frame : fm K TIME := fm.base TIME
-def time_std_space := mk_space K (time_std_frame K)
+def time_std_frame : fm scalar TIME := fm.base TIME
+def time_std_space : spc scalar time_std_frame := mk_space scalar (time_std_frame)
 
 /-
     *************************************
-    Instantiate vector_space K (vector K)
+    Instantiate vector_space scalar (vector scalar)
     *************************************
 -/
 
 namespace time
-variables {f : fm K TIME} {s : spc K f } 
+variables {f : fm scalar TIME} {s : spc scalar f } 
 @[simp]
 def add_duration_duration (v1 v2 : duration s) : duration s := 
     mk_duration' s (v1.to_vectr + v2.to_vectr)
 @[simp]
-def smul_duration (k : K) (v : duration s) : duration s := 
+def smul_duration (k : scalar) (v : duration s) : duration s := 
     mk_duration' s (k • v.to_vectr)
 @[simp]
 def neg_duration (v : duration s) : duration s := 
-    mk_duration' s ((-1 : K) • v.to_vectr)
+    mk_duration' s ((-1 : scalar) • v.to_vectr)
 @[simp]
 def sub_duration_duration (v1 v2 : duration s) : duration s :=    -- v1-v2
-    add_duration_duration K v1 (neg_duration K v2)
+    add_duration_duration v1 (neg_duration v2)
 
 -- See unframed file for template for proving vector_space
 
-instance has_add_duration : has_add (duration s) := ⟨ add_duration_duration K ⟩
+instance has_add_duration : has_add (duration s) := ⟨ add_duration_duration ⟩
 lemma add_assoc_duration : ∀ a b c : duration s, a + b + c = a + (b + c) := begin
     intros,
     ext,
@@ -108,11 +118,14 @@ lemma add_assoc_duration : ∀ a b c : duration s, a + b + c = a + (b + c) := be
     },
 
 end
-instance add_semigroup_duration : add_semigroup (duration s) := ⟨ add_duration_duration K, add_assoc_duration K⟩ 
+instance add_semigroup_duration : add_semigroup (duration s) := ⟨ add_duration_duration, add_assoc_duration⟩ 
 @[simp]
 def duration_zero  := mk_duration s 0
-instance has_zero_duration : has_zero (duration s) := ⟨duration_zero K⟩
+instance has_zero_duration : has_zero (duration s) := ⟨duration_zero⟩
 
+/-
+Andrew 5/14 - broke this, fix sometime soon
+-/
 lemma zero_add_duration : ∀ a : duration s, 0 + a = a := 
 begin
     intros,--,ext,
@@ -124,10 +137,10 @@ begin
     simp * at *,
     dsimp [has_zero.zero, mul_zero_class.zero, monoid_with_zero.zero,semiring.zero,ring.zero,division_ring.zero] at h0,
     --cases h0,
-    simp [duration_zero K] at h0,
+    simp [duration_zero] at h0,
     cases tmp,
     cases tmp,
-    have h2: ({to_prod := tmp__to_prod, inv := tmp_inv}:vec K) = {to_prod := (field.zero , field.zero ), inv := rfl} 
+    have h2: ({to_prod := tmp__to_prod, inv := tmp_inv}:vec scalar) = {to_prod := (field.zero , field.zero ), inv := rfl} 
             := by cc,
     simp * at *,
     dsimp [has_zero.zero, mul_zero_class.zero, monoid_with_zero.zero,add_monoid.zero, sub_neg_monoid.zero, add_group.zero, semiring.zero,ring.zero,division_ring.zero],
@@ -143,17 +156,17 @@ end
 
 instance add_monoid_duration : add_monoid (duration s) := ⟨ 
     -- add_semigroup
-    add_duration_duration K, 
-    add_assoc_duration K, 
+    add_duration_duration, 
+    add_assoc_duration, 
     -- has_zero
-    duration_zero K,
+    duration_zero,
     -- new structure 
-    @zero_add_duration K _ _ f s, 
-    add_zero_duration K
+    @zero_add_duration f s, 
+    add_zero_duration
 ⟩
 
-instance has_neg_duration : has_neg (duration s) := ⟨neg_duration K⟩
-instance has_sub_duration : has_sub (duration s) := ⟨ sub_duration_duration K⟩ 
+instance has_neg_duration : has_neg (duration s) := ⟨neg_duration⟩
+instance has_sub_duration : has_sub (duration s) := ⟨ sub_duration_duration⟩ 
 lemma sub_eq_add_neg_duration : ∀ a b : duration s, a - b = a + -b := 
 begin
     intros,ext,
@@ -161,12 +174,12 @@ begin
 end 
 
 instance sub_neg_monoid_duration : sub_neg_monoid (duration s) := ⟨ 
-    add_duration_duration K, add_assoc_duration K, duration_zero K, 
-    zero_add_duration K, 
-    add_zero_duration K, -- add_monoid
-    neg_duration K,                                                                  -- has_neg
-    sub_duration_duration K,                                                              -- has_sub
-    sub_eq_add_neg_duration K,                                                       -- new
+    add_duration_duration, add_assoc_duration, duration_zero, 
+    zero_add_duration, 
+    add_zero_duration, -- add_monoid
+    neg_duration,                                                                  -- has_neg
+    sub_duration_duration,                                                              -- has_sub
+    sub_eq_add_neg_duration,                                                       -- new
 ⟩ 
 
 lemma add_left_neg_duration : ∀ a : duration s, -a + a = 0 := 
@@ -176,19 +189,19 @@ begin
     repeat {
     have h0 : (-a + a).to_vec = -a.to_vec + a.to_vec := rfl,
     simp [h0],
-    have : (0:vec K) = (0:duration s).to_vectr.to_vec := rfl,
+    have : (0:vec scalar) = (0:duration s).to_vectr.to_vec := rfl,
     simp *,
     }
 end
 
 instance : add_group (duration s) := ⟨
     -- sub_neg_monoid
-    add_duration_duration K, add_assoc_duration K, duration_zero K, zero_add_duration K, add_zero_duration K, -- add_monoid
-    neg_duration K,                                                                  -- has_neg
-    sub_duration_duration K,                                                              -- has_sub
-    sub_eq_add_neg_duration K, 
+    add_duration_duration, add_assoc_duration, duration_zero, zero_add_duration, add_zero_duration, -- add_monoid
+    neg_duration,                                                                  -- has_neg
+    sub_duration_duration,                                                              -- has_sub
+    sub_eq_add_neg_duration, 
     -- new
-    add_left_neg_duration K,
+    add_left_neg_duration,
 ⟩ 
 
 lemma add_comm_duration : ∀ a b : duration s, a + b = b + a :=
@@ -204,38 +217,38 @@ begin
 end
 instance add_comm_semigroup_duration : add_comm_semigroup (duration s) := ⟨
     -- add_semigroup
-    add_duration_duration K, 
-    add_assoc_duration K,
-    add_comm_duration K,
+    add_duration_duration, 
+    add_assoc_duration,
+    add_comm_duration,
 ⟩
 
 instance add_comm_monoid_duration : add_comm_monoid (duration s) := ⟨
 -- add_monoid
     -- add_semigroup
-    add_duration_duration K, 
-    add_assoc_duration K, 
+    add_duration_duration, 
+    add_assoc_duration, 
     -- has_zero
-    duration_zero K,
+    duration_zero,
     -- new structure 
-    zero_add_duration K, 
-    add_zero_duration K,
+    zero_add_duration, 
+    add_zero_duration,
 -- add_comm_semigroup (minus repeats)
-    add_comm_duration K,
+    add_comm_duration,
 ⟩
 
-instance has_scalar_duration : has_scalar K (duration s) := ⟨
-smul_duration K,
+instance has_scalar_duration : has_scalar scalar (duration s) := ⟨
+smul_duration,
 ⟩
 
-lemma one_smul_duration : ∀ b : duration s, (1 : K) • b = b := begin
+lemma one_smul_duration : ∀ b : duration s, (1 : scalar) • b = b := begin
     intros,ext,
     repeat {
-        have h0 : ((1:K) • b).to_vec = ((1:K)•(b.to_vec)) := rfl,
+        have h0 : ((1:scalar) • b).to_vec = ((1:scalar)•(b.to_vec)) := rfl,
         rw [h0],
         simp *,
     }
 end
-lemma mul_smul_duration : ∀ (x y : K) (b : duration s), (x * y) • b = x • y • b := 
+lemma mul_smul_duration : ∀ (x y : scalar) (b : duration s), (x * y) • b = x • y • b := 
 begin
     intros,
     cases b,
@@ -244,12 +257,12 @@ begin
     exact mul_assoc x y _
 end
 
-instance mul_action_duration : mul_action K (duration s) := ⟨
-one_smul_duration K,
-mul_smul_duration K,
+instance mul_action_duration : mul_action scalar (duration s) := ⟨
+one_smul_duration,
+mul_smul_duration,
 ⟩ 
 
-lemma smul_add_duration : ∀(r : K) (x y : duration s), r • (x + y) = r • x + r • y := begin
+lemma smul_add_duration : ∀(r : scalar) (x y : duration s), r • (x + y) = r • x + r • y := begin
     intros, ext,
     repeat {
     have h0 : (r • (x + y)).to_vec = (r • (x.to_vec + y.to_vec)) := rfl,
@@ -259,41 +272,41 @@ lemma smul_add_duration : ∀(r : K) (x y : duration s), r • (x + y) = r • x
     }
 
 end
-lemma smul_zero_duration : ∀(r : K), r • (0 : duration s) = 0 := begin
+lemma smul_zero_duration : ∀(r : scalar), r • (0 : duration s) = 0 := begin
     intros, ext, exact mul_zero _, exact mul_zero _
 end
-instance distrib_mul_action_K_duration : distrib_mul_action K (duration s) := ⟨
-smul_add_duration K,
-smul_zero_duration K,
+instance distrib_mul_action_K_duration : distrib_mul_action scalar (duration s) := ⟨
+smul_add_duration,
+smul_zero_duration,
 ⟩ 
 
 -- renaming vs template due to clash with name "s" for prevailing variable
-lemma add_smul_duration : ∀ (a b : K) (x : duration s), (a + b) • x = a • x + b • x := 
+lemma add_smul_duration : ∀ (a b : scalar) (x : duration s), (a + b) • x = a • x + b • x := 
 begin
   intros,
   ext,
   exact right_distrib _ _ _,
   exact right_distrib _ _ _
 end
-lemma zero_smul_duration : ∀ (x : duration s), (0 : K) • x = 0 := begin
+lemma zero_smul_duration : ∀ (x : duration s), (0 : scalar) • x = 0 := begin
     intros,
     ext,
     exact zero_mul _, exact zero_mul _
 end
-instance semimodule_K_duration : semimodule K (duration s) := ⟨ add_smul_duration K, zero_smul_duration  K⟩ 
+instance semimodule_K_duration : semimodule scalar (duration s) := ⟨ add_smul_duration, zero_smul_duration ⟩ 
 
 instance add_comm_group_duration : add_comm_group (duration s) := ⟨
 -- add_group
-    add_duration_duration K, add_assoc_duration K, duration_zero K, zero_add_duration K, add_zero_duration K, -- add_monoid
-    neg_duration K,                                                                  -- has_neg
-    sub_duration_duration K,                                                              -- has_sub
-    sub_eq_add_neg_duration K, 
-    add_left_neg_duration K,
+    add_duration_duration, add_assoc_duration, duration_zero, zero_add_duration, add_zero_duration, -- add_monoid
+    neg_duration,                                                                  -- has_neg
+    sub_duration_duration,                                                              -- has_sub
+    sub_eq_add_neg_duration, 
+    add_left_neg_duration,
 -- commutativity
-    add_comm_duration K,
+    add_comm_duration,
 ⟩
 
-instance : vector_space K (duration s) := @time.semimodule_K_duration K _ _ f s
+instance : vector_space scalar (duration s) := @time.semimodule_K_duration f s
 
 
 /-
@@ -306,25 +319,25 @@ instance : vector_space K (duration s) := @time.semimodule_K_duration K _ _ f s
 /-
 Affine operations
 -/
-instance : has_add (duration s) := ⟨add_duration_duration K⟩
-instance : has_zero (duration s) := ⟨duration_zero K⟩
-instance : has_neg (duration s) := ⟨neg_duration K⟩
+instance : has_add (duration s) := ⟨add_duration_duration⟩
+instance : has_zero (duration s) := ⟨duration_zero⟩
+instance : has_neg (duration s) := ⟨neg_duration⟩
 
 /-
 Lemmas needed to implement affine space API
 -/
 @[simp]
-def sub_time_time {f : fm K TIME} {s : spc K f } (p1 p2 : time s) : duration s := 
+def sub_time_time {f : fm scalar TIME} {s : spc scalar f } (p1 p2 : time s) : duration s := 
     mk_duration' s (p1.to_point -ᵥ p2.to_point)
 @[simp]
-def add_time_duration {f : fm K TIME} {s : spc K f } (p : time s) (v : duration s) : time s := 
+def add_time_duration {f : fm scalar TIME} {s : spc scalar f } (p : time s) (v : duration s) : time s := 
     mk_time' s (v.to_vectr +ᵥ p.to_point) -- reorder assumes order is irrelevant
 @[simp]
-def add_duration_time {f : fm K TIME} {s : spc K f } (v : duration s) (p : time s) : time s := 
+def add_duration_time {f : fm scalar TIME} {s : spc scalar f } (v : duration s) (p : time s) : time s := 
     mk_time' s (v.to_vectr +ᵥ p.to_point)
 --@[simp]
---def aff_duration_group_action : duration s → time s → time s := add_duration_time K
-instance : has_vadd (duration s) (time s) := ⟨add_duration_time K⟩
+--def aff_duration_group_action : duration s → time s → time s := add_duration_time scalar
+instance : has_vadd (duration s) (time s) := ⟨add_duration_time⟩
 
 lemma zero_duration_vadd'_a1 : ∀ p : time s, (0 : duration s) +ᵥ p = p := begin
     intros,
@@ -345,10 +358,10 @@ lemma duration_add_assoc'_a1 : ∀ (g1 g2 : duration s) (p : time s), g1 +ᵥ (g
     }
 end
 instance duration_add_action: add_action (duration s) (time s) := 
-⟨ add_duration_time K, zero_duration_vadd'_a1 K, duration_add_assoc'_a1  K⟩ 
+⟨ add_duration_time, zero_duration_vadd'_a1, duration_add_assoc'_a1⟩ 
 --@[simp]
---def aff_time_group_sub : time s → time s → duration s := sub_time_time K
-instance time_has_vsub : has_vsub (duration s) (time s) := ⟨ sub_time_time K ⟩ 
+--def aff_time_group_sub : time s → time s → duration s := sub_time_time scalar
+instance time_has_vsub : has_vsub (duration s) (time s) := ⟨ sub_time_time⟩ 
 
 instance : nonempty (time s) := ⟨mk_time s 0⟩
 
@@ -373,17 +386,17 @@ end
 
 instance aff_time_torsor : add_torsor (duration s) (time s) := 
 ⟨ 
-    add_duration_time K,
-    zero_duration_vadd'_a1 K,    -- add_action
-    duration_add_assoc'_a1 K,   -- add_action
-    sub_time_time K,    -- has_vsub
-    time_vsub_vadd_a1 K,     -- add_torsor
-    time_vadd_vsub_a1 K,     -- add_torsor
+    add_duration_time,
+    zero_duration_vadd'_a1,    -- add_action
+    duration_add_assoc'_a1,   -- add_action
+    sub_time_time,    -- has_vsub
+    time_vsub_vadd_a1,     -- add_torsor
+    time_vadd_vsub_a1,     -- add_torsor
 ⟩
 
 open_locale affine
 
-instance : affine_space (duration s) (time s) := @time.aff_time_torsor K _ _ f s
+instance : affine_space (duration s) (time s) := @time.aff_time_torsor f s
 
 end time -- ha ha
 end bar
@@ -391,7 +404,7 @@ end bar
 --prefer implicit here
 universes u
 variables 
-{K : Type u} [field K] [inhabited K] 
+{scalar : Type u} [field scalar] [inhabited scalar] 
 
 
 --extends does not work with abbreviation or def, so the type is ugly.
@@ -399,12 +412,12 @@ variables
 /-
 Older version (3/31)
 
-structure time_transform {K : Type u} [field K] [inhabited K] {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2)
-  extends ((time sp1) ≃ᵃ[K] (time sp2))
-variables {f1 : fm K TIME} {f2 : fm K TIME}  (s2 : spc K f2)
-def spc.time_tr (s1 : spc K f1) {f2 : fm K TIME} : Π(s2 : spc K f2), time_transform s1 s2 := --(time s2) ≃ᵃ[K] (time s1) := 
+structure time_transform {scalar : Type u} [field scalar] [inhabited scalar] {f1 : fm scalar TIME} {f2 : fm scalar TIME} (sp1 : spc scalar f1) (sp2 : spc scalar f2)
+  extends ((time sp1) ≃ᵃ[scalar] (time sp2))
+variables {f1 : fm scalar TIME} {f2 : fm scalar TIME}  (s2 : spc scalar f2)
+def spc.time_tr (s1 : spc scalar f1) {f2 : fm scalar TIME} : Π(s2 : spc scalar f2), time_transform s1 s2 := --(time s2) ≃ᵃ[scalar] (time s1) := 
     λ s2,
-    let pointtr : (point s1) ≃ᵃ[K] (point s2)  := s1.tr s2 in
+    let pointtr : (point s1) ≃ᵃ[scalar] (point s2)  := s1.tr s2 in
         ⟨⟨
             ⟨
                 (λ p : time s1, (⟨(pointtr p.to_point : point _)⟩ : time s2)),
@@ -432,18 +445,42 @@ Tradeoff - Does not directly extend from affine equiv. Base class is an equiv on
 Extension methods are provided to directly transform Times and Duration between frames
 -/
 @[ext]
-structure time_transform {K : Type u} [field K] [inhabited K] {f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2 : spc K f2)
+structure time_transform {f1 : fm scalar TIME} {f2 : fm scalar TIME} (sp1 : spc scalar f1) (sp2 : spc scalar f2)
   extends fm_tr sp1 sp2
 
-
-def spc.mk_time_transform_to {f1 : fm K TIME} (s1 : spc K f1) : Π {f2 : fm K TIME} (s2 : spc K f2), 
-        time_transform s1 s2 := --(time s2) ≃ᵃ[K] (time s1) := 
+def spc.mk_time_transform_to {f1 : fm scalar TIME} (s1 : spc scalar f1) : Π {f2 : fm scalar TIME} (s2 : spc scalar f2), 
+        time_transform s1 s2 := --(time s2) ≃ᵃ[scalar] (time s1) := 
     λ f2 s2,
         ⟨s1.fm_tr s2⟩
+
+/-
+def fm_tr.symm  {f1 : fm K n} {f2 : fm K n} {s1 : spc K f1} {s2 : spc K f2} (ftr : fm_tr s1 s2) : fm_tr s2 s1 :=
+    ⟨ftr.1.symm⟩
+
+
+def fm_tr.trans  {f1 : fm K n} {f2 : fm K n} {f3 : fm K n} {s1 : spc K f1} {s2 : spc K f2} {s3 : spc K f3} (ftr : fm_tr s1 s2) : fm_tr s2 s3 → fm_tr s1 s3 :=
+    λftr_, ⟨ftr.1.trans ftr_.1⟩
+
+notation ftr⁻¹ := ftr.symm
+notation ftr∘ftr2 := ftr.symm ftr2
+
+-/
+
+def time_transform.symm 
+    {f1 : fm scalar TIME} {f2 : fm scalar TIME} {sp1 : spc scalar f1} {sp2 : spc scalar f2} (ttr : time_transform sp1 sp2)
+    : time_transform sp2 sp1 := ⟨(ttr.1).symm⟩
+
+
+def time_transform.trans 
+    {f1 : fm scalar TIME} {f2 : fm scalar TIME} {f3 : fm scalar TIME} {sp1 : spc scalar f1} {sp2 : spc scalar f2} {sp3 : spc scalar f3} 
+    (ttr : time_transform sp1 sp2)
+    : time_transform sp2 sp3 → time_transform sp1 sp3 := λttr_, ⟨(ttr.1).trans ttr_.1⟩
+
+--notation t_tr⁻¹ := (⟨⟨t_tr.fm_tr/-/⟩⟩ : time_transform _ _)
         
-variables 
-     {f1 : fm K TIME} {s1 : spc K f1}
-     {f2 : fm K TIME} {s2 : spc K f2}
+-- variables 
+ --    {f1 : fm scalar TIME} {s1 : spc scalar f1}
+ --    {f2 : fm scalar TIME} {s2 : spc scalar f2}
 /-
 
 def fm_tr.transform_point (tr:fm_tr s1 s2 ) : point s1 → point s2 :=
@@ -459,11 +496,15 @@ def fm_tr.transform_vectr (tr:fm_tr s1 s2 ) : vectr s1 → vectr s2 :=
 -/
 
 def time_transform.transform_time 
+    {f1 : fm _ TIME} {s1 : spc _ f1}
+    {f2 : fm _ TIME} {s2 : spc _ f2}
     (tr: time_transform s1 s2 ) : time s1 → time s2 :=
     λt : time s1,
     ⟨tr.to_fm_tr.to_equiv t.to_point⟩
 
 def time_transform.transform_duration
+    {f1 : fm _ TIME} {s1 : spc _ f1}
+    {f2 : fm _ TIME} {s2 : spc _ f2}
     (tr: time_transform s1 s2 ) : duration s1 → duration s2 :=
     λd,
     let as_pt : point s1 := (⟨⟨(1,d.to_vectr.to_vec.to_prod.2),rfl⟩⟩) in
@@ -471,7 +512,7 @@ def time_transform.transform_duration
     ⟨⟨⟨(0, tr_pt.to_pt.to_prod.2),rfl⟩⟩⟩
 
 
-def stdsp := time_std_space ℚ
+def stdsp := time_std_space
 variables (myd : duration stdsp) (myt : time stdsp)
 
 
@@ -481,6 +522,11 @@ def v_2 : vectr (std_space ℚ 0) := mk_vectr (std_space ℚ 0) 7
 def fr_1 : fm ℚ 0 := mk_frame p_2 v_2  
 def space2 := mk_space ℚ fr_1 
 
+def p_3 : point (space2) := mk_point (space2) 5 
+def v_3 : vectr (space2) := mk_vectr (space2) 7
 
-#check (stdsp.fm_tr stdsp).transform_vectr myd.1
-#check (stdsp.time_tr stdsp).transform_time myt
+def fr_2 : fm ℚ 0 := mk_frame p_3 v_3  
+def space3 := mk_space ℚ fr_2 
+
+def tr := stdsp.mk_time_transform_to space2
+def tr2 := space2.mk_time_transform_to space3
