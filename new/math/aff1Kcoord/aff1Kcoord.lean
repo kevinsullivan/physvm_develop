@@ -405,6 +405,15 @@ abbreviation raw_tr := (pt K) ≃ᵃ[K] (pt K)
 
 structure fm_tr {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)  extends (point s1) ≃ᵃ[K] (point s2)
 
+
+def fm_tr.symm  {f1 : fm K n} {f2 : fm K n} {s1 : spc K f1} {s2 : spc K f2} (ftr : fm_tr s1 s2) : fm_tr s2 s1 :=
+    ⟨ftr.1.symm⟩
+
+
+def fm_tr.trans  {f1 : fm K n} {f2 : fm K n} {f3 : fm K n} {s1 : spc K f1} {s2 : spc K f2} {s3 : spc K f3} (ftr : fm_tr s1 s2) : fm_tr s2 s3 → fm_tr s1 s3 :=
+    λftr_, ⟨ftr.1.trans ftr_.1⟩
+
+
 #check (fin 2)
 /-
 inductive fm : nat → Type u
