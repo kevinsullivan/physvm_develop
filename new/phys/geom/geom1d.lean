@@ -84,7 +84,7 @@ def geom1d_std_space : spc scalar geom1d_std_frame := mk_space scalar (geom1d_st
 
 /-
     *************************************
-    Instantiate vector_space scalar (vector scalar)
+    Instantiate module scalar (vector scalar)
     *************************************
 -/
 
@@ -103,7 +103,7 @@ def neg_displacement (v : displacement s) : displacement s :=
 def sub_displacement_displacement (v1 v2 : displacement s) : displacement s :=    -- v1-v2
     add_displacement_displacement v1 (neg_displacement v2)
 
--- See unframed file for template for proving vector_space
+-- See unframed file for template for proving module
 
 instance has_add_displacement : has_add (displacement s) := ⟨ add_displacement_displacement ⟩
 lemma add_assoc_displacement : ∀ a b c : displacement s, a + b + c = a + (b + c) := begin
@@ -128,23 +128,12 @@ Andrew 5/14 - broke this, fix someposition soon
 -/
 lemma zero_add_displacement : ∀ a : displacement s, 0 + a = a := 
 begin
-    intros,--,ext,
-    cases a,
-    generalize h0 : (0:displacement s) = tmp,
-    cases tmp,
-
-    have h1 : ({to_vectr := tmp} : displacement s) + ({to_vectr := a} : displacement s)= {to_vectr := tmp + a} := rfl,
-    simp * at *,
-    dsimp [has_zero.zero, mul_zero_class.zero, monoid_with_zero.zero,semiring.zero,ring.zero,division_ring.zero] at h0,
-    --cases h0,
-    simp [displacement_zero] at h0,
-    cases tmp,
-    cases tmp,
-    have h2: ({to_prod := tmp__to_prod, inv := tmp_inv}:vec scalar) = {to_prod := (field.zero , field.zero ), inv := rfl} 
-            := by cc,
-    simp * at *,
-    dsimp [has_zero.zero, mul_zero_class.zero, monoid_with_zero.zero,add_monoid.zero, sub_neg_monoid.zero, add_group.zero, semiring.zero,ring.zero,division_ring.zero],
-    trivial,
+    intros,--ext,
+    ext,
+    let h0 : (0 + a).to_vec = (0 : vectr s).to_vec + a.to_vec := rfl,
+    simp [h0],
+    exact zero_add _,
+    exact zero_add _,
 end
 
 lemma add_zero_displacement : ∀ a : displacement s, a + 0 = a := 
@@ -154,6 +143,12 @@ begin
     exact add_zero _,
 end
 
+@[simp]
+def nsmul_displacement : ℕ → (displacement s) → (displacement s) 
+| nat.zero v := displacement_zero
+--| 1 v := v
+| (nat.succ n) v := (add_displacement_displacement) v (nsmul_displacement n v)
+
 instance add_monoid_displacement : add_monoid (displacement s) := ⟨ 
     -- add_semigroup
     add_displacement_displacement, 
@@ -162,7 +157,8 @@ instance add_monoid_displacement : add_monoid (displacement s) := ⟨
     displacement_zero,
     -- new structure 
     @zero_add_displacement f s, 
-    add_zero_displacement
+    add_zero_displacement,
+    nsmul_displacement
 ⟩
 
 instance has_neg_displacement : has_neg (displacement s) := ⟨neg_displacement⟩
@@ -173,14 +169,11 @@ begin
     refl,refl
 end 
 
-instance sub_neg_monoid_displacement : sub_neg_monoid (displacement s) := ⟨ 
-    add_displacement_displacement, add_assoc_displacement, displacement_zero, 
-    zero_add_displacement, 
-    add_zero_displacement, -- add_monoid
-    neg_displacement,                                                                  -- has_neg
-    sub_displacement_displacement,                                                              -- has_sub
-    sub_eq_add_neg_displacement,                                                       -- new
-⟩ 
+instance sub_neg_monoid_displacement : sub_neg_monoid (displacement s) := 
+{
+    neg := neg_displacement ,
+    ..(show add_monoid (displacement s), by apply_instance)
+}
 
 lemma add_left_neg_displacement : ∀ a : displacement s, -a + a = 0 := 
 begin
@@ -194,15 +187,13 @@ begin
     }
 end
 
-instance : add_group (displacement s) := ⟨
-    -- sub_neg_monoid
-    add_displacement_displacement, add_assoc_displacement, displacement_zero, zero_add_displacement, add_zero_displacement, -- add_monoid
-    neg_displacement,                                                                  -- has_neg
-    sub_displacement_displacement,                                                              -- has_sub
-    sub_eq_add_neg_displacement, 
-    -- new
-    add_left_neg_displacement,
-⟩ 
+instance : add_group (displacement s) := {
+    add_left_neg := begin
+        exact add_left_neg_displacement,
+    end,
+..(show sub_neg_monoid (displacement s), by apply_instance),
+
+}
 
 lemma add_comm_displacement : ∀ a b : displacement s, a + b = b + a :=
 begin
@@ -222,19 +213,12 @@ instance add_comm_semigroup_displacement : add_comm_semigroup (displacement s) :
     add_comm_displacement,
 ⟩
 
-instance add_comm_monoid_displacement : add_comm_monoid (displacement s) := ⟨
--- add_monoid
-    -- add_semigroup
-    add_displacement_displacement, 
-    add_assoc_displacement, 
-    -- has_zero
-    displacement_zero,
-    -- new structure 
-    zero_add_displacement, 
-    add_zero_displacement,
--- add_comm_semigroup (minus repeats)
-    add_comm_displacement,
-⟩
+instance add_comm_monoid_displacement : add_comm_monoid (displacement s) := {
+    add_comm := begin
+        exact add_comm_displacement
+    end, 
+    ..(show add_monoid (displacement s), by apply_instance)
+}
 
 instance has_scalar_displacement : has_scalar scalar (displacement s) := ⟨
 smul_displacement,
@@ -293,20 +277,25 @@ lemma zero_smul_displacement : ∀ (x : displacement s), (0 : scalar) • x = 0 
     ext,
     exact zero_mul _, exact zero_mul _
 end
-instance semimodule_K_displacement : semimodule scalar (displacement s) := ⟨ add_smul_displacement, zero_smul_displacement ⟩ 
+instance module_K_displacement : module scalar (displacement s) := ⟨ add_smul_displacement, zero_smul_displacement ⟩ 
 
-instance add_comm_group_displacement : add_comm_group (displacement s) := ⟨
--- add_group
-    add_displacement_displacement, add_assoc_displacement, displacement_zero, zero_add_displacement, add_zero_displacement, -- add_monoid
-    neg_displacement,                                                                  -- has_neg
-    sub_displacement_displacement,                                                              -- has_sub
-    sub_eq_add_neg_displacement, 
-    add_left_neg_displacement,
--- commutativity
-    add_comm_displacement,
-⟩
-
-instance : vector_space scalar (displacement s) := @geom1d.semimodule_K_displacement f s
+instance add_comm_group_displacement : add_comm_group (displacement s) := {
+    add_comm := begin
+        exact add_comm_displacement
+        
+        /-intros,
+        ext,
+        let h0 : (a + b).to_vec = a.to_vec + b.to_vec := rfl,
+        let h1 : (b + a).to_vec = b.to_vec + a.to_vec := rfl,
+        rw [h0,h1],
+        exact add_comm _ _,
+        exact add_comm _ _,-/
+    end,
+--to_add_group := (show add_group (vec K), by apply_instance),
+--to_add_comm_monoid := (show add_comm_monoid (vec K), by apply_instance),
+..(show add_group (displacement s), by apply_instance)
+}
+instance : module scalar (displacement s) := @geom1d.module_K_displacement f s
 
 
 /-
@@ -352,13 +341,20 @@ lemma displacement_add_assoc'_a1 : ∀ (g1 g2 : displacement s) (p : position s)
     have h1 : (g1 + g2 +ᵥ p).to_pt = (g1.to_vec +ᵥ g2.to_vec +ᵥ p.to_pt) := rfl,
     rw [h0,h1],
     simp *,
-    simp [has_vadd.vadd, has_add.add, add_semigroup.add, add_monoid.add, sub_neg_monoid.add, 
+    simp [has_vadd.vadd, has_add.add, add_semigroup.add, add_zero_class.add, add_monoid.add, sub_neg_monoid.add, 
         add_group.add, distrib.add, ring.add, division_ring.add],
     cc,
     }
 end
+
+
 instance displacement_add_action: add_action (displacement s) (position s) := 
-⟨ add_displacement_position, zero_displacement_vadd'_a1, displacement_add_assoc'_a1⟩ 
+⟨ zero_displacement_vadd'_a1, 
+begin
+    let h0 := displacement_add_assoc'_a1,
+    intros,
+    exact (h0 g₁ g₂ p).symm
+end⟩ 
 --@[simp]
 --def aff_geom1d_group_sub : position s → position s → displacement s := sub_geom1d_position scalar
 instance position_has_vsub : has_vsub (displacement s) (position s) := ⟨ sub_position_position⟩ 
@@ -367,11 +363,23 @@ instance : nonempty (position s) := ⟨mk_position s 0⟩
 
 lemma position_vsub_vadd_a1 : ∀ (p1 p2 : (position s)), (p1 -ᵥ p2) +ᵥ p2 = p1 := begin
     intros, ext,
-    repeat {
-    have h0 : (p1 -ᵥ p2 +ᵥ p2).to_point = (p1.to_point -ᵥ p2.to_point +ᵥ p2.to_point) := rfl,
+    --repeat {
+    have h0 : (p1 -ᵥ p2 +ᵥ p2).to_pt = (p1.to_pt -ᵥ p2.to_pt +ᵥ p2.to_pt) := rfl,
     rw h0,
-    simp *,
-    }
+    simp [has_vsub.vsub, has_sub.sub, sub_neg_monoid.sub, add_group.sub, add_comm_group.sub, ring.sub, division_ring.sub],
+    simp [has_vadd.vadd, has_add.add, distrib.add, ring.add, division_ring.add],
+    let h0 : field.add p2.to_pt.to_prod.fst (field.sub p1.to_pt.to_prod.fst p2.to_pt.to_prod.fst) = 
+            field.add (field.sub p1.to_pt.to_prod.fst p2.to_pt.to_prod.fst) p2.to_pt.to_prod.fst := add_comm _ _,
+    rw h0,
+    exact sub_add_cancel _ _,
+    have h0 : (p1 -ᵥ p2 +ᵥ p2).to_pt = (p1.to_pt -ᵥ p2.to_pt +ᵥ p2.to_pt) := rfl,
+    rw h0,
+    simp [has_vsub.vsub, has_sub.sub, sub_neg_monoid.sub, add_group.sub, add_comm_group.sub, ring.sub, division_ring.sub],
+    simp [has_vadd.vadd, has_add.add, distrib.add, ring.add, division_ring.add],
+    let h0 : field.add p2.to_pt.to_prod.snd (field.sub p1.to_pt.to_prod.snd p2.to_pt.to_prod.snd) = 
+            field.add (field.sub p1.to_pt.to_prod.snd p2.to_pt.to_prod.snd) p2.to_pt.to_prod.snd := add_comm _ _,
+    rw h0,
+    exact sub_add_cancel _ _,
 end
 lemma position_vadd_vsub_a1 : ∀ (g : displacement s) (p : position s), g +ᵥ p -ᵥ p = g := 
 begin
@@ -386,12 +394,12 @@ end
 
 instance aff_geom1d_torsor : add_torsor (displacement s) (position s) := 
 ⟨ 
-    add_displacement_position,
-    zero_displacement_vadd'_a1,    -- add_action
-    displacement_add_assoc'_a1,   -- add_action
-    sub_position_position,    -- has_vsub
-    position_vsub_vadd_a1,     -- add_torsor
-    position_vadd_vsub_a1,     -- add_torsor
+    begin
+        exact position_vsub_vadd_a1,
+    end,
+    begin
+        exact position_vadd_vsub_a1,
+    end,
 ⟩
 
 open_locale affine

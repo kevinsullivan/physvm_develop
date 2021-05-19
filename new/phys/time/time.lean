@@ -84,7 +84,7 @@ def time_std_space : spc scalar time_std_frame := mk_space scalar (time_std_fram
 
 /-
     *************************************
-    Instantiate vector_space scalar (vector scalar)
+    Instantiate module scalar (vector scalar)
     *************************************
 -/
 
@@ -103,7 +103,7 @@ def neg_duration (v : duration s) : duration s :=
 def sub_duration_duration (v1 v2 : duration s) : duration s :=    -- v1-v2
     add_duration_duration v1 (neg_duration v2)
 
--- See unframed file for template for proving vector_space
+-- See unframed file for template for proving module
 
 instance has_add_duration : has_add (duration s) := ⟨ add_duration_duration ⟩
 lemma add_assoc_duration : ∀ a b c : duration s, a + b + c = a + (b + c) := begin
@@ -128,23 +128,12 @@ Andrew 5/14 - broke this, fix sometime soon
 -/
 lemma zero_add_duration : ∀ a : duration s, 0 + a = a := 
 begin
-    intros,--,ext,
-    cases a,
-    generalize h0 : (0:duration s) = tmp,
-    cases tmp,
-
-    have h1 : ({to_vectr := tmp} : duration s) + ({to_vectr := a} : duration s)= {to_vectr := tmp + a} := rfl,
-    simp * at *,
-    dsimp [has_zero.zero, mul_zero_class.zero, monoid_with_zero.zero,semiring.zero,ring.zero,division_ring.zero] at h0,
-    --cases h0,
-    simp [duration_zero] at h0,
-    cases tmp,
-    cases tmp,
-    have h2: ({to_prod := tmp__to_prod, inv := tmp_inv}:vec scalar) = {to_prod := (field.zero , field.zero ), inv := rfl} 
-            := by cc,
-    simp * at *,
-    dsimp [has_zero.zero, mul_zero_class.zero, monoid_with_zero.zero,add_monoid.zero, sub_neg_monoid.zero, add_group.zero, semiring.zero,ring.zero,division_ring.zero],
-    trivial,
+    intros,--ext,
+    ext,
+    let h0 : (0 + a).to_vec = (0 : vectr s).to_vec + a.to_vec := rfl,
+    simp [h0],
+    exact zero_add _,
+    exact zero_add _,
 end
 
 lemma add_zero_duration : ∀ a : duration s, a + 0 = a := 
@@ -154,6 +143,12 @@ begin
     exact add_zero _,
 end
 
+@[simp]
+def nsmul_duration : ℕ → (duration s) → (duration s) 
+| nat.zero v := duration_zero
+--| 1 v := v
+| (nat.succ n) v := (add_duration_duration) v (nsmul_duration n v)
+
 instance add_monoid_duration : add_monoid (duration s) := ⟨ 
     -- add_semigroup
     add_duration_duration, 
@@ -162,7 +157,8 @@ instance add_monoid_duration : add_monoid (duration s) := ⟨
     duration_zero,
     -- new structure 
     @zero_add_duration f s, 
-    add_zero_duration
+    add_zero_duration,
+    nsmul_duration
 ⟩
 
 instance has_neg_duration : has_neg (duration s) := ⟨neg_duration⟩
@@ -173,14 +169,19 @@ begin
     refl,refl
 end 
 
-instance sub_neg_monoid_duration : sub_neg_monoid (duration s) := ⟨ 
+instance sub_neg_monoid_duration : sub_neg_monoid (duration s) := 
+{
+    neg := neg_duration,
+    ..(show add_monoid (duration s), by apply_instance)
+}
+/-⟨ 
     add_duration_duration, add_assoc_duration, duration_zero, 
     zero_add_duration, 
     add_zero_duration, -- add_monoid
     neg_duration,                                                                  -- has_neg
     sub_duration_duration,                                                              -- has_sub
     sub_eq_add_neg_duration,                                                       -- new
-⟩ 
+⟩ -/
 
 lemma add_left_neg_duration : ∀ a : duration s, -a + a = 0 := 
 begin
@@ -194,7 +195,15 @@ begin
     }
 end
 
-instance : add_group (duration s) := ⟨
+instance : add_group (duration s) := {
+    add_left_neg := begin
+        exact add_left_neg_duration,
+    end,
+..(show sub_neg_monoid (duration s), by apply_instance),
+
+}
+
+/--/ ⟨
     -- sub_neg_monoid
     add_duration_duration, add_assoc_duration, duration_zero, zero_add_duration, add_zero_duration, -- add_monoid
     neg_duration,                                                                  -- has_neg
@@ -202,7 +211,7 @@ instance : add_group (duration s) := ⟨
     sub_eq_add_neg_duration, 
     -- new
     add_left_neg_duration,
-⟩ 
+⟩ -/
 
 lemma add_comm_duration : ∀ a b : duration s, a + b = b + a :=
 begin
@@ -222,7 +231,14 @@ instance add_comm_semigroup_duration : add_comm_semigroup (duration s) := ⟨
     add_comm_duration,
 ⟩
 
-instance add_comm_monoid_duration : add_comm_monoid (duration s) := ⟨
+instance add_comm_monoid_duration : add_comm_monoid (duration s) := {
+    add_comm := begin
+        exact add_comm_duration
+    end, 
+    ..(show add_monoid (duration s), by apply_instance)
+}
+
+/-⟨
 -- add_monoid
     -- add_semigroup
     add_duration_duration, 
@@ -234,7 +250,7 @@ instance add_comm_monoid_duration : add_comm_monoid (duration s) := ⟨
     add_zero_duration,
 -- add_comm_semigroup (minus repeats)
     add_comm_duration,
-⟩
+⟩-/
 
 instance has_scalar_duration : has_scalar scalar (duration s) := ⟨
 smul_duration,
@@ -293,9 +309,26 @@ lemma zero_smul_duration : ∀ (x : duration s), (0 : scalar) • x = 0 := begin
     ext,
     exact zero_mul _, exact zero_mul _
 end
-instance semimodule_K_duration : semimodule scalar (duration s) := ⟨ add_smul_duration, zero_smul_duration ⟩ 
+instance module_K_duration : module scalar (duration s) := ⟨ add_smul_duration, zero_smul_duration ⟩ 
 
-instance add_comm_group_duration : add_comm_group (duration s) := ⟨
+instance add_comm_group_duration : add_comm_group (duration s) := 
+{
+    add_comm := begin
+        exact add_comm_duration
+        
+        /-intros,
+        ext,
+        let h0 : (a + b).to_vec = a.to_vec + b.to_vec := rfl,
+        let h1 : (b + a).to_vec = b.to_vec + a.to_vec := rfl,
+        rw [h0,h1],
+        exact add_comm _ _,
+        exact add_comm _ _,-/
+    end,
+--to_add_group := (show add_group (vec K), by apply_instance),
+--to_add_comm_monoid := (show add_comm_monoid (vec K), by apply_instance),
+..(show add_group (duration s), by apply_instance)
+}
+/-⟨
 -- add_group
     add_duration_duration, add_assoc_duration, duration_zero, zero_add_duration, add_zero_duration, -- add_monoid
     neg_duration,                                                                  -- has_neg
@@ -304,9 +337,9 @@ instance add_comm_group_duration : add_comm_group (duration s) := ⟨
     add_left_neg_duration,
 -- commutativity
     add_comm_duration,
-⟩
+⟩-/
 
-instance : vector_space scalar (duration s) := @time.semimodule_K_duration f s
+instance : module scalar (duration s) := @time.module_K_duration f s
 
 
 /-
@@ -352,13 +385,19 @@ lemma duration_add_assoc'_a1 : ∀ (g1 g2 : duration s) (p : time s), g1 +ᵥ (g
     have h1 : (g1 + g2 +ᵥ p).to_pt = (g1.to_vec +ᵥ g2.to_vec +ᵥ p.to_pt) := rfl,
     rw [h0,h1],
     simp *,
-    simp [has_vadd.vadd, has_add.add, add_semigroup.add, add_monoid.add, sub_neg_monoid.add, 
+    simp [has_vadd.vadd, has_add.add, add_semigroup.add, add_zero_class.add, add_monoid.add, sub_neg_monoid.add, 
         add_group.add, distrib.add, ring.add, division_ring.add],
     cc,
     }
 end
+
 instance duration_add_action: add_action (duration s) (time s) := 
-⟨ add_duration_time, zero_duration_vadd'_a1, duration_add_assoc'_a1⟩ 
+⟨ zero_duration_vadd'_a1, 
+begin
+    let h0 := duration_add_assoc'_a1,
+    intros,
+    exact (h0 g₁ g₂ p).symm
+end⟩ 
 --@[simp]
 --def aff_time_group_sub : time s → time s → duration s := sub_time_time scalar
 instance time_has_vsub : has_vsub (duration s) (time s) := ⟨ sub_time_time⟩ 
@@ -367,11 +406,23 @@ instance : nonempty (time s) := ⟨mk_time s 0⟩
 
 lemma time_vsub_vadd_a1 : ∀ (p1 p2 : (time s)), (p1 -ᵥ p2) +ᵥ p2 = p1 := begin
     intros, ext,
-    repeat {
-    have h0 : (p1 -ᵥ p2 +ᵥ p2).to_point = (p1.to_point -ᵥ p2.to_point +ᵥ p2.to_point) := rfl,
+    --repeat {
+    have h0 : (p1 -ᵥ p2 +ᵥ p2).to_pt = (p1.to_pt -ᵥ p2.to_pt +ᵥ p2.to_pt) := rfl,
     rw h0,
-    simp *,
-    }
+    simp [has_vsub.vsub, has_sub.sub, sub_neg_monoid.sub, add_group.sub, add_comm_group.sub, ring.sub, division_ring.sub],
+    simp [has_vadd.vadd, has_add.add, distrib.add, ring.add, division_ring.add],
+    let h0 : field.add p2.to_pt.to_prod.fst (field.sub p1.to_pt.to_prod.fst p2.to_pt.to_prod.fst) = 
+            field.add (field.sub p1.to_pt.to_prod.fst p2.to_pt.to_prod.fst) p2.to_pt.to_prod.fst := add_comm _ _,
+    rw h0,
+    exact sub_add_cancel _ _,
+    have h0 : (p1 -ᵥ p2 +ᵥ p2).to_pt = (p1.to_pt -ᵥ p2.to_pt +ᵥ p2.to_pt) := rfl,
+    rw h0,
+    simp [has_vsub.vsub, has_sub.sub, sub_neg_monoid.sub, add_group.sub, add_comm_group.sub, ring.sub, division_ring.sub],
+    simp [has_vadd.vadd, has_add.add, distrib.add, ring.add, division_ring.add],
+    let h0 : field.add p2.to_pt.to_prod.snd (field.sub p1.to_pt.to_prod.snd p2.to_pt.to_prod.snd) = 
+            field.add (field.sub p1.to_pt.to_prod.snd p2.to_pt.to_prod.snd) p2.to_pt.to_prod.snd := add_comm _ _,
+    rw h0,
+    exact sub_add_cancel _ _,
 end
 lemma time_vadd_vsub_a1 : ∀ (g : duration s) (p : time s), g +ᵥ p -ᵥ p = g := 
 begin
@@ -384,14 +435,14 @@ begin
     
 end
 
-instance aff_time_torsor : add_torsor (duration s) (time s) := 
-⟨ 
-    add_duration_time,
-    zero_duration_vadd'_a1,    -- add_action
-    duration_add_assoc'_a1,   -- add_action
-    sub_time_time,    -- has_vsub
-    time_vsub_vadd_a1,     -- add_torsor
-    time_vadd_vsub_a1,     -- add_torsor
+instance aff_time_torsor : add_torsor (duration s) (time s) := ⟨
+    begin
+        exact time_vsub_vadd_a1,
+    end,
+    begin
+        exact time_vadd_vsub_a1,
+    end,
+
 ⟩
 
 open_locale affine
@@ -403,9 +454,6 @@ end bar
 
 --prefer implicit here
 universes u
-variables 
-{scalar : Type u} [field scalar] [inhabited scalar] 
-
 
 --extends does not work with abbreviation or def, so the type is ugly.
 
