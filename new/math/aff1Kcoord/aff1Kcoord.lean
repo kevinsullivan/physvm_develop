@@ -6,6 +6,7 @@ import linear_algebra.matrix
 Framed points, vectors, frames
 -/
 
+open_locale affine
 universes u 
 
 section explicitK
@@ -70,7 +71,7 @@ fm.deriv n (p.to_pt, v.to_vec) parent   -- TODO: make sure v ≠ 0 (erasing tyoe
 
 /-
     *************************************
-    Instantiate vector_space K (vector K)
+    Instantiate module K (vector K)
     *************************************
 -/
 
@@ -87,7 +88,7 @@ def neg_vectr (v : vectr s) : vectr s := mk_vectr' s ((-1 : K) • v.to_vec)
 @[simp]
 def sub_vectr_vectr (v1 v2 : vectr s) : vectr s := add_vectr_vectr s v1 (neg_vectr s v2)
 
--- See unframed file for template for proving vector_space
+-- See unframed file for template for proving module
 
 instance has_add_vectr : has_add (vectr s) := ⟨add_vectr_vectr s⟩
 lemma add_assoc_vectr : ∀ a b c : vectr s, a + b + c = a + (b + c) := 
@@ -114,21 +115,13 @@ instance has_zero_vectr : has_zero (vectr s) := ⟨vectr_zero s⟩
 
 lemma zero_add_vectr : ∀ a : vectr s, 0 + a = a := 
 begin
-    intros,--,ext,
-    cases a,
-    generalize h0 : (0:vectr s) = tmp,
-    cases tmp,
+    intros,--ext,
+    ext,
+    let h0 : (0 + a).to_vec = (0 : vectr s).to_vec + a.to_vec := rfl,
+    simp [h0],
+    exact zero_add _,
+    exact zero_add _,
 
-    have h1 : ({to_vec := tmp} : vectr s) + ({to_vec := a} : vectr s)= {to_vec := tmp + a} := rfl,
-    simp * at *,
-    dsimp [has_zero.zero, mul_zero_class.zero, monoid_with_zero.zero,semiring.zero,ring.zero,division_ring.zero] at h0,
-    --cases h0,
-    cases tmp,
-    have h2: ({to_prod := tmp__to_prod, inv := tmp_inv}:vec K) = {to_prod := (field.zero , field.zero ), inv := rfl} 
-            := by cc,
-    simp * at *,
-    dsimp [has_zero.zero, mul_zero_class.zero, monoid_with_zero.zero,add_monoid.zero, sub_neg_monoid.zero, add_group.zero, semiring.zero,ring.zero,division_ring.zero],
-    trivial,
 end
 
 lemma add_zero_vectr : ∀ a : vectr s, a + 0 = a := 
@@ -138,6 +131,12 @@ begin
     exact add_zero _,
 end
 
+@[simp]
+def nsmul_vectr : ℕ → (vectr s) → (vectr s) 
+| nat.zero v := vectr_zero s
+--| 1 v := v
+| (nat.succ n) v := (add_vectr_vectr _) v (nsmul_vectr n v)
+
 instance add_monoid_vectr : add_monoid (vectr s) := ⟨ 
     -- add_semigroup
     add_vectr_vectr s, 
@@ -146,7 +145,8 @@ instance add_monoid_vectr : add_monoid (vectr s) := ⟨
     vectr_zero s,
     -- new structure 
     zero_add_vectr s, 
-    add_zero_vectr s
+    add_zero_vectr s,
+    nsmul_vectr s
 ⟩
 
 instance has_neg_vectr : has_neg (vectr s) := ⟨ neg_vectr s ⟩
@@ -159,12 +159,18 @@ begin
 end 
 
 
-instance sub_neg_monoid_vectr : sub_neg_monoid (vectr s) := ⟨ 
+instance sub_neg_monoid_vectr : sub_neg_monoid (vectr s) :=
+{
+    neg := neg_vectr s,
+    ..(show add_monoid (vectr s), by apply_instance)
+}
+
+/- ⟨ 
     add_vectr_vectr s, add_assoc_vectr s, vectr_zero s, zero_add_vectr s, add_zero_vectr s, -- add_monoid
     neg_vectr s,                                                                  -- has_neg
     sub_vectr_vectr s,                                                              -- has_sub
     sub_eq_add_neg_vectr s,                                                       -- new
-⟩ 
+⟩ -/
 
 lemma add_left_neg_vectr : ∀ a : vectr s, -a + a = 0 := 
 begin
@@ -180,7 +186,16 @@ begin
 end
 
 
-instance : add_group (vectr s) := ⟨
+instance : add_group (vectr s) := {
+    add_left_neg := begin
+        exact add_left_neg_vectr s,
+    end,
+..(show sub_neg_monoid (vectr s), by apply_instance),
+
+}
+
+
+/-⟨
     -- sub_neg_monoid
     add_vectr_vectr s, add_assoc_vectr s, vectr_zero s, zero_add_vectr s, add_zero_vectr s, -- add_monoid
     neg_vectr s,                                                                  -- has_neg
@@ -188,7 +203,7 @@ instance : add_group (vectr s) := ⟨
     sub_eq_add_neg_vectr s, 
     -- new
     add_left_neg_vectr s,
-⟩ 
+⟩ -/
 
 lemma add_comm_vectr : ∀ a b : vectr s, a + b = b + a := 
 begin
@@ -209,19 +224,15 @@ instance add_comm_semigroup_vectr : add_comm_semigroup (vectr s) := ⟨
     add_comm_vectr s,
 ⟩
 
-instance add_comm_monoid_vectr : add_comm_monoid (vectr s) := ⟨
--- add_monoid
-    -- add_semigroup
-    add_vectr_vectr s, 
-    add_assoc_vectr s, 
-    -- has_zero
-    vectr_zero s,
-    -- new structure 
-    zero_add_vectr s, 
-    add_zero_vectr s,
--- add_comm_semigroup (minus repeats)
-    add_comm_vectr s,
-⟩
+instance add_comm_monoid_vectr : add_comm_monoid (vectr s) := 
+{
+    add_comm := begin
+        exact add_comm_vectr s
+    end, 
+    ..(show add_monoid (vectr s), by apply_instance)
+}
+
+
 
 instance has_scalar_vectr : has_scalar K (vectr s) := ⟨
 smul_vectr s,
@@ -283,12 +294,29 @@ lemma zero_smul_vectr : ∀ (x : vectr s), (0 : K) • x = 0 := begin
     ext,
     exact zero_mul _, exact zero_mul _
 end
-instance semimodule_K_vectrK : semimodule K (vectr s) := ⟨ 
+instance module_K_vectrK : module K (vectr s) := ⟨ 
     add_smul_vectr s, 
     zero_smul_vectr s, 
 ⟩ 
 
-instance add_comm_group_vectr : add_comm_group (vectr s) := ⟨
+instance add_comm_group_vectr : add_comm_group (vectr s) := 
+{
+    add_comm := begin
+        exact add_comm_vectr s
+        
+        /-intros,
+        ext,
+        let h0 : (a + b).to_vec = a.to_vec + b.to_vec := rfl,
+        let h1 : (b + a).to_vec = b.to_vec + a.to_vec := rfl,
+        rw [h0,h1],
+        exact add_comm _ _,
+        exact add_comm _ _,-/
+    end,
+--to_add_group := (show add_group (vec K), by apply_instance),
+--to_add_comm_monoid := (show add_comm_monoid (vec K), by apply_instance),
+..(show add_group (vectr s), by apply_instance)
+}
+/-⟨
 -- add_group
     add_vectr_vectr s, add_assoc_vectr s, vectr_zero s, zero_add_vectr s, add_zero_vectr s, -- add_monoid
     neg_vectr s,                                                                  -- has_neg
@@ -297,9 +325,9 @@ instance add_comm_group_vectr : add_comm_group (vectr s) := ⟨
     add_left_neg_vectr s,
 -- commutativity
     add_comm_vectr s,
-⟩
+⟩-/
 
-instance : vector_space K (vectr s) := semimodule_K_vectrK s
+instance : module K (vectr s) := module_K_vectrK s
 
 /-
     ********************
@@ -337,21 +365,30 @@ lemma zero_vectr_vadd'_a1 : ∀ p : point s, (0 : vectr s) +ᵥ p = p := begin
     exact add_zero _
 end
 
-lemma vectr_add_assoc'_a1 : ∀ (g1 g2 : vectr s) (p : point s), g1 +ᵥ (g2 +ᵥ p) = (g1 + g2) +ᵥ p := begin
+lemma vectr_add_assoc'_a1 : ∀ (g1 g2 : vectr s) (p : point s), g1 +ᵥ (g2 +ᵥ p) = g1 + g2 +ᵥ p := begin
     intros, ext,
     repeat {
     have h0 : (g1 +ᵥ (g2 +ᵥ p)).to_pt = (g1.to_vec +ᵥ (g2.to_vec +ᵥ p.to_pt)) := rfl,
     have h1 : (g1 + g2 +ᵥ p).to_pt = (g1.to_vec +ᵥ g2.to_vec +ᵥ p.to_pt) := rfl,
     rw [h0,h1],
     simp *,
-    simp [has_vadd.vadd, has_add.add, add_semigroup.add, add_monoid.add, sub_neg_monoid.add, 
+    simp [has_vadd.vadd, has_add.add, add_semigroup.add, add_zero_class.add,  add_monoid.add, sub_neg_monoid.add, 
         add_group.add, distrib.add, ring.add, division_ring.add],
     cc,
     }
 end
 
 instance vectr_add_action: add_action (vectr s) (point s) := 
-⟨ aff_vectr_group_action s, zero_vectr_vadd'_a1 s, vectr_add_assoc'_a1 s ⟩ 
+⟨ 
+begin
+    exact zero_vectr_vadd'_a1 s
+end,
+begin
+    let h0 := vectr_add_assoc'_a1 s,
+    intros,
+    exact (h0 g₁ g₂ p).symm
+end
+⟩
 
 @[simp]
 def aff_point_group_sub : point s → point s → vectr s := sub_point_point s
@@ -361,12 +398,28 @@ instance : nonempty (point s) := ⟨mk_point s 0⟩
 
 lemma point_vsub_vadd_a1 : ∀ (p1 p2 : (point s)), (p1 -ᵥ p2) +ᵥ p2 = p1 := begin
     intros, ext,
-    repeat {
+    --repeat {
     have h0 : (p1 -ᵥ p2 +ᵥ p2).to_pt = (p1.to_pt -ᵥ p2.to_pt +ᵥ p2.to_pt) := rfl,
     rw h0,
-    simp *,
-    }
+    simp [has_vsub.vsub, has_sub.sub, sub_neg_monoid.sub, add_group.sub, add_comm_group.sub, ring.sub, division_ring.sub],
+    simp [has_vadd.vadd, has_add.add, distrib.add, ring.add, division_ring.add],
+    let h0 : field.add p2.to_pt.to_prod.fst (field.sub p1.to_pt.to_prod.fst p2.to_pt.to_prod.fst) = 
+            field.add (field.sub p1.to_pt.to_prod.fst p2.to_pt.to_prod.fst) p2.to_pt.to_prod.fst := add_comm _ _,
+    rw h0,
+    exact sub_add_cancel _ _,
+    have h0 : (p1 -ᵥ p2 +ᵥ p2).to_pt = (p1.to_pt -ᵥ p2.to_pt +ᵥ p2.to_pt) := rfl,
+    rw h0,
+    simp [has_vsub.vsub, has_sub.sub, sub_neg_monoid.sub, add_group.sub, add_comm_group.sub, ring.sub, division_ring.sub],
+    simp [has_vadd.vadd, has_add.add, distrib.add, ring.add, division_ring.add],
+    let h0 : field.add p2.to_pt.to_prod.snd (field.sub p1.to_pt.to_prod.snd p2.to_pt.to_prod.snd) = 
+            field.add (field.sub p1.to_pt.to_prod.snd p2.to_pt.to_prod.snd) p2.to_pt.to_prod.snd := add_comm _ _,
+    rw h0,
+    exact sub_add_cancel _ _,
+    --have h1 : (p1.to_pt -ᵥ p2.to_pt +ᵥ p2.to_pt).to_prod = (p1.to_pt.to_prod -ᵥ p2.to_pt.to_prod +ᵥ p2.to_pt.to_prod) := by simp *,
+    
+    --}
 end
+
 
 lemma point_vadd_vsub_a1 : ∀ (g : vectr s) (p : point s), g +ᵥ p -ᵥ p = g := 
 begin
@@ -378,7 +431,8 @@ begin
     }
 end
 
-instance aff_point_torsor : add_torsor (vectr s) (point s) := 
+
+/-instance aff_point_torsor : add_torsor (vectr s) (point s) := 
 ⟨ 
     aff_vectr_group_action s,
     zero_vectr_vadd'_a1 s,    -- from add_action
@@ -386,10 +440,17 @@ instance aff_point_torsor : add_torsor (vectr s) (point s) :=
     aff_point_group_sub s,    -- from has_vsub
     point_vsub_vadd_a1 s,     -- from add_torsor
     point_vadd_vsub_a1 s,     -- from add_torsor
-⟩
+⟩-/
 
-open_locale affine
-instance : affine_space (vectr s) (point s) := aff_point_torsor s
+instance : affine_space (vectr s) (point s) := ⟨
+    begin
+        exact point_vsub_vadd_a1 s,
+    end,
+    begin
+        exact point_vadd_vsub_a1 s,
+    end,
+
+⟩
 
 
 
@@ -398,7 +459,7 @@ And now for transforms
 -/
 
 --variables {f1 : fm K n} {f2 : fm K n} (s1 : spc K f1) (s2 : spc K f2)
-
+#check (point s) ≃ᵃ[K] (point s)
 --not usable?
 abbreviation raw_tr := (pt K) ≃ᵃ[K] (pt K)
 --abbreviation fm_tr := (point s1) ≃ᵃ[K] (point s2)

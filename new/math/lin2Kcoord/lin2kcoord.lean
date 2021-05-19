@@ -8,7 +8,7 @@ variables (K : Type u) [field K] [inhabited K]
 /-
 Main goal of this file is to instsantiate this typeclass application.
 -/
-#check vector_space K (K × K)
+#check module K (K × K)
 
 /-
 Operations
@@ -94,12 +94,12 @@ instance : distrib_mul_action K (K × K) := ⟨ smul_add_l2 K, smul_zero_l2 K⟩
 
 
 /- 
-class semimodule (R : Type u) (M : Type v) [semiring R]
+class module (R : Type u) (M : Type v) [semiring R]
   [add_comm_monoid M] extends distrib_mul_action R M :=
 (add_smul : ∀(r s : R) (x : M), (r + s) • x = r • x + s • x)
 (zero_smul : ∀x : M, (0 : R) • x = 0)
 -/
-#check semimodule
+#check module
 lemma add_smul_l2 : ∀ (r s : K) (x : K × K), (r + s) • x = r • x + s • x := 
 begin
   intros,
@@ -116,18 +116,18 @@ begin
   simp *,
   simp *
 end
-instance semimodule_K_KxK : semimodule K (K × K) := ⟨ add_smul_l2 K, zero_smul_l2 K ⟩ 
+instance module_K_KxK : module K (K × K) := ⟨ add_smul_l2 K, zero_smul_l2 K ⟩ 
 
 
 
 /-
-vector_space : 
+module : 
   Π (R : Type u_1)                -- ring of scalars
     (M : Type u_2)                -- set of vectoids
     [_inst_1 : field R]           -- implicit
     [_inst_2 : add_comm_group M], -- implicit
   Type (max u_1 u_2) :=
-    semimodule R M      -- a vector space R M is a semimodule R M
+    module R M      -- a vector space R M is a module R M
 -/
-instance : vector_space K (K × K) := semimodule_K_KxK K
+instance : module K (K × K) := module_K_KxK K
 
