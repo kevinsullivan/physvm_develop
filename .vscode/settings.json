@@ -1,4 +1,5 @@
 {
+    "keyboard.dispatch": "keyCode",
     "cSpell.words": [
         "coordinatized",
         "gitignore"
