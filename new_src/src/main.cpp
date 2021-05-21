@@ -301,7 +301,7 @@ public:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, StringRef file) override
   {
-    LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
+    //LOG(INFO) << "Peirce. Building interpretation for " << file.str() << "." << std::endl;
     if(!rewriteMode)
     {
       context_ = &CI.getASTContext();

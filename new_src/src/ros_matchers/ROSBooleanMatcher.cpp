@@ -40,6 +40,7 @@ void ROSBooleanMatcher::setup(){
 	
 		StatementMatcher cxxBoolLiteralExpr_=cxxBoolLiteral().bind("CXXBoolLiteralExpr");
 		localFinder_.addMatcher(cxxBoolLiteralExpr_,this);
+    this->childExprStore_ = nullptr;
 };
 
 void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
@@ -64,7 +65,6 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
 	auto cxxBoolLiteralExpr_ = Result.Nodes.getNodeAs<clang::CXXBoolLiteralExpr>("CXXBoolLiteralExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
-    this->childExprStore_ = nullptr;
 
     if(cxxConstructExpr_){
         auto decl_ = cxxConstructExpr_->getConstructor();

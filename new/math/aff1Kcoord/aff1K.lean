@@ -599,26 +599,17 @@ open_locale affine
 --def ttf [affine_space (vec K) (pt K)] : _ := @affine_equiv K K (pt K) 
 --#check @affine_equiv K (pt K) (pt K) (vec K) (vec K) _ _ ()
 
+instance : has_neg (vec K) := ⟨neg_vec K⟩
+
 @[simp]
 def nsmul_vec : ℕ → (vec K) → (vec K) 
 | nat.zero v := vec_zero K
 --| 1 v := v
 | (nat.succ n) v := (add_vec_vec _) v (nsmul_vec n v)
 
-instance : has_neg (vec K) := ⟨neg_vec K⟩
-/--/
-@[simp]
-def gsmul_vec : ℤ → (vec K) → (vec K) 
-| (int.of_nat nat.zero) v := vec_zero K
-| (int.of_nat 1) v := v
-| (-1) v := -v--(-(nsmul_vec K i v))
-| (-(nat.succ n)) v := (-v)--(add_vec_vec _) (-v) (gsmul_vec (int.of_nat nat.zero) v)
--/
-
 @[simp]
 def gsmul_vec : ℤ → (vec K) → (vec K) 
 | (int.of_nat i) v := nsmul_vec K i v
---| (int.of_nat (nat.succ n)) v := vec_zero K
 | (int.neg_succ_of_nat i) v := (-(nsmul_vec K i v))
 
 lemma  t : auto_param (∀ (a : vec K), gsmul_vec K 0 a = 0) (name.mk_string "try_refl_tac" name.anonymous) :=

@@ -74,11 +74,13 @@ void ROS1ProgramMatcher::run(const MatchFinder::MatchResult &Result){
                             {
                                 ROSStatementMatcher rootMatcher{this->context_, this->interp_};
                                 rootMatcher.setup();
-                                //std::cout<<"dumping";
+                               // std::cout<<"dumping\n";
                                 //(*it)->dump();
-                                //std::cout<<"dumped";
+                                //std::cout<<"dumped\n";
                                 rootMatcher.visit(**it);
                                 if(rootMatcher.getChildExprStore()){
+                                    std::cout<<"GOT A WINNER!\n";
+                                    rootMatcher.getChildExprStore()->dump();
                                     //rootMatcher.getChildExprStore()->dump();
                                     stmts.push_back(rootMatcher.getChildExprStore());
                                 }

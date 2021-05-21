@@ -516,6 +516,9 @@
   /usr/include/x86_64-linux-gnu/bits/getopt_core.h Coords.h \
   /usr/lib/llvm-6.0/include/clang/AST/AST.h \
   /usr/lib/llvm-6.0/include/clang/AST/StmtVisitor.h AST.h Domain.h \
+  maps/ASTToCoords.h maps/CoordsToDomain.h oracles/Oracle.h \
+  oracles/Oracle_AskAll.h oracles/Oracle_LeanInference.h \
+  oracles/../Interp.h maps/CoordsToInterp.h maps/InterpToDomain.h \
   /usr/include/g3log/g3log.hpp /usr/include/g3log/loglevels.hpp \
   /usr/include/g3log/generated_definitions.hpp \
   /usr/include/g3log/atomicbool.hpp /usr/include/g3log/logcapture.hpp \
@@ -546,9 +549,6 @@
   /usr/include/g3log/logmessage.hpp /usr/include/g3log/time.hpp \
   /usr/include/g3log/moveoncopy.hpp \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread \
-  maps/ASTToCoords.h maps/CoordsToDomain.h oracles/Oracle.h \
-  oracles/Oracle_AskAll.h oracles/Oracle_LeanInference.h \
-  oracles/../Interp.h maps/CoordsToInterp.h maps/InterpToDomain.h \
   ros_matchers/ROSFunctionMatcher.h ros_matchers/ROS1ProgramMatcher.h \
   ros_matchers/../BaseMatcher.h ros_matchers/../Interpretation.h
 
@@ -1628,6 +1628,22 @@ AST.h:
 
 Domain.h:
 
+maps/ASTToCoords.h:
+
+maps/CoordsToDomain.h:
+
+oracles/Oracle.h:
+
+oracles/Oracle_AskAll.h:
+
+oracles/Oracle_LeanInference.h:
+
+oracles/../Interp.h:
+
+maps/CoordsToInterp.h:
+
+maps/InterpToDomain.h:
+
 /usr/include/g3log/g3log.hpp:
 
 /usr/include/g3log/loglevels.hpp:
@@ -1695,22 +1711,6 @@ Domain.h:
 /usr/include/g3log/moveoncopy.hpp:
 
 /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread:
-
-maps/ASTToCoords.h:
-
-maps/CoordsToDomain.h:
-
-oracles/Oracle.h:
-
-oracles/Oracle_AskAll.h:
-
-oracles/Oracle_LeanInference.h:
-
-oracles/../Interp.h:
-
-maps/CoordsToInterp.h:
-
-maps/InterpToDomain.h:
 
 ros_matchers/ROSFunctionMatcher.h:
 

@@ -9,7 +9,7 @@
 
 #include "Domain.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 #ifndef leanInferenceWildcard
 #define leanInferenceWildcard "_"
@@ -118,6 +118,24 @@ DerivedTimeCoordinateSpace* Domain::mkDerivedTimeCoordinateSpace(std::string nam
     this->timeSpaces.push_back(sp);
     return sp;
 };
+StandardGeom1DCoordinateSpace* Domain::mkStandardGeom1DCoordinateSpace(std::string name){
+    StandardGeom1DCoordinateSpace* sp = new StandardGeom1DCoordinateSpace(name);
+    this->spaces.push_back(static_cast<Geom1DCoordinateSpace*>(sp));
+    this->geom1dSpaces.push_back(sp);
+    return sp;
+};
+
+DerivedGeom1DCoordinateSpace* Domain::mkDerivedGeom1DCoordinateSpace(std::string name, Geom1DCoordinateSpace* parent, float* originData, float** basisData){
+    DerivedGeom1DCoordinateSpace* sp = new DerivedGeom1DCoordinateSpace(name, parent, originData, basisData);
+    this->spaces.push_back(static_cast<Geom1DCoordinateSpace*>(sp));
+    this->geom1dSpaces.push_back(sp);
+    return sp;
+};
+
+Scalar* Domain::mkScalar(std::string name, float* value){
+    auto scalar = new Scalar(name, value);
+    return scalar;
+}
 
 Duration* Domain::mkDuration(std::string name, TimeCoordinateSpace* parent, float* value){
     auto dur = new Duration(name, parent, value);
@@ -129,13 +147,22 @@ Time* Domain::mkTime(std::string name, TimeCoordinateSpace* parent, float* value
     return time;
 }
 
-
-Scalar* Domain::mkScalar(std::string name, float* value){
-    auto scalar = new Scalar(name, value);
-    return scalar;
-}
-
 TimeTransform* Domain::mkTimeTransform(std::string name, TimeCoordinateSpace* domain_, TimeCoordinateSpace* codomain_){
     auto ttransform = new TimeTransform(name, domain_, codomain_);
     return ttransform;
+}
+
+Displacement* Domain::mkDisplacement(std::string name, Geom1DCoordinateSpace* parent, float* value){
+    auto disp = new Displacement(name, parent, value);
+    return disp;
+}
+
+Position* Domain::mkPosition(std::string name, Geom1DCoordinateSpace* parent, float* value){
+    auto pos = new Position(name, parent, value);
+    return pos;
+}
+
+Geom1DTransform* Domain::mkGeom1DTransform(std::string name, Geom1DCoordinateSpace* domain_, Geom1DCoordinateSpace* codomain_){
+    auto g1transform = new Geom1DTransform(name, domain_, codomain_);
+    return g1transform;
 }

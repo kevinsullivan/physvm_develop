@@ -1,7 +1,7 @@
 
 #include "ASTToCoords.h"
 //#include "AST.h"
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 #include <iostream>
 #include <exception>
@@ -92,6 +92,55 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
             end.getSpellingColumnNumber()
         );
     }
+    else if(astNode->ASTTag_ == ASTTag::ConsDecl__){
+        auto code = astNode->ASTNode_.ConsDecl_->getQualifiedNameAsString();
+        auto node = astNode->ASTNode_.ConsDecl_;
+        std::cout<<"found name!!\n";
+        std::cout<<code<<"\n";
+        std::cout<<"found name!!\n";
+       // std::cout<<node->getThisType()->getAsString()<<"\n";
+        std::cout<<"found name!!\n";
+        std::cout<<((clang::QualType)node->getReturnType()).getAsString()<<"\n";
+        std::cout<<"found name!!\n";
+        //std::cout<<((clang::QualType)node->getDeclaredReturnType()).getAsString()<<"\n";
+        std::cout<<"found name!!\n";
+        std::cout<<((clang::QualType)node->getCallResultType()).getAsString()<<"\n";
+        std::cout<<"found name!!\n";
+
+        coords->state_ = new coords::ASTState(
+            "",
+            "",
+            "",
+            code,//(clang::dyn_cast<clang::NamedDecl>(decl)) ? (clang::dyn_cast<clang::NamedDecl>(decl))->getNameAsString() : "",
+            code,
+            0,0,0,0
+            //begin.getSpellingLineNumber(),
+            //begin.getSpellingColumnNumber(),
+            //end.getSpellingLineNumber(),
+            //end.getSpellingColumnNumber()
+        );
+    }
+    else if(astNode->ASTTag_ == ASTTag::ParamDecl__){
+        auto code = astNode->ASTNode_.ParamDecl_->getNameAsString();
+        coords->state_ = new coords::ASTState(
+            "",
+            "",
+            "",
+            code,//(clang::dyn_cast<clang::NamedDecl>(decl)) ? (clang::dyn_cast<clang::NamedDecl>(decl))->getNameAsString() : "",
+            code,
+            0,0,0,0
+            //begin.getSpellingLineNumber(),
+            //begin.getSpellingColumnNumber(),
+            //end.getSpellingLineNumber(),
+            //end.getSpellingColumnNumber()
+        );
+
+    }
+    else{
+        for(int i = 0;i<100;i++){
+            std::cout<<"Warning : bad code in ASTToCoords\n";
+        }
+    }
 }
 /*
 void ASTToCoords::setASTState(coords::Coords* coords, clang::Decl* decl, clang::ASTContext* c)
@@ -151,6 +200,14 @@ bool ASTToCoords::put(std::shared_ptr<ast::NodeContainer> astNode, coords::Coord
     }
     if(astNode->ASTTag_==ASTTag::UnitDecl__){
 				unit_edges[astNode->ASTNode_.UnitDecl_] = coords_;
+                return true;
+    }
+    if(astNode->ASTTag_==ASTTag::ConsDecl__){
+				cons_edges[astNode->ASTNode_.ConsDecl_] = coords_;
+                return true;
+    }
+    if(astNode->ASTTag_==ASTTag::ParamDecl__){
+				param_edges[astNode->ASTNode_.ParamDecl_] = coords_;
                 return true;
     }
     else{

@@ -5,26 +5,26 @@ namespace lang.time
 
 universes u
 
-@[protected]
-abbreviation K := ℚ
+--@[protected]
+--abbreviation scalar := ℚ
 
 
 
 structure time_frame_var extends var 
 
 
-inductive time_frame_expr : Type 1 --{f : fm K T}
-| lit (f : fm K TIME) : time_frame_expr
+inductive time_frame_expr : Type 1 --{f : fm scalar T}
+| lit (f : fm scalar TIME) : time_frame_expr
 | var (v : time_frame_var) : time_frame_expr
 
 
 abbreviation time_frame_env :=
-  time_frame_var → fm K TIME
+  time_frame_var → fm scalar TIME
 abbreviation time_frame_eval :=
-  time_frame_env → time_frame_expr → fm K TIME
+  time_frame_env → time_frame_expr → fm scalar TIME
 
 def default_frame_env : time_frame_env := 
-  λv, time_std_frame K
+  λv, time_std_frame
 def default_frame_eval : time_frame_eval := λenv_, λexpr_, 
   begin
     cases expr_,
@@ -36,44 +36,38 @@ def static_frame_eval : time_frame_eval
 | env_ (time_frame_expr.lit f) := f
 | env_ (time_frame_expr.var v) := env_ v
 
-def time_frame_expr.value (expr_ : time_frame_expr) : fm K TIME :=
+def time_frame_expr.value (expr_ : time_frame_expr) : fm scalar TIME :=
   (static_frame_eval) (default_frame_env) expr_
-
-
-
-
-variables  (ff : time_frame_expr) 
-#check ff.value 
 
 structure time_space_var (f : time_frame_expr) extends var
 
 inductive time_space_expr (f : time_frame_expr) : Type 1
-| lit (sp : spc K f.value) : time_space_expr
+| lit (sp : spc scalar f.value) : time_space_expr
 | var (v : time_space_var f) : time_space_expr
 | mk : time_space_expr
 
 abbreviation time_space_env := Π(f : time_frame_expr),
-  time_space_var f → spc K f.value
+  time_space_var f → spc scalar f.value
 abbreviation time_space_eval := Π(f : time_frame_expr),
-  time_space_env → time_space_expr f → spc K f.value
+  time_space_env → time_space_expr f → spc scalar f.value
 
 
 def default_space_env : time_space_env := 
-  λf, λv, mk_space K f.value
+  λf, λv, mk_space scalar f.value
 def default_space_eval : time_space_eval := λf, λenv_, λexpr_, 
   begin
     cases expr_,
     exact expr_,
     exact (default_space_env f expr_),
-    exact mk_space K f.value
+    exact mk_space scalar f.value
   end
 
 def static_space_eval : time_space_eval 
 | f env_ (time_space_expr.lit sp) := sp
 | f env_ (time_space_expr.var v) := env_ f v
-| f env_ (time_space_expr.mk) := mk_space K f.value
+| f env_ (time_space_expr.mk) := mk_space scalar f.value
 
-def time_space_expr.value {f : time_frame_expr} (expr_ : time_space_expr f)  : spc K f.value :=
+def time_space_expr.value {f : time_frame_expr} (expr_ : time_space_expr f)  : spc scalar f.value :=
   (static_space_eval f) (default_space_env) expr_
 
 /-
@@ -83,12 +77,12 @@ structure transform_var
   {f1 : time_frame_expr} (sp1 : time_space_expr f1) {f2 : time_frame_expr} (sp2 : time_space_expr f2) extends var
 
 inductive time_transform_expr
-  --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
- -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
+  --{f1 : fm scalar TIME} {f2 : fm scalar TIME} (sp1 : spc scalar f1) (sp2:=sp1 : spc scalar f2) 
+ -- (sp1 : Σf1 : fm scalar TIME, spc scalar f1)  (sp2 : Σf2 : fm scalar TIME, spc scalar f2 := sp1)
   : Π {f1 : time_frame_expr} (sp1 : time_space_expr f1), Π {f2 : time_frame_expr} (sp2 : time_space_expr f2), Type 1
 | lit {f1 : time_frame_expr} {sp1 : time_space_expr f1} {f2 : time_frame_expr} {sp2 : time_space_expr f2} (p : time_transform sp1.value sp2.value) : time_transform_expr sp1 sp2
 | var {f1 : time_frame_expr} {sp1 : time_space_expr f1} {f2 : time_frame_expr} {sp2 : time_space_expr f2} (v : transform_var sp1 sp2) : time_transform_expr sp1 sp2
-| compose_lit {f1 : time_frame_expr} {sp1 : time_space_expr f1} {f2 : fm K TIME} {sp2 : spc K f2} (t1 : time_transform sp1.value sp2) 
+| compose_lit {f1 : time_frame_expr} {sp1 : time_space_expr f1} {f2 : fm scalar TIME} {sp2 : spc scalar f2} (t1 : time_transform sp1.value sp2) 
   {f3 : time_frame_expr} {sp3 : time_space_expr f3}  (t2 : time_transform sp2 sp3.value) : time_transform_expr sp1 sp3
 | inv_lit {f1 : time_frame_expr} {sp1 : time_space_expr f1} {f2 : time_frame_expr} {sp2 : time_space_expr f2} (t : time_transform sp2.value sp1.value) : time_transform_expr sp1 sp2
 | compose 
@@ -104,27 +98,11 @@ inductive time_transform_expr
 class time_transform_has_lit 
   {f1 : time_frame_expr} (sp1 : time_space_expr f1) {f2 : time_frame_expr} (sp2 : time_space_expr f2) := 
   (cast : time_transform sp1.value sp2.value → time_transform_expr sp1 sp2)
-notation `[`tlit`]` := time_transform_has_lit.cast tlit
+notation `|`tlit`|` := time_transform_has_lit.cast tlit
 
 instance time_transform_lit 
   {f1 : time_frame_expr} {sp1 : time_space_expr f1} {f2 : time_frame_expr} {sp2 : time_space_expr f2} : time_transform_has_lit sp1 sp2 := 
   ⟨λt, time_transform_expr.lit t⟩
-
-
-/-
-
-inductive time_transform_expr {K : Type u} [field K] [inhabited K] 
-  --{f1 : fm K TIME} {f2 : fm K TIME} (sp1 : spc K f1) (sp2:=sp1 : spc K f2) 
- -- (sp1 : Σf1 : fm K TIME, spc K f1)  (sp2 : Σf2 : fm K TIME, spc K f2 := sp1)
-  : Σf1 : fm K TIME, spc K f1 → Σf2 : fm K TIME, spc K f2 → Type u
-| lit (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (p : time_transform sp1.1 sp1.2) : time_transform_expr
---| var (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : transform_var sp1.1 sp1.2) : time_transform_expr sp1 sp2
---| apply_duration (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2) (v : time_transform_expr ) (d : duration_expr sp) : time_transform_expr sp1 sp2
---| compose (sp1 : Σf1 : fm K TIME, spc K f1) (sp2 : Σf2 : fm K TIME, spc K f2)  (v : time_transform_expr sp1 sp2) 
- -- (sp3 : Σf3 : fm K TIME, spc K f3)  (v : time_transform_expr sp2 sp3) : time_transform_expr sp1 sp3
-
-
--/
 
 abbreviation transform_env 
   {f1 : time_frame_expr} (sp1 : time_space_expr f1) {f2 : time_frame_expr} (sp2 : time_space_expr f2)  := 
@@ -137,11 +115,11 @@ abbreviation transform_eval
 
 def default_transform_env 
   {f1 : time_frame_expr} (sp1 : time_space_expr f1) {f2 : time_frame_expr} (sp2 : time_space_expr f2) : transform_env sp1 sp2:=
-    λv, sp1.value.time_tr sp2.value
+    λv, sp1.value.mk_time_transform_to sp2.value
 
 def default_transform_eval 
   {f1 : time_frame_expr} (sp1 : time_space_expr f1) {f2 : time_frame_expr} (sp2 : time_space_expr f2) : transform_eval sp1 sp2 :=
-  λenv_, λexpr_,  sp1.value.time_tr sp2.value
+  λenv_, λexpr_,  sp1.value.mk_time_transform_to sp2.value
 
 def static_transform_eval 
   {f1 : time_frame_expr} (sp1 : time_space_expr f1) {f2 : time_frame_expr} (sp2 : time_space_expr f2) : transform_eval sp1 sp2 
@@ -196,15 +174,48 @@ def time_transform_expr.trans
  := λt2,
  time_transform_expr.compose_lit expr_.value t2.value
 
+structure scalar_var extends var
+
 inductive scalar_expr : Type
-| lit (s : K) : scalar_expr
+| lit (s : scalar) : scalar_expr
+| var (v : scalar_var) : scalar_expr
+| add_scalar_scalar (s1 : scalar_expr) (s2 : scalar_expr) : scalar_expr
+| mul_scalar_scalar (s1 : scalar_expr) (s2 : scalar_expr) : scalar_expr
+
+abbreviation scalar_env := scalar_var → scalar
+
+abbreviation scalar_eval := 
+  scalar_env  → scalar_expr → scalar
+
+
+def default_scalar_env 
+   : scalar_env :=
+    λv, 1
+
+def default_scalar_eval 
+  : scalar_eval :=
+  λenv_, λexpr_,  1
+
+def static_scalar_eval 
+   : scalar_eval
+| env_ (scalar_expr.lit s) := s
+| env_ (scalar_expr.var v) := (env_ v)
+| env_ (scalar_expr.add_scalar_scalar s1 s2) := (static_scalar_eval env_ s1) + (static_scalar_eval env_ s2)
+| env_ (scalar_expr.mul_scalar_scalar s1 s2) := (static_scalar_eval env_ s1) * (static_scalar_eval env_ s2)
+
+def time_scalar_expr.value
+  (expr_ : scalar_expr) : scalar :=
+  static_scalar_eval default_scalar_env expr_
+
+instance : field scalar_expr := sorry
+
 
 --class scalar_has_lit (sp : scalar_expr) := 
---  (cast : K → scalar_expr)
-notation `[`slit`]` := scalar_expr.lit slit --scalar_has_lit.cast slit
+--  (cast : scalar → scalar_expr)
+notation `|`slit`|` := scalar_expr.lit slit --scalar_has_lit.cast slit
 
 --instance scalar_lit (sp : scalar_expr) : scalar_has_lit  sp := 
---  ⟨λt : K, scalar_expr.lit t⟩
+--  ⟨λt : scalar, scalar_expr.lit t⟩
 /-
 Duration
 -/
@@ -214,7 +225,7 @@ structure duration_var {f : time_frame_expr} (sp : time_space_expr f) extends va
 Time
 -/
 structure time_var  {f : time_frame_expr} (sp : time_space_expr f) extends var
-set_option trace.app_builder true --need to fix K for this to work
+set_option trace.app_builder true --need to fix scalar for this to work
 
 mutual inductive duration_expr, time_expr {f : time_frame_expr} (sp : time_space_expr f)
 with duration_expr : Type 1
@@ -277,7 +288,7 @@ with static_duration_eval : duration_eval
 | f sp tenv_ denv_ (duration_expr.neg_dur d) := -(static_duration_eval sp tenv_ denv_ d)
 | f sp tenv_ denv_ (duration_expr.sub_dur_dur d1 d2) := (static_duration_eval sp tenv_ denv_ d1) -ᵥ (static_duration_eval sp tenv_ denv_ d2)
 | f sp tenv_ denv_ (duration_expr.sub_time_time t1 t2) := (static_time_eval sp tenv_ denv_ t1) -ᵥ (static_time_eval sp tenv_ denv_ t2)
-| f sp tenv_ denv_ (duration_expr.smul_dur s d) := s•(static_duration_eval sp tenv_ denv_ d)
+| f sp tenv_ denv_ (duration_expr.smul_dur s d) := (static_scalar_eval default_scalar_env s)•(static_duration_eval sp tenv_ denv_ d)
 | f sp tenv_ denv_ (duration_expr.apply_duration_lit t d) := t.value.transform_duration d
 with static_time_eval : time_eval
 | f sp tenv_ denv_ (time_expr.lit p) := p
@@ -305,51 +316,51 @@ def duration_expr.value {f : time_frame_expr} {sp : time_space_expr f} (expr_ : 
 
 
 --not working -- lean doesn't play nice with notation and dependent types
---notation `[`flit`]` := time_frame_expr.lit flit
---notation `[`slit`]` := time_space_expr.lit slit
---instance {K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} : has_coe (time sp) (time_expr sp) := ⟨λt, time_expr.lit t⟩
---instance {K : Type u} [field K] [inhabited K] {f : fm K TIME} {sp : spc K f} : has_coe (duration sp) (duration_expr sp) := ⟨λt, duration_expr.lit t⟩
---instance {K : Type u} [field K] [inhabited K] : has_coe (fm K TIME) (time_frame_expr K) := ⟨λf, time_frame_expr.lit f⟩
---instance {K : Type u} [field K] [inhabited K] {f : fm K TIME} : has_coe (spc K f) (time_space_expr K) := ⟨λs, time_space_expr.lit s⟩
+--notation `|`flit`|` := time_frame_expr.lit flit
+--notation `|`slit`|` := time_space_expr.lit slit
+--instance {scalar : Type u} [field scalar] [inhabited scalar] {f : fm scalar TIME} {sp : spc scalar f} : has_coe (time sp) (time_expr sp) := ⟨λt, time_expr.lit t⟩
+--instance {scalar : Type u} [field scalar] [inhabited scalar] {f : fm scalar TIME} {sp : spc scalar f} : has_coe (duration sp) (duration_expr sp) := ⟨λt, duration_expr.lit t⟩
+--instance {scalar : Type u} [field scalar] [inhabited scalar] : has_coe (fm scalar TIME) (time_frame_expr scalar) := ⟨λf, time_frame_expr.lit f⟩
+--instance {scalar : Type u} [field scalar] [inhabited scalar] {f : fm scalar TIME} : has_coe (spc scalar f) (time_space_expr scalar) := ⟨λs, time_space_expr.lit s⟩
 
 /-
 class has_lit (t1 : Type 0) (t2 : Type 1) :=
   (cast : t1 → t2)
-notation `[`lit`]` := has_lit.cast lit
+notation `|`lit`|` := has_lit.cast lit
 instance time_lit {f : time_frame_expr} {sp : time_space_expr f } : has_lit (time sp.value) (time_expr sp) :=
   ⟨λt, time_expr.lit t⟩
 instance duration_lit {f : time_frame_expr} {sp : time_space_expr f } : has_lit (duration sp.value) (duration_expr sp) :=
   ⟨λd, duration_expr.lit d⟩
-instance time_space_lit {f : time_frame_expr} : has_lit (spc K f.value) (time_space_expr f) :=
+instance time_space_lit {f : time_frame_expr} : has_lit (spc scalar f.value) (time_space_expr f) :=
   ⟨λs, time_space_expr.lit s⟩
-instance time_frame_lit : has_lit (fm K TIME) (time_frame_expr) :=
+instance time_frame_lit : has_lit (fm scalar TIME) (time_frame_expr) :=
   ⟨λf, time_frame_expr.lit f⟩
 -/
 
 class time_has_lit {f : time_frame_expr} (sp : time_space_expr f) := 
   (cast : time sp.value → time_expr sp)
-notation `[`tlit`]` := time_has_lit.cast tlit
+notation `|`tlit`|` := time_has_lit.cast tlit
 
 instance time_lit {f : time_frame_expr} (sp : time_space_expr f) : time_has_lit  sp := 
   ⟨λt : time sp.value, time_expr.lit t⟩
 
 class duration_has_lit {f : time_frame_expr} (sp : time_space_expr f) := 
   (cast : duration sp.value → duration_expr sp)
-notation `[`tlit`]` := duration_has_lit.cast tlit
+notation `|`tlit`|` := duration_has_lit.cast tlit
 
 instance duration_lit {f : time_frame_expr} (sp : time_space_expr f) : duration_has_lit  sp := 
   ⟨λt : duration sp.value, duration_expr.lit t⟩
 
 class time_frame_has_lit := 
-  (cast : fm K TIME → time_frame_expr)
-notation `[`flit`]` := time_frame_has_lit.cast flit
+  (cast : fm scalar TIME → time_frame_expr)
+notation `|`flit`|` := time_frame_has_lit.cast flit
 
 instance time_frame_lit : time_frame_has_lit := 
   ⟨λf, time_frame_expr.lit f⟩
 
 class time_space_has_lit (f : time_frame_expr ) := 
-  (cast : spc K f.value  → time_space_expr f)
-notation `[`slit`]` := time_space_has_lit.cast slit
+  (cast : spc scalar f.value  → time_space_expr f)
+notation `|`slit`|` := time_space_has_lit.cast slit
 
 instance time_space_lit {f : time_frame_expr} : time_space_has_lit f := 
   ⟨λs, time_space_expr.lit s⟩
@@ -390,10 +401,14 @@ def neg_dur_expr (v : duration_expr sp) : duration_expr sp :=
 def sub_dur_expr_dur_expr (v1 v2 : duration_expr sp) : duration_expr sp :=    -- v1-v2
     duration_expr.sub_dur_dur v1 v2
 
--- See unframed file for template for proving vector_space
+-- See unframed file for template for proving module
 instance has_one_dur_expr : has_one (duration_expr sp) := ⟨duration_expr.one⟩
 
 instance has_add_dur_expr : has_add (duration_expr sp) := ⟨ add_dur_expr_dur_expr ⟩
+
+/-
+THIS IS UNPROVABLE
+-/
 lemma add_assoc_dur_expr : ∀ a b c : duration_expr sp, a + b + c = a + (b + c) :=
 begin
     intros,
@@ -437,7 +452,7 @@ instance has_zero_dur_expr : has_zero (duration_expr sp) := ⟨dur_expr_zero⟩
 
 lemma zero_add_dur_expr : ∀ a : duration_expr sp, 0 + a = a := sorry
 lemma add_zero_dur_expr : ∀ a : duration_expr sp, a + 0 = a := sorry
-instance add_monoid_dur_expr : add_monoid (duration_expr sp) := ⟨ 
+instance add_monoid_dur_expr : add_monoid (duration_expr sp) := sorry/-⟨ 
     -- add_semigroup
     add_dur_expr_dur_expr, 
     add_assoc_dur_expr, 
@@ -446,22 +461,22 @@ instance add_monoid_dur_expr : add_monoid (duration_expr sp) := ⟨
     -- new structure 
     sorry,--@zero_add_dur_expr _ _ f sp, 
     add_zero_dur_expr
-⟩
+⟩-/
 
 instance has_neg_dur_expr : has_neg (duration_expr sp) := ⟨neg_dur_expr⟩
 instance has_sub_dur_expr : has_sub (duration_expr sp) := ⟨ sub_dur_expr_dur_expr⟩ 
 lemma sub_eq_add_neg_dur_expr : ∀ a b : duration_expr sp, a - b = a + -b := sorry
-instance sub_neg_monoid_dur_expr : sub_neg_monoid (duration_expr sp) := ⟨ 
+instance sub_neg_monoid_dur_expr : sub_neg_monoid (duration_expr sp) :=sorry /-⟨ 
     add_dur_expr_dur_expr, add_assoc_dur_expr, dur_expr_zero, 
     zero_add_dur_expr, 
     add_zero_dur_expr, -- add_monoid
     neg_dur_expr,                                                                  -- has_neg
     sub_dur_expr_dur_expr,                                                              -- has_sub
     sub_eq_add_neg_dur_expr,                                                       -- new
-⟩ 
+⟩ -/
 
 lemma add_left_neg_dur_expr : ∀ a : duration_expr sp, -a + a = 0 := sorry
-instance : add_group (duration_expr sp) := ⟨
+instance : add_group (duration_expr sp) := sorry/-⟨
     -- sub_neg_monoid
     add_dur_expr_dur_expr, add_assoc_dur_expr, dur_expr_zero, zero_add_dur_expr, add_zero_dur_expr, -- add_monoid
     neg_dur_expr,                                                                  -- has_neg
@@ -469,7 +484,7 @@ instance : add_group (duration_expr sp) := ⟨
     sub_eq_add_neg_dur_expr, 
     -- new
     add_left_neg_dur_expr,
-⟩ 
+⟩ -/
 
 lemma add_comm_dur_expr : ∀ a b : duration_expr sp, a + b = b + a := sorry
 instance add_comm_semigroup_dur_expr : add_comm_semigroup (duration_expr sp) := ⟨
@@ -479,7 +494,7 @@ instance add_comm_semigroup_dur_expr : add_comm_semigroup (duration_expr sp) := 
     add_comm_dur_expr,
 ⟩
 
-instance add_comm_monoid_dur_expr : add_comm_monoid (duration_expr sp) := ⟨
+instance add_comm_monoid_dur_expr : add_comm_monoid (duration_expr sp) := sorry/-⟨
 -- add_monoid
     -- add_semigroup
     add_dur_expr_dur_expr, 
@@ -491,7 +506,7 @@ instance add_comm_monoid_dur_expr : add_comm_monoid (duration_expr sp) := ⟨
     add_zero_dur_expr,
 -- add_comm_semigroup (minus repeats)
     add_comm_dur_expr,
-⟩
+⟩-/
 
 instance has_scalar_dur_expr : has_scalar scalar_expr (duration_expr sp) := ⟨
 smul_dur_expr,
@@ -509,17 +524,17 @@ mul_smul_dur_expr,
 
 lemma smul_add_dur_expr : ∀(r : scalar_expr) (x y : duration_expr sp), r • (x + y) = r • x + r • y := sorry
 lemma smul_zero_dur_expr : ∀(r : scalar_expr), r • (0 : duration_expr sp) = 0 := sorry
-instance distrib_mul_action_K_dur_exprKx : distrib_mul_action scalar_expr (duration_expr sp) := ⟨
+instance distrib_mul_action_K_dur_exprKx : distrib_mul_action scalar_expr (duration_expr sp) := sorry/-⟨
 smul_add_dur_expr,
 smul_zero_dur_expr,
-⟩ 
+⟩ -/
 
 -- renaming vs template due to clash with name "s" for prevailing variable
 lemma add_smul_dur_expr : ∀ (a b : scalar_expr) (x : duration_expr sp), (a + b) • x = a • x + b • x := sorry
 lemma zero_smul_dur_expr : ∀ (x : duration_expr sp), (0 : scalar_expr) • x = 0 := sorry
-instance semimodule_K_durationK : semimodule scalar_expr (duration_expr sp) := ⟨ add_smul_dur_expr, zero_smul_dur_expr ⟩ 
+instance module_K_durationK : module scalar_expr (duration_expr sp) := sorry--⟨ add_smul_dur_expr, zero_smul_dur_expr ⟩ 
 
-instance add_comm_group_dur_expr : add_comm_group (duration_expr sp) := ⟨
+instance add_comm_group_dur_expr : add_comm_group (duration_expr sp) := sorry/-⟨
 -- add_group
     add_dur_expr_dur_expr, add_assoc_dur_expr, dur_expr_zero, zero_add_dur_expr, add_zero_dur_expr, -- add_monoid
     neg_dur_expr,                                                                  -- has_neg
@@ -528,10 +543,10 @@ instance add_comm_group_dur_expr : add_comm_group (duration_expr sp) := ⟨
     add_left_neg_dur_expr,
 -- commutativity
     add_comm_dur_expr,
-⟩
+⟩-/
 
 
-instance : vector_space K (duration_expr sp) := sorry
+instance : module scalar (duration_expr sp) := sorry
 
 
 /-
@@ -562,7 +577,7 @@ def add_dur_expr_time_expr {f : time_frame_expr} {sp : time_space_expr f}  (v : 
 def aff_dur_expr_group_action {f : time_frame_expr} {sp : time_space_expr f} : duration_expr sp → time_expr sp → time_expr sp := add_dur_expr_time_expr
 instance {f : time_frame_expr} {sp : time_space_expr f} : has_vadd (duration_expr sp) (time_expr sp) := ⟨λd, λt, time_expr.add_dur_time d t⟩
 
-def spf : time_space_expr [time_std_frame K] := [(time_std_space K)]
+def spf : time_space_expr [time_std_frame] := [(time_std_space)]
 
 variables (d d2 : duration_expr spf) (t : time_expr spf) (df : duration_expr spf)
 
@@ -571,7 +586,7 @@ variables (d d2 : duration_expr spf) (t : time_expr spf) (df : duration_expr spf
 lemma zero_dur_expr_vadd'_a1 {f : time_frame_expr} {sp : time_space_expr f} : ∀ p : time_expr sp, (0 : duration_expr sp) +ᵥ p = p := sorry
 lemma dur_expr_add_assoc'_a1 : ∀ (g1 g2 : duration_expr sp) (p : time_expr sp), g1 +ᵥ (g2 +ᵥ p) = (g1 + g2) +ᵥ p := sorry
 instance dur_expr_add_action: add_action (duration_expr sp) (time_expr sp) := 
-⟨ aff_dur_expr_group_action, zero_dur_expr_vadd'_a1, dur_expr_add_assoc'_a1 ⟩ 
+sorry--⟨ aff_dur_expr_group_action, zero_dur_expr_vadd'_a1, dur_expr_add_assoc'_a1 ⟩ 
 
 def aff_time_expr_group_sub : time_expr sp → time_expr sp → duration_expr sp := sub_time_expr_time_expr
 instance time_expr_has_vsub : has_vsub (duration_expr sp) (time_expr sp) := ⟨ aff_time_expr_group_sub ⟩ 
@@ -581,15 +596,7 @@ instance : nonempty (time_expr sp) := ⟨time_expr.lit (mk_time sp.value  0)⟩
 
 lemma time_expr_vsub_vadd_a1 : ∀ (p1 p2 : (time_expr sp)), (p1 -ᵥ p2) +ᵥ p2 = p1 := sorry
 lemma time_expr_vadd_vsub_a1 : ∀ (g : duration_expr sp) (p : time_expr sp), g +ᵥ p -ᵥ p = g := sorry
-instance aff_time_expr_torsor : add_torsor (duration_expr sp) (time_expr sp) := --affine space! 
-⟨ 
-    aff_dur_expr_group_action,
-    zero_dur_expr_vadd'_a1,    -- add_action
-    dur_expr_add_assoc'_a1,   -- add_action
-    aff_time_expr_group_sub,    -- has_vsub
-    time_expr_vsub_vadd_a1,     -- add_torsor
-    time_expr_vadd_vsub_a1,     -- add_torsor
-⟩
+instance aff_time_expr_torsor : add_torsor (duration_expr sp) (time_expr sp) := sorry
 
 notation t+ᵥv := add_dur_expr_time_expr v t
 notation d•k :=  smul_dur_expr k d

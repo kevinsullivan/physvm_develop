@@ -65,7 +65,7 @@ begin
   simp *,
   exact mul_assoc x y _,
 end
-instance : mul_action K (K × K) := ⟨ one_smul_l2 K, mul_smul_l2 K ⟩ 
+--instance : mul_action K (K × K) := ⟨ one_smul_l2 K, mul_smul_l2 K ⟩ 
 
 
 
@@ -89,7 +89,7 @@ begin
   simp *,
   simp *
 end
-instance : distrib_mul_action K (K × K) := ⟨ smul_add_l2 K, smul_zero_l2 K⟩ 
+--instance : distrib_mul_action K (K × K) := ⟨ smul_add_l2 K, smul_zero_l2 K⟩ 
 
 
 
@@ -129,5 +129,4 @@ module :
   Type (max u_1 u_2) :=
     module R M      -- a vector space R M is a module R M
 -/
-instance : module K (K × K) := module_K_KxK K
 

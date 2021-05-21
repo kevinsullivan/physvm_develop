@@ -51,6 +51,9 @@ public:
     virtual void visit(const clang::Stmt &node);
 
     clang::Stmt* getChildExprStore() const {
+        //std::cout<<"GETTING CHILD EXPR STORE!!!\n";
+        //this->childExprStore_->dump();
+        //std::cout<<"DUMPING!\n";
         return this->childExprStore_;
     }
 protected:

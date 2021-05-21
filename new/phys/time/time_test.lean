@@ -28,22 +28,25 @@ Progress this week:
     - next steps: discuss after presentation
 -/
 
-abbreviation K :=ℚ   -- or try ℚ for a computable version (but no square roots)
+--abbreviation K :=ℚ   -- or try ℚ for a computable version (but no square roots)
 
 -- assume unit vector is one second in standard time space
-#check time_std_space K
+#check time_std_space
 
 
- def t1 : time (time_std_space K) :=  mk_time (time_std_space K)  1          -- t=0 + 1 second
- def t2 := mk_time (time_std_space K) 3                             -- t=0 + 3 seconds
- def d1 : duration (time_std_space K) := t2 -ᵥ t1                     -- 2 seconds
+ def t1 : time (time_std_space) :=  mk_time (time_std_space)  1          -- t=0 + 1 second
+ def t2 := mk_time (time_std_space) 3                             -- t=0 + 3 seconds
+ def d1 : duration (time_std_space) := t2 -ᵥ t1                     -- 2 seconds
  def t3 := 5 • d1 +ᵥ t1                                          -- t=0 + 11 seconds
 
 -- new frame with origin at t=0 + 1hr and unit duration of 1 minute
- def t1' := mk_time (time_std_space K) 3600      -- t=0 + 1hr
- def d1' := 60 • (mk_duration (time_std_space K) 1)                                             -- one minute
+ def t1' := mk_time (time_std_space) 3600      -- t=0 + 1hr
+
+#eval t1'.coords
+
+ def d1' := 60 • (mk_duration (time_std_space) 1)                                             -- one minute
  def new_fm := mk_frame t1'.to_point d1'.to_vectr                -- TODO: fix
- def new_space := mk_space K new_fm
+ def new_space := mk_space scalar new_fm
 
 -- create some points and vectors in new space
  def t1'' : time new_space := mk_time new_space 1                -- t=0 + 1 second (3660)
@@ -51,7 +54,10 @@ abbreviation K :=ℚ   -- or try ℚ for a computable version (but no square roo
 
 def t3'' := mk_duration new_space 5
 
-def mytr := (time_std_space K).time_tr new_space
+def mytr := (time_std_space).mk_time_transform_to new_space
+
+#check mytr
+
 def ftr := (new_space).time_tr (time_std_space K)
 
 #check ftr

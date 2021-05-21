@@ -56,18 +56,36 @@ public:
     //void setASTState(coords::Coords* coords, clang::Decl* decl, clang::ASTContext* c);
 	coords::Coords* getCoords(std::shared_ptr<ast::NodeContainer> astNode){
 		switch(astNode->ASTTag_){
-			case ast::ASTTag::Stmt__:
-				return stmt_edges[astNode->ASTNode_.Stmt_];
-			 	break;
-			case ast::ASTTag::VarDecl__:
-				return var_edges[astNode->ASTNode_.VarDecl_];
-				break;
-			case ast::ASTTag::FuncDecl__:
+			case ast::ASTTag::Stmt__: {
+				if(stmt_edges.find(astNode->ASTNode_.Stmt_) == stmt_edges.end())
+					return nullptr;
+				else return stmt_edges[astNode->ASTNode_.Stmt_];
+			} 	break;
+			case ast::ASTTag::VarDecl__: {
+				if(var_edges.find(astNode->ASTNode_.VarDecl_) == var_edges.end())
+					return nullptr;
+				else return var_edges[astNode->ASTNode_.VarDecl_];
+			}	break;
+			case ast::ASTTag::FuncDecl__: {
+				if(func_edges.find(astNode->ASTNode_.FuncDecl_) == func_edges.end())
+					return nullptr;
 				return func_edges[astNode->ASTNode_.FuncDecl_];
- 				break;
-			case ast::ASTTag::UnitDecl__:
+			}	break;
+			case ast::ASTTag::UnitDecl__: {
+				if(unit_edges.find(astNode->ASTNode_.UnitDecl_) == unit_edges.end())
+					return nullptr;
 				return unit_edges[astNode->ASTNode_.UnitDecl_];
-				break;
+			}	break;
+			case ast::ASTTag::ConsDecl__: {
+				if(cons_edges.find(astNode->ASTNode_.ConsDecl_) == cons_edges.end())
+					return nullptr;
+				return cons_edges[astNode->ASTNode_.ConsDecl_];
+			}	break;
+			case ast::ASTTag::ParamDecl__: {
+				if(param_edges.find(astNode->ASTNode_.ParamDecl_) == param_edges.end())
+					return nullptr;
+				return param_edges[astNode->ASTNode_.ParamDecl_];
+			}	break;
 		}
 	}
 	bool put(std::shared_ptr<ast::NodeContainer> astNode, coords::Coords* coords);
@@ -76,6 +94,9 @@ private:
 	std::unordered_map<ast::VarDecl*, coords::Coords*> var_edges;
 	std::unordered_map<ast::FuncDecl*, coords::Coords*> func_edges;
 	std::unordered_map<ast::UnitDecl*, coords::Coords*> unit_edges;
+	std::unordered_map<ast::ConsDecl*, coords::Coords*> cons_edges;
+	std::unordered_map<ast::ParamDecl*, coords::Coords*> param_edges;
+
 };
 
 

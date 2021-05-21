@@ -67,8 +67,20 @@ public:
 	/*
 	move isAST and capture into configuration file
 	*/
-	void mkNode(std::string internalNodeType, std::shared_ptr<ast::NodeContainer> astNode, bool capture=false, bool isAST = false);
+	coords::Coords* mkNode(std::string internalNodeType, std::shared_ptr<ast::NodeContainer> astNode, bool capture=false, bool isAST = false);
 	
+    bool existsConstructor(std::shared_ptr<ast::NodeContainer> astNode){
+        return this->ast2coords_->getCoords(astNode) != nullptr;
+    }
+    bool existsConstructor(ast::ConsDecl* node){
+        return existsConstructor(ast::mkContainer(node));
+    }
+
+    void mkConstructor(std::shared_ptr<ast::NodeContainer> astNode);
+    void mkConstructor(ast::ConsDecl* node){
+        return mkConstructor(ast::mkContainer(node));
+    }
+
 	void mkNode(std::string internalNodeType, ast::Stmt* node, bool capture=false, bool isAST = false){
         mkNode(internalNodeType,ast::mkContainer(node),capture,isAST);
     };
@@ -82,6 +94,14 @@ public:
 	void mkNode(std::string internalNodeType, ast::FuncDecl* node, bool capture=false, bool isAST = false){
         mkNode(internalNodeType,ast::mkContainer(node),capture,isAST);
     };
+	void mkNode(std::string internalNodeType, ast::ConsDecl* node, bool capture=false, bool isAST = false){
+        //node->dump();
+        mkNode(internalNodeType,ast::mkContainer(node),capture,isAST);
+    };
+	void mkNode(std::string internalNodeType, ast::ParamDecl* node, bool capture=false, bool isAST = false){
+        mkNode(internalNodeType,ast::mkContainer(node),capture,isAST);
+    };
+
 	void buffer_link(ast::Stmt* stmt){
 		auto node = ast::mkContainer(stmt);
 		this->link = node;
@@ -98,6 +118,11 @@ public:
 		auto node = ast::mkContainer(funcDecl);
 		this->link = node;
 	};
+
+    void buffer_constructor(ast::ConsDecl* consDecl){
+        auto node = ast::mkContainer(consDecl);
+        this->constructor = node;
+    }
 
 	//when constructing ast node, buffer immediate descendants
 	void buffer_operand(std::shared_ptr<ast::NodeContainer> node){
@@ -131,10 +156,17 @@ public:
             this->astBuffer.push_back(node);
         }
     }
+    void buffer_operands(std::vector<ast::ParamDecl*> decls){
+        for(auto decl_:decls){
+            auto node = ast::mkContainer(decl_);
+            this->astBuffer.push_back(node);
+        }
+    }
 
 	void clear_buffer(){//to make it clear
 		this->astBuffer.clear();
         link = nullptr;
+        constructor = nullptr;
 	};
 
     void printChoices();//print to file*
@@ -148,6 +180,8 @@ public:
 
 	void printVarTable();
     void printErrors();
+    void printConstructorTable();
+    void interpretConstructors();
 	void interpretProgram();//central loop to interact with human
 
     /*
@@ -180,9 +214,10 @@ public:
 	std::vector<coords::Coords*> captureCache;//used to store Coords
 
     std::shared_ptr<ast::NodeContainer> link;
+    std::shared_ptr<ast::NodeContainer> constructor;
 	std::vector<std::shared_ptr<ast::NodeContainer>> astBuffer;
 
-
+    std::vector<coords::Coords*> constructors;
 }; 
 
 } // namespaceT

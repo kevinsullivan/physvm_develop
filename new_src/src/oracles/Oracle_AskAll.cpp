@@ -117,8 +117,9 @@ domain::CoordinateSpace* Oracle_AskAll::getSpace(){
     choice = this->getValidChoice(1,2, menu);
     if(choice==1)
     {
-        menu = "1 - Space with Standard Frame\n2 - Space Derived from Existing Coordinate Space\n";
-        choice = this->getValidChoice(1,3, menu);
+        menu = "1 - Time Space with Standard Frame\n2 - Time Space Derived from Existing Coordinate Space\n";
+        menu += "3 - Geom1D Space with Standard Frame\n4 - Geom1D Space Derived from Existing Coordinate Space\n";
+        choice = this->getValidChoice(1,5, menu);
         //std::cin>>choice;
         switch(choice){
             case 1:{
@@ -138,6 +139,23 @@ domain::CoordinateSpace* Oracle_AskAll::getSpace(){
                 
                 //probably bad code, not really clear where to delete these...
             } break;
+            case 3:{
+                auto name = this->getName();
+                return static_cast<domain::Geom1DCoordinateSpace*>(this->domain_->mkStandardGeom1DCoordinateSpace(name));
+            } break;
+            case 4:{
+                auto name = this->getName();
+                std::cout<<"Choose Parent Coordinate Space : \n";
+                auto parent = dynamic_cast<domain::Geom1DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom1DSpaces()));
+                std::cout<<"Choose Origin Coordinates : \n";
+                auto originData = this->getValueVector<1>();
+                std::cout<<"Choose Basis Coordinates : \n";
+                auto basisData = this->getValueMatrix<1>();
+            
+                return static_cast<domain::Geom1DCoordinateSpace*>(this->domain_->mkDerivedGeom1DCoordinateSpace(name, parent, originData, basisData));
+                
+                //probably bad code, not really clear where to delete these...
+            } break;
             default: goto redo;
         }
     }
@@ -153,9 +171,12 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
         "2 - Duration\n"+
         "3 - Time\n"+
         "4 - Scalar\n"+
-        "5 - Time Transform\n";
+        "5 - Time Transform\n"+
+        "6 - Displacement\n"+
+        "7 - Position\n"+
+        "8 - Geom1D Transform\n";
     redo:
-    int choice = this->getValidChoice(1,6,menu);
+    int choice = this->getValidChoice(1,9,menu);
 
     //std::cin>>choice;
     switch(choice)
@@ -228,6 +249,57 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
                 return nullptr;
             }
             auto interpretation_ = this->domain_->mkTimeTransform(name, tdom_, tcod_);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 6:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            auto sp =  dynamic_cast<domain::Geom1DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom1DSpaces()));
+            if(!sp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto value = this->getValueVector<1>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            //std::cout<<sp->getName();
+            auto interpretation_ = this->domain_->mkDisplacement(name, sp, value);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 7:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            auto sp =  dynamic_cast<domain::Geom1DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom1DSpaces()));
+            if(!sp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto value = this->getValueVector<1>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto interpretation_ = this->domain_->mkPosition(name, sp, value);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 8:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            std::cout<<"Annotate Domain:\n";
+            auto tdom_ =  dynamic_cast<domain::Geom1DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom1DSpaces()));
+            if(!tdom_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Annotate Codomain:\n";
+            auto tcod_ =  dynamic_cast<domain::Geom1DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom1DSpaces()));
+            if(!tcod_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto interpretation_ = this->domain_->mkGeom1DTransform(name, tdom_, tcod_);
             this->existing_interpretations.push_back(interpretation_);
             return interpretation_;
         } break;

@@ -137,6 +137,10 @@ public:
         return index;
     }
 
+    std::vector<coords::Coords*> getOperands() const {
+        return operands;
+    }
+
     ASTState* state_; //maybe  change this to a constructor argument 
 protected:
     int index;//4-11 don't remember what this is for...?

@@ -32,4 +32,18 @@ std::shared_ptr<NodeContainer> mkContainer (VarDecl* varDecl){
     return nc;
 };
 
+std::shared_ptr<NodeContainer> mkContainer (ConsDecl* consDecl){
+    auto nc = std::make_shared<NodeContainer>(NodeContainer());
+    nc->ASTTag_ = ASTTag::ConsDecl__;
+    nc->ASTNode_.ConsDecl_ = consDecl;
+    return nc;
+};
+
+std::shared_ptr<NodeContainer> mkContainer (ParamDecl* paramDecl){
+    auto nc = std::make_shared<NodeContainer>(NodeContainer());
+    nc->ASTTag_ = ASTTag::ParamDecl__;
+    nc->ASTNode_.ParamDecl_ = paramDecl;
+    return nc;
+};
+
 }//end ast

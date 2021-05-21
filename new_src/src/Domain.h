@@ -16,7 +16,7 @@
 //#include "AST.h"
 #include "Coords.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 
 
 using namespace std;
@@ -40,16 +40,24 @@ class CoordinateSpace;
 class StandardSpace;
 template<int Dimension>
 class DerivedSpace;
+
 class TimeCoordinateSpace;
 class StandardTimeCoordinateSpace;
 class DerivedTimeCoordinateSpace;
 
-class TimeCoordinateSpace;
+class Geom1DCoordinateSpace;
+class StandardGeom1DCoordinateSpace;
+class DerivedGeom1DCoordinateSpace;
+
+class Scalar;
+
 class Duration;
 class Time;
-class Scalar;
 class TimeTransform;
 
+class Displacement;
+class Position;
+class Geom1DTransform;
             
 // Definition for Domain class 
 using string = std::string;
@@ -69,15 +77,25 @@ public:
     StandardTimeCoordinateSpace* mkStandardTimeCoordinateSpace(string name);
     DerivedTimeCoordinateSpace* mkDerivedTimeCoordinateSpace(string name, TimeCoordinateSpace* parent, float* originData, float** basisData);
 
+    StandardGeom1DCoordinateSpace* mkStandardGeom1DCoordinateSpace(string name);
+    DerivedGeom1DCoordinateSpace* mkDerivedGeom1DCoordinateSpace(string name, Geom1DCoordinateSpace* parent, float* originData, float** basisData);
+
+    Scalar* mkScalar(string name, float* value);
+
     Duration* mkDuration(string name, TimeCoordinateSpace* parent, float* value);
     Time* mkTime(string name, TimeCoordinateSpace* parent, float* value);
-    Scalar* mkScalar(string name, float* value);
     TimeTransform* mkTimeTransform(string name, TimeCoordinateSpace* domain_, TimeCoordinateSpace* codomain_); 
 
+    Displacement* mkDisplacement(string name, Geom1DCoordinateSpace* parent, float* value);
+    Position* mkPosition(string name, Geom1DCoordinateSpace* parent, float* value);
+    Geom1DTransform* mkGeom1DTransform(string name, Geom1DCoordinateSpace* domain_, Geom1DCoordinateSpace* codomain_); 
+
     std::vector<TimeCoordinateSpace*> getTimeSpaces() const {return timeSpaces;};
+    std::vector<Geom1DCoordinateSpace*> getGeom1DSpaces() const {return geom1dSpaces;};
     std::vector<CoordinateSpace*> getSpaces() const {return spaces;};
 private:
     std::vector<TimeCoordinateSpace*> timeSpaces;
+    std::vector<Geom1DCoordinateSpace*> geom1dSpaces;
     std::vector<CoordinateSpace*> spaces;
 };
 class DomainObject {
@@ -258,6 +276,44 @@ private:
     //--TimeCoordinateSpace* parentSpace;
 };
 
+
+class Geom1DCoordinateSpace : public CoordinateSpace {
+public:
+    Geom1DCoordinateSpace(std::string name) : CoordinateSpace(name) {};
+private:
+};
+
+//it's a... diamond
+class StandardGeom1DCoordinateSpace : public Geom1DCoordinateSpace, public StandardSpace {
+public:
+    StandardGeom1DCoordinateSpace(std::string name) : Geom1DCoordinateSpace(name) {};
+
+    virtual std::string toString() const override{
+        return Geom1DCoordinateSpace::getName() + " StandardGeom1DCoordinateSpace()";
+    };
+private:
+};
+
+class DerivedGeom1DCoordinateSpace : public Geom1DCoordinateSpace, public DerivedSpace<1> {
+public:
+    DerivedGeom1DCoordinateSpace(std::string name, 
+        Geom1DCoordinateSpace* parentSpace_, float* originData, float** basisData)
+        : Geom1DCoordinateSpace(name), DerivedSpace<1>(parentSpace_,originData, basisData){};//, parentSpace(parentSpace_) {};
+    Geom1DCoordinateSpace* getParent() const {
+        return dynamic_cast<Geom1DCoordinateSpace*>(DerivedSpace::getParent());
+    }
+    virtual std::string toString() const override{
+        return Geom1DCoordinateSpace::getName() + " DerivedGeom1DCoordinateSpace(parent:" 
+            + this->getParent()->getName() + ",origin:" + std::to_string(originData[0]) + ",basis:" + std::to_string(basisData[0][0]) + ")";
+    };
+
+private:
+    //--Geom1DCoordinateSpace* parentSpace;
+};
+
+
+
+
 class CoordinateSpaceTransform : public DomainObject {
 public:
     CoordinateSpaceTransform(std::string name, CoordinateSpace* domain_, CoordinateSpace* codomain_)
@@ -295,6 +351,35 @@ private:
     float* value;
 };
 
+class Displacement : public DomainObject {
+public:
+    Displacement(std::string name_, Geom1DCoordinateSpace* sp, float* value_) 
+        : DomainObject(name_), space(sp), value(value_) {};
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string("Displacement(") + space->getName() + "," + std::to_string(value[0]) + ")"; 
+    };
+    virtual Geom1DCoordinateSpace* getSpace() const { return space; };
+    virtual float* getValue() const { return value; };
+private:
+    Geom1DCoordinateSpace* space;
+    float* value;
+};
+
+class Position : public DomainObject {
+public:
+    Position(std::string name_, Geom1DCoordinateSpace* sp, float* value_) 
+        : DomainObject(name_), space(sp), value(value_) {};
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string("Position(") + space->getName() + "," + std::to_string(value[0]) + ")"; 
+    };
+    virtual Geom1DCoordinateSpace* getSpace() const { return space; };
+    virtual float* getValue() const { return value; };
+private:
+    Geom1DCoordinateSpace* space;
+    float* value;
+};
+
+
 class Scalar : public DomainObject {
 public:
     Scalar(std::string name_, float* value_)
@@ -309,7 +394,7 @@ private:
 
 class TimeTransform : public CoordinateSpaceTransform {
 public:
-    TimeTransform(std::string name, CoordinateSpace* domain, CoordinateSpace* codomain)
+    TimeTransform(std::string name, TimeCoordinateSpace* domain, TimeCoordinateSpace* codomain)
         : CoordinateSpaceTransform(name, domain, codomain) {};
     TimeCoordinateSpace* getDomain() const {
         return static_cast<TimeCoordinateSpace*>(domain);
@@ -319,6 +404,22 @@ public:
     };
     virtual std::string toString() const override {
         return this->getName() + " " + std::string("TimeTransform(") + this->getDomain()->getName() + "," + this->getCodomain()->getName() + ")"; 
+    }
+private:
+};
+
+class Geom1DTransform : public CoordinateSpaceTransform {
+public:
+    Geom1DTransform(std::string name, Geom1DCoordinateSpace* domain, Geom1DCoordinateSpace* codomain)
+        : CoordinateSpaceTransform(name, domain, codomain) {};
+    Geom1DCoordinateSpace* getDomain() const {
+        return static_cast<Geom1DCoordinateSpace*>(domain);
+    };
+    Geom1DCoordinateSpace* getCodomain() const {
+        return static_cast<Geom1DCoordinateSpace*>(codomain);
+    };
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string("Geom1DTransform(") + this->getDomain()->getName() + "," + this->getCodomain()->getName() + ")"; 
     }
 private:
 };

@@ -519,7 +519,7 @@ def geom1d_transform.transform_displacement
     let tr_pt := (tr.to_equiv as_pt) in
     ⟨⟨⟨(0, tr_pt.to_pt.to_prod.2),rfl⟩⟩⟩
 
-
+/-
 def stdsp := geom1d_std_space
 variables (myd : displacement stdsp) (myt : position stdsp)
 
@@ -538,3 +538,4 @@ def space3 := mk_space scalar fr_2
 
 def tr := @spc.mk_geom1d_transform_to geom1d_std_frame stdsp fr_1 space2
 def tr2 := space2.mk_geom1d_transform_to space3 
+-/

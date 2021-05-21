@@ -439,6 +439,9 @@
   /usr/lib/llvm-6.0/include/llvm/Support/ManagedStatic.h \
   /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchersMacros.h \
   /usr/lib/llvm-6.0/include/llvm/Support/Timer.h AST.h Domain.h \
+  maps/ASTToCoords.h maps/CoordsToDomain.h oracles/Oracle.h \
+  oracles/Oracle_AskAll.h oracles/Oracle_LeanInference.h \
+  oracles/../Interp.h maps/CoordsToInterp.h maps/InterpToDomain.h \
   /usr/include/g3log/g3log.hpp /usr/include/g3log/loglevels.hpp \
   /usr/include/g3log/generated_definitions.hpp \
   /usr/include/g3log/atomicbool.hpp /usr/include/g3log/logcapture.hpp \
@@ -468,10 +471,7 @@
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/g3log/logmessage.hpp /usr/include/g3log/time.hpp \
   /usr/include/g3log/moveoncopy.hpp \
-  /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread \
-  maps/ASTToCoords.h maps/CoordsToDomain.h oracles/Oracle.h \
-  oracles/Oracle_AskAll.h oracles/Oracle_LeanInference.h \
-  oracles/../Interp.h maps/CoordsToInterp.h maps/InterpToDomain.h
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread
 
 /usr/include/stdio.h:
 
@@ -1397,6 +1397,22 @@ AST.h:
 
 Domain.h:
 
+maps/ASTToCoords.h:
+
+maps/CoordsToDomain.h:
+
+oracles/Oracle.h:
+
+oracles/Oracle_AskAll.h:
+
+oracles/Oracle_LeanInference.h:
+
+oracles/../Interp.h:
+
+maps/CoordsToInterp.h:
+
+maps/InterpToDomain.h:
+
 /usr/include/g3log/g3log.hpp:
 
 /usr/include/g3log/loglevels.hpp:
@@ -1464,19 +1480,3 @@ Domain.h:
 /usr/include/g3log/moveoncopy.hpp:
 
 /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread:
-
-maps/ASTToCoords.h:
-
-maps/CoordsToDomain.h:
-
-oracles/Oracle.h:
-
-oracles/Oracle_AskAll.h:
-
-oracles/Oracle_LeanInference.h:
-
-oracles/../Interp.h:
-
-maps/CoordsToInterp.h:
-
-maps/InterpToDomain.h:

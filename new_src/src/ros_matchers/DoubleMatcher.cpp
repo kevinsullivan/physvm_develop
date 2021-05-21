@@ -44,6 +44,7 @@ void DoubleMatcher::setup(){
 	
 		StatementMatcher binaryOperator_=binaryOperator().bind("BinaryOperator");
 		localFinder_.addMatcher(binaryOperator_,this);
+    this->childExprStore_ = nullptr;
 };
 
 void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
@@ -68,7 +69,6 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	auto binaryOperator_ = Result.Nodes.getNodeAs<clang::BinaryOperator>("BinaryOperator");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
-    this->childExprStore_ = nullptr;
 
     if(cxxConstructExpr_){
         auto decl_ = cxxConstructExpr_->getConstructor();
@@ -255,6 +255,38 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
             if(true ){
                 //interp_->mk(cxxConstructExpr_);
                 
+                auto consDecl_ = cxxConstructExpr_->getConstructor();
+                if(this->interp_->existsConstructor(consDecl_))
+                {
+
+                }
+                else
+                {
+                    std::vector<const clang::ParmVarDecl*> valid_params_;
+                    auto params_ = consDecl_->parameters();
+                    if(params_.size() > 0){
+                        int param_i = 0;
+                        auto param_ = params_[0];
+                        
+                        /*for(auto a:consDecl_->parameters())
+                        {
+                            if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(a)){
+                                interp_->mkNode("CONSTRUCTOR_PARAM", a,false);
+                                params_.push_back(const_cast<clang::ParmVarDecl*>(a));
+                             }
+                            else
+                            {
+                                std::cout << "Warning : Param is not a ParmVarDecl\n";
+                                a->dump();
+                            }
+                        }*/
+                        if(valid_params_.size()>0)
+                            interp_->buffer_operands(valid_params_);
+                    }
+                    interp_->mkConstructor(consDecl_);
+                }
+
+                interp_->buffer_constructor(consDecl_);
                 interp_->mkNode("LIT_R1",cxxConstructExpr_, true);
                 this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
                 return;

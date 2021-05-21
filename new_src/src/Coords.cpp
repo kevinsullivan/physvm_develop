@@ -1,7 +1,7 @@
 
 #include "Coords.h"
 
-#include <g3log/g3log.hpp>
+//#include <g3log/g3log.hpp>
 #include <memory>
 
 
@@ -42,7 +42,7 @@ bool Coords::operator==(const Coords &other) const {
 }
 
 std::string Coords::toString() const {
-    LOG(FATAL) << "Coords::toString. Error. Should not be called. Abstract.\n";
+   //LOG(FATAL) << "Coords::toString. Error. Should not be called. Abstract.\n";
     return NULL;
 }
 

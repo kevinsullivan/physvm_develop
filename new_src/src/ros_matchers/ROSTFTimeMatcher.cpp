@@ -4,7 +4,7 @@
 
 #include "ROSTFTimeMatcher.h"
 #include "ROSTFTimeMatcher.h"
-#include "ROSTFDurationMatcher.h"
+#include "ROSDurationMatcher.h"
 
 
 #include <string>
@@ -42,6 +42,7 @@ void ROSTFTimeMatcher::setup(){
 	
 		StatementMatcher cxxOperatorCallExpr_=cxxOperatorCallExpr().bind("CXXOperatorCallExpr");
 		localFinder_.addMatcher(cxxOperatorCallExpr_,this);
+    this->childExprStore_ = nullptr;
 };
 
 void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
@@ -66,7 +67,6 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	auto cxxOperatorCallExpr_ = Result.Nodes.getNodeAs<clang::CXXOperatorCallExpr>("CXXOperatorCallExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
-    this->childExprStore_ = nullptr;
 
     if(cxxConstructExpr_){
         auto decl_ = cxxConstructExpr_->getConstructor();
@@ -284,7 +284,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
                     if(false){}
                     
                     else if(true){
-                    ROSTFDurationMatcher arg1m{ this->context_,this->interp_};
+                    ROSDurationMatcher arg1m{ this->context_,this->interp_};
                         arg1m.setup();
                         arg1m.visit(*arg1);
                         arg1stmt = arg1m.getChildExprStore();
@@ -312,6 +312,38 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
             if(true ){
                 //interp_->mk(cxxConstructExpr_);
                 
+                auto consDecl_ = cxxConstructExpr_->getConstructor();
+                if(this->interp_->existsConstructor(consDecl_))
+                {
+
+                }
+                else
+                {
+                    std::vector<const clang::ParmVarDecl*> valid_params_;
+                    auto params_ = consDecl_->parameters();
+                    if(params_.size() > 0){
+                        int param_i = 0;
+                        auto param_ = params_[0];
+                        
+                        /*for(auto a:consDecl_->parameters())
+                        {
+                            if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(a)){
+                                interp_->mkNode("CONSTRUCTOR_PARAM", a,false);
+                                params_.push_back(const_cast<clang::ParmVarDecl*>(a));
+                             }
+                            else
+                            {
+                                std::cout << "Warning : Param is not a ParmVarDecl\n";
+                                a->dump();
+                            }
+                        }*/
+                        if(valid_params_.size()>0)
+                            interp_->buffer_operands(valid_params_);
+                    }
+                    interp_->mkConstructor(consDecl_);
+                }
+
+                interp_->buffer_constructor(consDecl_);
                 interp_->mkNode("LIT_R1",cxxConstructExpr_, true);
                 this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
                 return;

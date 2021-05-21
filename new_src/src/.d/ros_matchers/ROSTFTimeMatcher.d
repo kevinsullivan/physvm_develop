@@ -442,7 +442,14 @@
   /usr/lib/llvm-6.0/include/clang/AST/StmtOpenMP.h \
   /usr/lib/llvm-6.0/include/clang/AST/OpenMPClause.h \
   ros_matchers/../AST.h ros_matchers/../Domain.h \
-  /usr/include/g3log/g3log.hpp /usr/include/g3log/loglevels.hpp \
+  ros_matchers/../maps/ASTToCoords.h \
+  ros_matchers/../maps/CoordsToDomain.h ros_matchers/../oracles/Oracle.h \
+  ros_matchers/../oracles/Oracle_AskAll.h \
+  ros_matchers/../oracles/Oracle_LeanInference.h \
+  ros_matchers/../oracles/../Interp.h \
+  ros_matchers/../maps/CoordsToInterp.h \
+  ros_matchers/../maps/InterpToDomain.h /usr/include/g3log/g3log.hpp \
+  /usr/include/g3log/loglevels.hpp \
   /usr/include/g3log/generated_definitions.hpp \
   /usr/include/g3log/atomicbool.hpp /usr/include/g3log/logcapture.hpp \
   /usr/include/g3log/crashhandler.hpp \
@@ -472,14 +479,7 @@
   /usr/include/g3log/logmessage.hpp /usr/include/g3log/time.hpp \
   /usr/include/g3log/moveoncopy.hpp \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread \
-  ros_matchers/../maps/ASTToCoords.h \
-  ros_matchers/../maps/CoordsToDomain.h ros_matchers/../oracles/Oracle.h \
-  ros_matchers/../oracles/Oracle_AskAll.h \
-  ros_matchers/../oracles/Oracle_LeanInference.h \
-  ros_matchers/../oracles/../Interp.h \
-  ros_matchers/../maps/CoordsToInterp.h \
-  ros_matchers/../maps/InterpToDomain.h \
-  ros_matchers/ROSTFDurationMatcher.h
+  ros_matchers/ROSDurationMatcher.h
 
 /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchFinder.h:
 
@@ -1409,6 +1409,22 @@ ros_matchers/../AST.h:
 
 ros_matchers/../Domain.h:
 
+ros_matchers/../maps/ASTToCoords.h:
+
+ros_matchers/../maps/CoordsToDomain.h:
+
+ros_matchers/../oracles/Oracle.h:
+
+ros_matchers/../oracles/Oracle_AskAll.h:
+
+ros_matchers/../oracles/Oracle_LeanInference.h:
+
+ros_matchers/../oracles/../Interp.h:
+
+ros_matchers/../maps/CoordsToInterp.h:
+
+ros_matchers/../maps/InterpToDomain.h:
+
 /usr/include/g3log/g3log.hpp:
 
 /usr/include/g3log/loglevels.hpp:
@@ -1477,20 +1493,4 @@ ros_matchers/../Domain.h:
 
 /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread:
 
-ros_matchers/../maps/ASTToCoords.h:
-
-ros_matchers/../maps/CoordsToDomain.h:
-
-ros_matchers/../oracles/Oracle.h:
-
-ros_matchers/../oracles/Oracle_AskAll.h:
-
-ros_matchers/../oracles/Oracle_LeanInference.h:
-
-ros_matchers/../oracles/../Interp.h:
-
-ros_matchers/../maps/CoordsToInterp.h:
-
-ros_matchers/../maps/InterpToDomain.h:
-
-ros_matchers/ROSTFDurationMatcher.h:
+ros_matchers/ROSDurationMatcher.h:

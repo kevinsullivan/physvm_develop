@@ -559,7 +559,7 @@ def time_transform.transform_duration
     let tr_pt := (tr.to_equiv as_pt) in
     ⟨⟨⟨(0, tr_pt.to_pt.to_prod.2),rfl⟩⟩⟩
 
-
+/-
 def stdsp := time_std_space
 variables (myd : duration stdsp) (myt : time stdsp)
 
@@ -578,3 +578,4 @@ def space3 := mk_space ℚ fr_2
 
 def tr := stdsp.mk_time_transform_to space2
 def tr2 := space2.mk_time_transform_to space3
+-/

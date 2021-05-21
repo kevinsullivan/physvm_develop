@@ -3,7 +3,7 @@
 #include "geometry_msgs/Vector3.h"
 #include "geometry_msgs/Transform.h"
 #include "geometry_msgs/TransformStamped.h"
-#include <tf/transform_datatypes.h>
+//#include <tf/transform_datatypes.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <cmath>
 
@@ -17,7 +17,7 @@ int main(int argc, char **argv){
 
     Instantiate a derived frame, with origin 0 and appropriate basis value, 
         and then a (COORDINATE) space from that frame ??or a derived space directly?? 
-        - called "world time in years"
+        - called "world time in years"t
     */
 
     //Annotate this as a Time in the "world_time_in_seconds" Space with value 0
