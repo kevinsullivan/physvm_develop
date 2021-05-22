@@ -95,17 +95,6 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
     else if(astNode->ASTTag_ == ASTTag::ConsDecl__){
         auto code = astNode->ASTNode_.ConsDecl_->getQualifiedNameAsString();
         auto node = astNode->ASTNode_.ConsDecl_;
-        std::cout<<"found name!!\n";
-        std::cout<<code<<"\n";
-        std::cout<<"found name!!\n";
-       // std::cout<<node->getThisType()->getAsString()<<"\n";
-        std::cout<<"found name!!\n";
-        std::cout<<((clang::QualType)node->getReturnType()).getAsString()<<"\n";
-        std::cout<<"found name!!\n";
-        //std::cout<<((clang::QualType)node->getDeclaredReturnType()).getAsString()<<"\n";
-        std::cout<<"found name!!\n";
-        std::cout<<((clang::QualType)node->getCallResultType()).getAsString()<<"\n";
-        std::cout<<"found name!!\n";
 
         coords->state_ = new coords::ASTState(
             "",
@@ -137,9 +126,9 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
 
     }
     else{
-        for(int i = 0;i<100;i++){
-            std::cout<<"Warning : bad code in ASTToCoords\n";
-        }
+        //for(int i = 0;i<100;i++){
+        //    std::cout<<"Warning : bad code in ASTToCoords\n";
+        //}
     }
 }
 /*

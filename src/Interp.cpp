@@ -93,7 +93,7 @@ std::string Interp::toString(){
             retval += "_";
         }
         
-        if(this->constructor->hasValue()){
+        if(this->constructor and this->constructor->hasValue()){
             retval += " : " + this->constructor->getType() + ")";
         }
     } 

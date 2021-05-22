@@ -23,7 +23,7 @@ namespace interp{
 class Interp {
 public:
     Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_) 
-        : coords(coords_),domain(domain_),operands(operands_) {};
+        : coords(coords_),domain(domain_),operands(operands_),linked(nullptr),constructor(nullptr) {};
     std::string toString();
     std::string toStringLinked(std::vector<domain::CoordinateSpace*> spaces);
     Interp* getOperand(int i) const {

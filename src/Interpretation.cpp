@@ -79,29 +79,21 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
     std::vector<interp::Interp*> operand_interps;
     int i = 0;
 
-    std::cout<<"available operands";
 
     for(auto child:this->astBuffer){
-        //std::cout<<this->ast2coords_->getCoords(child)->getNodeType()<<"\n";
         operand_coords.push_back(this->ast2coords_->getCoords(child));
     }
     for(auto operand_coord : operand_coords){
         operand_domains.push_back(this->coords2dom_->getDomain(operand_coord));
         operand_interps.push_back(this->coords2interp_->getInterp(operand_coord));
-        std::cout<<"printing op interp\n";
-        std::cout<<this->coords2interp_->getInterp(operand_coord)<<"\n";
     }
 
     coords::Coords* coords_ = new coords::Coords(nodeType, operand_coords);
     coords_->setIndex(global_index++);
     auto b = this->ast2coords_->put(astNode, coords_);
-    std::cout<<"DID IT INSERT????\n"<<b<<"\n";
     this->ast2coords_->setASTState(coords_,astNode,context_);
     domain::DomainContainer* domain__ = this->domain_->mkDefaultDomainContainer(operand_domains);
     interp::Interp* interp_ = new interp::Interp(coords_, domain__, operand_interps);
-    std::cout<<this->ast2coords_->getCoords(astNode)->getNodeType()<<"\n";
-    std::cout<<coords_->getNodeType()<<"\n";
-    //std::cout<<interp_->toString()<<"\n";
 
     this->coords2dom_->put(coords_, domain__);
     this->coords2interp_->put(coords_,interp_);
@@ -112,9 +104,7 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
         auto cons_interp_ = this->coords2interp_->getInterp(cons_coords_);
         interp_->setConstructor(cons_interp_);
     }
-    std::cout<<"LINK LINK\n";
-    std::cout<<this->link<<"\n";
-    std::cout<<"LINK LINK\n";
+
     if(this->link){
         auto link_coords = this->ast2coords_->getCoords(this->link);
         link_coords->addLink(coords_);
@@ -131,32 +121,22 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
         this->AST = coords_;
     }
     this->clear_buffer();
-    std::cout<<nodeType<<"\n";
-    //if(interp_->getLinked()){
-       // std::cout<<interp_->getLinked()->toString()<<"\n";
-   // }
-
-    std::cout<<this->ast2coords_->getCoords(astNode)->getNodeType()<<"\n";
-    std::cout<<interp_->toString()<<"\n";
-    std::cout<<"done\n";
 
     return coords_;
 }
 
 //roughly duplicated code for now...add a "clearBuffer flag to mkNode?"
 void Interpretation::mkConstructor(std::shared_ptr<ast::NodeContainer> astNode){
-    std::cout<<"MAKE CONSTRUCTOR\n";
-    for(auto child:this->astBuffer){
-        child->ASTNode_.ParamDecl_->dump();
-    }
+    //for(auto child:this->astBuffer){
+     //   child->ASTNode_.ParamDecl_->dump();
+    //}
     auto coords_ = mkNode("CONSTRUCTOR", astNode, false, false);
 
-    std::cout<<"PRINT OPERANDS\n";
-    for(auto c : coords_->getOperands()){
-        std::cout<<c->getNodeType()<<"\n";
-        auto dom_ = this->coords2dom_->getDomain(c);
-        std:cout<<dom_->toString()<<"\n";
-    }
+    //for(auto c : coords_->getOperands()){
+    //    std::cout<<c->getNodeType()<<"\n";
+    //    auto dom_ = this->coords2dom_->getDomain(c);
+    //    std:cout<<dom_->toString()<<"\n";
+    //}
 
     this->constructors.push_back(coords_);
 };
@@ -220,10 +200,6 @@ void Interpretation::printConstructorTable()
         int j = 0;
         for(auto parm_ : cons_->getOperands()){
             auto parm_dom_ = this->coords2dom_->getDomain(parm_);
-            std::cout<<parm_->getNodeType();
-            std::cout<<parm_dom_->toString()<<"\n";
-            std::cout<<parm_->state_->code_<<"\n";
-            std::cout<<parm_dom_->getAnnotationStateStr()<<"\n";
             std::cout<<"Index: "<<i++<<", Parameter Declaration "<<std::to_string(++j)<<", Annotation State : "<<parm_dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<parm_->state_->code_
                 <<"\n\tExisting Interpretation: "<<parm_dom_->toString()<<std::endl<<std::endl;
         }
