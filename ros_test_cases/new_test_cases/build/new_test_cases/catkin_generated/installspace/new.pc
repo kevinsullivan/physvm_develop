@@ -1,0 +1,8 @@
+prefix=/peirce/ros_test_cases/new_test_cases/install
+
+Name: new
+Description: Description of new
+Version: 1.1.1
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: 

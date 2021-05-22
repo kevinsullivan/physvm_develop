@@ -6,7 +6,7 @@
         {
             "label": "make",
             "type": "shell",
-            "command": "cd /peirce/gen && mcs -out:PeirceGen.exe -nowarn:0219 *.cs Generators/*.cs && mono PeirceGen.exe && cp -r /peirce/gen/symlinkme/* /peirce/src && cd /peirce/src && bear make -j 4 && make install",
+            "command": "cd /peirce/gen && mcs -out:PeirceGen.exe -nowarn:0219 *.cs Generators/*.cs && mono PeirceGen.exe && cp -r /peirce/gen/symlinkme/ros_matchers/* /peirce/src/ros_matchers/ && cd /peirce/src && make clean && make -j 4 && make install",//"cd /peirce/gen && mcs -out:PeirceGen.exe -nowarn:0219 *.cs Generators/*.cs && mono PeirceGen.exe && cp -r /peirce/gen/symlinkme/* /peirce/src && cd /peirce/src && bear make -j 4 && make install",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -16,6 +16,12 @@
             "label": "test1",
             "type": "shell",
             "command": "/peirce/bin/peirce ros/current_feature_tests/src/current_feature_tests/src/test1-space_creation-input.cpp -extra-arg=-I/opt/ros/melodic/include/ < /peirce/ros/current_feature_tests/src/current_feature_tests/src/test1-data.txt && diff /peirce/PeirceOutput.lean /peirce/ros/current_feature_tests/src/current_feature_tests/src/test1-space_creation-output.lean && echo '### SUCCESS: Files Are Identical! ###' || echo '### WARNING: Files Are Different! ###'",
+            "group": "none"
+        },
+        {
+            "label": "charlie_install",
+            "type": "shell",
+            "command": "sh /peirce/Peirce-vscode/install.sh",
             "group": "test"
         }
     ]

@@ -8,7 +8,7 @@
 #include "ROS1ProgramMatcher.h"
 #include "ROSStatementMatcher.h"
 
-#include "../ASTToCoords.h"
+//#include "../ASTToCoords.h"
 
 int TUDCount;
 
@@ -74,25 +74,33 @@ void ROS1ProgramMatcher::run(const MatchFinder::MatchResult &Result){
                             {
                                 ROSStatementMatcher rootMatcher{this->context_, this->interp_};
                                 rootMatcher.setup();
-                                //std::cout<<"dumping";
-                                //(*it)->dump();
-                                //std::cout<<"dumped";
+                                std::cout<<"dumping\n";
+                                (*it)->dump();
+                                std::cout<<"dumped\n";
                                 rootMatcher.visit(**it);
                                 if(rootMatcher.getChildExprStore()){
+                                    std::cout<<"GOT A WINNER!\n";
+                                    rootMatcher.getChildExprStore()->dump();
                                     //rootMatcher.getChildExprStore()->dump();
                                     stmts.push_back(rootMatcher.getChildExprStore());
                                 }
                             }
                         
-                            this->interp_->mkCOMPOUND_STMT(cmpd, stmts);
+                            //this->interp_->mkCOMPOUND_STMT(cmpd, stmts);
 
                             if(fn->isMain())
                             {//s
                                 //this->interp_->mkINT_FUNC_IDENT_STMT(fn, cmpd);
 
-                                this->interp_->mkMAIN_FUNC_DECL_STMT(fn, cmpd);
+                                //this->interp_->mkMAIN_FUNC_DECL_STMT(fn, cmpd);
+                                this->interp_->buffer_operands(stmts);
+                                this->interp_->mkNode("COMPOUND_STMT",cmpd,false, true);
+                                this->interp_->buffer_operand(cmpd);
+                                this->interp_->mkNode("FUNC_MAIN",fn,false);
                             }
                             else{
+                                this->interp_->buffer_operands(stmts);
+                                this->interp_->mkNode("COMPOUND_STMT",cmpd,false);
                                 //this->interp_->mkFUNCTION_STMT(fn, cmpd);
                             }
 
@@ -109,6 +117,8 @@ void ROS1ProgramMatcher::run(const MatchFinder::MatchResult &Result){
             }
         }
         
-        this->interp_->mkSEQ_GLOBALSTMT(tud, globals);
+        //this->interp_->mkSEQ_GLOBALSTMT(tud, globals);
+        this->interp_->buffer_operands(globals);
+        this->interp_->mkNode("COMPOUND_GLOBAL",tud,false,false);
     }
 };

@@ -1,0 +1,8 @@
+prefix=/peirce/ros_test_cases/tf_tutorial/install
+
+Name: tf_tutorial
+Description: Description of tf_tutorial
+Version: 1.1.1
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: 

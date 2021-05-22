@@ -1,8 +1,0 @@
-prefix=/peirce/ros/ros_failure_tests/devel
-
-Name: physical_inconsistencies
-Description: Description of physical_inconsistencies
-Version: 1.1.1
-Cflags: -I/peirce/ros/ros_failure_tests/src/ros_failure_tests/include
-Libs: -L${prefix}/lib 
-Requires: 

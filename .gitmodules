@@ -16,3 +16,12 @@
 [submodule "docker"]
 	path = docker
 	url = https://github.com/kevinsullivan/PeirceDocker.git
+[submodule "ros_test_cases/new_test_cases/src/new_test_cases/src/Peirce-vscode"]
+	path = ros_test_cases/new_test_cases/src/new_test_cases/src/Peirce-vscode
+	url = https://github.com/PeirceProject/Peirce-vscode
+[submodule "Peirce-vscode-api"]
+	path = Peirce-vscode-api
+	url = https://github.com/PeirceProject/Peirce-vscode-api
+[submodule "Peirce-vscode"]
+	path = Peirce-vscode
+	url = https://github.com/PeirceProject/Peirce-vscode

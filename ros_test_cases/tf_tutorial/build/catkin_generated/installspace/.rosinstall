@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /peirce/ros_test_cases/tf_tutorial/install/setup.sh

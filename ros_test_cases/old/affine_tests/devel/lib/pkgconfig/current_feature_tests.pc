@@ -1,8 +1,0 @@
-prefix=/peirce/ros/affine_tests/devel
-
-Name: current_feature_tests
-Description: Description of current_feature_tests
-Version: 1.1.1
-Cflags: -I/peirce/ros/affine_tests/src/affine_tests/include
-Libs: -L${prefix}/lib 
-Requires: 
