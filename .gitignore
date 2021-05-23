@@ -1,4 +1,6 @@
 build/
+src/.o/
+src/peirce
 *.o
 .d
 .o

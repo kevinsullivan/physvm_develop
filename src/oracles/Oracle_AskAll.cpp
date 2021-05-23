@@ -21,47 +21,20 @@ using namespace oracle;
 
 std::string Oracle_AskAll::getName(){
     std::cout<<"Choose a name for interpretation : \n";    
-    //char* str_ = new char[255];
-    //std::cout<<"hey...";
-    //std::gets(str_);
-    //std::cout<<"hmmm";
     std::string name;
     std::cin>>name;
     this->choices.push_back(name);
-    //std::getline(std::cin, name);
     return name;//std::string(str_);
 };
 
 template<int Dimension>
 float* Oracle_AskAll::getValueVector(){
     float* values = new float[Dimension];
-    float value = 0;
-    for(auto i = 0; i<Dimension;i++){
-        redo:
-        std::cout<<"Enter value at index : "<<i<<"\n";
-        try{
-            std::cin.clear();
-            std::cin>>value;
-        }
-        catch(std::exception ex){
-            goto redo;
-        }
-        values[i] = value;
-    }
-    for(auto i = 0; i< Dimension;i++)
-        this->choices.push_back(std::to_string(values[i]));
-    return values;
-};
-template<int Dimension>
-float** Oracle_AskAll::getValueMatrix(){
-    float** values = new float*[Dimension];
-    for(auto i = 0;i<Dimension;i++)
-        values[i] = new float[Dimension];
-    float value = 0;
-    for(auto i = 0; i<Dimension;i++){
-        for(auto j = 0;j<Dimension;j++){
-            redo:
-            std::cout<<"Enter value at index : "<<i<<","<<j<<"\n";
+    redo:
+    try{
+        float value = 0;
+        for(auto i = 0; i<Dimension;i++){
+            std::cout<<"Enter value at index : "<<i<<"\n";
             try{
                 std::cin.clear();
                 std::cin>>value;
@@ -69,13 +42,47 @@ float** Oracle_AskAll::getValueMatrix(){
             catch(std::exception ex){
                 goto redo;
             }
-            values[i][j] = value;
+            values[i] = value;
         }
+        for(auto i = 0; i< Dimension;i++)
+            this->choices.push_back(std::to_string(values[i]));
+        return values;
     }
-    for(auto i = 0; i<Dimension;i++)
-        for(auto j = 0;j<Dimension;j++)
-            this->choices.push_back(std::to_string(values[i][j]));
-    return values;
+    catch(std::exception ex){
+        goto redo;
+    }
+    return nullptr;
+};
+template<int Dimension>
+float** Oracle_AskAll::getValueMatrix(){
+    float** values = new float*[Dimension];
+    redo:
+    try{
+        for(auto i = 0;i<Dimension;i++)
+            values[i] = new float[Dimension];
+        float value = 0;
+        for(auto i = 0; i<Dimension;i++){
+            for(auto j = 0;j<Dimension;j++){
+                std::cout<<"Enter value at index : "<<i<<","<<j<<"\n";
+                try{
+                    std::cin.clear();
+                    std::cin>>value;
+                }
+                catch(std::exception ex){
+                    goto redo;
+                }
+                values[i][j] = value;
+            }
+        }
+        for(auto i = 0; i<Dimension;i++)
+            for(auto j = 0;j<Dimension;j++)
+                this->choices.push_back(std::to_string(values[i][j]));
+        return values;
+    }
+    catch(std::exception ex){
+        goto redo;
+    }
+    return nullptr;
 };
 
 template<typename SpaceType>
@@ -113,52 +120,66 @@ domain::CoordinateSpace* Oracle_AskAll::getSpace(){
     int choice;
     redo:
     std::string menu = std::string("Choose Space:\n")+
-        "1 - Classical Time Coordinate Space\n";
-    choice = this->getValidChoice(1,2, menu);
-    if(choice==1)
+        "1 - Classical Time Coordinate Space\n"+
+        "2 - Euclidean Geometry 1D Space\n";
+    choice = this->getValidChoice(1,3, menu);
+    switch(choice)
     {
-        menu = "1 - Time Space with Standard Frame\n2 - Time Space Derived from Existing Coordinate Space\n";
-        menu += "3 - Geom1D Space with Standard Frame\n4 - Geom1D Space Derived from Existing Coordinate Space\n";
-        choice = this->getValidChoice(1,5, menu);
-        //std::cin>>choice;
-        switch(choice){
-            case 1:{
-                auto name = this->getName();
-                return static_cast<domain::TimeCoordinateSpace*>(this->domain_->mkStandardTimeCoordinateSpace(name));
-            } break;
-            case 2:{
-                auto name = this->getName();
-                std::cout<<"Choose Parent Coordinate Space : \n";
-                auto parent = dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
-                std::cout<<"Choose Origin Coordinates : \n";
-                auto originData = this->getValueVector<1>();
-                std::cout<<"Choose Basis Coordinates : \n";
-                auto basisData = this->getValueMatrix<1>();
-            
-                return static_cast<domain::TimeCoordinateSpace*>(this->domain_->mkDerivedTimeCoordinateSpace(name, parent, originData, basisData));
+        case 1: {
+            menu = "1 - Time Space with Standard Frame\n2 - Time Space Derived from Existing Coordinate Space\n";
+            choice = this->getValidChoice(1,5, menu);
+            //std::cin>>choice;
+            switch(choice){
+                case 1:{
+                    auto name = this->getName();
+                    return static_cast<domain::TimeCoordinateSpace*>(this->domain_->mkStandardTimeCoordinateSpace(name));
+                } break;
+                case 2:{
+                    auto name = this->getName();
+                    std::cout<<"Choose Parent Coordinate Space : \n";
+                    auto parent = dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+                    std::cout<<"Choose Origin Coordinates : \n";
+                    auto originData = this->getValueVector<1>();
+                    std::cout<<"Choose Basis Coordinates : \n";
+                    auto basisData = this->getValueMatrix<1>();
                 
-                //probably bad code, not really clear where to delete these...
-            } break;
-            case 3:{
-                auto name = this->getName();
-                return static_cast<domain::Geom1DCoordinateSpace*>(this->domain_->mkStandardGeom1DCoordinateSpace(name));
-            } break;
-            case 4:{
-                auto name = this->getName();
-                std::cout<<"Choose Parent Coordinate Space : \n";
-                auto parent = dynamic_cast<domain::Geom1DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom1DSpaces()));
-                std::cout<<"Choose Origin Coordinates : \n";
-                auto originData = this->getValueVector<1>();
-                std::cout<<"Choose Basis Coordinates : \n";
-                auto basisData = this->getValueMatrix<1>();
-            
-                return static_cast<domain::Geom1DCoordinateSpace*>(this->domain_->mkDerivedGeom1DCoordinateSpace(name, parent, originData, basisData));
+                    return static_cast<domain::TimeCoordinateSpace*>(this->domain_->mkDerivedTimeCoordinateSpace(name, parent, originData, basisData));
+                    
+                    //probably bad code, not really clear where to delete these...
+                } break;
+                default: goto redo;
+            }
+        } break;
+        case 2: {
+            menu = "1 - Geom1D Space with Standard Frame\n2 - Geom1D Space Derived from Existing Coordinate Space\n";
+            choice = this->getValidChoice(1,3, menu);
+            //std::cin>>choice;
+            switch(choice){
+                case 1:{
+                    auto name = this->getName();
+                    return static_cast<domain::Geom1DCoordinateSpace*>(this->domain_->mkStandardGeom1DCoordinateSpace(name));
+                } break;
+                case 2:{
+                    auto name = this->getName();
+                    std::cout<<"Choose Parent Coordinate Space : \n";
+                    auto parent = dynamic_cast<domain::Geom1DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom1DSpaces()));
+                    std::cout<<"Choose Origin Coordinates : \n";
+                    auto originData = this->getValueVector<1>();
+                    std::cout<<"Choose Basis Coordinates : \n";
+                    auto basisData = this->getValueMatrix<1>();
                 
-                //probably bad code, not really clear where to delete these...
-            } break;
-            default: goto redo;
-        }
+                    return static_cast<domain::Geom1DCoordinateSpace*>(this->domain_->mkDerivedGeom1DCoordinateSpace(name, parent, originData, basisData));
+                    
+                    //probably bad code, not really clear where to delete these...
+                } break;
+                default: goto redo;
+            }
+        } break;
+        default: goto redo;
     }
+
+    return nullptr;
+    
 };
 
 domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
@@ -202,7 +223,6 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
                 std::cout<<"Interpretation building failed\n";
                 return nullptr;
             }
-            //std::cout<<sp->getName();
             auto interpretation_ = this->domain_->mkDuration(name, sp, value);
             this->existing_interpretations.push_back(interpretation_);
             return interpretation_;
@@ -336,8 +356,8 @@ domain::DomainObject* Oracle_AskAll::selectExisting(){
     }
     int i = 1;
     std::string menu("Choose From Existing Interpretations:\n");
-    for(auto interp_ : this->existing_interpretations){
-        if(auto dc = dynamic_cast<domain::Time*>(interp_))
+    for(auto domain_ : this->existing_interpretations){
+        /*if(auto dc = dynamic_cast<domain::Time*>(interp_))
             menu += std::to_string(i++) + " - " + dc->toString() + "\n";
         else if(auto dc = dynamic_cast<domain::Duration*>(interp_))
             menu += std::to_string(i++) + " - " + dc->toString() + "\n";
@@ -345,6 +365,8 @@ domain::DomainObject* Oracle_AskAll::selectExisting(){
             menu += std::to_string(i++) + " - " + dc->toString() + "\n";
         else if(auto dc = dynamic_cast<domain::TimeTransform*>(interp_))
             menu += std::to_string(i++) + " - " + dc->toString() + "\n";
+        */
+        menu += std::to_string(i++) + " - " + domain_->toString();
     }
     int choice = getValidChoice(1, this->existing_interpretations.size()+1,menu)-1;
     return this->existing_interpretations[choice];

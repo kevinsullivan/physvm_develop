@@ -55,8 +55,8 @@ std::string Interpretation::toString_AST(){
     //4/13 - nope move this 
     std::string math = "";
 
-    math += "import .new.lang.expressions.time_expr\n";
-    math += "import .new.lang.expressions.geom1d_expr\n\n";
+    math += "import .lang.expressions.time_expr\n";
+    math += "import .lang.expressions.geom1d_expr\n\n";
     math += "open lang.time\nopen lang.geom1d\n";//abbreviation F := lang.time.K\n\n";
     //math += "noncomputable theory\n\n";
     //math += "def " + interp::getEnvName() + " := environment.init_env";
@@ -127,16 +127,8 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
 
 //roughly duplicated code for now...add a "clearBuffer flag to mkNode?"
 void Interpretation::mkConstructor(std::shared_ptr<ast::NodeContainer> astNode){
-    //for(auto child:this->astBuffer){
-     //   child->ASTNode_.ParamDecl_->dump();
-    //}
-    auto coords_ = mkNode("CONSTRUCTOR", astNode, false, false);
 
-    //for(auto c : coords_->getOperands()){
-    //    std::cout<<c->getNodeType()<<"\n";
-    //    auto dom_ = this->coords2dom_->getDomain(c);
-    //    std:cout<<dom_->toString()<<"\n";
-    //}
+    auto coords_ = mkNode("CONSTRUCTOR", astNode, false, false);
 
     this->constructors.push_back(coords_);
 };

@@ -108,10 +108,7 @@ if (nodeType =="COMPOUND_STMT") {
         auto var_ = (this->operands[0]);
         auto expr_ = (this->operands[1]);
         auto vardom_ = var_->getDomain();
-        //std::cout<<"COORDNM\n";
-        //std::cout<<this->coords->getName()<<"\n";
-        //std::cout<<this->coords->hasName()<<"\n";
-        //std::cout<<this->coords->state_->name_<<"\n";
+        
         retval += std::string("def ") + this->coords->getName() + " : " + (var_->getType()) + " := " + expr_->toString();//[(" +  + ")]";
     }
     else if(nodeType == "DECL_LIST_R1") {

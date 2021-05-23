@@ -76,9 +76,8 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
         //auto sm = c->getSourceManager();
         auto code = std::string(c->getSourceManager().getCharacterData(b),
             c->getSourceManager().getCharacterData(e)-c->getSourceManager().getCharacterData(b));
-        //std::cout<<code<<"\n";
         code = code == "" ? "No Source Snip Available" : code;
-        //decl->dump();
+        
         //std::cout<<((clang::dyn_cast<clang::NamedDecl>(decl)) ? (clang::dyn_cast<clang::NamedDecl>(decl))->getNameAsString() : "")<<"\n";
         coords->state_ = new coords::ASTState(
             "",

@@ -21,26 +21,26 @@ int main(int argc, char **argv){
     */
 
     //Annotate this as a Time in the "world_time_in_seconds" Space with value 0
-    ros::Time launch_time_in_seconds(0);
+    //ros::Time launch_time_in_seconds(0);
     //Annotate this as a Time in the "world_time_in_years" Space with value 0
-    ros::Time launch_time_in_years(0);
+    //ros::Time launch_time_in_years(0);
     //Annotate this as a Duration in the "world_time_in_seconds" Space with value 1
-    ros::Duration one_second(1);
+    //ros::Duration one_second(1);
     //Annotate this as a Duration in the "world_time_in_years" Space with value 1
-    ros::Duration one_year(1);
+    //ros::Duration one_year(1);
     //ros::Time adding_launches = launch_time_in_seconds + launch_time_in_years; //ros doesn't support this
 
     //Annotate as a Duration in the "world_time_in_seconds" Space with no value provided
-    ros::Duration two_seconds = one_second + one_second;
+    //ros::Duration two_seconds = one_second + one_second;
     //Annotate as a Time in the "world_time_in_seconds" Space with no value provided
-    ros::Time one_second_after_launch = launch_time_in_seconds + one_second;
+    //ros::Time one_second_after_launch = launch_time_in_seconds + one_second;
 
     //Regardless of annotation, this will not type check, as the Spaces/Measurement Systems/Frames differ between operands
-    ros::Time what_after_what = launch_time_in_years + one_second;
+    //ros::Time what_after_what = launch_time_in_years + one_second;
     //ros::Duration five_seconds = 5*one_second;
 
     //Annotate as a Time in the "world_time_in_years" Space to demonstrate a failed type check
-    ros::Duration two_years = one_second + one_second;
+    //ros::Duration two_years = one_second + one_second;
 
     float seconds_to_years = .001;
     float five_seconds = 5;

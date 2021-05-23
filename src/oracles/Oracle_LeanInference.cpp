@@ -68,7 +68,6 @@ void Oracle_LeanInference::generateLeanChecker(std::string peirceOutputName){
     char * name_cstr = new char [name.length()+1];
     strcpy (name_cstr, name.c_str());
     f->name = name_cstr;
-    //std::cout<<"Generating file ... " << name_cstr << "\n";
     f->file = fopen(f->name,"w");
 
     std::string flag_str = "#check \"FLAG\"\n";
@@ -106,11 +105,6 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
     try{
         std::string checkType = check_[0];
         std::string evalResult = eval_.size() > 0 ? eval_[0] : "sorry";
-        //std::cout<<checkType<<"\n";
-        //std::cout<<i++<<"\n";
-        for(auto ln:check_){
-            //std::cout<<ln<<"\n";
-        }
 
         if(checkType.find("error:") != string::npos || checkType.find("type mismatch") != string::npos){
             auto join_ = std::string("");
@@ -119,82 +113,147 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
             return new domain::ErrorObject(join_);
         }
 
-    std::string tstr("lang.time.time_expr");
-    std::string dstr("lang.time.duration_expr");
-    std::string sstr(": F");
-    std::string trstr("lang.time.time_transform_expr");
+        std::string time_str("lang.time.time_expr");
+        std::string duration_str("lang.time.duration_expr");
+        std::string time_transform_str("lang.time.time_transform_expr");
 
-    if(evalResult.find("sorry") != string::npos){
+        std::string position_str("lang.geom1d.position_expr");
+        std::string displacement_str("lang.geom1d.displacement_expr");
+        std::string geom1d_transform_str("lang.geom1d.geom1d_transform_expr");
+
+        std::string scalar_str(": scalar");
+
+        if(evalResult.find("sorry") != string::npos){
+            return nullptr;
+        }
+
+        if(checkType.find(time_str) != string::npos){
+            //return nullptr;
+            auto typesub = checkType.substr(checkType.find(time_str));
+            auto spaces = domain_->getTimeSpaces();
+            auto sp = spaces[0]; //fairly safely assume it's not empty
+            auto spname = trim(typesub.substr(std::string(time_str).length()));
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                    break;
+                }
+            }
+            auto default_value = new float[1];
+            default_value[0] = 0;
+            return domain_->mkTime("INFERRED", sp,default_value);
+
+        }
+        else if(checkType.find(duration_str) != string::npos){
+            auto typesub = checkType.substr(checkType.find(duration_str));
+            auto spaces = domain_->getTimeSpaces();
+            auto sp = spaces[0]; //fairly safely assume it's not empty
+            auto spname = trim(typesub.substr(std::string(duration_str).length()));
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                    break;
+                }
+            }
+            auto default_value = new float[1];
+            default_value[0] = 0;
+            return domain_->mkDuration("INFERRED", sp,default_value);
+
+        }
+        else if(checkType.find(time_transform_str) != string::npos){
+            //return nullptr;
+            checkType = checkType.substr(checkType.find(time_transform_str));
+            auto domcodsub = trim(checkType.substr(std::string(time_transform_str).length()));
+            auto domname = trim(domcodsub.substr(0,domcodsub.find(' ')));
+            auto codname = trim(domcodsub.substr(domcodsub.find(' ')));
+
+            auto spaces = domain_->getTimeSpaces();
+            auto domsp = spaces[0]; //fairly safely assume it's not empty
+            auto codsp = spaces[0];
+            for(auto sp_ : spaces){
+                if(sp_->getName() == domname){
+                    domsp = sp_;
+                    break;
+                }
+                if(sp_->getName() == codname){
+                    codsp = sp_;
+                    break;
+                }
+            }
+            //auto default_value = new float[1];
+            //default_value[0] = 0;
+            return domain_->mkTimeTransform("INFERRED", domsp, codsp);
+            
+        }
+        else if(checkType.find(position_str) != string::npos){
+            //return nullptr;
+            auto typesub = checkType.substr(checkType.find(position_str));
+            auto spaces = domain_->getGeom1DSpaces();
+            auto sp = spaces[0]; //fairly safely assume it's not empty
+            auto spname = trim(typesub.substr(std::string(position_str).length()));
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                    break;
+                }
+            }
+            auto default_value = new float[1];
+            default_value[0] = 0;
+            return domain_->mkPosition("INFERRED", sp,default_value);
+
+        }
+        else if(checkType.find(displacement_str) != string::npos){
+            //return nullptr;
+            auto typesub = checkType.substr(checkType.find(displacement_str));
+            auto spaces = domain_->getGeom1DSpaces();
+            auto sp = spaces[0]; //fairly safely assume it's not empty
+            auto spname = trim(typesub.substr(std::string(displacement_str).length()));
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                    break;
+                }
+            }
+            auto default_value = new float[1];
+            default_value[0] = 0;
+            return domain_->mkDisplacement("INFERRED", sp,default_value);
+
+        }
+        else if(checkType.find(geom1d_transform_str) != string::npos){
+            //return nullptr;
+            checkType = checkType.substr(checkType.find(geom1d_transform_str));
+            auto domcodsub = trim(checkType.substr(std::string(geom1d_transform_str).length()));
+            auto domname = trim(domcodsub.substr(0,domcodsub.find(' ')));
+            auto codname = trim(domcodsub.substr(domcodsub.find(' ')));
+
+            auto spaces = domain_->getGeom1DSpaces();
+            auto domsp = spaces[0]; //fairly safely assume it's not empty
+            auto codsp = spaces[0];
+            for(auto sp_ : spaces){
+                if(sp_->getName() == domname){
+                    domsp = sp_;
+                    break;
+                }
+                if(sp_->getName() == codname){
+                    codsp = sp_;
+                    break;
+                }
+            }
+            //auto default_value = new float[1];
+            //default_value[0] = 0;
+            return domain_->mkGeom1DTransform("INFERRED", domsp, codsp);
+            
+        }
+        else if(checkType.find(scalar_str) != string::npos){
+            //return nullptr;
+            auto typesub = checkType.substr(checkType.find(scalar_str));
+            auto spaces = domain_->getTimeSpaces();
+            auto default_value = new float[1];
+            default_value[0] = 0;
+            return domain_->mkScalar("INFERRED", default_value);
+
+        }
         return nullptr;
-    }
-
-    if(checkType.find(tstr) != string::npos){
-        //return nullptr;
-        auto typesub = checkType.substr(checkType.find(tstr));
-        auto spaces = domain_->getTimeSpaces();
-        auto sp = spaces[0]; //fairly safely assume it's not empty
-        auto spname = trim(typesub.substr(std::string(tstr).length()));
-        for(auto sp_ : spaces){
-            if(sp_->getName() == spname){
-                sp = sp_;
-                break;
-            }
-        }
-        auto default_value = new float[1];
-        default_value[0] = 0;
-        return domain_->mkTime("INFERRED", sp,default_value);
-
-    }
-    else if(checkType.find(dstr) != string::npos){
-        //return nullptr;
-        auto typesub = checkType.substr(checkType.find(dstr));
-        //std::cout<<"TYPE SUB : "<<typesub<<"\n";
-        auto spaces = domain_->getTimeSpaces();
-        auto sp = spaces[0]; //fairly safely assume it's not empty
-        auto spname = trim(typesub.substr(std::string(dstr).length()));
-        //std::cout<<"TYPE SUB : "<<spname<<"\n";
-        for(auto sp_ : spaces){
-            if(sp_->getName() == spname){
-                sp = sp_;
-                break;
-            }
-        }
-        auto default_value = new float[1];
-        default_value[0] = 0;
-        return domain_->mkDuration("INFERRED", sp,default_value);
-
-    }
-    else if(checkType.find(sstr) != string::npos){
-        //return nullptr;
-        auto typesub = checkType.substr(checkType.find(sstr));
-        //std::cout<<"TYPE SUB : "<<typesub<<"\n";
-        auto spaces = domain_->getTimeSpaces();
-        auto default_value = new float[1];
-        default_value[0] = 0;
-        return domain_->mkScalar("INFERRED", default_value);
-
-    }
-    else if(checkType.find(trstr) != string::npos){
-        //return nullptr;
-        /*auto typesub = checkType.substr(checkType.find(dstr));
-        //std::cout<<"TYPE SUB : "<<typesub<<"\n";
-        auto spaces = domain_->getTimeSpaces();
-        auto domsp = spaces[0]; //fairly safely assume it's not empty
-        auto spname = trim(typesub.substr(std::string(dstr).length()));
-        //std::cout<<"TYPE SUB : "<<spname<<"\n";
-        for(auto sp_ : spaces){
-            if(sp_->getName() == spname){
-                sp = sp_;
-                break;
-            }
-        }
-        auto default_value = new float[1];
-        default_value[0] = 0;
-        return domain_->mkDuration("INFERRED", sp,default_value);
-        */
-    }
-    //std::cout<<"leaving method";
-    return nullptr;
     }
     catch(std::exception ex){
         std::cout<<ex.what()<<"\n";

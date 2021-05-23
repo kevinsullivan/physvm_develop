@@ -54,7 +54,6 @@ std::string Coords::getSourceLoc() const {
     } else {
       FullLocation = context_->getFullLoc(clang_decl_->getLocation());
     }*/
-    //std::cout<<this->toString()<<std::endl;
     std::string retval = "Begin: line ";
     retval += std::to_string(this->state_->begin_line_no_);
     retval +=  ", column ";

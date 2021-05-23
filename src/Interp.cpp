@@ -21,7 +21,6 @@ Work in progress, move much of this to configuration with some templates
 std::string Interp::toString(){
     std::string retval = "";
     std::string nodeType = this->coords->getNodeType();
-    //std::cout<<nodeType<<"\n";
     
     if (nodeType =="COMPOUND_STMT") {
         for(auto op: operands){
@@ -32,10 +31,6 @@ std::string Interp::toString(){
         auto var_ = (this->operands[0]);
         auto expr_ = (this->operands[1]);
         auto vardom_ = var_->getDomain();
-        //std::cout<<"COORDNM\n";
-        //std::cout<<this->coords->getName()<<"\n";
-        //std::cout<<this->coords->hasName()<<"\n";
-        //std::cout<<this->coords->state_->name_<<"\n";
         retval += std::string("def ") + this->coords->getName()/*(vardom_->hasValue() ? vardom_->getValue()->getName() : "")*/ + " : " + (var_->getType()) + " := " + expr_->toString();//[(" +  + ")]";
     }
     else if(nodeType == "DECL_LIST_R1") {
@@ -76,10 +71,10 @@ std::string Interp::toString(){
                 retval+= dom_->getName() + ".value.mk_time_transform_to " + cod_->getName() + ".value";
             }
             else if(auto aspos = dynamic_cast<domain::Position*>(this->domain->getValue())){
-                retval+= std::string("mk_position ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]);
+                retval+= std::string("mk_position ") + aspos->getSpace()->getName() + ".value " + std::to_string(aspos->getValue()[0]);
             }
             else if(auto asdisp = dynamic_cast<domain::Displacement*>(this->domain->getValue())){
-                retval+= std::string("mk_displacement ") + asdur->getSpace()->getName() + ".value " + std::to_string(asdur->getValue()[0]);
+                retval+= std::string("mk_displacement ") + asdisp->getSpace()->getName() + ".value " + std::to_string(asdisp->getValue()[0]);
             }
             else if(auto astrans = dynamic_cast<domain::Geom1DTransform*>(this->domain->getValue())){
                 auto dom_ = astrans->getDomain();
@@ -122,6 +117,9 @@ std::string Interp::toString(){
             if(auto astrans = dynamic_cast<domain::TimeTransform*>(lhs_->getDomain()->getValue())){
                 retval += lhs_->toString() + "⬝" + rhs_->toString() + ".value";
             }
+            else if(auto astrans = dynamic_cast<domain::Geom1DTransform*>(lhs_->getDomain()->getValue())){
+                retval += lhs_->toString() + "⬝" + rhs_->toString() + ".value";
+            } 
             else{
                 retval += lhs_->toString() + "•" + rhs_->toString();
             }
@@ -148,7 +146,6 @@ std::string Interp::getType(){
 
             Probably right thing to do is a config to translate a domain type to a lean type/and or constructor function
         */
-        //std::cout<<this->domain->getValue()<<"\n";
         if(auto astime = dynamic_cast<domain::Time*>(this->domain->getValue())){
             return std::string("time_expr ") + astime->getSpace()->getName();
         }
@@ -164,7 +161,7 @@ std::string Interp::getType(){
             return std::string("position_expr ") + aspos->getSpace()->getName();
         }
         else if(auto asdisp = dynamic_cast<domain::Displacement*>(this->domain->getValue())){
-            return std::string("displacement_expr ") + asdur->getSpace()->getName();
+            return std::string("displacement_expr ") + asdisp->getSpace()->getName();
         }
         else if(auto astrans = dynamic_cast<domain::Geom1DTransform*>(this->domain->getValue())){
             auto dom_ = astrans->getDomain();
@@ -215,10 +212,8 @@ std::string Interp::toStringLinked(std::vector<domain::CoordinateSpace*> spaces)
             retval += "def " + space->getName() + " : geom1d_space_expr " + space->getName() + "_fr := mk_geom1d_space_expr " + space->getName() + "_fr\n\n";
         }
     }
-    //std::cout<<"print nodes\n";
     for(auto op: this->operands){
         retval+= op->toString() + "\n";
-        //std::cout<<op->getCoords()->getNodeType()<<"\n";
     }
 
     return retval;
