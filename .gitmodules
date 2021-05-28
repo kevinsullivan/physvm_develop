@@ -25,3 +25,6 @@
 [submodule "Peirce-vscode"]
 	path = Peirce-vscode
 	url = https://github.com/PeirceProject/Peirce-vscode
+[submodule "balance-car"]
+	path = balance-car
+	url = https://github.com/GaloisInc/lean4-balance-car.git
