@@ -1,5 +1,16 @@
 # PeirceProject
-This repository supports the collaborative development of Pierce, a system for implementing a *physical semantics* for code. The project name recalls the American logician, Charles Saunders Peirce, who carried out seminal work on logic and semiotics, which is the study of the meanings of symbols.  See https://plato.stanford.edu/entries/peirce-semiotics/. 
+This repository supports the collaborative development of Pierce, a system for implementing a *physical semantics* for code. 
+
+## How to run it
+
+See the documentation in util/doc/HOW_TO_RUN_IT.md. We do
+encouraged you to go run the demo now, per the instructions
+in this file. If the demo succeeds, you'll know you're all 
+set up to work with our project and code base.
+
+## The project name
+
+The project name recalls the American logician, Charles Saunders Peirce (pronounced "purse"), who inter alia carried out seminal work on logic, the study of formal symbol systems for the purposes of capturing valid forms of reasoning, and semiotics, the study of the meanings of symbols.  See https://plato.stanford.edu/entries/peirce-semiotics/. 
 
 ## Overview
 Software profoundly determines many of the critical properties of the physical systems that it increasingly monitors and controls. Yet today it is hard to impossible to reason sufficiently well about at least some critical system properties based on the software code that drives them. The reason is that software code today lacks what we will call a *physical semantics*. 
