@@ -18,7 +18,8 @@
 		"karigari.chat",
 		"jroesch.lean",
 		"llvm-vs-code-extensions.vscode-clangd",
-		"ms-vscode.vscode-typescript-nex"
+		"ms-vscode.vscode-typescript-nex",
+		"rbbit.typescript-hero"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": [
