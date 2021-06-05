@@ -80,6 +80,14 @@ public:
     void mkConstructor(ast::ConsDecl* node){
         return mkConstructor(ast::mkContainer(node));
     }
+    void mkFunction(std::shared_ptr<ast::NodeContainer> astNode);
+    void mkFunction(ast::FuncDecl* node){
+        return mkFunction(ast::mkContainer(node));
+    }
+    void mkFunctionWithReturn(std::string nodeRef, std::shared_ptr<ast::NodeContainer> astNode);
+    void mkFunctionWithReturn(std::string nodeRef, ast::FuncDecl* node){
+        return mkFunctionWithReturn(nodeRef, ast::mkContainer(node));
+    }
 
 	void mkNode(std::string internalNodeType, ast::Stmt* node, bool capture=false, bool isAST = false){
         mkNode(internalNodeType,ast::mkContainer(node),capture,isAST);
@@ -126,45 +134,74 @@ public:
 
 	//when constructing ast node, buffer immediate descendants
 	void buffer_operand(std::shared_ptr<ast::NodeContainer> node){
-		this->astBuffer.push_back(node);
+		this->astOperandBuffer.push_back(node);
 	};
 	void buffer_operand(ast::Stmt* stmt){
 		auto node = ast::mkContainer(stmt);
-		this->astBuffer.push_back(node);
+		this->astOperandBuffer.push_back(node);
 	};
 	void buffer_operand(ast::UnitDecl* udecl){
 		auto node = ast::mkContainer(udecl);
-		this->astBuffer.push_back(node);
+		this->astOperandBuffer.push_back(node);
 	};
 	void buffer_operand(ast::VarDecl* varDecl){
 		auto node = ast::mkContainer(varDecl);
-		this->astBuffer.push_back(node);
+		this->astOperandBuffer.push_back(node);
 	};
 	void buffer_operand(ast::FuncDecl* funcDecl){
 		auto node = ast::mkContainer(funcDecl);
-		this->astBuffer.push_back(node);
+		this->astOperandBuffer.push_back(node);
 	};
     void buffer_operands(std::vector<ast::Stmt*> stmts){
         for(auto stmt:stmts){
             auto node = ast::mkContainer(stmt);
-            this->astBuffer.push_back(node);
+            this->astOperandBuffer.push_back(node);
         }
     }
     void buffer_operands(std::vector<ast::FuncDecl*> decls){
         for(auto decl_:decls){
             auto node = ast::mkContainer(decl_);
-            this->astBuffer.push_back(node);
+            this->astOperandBuffer.push_back(node);
         }
     }
     void buffer_operands(std::vector<ast::ParamDecl*> decls){
         for(auto decl_:decls){
             auto node = ast::mkContainer(decl_);
-            this->astBuffer.push_back(node);
+            this->astOperandBuffer.push_back(node);
+        }
+    }
+	void buffer_body(ast::Stmt* stmt){
+		auto node = ast::mkContainer(stmt);
+		this->astBodyBuffer.push_back(node);
+	};
+	void buffer_body(ast::UnitDecl* udecl){
+		auto node = ast::mkContainer(udecl);
+		this->astBodyBuffer.push_back(node);
+	};
+	void buffer_body(ast::VarDecl* varDecl){
+		auto node = ast::mkContainer(varDecl);
+		this->astBodyBuffer.push_back(node);
+	};
+	void buffer_body(ast::FuncDecl* funcDecl){
+		auto node = ast::mkContainer(funcDecl);
+		this->astBodyBuffer.push_back(node);
+	};
+    void buffer_body(std::vector<ast::Stmt*> stmts){
+        for(auto stmt:stmts){
+            auto node = ast::mkContainer(stmt);
+            this->astBodyBuffer.push_back(node);
+        }
+    }
+    void buffer_body(std::vector<ast::FuncDecl*> decls){
+        for(auto decl_:decls){
+            auto node = ast::mkContainer(decl_);
+            this->astBodyBuffer.push_back(node);
         }
     }
 
 	void clear_buffer(){//to make it clear
-		this->astBuffer.clear();
+		this->astOperandBuffer.clear();
+		this->astBodyBuffer.clear();
         link = nullptr;
         constructor = nullptr;
 	};
@@ -182,6 +219,9 @@ public:
     void printErrors();
     void printConstructorTable();
     void interpretConstructors();
+    void printFunctionTable();
+    void interpretFunctions();
+    void performInference();
 	void interpretProgram();//central loop to interact with human
 
     /*
@@ -215,9 +255,12 @@ public:
 
     std::shared_ptr<ast::NodeContainer> link;
     std::shared_ptr<ast::NodeContainer> constructor;
-	std::vector<std::shared_ptr<ast::NodeContainer>> astBuffer;
+	std::vector<std::shared_ptr<ast::NodeContainer>> astOperandBuffer;
+	std::vector<std::shared_ptr<ast::NodeContainer>> astBodyBuffer;
 
     std::vector<coords::Coords*> constructors;
+    std::vector<coords::Coords*> functions;
+    std::vector<coords::Coords*> functions_with_return;
 }; 
 
 } // namespaceT

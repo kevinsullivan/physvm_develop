@@ -45,8 +45,11 @@ async def update_peirce():
             #    break
             while not os.path.isfile(request_file_):
                 time.sleep(.25)
-            os.remove(request_file_)
-
+            print("Removing request file")
+            print(os.remove(request_file_))
+            if os.path.isfile(request_file_):
+                print('failed to delete')
+                raise 'failed to delete'
             if debug:
                 print ('RUNNING')
                 t3 = datetime.now()

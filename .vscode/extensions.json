@@ -17,7 +17,8 @@
 		"stephanvs.dot",
 		"karigari.chat",
 		"jroesch.lean",
-		"llvm-vs-code-extensions.vscode-clangd"
+		"llvm-vs-code-extensions.vscode-clangd",
+		"ms-vscode.vscode-typescript-nex"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": [

@@ -24,8 +24,19 @@ class Interp {
 public:
     Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_) 
         : coords(coords_),domain(domain_),operands(operands_),linked(nullptr),constructor(nullptr) {};
+    Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_, std::vector<Interp*> body_) 
+        : coords(coords_),domain(domain_),operands(operands_),body(body_), linked(nullptr),constructor(nullptr) {};
     std::string toString();
     std::string toStringLinked(std::vector<domain::CoordinateSpace*> spaces);
+
+    std::string toDefString(){
+        return "def " + this->toString();
+    }
+
+    std::string toLetString(){
+        return "let " + this->toString() + " in";
+    }
+
     Interp* getOperand(int i) const {
         return this->operands[i];
     }
@@ -53,12 +64,13 @@ public:
 
     bool hasValue();
     std::string getType();
-private:
+protected:
     std::vector<interp::Interp*> links;
     interp::Interp* linked;
     coords::Coords* coords;
     domain::DomainContainer* domain;
     std::vector<Interp*> operands;
+    std::vector<Interp*> body;
     interp::Interp* constructor;
 };
 

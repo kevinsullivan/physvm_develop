@@ -34,7 +34,7 @@ bool Checker::Check() {
 
 std::string myfile = "/peirce/PeirceOutput.lean";
 
-bool Checker::CheckPoll(){
+bool Checker::RebuildOutput(){
     
     aFile* f = openFile(myfile);
     generateMath(f, interp_); 

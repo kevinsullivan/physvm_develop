@@ -124,10 +124,21 @@ protected:
 
 class ErrorObject : public DomainObject {
 public:
-    ErrorObject() : DomainObject() {};
-    ErrorObject(std::string error_str_) : DomainObject(), error_str(error_str_) {};
+    ErrorObject() : DomainObject(), inner_(nullptr) {};
+    ErrorObject(std::string error_str_) : DomainObject(), error_str(error_str_), inner_(nullptr) {};
+    bool hasValue() const {
+        return inner_ != nullptr; 
+    }
+    DomainObject* getValue() const {
+        return inner_;
+    }
+    void setValue(DomainObject* value){
+        this->inner_ = value;
+    }
+
+
     virtual std::string toString() const override {
-        return std::string("Error Detected");
+        return std::string("Error Object");//this->hasValue() ? std::string("Error(") + inner_->toString() + ")" : std::string("Error()");
     }
 
     virtual std::string toErrorString() const {
@@ -136,21 +147,28 @@ public:
 
 private:
     std::string error_str;
+    domain::DomainObject* inner_;
 };
 
-enum class AnnotationState { Unannotated =1, Manual=2, Inferred=3, Error=4 };
+enum class AnnotationState { Unannotated =1, Manual=2, Inferred=3, Error=4, ManualError=5 };
 
 
 class DomainContainer : public DomainObject{
 public:
-        DomainContainer() : DomainObject(), inner_(nullptr), as_(AnnotationState::Unannotated) {};
+        DomainContainer() : DomainObject(), inner_(nullptr), error_(nullptr), as_(AnnotationState::Unannotated) {};
         DomainContainer(DomainObject* inner) : inner_(inner), as_(AnnotationState::Unannotated) {};
         DomainContainer(std::initializer_list<DomainObject*> operands);
         DomainContainer(std::vector<DomainObject*> operands);
         DomainContainer(std::initializer_list<DomainContainer*> operands);
         DomainContainer(std::vector<DomainContainer*> operands);
         virtual std::string toString() const override;// { this->hasValue() ? this->inner_->toString() : "No Provided Interpretation"; }
-        DomainObject* getValue() const { return this->inner_; }
+        DomainObject* getValue() const { 
+            if(auto dc = dynamic_cast<domain::ErrorObject*>(inner_)){
+                return this->inner_;
+            }
+            else
+                return this->inner_; 
+        }
         void setValue(DomainObject* obj);
         bool hasValue() const;
         void setAnnotationState(AnnotationState as){
@@ -160,17 +178,38 @@ public:
             return this->as_;
         }
 
+        bool hasError() const {return this->error_ != nullptr;}
+        void removeError(){ 
+            if(this->hasError()) {
+                
+                //6/2 I am getting segfaults when I try to delete this
+                //std::cout<<"deleting error!"<<this->error_->toErrorString()<<"\n";
+                //delete this->error_; 
+            }
+            this->error_ = nullptr;
+        }
+        void setError(ErrorObject* obj){
+            this->removeError();
+            this->error_ = obj;
+        }
+
+        ErrorObject* getError() const {
+            return this->error_;
+        }
+
         std::string getAnnotationStateStr(){
             return 
                 this->as_ == AnnotationState::Unannotated ? "Unannotated" :
                    this->as_ == AnnotationState::Manual ? "Manual" :
                     this->as_ == AnnotationState::Inferred ? "Inferred" :
-                    this->as_ == AnnotationState::Error ? "Error" : "";
+                    this->as_ == AnnotationState::Error ? "Error" :
+                    this->as_ == AnnotationState::ManualError ? "ManualError" : "";
         };
 
 private:
     DomainObject* inner_;
     AnnotationState as_;
+    ErrorObject* error_;
 };
 
 class CoordinateSpace : public DomainObject {

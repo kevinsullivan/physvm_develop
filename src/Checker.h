@@ -15,7 +15,7 @@ class Checker {
 public:
     Checker(interp::Interpretation* i) : interp_(i) {}
     bool Check(); 
-    bool CheckPoll();
+    bool RebuildOutput();
     bool Setup();
 private:
     interp::Interpretation* interp_;

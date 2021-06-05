@@ -15,6 +15,10 @@
 #include <locale>
 #include <sstream>
 
+#include <unistd.h>
+#include <chrono>
+#include <thread>
+
 //move to a library file/folder
 //pilfered from https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 // trim from start
@@ -106,11 +110,30 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
         std::string checkType = check_[0];
         std::string evalResult = eval_.size() > 0 ? eval_[0] : "sorry";
 
-        if(checkType.find("error:") != string::npos || checkType.find("type mismatch") != string::npos){
+        if(checkType.find("error:") != string::npos 
+            || checkType.find("type mismatch") != string::npos
+            || checkType.find(": ⁇") != string::npos){
             auto join_ = std::string("");
             for(auto str_ : check_)
                 join_ += str_;
+
+            //std::cout<<"join object!!"<<join_<<"\n";
             return new domain::ErrorObject(join_);
+        }
+        else if(evalResult.find("trying to evaluate sorry") != string::npos 
+            || evalResult.find("don't know how to synthesize placeholder") != string::npos){
+            auto join_ = std::string("");
+            for(auto str_ : evalResult){
+                join_ += str_;
+            }
+
+            //std::cout<<"join object!!"<<join_<<"\n";
+            return new domain::ErrorObject(join_);
+
+        }
+        else {
+            //std::cout<<"no error detected!\n";
+            //std::cout<<checkType<<"\n";
         }
 
         std::string time_str("lang.time.time_expr");
@@ -261,36 +284,108 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
     }
 };
 
+std::string bootFile = "/peirce/lean_client/boot.touch";
+std::string outputFile = "/peirce/lean_client/output.txt";
+
+std::string bootCmd("touch /peirce/lean_client/boot.touch");
+std::string readCmd("cat /peirce/lean_client/output.txt");
+std::string cleanCmd("rm /peirce/lean_client/output.txt");
+
 void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
+    this->ordered_interpretations.clear();
     this->generateLeanChecker(peirceOutputName);
     std::cout<<"Booting Lean...\n";
-    std::string result = exec_toString(std::string("lean /peirce/") + peirceOutputName + "_CHECK.lean");//method
+    //std::string result = exec_toString(std::string("lean /peirce/") + peirceOutputName + "_CHECK.lean");//method
+    exec_toString(bootCmd);
+
+    while(access( outputFile.c_str(), F_OK ) == -1)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+
+    std::string result = exec_toString(readCmd);
+    std::cout<<""<<exec_toString(cleanCmd)<<"";
+    
     std::stringstream tosplit(result);
 
     std::string cur_line;
 
+    int state;
+    int 
+        preflag=0,
+        precheck=1,
+        check=2,
+        eval=3;
+
+    state = preflag;
+    std::vector<std::string> check_, eval_;
+    while(std::getline(tosplit,cur_line))
+    {
+        //std::cout<<cur_line<<"\n";
+
+        switch(state)
+        {
+            case 0:{
+                if(cur_line.find("\"FLAG\" : string") != string::npos){
+                    state = precheck;
+                }
+            } break;
+            case 1:{
+                if(cur_line.find("\"CHECK\" : string") != string::npos){
+                    state = check;
+                }
+            } break;
+            case 2:{
+                if(cur_line.find("\"EVAL\" : string") != string::npos){
+                    state = eval;
+                }
+                else {
+                    check_.push_back(cur_line);
+                }
+            } break;
+            case 3:{
+                if(cur_line.find("\"FLAG\" : string") != string::npos){
+                    domain::DomainObject* dom_ = this->parseInterpretation(check_, eval_);
+                    this->ordered_interpretations.push_back(dom_);
+                    state = precheck;
+                    check_.clear();
+                    eval_.clear();
+                }
+                else{
+                    eval_.push_back(cur_line);
+                }
+
+            } break;
+            default: throw "";
+        }
+    }
+
+    /*
     while(std::getline(tosplit,cur_line) && cur_line.find("\"FLAG\" : string") == string::npos){
         //std::cout<<"DISCARD LINE : "<<cur_line<<"\n";
+        std::cout<<"LINE:"<<cur_line<<"\n";
     }
 
     while(
             std::getline(tosplit,cur_line) 
             && cur_line.find("\"CHECK\" : string") != string::npos){
-        
+        std::cout<<"CKLINE:"<<cur_line<<"\n";
         std::vector<std::string> check_, eval_;
         while(
             std::getline(tosplit,cur_line) 
             && cur_line.find("\"EVAL\" : string") == string::npos){
+            std::cout<<"EVLINE:"<<cur_line<<"\n";
             check_.push_back(cur_line);
         }
         while(
             std::getline(tosplit,cur_line) 
             && cur_line.find("\"FLAG\" : string") == string::npos){
+            std::cout<<"FLLINE:"<<cur_line<<"\n";
             eval_.push_back(cur_line);
         }
-        //std::cout<<"PARSE LINE : "<<check_[0]<<"\n";
+        //std::cout<<"PARSE LINE : \n"<<(check_.size()>0? check_[0]:"missing check")<<"\n"<<
+        //    (eval_.size()>0?eval_[0]:"missing eval")<<"\n";
         //std::getline(tosplit,eval_line);
-        //std::cout<<"EVAL LINE : "<<eval_[0]<<"\n";
         domain::DomainObject* dom_ = this->parseInterpretation(check_, eval_);
         this->ordered_interpretations.push_back(dom_);
         //if(eval_line.find("\"FLAG\" : string") == string::npos){
@@ -298,5 +393,5 @@ void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
         //        std::cout<<"DISCARD LINE : "<<cur_line<<"\n";
         //    }
         //}
-    }
+    }*/
 };

@@ -88,6 +88,8 @@ class Coords
 public:
     Coords(std::string nodeType_, std::vector<coords::Coords*> operands_) 
         : nodeType(nodeType_), operands(operands_), linked(nullptr) {};
+    Coords(std::string nodeType_, std::vector<coords::Coords*> operands_, std::vector<coords::Coords*> body_) 
+        : nodeType(nodeType_), operands(operands_), linked(nullptr) {};
     Coords(std::string nodeType_, std::vector<coords::Coords*> operands_, int index_) 
         : nodeType(nodeType_), operands(operands_), linked(nullptr), index(index_) {};
 
@@ -145,6 +147,7 @@ public:
 protected:
     int index;//4-11 don't remember what this is for...?
     std::vector<coords::Coords*> operands;
+    std::vector<coords::Coords*> body;
     std::vector<coords::Coords*> links;
     coords::Coords* linked;
     std::string nodeType;

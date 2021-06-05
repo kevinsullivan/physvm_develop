@@ -21,9 +21,19 @@ Work in progress, move much of this to configuration with some templates
 std::string Interp::toString(){
     std::string retval = "";
     std::string nodeType = this->coords->getNodeType();
-    
-    if (nodeType =="COMPOUND_STMT") {
-        for(auto op: operands){
+    if(nodeType == "COMPOUND_GLOBAL"){
+        for(auto op: body){
+            retval+= op->toString() + "\n";
+        }
+    }
+    if(nodeType == "FUNCTION_MAIN"){
+        
+        for(auto op: body){
+            retval+= op->toString() + "\n";
+        }
+    }
+    else if (nodeType =="COMPOUND_STMT") {
+        for(auto op: body){
             retval+= op->toString() + "\n";
         }
     } 
@@ -31,7 +41,7 @@ std::string Interp::toString(){
         auto var_ = (this->operands[0]);
         auto expr_ = (this->operands[1]);
         auto vardom_ = var_->getDomain();
-        retval += std::string("def ") + this->coords->getName()/*(vardom_->hasValue() ? vardom_->getValue()->getName() : "")*/ + " : " + (var_->getType()) + " := " + expr_->toString();//[(" +  + ")]";
+        retval += std::string("def ") + this->coords->getName() + " : " + (var_->getType()) + " := " + expr_->toString();//[(" +  + ")]";
     }
     else if(nodeType == "DECL_LIST_R1") {
         auto var_ = (this->operands[0]);
@@ -212,7 +222,7 @@ std::string Interp::toStringLinked(std::vector<domain::CoordinateSpace*> spaces)
             retval += "def " + space->getName() + " : geom1d_space_expr " + space->getName() + "_fr := mk_geom1d_space_expr " + space->getName() + "_fr\n\n";
         }
     }
-    for(auto op: this->operands){
+    for(auto op: this->body){
         retval+= op->toString() + "\n";
     }
 

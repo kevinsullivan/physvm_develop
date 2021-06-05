@@ -16,3 +16,4 @@ PeirceGen.exe
 .clangd
 compile_commands.json
 annotations.txt
+nohup.out

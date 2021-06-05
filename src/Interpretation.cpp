@@ -77,10 +77,12 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
     std::vector<coords::Coords*> operand_coords;
     std::vector<domain::DomainContainer*> operand_domains;
     std::vector<interp::Interp*> operand_interps;
+    std::vector<coords::Coords*> body_coords;
+    std::vector<interp::Interp*> body_interps;
     int i = 0;
 
 
-    for(auto child:this->astBuffer){
+    for(auto child:this->astOperandBuffer){
         operand_coords.push_back(this->ast2coords_->getCoords(child));
     }
     for(auto operand_coord : operand_coords){
@@ -88,12 +90,19 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
         operand_interps.push_back(this->coords2interp_->getInterp(operand_coord));
     }
 
-    coords::Coords* coords_ = new coords::Coords(nodeType, operand_coords);
+    for(auto child:this->astBodyBuffer){
+        body_coords.push_back(this->ast2coords_->getCoords(child));
+    }
+    for(auto body_coord : body_coords){
+        body_interps.push_back(this->coords2interp_->getInterp(body_coord));
+    }
+
+    coords::Coords* coords_ = new coords::Coords(nodeType, operand_coords, body_coords);
     coords_->setIndex(global_index++);
     auto b = this->ast2coords_->put(astNode, coords_);
     this->ast2coords_->setASTState(coords_,astNode,context_);
     domain::DomainContainer* domain__ = this->domain_->mkDefaultDomainContainer(operand_domains);
-    interp::Interp* interp_ = new interp::Interp(coords_, domain__, operand_interps);
+    interp::Interp* interp_ = new interp::Interp(coords_, domain__, operand_interps, body_interps);
 
     this->coords2dom_->put(coords_, domain__);
     this->coords2interp_->put(coords_,interp_);
@@ -125,12 +134,25 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
     return coords_;
 }
 
-//roughly duplicated code for now...add a "clearBuffer flag to mkNode?"
 void Interpretation::mkConstructor(std::shared_ptr<ast::NodeContainer> astNode){
 
     auto coords_ = mkNode("CONSTRUCTOR", astNode, false, false);
 
     this->constructors.push_back(coords_);
+};
+
+void Interpretation::mkFunction(std::shared_ptr<ast::NodeContainer> astNode){
+
+    auto coords_ = mkNode("FUNCTION", astNode, false, false);
+
+    this->functions.push_back(coords_);
+};
+
+void Interpretation::mkFunctionWithReturn(std::string nodeRef, std::shared_ptr<ast::NodeContainer> astNode){
+
+    auto coords_ = mkNode("FUNCTION_"+nodeRef, astNode, false, false);
+
+    this->functions_with_return.push_back(coords_);
 };
 
 
@@ -150,35 +172,6 @@ void Interpretation::printChoices(){
     delete f;
 };
 
-int optionSize = 6;
-void Interpretation::printVarTable(){
-    int i = optionSize+1;//move to "menu offset" global variable
-    for(auto coords_ : this->captureCache)
-    {
-        auto dom_ = this->coords2dom_->getDomain(coords_);
-        std::cout<<"Index: "<<i++<<", Node Type : "<<coords_->getNodeType()<<", Annotation State : "<<dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
-            <<"\n\tExisting Interpretation: "<<dom_->toString()<<std::endl<<std::endl;
-    }
-};
-
-void Interpretation::printErrors(){
-    int i = optionSize+1;//move to "menu offset" global variable
-    for(auto coords_ : this->captureCache)
-    {
-        auto dom_ = this->coords2dom_->getDomain(coords_);
-
-        std::string error_str_ = "No Error Detected";
-        if(dom_->hasValue()){
-            if(auto dc = dynamic_cast<domain::ErrorObject*>(dom_->getValue())){
-                error_str_ = dc->toErrorString();
-            }
-        }
-
-        std::cout<<"Index: "<<i++<<",Node Type : "<<coords_->getNodeType()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
-            <<"\n\tError Message: "<<error_str_<<std::endl;
-    }
-};
-
 int consOptionSize = 1;
 void Interpretation::printConstructorTable()
 {
@@ -187,12 +180,12 @@ void Interpretation::printConstructorTable()
     for(auto cons_ : this->constructors)
     {
         auto dom_ = this->coords2dom_->getDomain(cons_);
-        std::cout<<"Index: "<<i++<<", Constructor Declaration, Annotation State : "<<dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<cons_->state_->code_
+        std::cout<<"Index: "<<i++<<", Type : Constructor Declaration, Annotation State : "<<dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<cons_->state_->code_
             <<"\n\tExisting Interpretation: "<<dom_->toString()<<std::endl<<std::endl;
         int j = 0;
         for(auto parm_ : cons_->getOperands()){
             auto parm_dom_ = this->coords2dom_->getDomain(parm_);
-            std::cout<<"Index: "<<i++<<", Parameter Declaration "<<std::to_string(++j)<<", Annotation State : "<<parm_dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<parm_->state_->code_
+            std::cout<<"Index: "<<i++<<",Type : Parameter Declaration "<<std::to_string(++j)<<", Annotation State : "<<parm_dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<parm_->state_->code_
                 <<"\n\tExisting Interpretation: "<<parm_dom_->toString()<<std::endl<<std::endl;
         }
     }
@@ -250,6 +243,190 @@ void Interpretation::interpretConstructors(){
     }
 }
 
+int funcOptionSize = 1;
+void Interpretation::printFunctionTable()
+{
+    int i = funcOptionSize+1;//move to "menu offset" global variable
+
+    for(auto cons_ : this->functions_with_return)
+    {
+        auto dom_ = this->coords2dom_->getDomain(cons_);
+        std::cout<<"Index: "<<i++<<", Function Declaration : "<<cons_->getName()<<", Annotation State : "<<dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<cons_->state_->code_
+            <<"\n\tExisting Interpretation: "<<dom_->toString()<<std::endl<<std::endl;
+        int j = 0;
+        for(auto parm_ : cons_->getOperands()){
+            auto parm_dom_ = this->coords2dom_->getDomain(parm_);
+            std::cout<<"Index: "<<i++<<", Parameter Declaration "<<std::to_string(++j)<<", Annotation State : "<<parm_dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<parm_->state_->code_
+                <<"\n\tExisting Interpretation: "<<parm_dom_->toString()<<std::endl<<std::endl;
+        }
+    }
+
+    for(auto cons_ : this->functions)
+    {
+        auto dom_ = this->coords2dom_->getDomain(cons_);
+        int j = 0;
+        for(auto parm_ : cons_->getOperands()){
+            auto parm_dom_ = this->coords2dom_->getDomain(parm_);
+            std::cout<<"Index: "<<i++<<", Parameter Declaration For Function: "<<cons_->getName()<<std::to_string(++j)<<", Annotation State : "<<parm_dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<parm_->state_->code_
+                <<"\n\tExisting Interpretation: "<<parm_dom_->toString()<<std::endl<<std::endl;
+        }
+    }
+}
+
+void Interpretation::interpretFunctions(){
+    while(true){
+        std::string menu = std::string("Options:\n")
+                +"0 - Print Function Table\n"
+                +"1 - Return to Main Menu\n";
+
+                
+        int menuSize = funcOptionSize;
+        std::vector<coords::Coords*> functionCache;
+        for(auto func_ : this->functions_with_return){
+            functionCache.push_back(func_);
+            menuSize++;
+            for(auto func_ : func_->getOperands()){
+                functionCache.push_back(func_);
+                menuSize++;
+            }
+        }
+        for(auto func_ : this->functions){
+            for(auto parm_ : func_->getOperands()){
+                functionCache.push_back(parm_);
+                menuSize++;
+            }
+        }
+        if(this->functions.size()+this->functions_with_return.size()>0){
+            menu = menu+(std::to_string(funcOptionSize+1))+"-"+std::to_string(menuSize)+" - Annotate Node\n";
+        }
+    
+
+
+        int choice = oracle_->getValidChoice(0, menuSize+1, menu);
+        switch(choice)
+        {
+            case 0:{
+                printConstructorTable();
+            } break;
+            case 1:{
+                return;
+            } break;
+            default:{
+                auto coords_ = functionCache[choice-funcOptionSize-1];
+                domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
+                auto new_dom = this->oracle_->getInterpretation(coords_);
+                
+                if(new_dom){
+
+                    dom_cont->setValue(new_dom);
+                    dom_cont->setAnnotationState(domain::AnnotationState::Manual);
+                    for(auto link_ : coords_->getLinks()){
+                        domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
+                        link_cont->setValue(new_dom);
+                        link_cont->setAnnotationState(domain::AnnotationState::Inferred);
+                    }
+                }
+            };
+        }
+    }
+}
+
+void Interpretation::performInference(){
+    int totalInferred = 0;
+    oracle_infer_->buildInterpretations("PeirceOutput");//move to configuration or method
+    for(auto coords_ : this->captureCache){
+        /*
+        What is the update logic? Very difficult question to answer.
+        */
+        auto dom_cont = this->coords2dom_->getDomain(coords_);
+        auto infer_dom = oracle_infer_->getInterpretation(coords_);
+
+        switch(dom_cont->getAnnotationState()){
+            case domain::AnnotationState::Manual : {
+                //dont overwrite manual annotations
+                if(infer_dom){
+                    
+                    if(auto dc = dynamic_cast<domain::ErrorObject*>(infer_dom)){
+                        dom_cont->setAnnotationState(domain::AnnotationState::ManualError);
+                        dom_cont->setError(dc);
+                        for(auto link_ : coords_->getLinks()){
+                            domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
+                            link_cont->setError(dc);
+                            link_cont->setAnnotationState(domain::AnnotationState::ManualError);
+                            
+                        }
+                    }
+                    else{
+                        dom_cont->setAnnotationState(domain::AnnotationState::Manual);
+                        dom_cont->removeError();
+                    }
+
+                }
+            } break;
+            default : {
+                if(infer_dom){
+
+                    if(auto dc = dynamic_cast<domain::ErrorObject*>(infer_dom)){
+                        dom_cont->setAnnotationState(domain::AnnotationState::Error);
+                        dom_cont->setError(dc);
+                        
+                        for(auto link_ : coords_->getLinks()){
+                            domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
+                            link_cont->setError(dc);
+                            link_cont->setAnnotationState(domain::AnnotationState::Error);
+                            
+                        }
+                    }
+                    else {
+                        dom_cont->removeError();
+                        dom_cont->setValue(infer_dom);
+                        totalInferred++;
+                        
+                        for(auto link_ : coords_->getLinks()){
+                            domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
+                            dom_cont->removeError();
+                            link_cont->setValue(infer_dom);
+                            link_cont->setAnnotationState(domain::AnnotationState::Inferred);
+                            //totalInferred++;
+                        }
+                        dom_cont->setAnnotationState(domain::AnnotationState::Inferred);
+                    }
+
+                }
+            }
+        }
+    }
+    std::cout<<"Total Inferred Interpretations : "<<std::to_string(totalInferred) + "\n";
+}
+
+
+int optionSize = 6;
+void Interpretation::printErrors(){
+    int i = optionSize+1;//move to "menu offset" global variable
+    for(auto coords_ : this->captureCache)
+    {
+        auto dom_ = this->coords2dom_->getDomain(coords_);
+
+        std::string error_str_ = "No Error Detected";
+        //if(dom_->hasValue()){
+            if(dom_->hasError()){
+                error_str_ = dom_->getError()->toErrorString();
+            }
+        //}
+
+        std::cout<<"Index: "<<i++<<",Node Type : "<<coords_->getNodeType()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
+            <<"\n\tError Message: "<<error_str_<<std::endl;
+    }
+};
+void Interpretation::printVarTable(){
+    int i = optionSize+1;//move to "menu offset" global variable
+    for(auto coords_ : this->captureCache)
+    {
+        auto dom_ = this->coords2dom_->getDomain(coords_);
+        std::cout<<"Index: "<<i++<<", Node Type : "<<coords_->getNodeType()<<", Annotation State : "<<dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
+            <<"\n\tExisting Interpretation: "<<dom_->toString()<<std::endl<<std::endl;
+    }
+};
 void Interpretation::interpretProgram(){
     bool continue_ = true;
     std::vector<interp::Interp*> ordered_nodes;
@@ -259,7 +436,8 @@ void Interpretation::interpretProgram(){
     oracle_infer_->setNodes(ordered_nodes);
     while(continue_)
     {
-        checker_->CheckPoll();
+        checker_->RebuildOutput();
+        this->performInference();
 
         this->printChoices();
         std::cout << "********************************************\n";
@@ -269,13 +447,13 @@ void Interpretation::interpretProgram(){
 
         int menuSize = optionSize+this->captureCache.size();
         std::string menu = std::string("Options:\n")
-            +"0 - Print Variable Table\n"
+            +"0 - Print Table of Terms\n"
             +"1 - Print Available Coordinate Spaces\n"
             +"2 - Create Coordinate Space\n"
             +"3 - Exit and Finish Type Checking\n"
-            +"4 - Perform Lean Inference\n"
-            +"5 - Print Detected Lean Errors\n"
-            +"6 - Annotate Constructors\n";
+            +"4 - Print Detected Lean Errors\n"
+            +"5 - Annotate Constructors\n"
+            +"6 - Annotate Functions\n";
         if(this->captureCache.size()>0){
             menu = menu+(std::to_string(optionSize+1))+"-"+std::to_string(menuSize)+" - Annotate Node\n";
         }
@@ -296,50 +474,15 @@ void Interpretation::interpretProgram(){
             case 3:{
                 continue_ = false;
             } break;
-            case 4:{
-                
-                /*
-                move this somewhere maybe
-                Organize loop better
-                */
-                oracle_infer_->buildInterpretations("PeirceOutput");//move to configuration or method
-                for(auto coords_ : this->captureCache){
-                    /*
-                    What is the update logic? Very difficult question to answer.
-                    */
-                    auto dom_cont = this->coords2dom_->getDomain(coords_);
-                    auto infer_dom = oracle_infer_->getInterpretation(coords_);
-
-                    switch(dom_cont->getAnnotationState()){
-                        case domain::AnnotationState::Manual : {
-                            //dont overwrite manual annotations
-                        } break;
-                        default : {
-                            if(infer_dom){
-                                dom_cont->setValue(infer_dom);
-                                
-                                for(auto link_ : coords_->getLinks()){
-                                    domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
-                                    link_cont->setValue(infer_dom);
-                                    link_cont->setAnnotationState(domain::AnnotationState::Inferred);
-                                }
-
-                                if(auto dc = dynamic_cast<domain::ErrorObject*>(infer_dom))
-                                    dom_cont->setAnnotationState(domain::AnnotationState::Error);
-                                else 
-                                    dom_cont->setAnnotationState(domain::AnnotationState::Inferred);
-
-                            }
-                        }
-                    }
-                }
-            } break;
-            case 5: {
+            case 4: {
                 this->printErrors();
             } break;
-            case 6: {
+            case 5: {
                 this->interpretConstructors();
             } break;
+            case 6: {
+                this->interpretFunctions();
+            }
             default:{
                 auto coords_ = this->captureCache[choice-optionSize-1];
                 domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
@@ -359,8 +502,3 @@ void Interpretation::interpretProgram(){
         }
     }
 };
-
-void remap(coords::Coords* c, domain::DomainObject* newinterp){
-    return;
-};
-

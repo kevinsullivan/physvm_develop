@@ -30,11 +30,13 @@ void DomainObject::setOperands(std::vector<DomainObject*> operands) { this->oper
 
 DomainContainer::DomainContainer(std::initializer_list<DomainObject*> operands) : DomainObject(operands) {
     this->inner_ = nullptr;
+    this->error_ = nullptr;
     this->as_ = AnnotationState::Unannotated;
 };
 
 DomainContainer::DomainContainer(std::vector<DomainObject*> operands) : DomainObject(operands) {
     this->inner_ = nullptr;
+    this->error_ = nullptr;
     this->as_ = AnnotationState::Unannotated;
 };
 DomainContainer::DomainContainer(std::initializer_list<DomainContainer*> operands) {
@@ -43,6 +45,7 @@ DomainContainer::DomainContainer(std::initializer_list<DomainContainer*> operand
     }
     operand_count = this->operands_.size();
     this->inner_ = nullptr;
+    this->error_ = nullptr;
     this->as_ = AnnotationState::Unannotated;
 };
 
@@ -52,6 +55,7 @@ DomainContainer::DomainContainer(std::vector<DomainContainer*> operands) {
     }
     operand_count = this->operands_.size();
     this->inner_ = nullptr;
+    this->error_ = nullptr;
     this->as_ = AnnotationState::Unannotated;
 };
 
@@ -71,12 +75,20 @@ void DomainContainer::setValue(DomainObject* dom_){
 };
 
 bool DomainContainer::hasValue() const{
-    return this->inner_ != nullptr;
+    return this->inner_ != nullptr && (dynamic_cast<ErrorObject*>(this->inner_) == nullptr);
 };
 
 std::string DomainContainer::toString() const{
     if(this->hasValue()){
-        return this->inner_->toString();
+        if(auto dc = dynamic_cast<domain::ErrorObject*>(inner_)){
+            if(dc->hasValue()){
+                return this->inner_->toString();
+            }
+            else
+                return "Error Detected";
+        }
+        else 
+            return this->inner_->toString();
     }
     else{
         return "No Interpretation provided";
