@@ -45,7 +45,7 @@ contact Prof. Sullivan for access and be sure to accept any invitations he sends
 
 2. Make an account with Docker and get permission from the owner of the docker to pull the current image (owner as of 5/26/2020 is Andrew Elsey).
 
-3. Configure docker to run on your machine. Check your hardware for amount of memory (Host_mem) and number of cores/threads (Host_cores) and change your Docker Preferences to allocate desired shares of these resources to Docker (VM_cores and VM_mem). We recommend starting by giving Docker at least, if available, 4GB of memory and 4 CPU cores. This is not a required step but will improve the "build time" of Peirce, which can range up to 30 minutes on less powerful machines.
+3. Configure docker to run on your machine. Check your hardware for amount of memory (Host_mem) and number of cores/threads (Host_cores) and change your Docker Preferences to allocate desired shares of these resources to Docker (VM_cores and VM_mem). We recommend starting by giving Docker at least, if available, 4GB of memory and 4 CPU cores. **UPDATE** 6-5. READ. You must give docker 8GB of memory. The lean server used in Peirce will crash on our math library using anything less than 8GB. This is not a required step but will improve the "build time" of Peirce, which can range up to 30 minutes on less powerful machines.
 
 4. Issue the following command in a terminal window:
 ```shell
@@ -87,7 +87,9 @@ NOTE: It is important that your local Peirce repo directory be mounted on the VM
 6. Select the Git panel in VS Code. If you have any pending changes (for the newly cloned directory), use git functions to discard those changes then stop and restart the Docker container. The pending changes should no longer appear. Sorry for this glitch. If things get confusing, ask Prof. Sullivan or another expert for help.
 7. You'll now be able to build (Ctrl+Shift+B), Debug (F5), and Run (Ctrl+F5)
 
-## Install Mathlib
+
+
+## Install Mathlib (ANDREW 6-5 SHOULD BE DELETED. MATHLIB IS INSTALLED IN THE CONTAINER ALREADY.)
 1. Once you're in the container in VSCode, open a terminal window (Terminal -> New Terminal). 
 2. cd into the peirce/deps/phys directory. Confirm that you're editing or check out the master branch. 
 3. Run *leanpkg configure*, then, after that finishes, run *leanpkg build*. The build can take a while (up to 30 minutes perhaps), and might produce some error messages. Ignore these and let the build process run to completion. After it finishes, you should have a working Mathlib as part of your Lean Prover infrastructure for this project. 
