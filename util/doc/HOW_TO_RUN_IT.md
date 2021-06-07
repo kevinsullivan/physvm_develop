@@ -29,7 +29,7 @@ From here, there are 3 ways to run Peirce. Through VSCode, directly over the ter
 3. Open up 2 terminal windows on your native machine
 4. Type in "docker exec -it peirce_docker /bin/bash" on both terminals so that you have a shell inside the docker container.
 5. Next, type in source 
-6. In the first terminal, type "source run_api.sh"
-7. In the second terminal, type "source run_lean_client.sh" (and wait 2 minutes for the server to boot)
-8. Go back to the terminal in your VSCode. Type in "source install_plugin.sh". You should see that an additional button on the left-hand VSCode menu has just been added
+6. In the first terminal, type "source /peirce/run_api.sh"
+7. In the second terminal, type "source /peirce/run_lean_client.sh" (and wait 2 minutes for the server to boot)
+8. Go back to the terminal in your VSCode. Type in "source /peirce/install_plugin.sh". You should see that an additional button on the left-hand VSCode menu has just been added
 9. Next, navigate to the C++ file that you wish to annotate, click inside it, and open up the plugin tab on the left hand menu. Typing in CTRL+ALT+R will populate the Table of Terms from Peirce.
