@@ -342,10 +342,11 @@ void Interpretation::performInference(){
         auto infer_dom = oracle_infer_->getInterpretation(coords_);
 
         switch(dom_cont->getAnnotationState()){
+            case domain::AnnotationState::ManualError :
             case domain::AnnotationState::Manual : {
                 //dont overwrite manual annotations
                 if(infer_dom){
-                    
+                    std::cout<<infer_dom->toString()<<"\n";
                     if(auto dc = dynamic_cast<domain::ErrorObject*>(infer_dom)){
                         dom_cont->setAnnotationState(domain::AnnotationState::ManualError);
                         dom_cont->setError(dc);
@@ -380,6 +381,7 @@ void Interpretation::performInference(){
                     else {
                         dom_cont->removeError();
                         dom_cont->setValue(infer_dom);
+
                         totalInferred++;
                         
                         for(auto link_ : coords_->getLinks()){
@@ -433,12 +435,24 @@ void Interpretation::interpretProgram(){
     for(auto coords_ : this->captureCache) 
         ordered_nodes.push_back(this->coords2interp_->getInterp(coords_));
 
+    std::cout<<"intepreting program\n";
     oracle_infer_->setNodes(ordered_nodes);
+    bool needs_infer = true;
     while(continue_)
     {
-        checker_->RebuildOutput();
-        this->performInference();
-
+        //oracle_infer_->generateLeanChecker("PeirceOutput");
+        if(needs_infer){
+            std::cout<<"rebuilding output\n";
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            std::cout<<"performing inference\n";
+            this->performInference();
+            //I don't know why I need ot do this twice. this is a hack for an underlying bug
+            std::cout<<"rebuilding output\n";
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            std::cout<<"performing inference\n";
+            this->performInference();
+            needs_infer = false;
+        }
         this->printChoices();
         std::cout << "********************************************\n";
         std::cout << "See type-checking output in "<<"/peirce/PeirceOutput.lean"<<"\n";
@@ -479,11 +493,14 @@ void Interpretation::interpretProgram(){
             } break;
             case 5: {
                 this->interpretConstructors();
+                needs_infer = true;
             } break;
             case 6: {
                 this->interpretFunctions();
+                needs_infer = true;
             }
             default:{
+                needs_infer = true;
                 auto coords_ = this->captureCache[choice-optionSize-1];
                 domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
                 auto new_dom = this->oracle_->getInterpretation(coords_);

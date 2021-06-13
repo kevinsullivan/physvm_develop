@@ -18,12 +18,12 @@ public:
     void buildInterpretations(std::string peirceOutputName);
 
     domain::DomainObject* getInterpretation(coords::Coords* coords);
-
+    std::string leanInferenceOutputStr(std::string peirceOutputName);
     void setNodes(std::vector<interp::Interp*> ordered_nodes_){
         this->ordered_nodes = ordered_nodes_;
     }
-private:
-    void generateLeanChecker(std::string peirceOutputName);    
+    void generateLeanChecker(std::string peirceOutputName);  
+private:  
     domain::DomainObject* parseInterpretation(std::vector<std::string> check_,std::vector<std::string> eval_);
     std::vector<interp::Interp*> ordered_nodes;
     std::vector<domain::DomainObject*> ordered_interpretations;

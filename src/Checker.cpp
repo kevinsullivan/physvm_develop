@@ -32,14 +32,24 @@ bool Checker::Check() {
     return status;
 }
 
-std::string myfile = "/peirce/PeirceOutput.lean";
+std::string outputfile = "/peirce/PeirceOutput.lean";
+std::string checkfile = "/peirce/PeirceOutput_CHECK.lean";
 
-bool Checker::RebuildOutput(){
+bool Checker::RebuildOutput(std::string check_data_){
     
-    aFile* f = openFile(myfile);
+    aFile* f = openFile(outputfile);
     generateMath(f, interp_); 
     bool status = true;//checkMath(f);
     cleanup(f);
+
+    /*
+    this is a hack. remove this fairly soon. why on earth did i have to do this?
+    */
+    aFile* f2 = openFile(checkfile);
+    fputs(check_data_.c_str(), f2->file);
+    fclose(f2->file);
+    cleanup(f2);
+
     return status;
 }
 
