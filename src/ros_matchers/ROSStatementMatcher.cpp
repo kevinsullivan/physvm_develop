@@ -66,6 +66,9 @@ void ROSStatementMatcher::setup(){
     StatementMatcher
         cxxMemberCallExpr_ = cxxMemberCallExpr().bind("CXXMemberCallExpr");
 
+    //StatementMatcher
+    //    functionDecl_ = functionDecl().bind("FunctionDecl");
+
     localFinder_.addMatcher(exprWithCleanups_,this);
     localFinder_.addMatcher(cxxMemberCallExpr_,this);
     localFinder_.addMatcher(decl_, this);
@@ -77,6 +80,7 @@ void ROSStatementMatcher::setup(){
     localFinder_.addMatcher(whileStmt_, this);
     localFinder_.addMatcher(forStmt_, this);
     localFinder_.addMatcher(tryStmt_, this);
+    //localFinder_.addMatcher(functionDecl_, this);
     this->childExprStore_ = nullptr;
 };
 
@@ -104,6 +108,8 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
 
     const auto cxxMemberCallExpr_ = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("CXXMemberCallExpr");
     
+    //const auto functionDecl_ = Result.Nodes.getNodeAs<clang::FunctionDecl>("FunctionDecl");
+
     if(whileStmt_){
         auto wcond = whileStmt_->getCond();
         auto wbody = whileStmt_->getBody();
@@ -169,6 +175,9 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         this->childExprStore_ = (clang::Stmt*)forStmt_;
         return;
     }
+
+    //if(functionDecl_){
+        
 
     /*
     if(returnStmt_){
@@ -259,7 +268,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                 stmts.push_back(stmti.getChildExprStore());
             }
             else{
-                auto current = st;
+                //auto current = st;
                 std::vector<std::vector<clang::Stmt*>> stack;
                 std::vector<int> recptr;
 
@@ -337,9 +346,11 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
         }
         //this->interp_->mkCOMPOUND_STMT(cmpdStmt_, stmts);
-        interp_->buffer_operands(stmts);
-        interp_->mkNode("COMPOUND_STMT", cmpdStmt_);
-        this->childExprStore_ = (clang::Stmt*)cmpdStmt_;
+        if(stmts.size()>0){
+            interp_->buffer_body(stmts);
+            interp_->mkNode("COMPOUND_STMT", cmpdStmt_);
+            this->childExprStore_ = (clang::Stmt*)cmpdStmt_;
+        }
         return;
         
     }

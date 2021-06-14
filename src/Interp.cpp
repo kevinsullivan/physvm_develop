@@ -40,7 +40,6 @@ std::string Interp::toString(){
     else if(nodeType == "DECL_INIT_R1") {
         auto var_ = (this->operands[0]);
         auto expr_ = (this->operands[1]);
-        auto vardom_ = var_->getDomain();
         retval += std::string("def ") + this->coords->getName() + " : " + (var_->getType()) + " := " + expr_->toString();//[(" +  + ")]";
     }
     else if(nodeType == "DECL_LIST_R1") {
@@ -181,6 +180,7 @@ std::string Interp::getType(){
         else if(auto asscalar = dynamic_cast<domain::Scalar*>(this->domain->getValue())){
             return std::string("scalar_expr");
         }
+        else return "_";
     }
     else return "_";
 };

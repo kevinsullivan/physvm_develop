@@ -155,7 +155,7 @@ enum class AnnotationState { Unannotated =1, Manual=2, Inferred=3, Error=4, Manu
 
 class DomainContainer : public DomainObject{
 public:
-        DomainContainer() : DomainObject(), inner_(nullptr), error_(nullptr), as_(AnnotationState::Unannotated) {};
+        DomainContainer() : DomainObject(), inner_(nullptr), as_(AnnotationState::Unannotated), error_(nullptr) {};
         DomainContainer(DomainObject* inner) : inner_(inner), as_(AnnotationState::Unannotated) {};
         DomainContainer(std::initializer_list<DomainObject*> operands);
         DomainContainer(std::vector<DomainObject*> operands);

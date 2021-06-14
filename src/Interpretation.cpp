@@ -79,7 +79,6 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
     std::vector<interp::Interp*> operand_interps;
     std::vector<coords::Coords*> body_coords;
     std::vector<interp::Interp*> body_interps;
-    int i = 0;
 
 
     for(auto child:this->astOperandBuffer){
@@ -99,7 +98,7 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
 
     coords::Coords* coords_ = new coords::Coords(nodeType, operand_coords, body_coords);
     coords_->setIndex(global_index++);
-    auto b = this->ast2coords_->put(astNode, coords_);
+    this->ast2coords_->put(astNode, coords_);
     this->ast2coords_->setASTState(coords_,astNode,context_);
     domain::DomainContainer* domain__ = this->domain_->mkDefaultDomainContainer(operand_domains);
     interp::Interp* interp_ = new interp::Interp(coords_, domain__, operand_interps, body_interps);
@@ -263,7 +262,7 @@ void Interpretation::printFunctionTable()
 
     for(auto cons_ : this->functions)
     {
-        auto dom_ = this->coords2dom_->getDomain(cons_);
+        //auto dom_ = this->coords2dom_->getDomain(cons_);
         int j = 0;
         for(auto parm_ : cons_->getOperands()){
             auto parm_dom_ = this->coords2dom_->getDomain(parm_);
@@ -342,10 +341,11 @@ void Interpretation::performInference(){
         auto infer_dom = oracle_infer_->getInterpretation(coords_);
 
         switch(dom_cont->getAnnotationState()){
+            case domain::AnnotationState::ManualError :
             case domain::AnnotationState::Manual : {
                 //dont overwrite manual annotations
                 if(infer_dom){
-                    
+                    std::cout<<infer_dom->toString()<<"\n";
                     if(auto dc = dynamic_cast<domain::ErrorObject*>(infer_dom)){
                         dom_cont->setAnnotationState(domain::AnnotationState::ManualError);
                         dom_cont->setError(dc);
@@ -380,6 +380,7 @@ void Interpretation::performInference(){
                     else {
                         dom_cont->removeError();
                         dom_cont->setValue(infer_dom);
+
                         totalInferred++;
                         
                         for(auto link_ : coords_->getLinks()){
@@ -434,11 +435,19 @@ void Interpretation::interpretProgram(){
         ordered_nodes.push_back(this->coords2interp_->getInterp(coords_));
 
     oracle_infer_->setNodes(ordered_nodes);
+    bool needs_infer = true;
     while(continue_)
     {
-        checker_->RebuildOutput();
-        this->performInference();
+        //oracle_infer_->generateLeanChecker("PeirceOutput");
+        if(needs_infer){
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            this->performInference();
+            //I don't know why I need ot do this twice. this is a hack for an underlying bug
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
+            this->performInference();
+            needs_infer = false;
+        }
         this->printChoices();
         std::cout << "********************************************\n";
         std::cout << "See type-checking output in "<<"/peirce/PeirceOutput.lean"<<"\n";
@@ -479,11 +488,14 @@ void Interpretation::interpretProgram(){
             } break;
             case 5: {
                 this->interpretConstructors();
+                needs_infer = true;
             } break;
             case 6: {
                 this->interpretFunctions();
+                needs_infer = true;
             }
             default:{
+                needs_infer = true;
                 auto coords_ = this->captureCache[choice-optionSize-1];
                 domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
                 auto new_dom = this->oracle_->getInterpretation(coords_);

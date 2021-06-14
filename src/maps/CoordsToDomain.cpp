@@ -18,9 +18,10 @@ using namespace coords2domain;
 
 coords::Coords* CoordsToDomain::getCoords(domain::DomainContainer* d){
     for(auto kp:edges){
-        if(kp.second = d)
+        if(kp.second == d)
             return kp.first;
     }
+    return nullptr;
 };
 
 domain::DomainContainer* CoordsToDomain::getDomain(coords::Coords* c){

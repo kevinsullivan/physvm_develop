@@ -111,7 +111,7 @@ void ROS1ProgramMatcher::setup()
                             auto retType = (clang::QualType)fn->getReturnType();
         
                             auto fbody = fn->getBody();
-
+                            /*
                             auto typeDetector = [=](std::string typenm){
                                 if(false){return false;}
                         
@@ -123,7 +123,7 @@ void ROS1ProgramMatcher::setup()
 			else if(typenm=="float" or typenm == "const float" or typenm == "class float"){ return true; }
 			else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"){ return true; }
                                 else { return false;}
-                            };
+                            };*/
 
                             ROSStatementMatcher bodym{ this->context_, this->interp_};
                             bodym.setup();
