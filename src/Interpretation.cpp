@@ -191,6 +191,7 @@ void Interpretation::printConstructorTable()
 }
 
 void Interpretation::interpretConstructors(){
+    bool needs_infer = false;
     while(true){
         std::string menu = std::string("Options:\n")
                 +"0 - Print Constructor Table\n"
@@ -211,7 +212,16 @@ void Interpretation::interpretConstructors(){
             menu = menu+(std::to_string(consOptionSize+1))+"-"+std::to_string(menuSize)+" - Annotate Node\n";
         }
     
+        
+        if(needs_infer){
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            this->performInference();
+            //I don't know why I need ot do this twice. this is a hack for an underlying bug
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
+            this->performInference();
+            needs_infer = false;
+        }
 
         int choice = oracle_->getValidChoice(0, menuSize+1, menu);
         switch(choice)
@@ -223,6 +233,7 @@ void Interpretation::interpretConstructors(){
                 return;
             } break;
             default:{
+                needs_infer = true;
                 auto coords_ = constructorCache[choice-consOptionSize-1];
                 domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
                 auto new_dom = this->oracle_->getInterpretation(coords_);
@@ -273,6 +284,7 @@ void Interpretation::printFunctionTable()
 }
 
 void Interpretation::interpretFunctions(){
+    bool needs_infer = false;
     while(true){
         std::string menu = std::string("Options:\n")
                 +"0 - Print Function Table\n"
@@ -299,7 +311,16 @@ void Interpretation::interpretFunctions(){
             menu = menu+(std::to_string(funcOptionSize+1))+"-"+std::to_string(menuSize)+" - Annotate Node\n";
         }
     
+        
+        if(needs_infer){
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            this->performInference();
+            //I don't know why I need ot do this twice. this is a hack for an underlying bug
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
+            this->performInference();
+            needs_infer = false;
+        }
 
         int choice = oracle_->getValidChoice(0, menuSize+1, menu);
         switch(choice)
@@ -311,6 +332,8 @@ void Interpretation::interpretFunctions(){
                 return;
             } break;
             default:{
+                needs_infer = true;
+                
                 auto coords_ = functionCache[choice-funcOptionSize-1];
                 domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
                 auto new_dom = this->oracle_->getInterpretation(coords_);
@@ -488,11 +511,11 @@ void Interpretation::interpretProgram(){
             } break;
             case 5: {
                 this->interpretConstructors();
-                needs_infer = true;
+                //needs_infer = true;
             } break;
             case 6: {
                 this->interpretFunctions();
-                needs_infer = true;
+                //needs_infer = true;
             }
             default:{
                 needs_infer = true;
