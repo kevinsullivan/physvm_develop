@@ -65,12 +65,12 @@ public:
     bool hasValue();
     std::string getType();
 protected:
-    std::vector<interp::Interp*> links;
-    interp::Interp* linked;
     coords::Coords* coords;
     domain::DomainContainer* domain;
     std::vector<Interp*> operands;
     std::vector<Interp*> body;
+    std::vector<interp::Interp*> links;
+    interp::Interp* linked;
     interp::Interp* constructor;
 };
 

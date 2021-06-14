@@ -87,11 +87,11 @@ class Coords
 {
 public:
     Coords(std::string nodeType_, std::vector<coords::Coords*> operands_) 
-        : nodeType(nodeType_), operands(operands_), linked(nullptr) {};
+        : operands(operands_), linked(nullptr), nodeType(nodeType_) {};
     Coords(std::string nodeType_, std::vector<coords::Coords*> operands_, std::vector<coords::Coords*> body_) 
-        : nodeType(nodeType_), operands(operands_), linked(nullptr) {};
+        : operands(operands_), linked(nullptr), nodeType(nodeType_) {};
     Coords(std::string nodeType_, std::vector<coords::Coords*> operands_, int index_) 
-        : nodeType(nodeType_), operands(operands_), linked(nullptr), index(index_) {};
+        : index(index_), operands(operands_), linked(nullptr), nodeType(nodeType_) {};
 
     virtual bool operator ==(const Coords &other) const;
     virtual std::string toString() const;

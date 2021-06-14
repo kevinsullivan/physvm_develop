@@ -79,7 +79,6 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
     std::vector<interp::Interp*> operand_interps;
     std::vector<coords::Coords*> body_coords;
     std::vector<interp::Interp*> body_interps;
-    int i = 0;
 
 
     for(auto child:this->astOperandBuffer){
@@ -99,7 +98,7 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
 
     coords::Coords* coords_ = new coords::Coords(nodeType, operand_coords, body_coords);
     coords_->setIndex(global_index++);
-    auto b = this->ast2coords_->put(astNode, coords_);
+    this->ast2coords_->put(astNode, coords_);
     this->ast2coords_->setASTState(coords_,astNode,context_);
     domain::DomainContainer* domain__ = this->domain_->mkDefaultDomainContainer(operand_domains);
     interp::Interp* interp_ = new interp::Interp(coords_, domain__, operand_interps, body_interps);
@@ -263,7 +262,7 @@ void Interpretation::printFunctionTable()
 
     for(auto cons_ : this->functions)
     {
-        auto dom_ = this->coords2dom_->getDomain(cons_);
+        //auto dom_ = this->coords2dom_->getDomain(cons_);
         int j = 0;
         for(auto parm_ : cons_->getOperands()){
             auto parm_dom_ = this->coords2dom_->getDomain(parm_);
@@ -435,21 +434,17 @@ void Interpretation::interpretProgram(){
     for(auto coords_ : this->captureCache) 
         ordered_nodes.push_back(this->coords2interp_->getInterp(coords_));
 
-    std::cout<<"intepreting program\n";
     oracle_infer_->setNodes(ordered_nodes);
     bool needs_infer = true;
     while(continue_)
     {
         //oracle_infer_->generateLeanChecker("PeirceOutput");
         if(needs_infer){
-            std::cout<<"rebuilding output\n";
             checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
-            std::cout<<"performing inference\n";
             this->performInference();
             //I don't know why I need ot do this twice. this is a hack for an underlying bug
-            std::cout<<"rebuilding output\n";
             checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
-            std::cout<<"performing inference\n";
+
             this->performInference();
             needs_infer = false;
         }

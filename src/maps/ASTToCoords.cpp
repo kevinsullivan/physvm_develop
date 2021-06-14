@@ -93,7 +93,7 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
     }
     else if(astNode->ASTTag_ == ASTTag::ConsDecl__){
         auto code = astNode->ASTNode_.ConsDecl_->getQualifiedNameAsString();
-        auto node = astNode->ASTNode_.ConsDecl_;
+        //auto node = astNode->ASTNode_.ConsDecl_;
 
         coords->state_ = new coords::ASTState(
             "",

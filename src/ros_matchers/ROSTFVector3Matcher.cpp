@@ -256,8 +256,10 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
                     std::vector<const clang::ParmVarDecl*> valid_params_;
                     auto params_ = consDecl_->parameters();
                     if(params_.size() > 0){
+
                         int param_i = 0;
-                        auto param_ = params_[0];
+                        
+                        
                         param_i++;
 param_i++;
 

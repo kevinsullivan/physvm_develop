@@ -265,8 +265,9 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
                     std::vector<const clang::ParmVarDecl*> valid_params_;
                     auto params_ = consDecl_->parameters();
                     if(params_.size() > 0){
-                        int param_i = 0;
-                        auto param_ = params_[0];
+
+                        
+                        
                         
                         /*for(auto a:consDecl_->parameters())
                         {
@@ -306,10 +307,10 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
     };
     if(binaryOperator_){
         auto bostr = binaryOperator_->getOpcodeStr().str();
-        auto lhs = binaryOperator_->getLHS();
-        auto rhs = binaryOperator_->getRHS();
-        clang::Stmt* lhsstmt;
-        clang::Stmt* rhsstmt;
+        //auto lhs = binaryOperator_->getLHS();
+        //auto rhs = binaryOperator_->getRHS();
+        //clang::Stmt* lhsstmt;
+        //clang::Stmt* rhsstmt;
             
 
         if(bostr=="+" or bostr == "const +" or bostr == "class +"/*bostr.find("+") != string::npos*/){
@@ -361,10 +362,10 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
     };
     if(binaryOperator_){
         auto bostr = binaryOperator_->getOpcodeStr().str();
-        auto lhs = binaryOperator_->getLHS();
-        auto rhs = binaryOperator_->getRHS();
-        clang::Stmt* lhsstmt;
-        clang::Stmt* rhsstmt;
+        //auto lhs = binaryOperator_->getLHS();
+        //auto rhs = binaryOperator_->getRHS();
+        //clang::Stmt* lhsstmt;
+        //clang::Stmt* rhsstmt;
             
 
         if(bostr=="*" or bostr == "const *" or bostr == "class *"/*bostr.find("*") != string::npos*/){

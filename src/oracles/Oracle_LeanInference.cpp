@@ -71,7 +71,7 @@ struct aFile {
 //also need to work on this a bit more... "ordered_nodes" list need to be rethought 
 std::string Oracle_LeanInference::leanInferenceOutputStr(std::string peirceOutputName){
     std::unordered_map<coords::Coords*, int> ident_map;
-    auto ident_ = 0;
+    //auto ident_ = 0;
     std::string flag_str = "#check \"FLAG\"\n";
     std::string check_str = "#check \"CHECK\"\n";
     std::string eval_str = "#check \"EVAL\"\n";
@@ -80,7 +80,7 @@ std::string Oracle_LeanInference::leanInferenceOutputStr(std::string peirceOutpu
         math += check_str;
         auto coords_ = interp_->getCoords();
         if(coords_->getNodeType().find("LIST") != string::npos){
-            auto iident_ = ident_map.count(coords_) ? (ident_map[coords_] = ident_map[coords_]++) : (ident_map[coords_] = ident_++);
+            //auto iident_ = ident_map.count(coords_) ? (ident_map[coords_] = ident_map[coords_]++) : (ident_map[coords_] = ident_++);
             math += "#check " + interp_->toString() + "0\n";
             math += eval_str;
             math += "#eval " + interp_->toString() + "0\n";
@@ -136,7 +136,6 @@ void Oracle_LeanInference::generateLeanChecker(std::string peirceOutputName){
 };
 
 domain::DomainObject* Oracle_LeanInference::getInterpretation(coords::Coords* coords_){
-    int selected = 0;
     for(auto i = 0;ordered_nodes.size();i++){
         if(this->ordered_nodes[i]->getCoords() == coords_)
             return this->ordered_interpretations[i];

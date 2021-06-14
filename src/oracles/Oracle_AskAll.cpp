@@ -93,7 +93,7 @@ domain::CoordinateSpace* Oracle_AskAll::selectSpace(std::vector<SpaceType*> opti
     }
     redo:
     std::cout<<"Select Space : \n";
-    for(auto i = 0;i<options.size();i++){
+    for(auto i = 0;i<((int)options.size());i++){
 
         std::cout<<(i+1)<<" - "<<options[i]->toString()<<"\n";//yay templates?
     }
@@ -105,7 +105,7 @@ domain::CoordinateSpace* Oracle_AskAll::selectSpace(std::vector<SpaceType*> opti
     catch(std::exception ex){
         goto redo;
     }
-    if(choice >= 1 and choice <= options.size()){
+    if(choice >= 1 and choice <= ((int)options.size())){
         this->choices.push_back(std::to_string(choice));
         return options[choice-1];
     }

@@ -19,9 +19,10 @@ domain::DomainContainer* InterpToDomain::getDomain(interp::Interp* interp_){
 
 interp::Interp* InterpToDomain::getInterp(domain::DomainContainer* domain_){
     for(auto kp:edges){
-        if(kp.second = domain_)
+        if(kp.second == domain_)
             return kp.first;
     }
+    return nullptr;
     
     //return this->edges[domain_];
 };
