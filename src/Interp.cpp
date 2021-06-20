@@ -271,7 +271,6 @@ std::string Interp::toStringLinked(std::vector<domain::CoordinateSpace*> spaces)
         }
     }
     for(auto op: this->body){
-        std::cout<<op->getCoords()->getNodeType()<<"\n";
         retval+= op->toString() + "\n";
     }
 
