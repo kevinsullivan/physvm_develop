@@ -121,8 +121,10 @@ domain::CoordinateSpace* Oracle_AskAll::getSpace(){
     redo:
     std::string menu = std::string("Choose Space:\n")+
         "1 - Classical Time Coordinate Space\n"+
-        "2 - Euclidean Geometry 1D Space\n";
-    choice = this->getValidChoice(1,3, menu);
+        "2 - Euclidean Geometry 1D Space\n"+
+        "3 - Euclidean Geometry 3D Space\n";
+        
+    choice = this->getValidChoice(1,4, menu);
     switch(choice)
     {
         case 1: {
@@ -175,6 +177,31 @@ domain::CoordinateSpace* Oracle_AskAll::getSpace(){
                 default: goto redo;
             }
         } break;
+        case 3: {
+            menu = "1 - Geom3D Space with Standard Frame\n2 - Geom3D Space Derived from Existing Coordinate Space\n";
+            choice = this->getValidChoice(1,3, menu);
+            //std::cin>>choice;
+            switch(choice){
+                case 1:{
+                    auto name = this->getName();
+                    return static_cast<domain::Geom3DCoordinateSpace*>(this->domain_->mkStandardGeom3DCoordinateSpace(name));
+                } break;
+                case 2:{
+                    auto name = this->getName();
+                    std::cout<<"Choose Parent Coordinate Space : \n";
+                    auto parent = dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+                    std::cout<<"Choose Origin Coordinates : \n";
+                    auto originData = this->getValueVector<3>();
+                    std::cout<<"Choose Basis Coordinates : \n";
+                    auto basisData = this->getValueMatrix<3>();
+                
+                    return static_cast<domain::Geom3DCoordinateSpace*>(this->domain_->mkDerivedGeom3DCoordinateSpace(name, parent, originData, basisData));
+                    
+                    //probably bad code, not really clear where to delete these...
+                } break;
+                default: goto redo;
+            }
+        } break;
         default: goto redo;
     }
 
@@ -193,11 +220,14 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
         "3 - Time\n"+
         "4 - Scalar\n"+
         "5 - Time Transform\n"+
-        "6 - Displacement\n"+
-        "7 - Position\n"+
-        "8 - Geom1D Transform\n";
+        "6 - Displacement1D\n"+
+        "7 - Position1D\n"+
+        "8 - Geom1D Transform\n"+
+        "9 - Displacement3D\n"+
+        "10 - Position3D\n"+
+        "11 - Geom3D Transform\n";
     redo:
-    int choice = this->getValidChoice(1,9,menu);
+    int choice = this->getValidChoice(1,12,menu);
 
     //std::cin>>choice;
     switch(choice)
@@ -285,7 +315,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
                 return nullptr;
             }
             //std::cout<<sp->getName();
-            auto interpretation_ = this->domain_->mkDisplacement(name, sp, value);
+            auto interpretation_ = this->domain_->mkDisplacement1D(name, sp, value);
             this->existing_interpretations.push_back(interpretation_);
             return interpretation_;
         } break;
@@ -301,7 +331,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
                 std::cout<<"Interpretation building failed\n";
                 return nullptr;
             }
-            auto interpretation_ = this->domain_->mkPosition(name, sp, value);
+            auto interpretation_ = this->domain_->mkPosition1D(name, sp, value);
             this->existing_interpretations.push_back(interpretation_);
             return interpretation_;
         } break;
@@ -320,6 +350,57 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
                 return nullptr;
             }
             auto interpretation_ = this->domain_->mkGeom1DTransform(name, tdom_, tcod_);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 9:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            auto sp =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!sp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto value = this->getValueVector<3>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            //std::cout<<sp->getName();
+            auto interpretation_ = this->domain_->mkDisplacement3D(name, sp, value);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 10:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            auto sp =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!sp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto value = this->getValueVector<3>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto interpretation_ = this->domain_->mkPosition3D(name, sp, value);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 11:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            std::cout<<"Annotate Domain:\n";
+            auto tdom_ =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!tdom_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Annotate Codomain:\n";
+            auto tcod_ =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!tcod_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto interpretation_ = this->domain_->mkGeom3DTransform(name, tdom_, tcod_);
             this->existing_interpretations.push_back(interpretation_);
             return interpretation_;
         } break;

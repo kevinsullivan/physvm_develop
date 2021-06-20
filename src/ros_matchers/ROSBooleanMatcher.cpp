@@ -87,14 +87,14 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_bool"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool"){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="bool" or typestr == "const bool" or typestr == "const bool"/*typestr.find("bool") != string::npos*/){
+        else if(typestr=="bool" or typestr == "const bool" or typestr == "const bool" or typestr == "const class bool"){
             ROSBooleanMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -107,7 +107,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_bool"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool"){ return true; }
         else { return false; } 
     };
 
@@ -117,7 +117,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="bool" or typestr == "const bool" or typestr == "class bool"/*typestr.find("bool") != string::npos*/){
+        else if(typestr=="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool"){
             ROSBooleanMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -135,7 +135,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_bool"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool"){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -157,7 +157,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_bool"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool"){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -180,7 +180,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_bool"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool"){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -247,7 +247,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBoolLiteralExpr__bool"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"/*typenm.find("bool") != string::npos*/){ return true; }
+		else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool"){ return true; }
         else { return false; }
     };
     if (cxxBoolLiteralExpr_)

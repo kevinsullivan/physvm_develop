@@ -144,6 +144,21 @@ DerivedGeom1DCoordinateSpace* Domain::mkDerivedGeom1DCoordinateSpace(std::string
     return sp;
 };
 
+StandardGeom3DCoordinateSpace* Domain::mkStandardGeom3DCoordinateSpace(std::string name){
+    StandardGeom3DCoordinateSpace* sp = new StandardGeom3DCoordinateSpace(name);
+    this->spaces.push_back(static_cast<Geom3DCoordinateSpace*>(sp));
+    this->geom3dSpaces.push_back(sp);
+    return sp;
+};
+
+DerivedGeom3DCoordinateSpace* Domain::mkDerivedGeom3DCoordinateSpace(std::string name, Geom3DCoordinateSpace* parent, float* originData, float** basisData){
+    DerivedGeom3DCoordinateSpace* sp = new DerivedGeom3DCoordinateSpace(name, parent, originData, basisData);
+    this->spaces.push_back(static_cast<Geom3DCoordinateSpace*>(sp));
+    this->geom3dSpaces.push_back(sp);
+    return sp;
+};
+
+
 Scalar* Domain::mkScalar(std::string name, float* value){
     auto scalar = new Scalar(name, value);
     return scalar;
@@ -164,17 +179,32 @@ TimeTransform* Domain::mkTimeTransform(std::string name, TimeCoordinateSpace* do
     return ttransform;
 }
 
-Displacement* Domain::mkDisplacement(std::string name, Geom1DCoordinateSpace* parent, float* value){
-    auto disp = new Displacement(name, parent, value);
+Displacement1D* Domain::mkDisplacement1D(std::string name, Geom1DCoordinateSpace* parent, float* value){
+    auto disp = new Displacement1D(name, parent, value);
     return disp;
 }
 
-Position* Domain::mkPosition(std::string name, Geom1DCoordinateSpace* parent, float* value){
-    auto pos = new Position(name, parent, value);
+Position1D* Domain::mkPosition1D(std::string name, Geom1DCoordinateSpace* parent, float* value){
+    auto pos = new Position1D(name, parent, value);
     return pos;
 }
 
 Geom1DTransform* Domain::mkGeom1DTransform(std::string name, Geom1DCoordinateSpace* domain_, Geom1DCoordinateSpace* codomain_){
     auto g1transform = new Geom1DTransform(name, domain_, codomain_);
+    return g1transform;
+}
+
+Displacement3D* Domain::mkDisplacement3D(std::string name, Geom3DCoordinateSpace* parent, float* value){
+    auto disp = new Displacement3D(name, parent, value);
+    return disp;
+}
+
+Position3D* Domain::mkPosition3D(std::string name, Geom3DCoordinateSpace* parent, float* value){
+    auto pos = new Position3D(name, parent, value);
+    return pos;
+}
+
+Geom3DTransform* Domain::mkGeom3DTransform(std::string name, Geom3DCoordinateSpace* domain_, Geom3DCoordinateSpace* codomain_){
+    auto g1transform = new Geom3DTransform(name, domain_, codomain_);
     return g1transform;
 }

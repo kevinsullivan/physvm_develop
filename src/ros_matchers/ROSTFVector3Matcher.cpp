@@ -3,6 +3,12 @@
 #include "clang/ASTMatchers/ASTMatchers.h"
 
 #include "ROSTFVector3Matcher.h"
+#include "ROSTFTransformMatcher.h"
+#include "ROSTFVector3Matcher.h"
+#include "ROSTFVector3Matcher.h"
+#include "ROSTFVector3Matcher.h"
+#include "ROSTFScalarMatcher.h"
+#include "ROSTFVector3Matcher.h"
 
 
 #include <string>
@@ -37,6 +43,9 @@ void ROSTFVector3Matcher::setup(){
 	
 		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
 		localFinder_.addMatcher(declRefExpr_,this);
+	
+		StatementMatcher cxxOperatorCallExpr_=cxxOperatorCallExpr().bind("CXXOperatorCallExpr");
+		localFinder_.addMatcher(cxxOperatorCallExpr_,this);
     this->childExprStore_ = nullptr;
 };
 
@@ -58,6 +67,8 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
 	
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+	
+	auto cxxOperatorCallExpr_ = Result.Nodes.getNodeAs<clang::CXXOperatorCallExpr>("CXXOperatorCallExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
 
@@ -82,14 +93,14 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_tf::Vector3"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "const tf::Vector3"/*typestr.find("tf::Vector3") != string::npos*/){
+        else if(typestr=="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "const tf::Vector3" or typestr == "const class tf::Vector3"){
             ROSTFVector3Matcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -102,7 +113,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_tf::Vector3"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ return true; }
         else { return false; } 
     };
 
@@ -112,7 +123,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3"/*typestr.find("tf::Vector3") != string::npos*/){
+        else if(typestr=="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3"){
             ROSTFVector3Matcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -130,7 +141,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_tf::Vector3"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -152,7 +163,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_tf::Vector3"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -175,7 +186,7 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_tf::Vector3"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"/*typenm.find("tf::Vector3") != string::npos*/){ return true; }
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -236,6 +247,189 @@ void ROSTFVector3Matcher::run(const MatchFinder::MatchResult &Result){
             this->childExprStore_ = (clang::Stmt*)declRefExpr_;
             return;
 
+        }
+    }
+
+	
+	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Vector3).*@$.MULtf::Transform"] = [=](std::string typenm){
+        if(false){ return false;}
+		else if(typenm=="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform" or typenm == "const class tf::Transform"){ return true; }
+        else { return false; }
+    };
+	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Vector3).*@$.MULtf::Vector3"] = [=](std::string typenm){
+        if(false){ return false;}
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ return true; }
+        else { return false; }
+    };
+    if(cxxOperatorCallExpr_){
+        auto decl_ = cxxOperatorCallExpr_->getCalleeDecl();
+        if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
+            auto name = dc->getNameAsString();
+
+            if(name=="operator*" or name=="*" or name=="const *" or name=="class *"  or name == "const class *"){
+                auto arg0=cxxOperatorCallExpr_->getArg(0);
+                auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
+
+                auto arg1=cxxOperatorCallExpr_->getArg(1);
+                auto arg1str = ((clang::QualType)arg1->getType()).getAsString();
+
+                clang::Stmt* arg0stmt = nullptr;
+
+                clang::Stmt* arg1stmt = nullptr;
+              
+                if (arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Vector3).*@$.MULtf::Transform"](arg0str) and 
+                    arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Transform,tf::Vector3).*@$.MULtf::Vector3"](arg1str)){
+                    if(false){}
+                    else if(arg0str=="tf::Transform" or arg0str=="const tf::Transform" or arg0str=="class tf::Transform" or arg0str == "const class tf::Transform"){
+            
+                        ROSTFTransformMatcher arg0m{this->context_,this->interp_};
+                        arg0m.setup();
+                        arg0m.visit(*arg0);
+                        arg0stmt = arg0m.getChildExprStore();
+                    }
+                    if(false){}
+                    else if(arg1str=="tf::Vector3" or arg1str=="const tf::Vector3" or arg1str=="class tf::Vector3" or arg1str == "const class tf::Vector3"){
+            
+                        ROSTFVector3Matcher arg1m{this->context_,this->interp_};
+                        arg1m.setup();
+                        arg1m.visit(*arg1);
+                        arg1stmt = arg1m.getChildExprStore();
+                    }
+                    if(arg0stmt and arg1stmt){
+                        //interp_->mk(cxxOperatorCallExpr_,arg0stmt,arg1stmt);
+                        
+                        interp_->buffer_operand(arg0stmt);
+                        interp_->buffer_operand(arg1stmt);
+                        interp_->mkNode("MUL_R4X4_R3",cxxOperatorCallExpr_, true);
+                        this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                        return;
+                    }
+            
+                }
+            }
+        }
+    }
+
+	
+	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3?FORCE,tf::Vector3?FORCE).+@$.ADDtf::Vector3"] = [=](std::string typenm){
+        if(false){ return false;}
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ return true; }
+        else { return false; }
+    };
+	arg_decay_exist_predicates["CXXOperatorCallExpr(tf::Vector3?FORCE,tf::Vector3?FORCE).+@$.ADDtf::Vector3"] = [=](std::string typenm){
+        if(false){ return false;}
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ return true; }
+        else { return false; }
+    };
+    if(cxxOperatorCallExpr_){
+        auto decl_ = cxxOperatorCallExpr_->getCalleeDecl();
+        if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
+            auto name = dc->getNameAsString();
+
+            if(name=="operator+" or name=="+" or name=="const +" or name=="class +"  or name == "const class +"){
+                auto arg0=cxxOperatorCallExpr_->getArg(0);
+                auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
+
+                auto arg1=cxxOperatorCallExpr_->getArg(1);
+                auto arg1str = ((clang::QualType)arg1->getType()).getAsString();
+
+                clang::Stmt* arg0stmt = nullptr;
+
+                clang::Stmt* arg1stmt = nullptr;
+              
+                if (true and 
+                    true){
+                    if(false){}
+                    
+                    else if(true){
+                    ROSTFVector3Matcher arg0m{ this->context_,this->interp_};
+                        arg0m.setup();
+                        arg0m.visit(*arg0);
+                        arg0stmt = arg0m.getChildExprStore();
+                    }
+                    
+                    if(false){}
+                    
+                    else if(true){
+                    ROSTFVector3Matcher arg1m{ this->context_,this->interp_};
+                        arg1m.setup();
+                        arg1m.visit(*arg1);
+                        arg1stmt = arg1m.getChildExprStore();
+                    }
+                    
+                    if(arg0stmt and arg1stmt){
+                        //interp_->mk(cxxOperatorCallExpr_,arg0stmt,arg1stmt);
+                        
+                        interp_->buffer_operand(arg0stmt);
+                        interp_->buffer_operand(arg1stmt);
+                        interp_->mkNode("ADD_R3_R3",cxxOperatorCallExpr_, true);
+                        this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                        return;
+                    }
+            
+                }
+            }
+        }
+    }
+
+	
+	arg_decay_exist_predicates["CXXOperatorCallExpr(tfScalar,tf::Vector3?FORCE).*@$.MULtfScalar"] = [=](std::string typenm){
+        if(false){ return false;}
+		else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar" or typenm == "const class tfScalar"){ return true; }
+        else { return false; }
+    };
+	arg_decay_exist_predicates["CXXOperatorCallExpr(tfScalar,tf::Vector3?FORCE).*@$.MULtf::Vector3"] = [=](std::string typenm){
+        if(false){ return false;}
+		else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ return true; }
+        else { return false; }
+    };
+    if(cxxOperatorCallExpr_){
+        auto decl_ = cxxOperatorCallExpr_->getCalleeDecl();
+        if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
+            auto name = dc->getNameAsString();
+
+            if(name=="operator*" or name=="*" or name=="const *" or name=="class *"  or name == "const class *"){
+                auto arg0=cxxOperatorCallExpr_->getArg(0);
+                auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
+
+                auto arg1=cxxOperatorCallExpr_->getArg(1);
+                auto arg1str = ((clang::QualType)arg1->getType()).getAsString();
+
+                clang::Stmt* arg0stmt = nullptr;
+
+                clang::Stmt* arg1stmt = nullptr;
+              
+                if (arg_decay_exist_predicates["CXXOperatorCallExpr(tfScalar,tf::Vector3?FORCE).*@$.MULtfScalar"](arg0str) and 
+                    true){
+                    if(false){}
+                    else if(arg0str=="tfScalar" or arg0str=="const tfScalar" or arg0str=="class tfScalar" or arg0str == "const class tfScalar"){
+            
+                        ROSTFScalarMatcher arg0m{this->context_,this->interp_};
+                        arg0m.setup();
+                        arg0m.visit(*arg0);
+                        arg0stmt = arg0m.getChildExprStore();
+                    }
+                    if(false){}
+                    
+                    else if(true){
+                    ROSTFVector3Matcher arg1m{ this->context_,this->interp_};
+                        arg1m.setup();
+                        arg1m.visit(*arg1);
+                        arg1stmt = arg1m.getChildExprStore();
+                    }
+                    
+                    if(arg0stmt and arg1stmt){
+                        //interp_->mk(cxxOperatorCallExpr_,arg0stmt,arg1stmt);
+                        
+                        interp_->buffer_operand(arg0stmt);
+                        interp_->buffer_operand(arg1stmt);
+                        interp_->mkNode("MUL_R1_R3",cxxOperatorCallExpr_, true);
+                        this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                        return;
+                    }
+            
+                }
+            }
         }
     }
 

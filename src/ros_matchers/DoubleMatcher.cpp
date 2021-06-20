@@ -91,14 +91,14 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_double"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="double" or typestr == "const double" or typestr == "const double"/*typestr.find("double") != string::npos*/){
+        else if(typestr=="double" or typestr == "const double" or typestr == "const double" or typestr == "const class double"){
             DoubleMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -111,7 +111,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_double"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
         else { return false; } 
     };
 
@@ -121,7 +121,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="double" or typestr == "const double" or typestr == "class double"/*typestr.find("double") != string::npos*/){
+        else if(typestr=="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double"){
             DoubleMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -139,7 +139,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_double"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -161,7 +161,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_double"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -184,7 +184,7 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_double"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -297,12 +297,12 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["BinaryOperator(double?FORCE,double?FORCE).+@$.ADDdouble"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
     else { return false; }
     };
 	arg_decay_exist_predicates["BinaryOperator(double?FORCE,double?FORCE).+@$.ADDdouble"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
     else { return false; }
     };
     if(binaryOperator_){
@@ -352,12 +352,12 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["BinaryOperator(double?FORCE,double?FORCE).*@$.MULdouble"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
     else { return false; }
     };
 	arg_decay_exist_predicates["BinaryOperator(double?FORCE,double?FORCE).*@$.MULdouble"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
     else { return false; }
     };
     if(binaryOperator_){

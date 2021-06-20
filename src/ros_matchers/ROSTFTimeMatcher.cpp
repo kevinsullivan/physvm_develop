@@ -89,14 +89,14 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_ros::Time"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time"){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="ros::Time" or typestr == "const ros::Time" or typestr == "const ros::Time"/*typestr.find("ros::Time") != string::npos*/){
+        else if(typestr=="ros::Time" or typestr == "const ros::Time" or typestr == "const ros::Time" or typestr == "const class ros::Time"){
             ROSTFTimeMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -109,7 +109,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_ros::Time"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time"){ return true; }
         else { return false; } 
     };
 
@@ -119,7 +119,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time"/*typestr.find("ros::Time") != string::npos*/){
+        else if(typestr=="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time"){
             ROSTFTimeMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -137,7 +137,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_ros::Time"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time"){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -159,7 +159,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_ros::Time"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time"){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -182,7 +182,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_ros::Time"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time"){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -246,12 +246,12 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time?FORCE,ros::Duration?FORCE).+@$.ADDros::Time"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"/*typenm.find("ros::Time") != string::npos*/){ return true; }
+		else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time"){ return true; }
         else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Time?FORCE,ros::Duration?FORCE).+@$.ADDros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; }
     };
     if(cxxOperatorCallExpr_){
@@ -259,7 +259,7 @@ void ROSTFTimeMatcher::run(const MatchFinder::MatchResult &Result){
         if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
             auto name = dc->getNameAsString();
 
-            if(name=="operator+" or name=="+" or name=="const +" or name=="class +"/*name.find("+") != string::npos*/){
+            if(name=="operator+" or name=="+" or name=="const +" or name=="class +"  or name == "const class +"){
                 auto arg0=cxxOperatorCallExpr_->getArg(0);
                 auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
 

@@ -57,7 +57,8 @@ std::string Interpretation::toString_AST(){
 
     math += "import .lang.expressions.time_expr\n";
     math += "import .lang.expressions.geom1d_expr\n\n";
-    math += "open lang.time\nopen lang.geom1d\n";//abbreviation F := lang.time.K\n\n";
+    math += "import .lang.expressions.geom3d_expr\n\n";
+    math += "open lang.time\nopen lang.geom1d\nopen lang.geom3d\n";//abbreviation F := lang.time.K\n\n";
     //math += "noncomputable theory\n\n";
     //math += "def " + interp::getEnvName() + " := environment.init_env";
     //math += interp->toString_Spaces();
@@ -368,7 +369,7 @@ void Interpretation::performInference(){
             case domain::AnnotationState::Manual : {
                 //dont overwrite manual annotations
                 if(infer_dom){
-                    std::cout<<infer_dom->toString()<<"\n";
+                    //std::cout<<infer_dom->toString()<<"\n";
                     if(auto dc = dynamic_cast<domain::ErrorObject*>(infer_dom)){
                         dom_cont->setAnnotationState(domain::AnnotationState::ManualError);
                         dom_cont->setError(dc);
@@ -462,8 +463,8 @@ void Interpretation::interpretProgram(){
     while(continue_)
     {
         //oracle_infer_->generateLeanChecker("PeirceOutput");
+        checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
         if(needs_infer){
-            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             this->performInference();
             //I don't know why I need ot do this twice. this is a hack for an underlying bug
             checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));

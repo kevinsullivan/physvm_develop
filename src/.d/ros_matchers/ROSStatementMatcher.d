@@ -481,9 +481,11 @@
   /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread \
   ros_matchers/ROSStatementMatcher.h ros_matchers/../BaseMatcher.h \
   ros_matchers/ROSBooleanMatcher.h ros_matchers/FloatMatcher.h \
-  ros_matchers/DoubleMatcher.h ros_matchers/ROSTFTimeMatcher.h \
-  ros_matchers/ROSDurationMatcher.h ros_matchers/ROSTFVector3Matcher.h \
-  ros_matchers/ROSTF2DurationMatcher.h
+  ros_matchers/DoubleMatcher.h ros_matchers/ROSTFScalarMatcher.h \
+  ros_matchers/ROSTFTimeMatcher.h ros_matchers/ROSDurationMatcher.h \
+  ros_matchers/ROSTFVector3Matcher.h \
+  ros_matchers/ROSTF2DurationMatcher.h \
+  ros_matchers/ROSTFTransformMatcher.h
 
 /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchFinder.h:
 
@@ -1503,6 +1505,8 @@ ros_matchers/FloatMatcher.h:
 
 ros_matchers/DoubleMatcher.h:
 
+ros_matchers/ROSTFScalarMatcher.h:
+
 ros_matchers/ROSTFTimeMatcher.h:
 
 ros_matchers/ROSDurationMatcher.h:
@@ -1510,3 +1514,5 @@ ros_matchers/ROSDurationMatcher.h:
 ros_matchers/ROSTFVector3Matcher.h:
 
 ros_matchers/ROSTF2DurationMatcher.h:
+
+ros_matchers/ROSTFTransformMatcher.h:
