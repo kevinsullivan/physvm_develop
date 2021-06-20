@@ -91,14 +91,14 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_ros::Duration"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="ros::Duration" or typestr == "const ros::Duration" or typestr == "const ros::Duration"/*typestr.find("ros::Duration") != string::npos*/){
+        else if(typestr=="ros::Duration" or typestr == "const ros::Duration" or typestr == "const ros::Duration" or typestr == "const class ros::Duration"){
             ROSDurationMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -111,7 +111,7 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_ros::Duration"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; } 
     };
 
@@ -121,7 +121,7 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration"/*typestr.find("ros::Duration") != string::npos*/){
+        else if(typestr=="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration"){
             ROSDurationMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -139,7 +139,7 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_ros::Duration"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -161,7 +161,7 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_ros::Duration"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -184,7 +184,7 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_ros::Duration"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -251,12 +251,12 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,ros::Duration?FORCE).+@$.ADDros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,ros::Duration?FORCE).+@$.ADDros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; }
     };
     if(cxxOperatorCallExpr_){
@@ -264,7 +264,7 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
         if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
             auto name = dc->getNameAsString();
 
-            if(name=="operator+" or name=="+" or name=="const +" or name=="class +"/*name.find("+") != string::npos*/){
+            if(name=="operator+" or name=="+" or name=="const +" or name=="class +"  or name == "const class +"){
                 auto arg0=cxxOperatorCallExpr_->getArg(0);
                 auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
 
@@ -313,12 +313,12 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,double).*@$.MULros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"/*typenm.find("ros::Duration") != string::npos*/){ return true; }
+		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; }
     };
 	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,double).*@$.MULdouble"] = [=](std::string typenm){
         if(false){ return false;}
-		else if(typenm=="double" or typenm == "const double" or typenm == "class double"/*typenm.find("double") != string::npos*/){ return true; }
+		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
         else { return false; }
     };
     if(cxxOperatorCallExpr_){
@@ -326,7 +326,7 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
         if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
             auto name = dc->getNameAsString();
 
-            if(name=="operator*" or name=="*" or name=="const *" or name=="class *"/*name.find("*") != string::npos*/){
+            if(name=="operator*" or name=="*" or name=="const *" or name=="class *"  or name == "const class *"){
                 auto arg0=cxxOperatorCallExpr_->getArg(0);
                 auto arg0str = ((clang::QualType)arg0->getType()).getAsString();
 
@@ -349,7 +349,7 @@ void ROSDurationMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                     
                     if(false){}
-                    else if(arg1str=="double" or arg1str=="const double" or arg1str=="class double"){
+                    else if(arg1str=="double" or arg1str=="const double" or arg1str=="class double" or arg1str == "const class double"){
             
                         DoubleMatcher arg1m{this->context_,this->interp_};
                         arg1m.setup();

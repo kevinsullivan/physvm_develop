@@ -115,13 +115,15 @@ void ROS1ProgramMatcher::setup()
                             auto typeDetector = [=](std::string typenm){
                                 if(false){return false;}
                         
-			else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"){ return true; }
-			else if(typenm=="tf2::Duration" or typenm == "const tf2::Duration" or typenm == "class tf2::Duration"){ return true; }
-			else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"){ return true; }
-			else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"){ return true; }
-			else if(typenm=="double" or typenm == "const double" or typenm == "class double"){ return true; }
-			else if(typenm=="float" or typenm == "const float" or typenm == "class float"){ return true; }
-			else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"){ return true; }
+			else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typestr == "const class ros::Duration"){ return true; }
+			else if(typenm=="tf2::Duration" or typenm == "const tf2::Duration" or typenm == "class tf2::Duration" or typestr == "const class tf2::Duration"){ return true; }
+			else if(typenm=="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform" or typestr == "const class tf::Transform"){ return true; }
+			else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typestr == "const class tf::Vector3"){ return true; }
+			else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typestr == "const class ros::Time"){ return true; }
+			else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar" or typestr == "const class tfScalar"){ return true; }
+			else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typestr == "const class double"){ return true; }
+			else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typestr == "const class float"){ return true; }
+			else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typestr == "const class bool"){ return true; }
                                 else { return false;}
                             };*/
 
@@ -141,7 +143,7 @@ void ROS1ProgramMatcher::setup()
                                     auto typestr = param_->getType().getAsString();
                                     if(false){}
                                  
-                                    else if(typestr == "ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration"/*typestr.find("ros::Duration") != string::npos*/){
+                                    else if(typestr == "ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -155,7 +157,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration"/*typestr.find("tf2::Duration") != string::npos*/){
+                                    else if(typestr == "tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -169,7 +171,21 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3"/*typestr.find("tf::Vector3") != string::npos*/){
+                                    else if(typestr == "tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform"){
+                                        //interp_->mkFunctionParam("R4X4", param_);
+
+                                        if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
+                                            interp_->mkNode("FUNCTION_PARAM", param_,false);
+                                            valid_params_.push_back(const_cast<clang::ParmVarDecl*>(param_));
+                                        }
+                                        else
+                                        {
+                                            std::cout << "Warning : Param is not a ParmVarDecl\n";
+                                            param_->dump();
+                                        }
+                                        valid_params_.push_back(param_);
+                                    }
+                                    else if(typestr == "tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3"){
                                         //interp_->mkFunctionParam("R3", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -183,7 +199,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time"/*typestr.find("ros::Time") != string::npos*/){
+                                    else if(typestr == "ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -197,7 +213,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "double" or typestr == "const double" or typestr == "class double"/*typestr.find("double") != string::npos*/){
+                                    else if(typestr == "tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar" or typestr == "const class tfScalar"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -211,7 +227,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "float" or typestr == "const float" or typestr == "class float"/*typestr.find("float") != string::npos*/){
+                                    else if(typestr == "double" or typestr == "const double" or typestr == "class double" or typestr == "const class double"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -225,7 +241,21 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "bool" or typestr == "const bool" or typestr == "class bool"/*typestr.find("bool") != string::npos*/){
+                                    else if(typestr == "float" or typestr == "const float" or typestr == "class float" or typestr == "const class float"){
+                                        //interp_->mkFunctionParam("R1", param_);
+
+                                        if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
+                                            interp_->mkNode("FUNCTION_PARAM", param_,false);
+                                            valid_params_.push_back(const_cast<clang::ParmVarDecl*>(param_));
+                                        }
+                                        else
+                                        {
+                                            std::cout << "Warning : Param is not a ParmVarDecl\n";
+                                            param_->dump();
+                                        }
+                                        valid_params_.push_back(param_);
+                                    }
+                                    else if(typestr == "bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool"){
                                         //interp_->mkFunctionParam("BOOL", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -246,13 +276,15 @@ void ROS1ProgramMatcher::setup()
                             auto typenm = retType.getAsString();
                             if(false){}
                         
-					else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration"){ hasReturn = true; nodePrefix = "R1"; }
-					else if(typenm=="tf2::Duration" or typenm == "const tf2::Duration" or typenm == "class tf2::Duration"){ hasReturn = true; nodePrefix = "R1"; }
-					else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3"){ hasReturn = true; nodePrefix = "R3"; }
-					else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time"){ hasReturn = true; nodePrefix = "R1"; }
-					else if(typenm=="double" or typenm == "const double" or typenm == "class double"){ hasReturn = true; nodePrefix = "R1"; }
-					else if(typenm=="float" or typenm == "const float" or typenm == "class float"){ hasReturn = true; nodePrefix = "R1"; }
-					else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool"){ hasReturn = true; nodePrefix = "BOOL"; }
+							else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm=="tf2::Duration" or typenm == "const tf2::Duration" or typenm == "class tf2::Duration" or typenm == "const class tf2::Duration"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm=="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform" or typenm == "const class tf::Transform"){ hasReturn = true; nodePrefix = "R4X4"; }
+							else if(typenm=="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3"){ hasReturn = true; nodePrefix = "R3"; }
+							else if(typenm=="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm=="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar" or typenm == "const class tfScalar"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool"){ hasReturn = true; nodePrefix = "BOOL"; }
                             else {}
         
 

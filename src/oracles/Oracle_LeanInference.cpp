@@ -188,9 +188,13 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
         std::string duration_str("lang.time.duration_expr");
         std::string time_transform_str("lang.time.time_transform_expr");
 
-        std::string position_str("lang.geom1d.position_expr");
-        std::string displacement_str("lang.geom1d.displacement_expr");
+        std::string position1d_str("lang.geom1d.position1d_expr");
+        std::string displacement1d_str("lang.geom1d.displacement1d_expr");
         std::string geom1d_transform_str("lang.geom1d.geom1d_transform_expr");
+
+        std::string position3d_str("lang.geom3d.position3d_expr");
+        std::string displacement3d_str("lang.geom3d.displacement3d_expr");
+        std::string geom3d_transform_str("lang.geom3d.geom3d_transform_expr");
 
         std::string scalar_str(": scalar");
 
@@ -256,12 +260,12 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
             return domain_->mkTimeTransform("INFERRED", domsp, codsp);
             
         }
-        else if(checkType.find(position_str) != string::npos){
+        else if(checkType.find(position1d_str) != string::npos){
             //return nullptr;
-            auto typesub = checkType.substr(checkType.find(position_str));
+            auto typesub = checkType.substr(checkType.find(position1d_str));
             auto spaces = domain_->getGeom1DSpaces();
             auto sp = spaces[0]; //fairly safely assume it's not empty
-            auto spname = trim(typesub.substr(std::string(position_str).length()));
+            auto spname = trim(typesub.substr(std::string(position1d_str).length()));
             for(auto sp_ : spaces){
                 if(sp_->getName() == spname){
                     sp = sp_;
@@ -270,15 +274,15 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
             }
             auto default_value = new float[1];
             default_value[0] = 0;
-            return domain_->mkPosition("INFERRED", sp,default_value);
+            return domain_->mkPosition1D("INFERRED", sp,default_value);
 
         }
-        else if(checkType.find(displacement_str) != string::npos){
+        else if(checkType.find(displacement1d_str) != string::npos){
             //return nullptr;
-            auto typesub = checkType.substr(checkType.find(displacement_str));
+            auto typesub = checkType.substr(checkType.find(displacement1d_str));
             auto spaces = domain_->getGeom1DSpaces();
             auto sp = spaces[0]; //fairly safely assume it's not empty
-            auto spname = trim(typesub.substr(std::string(displacement_str).length()));
+            auto spname = trim(typesub.substr(std::string(displacement1d_str).length()));
             for(auto sp_ : spaces){
                 if(sp_->getName() == spname){
                     sp = sp_;
@@ -287,7 +291,7 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
             }
             auto default_value = new float[1];
             default_value[0] = 0;
-            return domain_->mkDisplacement("INFERRED", sp,default_value);
+            return domain_->mkDisplacement1D("INFERRED", sp,default_value);
 
         }
         else if(checkType.find(geom1d_transform_str) != string::npos){
@@ -313,6 +317,69 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::vector<std:
             //auto default_value = new float[1];
             //default_value[0] = 0;
             return domain_->mkGeom1DTransform("INFERRED", domsp, codsp);
+            
+        }
+        else if(checkType.find(position3d_str) != string::npos){
+            //return nullptr;
+            auto typesub = checkType.substr(checkType.find(position3d_str));
+            auto spaces = domain_->getGeom3DSpaces();
+            auto sp = spaces[0]; //fairly safely assume it's not empty
+            auto spname = trim(typesub.substr(std::string(position3d_str).length()));
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                    break;
+                }
+            }
+            auto default_value = new float[3];
+            default_value[0] = 0;
+            default_value[1] = 0;
+            default_value[2] = 0;
+            return domain_->mkPosition3D("INFERRED", sp,default_value);
+
+        }
+        else if(checkType.find(displacement3d_str) != string::npos){
+            //return nullptr;
+            auto typesub = checkType.substr(checkType.find(displacement3d_str));
+            auto spaces = domain_->getGeom3DSpaces();
+            auto sp = spaces[0]; //fairly safely assume it's not empty
+            auto spname = trim(typesub.substr(std::string(displacement3d_str).length()));
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                    break;
+                }
+            }
+            auto default_value = new float[3];
+            default_value[0] = 0;
+            default_value[1] = 0;
+            default_value[2] = 0;
+            return domain_->mkDisplacement3D("INFERRED", sp,default_value);
+
+        }
+        else if(checkType.find(geom3d_transform_str) != string::npos){
+            //return nullptr;
+            checkType = checkType.substr(checkType.find(geom3d_transform_str));
+            auto domcodsub = trim(checkType.substr(std::string(geom3d_transform_str).length()));
+            auto domname = trim(domcodsub.substr(0,domcodsub.find(' ')));
+            auto codname = trim(domcodsub.substr(domcodsub.find(' ')));
+
+            auto spaces = domain_->getGeom3DSpaces();
+            auto domsp = spaces[0]; //fairly safely assume it's not empty
+            auto codsp = spaces[0];
+            for(auto sp_ : spaces){
+                if(sp_->getName() == domname){
+                    domsp = sp_;
+                    break;
+                }
+                if(sp_->getName() == codname){
+                    codsp = sp_;
+                    break;
+                }
+            }
+            //auto default_value = new float[1];
+            //default_value[0] = 0;
+            return domain_->mkGeom3DTransform("INFERRED", domsp, codsp);
             
         }
         else if(checkType.find(scalar_str) != string::npos){

@@ -91,14 +91,14 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_float"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = ((clang::QualType)inner->getType()).getAsString();
         if(false){}
-        else if(typestr=="float" or typestr == "const float" or typestr == "const float"/*typestr.find("float") != string::npos*/){
+        else if(typestr=="float" or typestr == "const float" or typestr == "const float" or typestr == "const class float"){
             FloatMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -111,7 +111,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_float"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ return true; }
         else { return false; } 
     };
 
@@ -121,7 +121,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = inner->getType().getAsString();
 
         if(false){}
-        else if(typestr=="float" or typestr == "const float" or typestr == "class float"/*typestr.find("float") != string::npos*/){
+        else if(typestr=="float" or typestr == "const float" or typestr == "class float" or typestr == "const class float"){
             FloatMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -139,7 +139,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_float"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -161,7 +161,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_float"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -184,7 +184,7 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_float"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -297,12 +297,12 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["BinaryOperator(float?FORCE,float?FORCE).+@$.ADDfloat"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ return true; }
     else { return false; }
     };
 	arg_decay_exist_predicates["BinaryOperator(float?FORCE,float?FORCE).+@$.ADDfloat"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ return true; }
     else { return false; }
     };
     if(binaryOperator_){
@@ -352,12 +352,12 @@ void FloatMatcher::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["BinaryOperator(float?FORCE,float?FORCE).*@$.MULfloat"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ return true; }
     else { return false; }
     };
 	arg_decay_exist_predicates["BinaryOperator(float?FORCE,float?FORCE).*@$.MULfloat"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm=="float" or typenm == "const float" or typenm == "class float"/*typenm.find("float") != string::npos*/){ return true; }
+		else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ return true; }
     else { return false; }
     };
     if(binaryOperator_){
