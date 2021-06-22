@@ -91,7 +91,8 @@ std::string Interp::toString(){
                 retval+= dom_->getName() + ".value.mk_geom1d_transform_to " + cod_->getName() + ".value";
             }
             else if(auto aspos = dynamic_cast<domain::Position3D*>(this->domain->getValue())){
-                retval+= std::string("mk_position3d ") + aspos->getSpace()->getName() + ".value " + std::to_string(aspos->getValue()[0]) + " " + std::to_string(asdisp->getValue()[1]) + std::to_string(asdisp->getValue()[2]);
+                std::cout<<"about to crash??";
+                retval+= std::string("mk_position3d ") + aspos->getSpace()->getName() + ".value " + std::to_string(aspos->getValue()[0]) + " " + std::to_string(aspos->getValue()[1]) + " " + std::to_string(aspos->getValue()[2]);
             }
             else if(auto asdisp = dynamic_cast<domain::Displacement3D*>(this->domain->getValue())){
                 retval+= std::string("mk_displacement3d ") + asdisp->getSpace()->getName() + ".value " + std::to_string(asdisp->getValue()[0]) + " " + std::to_string(asdisp->getValue()[1]) + " " + std::to_string(asdisp->getValue()[2]);
@@ -204,10 +205,10 @@ std::string Interp::getType(){
         else if(auto asdisp = dynamic_cast<domain::Displacement3D*>(this->domain->getValue())){
             return std::string("displacement3d_expr ") + asdisp->getSpace()->getName();
         }
-        else if(auto astrans = dynamic_cast<domain::Geom1DTransform*>(this->domain->getValue())){
+        else if(auto astrans = dynamic_cast<domain::Geom3DTransform*>(this->domain->getValue())){
             auto dom_ = astrans->getDomain();
             auto cod_ = astrans->getCodomain();
-            return std::string("geom1d_transform_expr ") + dom_->getName() + " " + cod_->getName(); 
+            return std::string("geom3d_transform_expr ") + dom_->getName() + " " + cod_->getName(); 
         }
         else if(auto asscalar = dynamic_cast<domain::Scalar*>(this->domain->getValue())){
             return std::string("scalar_expr");

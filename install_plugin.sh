@@ -4,7 +4,7 @@ cd /peirce/Peirce-vscode
 npm install
 npm install -g vsce
 vsce package
-code --install-extension /peirce/Peirce-vscode/code-annotation-0.0.1.vsix
+code --install-extension /peirce/Peirce-vscode/peirce-plugin-0.0.1.vsix
 
 cd /peirce
 

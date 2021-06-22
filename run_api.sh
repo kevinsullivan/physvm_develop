@@ -1,4 +1,4 @@
-pkill python3
+#pkill python3
 cd /peirce/Peirce-vscode-api
 python3 -m venv venv
 source venv/bin/activate
