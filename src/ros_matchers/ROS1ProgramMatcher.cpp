@@ -124,6 +124,7 @@ void ROS1ProgramMatcher::setup()
 			else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typestr == "const class double"){ return true; }
 			else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typestr == "const class float"){ return true; }
 			else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typestr == "const class bool"){ return true; }
+			else if(typenm=="void" or typenm == "const void" or typenm == "class void" or typestr == "const class void"){ return true; }
                                 else { return false;}
                             };*/
 
@@ -269,6 +270,20 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         valid_params_.push_back(param_);
                                     }
+                                    else if(typestr == "void" or typestr == "const void" or typestr == "class void" or typestr == "const class void"){
+                                        //interp_->mkFunctionParam("VOID", param_);
+
+                                        if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
+                                            interp_->mkNode("FUNCTION_PARAM", param_,false);
+                                            valid_params_.push_back(const_cast<clang::ParmVarDecl*>(param_));
+                                        }
+                                        else
+                                        {
+                                            std::cout << "Warning : Param is not a ParmVarDecl\n";
+                                            param_->dump();
+                                        }
+                                        valid_params_.push_back(param_);
+                                    }
                                 }
                             }
                             bool hasReturn = false;
@@ -285,6 +300,7 @@ void ROS1ProgramMatcher::setup()
 							else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ hasReturn = true; nodePrefix = "R1"; }
 							else if(typenm=="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float"){ hasReturn = true; nodePrefix = "R1"; }
 							else if(typenm=="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool"){ hasReturn = true; nodePrefix = "BOOL"; }
+							else if(typenm=="void" or typenm == "const void" or typenm == "class void" or typenm == "const class void"){ hasReturn = true; nodePrefix = "VOID"; }
                             else {}
         
 

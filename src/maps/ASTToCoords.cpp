@@ -28,9 +28,9 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
         auto begin = c->getFullLoc(range.getBegin());
         auto end = c->getFullLoc(range.getEnd());
         clang::LangOptions lopt;
-        clang::SourceLocation b = c->getSourceManager().getSpellingLoc(range.getBegin());//(d->getLocStart()), _e(d->getLocEnd());
+        clang::SourceLocation b = c->getSourceManager().getSpellingLoc(range.getBegin());
         clang::SourceLocation e = c->getSourceManager().getSpellingLoc(range.getEnd());
-        //auto sm = c->getSourceManager();
+
         auto code = std::string(c->getSourceManager().getCharacterData(b),
             c->getSourceManager().getCharacterData(e)-c->getSourceManager().getCharacterData(b));
         
@@ -38,7 +38,7 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
         {
             code = dc->getFoundDecl()->getNameAsString();
         }
-        //std::cout<<code<<"\n";
+
         code = code == "" ? "No Source Snip Available" : code;
         auto name = (clang::dyn_cast<clang::DeclRefExpr>(stmt)) ? (clang::dyn_cast<clang::DeclRefExpr>(stmt))->getDecl()->getNameAsString() : "";
         if(auto dc = clang::dyn_cast<clang::DeclStmt>(stmt))
@@ -71,14 +71,13 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
         auto begin = c->getFullLoc(range.getBegin());
         auto end = c->getFullLoc(range.getEnd());
         clang::LangOptions lopt;
-        clang::SourceLocation b = c->getSourceManager().getSpellingLoc(range.getBegin());//(d->getLocStart()), _e(d->getLocEnd());
-        clang::SourceLocation e = c->getSourceManager().getSpellingLoc(range.getEnd());//(clang::Lexer::getLocForEndOfToken(_e, 0, c->getSourceManager(), lopt));
+        clang::SourceLocation b = c->getSourceManager().getSpellingLoc(range.getBegin());
+        clang::SourceLocation e = c->getSourceManager().getSpellingLoc(range.getEnd());
         //auto sm = c->getSourceManager();
         auto code = std::string(c->getSourceManager().getCharacterData(b),
             c->getSourceManager().getCharacterData(e)-c->getSourceManager().getCharacterData(b));
         code = code == "" ? "No Source Snip Available" : code;
         
-        //std::cout<<((clang::dyn_cast<clang::NamedDecl>(decl)) ? (clang::dyn_cast<clang::NamedDecl>(decl))->getNameAsString() : "")<<"\n";
         coords->state_ = new coords::ASTState(
             "",
             "",
@@ -93,19 +92,14 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
     }
     else if(astNode->ASTTag_ == ASTTag::ConsDecl__){
         auto code = astNode->ASTNode_.ConsDecl_->getQualifiedNameAsString();
-        //auto node = astNode->ASTNode_.ConsDecl_;
 
         coords->state_ = new coords::ASTState(
             "",
             "",
             "",
-            code,//(clang::dyn_cast<clang::NamedDecl>(decl)) ? (clang::dyn_cast<clang::NamedDecl>(decl))->getNameAsString() : "",
+            code,
             code,
             0,0,0,0
-            //begin.getSpellingLineNumber(),
-            //begin.getSpellingColumnNumber(),
-            //end.getSpellingLineNumber(),
-            //end.getSpellingColumnNumber()
         );
     }
     else if(astNode->ASTTag_ == ASTTag::ParamDecl__){
@@ -114,65 +108,19 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
             "",
             "",
             "",
-            code,//(clang::dyn_cast<clang::NamedDecl>(decl)) ? (clang::dyn_cast<clang::NamedDecl>(decl))->getNameAsString() : "",
+            code,
             code,
             0,0,0,0
-            //begin.getSpellingLineNumber(),
-            //begin.getSpellingColumnNumber(),
-            //end.getSpellingLineNumber(),
-            //end.getSpellingColumnNumber()
         );
 
     }
     else{
-        //for(int i = 0;i<100;i++){
-        //    std::cout<<"Warning : bad code in ASTToCoords\n";
-        //}
     }
 }
-/*
-void ASTToCoords::setASTState(coords::Coords* coords, clang::Decl* decl, clang::ASTContext* c)
-{
-    auto range = decl->getSourceRange();
-    auto begin = c->getFullLoc(range.getBegin());
-    auto end = c->getFullLoc(range.getEnd());
-    clang::LangOptions lopt;
-    clang::SourceLocation b = c->getSourceManager().getSpellingLoc(range.getBegin());//(d->getLocStart()), _e(d->getLocEnd());
-    clang::SourceLocation e = c->getSourceManager().getSpellingLoc(range.getEnd());//(clang::Lexer::getLocForEndOfToken(_e, 0, c->getSourceManager(), lopt));
-    //auto sm = c->getSourceManager();
-    auto code = std::string(c->getSourceManager().getCharacterData(b),
-        c->getSourceManager().getCharacterData(e)-c->getSourceManager().getCharacterData(b));
-    //std::cout<<code<<"\n";
-    code = code == "" ? "No Source Snip Available" : code;
-    coords->state_ = new coords::ASTState(
-        "",
-        "",
-        "",
-        (clang::dyn_cast<clang::NamedDecl>(decl)) ? (clang::dyn_cast<clang::NamedDecl>(decl))->getNameAsString() : "",
-        code,
-        begin.getSpellingLineNumber(),
-        begin.getSpellingColumnNumber(),
-        end.getSpellingLineNumber(),
-        end.getSpellingColumnNumber()
-    );
-    /*
-    coords->state_.file_id_ = "";
-    coords->state_.file_name_ = "";
-    coords->state_.file_path_ = "";
-
-    coords->state_.name_ = ((clang::NamedDecl*) decl) ? ((clang::NamedDecl*) decl)->getNameAsString() : "";
-
-    coords->state_.begin_line_no_ = begin.getSpellingLineNumber();
-    coords->state_.begin_col_no_ = begin.getSpellingColumnNumber();
-    coords->state_.end_line_no_ = end.getSpellingLineNumber();
-    coords->state_.end_col_no_ = end.getSpellingColumnNumber();
-    
-}*/
 
 ASTToCoords::ASTToCoords() {
 };
-
-std::string TagConversion[] = {"UnitDecl", "FuncDecl", "Stmt", "VarDecl"};
+//enum class ASTTag { UnitDecl__, FuncDecl__, Stmt__, VarDecl__, ConsDecl__, ParamDecl__ };
 bool ASTToCoords::put(std::shared_ptr<ast::NodeContainer> astNode, coords::Coords* coords_){
     if(astNode->ASTTag_==ASTTag::Stmt__){
         stmt_edges[astNode->ASTNode_.Stmt_] = coords_;
@@ -201,28 +149,6 @@ bool ASTToCoords::put(std::shared_ptr<ast::NodeContainer> astNode, coords::Coord
     else{
         return false;
     }
-    /*
-    switch(astNode->ASTTag_){
-			case ASTTag::Stmt__:
-                std::cout<<"stmt case";
-				stmt_edges[astNode->ASTNode_.Stmt_] = coords_;
-			    return true;;
-			case ASTTag::VarDecl__:
-                std::cout<<"var case";
-				var_edges[astNode->ASTNode_.VarDecl_] = coords_;
-                return true;
-			case ASTTag::FuncDecl__:
-                std::cout<<"func case";
-				func_edges[astNode->ASTNode_.FuncDecl_] = coords_;
-                return true;
-			case ASTTag::UnitDecl__:
-                std::cout<<"unit case";
-				unit_edges[astNode->ASTNode_.UnitDecl_] = coords_;
-                return true;
-		}
-        
-    return false;
-    */
 }
 
 

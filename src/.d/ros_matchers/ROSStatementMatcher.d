@@ -485,7 +485,7 @@
   ros_matchers/ROSTFTimeMatcher.h ros_matchers/ROSDurationMatcher.h \
   ros_matchers/ROSTFVector3Matcher.h \
   ros_matchers/ROSTF2DurationMatcher.h \
-  ros_matchers/ROSTFTransformMatcher.h
+  ros_matchers/ROSTFTransformMatcher.h ros_matchers/VoidMatcher.h
 
 /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchFinder.h:
 
@@ -1516,3 +1516,5 @@ ros_matchers/ROSTFVector3Matcher.h:
 ros_matchers/ROSTF2DurationMatcher.h:
 
 ros_matchers/ROSTFTransformMatcher.h:
+
+ros_matchers/VoidMatcher.h:

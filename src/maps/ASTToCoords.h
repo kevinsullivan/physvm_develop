@@ -55,10 +55,12 @@ public:
     //void setASTState(coords::Coords* coords, clang::Stmt* stmt, clang::ASTContext* c);
     //void setASTState(coords::Coords* coords, clang::Decl* decl, clang::ASTContext* c);
 	coords::Coords* getCoords(std::shared_ptr<ast::NodeContainer> astNode){
+		//std::string TagConversion[] = {"UnitDecl", "FuncDecl", "Stmt", "VarDecl", "ConsDecl","ParamDecl"};
 		switch(astNode->ASTTag_){
 			case ast::ASTTag::Stmt__: {
-				if(stmt_edges.find(astNode->ASTNode_.Stmt_) == stmt_edges.end())
+				if(stmt_edges.find(astNode->ASTNode_.Stmt_) == stmt_edges.end()){
 					return nullptr;
+				}
 				else return stmt_edges[astNode->ASTNode_.Stmt_];
 			} 	break;
 			case ast::ASTTag::VarDecl__: {

@@ -82,8 +82,8 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
     
             else{
                 this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-                //interp_->mkR1((clang::Stmt*)cxxBindTemporaryExpr_);
                 interp_->mkNode("LIT_R1",(clang::Stmt*)cxxBindTemporaryExpr_,true);
+                return;
             }
         }
     }
@@ -130,7 +130,6 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
         }
         else{
             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-            //interp_->mkR1((clang::Stmt*)implicitCastExpr_);
             interp_->mkNode("LIT_R1",(clang::Stmt*)implicitCastExpr_,true);
             return;
         }
@@ -152,7 +151,6 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
     
         else{
             this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-            //interp_->mkR1((clang::Stmt*)cxxBindTemporaryExpr_);
             interp_->mkNode("LIT_R1",(clang::Stmt*)cxxBindTemporaryExpr_,true);
             return;
         }
@@ -175,7 +173,6 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)materializeTemporaryExpr_;
-                //interp_->mkR1((clang::Stmt*)materializeTemporaryExpr_);
                 interp_->mkNode("LIT_R1",(clang::Stmt*)materializeTemporaryExpr_,true);
                 return;
             }
@@ -214,7 +211,7 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)exprWithCleanups_;
-                //interp_->mkR1((clang::Stmt*)exprWithCleanups_);
+                interp_->mkNode("LIT_R1",(clang::Stmt*)exprWithCleanups_,true);
                 return;
             }
         }
@@ -232,7 +229,7 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
             else{
 
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
-               // interp_->mkR1((clang::Stmt*)cxxFunctionalCastExpr_);
+                interp_->mkNode("LIT_R1",(clang::Stmt*)cxxFunctionalCastExpr_,true);
                 return;
             }
         }
@@ -249,12 +246,12 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,ros::Duration?FORCE).+@$.ADDros::Duration"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,ros::Duration?FORCE)@+@ros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; }
     };
-	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,ros::Duration?FORCE).+@$.ADDros::Duration"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,ros::Duration?FORCE)@+@ros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; }
@@ -300,7 +297,7 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
                         
                         interp_->buffer_operand(arg0stmt);
                         interp_->buffer_operand(arg1stmt);
-                        interp_->mkNode("ADD_R1_R1",cxxOperatorCallExpr_, true);
+                        interp_->mkNode("ADD_R1_R1",cxxOperatorCallExpr_,true);
                         this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
                         return;
                     }
@@ -311,12 +308,12 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,double).*@$.MULros::Duration"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,double)@*@ros::Duration"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm=="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration"){ return true; }
         else { return false; }
     };
-	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,double).*@$.MULdouble"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,double)@*@double"] = [=](std::string typenm){
         if(false){ return false;}
 		else if(typenm=="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double"){ return true; }
         else { return false; }
@@ -338,7 +335,7 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
                 clang::Stmt* arg1stmt = nullptr;
               
                 if (true and 
-                    arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,double).*@$.MULdouble"](arg0str)){
+                    arg_decay_exist_predicates["CXXOperatorCallExpr(ros::Duration?FORCE,double)@*@double"](arg0str)){
                     if(false){}
                     
                     else if(true){
@@ -361,7 +358,7 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
                         
                         interp_->buffer_operand(arg0stmt);
                         interp_->buffer_operand(arg1stmt);
-                        interp_->mkNode("MUL_R1_R1",cxxOperatorCallExpr_, true);
+                        interp_->mkNode("MUL_R1_R1",cxxOperatorCallExpr_,true);
                         this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
                         return;
                     }
@@ -411,7 +408,7 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
                 }
 
                 interp_->buffer_constructor(consDecl_);
-                interp_->mkNode("LIT_R1",cxxConstructExpr_, true);
+                interp_->mkNode("LIT_R1",cxxConstructExpr_,true);
                 this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
                 return;
             }
@@ -457,7 +454,7 @@ void ROSTF2DurationMatcher::run(const MatchFinder::MatchResult &Result){
                 }
 
                 interp_->buffer_constructor(consDecl_);
-                interp_->mkNode("LIT_R1",cxxConstructExpr_, true);
+                interp_->mkNode("LIT_R1",cxxConstructExpr_,true);
                 this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
                 return;
             }

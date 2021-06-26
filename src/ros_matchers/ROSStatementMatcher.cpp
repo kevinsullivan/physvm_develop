@@ -15,6 +15,7 @@
 #include "ROSTFVector3Matcher.h"
 #include "ROSTF2DurationMatcher.h"
 #include "ROSTFTransformMatcher.h"
+#include "VoidMatcher.h"
 
 #include <string>
 
@@ -269,6 +270,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
         else if (typestr == "bool" or typestr == "const bool"  or typestr == "class bool"  or typestr == "const class bool"/*typestr.find("bool") != string::npos) != string::npos){
             ROSBooleanMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr == "void" or typestr == "const void"  or typestr == "class void"  or typestr == "const class void"/*typestr.find("void") != string::npos) != string::npos){
+            VoidMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
@@ -585,6 +596,28 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             else{
                                 interp_->buffer_operand(vd);
                                 interp_->mkNode("DECL_LIST_BOOL",declStmt, false);
+                                this->childExprStore_ = (clang::Stmt*) declStmt;
+                                return;
+                            }
+                        }
+                    
+                        else if(param_type == "void" or param_type == "const void" or param_type == "class void" or param_type == "const class void"){
+                            
+                            interp_->mkNode("IDENT_LIST_VOID",vd, true);
+                            if (vd->hasInit()){
+                                //VoidMatcher argm{this->context_,this->interp_};
+                                //argm.setup();
+                               // argm.visit(*vd->getInit());
+                               // auto argstmt = argm.getChildExprStore();
+                               //interp_->buffer_operand(argstmt);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_VOID",declStmt, false);
+                                this->childExprStore_= (clang::Stmt*) declStmt;
+                                return;
+                            }
+                            else{
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_VOID",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -916,6 +949,42 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
+                else if (typestr == "void" or typestr == "const void" or typestr == "class void" or typestr == "const class void"){
+                    //interp_->mk(vd);
+                    interp_->mkNode("IDENT_VOID",vd, true);
+                    if (vd->hasInit())
+                    {
+                        VoidMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            //interp_->mk(declStmt, vd, m.getChildExprStore());
+                            interp_->buffer_operand(vd);
+                            interp_->buffer_operand(m.getChildExprStore());
+                            interp_->mkNode("DECL_INIT_VOID", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_VOID", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //interp_->mk(declStmt, vd);
+                        interp_->buffer_operand(vd);
+                        interp_->mkNode("DECL_VOID", declStmt);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
             }
         }
         else
@@ -1234,6 +1303,40 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
+                    else if(typestr == "void" or typestr == "const void" or typestr == "class void" or typestr == "const class void"){
+                        //interp_->mk(vd);
+                        
+                        interp_->mkNode("IDENT_VOID",vd, true);
+                        if (vd->hasInit())
+                        {
+                            VoidMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mk(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_VOID", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mk(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_VOID", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_VOID", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
                 }
             }
             if (anyfound)
@@ -1398,6 +1501,20 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
+                    else if(param_type == "void" or param_type == "const void" or param_type == "class void" or param_type == "const class void"){
+                        
+                        auto arg_=cxxMemberCallExpr_->getArg(0);
+                        VoidMatcher argm{this->context_,this->interp_};
+                        argm.setup();
+                        argm.visit(*arg_);
+                        auto argstmt = argm.getChildExprStore();
+                        interp_->buffer_link(objdecl);
+                        interp_->buffer_operand(argstmt);
+                        interp_->mkNode("APPEND_LIST_VOID",cxxMemberCallExpr_, false);
+                        this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
+                        return;
+                    }
+                    
                 }
                 else {
                     std::cout<<"Warning : Not a DeclRefExpr";
@@ -1491,6 +1608,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         }
         if(typestr == "bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool"){
             ROSBooleanMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+        if(typestr == "void" or typestr == "const void" or typestr == "class void" or typestr == "const class void"){
+            VoidMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
             if (m.getChildExprStore()){

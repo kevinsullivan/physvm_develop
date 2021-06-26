@@ -58,13 +58,8 @@ std::string Interpretation::toString_AST(){
     math += "import .lang.expressions.time_expr\n";
     math += "import .lang.expressions.geom1d_expr\n\n";
     math += "import .lang.expressions.geom3d_expr\n\n";
-    math += "open lang.time\nopen lang.geom1d\nopen lang.geom3d\n";//abbreviation F := lang.time.K\n\n";
-    //math += "noncomputable theory\n\n";
-    //math += "def " + interp::getEnvName() + " := environment.init_env";
-    //math += interp->toString_Spaces();
-    //math += interp->toString_PROGRAMs();
-    //math += this->toString_COMPOUND_STMTs();
-    //math += this->
+    math += "open lang.time\nopen lang.geom1d\nopen lang.geom3d\n";
+
     auto astInterp = coords2interp_->getInterp(this->AST);
     math+= astInterp->toStringLinked(domain_->getSpaces());
     return math;
@@ -93,6 +88,7 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
     for(auto child:this->astBodyBuffer){
         body_coords.push_back(this->ast2coords_->getCoords(child));
     }
+
     for(auto body_coord : body_coords){
         body_interps.push_back(this->coords2interp_->getInterp(body_coord));
     }

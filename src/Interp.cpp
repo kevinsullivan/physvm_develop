@@ -40,7 +40,7 @@ std::string Interp::toString(){
     else if(nodeType == "DECL_INIT_R1" || nodeType == "DECL_INIT_R3" || nodeType == "DECL_INIT_R4X4") {
         auto var_ = (this->operands[0]);
         auto expr_ = (this->operands[1]);
-        retval += std::string("def ") + this->coords->getName() + " : " + (var_->getType()) + " := " + expr_->toString();//[(" +  + ")]";
+        retval += std::string("def ") + this->coords->getName() + " : " + (var_->getType()) + " := " + expr_->toString();
     }
     else if(nodeType == "DECL_LIST_R1") {
         auto var_ = (this->operands[0]);
@@ -91,7 +91,6 @@ std::string Interp::toString(){
                 retval+= dom_->getName() + ".value.mk_geom1d_transform_to " + cod_->getName() + ".value";
             }
             else if(auto aspos = dynamic_cast<domain::Position3D*>(this->domain->getValue())){
-                std::cout<<"about to crash??";
                 retval+= std::string("mk_position3d ") + aspos->getSpace()->getName() + ".value " + std::to_string(aspos->getValue()[0]) + " " + std::to_string(aspos->getValue()[1]) + " " + std::to_string(aspos->getValue()[2]);
             }
             else if(auto asdisp = dynamic_cast<domain::Displacement3D*>(this->domain->getValue())){
@@ -161,6 +160,19 @@ std::string Interp::toString(){
         auto rhs_ = (this->operands[1]);
         retval += lhs_->toString() + ".value∘" + rhs_->toString() + ".value";
     }
+    else if(nodeType.find("INV") != string::npos){
+        retval += "(("+this->operands[0]->toString()+")⁻¹)";
+    }
+    else if(nodeType.find("ASSIGN_MUL_R4X4_R4X4") != string::npos){
+        auto member = this->operands[0]->getLink();
+        auto iident_ = ident_map.count(member) ? (ident_map[member] = ident_map[member]++) : (ident_map[member] = ident_++);
+        auto lhs_ = this->operands[1];
+        auto rhs_ = this->operands[2];
+
+        retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) + " : " + (member->getType()) + " := " + lhs_->toString() + ".value∘" + rhs_->toString() + ".value";;
+    }
+
+
     return retval;
 }
 
@@ -272,6 +284,7 @@ std::string Interp::toStringLinked(std::vector<domain::CoordinateSpace*> spaces)
         }
     }
     for(auto op: this->body){
+        std::cout<<op->getCoords()->getNodeType()<<"\n";
         retval+= op->toString() + "\n";
     }
 
