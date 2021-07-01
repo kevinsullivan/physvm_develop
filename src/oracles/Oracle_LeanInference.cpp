@@ -75,7 +75,7 @@ std::string Oracle_LeanInference::leanInferenceOutputStr(std::string peirceOutpu
     std::string flag_str = "#check \"FLAG\"\n";
     std::string check_str = "#check \"CHECK\"\n";
     std::string eval_str = "#check \"EVAL\"\n";
-    std::string math = "import ." + peirceOutputName + "\n" + flag_str;
+    std::string math = "import ." + peirceOutputName + "\nopen peirce_output\n" + flag_str;
     for(auto interp_ : this->ordered_nodes){
         math += check_str;
         auto coords_ = interp_->getCoords();

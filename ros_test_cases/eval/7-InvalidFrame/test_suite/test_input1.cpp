@@ -33,23 +33,23 @@ int main(int argc, char **argv){
 
     
     */
+    geometry_msgs::PoseWithCovarianceStamped pose;
+    geometry_msgs::PoseWithCovarianceStamped transformed_message;
+    
+    if (target_frame.empty())
+    {
+        transformed_message = pose;
+    }
+    else
+    {
+        transformed_message.header.frame_id = target_frame;
 
-    /*
-      if (target_frame.empty())
+        if (!transformMessage(tf_buffer, pose, transformed_message))
         {
-            transformed_message = pose;
+        ROS_ERROR_STREAM("Cannot create constraint from pose message with stamp " << pose.header.stamp);
+        return false;
         }
-        else
-        {
-            transformed_message.header.frame_id = target_frame;
+    }
+    
 
-            if (!transformMessage(tf_buffer, pose, transformed_message))
-            {
-            ROS_ERROR_STREAM("Cannot create constraint from pose message with stamp " << pose.header.stamp);
-            return false;
-            }
-        }
-    */
-
-    tf::Pose target_one;
 }

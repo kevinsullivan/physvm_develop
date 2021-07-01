@@ -87,11 +87,11 @@ class Coords
 {
 public:
     Coords(std::string nodeType_, std::vector<coords::Coords*> operands_) 
-        : operands(operands_), linked(nullptr), nodeType(nodeType_) {};
+        : operands(operands_), linked(nullptr), container(nullptr), nodeType(nodeType_) {};
     Coords(std::string nodeType_, std::vector<coords::Coords*> operands_, std::vector<coords::Coords*> body_) 
-        : operands(operands_), linked(nullptr), nodeType(nodeType_) {};
+        : operands(operands_), linked(nullptr), container(nullptr), nodeType(nodeType_) {};
     Coords(std::string nodeType_, std::vector<coords::Coords*> operands_, int index_) 
-        : index(index_), operands(operands_), linked(nullptr), nodeType(nodeType_) {};
+        : index(index_), operands(operands_), linked(nullptr), container(nullptr), nodeType(nodeType_) {};
 
     virtual bool operator ==(const Coords &other) const;
     virtual std::string toString() const;
@@ -127,6 +127,18 @@ public:
         this->linked = link_;
     }
 
+    bool hasContainer() const {
+        return container != nullptr;
+    }
+
+    coords::Coords* getContainer() const {
+        return container;
+    }
+
+    void setContainer(coords::Coords* cont_) {
+        this->container = cont_;
+    }
+
     bool hasName() const{
         return this->state_->name_ != "";
     };
@@ -143,13 +155,24 @@ public:
         return operands;
     }
 
+    void addProperty(coords::Coords* prop_){
+        this->properties.push_back(prop_);
+    }
+
+    std::vector<coords::Coords*> getProperties() const {
+        return properties;
+    }
+
+
     ASTState* state_; //maybe  change this to a constructor argument 
 protected:
     int index;//4-11 don't remember what this is for...?
     std::vector<coords::Coords*> operands;
     std::vector<coords::Coords*> body;
     std::vector<coords::Coords*> links;
+    std::vector<coords::Coords*> properties;
     coords::Coords* linked;
+    coords::Coords* container;
     std::string nodeType;
     std::string name;
 };

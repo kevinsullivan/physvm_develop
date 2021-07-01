@@ -485,7 +485,11 @@
   ros_matchers/ROSTFTimeMatcher.h ros_matchers/ROSDurationMatcher.h \
   ros_matchers/ROSTFVector3Matcher.h \
   ros_matchers/ROSTF2DurationMatcher.h \
-  ros_matchers/ROSTFTransformMatcher.h ros_matchers/VoidMatcher.h
+  ros_matchers/ROSTFTransformMatcher.h ros_matchers/VoidMatcher.h \
+  ros_matchers/ROSGeometryPoseWithCovarianceStamped.h \
+  ros_matchers/ROSGeomQuaternion.h ros_matchers/ROSTFQuaternion.h \
+  ros_matchers/ROSTF2Quaternion.h ros_matchers/ROSTF2Vector3Matcher.h \
+  ros_matchers/ROSTF2TransformStamped.h ros_matchers/ROSTF2Transform.h
 
 /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchFinder.h:
 
@@ -1518,3 +1522,17 @@ ros_matchers/ROSTF2DurationMatcher.h:
 ros_matchers/ROSTFTransformMatcher.h:
 
 ros_matchers/VoidMatcher.h:
+
+ros_matchers/ROSGeometryPoseWithCovarianceStamped.h:
+
+ros_matchers/ROSGeomQuaternion.h:
+
+ros_matchers/ROSTFQuaternion.h:
+
+ros_matchers/ROSTF2Quaternion.h:
+
+ros_matchers/ROSTF2Vector3Matcher.h:
+
+ros_matchers/ROSTF2TransformStamped.h:
+
+ros_matchers/ROSTF2Transform.h:

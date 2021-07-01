@@ -23,9 +23,9 @@ namespace interp{
 class Interp {
 public:
     Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_) 
-        : coords(coords_),domain(domain_),operands(operands_),linked(nullptr),constructor(nullptr) {};
+        : coords(coords_),domain(domain_),operands(operands_),linked(nullptr),container(nullptr), constructor(nullptr) {};
     Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_, std::vector<Interp*> body_) 
-        : coords(coords_),domain(domain_),operands(operands_),body(body_), linked(nullptr),constructor(nullptr) {};
+        : coords(coords_),domain(domain_),operands(operands_),body(body_), linked(nullptr),container(nullptr), constructor(nullptr) {};
     std::string toString();
     std::string toStringLinked(std::vector<domain::CoordinateSpace*> spaces);
 
@@ -46,10 +46,10 @@ public:
     coords::Coords* getCoords() const {
         return this->coords;
     }
-    bool hasLink() {
+    bool hasLinked() {
         return (linked);
     }
-    interp::Interp* getLink() const {
+    interp::Interp* getLinked() const {
         return linked;
     }
     void addLink(interp::Interp* interp_){
@@ -57,6 +57,18 @@ public:
     };
     void setLinked(interp::Interp* interp_){
         this->linked = interp_;
+    }
+    bool hasContainer() {
+        return (container);
+    }
+    interp::Interp* getContainer() const {
+        return container;
+    }
+    void addProperty(interp::Interp* prop_){
+        this->properties.push_back(prop_);
+    };
+    void setContainer(interp::Interp* container_){
+        this->container = container_;
     }
     void setConstructor(interp::Interp* interp_){
         this->constructor = interp_;
@@ -70,8 +82,10 @@ protected:
     std::vector<Interp*> operands;
     std::vector<Interp*> body;
     std::vector<interp::Interp*> links;
+    std::vector<interp::Interp*> properties;
     interp::Interp* linked;
     interp::Interp* constructor;
+    interp::Interp* container;
 };
 
 class COMPOUND_STMT : public Interp {

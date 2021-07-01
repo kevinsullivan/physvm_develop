@@ -66,6 +66,10 @@ class Geom1DTransform;
 class Displacement3D;
 class Position3D;
 class Geom3DTransform;
+
+class Rotation3D;
+class Orientation3D;
+class Pose3D;
             
 // Definition for Domain class 
 using string = std::string;
@@ -103,6 +107,9 @@ public:
 
     Displacement3D* mkDisplacement3D(string name, Geom3DCoordinateSpace* parent, float* value);
     Position3D* mkPosition3D(string name, Geom3DCoordinateSpace* parent, float* value);
+    Orientation3D* mkOrientation3D(string name, Geom3DCoordinateSpace* parent, float* value);
+    Rotation3D* mkRotation3D(string name, Geom3DCoordinateSpace* parent, float* value);
+    Pose3D* mkPose3D(string name, Geom3DCoordinateSpace* parent, Orientation3D* orientation_, Position3D* position_);
     Geom3DTransform* mkGeom3DTransform(string name, Geom3DCoordinateSpace* domain_, Geom3DCoordinateSpace* codomain_); 
 
     std::vector<TimeCoordinateSpace*> getTimeSpaces() const {return timeSpaces;};
@@ -501,6 +508,64 @@ private:
     float* value;
 };
 
+enum class OrientationFormat { EulerAngle, Quaternion, Basis };
+class Rotation3D : public DomainObject {
+public:
+    Rotation3D(std::string name_, Geom3DCoordinateSpace* sp, float* value_) 
+        : DomainObject(name_), space(sp), value(value_) {};
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string(
+            "Rotation3D(") + space->getName() + "," 
+            + std::to_string(value[0])+ "," + std::to_string(value[1]) + "," + std::to_string(value[2]) + "," 
+            + std::to_string(value[3])+ "," + std::to_string(value[4]) + "," + std::to_string(value[5]) + "," 
+            + std::to_string(value[6])+ "," + std::to_string(value[7]) + "," + std::to_string(value[8]) + ")"; 
+    };
+    virtual Geom3DCoordinateSpace* getSpace() const { return space; };
+    virtual float* getValue() const { return value; };
+private:
+    Geom3DCoordinateSpace* space;
+    float* value;
+};
+class Orientation3D : public DomainObject {
+public:
+    Orientation3D(std::string name_, Geom3DCoordinateSpace* sp, float* value_) 
+        : DomainObject(name_), space(sp), value(value_) {};
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string(
+            "Orientation3D(") + space->getName() + "," 
+            + std::to_string(value[0])+ "," + std::to_string(value[1]) + "," + std::to_string(value[2]) + "," 
+            + std::to_string(value[3])+ "," + std::to_string(value[4]) + "," + std::to_string(value[5]) + "," 
+            + std::to_string(value[6])+ "," + std::to_string(value[7]) + "," + std::to_string(value[8]) + ")"; 
+    };
+    virtual Geom3DCoordinateSpace* getSpace() const { return space; };
+    virtual float* getValue() const { return value; };
+private :
+    Geom3DCoordinateSpace* space;
+    float* value;
+};
+class Pose3D : public DomainObject {
+public:
+    Pose3D(std::string name_, Geom3DCoordinateSpace* sp, 
+        Orientation3D* orientation_, Position3D* position_) 
+        : DomainObject(name_), space(sp), 
+            orientation(orientation_), position(position_) {};
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string(
+            "Pose3D(") + space->getName() + "," + orientation->getName() + "," + position->getName() + ")"; 
+    };
+    virtual Geom3DCoordinateSpace* getSpace() const { return space; };
+    Orientation3D* getOrientation() const {
+        return orientation;
+    }
+    Position3D* getPosition() const {
+        return position;
+    }
+
+private:
+    Geom3DCoordinateSpace* space;
+    Orientation3D* orientation;
+    Position3D* position;
+};
 
 
 class Scalar : public DomainObject {

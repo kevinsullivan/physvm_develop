@@ -204,6 +204,24 @@ Position3D* Domain::mkPosition3D(std::string name, Geom3DCoordinateSpace* parent
     return pos;
 }
 
+Orientation3D* Domain::mkOrientation3D(std::string name, Geom3DCoordinateSpace* parent, float* value){
+    auto ort = new Orientation3D(name, parent, value);
+    return ort;
+}
+Rotation3D* Domain::mkRotation3D(std::string name, Geom3DCoordinateSpace* parent, float* value){
+    auto rot = new Rotation3D(name, parent, value);
+    return rot;
+}
+Pose3D* Domain::mkPose3D(std::string name, Geom3DCoordinateSpace* parent, Orientation3D* ort, Position3D* rot){
+    auto pose = new Pose3D(name, parent, ort, rot);
+    return pose;
+}
+/*
+Orientation3D* mkOrientation3D(string name, Geom3DCoordinateSpace* parent, float* value);
+Rotation3D* mkRotation3D(string name, Geom3DCoordinateSpace* parent, float* value);
+Pose3D* mkPose3D(string name, Geom3DCoordinateSpace* parent, Orientation3D* orientation_, Position3D position_);
+*/
+
 Geom3DTransform* Domain::mkGeom3DTransform(std::string name, Geom3DCoordinateSpace* domain_, Geom3DCoordinateSpace* codomain_){
     auto g1transform = new Geom3DTransform(name, domain_, codomain_);
     return g1transform;

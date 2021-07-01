@@ -12,6 +12,10 @@ int main(int argc, char **argv){
     ros::init(argc, argv, "new lang tests");
     ros::NodeHandle node;
 
+    //standard geom3d
+    //derived geom3d
+    //derived2 geom3d
+
     tf::Vector3 vec1(3, 3, 3);
     tf::Vector3 vec2(2, 2, 2);
 
@@ -19,10 +23,10 @@ int main(int argc, char **argv){
 
     tf::Vector3 vec4 = 4*vec1;
 
-    geometry_msgs::Vector3 vec5;
-
+    //std derived 1
     tf::Transform t1;
 
+    //derived to derived2
     tf::Transform t2;
 
     tf::Transform t3 = t1*t2;

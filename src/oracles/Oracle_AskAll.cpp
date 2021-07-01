@@ -225,9 +225,12 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
         "8 - Geom1D Transform\n"+
         "9 - Displacement3D\n"+
         "10 - Position3D\n"+
-        "11 - Geom3D Transform\n";
+        "11 - Orientation3D\n" + 
+        "12 - Rotation3D\n" + 
+        "13 - Pose3D\n" + 
+        "14 - Geom3D Transform\n";
     redo:
-    int choice = this->getValidChoice(1,12,menu);
+    int choice = this->getValidChoice(1,15,menu);
 
     //std::cin>>choice;
     switch(choice)
@@ -388,6 +391,71 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
         } break;
         case 11:{
             auto name = coords->hasName() ? coords->getName() : this->getName();
+            auto sp =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!sp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            float* value = nullptr;
+            if(coords->getNodeType().find("R4") != string::npos)
+                value = this->getValueVector<4>();
+            else
+                value = this->getValueVector<9>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto interpretation_ = this->domain_->mkOrientation3D(name, sp, value);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 12:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            auto sp =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!sp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            float* value = nullptr;
+            if(coords->getNodeType().find("R4") != string::npos)
+                value = this->getValueVector<4>();
+            else
+                value = this->getValueVector<9>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto interpretation_ = this->domain_->mkRotation3D(name, sp, value);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 13:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            auto sp =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!sp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Enter Orientation Coordinates\n";
+            auto value = this->getValueVector<9>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto ort = this->domain_->mkOrientation3D(name, sp, value);
+            std::cout<<"Enter Position Coordinates\n";
+            value = this->getValueVector<3>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto pos = this->domain_->mkPosition3D(name, sp, value);
+            auto interpretation_ = this->domain_->mkPose3D(name, sp, ort, pos);
+            this->existing_interpretations.push_back(interpretation_);
+            return interpretation_;
+        } break;
+        case 14:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
             std::cout<<"Annotate Domain:\n";
             auto tdom_ =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
             if(!tdom_){
@@ -447,7 +515,7 @@ domain::DomainObject* Oracle_AskAll::selectExisting(){
         else if(auto dc = dynamic_cast<domain::TimeTransform*>(interp_))
             menu += std::to_string(i++) + " - " + dc->toString() + "\n";
         */
-        menu += std::to_string(i++) + " - " + domain_->toString();
+        menu += std::to_string(i++) + " - " + domain_->toString() + "\n";
     }
     int choice = getValidChoice(1, this->existing_interpretations.size()+1,menu)-1;
     return this->existing_interpretations[choice];

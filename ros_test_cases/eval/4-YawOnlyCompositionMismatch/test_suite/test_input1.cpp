@@ -91,7 +91,7 @@ int main(int argc, char **argv){
     //Annotate a global Euclidean space, frame, measurement system
     //Declare a World frame, Base link frame, UTM frame, and a Base Link Yaw Only frame 
     //(derived from base link, with a new orientation applied)
-     
+     //
     //Annotate this as a transform from World->Base link
     tf::Transform transform_world_pose_;
 
@@ -99,11 +99,11 @@ int main(int argc, char **argv){
     tf::Transform cartesian_world_transform_;
 
     //Annotate this as a transform from UTM->Base Link Yaw Only
-    tf2::Transform cartesian_pose_with_orientation;
+    tf::Transform cartesian_pose_with_orientation;
 
     //This is an assignment, a type error should trigger automatically in Lean provided the prior annotations are given
     cartesian_world_transform_.mult(transform_world_pose_, cartesian_pose_with_orientation.inverse());
-
+  //
 
 
 }

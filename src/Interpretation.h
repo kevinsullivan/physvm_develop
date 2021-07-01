@@ -127,6 +127,16 @@ public:
 		this->link = node;
 	};
 
+    
+	void buffer_container(ast::VarDecl* varDecl){
+		auto node = ast::mkContainer(varDecl);
+		this->container = node;
+	};
+	void buffer_container(ast::ParamDecl* paramDecl){
+		auto node = ast::mkContainer(paramDecl);
+		this->container = node;
+	};
+
     void buffer_constructor(ast::ConsDecl* consDecl){
         auto node = ast::mkContainer(consDecl);
         this->constructor = node;
@@ -204,6 +214,7 @@ public:
 		this->astBodyBuffer.clear();
         link = nullptr;
         constructor = nullptr;
+        container = nullptr;
 	};
 
     void printChoices();//print to file*
@@ -255,6 +266,7 @@ public:
 
     std::shared_ptr<ast::NodeContainer> link;
     std::shared_ptr<ast::NodeContainer> constructor;
+    std::shared_ptr<ast::NodeContainer> container;
 	std::vector<std::shared_ptr<ast::NodeContainer>> astOperandBuffer;
 	std::vector<std::shared_ptr<ast::NodeContainer>> astBodyBuffer;
 

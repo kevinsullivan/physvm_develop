@@ -59,9 +59,15 @@ std::string Interpretation::toString_AST(){
     math += "import .lang.expressions.geom1d_expr\n\n";
     math += "import .lang.expressions.geom3d_expr\n\n";
     math += "open lang.time\nopen lang.geom1d\nopen lang.geom3d\n";
+    math += "namespace peirce_output\nnoncomputable theory\n";
 
     auto astInterp = coords2interp_->getInterp(this->AST);
-    math+= astInterp->toStringLinked(domain_->getSpaces());
+    if(astInterp){
+        math+= astInterp->toStringLinked(domain_->getSpaces());
+    }
+    else
+        std::cout<<"Warning : No top-level AST node present";
+    math += "end peirce_output";
     return math;
 };
 
@@ -108,6 +114,15 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
         auto cons_coords_ = this->ast2coords_->getCoords(this->constructor);
         auto cons_interp_ = this->coords2interp_->getInterp(cons_coords_);
         interp_->setConstructor(cons_interp_);
+    }
+
+    if(this->container){
+        auto cont_coords_ = this->ast2coords_->getCoords(this->container);
+        cont_coords_->addProperty(coords_);
+        coords_->setContainer(cont_coords_);
+        auto cont_interp_ = this->coords2interp_->getInterp(cont_coords_);
+        cont_interp_->addProperty(interp_);
+        interp_->setContainer(cont_interp_);
     }
 
     if(this->link){

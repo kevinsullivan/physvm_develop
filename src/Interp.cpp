@@ -37,7 +37,7 @@ std::string Interp::toString(){
             retval+= op->toString() + "\n";
         }
     } 
-    else if(nodeType == "DECL_INIT_R1" || nodeType == "DECL_INIT_R3" || nodeType == "DECL_INIT_R4X4") {
+    else if(nodeType == "DECL_INIT_R1" || nodeType == "DECL_INIT_R3" || nodeType == "DECL_INIT_R4X4"  || nodeType == "DECL_INIT_R3X3" || nodeType == "DECL_INIT_R4") {
         auto var_ = (this->operands[0]);
         auto expr_ = (this->operands[1]);
         retval += std::string("def ") + this->coords->getName() + " : " + (var_->getType()) + " := " + expr_->toString();
@@ -52,7 +52,7 @@ std::string Interp::toString(){
         auto iident_ = ident_map.count(this) ? (ident_map[this] = ident_map[this]++) : (ident_map[this] = ident_++);
         retval += std::string("def ") + this->coords->getLinked()->getName() + std::to_string(iident_) + " : list (" + (this->getType()) + ") := " + this->coords->getLinked()->getName() + std::to_string(iident_-1) + " ++ [" + val_->toString() + "]";
     }
-    else if(nodeType == "LIT_R1" || nodeType == "LIT_R3" || nodeType == "LIT_R4X4") {
+    else if(nodeType == "LIT_R1" || nodeType == "LIT_R3" || nodeType == "LIT_R4X4" || nodeType == "LIT_R4" || nodeType == "LIT_R3X3") {
         
         if(this->constructor and this->constructor->hasValue()){
             retval += "( ";
@@ -96,6 +96,42 @@ std::string Interp::toString(){
             else if(auto asdisp = dynamic_cast<domain::Displacement3D*>(this->domain->getValue())){
                 retval+= std::string("mk_displacement3d ") + asdisp->getSpace()->getName() + ".value " + std::to_string(asdisp->getValue()[0]) + " " + std::to_string(asdisp->getValue()[1]) + " " + std::to_string(asdisp->getValue()[2]);
             }
+            else if(auto asort = dynamic_cast<domain::Orientation3D*>(this->domain->getValue())){
+                if(nodeType != "LIT_R4"){
+                retval+= std::string("mk_orientation3d ") + asort->getSpace()->getName() + ".value "
+                     + std::to_string(asort->getValue()[0]) + " " + std::to_string(asort->getValue()[1]) + " " + std::to_string(asort->getValue()[2]) + " " 
+                     + std::to_string(asort->getValue()[3]) + " " + std::to_string(asort->getValue()[4]) + " " + std::to_string(asort->getValue()[5]) + " " 
+                     + std::to_string(asort->getValue()[6]) + " " + std::to_string(asort->getValue()[7]) + " " + std::to_string(asort->getValue()[8]);
+                }
+                else{
+                    retval+= std::string("mk_orientation3d_from_quaternion ") + asort->getSpace()->getName() + ".value "
+                        + std::to_string(asort->getValue()[0]) + " " + std::to_string(asort->getValue()[1]) + " " + std::to_string(asort->getValue()[2]) + " " 
+                        + std::to_string(asort->getValue()[3]);
+                }
+            }
+            else if(auto asrot = dynamic_cast<domain::Rotation3D*>(this->domain->getValue())){
+                if(nodeType != "LIT_R4"){
+                    retval+= std::string("mk_rotation3d ") + asrot->getSpace()->getName() + ".value "
+                        + std::to_string(asrot->getValue()[0]) + " " + std::to_string(asrot->getValue()[1]) + " " + std::to_string(asrot->getValue()[2]) + " " 
+                        + std::to_string(asrot->getValue()[3]) + " " + std::to_string(asrot->getValue()[4]) + " " + std::to_string(asrot->getValue()[5]) + " " 
+                        + std::to_string(asrot->getValue()[6]) + " " + std::to_string(asrot->getValue()[7]) + " " + std::to_string(asrot->getValue()[8]);
+                }
+                else{
+                    retval+= std::string("mk_rotation3d_from_quaternion ") + asrot->getSpace()->getName() + ".value "
+                        + std::to_string(asrot->getValue()[0]) + " " + std::to_string(asrot->getValue()[1]) + " " + std::to_string(asrot->getValue()[2]) + " " 
+                        + std::to_string(asrot->getValue()[3]);
+                }
+            }
+            else if(auto aspose = dynamic_cast<domain::Pose3D*>(this->domain->getValue())){
+                auto ort = aspose->getOrientation();
+                auto pos = aspose->getPosition();
+                retval+= std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value " ;
+                retval+= std::string("\n\t\t(mk_orientation3d ") + ort->getSpace()->getName() + ".value "
+                     + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
+                     + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
+                     + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")";
+                retval+= std::string("\n\t\t(mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")";
+            }
             else if(auto astrans = dynamic_cast<domain::Geom3DTransform*>(this->domain->getValue())){
                 auto dom_ = astrans->getDomain();
                 auto cod_ = astrans->getCodomain();
@@ -112,17 +148,43 @@ std::string Interp::toString(){
             retval += " : " + this->constructor->getType() + ")";
         }
     } 
-    else if(nodeType == "IDENT_R1" || nodeType == "IDENT_R3" || nodeType == "IDENT_R4X4") {
+    else if(nodeType == "IDENT_R1" || nodeType == "IDENT_R3" || nodeType == "IDENT_R4X4" || nodeType == "IDENT_R4" || nodeType == "IDENT_R3X3") {
         retval += this->coords->getName();
     }
     else if(nodeType == "IDENT_LIST_R1" || nodeType == "IDENT_LIST_R3" || nodeType == "IDENT_LIST_R4X4") {
         retval += this->coords->getName();
     }
-    else if(nodeType == "REF_R1" || nodeType == "REF_R3" || nodeType == "REF_R4X4") {
+    else if(nodeType == "REF_R1" || nodeType == "REF_R4X4") {
         retval += this->coords->getLinked()->getName();
-        //if(this->domain->hasValue())
-        //    retval += this->domain->getValue()->getName();
     } 
+    else if(nodeType == "REF_R3"){
+        if(this->hasContainer()){
+            auto container = this->getContainer();
+            if(auto aspose = dynamic_cast<domain::Pose3D*>(container->getDomain()->getValue())){
+                retval += container->getCoords()->getName() + ".position";
+            }
+            else{
+                retval += container->getCoords()->getName() + ".property";
+            }
+        }
+        else
+            retval += this->coords->getLinked()->getName();
+    }
+    else if(nodeType == "REF_R4" || nodeType =="REF_R3X3"){
+        
+        if(this->getCoords()->hasContainer()){
+            auto container = this->getCoords()->getContainer();
+            if(auto aspose = dynamic_cast<domain::Pose3D*>(container)){
+                retval += container->getName() + ".orientation";
+            }
+            else{
+                retval += container->getName() + ".property";
+
+            }
+        }
+        else
+            retval += this->coords->getLinked()->getName();
+    }
     else if(nodeType == "ADD_R1_R1" || nodeType == "ADD_R3_R3") {
         auto lhs_ = (this->operands[0]);
         auto rhs_ = (this->operands[1]);
@@ -163,14 +225,126 @@ std::string Interp::toString(){
     else if(nodeType.find("INV") != string::npos){
         retval += "(("+this->operands[0]->toString()+")⁻¹)";
     }
-    else if(nodeType.find("ASSIGN_MUL_R4X4_R4X4") != string::npos){
-        auto member = this->operands[0]->getLink();
+    else if(nodeType=="ASSIGN_MUL_R4X4_R4X4"){
+        auto member = this->operands[0]->getLinked();
         auto iident_ = ident_map.count(member) ? (ident_map[member] = ident_map[member]++) : (ident_map[member] = ident_++);
         auto lhs_ = this->operands[1];
         auto rhs_ = this->operands[2];
 
         retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) + " : " + (member->getType()) + " := " + lhs_->toString() + ".value∘" + rhs_->toString() + ".value";;
     }
+    else if(nodeType=="ASSIGN_R3X3" || nodeType=="ASSIGN_R4"){
+
+
+        if(this->operands[0]->hasContainer()){
+            auto container = this->operands[0]->getContainer();
+            if(auto aspose = dynamic_cast<domain::Pose3D*>(container->getDomain()->getValue())){
+                retval += container->getCoords()->getName() + ".orientation";
+                //retval += std::string("def ") + container->getCoords()->getName() + (std::to_string(iident_)) + " : " + (container->getType()) + " := " + val->toString();
+            }
+            else{
+                retval += container->getCoords()->getName() + ".property";
+
+            }
+        }
+        else {
+            auto member = this->operands[0]->getLinked();
+            auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+            auto val = this->operands[1];
+
+            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) + " : " + (member->getType()) + " := " + val->toString();
+        }
+    }
+    //this doesn't belong here, but deadlines!
+    else if(nodeType=="ASSIGN_R3X3_SWAP" || nodeType=="ASSIGN_R4_SWAP"){//pose value is on the right, assign to orientation on left
+        auto lhs = this->operands[1];
+        auto rhs = this->operands[0];
+        if(lhs->hasContainer() and rhs->hasContainer()){
+            throw "Not implemented";
+        }
+        else if (lhs->hasContainer()){
+            /*auto container = lhs->getCoords()->getContainer();
+            auto old_name = ident_map.count(lhs) 
+                ? lhs->getCoords()->getName() + std::to_string((ident_map[lhs])) 
+                : lhs->getCoords()->getName();
+            
+            auto iident_ = ident_map.count(lhs) 
+                ? (ident_map[lhs] = ident_map[lhs]++) 
+                : (ident_map[lhs] = ident_++);
+            if(auto aspose = dynamic_cast<domain::Pose3D*>(container)){
+                retval += std::string("def ") + container->getCoords()->getName() + (std::to_string(iident_)) 
+                + " : " + (member->getType()) + " := |{\n\t\torientation:=(" + val->toString() + ").value\n\t\t.."+old_name+"\n}|";
+
+            }
+            else{
+                retval += container->getName() + ".property";
+
+            }*/
+        }
+        else if(rhs->hasContainer()){
+            auto member = lhs->getLinked();
+            auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+
+            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) + " : " + (member->getType()) + " := ";
+            auto container = rhs->getContainer();
+            auto old_ident = ident_map.count(container) 
+                ? container->getCoords()->getName() + std::to_string((ident_map[container])) 
+                : container->getCoords()->getName();
+        
+            if(auto aspose = dynamic_cast<domain::Pose3D*>(container->getDomain()->getValue())){
+                retval += "|" + old_ident + ".value.orientation|";
+            }
+            else {
+                retval += "|" + old_ident + ".value.property|";
+            }
+        }
+        else {
+            auto member = this->operands[0]->getLinked();
+            auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+            auto val = this->operands[1];
+
+            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) + " : " + (member->getType()) + " := " + val->toString();
+        }
+    }
+    else if(nodeType=="ASSIGN_R4X4_AT_R3"){
+        auto member = this->operands[0]->getLinked();//->getContainer();
+
+        auto old_name = ident_map.count(member) ? member->getCoords()->getName() + std::to_string((ident_map[member])) : member->getCoords()->getName();
+        
+        auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+        auto val = this->operands[1];
+
+
+        if(auto pose = dynamic_cast<domain::Pose3D*>(member->getDomain()->getValue())){
+            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+                + " : " + (member->getType()) + " := |{\n\t\tposition:=(" + val->toString() + ").value,\n\t\t.."+old_name+".value\n}|";
+
+        }
+        else{
+            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+                + " : " + (member->getType()) + " := |{\n\t\t.."+old_name+"\n}|";
+
+        }
+
+    }
+    else if(nodeType=="ASSIGN_R4X4_AT_R3X3" || nodeType == "ASSIGN_R4X4_AT_R4"){
+        auto member = this->operands[0]->getLinked();
+        auto old_name = ident_map.count(member) ? member->getCoords()->getName() + std::to_string((ident_map[member])) : member->getCoords()->getName();
+
+        auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+        auto val = this->operands[1];
+        if(auto pose = dynamic_cast<domain::Pose3D*>(member->getDomain()->getValue())){
+            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+                + " : " + (member->getType()) + " := |{\n\t\torientation:=("  + val->toString() + ").value,\n\t\t.."+old_name+".value\n}|";
+
+        }
+        else{
+            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+                + " : " + (member->getType()) + " := |{\n\t\t.."+old_name+"\n}|";
+
+        }
+    }
+
 
 
     return retval;
@@ -217,6 +391,15 @@ std::string Interp::getType(){
         else if(auto asdisp = dynamic_cast<domain::Displacement3D*>(this->domain->getValue())){
             return std::string("displacement3d_expr ") + asdisp->getSpace()->getName();
         }
+        else if(auto asort = dynamic_cast<domain::Orientation3D*>(this->domain->getValue())){
+            return std::string("orientation3d_expr ") + asort->getSpace()->getName();
+        }
+        else if(auto asrot = dynamic_cast<domain::Rotation3D*>(this->domain->getValue())){
+            return std::string("rotation3d_expr ") + asrot->getSpace()->getName();
+        }
+        else if(auto aspose = dynamic_cast<domain::Pose3D*>(this->domain->getValue())){
+            return std::string("pose3d_expr ") + aspose->getSpace()->getName();
+        }
         else if(auto astrans = dynamic_cast<domain::Geom3DTransform*>(this->domain->getValue())){
             auto dom_ = astrans->getDomain();
             auto cod_ = astrans->getCodomain();
@@ -237,6 +420,8 @@ work in progress
 */
 std::string Interp::toStringLinked(std::vector<domain::CoordinateSpace*> spaces){
     std::string retval = "";
+    ident_ = 0;
+    ident_map.clear();
     for(auto space:spaces){
         if(auto dc = dynamic_cast<domain::StandardTimeCoordinateSpace*>(space)){
             retval += "def " + space->getName() + "_fr : time_frame_expr := |time_std_frame|\n";
@@ -284,7 +469,6 @@ std::string Interp::toStringLinked(std::vector<domain::CoordinateSpace*> spaces)
         }
     }
     for(auto op: this->body){
-        std::cout<<op->getCoords()->getNodeType()<<"\n";
         retval+= op->toString() + "\n";
     }
 

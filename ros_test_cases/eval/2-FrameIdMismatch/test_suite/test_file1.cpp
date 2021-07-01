@@ -10,7 +10,7 @@
 //#include "nav_msgs/MapMetaData.h"
 //#include "nav_msgs/OccupancyGrid.h"
 //#include "nav_msgs/GetMap.h"
-
+//
 
 #include <cmath>
 
@@ -18,19 +18,6 @@
 int main(int argc, char **argv){
     ros::init(argc, argv, " ");
     ros::NodeHandle node; 
-
-    bool b = argc > 1;
-    tf::Vector3 myVec1, myVec2, aVelocityVector, aDisplacementVector;
-    if(b){ 
-      myVec1 = aVelocityVector;
-      myVec2 = aVelocityVector;
-    }else{
-      myVec1 = aDisplacementVector;
-      myVec2 = aDisplacementVector;
-    }
-    //{aVelocityVector,aVelocityVector} + {aDisplacementVector,aDisplacementVector}
-    tf::Vector3 soundAddition_noProblem = myVec1 + myVec2; 
-
     /*
     2540-2627
 
@@ -132,25 +119,25 @@ int main(int argc, char **argv){
     //Declare an IMU and Target frame
     //Annotate this Pose as being in the IMU frame
     geometry_msgs::PoseWithCovarianceStamped msg;
-    msg.frame_id = "IMU";
+    msg.header.frame_id = "IMU";
     //Annotate this Pose as being in the Target frame
     tf2::Stamped<tf2::Transform> poseTmp;
     std::string finalTargetFrame = "Target";
-    poseTmp.frame_id = finalTargetFrame;
+    poseTmp.frame_id_ = finalTargetFrame;
     /*
     ...
     */
     //Give this tf2::Vector an interpretation as being in the IMU Frame
     //An automatically generated assertion you are attempting to assign a vector in one frame to a variable in another frame
-    poseTmp.setOrigin(tf2::Vector3(msg->pose.pose.position.x,
-                                   msg->pose.pose.position.y,
-                                   msg->pose.pose.position.z));
+    poseTmp.setOrigin(tf2::Vector3(msg.pose.pose.position.x,
+                                   msg.pose.pose.position.y,
+                                   msg.pose.pose.position.z)); //broke
     tf2::Quaternion orientation;
 
-    tf2::fromMsg(msg->pose.pose.orientation, orientation);
+    tf2::fromMsg(msg.pose.pose.orientation, orientation);//broke
 
     // Similar to above, the orientation is in the IMU frame, and we are attempting to assign it to an orientation in the target frame,
     // which a failed assertion will demonstrate.
-    poseTmp.setRotation(orientation);
+    poseTmp.setRotation(orientation); //broke
 
 }
