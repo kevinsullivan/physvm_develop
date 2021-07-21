@@ -76,7 +76,7 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
     
             else{
                 this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-                interp_->mkNode("LIT_REAL3_EXPR",(clang::Stmt*)cxxBindTemporaryExpr_,true);
+                interp_->mkNode("LIT_R3",(clang::Stmt*)cxxBindTemporaryExpr_,true);
                 return;
             }
         }
@@ -138,13 +138,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -157,13 +157,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -176,13 +176,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -195,13 +195,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -214,13 +214,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -233,13 +233,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -252,13 +252,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -271,13 +271,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -290,13 +290,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -309,13 +309,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -328,13 +328,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -347,13 +347,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -366,13 +366,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -385,13 +385,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -404,13 +404,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -423,13 +423,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -442,13 +442,13 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_R3",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -460,7 +460,7 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
                 }
             }
             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-            interp_->mkNode("LIT_REAL3_EXPR",(clang::Stmt*)implicitCastExpr_,true);
+            interp_->mkNode("LIT_R3",(clang::Stmt*)implicitCastExpr_,true);
             return;
         }
     }
@@ -481,7 +481,7 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
     
         else{
             this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-            interp_->mkNode("LIT_REAL3_EXPR",(clang::Stmt*)cxxBindTemporaryExpr_,true);
+            interp_->mkNode("LIT_R3",(clang::Stmt*)cxxBindTemporaryExpr_,true);
             return;
         }
     }
@@ -503,7 +503,7 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)materializeTemporaryExpr_;
-                interp_->mkNode("LIT_REAL3_EXPR",(clang::Stmt*)materializeTemporaryExpr_,true);
+                interp_->mkNode("LIT_R3",(clang::Stmt*)materializeTemporaryExpr_,true);
                 return;
             }
         }
@@ -541,7 +541,7 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)exprWithCleanups_;
-                interp_->mkNode("LIT_REAL3_EXPR",(clang::Stmt*)exprWithCleanups_,true);
+                interp_->mkNode("LIT_R3",(clang::Stmt*)exprWithCleanups_,true);
                 return;
             }
         }
@@ -559,7 +559,7 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
             else{
 
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
-                interp_->mkNode("LIT_REAL3_EXPR",(clang::Stmt*)cxxFunctionalCastExpr_,true);
+                interp_->mkNode("LIT_R3",(clang::Stmt*)cxxFunctionalCastExpr_,true);
                 return;
             }
         }
@@ -568,7 +568,7 @@ void ROSTF2Vector3Matcher::run(const MatchFinder::MatchResult &Result){
     if(declRefExpr_){
         if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
             interp_->buffer_link(dc);
-            interp_->mkNode("REF_REAL3_EXPR",declRefExpr_);
+            interp_->mkNode("REF_R3",declRefExpr_);
             this->childExprStore_ = (clang::Stmt*)declRefExpr_;
             return;
 

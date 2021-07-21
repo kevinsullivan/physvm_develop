@@ -81,7 +81,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
     
             else{
                 this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-                interp_->mkNode("LIT_BOOL_EXPR",(clang::Stmt*)cxxBindTemporaryExpr_,true);
+                interp_->mkNode("LIT_BOOL",(clang::Stmt*)cxxBindTemporaryExpr_,true);
                 return;
             }
         }
@@ -143,13 +143,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -162,13 +162,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -181,13 +181,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -200,13 +200,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -219,13 +219,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -238,13 +238,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -257,13 +257,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -276,13 +276,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -295,13 +295,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -314,13 +314,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -333,13 +333,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -352,13 +352,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -371,13 +371,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -390,13 +390,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -409,13 +409,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -428,13 +428,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -447,13 +447,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -465,7 +465,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
                 }
             }
             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-            interp_->mkNode("LIT_BOOL_EXPR",(clang::Stmt*)implicitCastExpr_,true);
+            interp_->mkNode("LIT_BOOL",(clang::Stmt*)implicitCastExpr_,true);
             return;
         }
     }
@@ -486,7 +486,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
     
         else{
             this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-            interp_->mkNode("LIT_BOOL_EXPR",(clang::Stmt*)cxxBindTemporaryExpr_,true);
+            interp_->mkNode("LIT_BOOL",(clang::Stmt*)cxxBindTemporaryExpr_,true);
             return;
         }
     }
@@ -508,7 +508,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)materializeTemporaryExpr_;
-                interp_->mkNode("LIT_BOOL_EXPR",(clang::Stmt*)materializeTemporaryExpr_,true);
+                interp_->mkNode("LIT_BOOL",(clang::Stmt*)materializeTemporaryExpr_,true);
                 return;
             }
         }
@@ -546,7 +546,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)exprWithCleanups_;
-                interp_->mkNode("LIT_BOOL_EXPR",(clang::Stmt*)exprWithCleanups_,true);
+                interp_->mkNode("LIT_BOOL",(clang::Stmt*)exprWithCleanups_,true);
                 return;
             }
         }
@@ -564,7 +564,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
             else{
 
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
-                interp_->mkNode("LIT_BOOL_EXPR",(clang::Stmt*)cxxFunctionalCastExpr_,true);
+                interp_->mkNode("LIT_BOOL",(clang::Stmt*)cxxFunctionalCastExpr_,true);
                 return;
             }
         }
@@ -573,7 +573,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
     if(declRefExpr_){
         if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
             interp_->buffer_link(dc);
-            interp_->mkNode("REF_BOOL_EXPR",declRefExpr_);
+            interp_->mkNode("REF_BOOL",declRefExpr_);
             this->childExprStore_ = (clang::Stmt*)declRefExpr_;
             return;
 

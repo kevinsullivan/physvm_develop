@@ -237,7 +237,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("REAL1_EXPR", param_);
+                                        //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -251,7 +251,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("REAL1_EXPR", param_);
+                                        //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -265,7 +265,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("REAL4X4_EXPR", param_);
+                                        //interp_->mkFunctionParam("R4X4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -279,7 +279,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("REAL3_EXPR", param_);
+                                        //interp_->mkFunctionParam("R3", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -293,7 +293,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("REAL3_EXPR", param_);
+                                        //interp_->mkFunctionParam("R3", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -307,7 +307,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("REAL1_EXPR", param_);
+                                        //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -321,7 +321,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatortfScalar" or typestr =="tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar" or typestr == "const class tfScalar" or typestr ==  "::tfScalar_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("REAL1_EXPR", param_);
+                                        //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -335,7 +335,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatordouble" or typestr =="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double" or typestr ==  "::double_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("REAL1_EXPR", param_);
+                                        //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -349,7 +349,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatorfloat" or typestr =="float" or typestr == "const float" or typestr == "class float" or typestr == "const class float" or typestr ==  "::float_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("REAL1_EXPR", param_);
+                                        //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -363,7 +363,7 @@ void ROS1ProgramMatcher::setup()
                                         valid_params_.push_back(param_);
                                     }
                                     else if(typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
-                                        //interp_->mkFunctionParam("BOOL_EXPR", param_);
+                                        //interp_->mkFunctionParam("BOOL", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
                                             interp_->mkNode("FUNCTION_PARAM", param_,false);
@@ -403,16 +403,16 @@ void ROS1ProgramMatcher::setup()
 							else if(typenm == "operatortf2::Quaternion" or typenm =="tf2::Quaternion" or typenm == "const tf2::Quaternion" or typenm == "class tf2::Quaternion" or typenm == "const class tf2::Quaternion" or typenm ==  "::tf2::Quaternion_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4"; }
 							else if(typenm == "operatortf::Quaternion" or typenm =="tf::Quaternion" or typenm == "const tf::Quaternion" or typenm == "class tf::Quaternion" or typenm == "const class tf::Quaternion" or typenm ==  "::tf::Quaternion_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4"; }
 							else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
-							else if(typenm == "operatorros::Duration" or typenm =="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration" or typenm ==  "::ros::Duration_<allocator<void> >"){ hasReturn = true; nodePrefix = "REAL1_EXPR"; }
-							else if(typenm == "operatortf2::Duration" or typenm =="tf2::Duration" or typenm == "const tf2::Duration" or typenm == "class tf2::Duration" or typenm == "const class tf2::Duration" or typenm ==  "::tf2::Duration_<allocator<void> >"){ hasReturn = true; nodePrefix = "REAL1_EXPR"; }
-							else if(typenm == "operatortf::Transform" or typenm =="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform" or typenm == "const class tf::Transform" or typenm ==  "::tf::Transform_<allocator<void> >"){ hasReturn = true; nodePrefix = "REAL4X4_EXPR"; }
-							else if(typenm == "operatortf2::Vector3" or typenm =="tf2::Vector3" or typenm == "const tf2::Vector3" or typenm == "class tf2::Vector3" or typenm == "const class tf2::Vector3" or typenm ==  "::tf2::Vector3_<allocator<void> >"){ hasReturn = true; nodePrefix = "REAL3_EXPR"; }
-							else if(typenm == "operatortf::Vector3" or typenm =="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3" or typenm ==  "::tf::Vector3_<allocator<void> >"){ hasReturn = true; nodePrefix = "REAL3_EXPR"; }
-							else if(typenm == "operatorros::Time" or typenm =="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time" or typenm ==  "::ros::Time_<allocator<void> >"){ hasReturn = true; nodePrefix = "REAL1_EXPR"; }
-							else if(typenm == "operatortfScalar" or typenm =="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar" or typenm == "const class tfScalar" or typenm ==  "::tfScalar_<allocator<void> >"){ hasReturn = true; nodePrefix = "REAL1_EXPR"; }
-							else if(typenm == "operatordouble" or typenm =="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double" or typenm ==  "::double_<allocator<void> >"){ hasReturn = true; nodePrefix = "REAL1_EXPR"; }
-							else if(typenm == "operatorfloat" or typenm =="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float" or typenm ==  "::float_<allocator<void> >"){ hasReturn = true; nodePrefix = "REAL1_EXPR"; }
-							else if(typenm == "operatorbool" or typenm =="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool" or typenm ==  "::bool_<allocator<void> >"){ hasReturn = true; nodePrefix = "BOOL_EXPR"; }
+							else if(typenm == "operatorros::Duration" or typenm =="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration" or typenm ==  "::ros::Duration_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatortf2::Duration" or typenm =="tf2::Duration" or typenm == "const tf2::Duration" or typenm == "class tf2::Duration" or typenm == "const class tf2::Duration" or typenm ==  "::tf2::Duration_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatortf::Transform" or typenm =="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform" or typenm == "const class tf::Transform" or typenm ==  "::tf::Transform_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
+							else if(typenm == "operatortf2::Vector3" or typenm =="tf2::Vector3" or typenm == "const tf2::Vector3" or typenm == "class tf2::Vector3" or typenm == "const class tf2::Vector3" or typenm ==  "::tf2::Vector3_<allocator<void> >"){ hasReturn = true; nodePrefix = "R3"; }
+							else if(typenm == "operatortf::Vector3" or typenm =="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3" or typenm ==  "::tf::Vector3_<allocator<void> >"){ hasReturn = true; nodePrefix = "R3"; }
+							else if(typenm == "operatorros::Time" or typenm =="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time" or typenm ==  "::ros::Time_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatortfScalar" or typenm =="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar" or typenm == "const class tfScalar" or typenm ==  "::tfScalar_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatordouble" or typenm =="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double" or typenm ==  "::double_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatorfloat" or typenm =="float" or typenm == "const float" or typenm == "class float" or typenm == "const class float" or typenm ==  "::float_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatorbool" or typenm =="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool" or typenm ==  "::bool_<allocator<void> >"){ hasReturn = true; nodePrefix = "BOOL"; }
 							else if(typenm == "operatorvoid" or typenm =="void" or typenm == "const void" or typenm == "class void" or typenm == "const class void" or typenm ==  "::void_<allocator<void> >"){ hasReturn = true; nodePrefix = "Void"; }
                             else {}
         

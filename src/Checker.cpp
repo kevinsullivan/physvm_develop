@@ -86,7 +86,7 @@ aFile* openFile(std::string fname) {
 }
 
 void generateMath(aFile* f, interp::Interpretation* interp) {
-    std::string math = interp->toString_AST();
+    std::string math = interp->toStringAST();
     //math += "import .lang.imperative_DSL.physlang\n\n";
     //math += "noncomputable theory\n\n";
     //math += interp->toString_Spaces();

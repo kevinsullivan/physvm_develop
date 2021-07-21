@@ -212,6 +212,10 @@ public:
             }
             this->error_ = nullptr;
         }
+        void removeInterpretation(){
+            this->inner_ = nullptr;
+        }
+
         void setError(ErrorObject* obj){
             this->removeError();
             this->error_ = obj;

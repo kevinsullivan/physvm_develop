@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <iostream> // for cheap logging only
 #include <vector>
+#include <utility>
+
 
 #include "Coords.h"
 //#include "AST.h"
@@ -20,6 +22,93 @@ namespace interp2domain
 */
 namespace interp{
 
+class Location {
+public:
+    Location(int line_, int column_) : line(line_), column(column_) {};
+
+    int getLine() const { return line; }
+    int getColumn() const { return column; }
+
+    std::string toString(){
+        return std::string("Loc(") + std::to_string(line) + "," + std::to_string(column) + ")";
+    }
+
+    std::string toShortString(){
+        return std::to_string(line)+","+std::to_string(column);
+    }
+
+private:
+    int line;
+    int column;
+};
+
+class OutputState {
+public:
+    OutputState(){
+
+    }
+
+    std::pair<std::shared_ptr<Location>,std::shared_ptr<Location>> update(std::string upd_str){
+        int 
+            cur_col = current_loc->getColumn(),
+            cur_line = current_loc->getLine();
+        
+        int symb_ct = 0;
+        for (std::string::size_type i = 0; i < upd_str.size(); i++) {
+            if(upd_str[i] == '\n'){
+                cur_line+=1;
+                cur_col=1;
+            }
+            else if(upd_str[i] < 0){
+                symb_ct += 1;
+                if(i == upd_str.size() - 1)
+                    cur_col += 1;
+                else if(symb_ct == 3){
+                    cur_col += 1;
+                    symb_ct = 0;
+                }
+            }
+            else{
+                if(symb_ct >0){//don't put two symbols together :)
+                    symb_ct = 0;
+                    cur_col += 2;
+                }
+                else 
+                    cur_col += 1;
+            }
+        }
+
+        auto begin = current_loc;
+        auto end = std::make_shared<Location>(Location(cur_line, cur_col));
+        this->current_loc = end;
+        this->current_output += upd_str;
+        return std::make_pair<std::shared_ptr<Location>,std::shared_ptr<Location>>(
+                std::forward<std::shared_ptr<Location>>(begin),
+                std::forward<std::shared_ptr<Location>>(end));
+    };
+
+    std::string getOutput(){
+        return this->current_output;
+    }
+
+    std::shared_ptr<Location> getCurrentLoc(){
+        return this->current_loc;
+    }
+
+    std::string printState(){
+        return current_loc->toString() + "\n" + current_output + "\n";
+    }
+
+    void reset(){
+        current_output = "";
+        current_loc = std::make_shared<Location>(1,1);
+    }
+
+private:
+    std::string current_output;
+    std::shared_ptr<Location> current_loc;
+};
+
 class Interp {
 public:
     Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_) 
@@ -27,7 +116,9 @@ public:
     Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_, std::vector<Interp*> body_) 
         : coords(coords_),domain(domain_),operands(operands_),body(body_), linked(nullptr),container(nullptr), constructor(nullptr) {};
     std::string toString();
-    std::string toStringLinked(std::vector<domain::CoordinateSpace*> spaces);
+    std::string toStringAST(std::vector<domain::CoordinateSpace*> spaces);
+
+    void buildString(bool withType=true);
 
     std::string toDefString(){
         return "def " + this->toString();
@@ -76,6 +167,23 @@ public:
 
     bool hasValue();
     std::string getType();
+
+    void setStartLocation(std::shared_ptr<interp::Location> pos){
+        this->start_location = pos;
+    }
+
+    void setEndLocation(std::shared_ptr<interp::Location> pos){
+        this->end_location = pos;
+    }
+
+    std::shared_ptr<interp::Location> getStartLocation(){
+        return this->start_location;
+    }
+
+    std::shared_ptr<interp::Location> getEndLocation(){
+        return this->end_location;
+    }
+
 protected:
     coords::Coords* coords;
     domain::DomainContainer* domain;
@@ -86,6 +194,8 @@ protected:
     interp::Interp* linked;
     interp::Interp* constructor;
     interp::Interp* container;
+    std::shared_ptr<Location> start_location;
+    std::shared_ptr<Location> end_location;
 };
 
 class COMPOUND_STMT : public Interp {

@@ -617,7 +617,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatorros::Duration" or param_type =="ros::Duration" or param_type == "const ros::Duration" or param_type == "class ros::Duration" or param_type == "const class ros::Duration" or param_type ==  "::ros::Duration_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_REAL1_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
                                 //ROSDurationMatcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -625,13 +625,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -639,7 +639,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatortf2::Duration" or param_type =="tf2::Duration" or param_type == "const tf2::Duration" or param_type == "class tf2::Duration" or param_type == "const class tf2::Duration" or param_type ==  "::tf2::Duration_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_REAL1_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
                                 //ROSTF2DurationMatcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -647,13 +647,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -661,7 +661,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatortf::Transform" or param_type =="tf::Transform" or param_type == "const tf::Transform" or param_type == "class tf::Transform" or param_type == "const class tf::Transform" or param_type ==  "::tf::Transform_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_REAL4X4_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_R4X4",vd, true);
                             if (vd->hasInit()){
                                 //ROSTFTransformMatcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -669,13 +669,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL4X4_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R4X4",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL4X4_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R4X4",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -683,7 +683,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatortf2::Vector3" or param_type =="tf2::Vector3" or param_type == "const tf2::Vector3" or param_type == "class tf2::Vector3" or param_type == "const class tf2::Vector3" or param_type ==  "::tf2::Vector3_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_REAL3_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_R3",vd, true);
                             if (vd->hasInit()){
                                 //ROSTF2Vector3Matcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -691,13 +691,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL3_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R3",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL3_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R3",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -705,7 +705,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatortf::Vector3" or param_type =="tf::Vector3" or param_type == "const tf::Vector3" or param_type == "class tf::Vector3" or param_type == "const class tf::Vector3" or param_type ==  "::tf::Vector3_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_REAL3_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_R3",vd, true);
                             if (vd->hasInit()){
                                 //ROSTFVector3Matcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -713,13 +713,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL3_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R3",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL3_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R3",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -727,7 +727,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatorros::Time" or param_type =="ros::Time" or param_type == "const ros::Time" or param_type == "class ros::Time" or param_type == "const class ros::Time" or param_type ==  "::ros::Time_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_REAL1_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
                                 //ROSTFTimeMatcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -735,13 +735,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -749,7 +749,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatortfScalar" or param_type =="tfScalar" or param_type == "const tfScalar" or param_type == "class tfScalar" or param_type == "const class tfScalar" or param_type ==  "::tfScalar_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_REAL1_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
                                 //ROSTFScalarMatcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -757,13 +757,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -771,7 +771,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatordouble" or param_type =="double" or param_type == "const double" or param_type == "class double" or param_type == "const class double" or param_type ==  "::double_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_REAL1_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
                                 //DoubleMatcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -779,13 +779,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -793,7 +793,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatorfloat" or param_type =="float" or param_type == "const float" or param_type == "class float" or param_type == "const class float" or param_type ==  "::float_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_REAL1_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
                                 //FloatMatcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -801,13 +801,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_REAL1_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -815,7 +815,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                         else if(param_type == "operatorbool" or param_type =="bool" or param_type == "const bool" or param_type == "class bool" or param_type == "const class bool" or param_type ==  "::bool_<allocator<void> >"){
                             
-                            interp_->mkNode("IDENT_LIST_BOOL_EXPR",vd, true);
+                            interp_->mkNode("IDENT_LIST_BOOL",vd, true);
                             if (vd->hasInit()){
                                 //ROSBooleanMatcher argm{this->context_,this->interp_};
                                 //argm.setup();
@@ -823,13 +823,13 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                // auto argstmt = argm.getChildExprStore();
                                //interp_->buffer_operand(argstmt);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_BOOL_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_BOOL",declStmt, false);
                                 this->childExprStore_= (clang::Stmt*) declStmt;
                                 return;
                             }
                             else{
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_LIST_BOOL_EXPR",declStmt, false);
+                                interp_->mkNode("DECL_LIST_BOOL",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -1077,7 +1077,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         ROSDurationMatcher m{ this->context_, this->interp_};
@@ -1088,7 +1088,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1096,7 +1096,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1105,7 +1105,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1113,7 +1113,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         ROSTF2DurationMatcher m{ this->context_, this->interp_};
@@ -1124,7 +1124,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1132,7 +1132,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1141,7 +1141,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1149,7 +1149,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_REAL4X4_EXPR",vd, true);
+                    interp_->mkNode("IDENT_R4X4",vd, true);
                     if (vd->hasInit())
                     {
                         ROSTFTransformMatcher m{ this->context_, this->interp_};
@@ -1160,7 +1160,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_REAL4X4_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_R4X4", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1168,7 +1168,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL4X4_EXPR", declStmt);
+                            interp_->mkNode("DECL_R4X4", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1177,7 +1177,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_REAL4X4_EXPR", declStmt);
+                        interp_->mkNode("DECL_R4X4", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1185,7 +1185,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_REAL3_EXPR",vd, true);
+                    interp_->mkNode("IDENT_R3",vd, true);
                     if (vd->hasInit())
                     {
                         ROSTF2Vector3Matcher m{ this->context_, this->interp_};
@@ -1196,7 +1196,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_REAL3_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_R3", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1204,7 +1204,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL3_EXPR", declStmt);
+                            interp_->mkNode("DECL_R3", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1213,7 +1213,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_REAL3_EXPR", declStmt);
+                        interp_->mkNode("DECL_R3", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1221,7 +1221,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_REAL3_EXPR",vd, true);
+                    interp_->mkNode("IDENT_R3",vd, true);
                     if (vd->hasInit())
                     {
                         ROSTFVector3Matcher m{ this->context_, this->interp_};
@@ -1232,7 +1232,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_REAL3_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_R3", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1240,7 +1240,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL3_EXPR", declStmt);
+                            interp_->mkNode("DECL_R3", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1249,7 +1249,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_REAL3_EXPR", declStmt);
+                        interp_->mkNode("DECL_R3", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1257,7 +1257,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         ROSTFTimeMatcher m{ this->context_, this->interp_};
@@ -1268,7 +1268,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1276,7 +1276,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1285,7 +1285,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1293,7 +1293,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatortfScalar" or typestr =="tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar" or typestr == "const class tfScalar" or typestr ==  "::tfScalar_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         ROSTFScalarMatcher m{ this->context_, this->interp_};
@@ -1304,7 +1304,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1312,7 +1312,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1321,7 +1321,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1329,7 +1329,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatordouble" or typestr =="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double" or typestr ==  "::double_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         DoubleMatcher m{ this->context_, this->interp_};
@@ -1340,7 +1340,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1348,7 +1348,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1357,7 +1357,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1365,7 +1365,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatorfloat" or typestr =="float" or typestr == "const float" or typestr == "class float" or typestr == "const class float" or typestr ==  "::float_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                    interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
                         FloatMatcher m{ this->context_, this->interp_};
@@ -1376,7 +1376,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1384,7 +1384,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1393,7 +1393,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1401,7 +1401,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
                 else if (typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
                     //interp_->mk(vd);
-                    interp_->mkNode("IDENT_BOOL_EXPR",vd, true);
+                    interp_->mkNode("IDENT_BOOL",vd, true);
                     if (vd->hasInit())
                     {
                         ROSBooleanMatcher m{ this->context_, this->interp_};
@@ -1412,7 +1412,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd, m.getChildExprStore());
                             interp_->buffer_operand(vd);
                             interp_->buffer_operand(m.getChildExprStore());
-                            interp_->mkNode("DECL_INIT_BOOL_EXPR", declStmt);
+                            interp_->mkNode("DECL_INIT_BOOL", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1420,7 +1420,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_BOOL_EXPR", declStmt);
+                            interp_->mkNode("DECL_BOOL", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                             return;
                         }
@@ -1429,7 +1429,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     {
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
-                        interp_->mkNode("DECL_BOOL_EXPR", declStmt);
+                        interp_->mkNode("DECL_BOOL", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1690,7 +1690,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                        interp_->mkNode("IDENT_R1",vd, true);
                         if (vd->hasInit())
                         {
                             ROSDurationMatcher m{ this->context_, this->interp_};
@@ -1701,14 +1701,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -1716,7 +1716,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1724,7 +1724,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                        interp_->mkNode("IDENT_R1",vd, true);
                         if (vd->hasInit())
                         {
                             ROSTF2DurationMatcher m{ this->context_, this->interp_};
@@ -1735,14 +1735,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -1750,7 +1750,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1758,7 +1758,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_REAL4X4_EXPR",vd, true);
+                        interp_->mkNode("IDENT_R4X4",vd, true);
                         if (vd->hasInit())
                         {
                             ROSTFTransformMatcher m{ this->context_, this->interp_};
@@ -1769,14 +1769,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_REAL4X4_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_R4X4", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_REAL4X4_EXPR", declStmt);
+                                interp_->mkNode("DECL_R4X4", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -1784,7 +1784,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL4X4_EXPR", declStmt);
+                            interp_->mkNode("DECL_R4X4", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1792,7 +1792,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_REAL3_EXPR",vd, true);
+                        interp_->mkNode("IDENT_R3",vd, true);
                         if (vd->hasInit())
                         {
                             ROSTF2Vector3Matcher m{ this->context_, this->interp_};
@@ -1803,14 +1803,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_REAL3_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_R3", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_REAL3_EXPR", declStmt);
+                                interp_->mkNode("DECL_R3", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -1818,7 +1818,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL3_EXPR", declStmt);
+                            interp_->mkNode("DECL_R3", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1826,7 +1826,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_REAL3_EXPR",vd, true);
+                        interp_->mkNode("IDENT_R3",vd, true);
                         if (vd->hasInit())
                         {
                             ROSTFVector3Matcher m{ this->context_, this->interp_};
@@ -1837,14 +1837,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_REAL3_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_R3", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_REAL3_EXPR", declStmt);
+                                interp_->mkNode("DECL_R3", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -1852,7 +1852,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL3_EXPR", declStmt);
+                            interp_->mkNode("DECL_R3", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1860,7 +1860,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                        interp_->mkNode("IDENT_R1",vd, true);
                         if (vd->hasInit())
                         {
                             ROSTFTimeMatcher m{ this->context_, this->interp_};
@@ -1871,14 +1871,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -1886,7 +1886,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1894,7 +1894,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatortfScalar" or typestr =="tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar" or typestr == "const class tfScalar" or typestr ==  "::tfScalar_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                        interp_->mkNode("IDENT_R1",vd, true);
                         if (vd->hasInit())
                         {
                             ROSTFScalarMatcher m{ this->context_, this->interp_};
@@ -1905,14 +1905,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -1920,7 +1920,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1928,7 +1928,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatordouble" or typestr =="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double" or typestr ==  "::double_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                        interp_->mkNode("IDENT_R1",vd, true);
                         if (vd->hasInit())
                         {
                             DoubleMatcher m{ this->context_, this->interp_};
@@ -1939,14 +1939,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -1954,7 +1954,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1962,7 +1962,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatorfloat" or typestr =="float" or typestr == "const float" or typestr == "class float" or typestr == "const class float" or typestr ==  "::float_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_REAL1_EXPR",vd, true);
+                        interp_->mkNode("IDENT_R1",vd, true);
                         if (vd->hasInit())
                         {
                             FloatMatcher m{ this->context_, this->interp_};
@@ -1973,14 +1973,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                                interp_->mkNode("DECL_R1", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -1988,7 +1988,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_REAL1_EXPR", declStmt);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1996,7 +1996,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
                         //interp_->mk(vd);
                         
-                        interp_->mkNode("IDENT_BOOL_EXPR",vd, true);
+                        interp_->mkNode("IDENT_BOOL",vd, true);
                         if (vd->hasInit())
                         {
                             ROSBooleanMatcher m{ this->context_, this->interp_};
@@ -2007,14 +2007,14 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                                 //interp_->mk(declStmt, vd, m.getChildExprStore());
                                 interp_->buffer_operand(vd);
                                 interp_->buffer_operand(m.getChildExprStore());
-                                interp_->mkNode("DECL_INIT_BOOL_EXPR", declStmt);
+                                interp_->mkNode("DECL_INIT_BOOL", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                             else
                             {
                                 //interp_->mk(declStmt, vd);
                                 interp_->buffer_operand(vd);
-                                interp_->mkNode("DECL_BOOL_EXPR", declStmt);
+                                interp_->mkNode("DECL_BOOL", declStmt);
                                 this->childExprStore_ =  (clang::Stmt*)declStmt;
                             }
                         }
@@ -2022,7 +2022,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         {
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
-                            interp_->mkNode("DECL_BOOL_EXPR", declStmt);
+                            interp_->mkNode("DECL_BOOL", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -2192,7 +2192,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_REAL1_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2206,7 +2206,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_REAL1_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2220,7 +2220,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_REAL4X4_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_R4X4",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2234,7 +2234,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_REAL3_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_R3",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2248,7 +2248,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_REAL3_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_R3",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2262,7 +2262,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_REAL1_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2276,7 +2276,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_REAL1_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2290,7 +2290,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_REAL1_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2304,7 +2304,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_REAL1_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2318,7 +2318,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         auto argstmt = argm.getChildExprStore();
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
-                        interp_->mkNode("APPEND_LIST_BOOL_EXPR",cxxMemberCallExpr_, false);
+                        interp_->mkNode("APPEND_LIST_BOOL",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }

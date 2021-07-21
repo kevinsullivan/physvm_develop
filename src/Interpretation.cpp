@@ -50,24 +50,17 @@ Interpretation::Interpretation() {
     checker_ = new Checker(this);
 }
 
-std::string Interpretation::toString_AST(){
+std::string Interpretation::toStringAST(){
     //this should technically be in Interp but OKAY this second
     //4/13 - nope move this 
     std::string math = "";
 
-    math += "import .lang.expressions.time_expr\n";
-    math += "import .lang.expressions.geom1d_expr\n\n";
-    math += "import .lang.expressions.geom3d_expr\n\n";
-    math += "open lang.time\nopen lang.geom1d\nopen lang.geom3d\n";
-    math += "namespace peirce_output\nnoncomputable theory\n";
-
     auto astInterp = coords2interp_->getInterp(this->AST);
     if(astInterp){
-        math+= astInterp->toStringLinked(domain_->getSpaces());
+        math+= astInterp->toStringAST(domain_->getSpaces());
     }
     else
         std::cout<<"Warning : No top-level AST node present";
-    math += "end peirce_output";
     return math;
 };
 
@@ -141,6 +134,7 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
         this->AST = coords_;
     }
     this->clear_buffer();
+    this->allCoords.push_back(coords_);
 
     return coords_;
 }
@@ -368,12 +362,12 @@ void Interpretation::interpretFunctions(){
 void Interpretation::performInference(){
     int totalInferred = 0;
     oracle_infer_->buildInterpretations("PeirceOutput");//move to configuration or method
-    for(auto coords_ : this->captureCache){
+    for(auto coords_ : this->allCoords){
         /*
         What is the update logic? Very difficult question to answer.
         */
         auto dom_cont = this->coords2dom_->getDomain(coords_);
-        auto infer_dom = oracle_infer_->getInterpretation(coords_);
+        auto infer_dom = oracle_infer_->getAllInterpretation(coords_);
 
         switch(dom_cont->getAnnotationState()){
             case domain::AnnotationState::ManualError :
@@ -394,6 +388,13 @@ void Interpretation::performInference(){
                     else{
                         dom_cont->setAnnotationState(domain::AnnotationState::Manual);
                         dom_cont->removeError();
+                        
+                        for(auto link_ : coords_->getLinks()){
+                            domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
+                            link_cont->removeError();
+                            link_cont->setAnnotationState(domain::AnnotationState::Manual);
+                            
+                        }
                     }
 
                 }
@@ -420,7 +421,7 @@ void Interpretation::performInference(){
                         
                         for(auto link_ : coords_->getLinks()){
                             domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
-                            dom_cont->removeError();
+                            link_cont->removeError();
                             link_cont->setValue(infer_dom);
                             link_cont->setAnnotationState(domain::AnnotationState::Inferred);
                             //totalInferred++;
@@ -428,6 +429,18 @@ void Interpretation::performInference(){
                         dom_cont->setAnnotationState(domain::AnnotationState::Inferred);
                     }
 
+                }
+                else{
+                    dom_cont->removeError();
+                    dom_cont->removeInterpretation();
+                    dom_cont->setAnnotationState(domain::AnnotationState::Unannotated);
+                    for(auto link_ : coords_->getLinks()){
+                        domain::DomainContainer* link_cont = this->coords2dom_->getDomain(link_);
+                        link_cont->removeError();
+                        link_cont->removeInterpretation();
+                        link_cont->setAnnotationState(domain::AnnotationState::Unannotated);
+                        //totalInferred++;
+                    }
                 }
             }
         }
@@ -437,7 +450,7 @@ void Interpretation::performInference(){
 
 
 int optionSize = 6;
-void Interpretation::printErrors(){
+/*void Interpretation::printErrors(){
     int i = optionSize+1;//move to "menu offset" global variable
     for(auto coords_ : this->captureCache)
     {
@@ -454,13 +467,48 @@ void Interpretation::printErrors(){
             <<"\n\tError Message: "<<error_str_<<std::endl;
     }
 };
+*/
+void Interpretation::printAllTerms()
+{
+    int i = optionSize+1;//move to "menu offset" global variable
+    for(auto coords_ : this->allCoords)
+    {
+        auto nt = coords_->getNodeType();
+
+        if(nt.find("COMPOUND") != string::npos or nt.find("FUNC") != string::npos or nt.find("DECL") != string::npos)
+            continue;
+
+        auto dom_ = this->coords2dom_->getDomain(coords_);
+
+        std::string error_str_ = "No Error Detected";
+        //if(dom_->hasValue()){
+            if(dom_->hasError()){
+                error_str_ = dom_->getError()->toErrorString();
+            }
+        //}
+        auto code = coords_->state_->code_;
+        code = code.size() > 100 ? code.substr(0,100):code;
+
+        std::cout<<"Index: "<<i++<<", Node Type : "<<coords_->getNodeType()<<", Annotation State : "<<dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
+            <<"\n\tExisting Interpretation: "<<dom_->toString()<<"\n\tError Message: "<<error_str_<<std::endl<<std::endl;
+    }
+};
+
+
 void Interpretation::printVarTable(){
     int i = optionSize+1;//move to "menu offset" global variable
     for(auto coords_ : this->captureCache)
     {
+        std::string error_str_ = "No Error Detected";
+
         auto dom_ = this->coords2dom_->getDomain(coords_);
+        //if(dom_->hasValue()){
+        if(dom_->hasError()){
+            error_str_ = dom_->getError()->toErrorString();
+        }
+
         std::cout<<"Index: "<<i++<<", Node Type : "<<coords_->getNodeType()<<", Annotation State : "<<dom_->getAnnotationStateStr()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
-            <<"\n\tExisting Interpretation: "<<dom_->toString()<<std::endl<<std::endl;
+            <<"\n\tExisting Interpretation: "<<dom_->toString()<<"\n\tError Message: "<<error_str_<<std::endl<<std::endl;
     }
 };
 void Interpretation::interpretProgram(){
@@ -469,7 +517,13 @@ void Interpretation::interpretProgram(){
     for(auto coords_ : this->captureCache) 
         ordered_nodes.push_back(this->coords2interp_->getInterp(coords_));
 
+    std::vector<interp::Interp*> all_nodes;
+    for(auto coords_ : this->allCoords) 
+        all_nodes.push_back(this->coords2interp_->getInterp(coords_));
+
+
     oracle_infer_->setNodes(ordered_nodes);
+    oracle_infer_->setAllNodes(all_nodes);
     bool needs_infer = true;
     while(continue_)
     {
@@ -478,9 +532,10 @@ void Interpretation::interpretProgram(){
         if(needs_infer){
             this->performInference();
             //I don't know why I need ot do this twice. this is a hack for an underlying bug
+            //checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
-            this->performInference();
+            //this->performInference();
             needs_infer = false;
         }
         this->printChoices();
@@ -491,11 +546,11 @@ void Interpretation::interpretProgram(){
 
         int menuSize = optionSize+this->captureCache.size();
         std::string menu = std::string("Options:\n")
-            +"0 - Print Table of Terms\n"
+            +"0 - Print Table of Annotatable Terms\n"
             +"1 - Print Available Coordinate Spaces\n"
             +"2 - Create Coordinate Space\n"
             +"3 - Exit and Finish Type Checking\n"
-            +"4 - Print Detected Lean Errors\n"
+            +"4 - Print Table of All Terms\n"
             +"5 - Annotate Constructors\n"
             +"6 - Annotate Functions\n";
         if(this->captureCache.size()>0){
@@ -519,12 +574,12 @@ void Interpretation::interpretProgram(){
                 continue_ = false;
             } break;
             case 4: {
-                this->printErrors();
+                this->printAllTerms();
             } break;
             case 5: {
                 this->interpretConstructors();
                 //needs_infer = true;
-            } break;
+            }
             case 6: {
                 this->interpretFunctions();
                 //needs_infer = true;

@@ -32,7 +32,7 @@ class Interpretation
 public:
     Interpretation();
 
-    std::string toString_AST();
+    std::string toStringAST();
 
     void setOracle(oracle::Oracle_AskAll* oracle)
     {
@@ -225,9 +225,9 @@ public:
     //void printVarTable();//print the indexed variable table for the user
     //void updateVarTable();//while loop where user can select a variable by index and provide a physical type for that variable
     //void printChoices();//to replay annotation sessions
-
+    //void printAllErrors();
 	void printVarTable();
-    void printErrors();
+    void printAllTerms();
     void printConstructorTable();
     void interpretConstructors();
     void printFunctionTable();
@@ -263,6 +263,7 @@ public:
     //std::unordered_map<int, void*> index2dom_;
 	coords::Coords* AST;
 	std::vector<coords::Coords*> captureCache;//used to store Coords
+    std::vector<coords::Coords*> allCoords;
 
     std::shared_ptr<ast::NodeContainer> link;
     std::shared_ptr<ast::NodeContainer> constructor;
