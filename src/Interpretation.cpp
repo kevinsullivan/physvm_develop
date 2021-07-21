@@ -226,6 +226,7 @@ void Interpretation::interpretConstructors(){
             checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
             this->performInference();
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
 
@@ -475,7 +476,10 @@ void Interpretation::printAllTerms()
     {
         auto nt = coords_->getNodeType();
 
-        if(nt.find("COMPOUND") != string::npos or nt.find("FUNC") != string::npos or nt.find("DECL") != string::npos)
+        if(nt.find("COMPOUND") != string::npos 
+            or nt.find("FUNC") != string::npos 
+            or nt.find("DECL") != string::npos
+            or nt.find("CONSTRUCTOR") != string::npos)
             continue;
 
         auto dom_ = this->coords2dom_->getDomain(coords_);
@@ -535,7 +539,8 @@ void Interpretation::interpretProgram(){
             //checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
-            //this->performInference();
+            this->performInference();
+            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
         this->printChoices();
@@ -579,11 +584,11 @@ void Interpretation::interpretProgram(){
             case 5: {
                 this->interpretConstructors();
                 //needs_infer = true;
-            }
+            } break;
             case 6: {
                 this->interpretFunctions();
                 //needs_infer = true;
-            }
+            } break;
             default:{
                 needs_infer = true;
                 auto coords_ = this->captureCache[choice-optionSize-1];
