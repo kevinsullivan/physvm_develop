@@ -7,11 +7,14 @@
 
 #include "ROSStatementMatcher.h"
 #include "ROSBooleanMatcher.h"
+#include "ROSBoolMatcher.h"
 #include "FloatMatcher.h"
 #include "DoubleMatcher.h"
 #include "ROSTFScalarMatcher.h"
-#include "ROSTFTimeMatcher.h"
+#include "ROSTimeMatcher.h"
+#include "ROSTimeBaseMatcher.h"
 #include "ROSDurationMatcher.h"
+#include "ROSDurationBaseMatcher.h"
 #include "ROSTFVector3Matcher.h"
 #include "ROSTF2DurationMatcher.h"
 #include "ROSTFTransformMatcher.h"
@@ -23,6 +26,8 @@
 #include "ROSTF2Vector3Matcher.h"
 #include "ROSTF2TransformStamped.h"
 #include "ROSTF2Transform.h"
+#include "ROSGeomPoseStamped.h"
+#include "ROSGeomTransformStamped.h"
 
 #include <string>
 
@@ -208,6 +213,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
+        else if (typestr == "geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped"  or typestr == "class geometry_msgs::TransformStamped"  or typestr == "const class geometry_msgs::TransformStamped"/*typestr.find("geometry_msgs::TransformStamped") != string::npos) != string::npos){
+            ROSGeomTransformStamped m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
         else if (typestr == "tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>"  or typestr == "class tf2::Stamped<tf2::Transform>"  or typestr == "const class tf2::Stamped<tf2::Transform>"/*typestr.find("tf2::Stamped<tf2::Transform>") != string::npos) != string::npos){
             ROSTF2TransformStamped m{ this->context_, this->interp_};
             m.setup();
@@ -218,8 +233,28 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
+        else if (typestr == "geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped"  or typestr == "class geometry_msgs::PoseStamped"  or typestr == "const class geometry_msgs::PoseStamped"/*typestr.find("geometry_msgs::PoseStamped") != string::npos) != string::npos){
+            ROSGeomPoseStamped m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
         else if (typestr == "geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion"  or typestr == "class geometry_msgs::Quaternion"  or typestr == "const class geometry_msgs::Quaternion"/*typestr.find("geometry_msgs::Quaternion") != string::npos) != string::npos){
             ROSGeomQuaternion m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr == "ros::DurationBase" or typestr == "const ros::DurationBase"  or typestr == "class ros::DurationBase"  or typestr == "const class ros::DurationBase"/*typestr.find("ros::DurationBase") != string::npos) != string::npos){
+            ROSDurationBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
@@ -250,6 +285,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
         else if (typestr == "tf2::Transform" or typestr == "const tf2::Transform"  or typestr == "class tf2::Transform"  or typestr == "const class tf2::Transform"/*typestr.find("tf2::Transform") != string::npos) != string::npos){
             ROSTF2Transform m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr == "ros::TimeBase" or typestr == "const ros::TimeBase"  or typestr == "class ros::TimeBase"  or typestr == "const class ros::TimeBase"/*typestr.find("ros::TimeBase") != string::npos) != string::npos){
+            ROSTimeBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
@@ -309,7 +354,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         }
             
         else if (typestr == "ros::Time" or typestr == "const ros::Time"  or typestr == "class ros::Time"  or typestr == "const class ros::Time"/*typestr.find("ros::Time") != string::npos) != string::npos){
-            ROSTFTimeMatcher m{ this->context_, this->interp_};
+            ROSTimeMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
@@ -330,6 +375,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             
         else if (typestr == "double" or typestr == "const double"  or typestr == "class double"  or typestr == "const class double"/*typestr.find("double") != string::npos) != string::npos){
             DoubleMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                this->childExprStore_ = (clang::Stmt*)_expr;
+            }
+            return;
+        }
+            
+        else if (typestr == "_Bool" or typestr == "const _Bool"  or typestr == "class _Bool"  or typestr == "const class _Bool"/*typestr.find("_Bool") != string::npos) != string::npos){
+            ROSBoolMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
@@ -505,11 +560,55 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
+                        else if(param_type == "operatorgeometry_msgs::TransformStamped" or param_type =="geometry_msgs::TransformStamped" or param_type == "const geometry_msgs::TransformStamped" or param_type == "class geometry_msgs::TransformStamped" or param_type == "const class geometry_msgs::TransformStamped" or param_type ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                            
+                            interp_->mkNode("IDENT_LIST_R4X4",vd, true);
+                            if (vd->hasInit()){
+                                //ROSGeomTransformStamped argm{this->context_,this->interp_};
+                                //argm.setup();
+                               // argm.visit(*vd->getInit());
+                               // auto argstmt = argm.getChildExprStore();
+                               //interp_->buffer_operand(argstmt);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R4X4",declStmt, false);
+                                this->childExprStore_= (clang::Stmt*) declStmt;
+                                return;
+                            }
+                            else{
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R4X4",declStmt, false);
+                                this->childExprStore_ = (clang::Stmt*) declStmt;
+                                return;
+                            }
+                        }
+                    
                         else if(param_type == "operatortf2::Stamped<tf2::Transform>" or param_type =="tf2::Stamped<tf2::Transform>" or param_type == "const tf2::Stamped<tf2::Transform>" or param_type == "class tf2::Stamped<tf2::Transform>" or param_type == "const class tf2::Stamped<tf2::Transform>" or param_type ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4X4",vd, true);
                             if (vd->hasInit()){
                                 //ROSTF2TransformStamped argm{this->context_,this->interp_};
+                                //argm.setup();
+                               // argm.visit(*vd->getInit());
+                               // auto argstmt = argm.getChildExprStore();
+                               //interp_->buffer_operand(argstmt);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R4X4",declStmt, false);
+                                this->childExprStore_= (clang::Stmt*) declStmt;
+                                return;
+                            }
+                            else{
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R4X4",declStmt, false);
+                                this->childExprStore_ = (clang::Stmt*) declStmt;
+                                return;
+                            }
+                        }
+                    
+                        else if(param_type == "operatorgeometry_msgs::PoseStamped" or param_type =="geometry_msgs::PoseStamped" or param_type == "const geometry_msgs::PoseStamped" or param_type == "class geometry_msgs::PoseStamped" or param_type == "const class geometry_msgs::PoseStamped" or param_type ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                            
+                            interp_->mkNode("IDENT_LIST_R4X4",vd, true);
+                            if (vd->hasInit()){
+                                //ROSGeomPoseStamped argm{this->context_,this->interp_};
                                 //argm.setup();
                                // argm.visit(*vd->getInit());
                                // auto argstmt = argm.getChildExprStore();
@@ -544,6 +643,28 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             else{
                                 interp_->buffer_operand(vd);
                                 interp_->mkNode("DECL_LIST_R4",declStmt, false);
+                                this->childExprStore_ = (clang::Stmt*) declStmt;
+                                return;
+                            }
+                        }
+                    
+                        else if(param_type == "operatorros::DurationBase" or param_type =="ros::DurationBase" or param_type == "const ros::DurationBase" or param_type == "class ros::DurationBase" or param_type == "const class ros::DurationBase" or param_type ==  "::ros::DurationBase_<allocator<void> >"){
+                            
+                            interp_->mkNode("IDENT_LIST_R1",vd, true);
+                            if (vd->hasInit()){
+                                //ROSDurationBaseMatcher argm{this->context_,this->interp_};
+                                //argm.setup();
+                               // argm.visit(*vd->getInit());
+                               // auto argstmt = argm.getChildExprStore();
+                               //interp_->buffer_operand(argstmt);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
+                                this->childExprStore_= (clang::Stmt*) declStmt;
+                                return;
+                            }
+                            else{
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -610,6 +731,28 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             else{
                                 interp_->buffer_operand(vd);
                                 interp_->mkNode("DECL_LIST_R4X4",declStmt, false);
+                                this->childExprStore_ = (clang::Stmt*) declStmt;
+                                return;
+                            }
+                        }
+                    
+                        else if(param_type == "operatorros::TimeBase" or param_type =="ros::TimeBase" or param_type == "const ros::TimeBase" or param_type == "class ros::TimeBase" or param_type == "const class ros::TimeBase" or param_type ==  "::ros::TimeBase_<allocator<void> >"){
+                            
+                            interp_->mkNode("IDENT_LIST_R1",vd, true);
+                            if (vd->hasInit()){
+                                //ROSTimeBaseMatcher argm{this->context_,this->interp_};
+                                //argm.setup();
+                               // argm.visit(*vd->getInit());
+                               // auto argstmt = argm.getChildExprStore();
+                               //interp_->buffer_operand(argstmt);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
+                                this->childExprStore_= (clang::Stmt*) declStmt;
+                                return;
+                            }
+                            else{
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -729,7 +872,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             
                             interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
-                                //ROSTFTimeMatcher argm{this->context_,this->interp_};
+                                //ROSTimeMatcher argm{this->context_,this->interp_};
                                 //argm.setup();
                                // argm.visit(*vd->getInit());
                                // auto argstmt = argm.getChildExprStore();
@@ -786,6 +929,28 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             else{
                                 interp_->buffer_operand(vd);
                                 interp_->mkNode("DECL_LIST_R1",declStmt, false);
+                                this->childExprStore_ = (clang::Stmt*) declStmt;
+                                return;
+                            }
+                        }
+                    
+                        else if(param_type == "operator_Bool" or param_type =="_Bool" or param_type == "const _Bool" or param_type == "class _Bool" or param_type == "const class _Bool" or param_type ==  "::_Bool_<allocator<void> >"){
+                            
+                            interp_->mkNode("IDENT_LIST_BOOL",vd, true);
+                            if (vd->hasInit()){
+                                //ROSBoolMatcher argm{this->context_,this->interp_};
+                                //argm.setup();
+                               // argm.visit(*vd->getInit());
+                               // auto argstmt = argm.getChildExprStore();
+                               //interp_->buffer_operand(argstmt);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_BOOL",declStmt, false);
+                                this->childExprStore_= (clang::Stmt*) declStmt;
+                                return;
+                            }
+                            else{
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_BOOL",declStmt, false);
                                 this->childExprStore_ = (clang::Stmt*) declStmt;
                                 return;
                             }
@@ -895,12 +1060,84 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
+                else if (typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                    //interp_->mk(vd);
+                    interp_->mkNode("IDENT_R4X4",vd, true);
+                    if (vd->hasInit())
+                    {
+                        ROSGeomTransformStamped m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            //interp_->mk(declStmt, vd, m.getChildExprStore());
+                            interp_->buffer_operand(vd);
+                            interp_->buffer_operand(m.getChildExprStore());
+                            interp_->mkNode("DECL_INIT_R4X4", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R4X4", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //interp_->mk(declStmt, vd);
+                        interp_->buffer_operand(vd);
+                        interp_->mkNode("DECL_R4X4", declStmt);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
                 else if (typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4X4",vd, true);
                     if (vd->hasInit())
                     {
                         ROSTF2TransformStamped m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            //interp_->mk(declStmt, vd, m.getChildExprStore());
+                            interp_->buffer_operand(vd);
+                            interp_->buffer_operand(m.getChildExprStore());
+                            interp_->mkNode("DECL_INIT_R4X4", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R4X4", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //interp_->mk(declStmt, vd);
+                        interp_->buffer_operand(vd);
+                        interp_->mkNode("DECL_R4X4", declStmt);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                    //interp_->mk(vd);
+                    interp_->mkNode("IDENT_R4X4",vd, true);
+                    if (vd->hasInit())
+                    {
+                        ROSGeomPoseStamped m{ this->context_, this->interp_};
                         m.setup();
                         m.visit((*vd->getInit()));
                         if (m.getChildExprStore())
@@ -962,6 +1199,42 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
                         interp_->mkNode("DECL_R4", declStmt);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+                    //interp_->mk(vd);
+                    interp_->mkNode("IDENT_R1",vd, true);
+                    if (vd->hasInit())
+                    {
+                        ROSDurationBaseMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            //interp_->mk(declStmt, vd, m.getChildExprStore());
+                            interp_->buffer_operand(vd);
+                            interp_->buffer_operand(m.getChildExprStore());
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //interp_->mk(declStmt, vd);
+                        interp_->buffer_operand(vd);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1070,6 +1343,42 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
                         interp_->mkNode("DECL_R4X4", declStmt);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+                    //interp_->mk(vd);
+                    interp_->mkNode("IDENT_R1",vd, true);
+                    if (vd->hasInit())
+                    {
+                        ROSTimeBaseMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            //interp_->mk(declStmt, vd, m.getChildExprStore());
+                            interp_->buffer_operand(vd);
+                            interp_->buffer_operand(m.getChildExprStore());
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //interp_->mk(declStmt, vd);
+                        interp_->buffer_operand(vd);
+                        interp_->mkNode("DECL_R1", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1260,7 +1569,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
                     {
-                        ROSTFTimeMatcher m{ this->context_, this->interp_};
+                        ROSTimeMatcher m{ this->context_, this->interp_};
                         m.setup();
                         m.visit((*vd->getInit()));
                         if (m.getChildExprStore())
@@ -1358,6 +1667,42 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         //interp_->mk(declStmt, vd);
                         interp_->buffer_operand(vd);
                         interp_->mkNode("DECL_R1", declStmt);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
+                    //interp_->mk(vd);
+                    interp_->mkNode("IDENT_BOOL",vd, true);
+                    if (vd->hasInit())
+                    {
+                        ROSBoolMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            //interp_->mk(declStmt, vd, m.getChildExprStore());
+                            interp_->buffer_operand(vd);
+                            interp_->buffer_operand(m.getChildExprStore());
+                            interp_->mkNode("DECL_INIT_BOOL", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_BOOL", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //interp_->mk(declStmt, vd);
+                        interp_->buffer_operand(vd);
+                        interp_->mkNode("DECL_BOOL", declStmt);
                         this->childExprStore_ = (clang::Stmt*)declStmt;
                         return;
                     }
@@ -1517,6 +1862,40 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
+                    else if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                        //interp_->mk(vd);
+                        
+                        interp_->mkNode("IDENT_R4X4",vd, true);
+                        if (vd->hasInit())
+                        {
+                            ROSGeomTransformStamped m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mk(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_R4X4", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mk(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_R4X4", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R4X4", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
                     else if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
                         //interp_->mk(vd);
                         
@@ -1524,6 +1903,40 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         if (vd->hasInit())
                         {
                             ROSTF2TransformStamped m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mk(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_R4X4", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mk(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_R4X4", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R4X4", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                        //interp_->mk(vd);
+                        
+                        interp_->mkNode("IDENT_R4X4",vd, true);
+                        if (vd->hasInit())
+                        {
+                            ROSGeomPoseStamped m{ this->context_, this->interp_};
                             m.setup();
                             m.visit((*vd->getInit()));
                             if (m.getChildExprStore())
@@ -1581,6 +1994,40 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
                             interp_->mkNode("DECL_R4", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+                        //interp_->mk(vd);
+                        
+                        interp_->mkNode("IDENT_R1",vd, true);
+                        if (vd->hasInit())
+                        {
+                            ROSDurationBaseMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mk(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mk(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1683,6 +2130,40 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
                             interp_->mkNode("DECL_R4X4", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+                        //interp_->mk(vd);
+                        
+                        interp_->mkNode("IDENT_R1",vd, true);
+                        if (vd->hasInit())
+                        {
+                            ROSTimeBaseMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mk(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mk(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -1863,7 +2344,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         interp_->mkNode("IDENT_R1",vd, true);
                         if (vd->hasInit())
                         {
-                            ROSTFTimeMatcher m{ this->context_, this->interp_};
+                            ROSTimeMatcher m{ this->context_, this->interp_};
                             m.setup();
                             m.visit((*vd->getInit()));
                             if (m.getChildExprStore())
@@ -1955,6 +2436,40 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             //interp_->mk(declStmt, vd);
                             interp_->buffer_operand(vd);
                             interp_->mkNode("DECL_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
+                        //interp_->mk(vd);
+                        
+                        interp_->mkNode("IDENT_BOOL",vd, true);
+                        if (vd->hasInit())
+                        {
+                            ROSBoolMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mk(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_BOOL", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mk(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_BOOL", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_BOOL", declStmt);
                             this->childExprStore_ =  (clang::Stmt*)declStmt;
                         }
                         anyfound = true;
@@ -2113,10 +2628,38 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
+                    else if(param_type == "operatorgeometry_msgs::TransformStamped" or param_type =="geometry_msgs::TransformStamped" or param_type == "const geometry_msgs::TransformStamped" or param_type == "class geometry_msgs::TransformStamped" or param_type == "const class geometry_msgs::TransformStamped" or param_type ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                        
+                        auto arg_=cxxMemberCallExpr_->getArg(0);
+                        ROSGeomTransformStamped argm{this->context_,this->interp_};
+                        argm.setup();
+                        argm.visit(*arg_);
+                        auto argstmt = argm.getChildExprStore();
+                        interp_->buffer_link(objdecl);
+                        interp_->buffer_operand(argstmt);
+                        interp_->mkNode("APPEND_LIST_R4X4",cxxMemberCallExpr_, false);
+                        this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
+                        return;
+                    }
+                    
                     else if(param_type == "operatortf2::Stamped<tf2::Transform>" or param_type =="tf2::Stamped<tf2::Transform>" or param_type == "const tf2::Stamped<tf2::Transform>" or param_type == "class tf2::Stamped<tf2::Transform>" or param_type == "const class tf2::Stamped<tf2::Transform>" or param_type ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTF2TransformStamped argm{this->context_,this->interp_};
+                        argm.setup();
+                        argm.visit(*arg_);
+                        auto argstmt = argm.getChildExprStore();
+                        interp_->buffer_link(objdecl);
+                        interp_->buffer_operand(argstmt);
+                        interp_->mkNode("APPEND_LIST_R4X4",cxxMemberCallExpr_, false);
+                        this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
+                        return;
+                    }
+                    
+                    else if(param_type == "operatorgeometry_msgs::PoseStamped" or param_type =="geometry_msgs::PoseStamped" or param_type == "const geometry_msgs::PoseStamped" or param_type == "class geometry_msgs::PoseStamped" or param_type == "const class geometry_msgs::PoseStamped" or param_type ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                        
+                        auto arg_=cxxMemberCallExpr_->getArg(0);
+                        ROSGeomPoseStamped argm{this->context_,this->interp_};
                         argm.setup();
                         argm.visit(*arg_);
                         auto argstmt = argm.getChildExprStore();
@@ -2137,6 +2680,20 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
                         interp_->mkNode("APPEND_LIST_R4",cxxMemberCallExpr_, false);
+                        this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
+                        return;
+                    }
+                    
+                    else if(param_type == "operatorros::DurationBase" or param_type =="ros::DurationBase" or param_type == "const ros::DurationBase" or param_type == "class ros::DurationBase" or param_type == "const class ros::DurationBase" or param_type ==  "::ros::DurationBase_<allocator<void> >"){
+                        
+                        auto arg_=cxxMemberCallExpr_->getArg(0);
+                        ROSDurationBaseMatcher argm{this->context_,this->interp_};
+                        argm.setup();
+                        argm.visit(*arg_);
+                        auto argstmt = argm.getChildExprStore();
+                        interp_->buffer_link(objdecl);
+                        interp_->buffer_operand(argstmt);
+                        interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2179,6 +2736,20 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
                         interp_->mkNode("APPEND_LIST_R4X4",cxxMemberCallExpr_, false);
+                        this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
+                        return;
+                    }
+                    
+                    else if(param_type == "operatorros::TimeBase" or param_type =="ros::TimeBase" or param_type == "const ros::TimeBase" or param_type == "class ros::TimeBase" or param_type == "const class ros::TimeBase" or param_type ==  "::ros::TimeBase_<allocator<void> >"){
+                        
+                        auto arg_=cxxMemberCallExpr_->getArg(0);
+                        ROSTimeBaseMatcher argm{this->context_,this->interp_};
+                        argm.setup();
+                        argm.visit(*arg_);
+                        auto argstmt = argm.getChildExprStore();
+                        interp_->buffer_link(objdecl);
+                        interp_->buffer_operand(argstmt);
+                        interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2256,7 +2827,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     else if(param_type == "operatorros::Time" or param_type =="ros::Time" or param_type == "const ros::Time" or param_type == "class ros::Time" or param_type == "const class ros::Time" or param_type ==  "::ros::Time_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
-                        ROSTFTimeMatcher argm{this->context_,this->interp_};
+                        ROSTimeMatcher argm{this->context_,this->interp_};
                         argm.setup();
                         argm.visit(*arg_);
                         auto argstmt = argm.getChildExprStore();
@@ -2291,6 +2862,20 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         interp_->buffer_link(objdecl);
                         interp_->buffer_operand(argstmt);
                         interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
+                        this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
+                        return;
+                    }
+                    
+                    else if(param_type == "operator_Bool" or param_type =="_Bool" or param_type == "const _Bool" or param_type == "class _Bool" or param_type == "const class _Bool" or param_type ==  "::_Bool_<allocator<void> >"){
+                        
+                        auto arg_=cxxMemberCallExpr_->getArg(0);
+                        ROSBoolMatcher argm{this->context_,this->interp_};
+                        argm.setup();
+                        argm.visit(*arg_);
+                        auto argstmt = argm.getChildExprStore();
+                        interp_->buffer_link(objdecl);
+                        interp_->buffer_operand(argstmt);
+                        interp_->mkNode("APPEND_LIST_BOOL",cxxMemberCallExpr_, false);
                         this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
                         return;
                     }
@@ -2358,6 +2943,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
+        if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+            ROSGeomTransformStamped m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
         if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
             ROSTF2TransformStamped m{ this->context_, this->interp_};
             m.setup();
@@ -2368,8 +2963,28 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
+        if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+            ROSGeomPoseStamped m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
         if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
             ROSGeomQuaternion m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+        if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+            ROSDurationBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
             if (m.getChildExprStore()){
@@ -2400,6 +3015,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         }
         if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
             ROSTF2Transform m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+        if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+            ROSTimeBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
             if (m.getChildExprStore()){
@@ -2459,7 +3084,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                 
         }
         if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
-            ROSTFTimeMatcher m{ this->context_, this->interp_};
+            ROSTimeMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
             if (m.getChildExprStore()){
@@ -2480,6 +3105,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         }
         if(typestr == "operatordouble" or typestr =="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double" or typestr ==  "::double_<allocator<void> >"){
             DoubleMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+        if(typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
+            ROSBoolMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
             if (m.getChildExprStore()){

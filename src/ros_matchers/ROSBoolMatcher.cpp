@@ -2,8 +2,10 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 
-#include "ROSTF2TransformStamped.h"
-#include "ROSTF2Transform.h"
+#include "ROSBoolMatcher.h"
+#include "ROSBooleanMatcher.h"
+#include "DoubleMatcher.h"
+#include "DoubleMatcher.h"
 
 
 #include <string>
@@ -11,7 +13,7 @@
 #include <functional>
 
 
-void ROSTF2Transform::setup(){
+void ROSBoolMatcher::setup(){
 		StatementMatcher cxxConstructExpr_=cxxConstructExpr().bind("CXXConstructExpr");
 		localFinder_.addMatcher(cxxConstructExpr_,this);
 	
@@ -38,10 +40,16 @@ void ROSTF2Transform::setup(){
 	
 		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
 		localFinder_.addMatcher(declRefExpr_,this);
+	
+		StatementMatcher cxxBoolLiteralExpr_=cxxBoolLiteral().bind("CXXBoolLiteralExpr");
+		localFinder_.addMatcher(cxxBoolLiteralExpr_,this);
+	
+		StatementMatcher binaryOperator_=binaryOperator().bind("BinaryOperator");
+		localFinder_.addMatcher(binaryOperator_,this);
     this->childExprStore_ = nullptr;
 };
 
-void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
+void ROSBoolMatcher::run(const MatchFinder::MatchResult &Result){
     if(this->childExprStore_ != nullptr){
         return;
     }
@@ -62,14 +70,73 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
 	
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
+	
+	auto cxxBoolLiteralExpr_ = Result.Nodes.getNodeAs<clang::CXXBoolLiteralExpr>("CXXBoolLiteralExpr");
+	
+	auto binaryOperator_ = Result.Nodes.getNodeAs<clang::BinaryOperator>("BinaryOperator");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
 
+	arg_decay_exist_predicates["BinaryOperator(double?FORCE,double?FORCE)@<@Capture=falsedouble"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm == "operatordouble" or typenm =="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double" or typenm ==  "::double_<allocator<void> >"){ return true; }
+    else { return false; }
+    };
+	arg_decay_exist_predicates["BinaryOperator(double?FORCE,double?FORCE)@<@Capture=falsedouble"] = [=](std::string typenm){
+    if(false){return false;}
+		else if(typenm == "operatordouble" or typenm =="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double" or typenm ==  "::double_<allocator<void> >"){ return true; }
+    else { return false; }
+    };
+    if(binaryOperator_){
+        auto bostr = binaryOperator_->getOpcodeStr().str();
+        //auto lhs = binaryOperator_->getLHS();
+        //auto rhs = binaryOperator_->getRHS();
+        //clang::Stmt* lhsstmt;
+        //clang::Stmt* rhsstmt;
+            
+
+        if(bostr == "operator<" or bostr =="<" or bostr == "const <" or bostr == "class <" or bostr == "const class <" or bostr ==  "::<_<allocator<void> >"){
+            auto lhs = binaryOperator_->getLHS();
+            auto lhsstr = this->getTypeAsString(lhs,true);
+            auto rhs = binaryOperator_->getRHS();
+            auto rhsstr = this->getTypeAsString(rhs,true);
+            clang::Stmt* lhsresult = nullptr;
+            clang::Stmt* rhsresult = nullptr;
+            if(false){}
+            
+            else if(true){
+                DoubleMatcher lhsm{this->context_,this->interp_};
+                lhsm.setup();
+                lhsm.visit(*lhs);
+                lhsresult = lhsm.getChildExprStore();
+            }
+
+            if(false){}
+            
+            else if(true){
+                DoubleMatcher rhsm{this->context_,this->interp_};
+                rhsm.setup();
+                rhsm.visit(*rhs);
+                rhsresult = rhsm.getChildExprStore();
+            }
+
+            if(lhsresult and rhsresult){
+                //interp_->mk(binaryOperator_,lhsresult, rhsresult);
+                interp_->buffer_operand(lhsresult);
+                interp_->buffer_operand(rhsresult);
+                interp_->mkNode("LT_R1_R1",binaryOperator_,false);
+                this->childExprStore_ = (clang::Stmt*)binaryOperator_;
+                return;
+            }
+        }
+    }
+
+	
     if(cxxConstructExpr_){
         auto decl_ = cxxConstructExpr_->getConstructor();
         if(decl_->isCopyOrMoveConstructor())
         {
-            ROSTF2Transform pm{context_, interp_};
+            ROSBoolMatcher pm{context_, interp_};
             pm.setup();
             pm.visit(**cxxConstructExpr_->getArgs());
             this->childExprStore_ = pm.getChildExprStore();
@@ -77,32 +144,32 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
     
             else{
                 this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-                interp_->mkNode("LIT_R4X4",(clang::Stmt*)cxxBindTemporaryExpr_,true);
+                interp_->mkNode("LIT_BOOL",(clang::Stmt*)cxxBindTemporaryExpr_,true);
                 return;
             }
         }
     }
 
 	
-	arg_decay_exist_predicates["memberExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["memberExpr__Bool"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operator_Bool" or typenm =="_Bool" or typenm == "const _Bool" or typenm == "class _Bool" or typenm == "const class _Bool" or typenm ==  "::_Bool_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorbool" or typenm =="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool" or typenm ==  "::bool_<allocator<void> >"){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = this->getTypeAsString(inner,true);
         if(false){}
-        else if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
-            ROSTF2TransformStamped innerm{this->context_,this->interp_};
+        else if(typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
+            ROSBoolMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
             return;
         }
-		else if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
-            ROSTF2Transform innerm{this->context_,this->interp_};
+		else if(typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
+            ROSBooleanMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
@@ -112,10 +179,10 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["implicitCastExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["implicitCastExpr__Bool"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operator_Bool" or typenm =="_Bool" or typenm == "const _Bool" or typenm == "class _Bool" or typenm == "const class _Bool" or typenm ==  "::_Bool_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorbool" or typenm =="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool" or typenm ==  "::bool_<allocator<void> >"){ return true; }
         else { return false; } 
     };
 
@@ -139,13 +206,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -158,13 +225,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -177,13 +244,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -196,13 +263,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -215,13 +282,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -234,13 +301,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -253,13 +320,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -272,13 +339,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -291,13 +358,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -310,13 +377,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -329,13 +396,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -348,13 +415,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -367,13 +434,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -386,13 +453,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -405,13 +472,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -424,13 +491,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -443,13 +510,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -462,13 +529,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -481,13 +548,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -500,13 +567,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -519,13 +586,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -538,13 +605,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -555,19 +622,19 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
      
             }
             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-            interp_->mkNode("LIT_R4X4",(clang::Stmt*)implicitCastExpr_,true);
+            interp_->mkNode("LIT_BOOL",(clang::Stmt*)implicitCastExpr_,true);
             return;
 
         }
-        else if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
-            ROSTF2TransformStamped innerm{this->context_,this->interp_};
+        else if(typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
+            ROSBoolMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
             return;
         }
-		else if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
-            ROSTF2Transform innerm{this->context_,this->interp_};
+		else if(typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
+            ROSBooleanMatcher innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
@@ -575,7 +642,7 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
         }
         else{
             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-            interp_->mkNode("LIT_R4X4",(clang::Stmt*)implicitCastExpr_,true);
+            interp_->mkNode("LIT_BOOL",(clang::Stmt*)implicitCastExpr_,true);
             return;
         }
         /*else{
@@ -594,13 +661,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -613,13 +680,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -632,13 +699,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -651,13 +718,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -670,13 +737,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -689,13 +756,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -708,13 +775,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -727,13 +794,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -746,13 +813,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -765,13 +832,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -784,13 +851,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -803,13 +870,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -822,13 +889,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -841,13 +908,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -860,13 +927,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -879,13 +946,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -898,13 +965,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -917,13 +984,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -936,13 +1003,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -955,13 +1022,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -974,13 +1041,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -993,13 +1060,13 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
                             interp_->buffer_container(paramdecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            interp_->mkNode("REF_BOOL",(clang::Stmt*)implicitCastExpr_);
                             return;
                         }
                         else {
@@ -1011,21 +1078,21 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
                 }
             }
             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-            interp_->mkNode("LIT_R4X4",(clang::Stmt*)implicitCastExpr_,true);
+            interp_->mkNode("LIT_BOOL",(clang::Stmt*)implicitCastExpr_,true);
             return;
         }*/
     }
 
 	
-	arg_decay_exist_predicates["cxxBindTemporaryExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["cxxBindTemporaryExpr__Bool"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operator_Bool" or typenm =="_Bool" or typenm == "const _Bool" or typenm == "class _Bool" or typenm == "const class _Bool" or typenm ==  "::_Bool_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorbool" or typenm =="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool" or typenm ==  "::bool_<allocator<void> >"){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
     {
-        ROSTF2Transform exprMatcher{ context_, interp_};
+        ROSBoolMatcher exprMatcher{ context_, interp_};
         exprMatcher.setup();
         exprMatcher.visit(*cxxBindTemporaryExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -1033,21 +1100,21 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
     
         else{
             this->childExprStore_ = (clang::Stmt*)cxxBindTemporaryExpr_;
-            interp_->mkNode("LIT_R4X4",(clang::Stmt*)cxxBindTemporaryExpr_,true);
+            interp_->mkNode("LIT_BOOL",(clang::Stmt*)cxxBindTemporaryExpr_,true);
             return;
         }
     }
 
 	
-	arg_decay_exist_predicates["materializeTemporaryExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["materializeTemporaryExpr__Bool"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operator_Bool" or typenm =="_Bool" or typenm == "const _Bool" or typenm == "class _Bool" or typenm == "const class _Bool" or typenm ==  "::_Bool_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorbool" or typenm =="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool" or typenm ==  "::bool_<allocator<void> >"){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
         {
-            ROSTF2Transform exprMatcher{ context_, interp_};
+            ROSBoolMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*materializeTemporaryExpr_->GetTemporaryExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -1056,21 +1123,21 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)materializeTemporaryExpr_;
-                interp_->mkNode("LIT_R4X4",(clang::Stmt*)materializeTemporaryExpr_,true);
+                interp_->mkNode("LIT_BOOL",(clang::Stmt*)materializeTemporaryExpr_,true);
                 return;
             }
         }
 
 	
-	arg_decay_exist_predicates["parenExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["parenExpr__Bool"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operator_Bool" or typenm =="_Bool" or typenm == "const _Bool" or typenm == "class _Bool" or typenm == "const class _Bool" or typenm ==  "::_Bool_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorbool" or typenm =="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool" or typenm ==  "::bool_<allocator<void> >"){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
     {
-        ROSTF2Transform inner{ context_, interp_};
+        ROSBoolMatcher inner{ context_, interp_};
         inner.setup();
         inner.visit(*parenExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
@@ -1086,7 +1153,7 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
 	
     if (exprWithCleanups_)
         {
-            ROSTF2Transform exprMatcher{ context_, interp_};
+            ROSBoolMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*exprWithCleanups_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -1095,7 +1162,7 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
         
             else{
                 this->childExprStore_ = (clang::Stmt*)exprWithCleanups_;
-                interp_->mkNode("LIT_R4X4",(clang::Stmt*)exprWithCleanups_,true);
+                interp_->mkNode("LIT_BOOL",(clang::Stmt*)exprWithCleanups_,true);
                 return;
             }
         }
@@ -1103,7 +1170,7 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
 	
     if (cxxFunctionalCastExpr_)
         {
-            ROSTF2Transform exprMatcher{ context_, interp_};
+            ROSBoolMatcher exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -1113,7 +1180,7 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
             else{
 
                 this->childExprStore_ = (clang::Stmt*)cxxFunctionalCastExpr_;
-                interp_->mkNode("LIT_R4X4",(clang::Stmt*)cxxFunctionalCastExpr_,true);
+                interp_->mkNode("LIT_BOOL",(clang::Stmt*)cxxFunctionalCastExpr_,true);
                 return;
             }
         }
@@ -1122,7 +1189,7 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
     if(declRefExpr_){
         if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){
             interp_->buffer_link(dc);
-            interp_->mkNode("REF_R4X4",declRefExpr_);
+            interp_->mkNode("REF_BOOL",declRefExpr_);
             this->childExprStore_ = (clang::Stmt*)declRefExpr_;
             return;
 
@@ -1130,50 +1197,17 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-    if(cxxConstructExpr_ and cxxConstructExpr_->getNumArgs() == 0){
-        if(true ){
-            
-            if(true ){
-                //interp_->mk(cxxConstructExpr_);
-                
-                auto consDecl_ = cxxConstructExpr_->getConstructor();
-                if(this->interp_->existsConstructor(consDecl_))
-                {
-
-                }
-                else
-                {
-                    std::vector<const clang::ParmVarDecl*> valid_params_;
-                    auto params_ = consDecl_->parameters();
-                    if(params_.size() > 0){
-
-                        
-                        
-                        
-                        /*for(auto a:consDecl_->parameters())
-                        {
-                            if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(a)){
-                                interp_->mkNode("CONSTRUCTOR_PARAM", a,false);
-                                params_.push_back(const_cast<clang::ParmVarDecl*>(a));
-                             }
-                            else
-                            {
-                                std::cout << "Warning : Param is not a ParmVarDecl\n";
-                                a->dump();
-                            }
-                        }*/
-                        if(valid_params_.size()>0)
-                            interp_->buffer_operands(valid_params_);
-                    }
-                    interp_->mkConstructor(consDecl_);
-                }
-
-                interp_->buffer_constructor(consDecl_);
-                interp_->mkNode("LIT_R4X4",cxxConstructExpr_,true);
-                this->childExprStore_ = (clang::Stmt*)cxxConstructExpr_;
-                return;
-            }
-        }
+	arg_decay_exist_predicates["cxxBoolLiteralExpr___Bool"] = [=](std::string typenm){
+        if(false){return false;}
+		else if(typenm == "operator_Bool" or typenm =="_Bool" or typenm == "const _Bool" or typenm == "class _Bool" or typenm == "const class _Bool" or typenm ==  "::_Bool_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorbool" or typenm =="bool" or typenm == "const bool" or typenm == "class bool" or typenm == "const class bool" or typenm ==  "::bool_<allocator<void> >"){ return true; }
+        else { return false; }
+    };
+    if (cxxBoolLiteralExpr_)
+    {
+        interp_->mkNode("BOOL_LIT",cxxBoolLiteralExpr_);
+        this->childExprStore_ = (clang::Stmt*)cxxBoolLiteralExpr_;
+        return;
     }
 
 

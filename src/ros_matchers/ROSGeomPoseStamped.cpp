@@ -2,8 +2,7 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 
-#include "ROSTF2TransformStamped.h"
-#include "ROSTF2Transform.h"
+#include "ROSGeomPoseStamped.h"
 
 
 #include <string>
@@ -11,7 +10,7 @@
 #include <functional>
 
 
-void ROSTF2Transform::setup(){
+void ROSGeomPoseStamped::setup(){
 		StatementMatcher cxxConstructExpr_=cxxConstructExpr().bind("CXXConstructExpr");
 		localFinder_.addMatcher(cxxConstructExpr_,this);
 	
@@ -41,7 +40,7 @@ void ROSTF2Transform::setup(){
     this->childExprStore_ = nullptr;
 };
 
-void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
+void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
     if(this->childExprStore_ != nullptr){
         return;
     }
@@ -69,7 +68,7 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
         auto decl_ = cxxConstructExpr_->getConstructor();
         if(decl_->isCopyOrMoveConstructor())
         {
-            ROSTF2Transform pm{context_, interp_};
+            ROSGeomPoseStamped pm{context_, interp_};
             pm.setup();
             pm.visit(**cxxConstructExpr_->getArgs());
             this->childExprStore_ = pm.getChildExprStore();
@@ -84,25 +83,17 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["memberExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["memberExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = this->getTypeAsString(inner,true);
         if(false){}
-        else if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
-            ROSTF2TransformStamped innerm{this->context_,this->interp_};
-            innerm.setup();
-            innerm.visit(*inner);
-            this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
-            return;
-        }
-		else if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
-            ROSTF2Transform innerm{this->context_,this->interp_};
+        else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+            ROSGeomPoseStamped innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
@@ -112,10 +103,9 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["implicitCastExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["implicitCastExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
         else { return false; } 
     };
 
@@ -559,15 +549,8 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
             return;
 
         }
-        else if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
-            ROSTF2TransformStamped innerm{this->context_,this->interp_};
-            innerm.setup();
-            innerm.visit(*inner);
-            this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
-            return;
-        }
-		else if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
-            ROSTF2Transform innerm{this->context_,this->interp_};
+        else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+            ROSGeomPoseStamped innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
             this->childExprStore_ = (clang::Stmt*)innerm.getChildExprStore();
@@ -1017,15 +1000,14 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["cxxBindTemporaryExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["cxxBindTemporaryExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
     {
-        ROSTF2Transform exprMatcher{ context_, interp_};
+        ROSGeomPoseStamped exprMatcher{ context_, interp_};
         exprMatcher.setup();
         exprMatcher.visit(*cxxBindTemporaryExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -1039,15 +1021,14 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["materializeTemporaryExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["materializeTemporaryExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
         {
-            ROSTF2Transform exprMatcher{ context_, interp_};
+            ROSGeomPoseStamped exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*materializeTemporaryExpr_->GetTemporaryExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -1062,15 +1043,14 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
         }
 
 	
-	arg_decay_exist_predicates["parenExpr_tf2::Transform"] = [=](std::string typenm){
+	arg_decay_exist_predicates["parenExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ return true; }
-		else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
     {
-        ROSTF2Transform inner{ context_, interp_};
+        ROSGeomPoseStamped inner{ context_, interp_};
         inner.setup();
         inner.visit(*parenExpr_->getSubExpr());
         this->childExprStore_ = (clang::Stmt*)inner.getChildExprStore();
@@ -1086,7 +1066,7 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
 	
     if (exprWithCleanups_)
         {
-            ROSTF2Transform exprMatcher{ context_, interp_};
+            ROSGeomPoseStamped exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*exprWithCleanups_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
@@ -1103,7 +1083,7 @@ void ROSTF2Transform::run(const MatchFinder::MatchResult &Result){
 	
     if (cxxFunctionalCastExpr_)
         {
-            ROSTF2Transform exprMatcher{ context_, interp_};
+            ROSGeomPoseStamped exprMatcher{ context_, interp_};
             exprMatcher.setup();
             exprMatcher.visit(*cxxFunctionalCastExpr_->getSubExpr());
             this->childExprStore_ = (clang::Stmt*)exprMatcher.getChildExprStore();
