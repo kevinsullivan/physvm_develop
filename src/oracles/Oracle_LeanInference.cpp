@@ -60,6 +60,16 @@ std::string exec_toString(std::string scmd){//const char* cmd) {
     return result;
 }
 
+std::vector<int> charPos(std::string str, char delim){
+    std::vector<int> positions;
+
+    for(std::string::size_type i = 0;i<str.length();i++){
+        if(str[i] == delim)
+            positions.push_back(i);
+    }
+    return positions;
+}
+
 //using namespace std;
 using namespace oracle;
 
@@ -178,9 +188,16 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
         std::string displacement1d_str("displacement1d_expr");
         std::string geom1d_transform_str("geom1d_transform_expr");
 
+        std::string timestamped_pose3d_str("timestamped_pose3d_expr");
+        std::string timestamped_geom3d_transform_str("timestamped_geom3d_transform_expr");
+
         std::string position3d_str("position3d_expr");
         std::string displacement3d_str("displacement3d_expr");
         std::string geom3d_transform_str("geom3d_transform_expr");
+
+        std::string orientation3d_str("orientation3d_expr");
+        std::string rotation3d_str("rotation3d_expr");
+        std::string pose3d_str("pose3d_expr");
 
         std::string scalar_str("scalar_expr");
         type_.erase(std::remove(type_.begin(), type_.end(), '\''), type_.end());
@@ -303,6 +320,86 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
             return domain_->mkGeom1DTransform("INFERRED", domsp, codsp);
             
         }
+        else if(type_.find(timestamped_pose3d_str) != string::npos){
+           
+            type_ = type_.substr(timestamped_pose3d_str.length());
+            type_ = trim(type_);
+            auto sppos = charPos(type_, ' ');
+            auto tmname = trim(type_.substr(0, sppos[0]));
+            //auto domcodsub = trim(type_.substr(std::string(geom3d_transform_str).length()));
+            auto spname = trim(type_.substr(sppos[0]));
+            auto spaces = domain_->getGeom3DSpaces();
+            auto timespaces = domain_->getTimeSpaces();
+            auto tmsp = timespaces[0];
+            for(auto tm_ : timespaces){
+                if(tm_->getName() == tmname){
+                    tmsp = tm_;
+                }
+            }
+            auto sp = spaces[0]; 
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                }
+            }
+            auto default_value_ort = new float[9];
+            default_value_ort[0] = 0;
+            default_value_ort[1] = 0;
+            default_value_ort[2] = 0;
+            default_value_ort[3] = 0;
+            default_value_ort[4] = 0;
+            default_value_ort[5] = 0;
+            default_value_ort[6] = 0;
+            default_value_ort[7] = 0;
+            default_value_ort[8] = 0;
+            auto ort = domain_->mkOrientation3D("INFERRED", sp,default_value_ort);
+            auto default_value_pos = new float[3];
+            default_value_pos[0] = 0;
+            default_value_pos[1] = 0;
+            default_value_pos[2] = 0;
+            auto pos = domain_->mkPosition3D("INFERRED", sp,default_value_pos);
+            auto pose_ = domain_->mkPose3D("INFERRED",sp,ort,pos);
+
+            auto tm_value = new float[1];
+            tm_value[0] = 0;
+            auto time_ = domain_->mkTime("INFERRED",tmsp, tm_value);
+            return domain_->mkTimeStampedPose3D("INFERRED", time_, pose_);
+        }
+        else if(type_.find(timestamped_geom3d_transform_str) != string::npos){
+            type_ = type_.substr(timestamped_geom3d_transform_str.length());
+            type_ = trim(type_);
+            auto sppos = charPos(type_, ' ');
+            auto tmname = trim(type_.substr(0, sppos[0]));
+            //auto domcodsub = trim(type_.substr(std::string(geom3d_transform_str).length()));
+            auto domname = trim(type_.substr(sppos[0],sppos[1]));
+            //trim(domcodsub.substr(0,domcodsub.find(' ')));
+            auto codname = trim(type_.substr(sppos[1]));//trim(domcodsub.substr(domcodsub.find(' ')));
+            auto spaces = domain_->getGeom3DSpaces();
+            auto timespaces = domain_->getTimeSpaces();
+            auto tmsp = timespaces[0];
+            for(auto tm_ : timespaces){
+                if(tm_->getName() == tmname){
+                    tmsp = tm_;
+                }
+            }
+            auto domsp = spaces[0]; //fairly safely assume it's not empty
+            auto codsp = spaces[0];
+            for(auto sp_ : spaces){
+                if(sp_->getName() == domname){
+                    domsp = sp_;
+                }
+                if(sp_->getName() == codname){
+                    codsp = sp_;
+                }
+            }
+            //auto default_value = new float[1];
+            //default_value[0] = 0;
+            auto tr = domain_->mkGeom3DTransform("INFERRED", domsp, codsp);
+            auto tm_value = new float[1];
+            tm_value[0] = 0;
+            auto time_ = domain_->mkTime("INFERRED",tmsp, tm_value);
+            return domain_->mkTimeStampedGeom3DTransform("INFERRED", time_, tr);
+        }
         else if(type_.find(position3d_str) != string::npos){
             //return nullptr;
             auto typesub = type_.substr(type_.find(position3d_str));
@@ -338,6 +435,78 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
             default_value[2] = 0;
             return domain_->mkDisplacement3D("INFERRED", sp,default_value);
 
+        }
+        else if(type_.find(orientation3d_str) != string::npos){
+            auto typesub = type_.substr(type_.find(orientation3d_str));
+            auto spaces = domain_->getGeom3DSpaces();
+            auto sp = spaces[0]; //fairly safely assume it's not empty
+            auto spname = trim(typesub.substr(std::string(orientation3d_str).length()));
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                }
+            }
+            auto default_value = new float[9];
+            default_value[0] = 0;
+            default_value[1] = 0;
+            default_value[2] = 0;
+            default_value[3] = 0;
+            default_value[4] = 0;
+            default_value[5] = 0;
+            default_value[6] = 0;
+            default_value[7] = 0;
+            default_value[8] = 0;
+            return domain_->mkOrientation3D("INFERRED", sp,default_value);
+        }
+        else if(type_.find(rotation3d_str) != string::npos){
+            auto typesub = type_.substr(type_.find(rotation3d_str));
+            auto spaces = domain_->getGeom3DSpaces();
+            auto sp = spaces[0]; //fairly safely assume it's not empty
+            auto spname = trim(typesub.substr(std::string(rotation3d_str).length()));
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                }
+            }
+            auto default_value = new float[9];
+            default_value[0] = 0;
+            default_value[1] = 0;
+            default_value[2] = 0;
+            default_value[3] = 0;
+            default_value[4] = 0;
+            default_value[5] = 0;
+            default_value[6] = 0;
+            default_value[7] = 0;
+            default_value[8] = 0;
+            return domain_->mkRotation3D("INFERRED", sp,default_value);
+        }
+        else if(type_.find(pose3d_str) != string::npos){
+            auto typesub = type_.substr(type_.find(pose3d_str));
+            auto spaces = domain_->getGeom3DSpaces();
+            auto sp = spaces[0]; //fairly safely assume it's not empty
+            auto spname = trim(typesub.substr(std::string(pose3d_str).length()));
+            for(auto sp_ : spaces){
+                if(sp_->getName() == spname){
+                    sp = sp_;
+                }
+            }
+            auto default_value_ort = new float[9];
+            default_value_ort[0] = 0;
+            default_value_ort[1] = 0;
+            default_value_ort[2] = 0;
+            default_value_ort[3] = 0;
+            default_value_ort[4] = 0;
+            default_value_ort[5] = 0;
+            default_value_ort[6] = 0;
+            default_value_ort[7] = 0;
+            default_value_ort[8] = 0;
+            auto ort = domain_->mkOrientation3D("INFERRED", sp,default_value_ort);
+            auto default_value_pos = new float[3];
+            default_value_pos[0] = 0;
+            default_value_pos[1] = 0;
+            default_value_pos[2] = 0;
+            auto pos = domain_->mkPosition3D("INFERRED", sp,default_value_pos);
+            return domain_->mkPose3D("INFERRED",sp,ort,pos);
         }
         else if(type_.find(geom3d_transform_str) != string::npos){
             //return nullptr;
@@ -567,6 +736,9 @@ void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
                     end->getLine() == endLines[i] and 
                     end->getColumn() == endColumns[i]){
                     //std::cout<<"Found match "<<beginLines[i]<<" "<<beginColumns[i]<<" "<<endLines[i]<<" "<<endColumns[i]<<" "<<types[i]<<" "<<errors[i]<<"\n";
+                    //std::cout<<this->all_nodes[i]->getCoords()->getNodeType()<<"\n";
+                    //std::cout<<types[i]<<" "<<errors[i]<<"\n";
+                    
                     this->all_interpretations.push_back(parseInterpretation(types[i], errors[i]));
                     found = true;
                     break;

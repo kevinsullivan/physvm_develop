@@ -26,8 +26,11 @@ public:
     float** getValueMatrix();/*not physical vector*/
     template<typename SpaceType>
     domain::CoordinateSpace* selectSpace(std::vector<SpaceType*>);
+    domain::TimeSeries* selectTimeSeries();
     domain::CoordinateSpace* getSpace();
     domain::DomainObject* selectExisting();
+    domain::TimeSeries* buildTimeSeries(coords::Coords*);
+    void addTimeStampedToTimeSeries();
 
     int getValidChoice(int lower, int upperExclusive, std::string menu);
     std::vector<std::string> getChoices(){

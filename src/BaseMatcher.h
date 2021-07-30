@@ -53,6 +53,37 @@ public:
     clang::Stmt* getChildExprStore() const {
         return this->childExprStore_;
     }
+
+    std::string getTypeAsString(const clang::VarDecl* decl_,bool removeInnerBracket){
+        auto typestr = ((clang::QualType)decl_->getType()).getSingleStepDesugaredType(*this->context_).getAtomicUnqualifiedType().stripObjCKindOfType(*this->context_).getAsString();
+        if(removeInnerBracket)
+            typestr = typestr.substr(0, typestr.find("<"));
+        return typestr;
+    }
+
+    std::string getTypeAsString(const clang::Expr* stmt_,bool removeInnerBracket){
+        auto typestr = ((clang::QualType)stmt_->getType()).getSingleStepDesugaredType(*this->context_).getAtomicUnqualifiedType().stripObjCKindOfType(*this->context_).getAsString();
+        if(removeInnerBracket)
+            typestr = typestr.substr(0, typestr.find("<"));
+        return typestr;
+    }
+
+    std::string getTypeAsString(clang::VarDecl* decl_,bool removeInnerBracket){
+        auto typestr = ((clang::QualType)decl_->getType()).getSingleStepDesugaredType(*this->context_).getAtomicUnqualifiedType().stripObjCKindOfType(*this->context_).getAsString();
+        if(removeInnerBracket)
+            typestr = typestr.substr(0, typestr.find("<"));
+        return typestr;
+    }
+
+    std::string getTypeAsString(clang::Expr* stmt_,bool removeInnerBracket){
+        auto typestr = ((clang::QualType)stmt_->getType()).getSingleStepDesugaredType(*this->context_).getAtomicUnqualifiedType().stripObjCKindOfType(*this->context_).getAsString();
+        if(removeInnerBracket)
+            typestr = typestr.substr(0, typestr.find("<"));
+        return typestr;
+    }
+
+
+
 protected:
     MatchFinder localFinder_;//pattern matchers are stored here, matches are "named"
     clang::ASTContext* context_;

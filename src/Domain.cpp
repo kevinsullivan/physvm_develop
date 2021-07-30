@@ -216,13 +216,45 @@ Pose3D* Domain::mkPose3D(std::string name, Geom3DCoordinateSpace* parent, Orient
     auto pose = new Pose3D(name, parent, ort, rot);
     return pose;
 }
+
+
 /*
 Orientation3D* mkOrientation3D(string name, Geom3DCoordinateSpace* parent, float* value);
 Rotation3D* mkRotation3D(string name, Geom3DCoordinateSpace* parent, float* value);
 Pose3D* mkPose3D(string name, Geom3DCoordinateSpace* parent, Orientation3D* orientation_, Position3D position_);
 */
 
+TimeStampedPose3D* Domain::mkTimeStampedPose3D(std::string name, Time* time, Pose3D* pose){
+    return new TimeStampedPose3D(name, time, pose);
+}
+
+TimeStampedGeom3DTransform* Domain::mkTimeStampedGeom3DTransform(std::string name, Time* time, Geom3DTransform* transform){
+    return new TimeStampedGeom3DTransform(name, time ,transform);
+};
+
+
 Geom3DTransform* Domain::mkGeom3DTransform(std::string name, Geom3DCoordinateSpace* domain_, Geom3DCoordinateSpace* codomain_){
     auto g1transform = new Geom3DTransform(name, domain_, codomain_);
     return g1transform;
 }
+
+Pose3DSeries* Domain::mkPose3DSeries(std::string name, TimeCoordinateSpace* timespace, Geom3DCoordinateSpace* space){
+    auto pose = new Pose3DSeries(name, timespace, space);
+    this->timeSeries.push_back(pose);
+    return pose;
+}
+
+Geom3DTransformSeries* Domain::mkGeom3DTransformSeries(std::string name, 
+    TimeCoordinateSpace* timespace, Geom3DCoordinateSpace* domain, Geom3DCoordinateSpace* codomain){
+    auto gt = new Geom3DTransformSeries(name, timespace, domain, codomain);
+    this->timeSeries.push_back(gt);
+    return gt;
+}
+
+/*
+
+
+    Pose3DSeries* mkPose3DSeries(string name, Geom3DCoordinateSpace* space);
+    Geom3DTransformSeries* mkGeom3DTransformSeries(string name, Geom3DCoordinateSpace* domain_, Geom3DCoordinateSpace* codomain_);
+
+*/

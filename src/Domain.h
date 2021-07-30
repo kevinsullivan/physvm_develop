@@ -70,6 +70,20 @@ class Geom3DTransform;
 class Rotation3D;
 class Orientation3D;
 class Pose3D;
+
+
+class TimeStamped;
+template<typename DomainType>
+class TimeStampedValue;
+class TimeStampedPose3D;
+class TimeStampedGeom3DTransform;
+
+class TimeSeries;
+template <typename ValueType>
+class ValuedTimeSeries;
+class SeriesIndex;
+class Pose3DSeries;
+class Geom3DTransformSeries;
             
 // Definition for Domain class 
 using string = std::string;
@@ -112,16 +126,28 @@ public:
     Pose3D* mkPose3D(string name, Geom3DCoordinateSpace* parent, Orientation3D* orientation_, Position3D* position_);
     Geom3DTransform* mkGeom3DTransform(string name, Geom3DCoordinateSpace* domain_, Geom3DCoordinateSpace* codomain_); 
 
+    TimeStampedPose3D* mkTimeStampedPose3D(string name, Time*, Pose3D*);
+    TimeStampedGeom3DTransform* mkTimeStampedGeom3DTransform(string name, Time* time, Geom3DTransform*);
+
+
+    Pose3DSeries* mkPose3DSeries(string name, TimeCoordinateSpace* time_space, Geom3DCoordinateSpace* space);
+    Geom3DTransformSeries* mkGeom3DTransformSeries(string name, TimeCoordinateSpace* time_space, Geom3DCoordinateSpace* domain_, Geom3DCoordinateSpace* codomain_);
+
+
+
     std::vector<TimeCoordinateSpace*> getTimeSpaces() const {return timeSpaces;};
     std::vector<Geom1DCoordinateSpace*> getGeom1DSpaces() const {return geom1dSpaces;};
     std::vector<Geom3DCoordinateSpace*> getGeom3DSpaces() const {return geom3dSpaces;};
     std::vector<CoordinateSpace*> getSpaces() const {return spaces;};
+    std::vector<TimeSeries*> getTimeSeries() const {return timeSeries;};
 private:
     std::vector<TimeCoordinateSpace*> timeSpaces;
     std::vector<Geom1DCoordinateSpace*> geom1dSpaces;
     std::vector<Geom3DCoordinateSpace*> geom3dSpaces;
     std::vector<CoordinateSpace*> spaces;
+    std::vector<TimeSeries*> timeSeries;
 };
+
 class DomainObject {
 public:
     DomainObject(std::initializer_list<DomainObject*> args);
@@ -454,6 +480,80 @@ private:
     float* value;
 };
 
+//for casting
+class TimeSeries : public DomainObject {
+public:
+    TimeSeries(std::string name_, TimeCoordinateSpace* sp)
+        : DomainObject(name_), time_space(sp) {};
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string("TimeSeries(" + time_space->getName() + ")");
+    };
+    virtual TimeCoordinateSpace* getTimeSpace() const { return time_space; };
+private:
+    TimeCoordinateSpace* time_space;
+};
+
+template <typename ValueType>
+class ValuedTimeSeries : public TimeSeries {
+public:
+    ValuedTimeSeries(std::string name_, TimeCoordinateSpace* sp)
+        : TimeSeries(name_, sp) {};
+    
+    std::vector<ValueType*> getValues() const { return values; }
+
+    void insertValue(ValueType* vt) { this->values.push_back(vt); }
+
+private:
+    std::vector<ValueType*> values;
+};
+
+class SeriesIndex : public DomainObject {
+public:
+    //if null, choose latest
+    SeriesIndex(TimeSeries* series_, Time* time_) {
+        this->series = series_; this->time = time_;
+        if(!time_){
+            this->latest = true;
+        }
+    };
+    virtual std::string toString() const override {
+        return std::string("SeriesIndex(" + series->getName() +',' + (latest?"Most Recent Value":std::to_string(time->getValue()[0])) + ")");
+    };
+    TimeSeries* getSeries() const { return series;}
+    Time* getTime() const { return time;}
+    bool getLatest() const { return latest;}
+
+private: 
+    TimeSeries* series;
+    Time* time;
+    bool latest;
+};
+
+class TimeStamped : public DomainObject {
+public:
+    TimeStamped(std::string name_, Time* time_) 
+        : DomainObject(name_), time(time_) {};
+    virtual std::string toString() const override {
+        return "";
+    };
+    virtual Time* getTime() const { return time; };
+protected:
+    Time* time;
+};
+
+template<typename DomainType>
+class TimeStampedValue : public TimeStamped {
+public:
+    TimeStampedValue(std::string name_, Time* time_, DomainType* value)
+        : TimeStamped(name_,time_), value(value) {};
+    virtual std::string toString() const override {
+        return "";
+    };
+    virtual DomainType* getValue() const { return value; };
+protected:
+    DomainType* value;
+};
+
 class Displacement1D : public DomainObject {
 public:
     Displacement1D(std::string name_, Geom1DCoordinateSpace* sp, float* value_) 
@@ -571,6 +671,25 @@ private:
     Position3D* position;
 };
 
+class Geom3DTransformSeries : public ValuedTimeSeries<TimeStampedGeom3DTransform> {
+public:
+    Geom3DTransformSeries(std::string name, domain::TimeCoordinateSpace* time_space, domain::Geom3DCoordinateSpace* domain,
+     domain::Geom3DCoordinateSpace* codomain) :
+        ValuedTimeSeries(name, time_space), domain(domain), codomain(codomain) {};
+
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string(
+            "Geom3DTransformSeries(") + TimeSeries::getTimeSpace()->getName() + "," + domain->getName() + "," + codomain->getName() + ")"; 
+    };
+    
+    virtual Geom3DCoordinateSpace* getDomain() const { return domain; };
+    virtual Geom3DCoordinateSpace* getCodomain() const { return codomain; };
+    
+private:
+    Geom3DCoordinateSpace* domain, *codomain;
+
+};
+
 
 class Scalar : public DomainObject {
 public:
@@ -632,6 +751,49 @@ public:
 private:
 };
 
+
+
+class TimeStampedPose3D : public TimeStampedValue<Pose3D> {
+public:
+    TimeStampedPose3D(std::string name, Time* time_, Pose3D* pose_) 
+        : TimeStampedValue(name, time_, pose_) {};
+    
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string(
+            "TimeStampedPose3D((") + this->time->toString()+"),("+this->value->toString() +"))"; 
+    };
+};
+
+class TimeStampedGeom3DTransform : public TimeStampedValue<Geom3DTransform> {
+public:
+    TimeStampedGeom3DTransform(std::string name, Time* time_, Geom3DTransform* transform_) 
+        : TimeStampedValue(name, time_, transform_) {};
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string(
+            "TimeStampedPose3D((") + this->time->toString()+"),("+this->value->toString() +"))"; 
+    };
+};
+
+class Pose3DSeries : public ValuedTimeSeries<TimeStampedPose3D> {
+public:
+    Pose3DSeries(std::string name, domain::TimeCoordinateSpace* time_space, domain::Geom3DCoordinateSpace* space) :
+        ValuedTimeSeries(name, time_space), space(space) {};
+
+    virtual std::string toString() const override {
+        return this->getName() + " " + std::string(
+            "Pose3DSeries((") + TimeSeries::getTimeSpace()->getName() + "),(" + space->getName() + "))"; 
+    };
+
+    virtual Geom3DCoordinateSpace* getSpace() const { return space; };
+    
+private:
+    Geom3DCoordinateSpace* space;
+
+};
+
+
 } // end namespace
+
+
 
 #endif

@@ -19,7 +19,80 @@ OutputState output_state;
 
 //std::shared_ptr<Location> global_loc;
 
+std::string getNextIdentifier(interp::Interp* interp_){
 
+    if(interp_->hasLinked()){
+        auto linked = interp_->getLinked();
+        if(ident_map.count(linked))
+            ident_map[linked]++;
+        else
+            ident_map[linked] = 0;
+        auto coords_ = linked->getCoords();
+        return coords_->getName() + std::to_string(ident_map[linked]);
+    }
+    else{
+        if(ident_map.count(interp_))
+            ident_map[interp_]++;
+        else
+            ident_map[interp_] = 0;
+        auto coords_ = interp_->getCoords();
+        return coords_->getName() + std::to_string(ident_map[interp_]);
+    }
+}
+
+std::string getLastIdentifier(interp::Interp* interp_){
+
+    if(interp_->hasLinked()){
+        auto linked = interp_->getLinked();
+        auto coords_ = linked->getCoords();
+        if(ident_map.count(linked))
+            if(ident_map[linked] == 0)
+                return coords_->getName();
+            else
+                return coords_->getName() + std::to_string(ident_map[linked]);
+        else
+            return coords_->getName();
+    }
+    else{
+        auto coords_ = interp_->getCoords();
+        if(ident_map.count(interp_))
+            if(ident_map[interp_] == 0)
+                return coords_->getName();
+            else
+                return coords_->getName() + std::to_string(ident_map[interp_] - 1);
+        else
+            return coords_->getName();
+    }
+}
+
+std::string getCurrentIdentifier(interp::Interp* interp_){
+
+    if(interp_->hasLinked()){
+        auto linked = interp_->getLinked();
+        auto coords_ = linked->getCoords();
+        if(ident_map.count(linked))
+            return coords_->getName() + std::to_string(ident_map[linked]);
+        else
+            return coords_->getName();
+    }
+    else{
+        auto coords_ = interp_->getCoords();
+        if(ident_map.count(interp_))
+            return coords_->getName() + std::to_string(ident_map[interp_]);
+        else
+            return coords_->getName();
+    }
+}
+
+//unfortunately I have to do this...arguable architecture limitation of separation of coords,domain,interp
+std::string getCurrentIdentifier(domain::DomainObject* domain_){
+    for(auto kp : ident_map){
+        if(kp.first->getDomain()->getValue() == domain_){
+            return getCurrentIdentifier(kp.first);
+        }
+    }
+    return domain_->getName();
+}
 
 /*
 Work in progress, move much of this to configuration with some templates
@@ -50,13 +123,11 @@ std::string Interp::toString(){
     }
     else if(nodeType == "DECL_LIST_R1") {
         auto var_ = (this->operands[0]);
-        auto iident_ = ident_map.count(var_) ? (ident_map[var_] = ident_map[var_]++) : (ident_map[var_] = ident_++);
-        retval += std::string("def ") + this->coords->getName() + std::to_string(iident_) + " : list (" + (var_->getType()) + ") := []";
+        retval += std::string("def ") + getNextIdentifier(var_) + " : list (" + (var_->getType()) + ") := []";
     }
     else if(nodeType == "APPEND_LIST_R1") {
         auto val_ = (this->operands[0]);
-        auto iident_ = ident_map.count(this) ? (ident_map[this] = ident_map[this]++) : (ident_map[this] = ident_++);
-        retval += std::string("def ") + this->coords->getLinked()->getName() + std::to_string(iident_) + " : list (" + (this->getType()) + ") := " + this->coords->getLinked()->getName() + std::to_string(iident_-1) + " ++ [" + val_->toString() + "]";
+        retval += std::string("def ") + getNextIdentifier(this) + " : list (" + (this->getType()) + ") := " + getLastIdentifier(this) + " ++ [" + val_->toString() + "]";
     }
     else if(nodeType == "LIT_R1" || nodeType == "LIT_R3" || nodeType == "LIT_R4X4" || nodeType == "LIT_R4" || nodeType == "LIT_R3X3") {
         
@@ -196,6 +267,11 @@ std::string Interp::toString(){
         auto rhs_ = (this->operands[1]);
         retval += lhs_->toString() + "+ᵥ" + rhs_->toString();
     }
+    else if(nodeType == "SUB_R1_R1" || nodeType == "SUB_R3_R3") {
+        auto lhs_ = (this->operands[0]);
+        auto rhs_ = (this->operands[1]);
+        retval += lhs_->toString() + "-ᵥ" + rhs_->toString();
+    }
     else if(nodeType == "MUL_R1_R1" || nodeType == "MUL_R1_R3") {
         auto lhs_ = (this->operands[0]);
         auto rhs_ = (this->operands[1]);
@@ -233,11 +309,10 @@ std::string Interp::toString(){
     }
     else if(nodeType=="ASSIGN_MUL_R4X4_R4X4"){
         auto member = this->operands[0]->getLinked();
-        auto iident_ = ident_map.count(member) ? (ident_map[member] = ident_map[member]++) : (ident_map[member] = ident_++);
         auto lhs_ = this->operands[1];
         auto rhs_ = this->operands[2];
 
-        retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) + " : " + (member->getType()) + " := " + lhs_->toString() + ".value∘" + rhs_->toString() + ".value";;
+        retval += std::string("def ") + getNextIdentifier(member) + " : " + (member->getType()) + " := " + lhs_->toString() + ".value∘" + rhs_->toString() + ".value";;
     }
     else if(nodeType=="ASSIGN_R3X3" || nodeType=="ASSIGN_R4"){
 
@@ -246,7 +321,6 @@ std::string Interp::toString(){
             auto container = this->operands[0]->getContainer();
             if(auto aspose = dynamic_cast<domain::Pose3D*>(container->getDomain()->getValue())){
                 retval += container->getCoords()->getName() + ".orientation";
-                //retval += std::string("def ") + container->getCoords()->getName() + (std::to_string(iident_)) + " : " + (container->getType()) + " := " + val->toString();
             }
             else{
                 retval += container->getCoords()->getName() + ".property";
@@ -255,10 +329,9 @@ std::string Interp::toString(){
         }
         else {
             auto member = this->operands[0]->getLinked();
-            auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
             auto val = this->operands[1];
 
-            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) + " : " + (member->getType()) + " := " + val->toString();
+            retval += std::string("def ") + getNextIdentifier(member) + " : " + (member->getType()) + " := " + val->toString();
         }
     }
     //this doesn't belong here, but deadlines!
@@ -269,29 +342,11 @@ std::string Interp::toString(){
             throw "Not implemented";
         }
         else if (lhs->hasContainer()){
-            /*auto container = lhs->getCoords()->getContainer();
-            auto old_name = ident_map.count(lhs) 
-                ? lhs->getCoords()->getName() + std::to_string((ident_map[lhs])) 
-                : lhs->getCoords()->getName();
-            
-            auto iident_ = ident_map.count(lhs) 
-                ? (ident_map[lhs] = ident_map[lhs]++) 
-                : (ident_map[lhs] = ident_++);
-            if(auto aspose = dynamic_cast<domain::Pose3D*>(container)){
-                retval += std::string("def ") + container->getCoords()->getName() + (std::to_string(iident_)) 
-                + " : " + (member->getType()) + " := |{\n\t\torientation:=(" + val->toString() + ").value\n\t\t.."+old_name+"\n}|";
-
-            }
-            else{
-                retval += container->getName() + ".property";
-
-            }*/
         }
         else if(rhs->hasContainer()){
             auto member = lhs->getLinked();
-            auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
 
-            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) + " : " + (member->getType()) + " := ";
+            retval += std::string("def ") + getNextIdentifier(member) + " : " + (member->getType()) + " := ";
             auto container = rhs->getContainer();
             auto old_ident = ident_map.count(container) 
                 ? container->getCoords()->getName() + std::to_string((ident_map[container])) 
@@ -306,10 +361,9 @@ std::string Interp::toString(){
         }
         else {
             auto member = this->operands[0]->getLinked();
-            auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
             auto val = this->operands[1];
 
-            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) + " : " + (member->getType()) + " := " + val->toString();
+            retval += std::string("def ") + getNextIdentifier(member) + " : " + (member->getType()) + " := " + val->toString();
         }
     }
     else if(nodeType=="ASSIGN_R4X4_AT_R3"){
@@ -317,17 +371,16 @@ std::string Interp::toString(){
 
         auto old_name = ident_map.count(member) ? member->getCoords()->getName() + std::to_string((ident_map[member])) : member->getCoords()->getName();
         
-        auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
         auto val = this->operands[1];
 
 
         if(auto pose = dynamic_cast<domain::Pose3D*>(member->getDomain()->getValue())){
-            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+            retval += std::string("def ") + getNextIdentifier(member)
                 + " : " + (member->getType()) + " := |{\n\t\tposition:=(" + val->toString() + ").value,\n\t\t.."+old_name+".value\n}|";
 
         }
         else{
-            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+            retval += std::string("def ") + getNextIdentifier(member)
                 + " : " + (member->getType()) + " := |{\n\t\t.."+old_name+"\n}|";
 
         }
@@ -337,15 +390,14 @@ std::string Interp::toString(){
         auto member = this->operands[0]->getLinked();
         auto old_name = ident_map.count(member) ? member->getCoords()->getName() + std::to_string((ident_map[member])) : member->getCoords()->getName();
 
-        auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
         auto val = this->operands[1];
         if(auto pose = dynamic_cast<domain::Pose3D*>(member->getDomain()->getValue())){
-            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+            retval += std::string("def ") + getNextIdentifier(member)
                 + " : " + (member->getType()) + " := |{\n\t\torientation:=("  + val->toString() + ").value,\n\t\t.."+old_name+".value\n}|";
 
         }
         else{
-            retval += std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+            retval += std::string("def ") + getNextIdentifier(member)
                 + " : " + (member->getType()) + " := |{\n\t\t.."+old_name+"\n}|";
 
         }
@@ -386,31 +438,105 @@ void Interp::buildString(bool withType){
             output_state.update("\n");
         }
     } 
-    else if(nodeType == "DECL_INIT_R1" || nodeType == "DECL_INIT_R3" || nodeType == "DECL_INIT_R4X4"  || nodeType == "DECL_INIT_R3X3" || nodeType == "DECL_INIT_R4") {
+    else if(nodeType == "DECL_INIT_BOOL"){
         auto var_ = (this->operands[0]);
         auto expr_ = (this->operands[1]);
-        output_state.update( std::string("def ") );
+        output_state.update("def ");
         var_->buildString(); 
-        output_state.update(" := "); 
+        output_state.update(" := \n\t\t");
         expr_->buildString();
+
+        //std::cout<<expr_->getCoords()->getNodeType()<<"\n";
+    }
+    else if(nodeType == "DECL_INIT_R1" || nodeType == "DECL_INIT_R3" || nodeType == "DECL_INIT_R4X4"  || nodeType == "DECL_INIT_R3X3" || nodeType == "DECL_INIT_R4") {
+            
+        auto var_ = (this->operands[0]);
+        auto expr_ = (this->operands[1]);
+
+        if(auto dc = dynamic_cast<domain::TimeSeries*>(var_->getDomain()->getValue())){
+            
+        /*
+            if its a time series IDENT, don't print it off, it's already been hoisted to the top
+            if it's a time series LIT, CHECK if the lit is timestamped
+            if it's timestamped, print off the timestamped
+            if not, print off _->LIT
+            change interp's loc to range of inner expression
+        */
+            output_state.update(std::string("def ") + getNextIdentifier(var_) + ":=" + getLastIdentifier(var_));
+            //output_state.update(std::string("["));
+            if(expr_->hasValue()){
+                output_state.update(std::string("["));
+                auto exprbegin = output_state.getCurrentLoc();
+                if(auto dci = dynamic_cast<domain::TimeStamped*>(expr_->getDomain()->getValue())){
+                    output_state.update("((|");
+                    auto astime = dci->getTime();
+                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]));
+                    auto exprbegin = output_state.getCurrentLoc();
+                    output_state.update("|↦|");
+                    if(auto astspose = dynamic_cast<domain::TimeStampedPose3D*>(dci)){
+                        auto aspose = astspose->getValue();
+                        auto ort = aspose->getOrientation();
+                        auto pos = aspose->getPosition();
+                        output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
+                        output_state.update( std::string("\n\t\t(mk_orientation3d ") + ort->getSpace()->getName() + ".value "
+                            + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
+                            + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
+                            + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")");
+                        output_state.update( std::string("\n\t\t(mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")");
+                    }
+                    else if(auto aststrans = dynamic_cast<domain::TimeStampedGeom3DTransform*>(dci)){
+                        auto astrans = aststrans->getValue();
+                        auto dom_ = astrans->getDomain();
+                        auto cod_ = astrans->getCodomain();
+                        output_state.update( dom_->getName() + ".value.mk_geom3d_transform_to " + cod_->getName() + ".value");
+                    }
+                    else{
+                        output_state.update("_");
+                    }
+                    
+                    output_state.update("|:_))");
+                }
+                else{
+                    output_state.update("((_↦");
+                    expr_->buildString();
+                    output_state.update(":_))");
+                }
+                expr_->setStartLocation(exprbegin);
+                expr_->setEndLocation(output_state.getCurrentLoc());
+                output_state.update(std::string("]"));
+            }
+            else {
+               // output_state.update("((_:_))");
+               expr_->setStartLocation(output_state.getCurrentLoc());
+               expr_->setEndLocation(output_state.getCurrentLoc());
+            }
+            //output_state.update(std::string("]"));
+
+        }
+        else{
+            output_state.update( std::string("def ") );
+            var_->buildString(); 
+            output_state.update(" := "); 
+            expr_->buildString();
+        }
     }
     else if(nodeType == "DECL_LIST_R1") {
         auto var_ = (this->operands[0]);
-        auto iident_ = ident_map.count(var_) ? (ident_map[var_] = ident_map[var_]++) : (ident_map[var_] = ident_++);
         output_state.update( std::string("def "));
         var_->buildString();
-        output_state.update(std::to_string(iident_) + " : list (" + (var_->getType()) + ") := []");
+        output_state.update(std::string("") + " : list (" + (var_->getType()) + ") := []");
     }
     else if(nodeType == "APPEND_LIST_R1") {
         auto val_ = (this->operands[0]);
-        auto iident_ = ident_map.count(this) ? (ident_map[this] = ident_map[this]++) : (ident_map[this] = ident_++);
         output_state.update( 
-            std::string("def ") + this->coords->getLinked()->getName() + std::to_string(iident_) + " : list (" + (this->getType()) + 
-            ") := " + this->coords->getLinked()->getName() + std::to_string(iident_-1) + " ++ ["); 
+            std::string("def ") + getNextIdentifier(this) + " : list (" + (this->getType()) + 
+            ") := " + getLastIdentifier(this) + " ++ ["); 
         val_->buildString();
         output_state.update(std::string("]"));
     }
-    else if(nodeType == "LIT_R1" || nodeType == "LIT_R3" || nodeType == "LIT_R4X4" || nodeType == "LIT_R4" || nodeType == "LIT_R3X3") {
+    else if(nodeType == "LIT_R1" || nodeType == "LIT_R3" 
+        || nodeType == "LIT_R4X4" || nodeType == "LIT_R4" 
+        || nodeType == "LIT_R3X3") {
         
         output_state.update("((");
 
@@ -497,6 +623,39 @@ void Interp::buildString(bool withType){
                 auto cod_ = astrans->getCodomain();
                 output_state.update( dom_->getName() + ".value.mk_geom3d_transform_to " + cod_->getName() + ".value");
             }
+            else if(auto astspose = dynamic_cast<domain::TimeStampedPose3D*>(this->domain->getValue())){
+                auto astime = astspose->getTime();
+                output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]));
+                output_state.update(",");
+                auto aspose = astspose->getValue();
+                auto ort = aspose->getOrientation();
+                auto pos = aspose->getPosition();
+                output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
+                output_state.update( std::string("\n\t\t(mk_orientation3d ") + ort->getSpace()->getName() + ".value "
+                    + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
+                    + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
+                    + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")");
+                output_state.update( std::string("\n\t\t(mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")");
+            }
+            else if(auto aststrans = dynamic_cast<domain::TimeStampedGeom3DTransform*>(this->domain->getValue())){
+                auto astime = aststrans->getTime();
+                output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]));
+                output_state.update(",");
+                auto astrans = aststrans->getValue();
+                auto dom_ = astrans->getDomain();
+                auto cod_ = astrans->getCodomain();
+                output_state.update( dom_->getName() + ".value.mk_geom3d_transform_to " + cod_->getName() + ".value");
+            }
+            else if (auto as_si = dynamic_cast<domain::SeriesIndex*>(this->domain->getValue())){
+                if(as_si->getLatest()){
+                    output_state.update(getCurrentIdentifier(as_si->getSeries())+ ".value.latest" );
+                }
+                else{
+                    output_state.update(getCurrentIdentifier(as_si->getSeries()) + ".value.sample ");
+                    output_state.update(std::string("(mk_time _") + std::to_string(as_si->getTime()->getValue()[0]) +")");
+                }
+            }
+            else output_state.update("_");
             output_state.update( "|");
 
         }
@@ -510,11 +669,23 @@ void Interp::buildString(bool withType){
 
         output_state.update(":" + this->getType()+"))");
     } 
-    else if(nodeType == "IDENT_R1" || nodeType == "IDENT_R3" || nodeType == "IDENT_R4X4" || nodeType == "IDENT_R4" || nodeType == "IDENT_R3X3") {
+    else if(nodeType == "IDENT_R1" || nodeType == "IDENT_R3" 
+    || nodeType == "IDENT_R4X4" || nodeType == "IDENT_R4" 
+    || nodeType == "IDENT_R3X3") {
         if(!withType)
             output_state.update( this->coords->getName());
         else{
             output_state.update( this->coords->getName() + " : " + this->getType());
+            //this->setStartLocation(begin);
+            //this->setEndLocation(end);
+        }
+
+    }
+    else if(nodeType == "IDENT_BOOL"){
+        if(!withType)
+            output_state.update( this->coords->getName());
+        else{
+            output_state.update( this->coords->getName() + " : bool_expr");
             //this->setStartLocation(begin);
             //this->setEndLocation(end);
         }
@@ -528,11 +699,38 @@ void Interp::buildString(bool withType){
         }
     }
     else if(nodeType == "REF_R1" || nodeType == "REF_R4X4") {
-        if(!withType)
-            output_state.update(this->coords->getLinked()->getName());
-        else
-            output_state.update("(("+ this->coords->getLinked()->getName() 
-                + " : " + this->getLinked()->getType()+"))");
+        /*if(auto dcts = dynamic_cast<domain::TimeSeries*>(this->getLinked()->getDomain()->getValue())){
+            if(!withType)
+                output_state.update(getLastIdentifier(this->getLinked())+".");
+            else
+                output_state.update("(("+ this->coords->getLinked()->getName() 
+                    + " : " + this->getLinked()->getType()+"))");
+        }*/
+        if(0){}
+        else if(this->hasContainer()){
+            auto isTimestamped = dynamic_cast<domain::TimeStamped*>(this->getContainer()->getDomain()->getValue());
+            auto isTimeSeries = dynamic_cast<domain::TimeSeries*>(this->getContainer()->getDomain()->getValue());
+            if(!withType)
+                output_state.update(getCurrentIdentifier(this->getContainer()));
+            else
+                if(isTimestamped)
+                    output_state.update("((|"+ getCurrentIdentifier(this->getContainer()) 
+                        + ".value.timestamp| : _))");
+                else if(isTimeSeries)
+                    output_state.update("((|"+ getCurrentIdentifier(this->getContainer()) 
+                        + ".value.latest.timestamp| : _))");
+                else
+                    output_state.update("((|"+ getCurrentIdentifier(this->getContainer()) 
+                        + ".value.property| : _))");
+        }
+        else{
+            if(!withType)
+                output_state.update(getCurrentIdentifier(this));
+            else
+                output_state.update("(("+ getCurrentIdentifier(this) 
+                    + " : " + this->getLinked()->getType()+"))");
+
+        }
     } 
     else if(nodeType == "REF_R3"){
         if(this->hasContainer()){
@@ -559,9 +757,10 @@ void Interp::buildString(bool withType){
     else if(nodeType == "REF_R4" || nodeType =="REF_R3X3"){
         if(this->getCoords()->hasContainer()){
             auto container = this->getCoords()->getContainer();
-            output_state.update("((");
             if(auto aspose = dynamic_cast<domain::Pose3D*>(container)){
+                output_state.update("((");
                 output_state.update(container->getName() + ".orientation");
+                output_state.update(":_))");
             }
             else{
                 output_state.update("((");
@@ -573,6 +772,7 @@ void Interp::buildString(bool withType){
             if(!withType)
                 output_state.update(this->coords->getLinked()->getName());
             else{
+                output_state.update("((");
                 output_state.update(this->coords->getLinked()->getName());
                 output_state.update(":" +this->getLinked()->getType() +"))");
             }
@@ -584,6 +784,15 @@ void Interp::buildString(bool withType){
         output_state.update("((");
         lhs_->buildString();
         output_state.update("+ᵥ");
+        rhs_->buildString();
+        output_state.update(":" +this->getType() +"))");
+    }
+    else if(nodeType == "SUB_R1_R1" || nodeType == "SUB_R3_R3") {
+        auto lhs_ = (this->operands[0]);
+        auto rhs_ = (this->operands[1]);
+        output_state.update("((");
+        lhs_->buildString();
+        output_state.update("-ᵥ");
         rhs_->buildString();
         output_state.update(":" +this->getType() +"))");
     }
@@ -648,20 +857,83 @@ void Interp::buildString(bool withType){
         this->operands[0]->buildString();
         output_state.update("⁻¹:" +this->getType() +"))");
     }
-    else if(nodeType=="ASSIGN_MUL_R4X4_R4X4"){
-        auto member = this->operands[0];
-        auto iident_ = ident_map.count(member) ? (ident_map[member] = ident_map[member]++) : (ident_map[member] = ident_++);
+    else if(nodeType.find("ASSIGN_MUL_R4X4_R4X4") != string::npos){
+        auto member_ = this->operands[0]->getLinked();
         auto lhs_ = this->operands[1];
         auto rhs_ = this->operands[2];
 
-        output_state.update( std::string("def "));
-        member->buildString(false);
-        output_state.update(std::to_string(iident_) + " : " + (member->getType()) + " := "); 
-        lhs_->buildString();
-        output_state.update(".value");
-        output_state.update("∘");
-        rhs_->buildString();
-        output_state.update(".value");
+        if(nodeType=="ASSIGN_MUL_R4X4_R4X4_2"){//OKAY, THIS LOGIC REALLY NEEDS TO GET PUSHED TO GEN
+            rhs_ = this->operands[0];//timestamped series ... assume latest
+            member_ = this->operands[1]->getLinked();//check if member is a timestamped series, if so, different logic
+            lhs_ = this->operands[2];//check if lhs is timestamped, if so, get the value
+        }
+
+        
+        if(auto dc = dynamic_cast<domain::TimeSeries*>(member_->getDomain()->getValue())){
+            
+        /*
+            check if the lhs is a timestamped transform
+            if it is print off t
+            if it is not, print off an empty time plus the literal expression
+
+        */
+            output_state.update(std::string("def ") + getNextIdentifier(member_) + ":=" + getLastIdentifier(member_));
+            output_state.update(std::string("[("));
+            if(lhs_->hasValue()){
+                if(auto dci = dynamic_cast<domain::TimeStampedGeom3DTransform*>(lhs_->getValue())){
+                    output_state.update("|(");
+                    output_state.update(getCurrentIdentifier(lhs_));
+                    output_state.update(".value.timestamp)|");
+                    output_state.update("↦|(");
+                    output_state.update(getCurrentIdentifier(lhs_));
+                    output_state.update(".value.value");
+                    output_state.update("⬝");
+                    if(auto dci = dynamic_cast<domain::Pose3DSeries*>(rhs_->getValue())){
+                        output_state.update(getCurrentIdentifier(rhs_) + ".value.latest.value");
+                    }
+                    else{
+                        output_state.update(std::string("("));
+                        rhs_->buildString();
+                        output_state.update(std::string(").value"));
+                    }
+
+                    output_state.update(")|");
+                }
+                else{
+                    output_state.update("|(");
+                    output_state.update("mk_time _ _");
+                    output_state.update(")|");
+                    output_state.update("↦|((");
+                    lhs_->buildString();
+                    output_state.update(".value)⬝");
+                    if(auto dci = dynamic_cast<domain::Pose3DSeries*>(rhs_->getValue())){
+                        output_state.update(getCurrentIdentifier(rhs_) + ".value.value");
+                    }
+                    else{
+                        output_state.update(std::string("("));
+                        rhs_->buildString();
+                        output_state.update(std::string(").value"));
+                    }
+
+                    output_state.update(")|");
+                }
+            }
+            else {
+                output_state.update("((_:_))");
+            }
+            output_state.update(std::string(")]"));
+
+        }
+        else{
+            output_state.update( std::string("def "));
+            //member->buildString(false);
+            output_state.update(getNextIdentifier(member_) + " : " + (member_->getType()) + " := "); 
+            lhs_->buildString();
+            output_state.update(".value");
+            output_state.update("∘");
+            rhs_->buildString();
+            output_state.update(".value");
+        }
     }
     else if(nodeType=="ASSIGN_R3X3" || nodeType=="ASSIGN_R4"){
 
@@ -678,12 +950,12 @@ void Interp::buildString(bool withType){
         }
         else {
             auto member = this->operands[0]->getLinked();
-            auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+            //auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
             auto val = this->operands[1];
 
             output_state.update( std::string("def "));
-            member->buildString(false);
-            output_state.update(std::to_string(iident_) + " : " + (member->getType()) + " := "); 
+            //member->buildString(false);
+            output_state.update(getNextIdentifier(member) + " : " + (member->getType()) + " := "); 
             val->buildString();
         }
     }
@@ -698,11 +970,11 @@ void Interp::buildString(bool withType){
         }
         else if(rhs->hasContainer()){
             auto member = lhs->getLinked();
-            auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+            //auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
 
             output_state.update( std::string("def "));
-            member->buildString(false);
-            output_state.update(std::to_string(iident_) + " : " + (member->getType()) + " := ");
+            //member->buildString(false);
+            output_state.update(getNextIdentifier(member) + " : " + (member->getType()) + " := ");
             auto container = rhs->getContainer();
             auto old_ident = ident_map.count(container) 
                 ? container->getCoords()->getName() + std::to_string((ident_map[container])) 
@@ -717,55 +989,76 @@ void Interp::buildString(bool withType){
         }
         else {
             auto member = this->operands[0]->getLinked();
-            auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+            //auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
             auto val = this->operands[1];
 
             output_state.update( std::string("def ") );
-            member->buildString(false);
-            output_state.update(std::to_string(iident_) + " : " + (member->getType()) + " := "); 
+            //member->buildString(false);
+            output_state.update(getNextIdentifier(member) + " : " + (member->getType()) + " := "); 
             val->buildString();
         }
     }
     else if(nodeType=="ASSIGN_R4X4_AT_R3"){
         auto member = this->operands[0]->getLinked();//->getContainer();
 
-        auto old_name = ident_map.count(member) ? member->getCoords()->getName() + std::to_string((ident_map[member])) : member->getCoords()->getName();
+        //auto old_name = ident_map.count(member) ? member->getCoords()->getName() + std::to_string((ident_map[member])) : member->getCoords()->getName();
         
-        auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+        //auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
         auto val = this->operands[1];
 
 
         if(auto pose = dynamic_cast<domain::Pose3D*>(member->getDomain()->getValue())){
-            output_state.update( std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+            output_state.update( std::string("def ") + getNextIdentifier(member)
                 + " : " + (member->getType()) + " := |{\n\t\tposition:=("); 
             val->buildString();
-            output_state.update(").value,\n\t\t.."+old_name+".value\n}|");
+            output_state.update(").value,\n\t\t.."+getLastIdentifier(member)+".value\n}|");
 
         }
         else{
-            output_state.update( std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
-                + " : " + (member->getType()) + " := |{\n\t\t.."+old_name+"\n}|");
+            output_state.update( std::string("def ") + getNextIdentifier(member)
+                + " : " + (member->getType()) + " := |{\n\t\t.."+getLastIdentifier(member)+"\n}|");
 
         }
 
     }
     else if(nodeType=="ASSIGN_R4X4_AT_R3X3" || nodeType == "ASSIGN_R4X4_AT_R4"){
         auto member = this->operands[0]->getLinked();
-        auto old_name = ident_map.count(member) ? member->getCoords()->getName() + std::to_string((ident_map[member])) : member->getCoords()->getName();
+        //auto old_name = ident_map.count(member) ? member->getCoords()->getName() + std::to_string((ident_map[member])) : member->getCoords()->getName();
 
-        auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
+        //auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
         auto val = this->operands[1];
         if(auto pose = dynamic_cast<domain::Pose3D*>(member->getDomain()->getValue())){
-            output_state.update( std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
+            output_state.update( std::string("def ") + getNextIdentifier(member) 
                 + " : " + (member->getType()) + " := |{\n\t\torientation:=("); 
             val->buildString();
-            output_state.update(").value,\n\t\t.."+old_name+".value\n}|");
+            output_state.update(").value,\n\t\t.."+getLastIdentifier(member)+".value\n}|");
         }
         else{
-            output_state.update( std::string("def ") + member->getCoords()->getName() + (std::to_string(iident_)) 
-                + " : " + (member->getType()) + " := |{\n\t\t.."+old_name+"\n}|");
+            output_state.update( std::string("def ") + getNextIdentifier(member)
+                + " : " + (member->getType()) + " := |{\n\t\t.."+getLastIdentifier(member)+"\n}|");
 
         }
+    }
+    /*
+
+  (|(|((|mk_time WorldTime.value 100|).value -ᵥ 
+    target_pose_in_baselink0.value.latest.timestamp : duration WorldTime.value)|)
+    .value.coord| : scalar_expr) < timespan
+    */
+    else if(nodeType == "LT_R1_R1"){
+        operands[0]->buildString();
+        output_state.update("<");
+        operands[1]->buildString();
+    }
+    else if(nodeType == "COORDS_R1"){
+        auto inner_ = this->operands[0];
+        if(auto dc = dynamic_cast<domain::Scalar*>(this->getValue())){
+            output_state.update("(|(");
+            inner_->buildString();
+            output_state.update(".value.coord)|:scalar_expr)");
+        }
+        else
+            inner_->buildString();
     }
     auto end = output_state.getCurrentLoc();
 
@@ -774,7 +1067,11 @@ void Interp::buildString(bool withType){
 }
 
 bool Interp::hasValue(){
-    return this->domain->hasValue();//(dc and dc->hasValue());
+    return (this->hasLinked()?this->getLinked()->getDomain()->hasValue() : this->domain->hasValue());//(dc and dc->hasValue());
+};
+
+domain::DomainObject* Interp::getValue(){
+    return (this->hasLinked()?this->getLinked()->getDomain()->getValue():this->domain->getValue());
 };
 
 std::string Interp::getType(){
@@ -830,6 +1127,17 @@ std::string Interp::getType(){
         else if(auto asscalar = dynamic_cast<domain::Scalar*>(this->domain->getValue())){
             return std::string("scalar_expr");
         }
+        else if(auto astspose = dynamic_cast<domain::TimeStampedPose3D*>(this->domain->getValue())){
+            return std::string("timestamped_pose3d_expr ") 
+                + astspose->getTime()->getSpace()->getName() + " "
+                + astspose->getValue()->getSpace()->getName();
+        }
+        else if(auto aststr = dynamic_cast<domain::TimeStampedGeom3DTransform*>(this->domain->getValue())){
+            return std::string("timestamped_geom3d_transform_expr ") 
+                + aststr->getTime()->getSpace()->getName() + " "
+                + aststr->getValue()->getDomain()->getName() + " "
+                + aststr->getValue()->getCodomain()->getName();
+        }
         else return "_";
     }
     else return "_";
@@ -840,7 +1148,7 @@ work in progress
 
 
 */
-std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces){
+std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std::vector<domain::TimeSeries*> series){
     std::string retval = "";
     ident_ = 0;
     ident_map.clear();
@@ -848,8 +1156,8 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces){
 
     
     auto begin = output_state.update("import .lang.lang\n").first;
-    output_state.update("open lang.time\nopen lang.geom1d\nopen lang.geom3d\n");
-    output_state.update("namespace peirce_output\nnoncomputable theory\n");
+    output_state.update("open lang.time\nopen lang.geom1d\nopen lang.geom3d\nopen lang.series.geom3d\nopen lang.bool_expr\n");
+    output_state.update("namespace peirce_output\nnoncomputable theory\n\n");
 
     for(auto space:spaces){
         if(auto dc = dynamic_cast<domain::StandardTimeCoordinateSpace*>(space)){
@@ -897,6 +1205,116 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces){
             output_state.update("def " + space->getName() + " : geom3d_space_expr " + space->getName() + "_fr := mk_geom3d_space_expr " + space->getName() + "_fr\n\n");
         }
     }
+    for(auto ser: series)
+    {
+        if(auto dc = dynamic_cast<domain::Pose3DSeries*>(ser))
+        {
+            output_state.update("def " + dc->getName() + " : pose3d_series_expr "); 
+            output_state.update(dc->getTimeSpace()->getName() + " " + dc->getSpace()->getName());
+            output_state.update(" := ");
+
+            auto values = dc->getValues();
+
+            if(values.size() == 0){
+                output_state.update("|mk_pose3d_discrete_empty _ _|\n");
+            }
+            else {
+                output_state.update("|[\n\t\t");
+                for(int i = 0;i<values.size();i++){
+                    auto val_ = values[i];
+                    auto astime = val_->getTime();
+                    //⟨⟩
+
+                    output_state.update("⟨(");
+                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]) + "");
+                    auto aspose = val_->getValue();
+                    auto ort = aspose->getOrientation();
+                    auto pos = aspose->getPosition();
+                    output_state.update("),(");
+                    output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
+                    output_state.update( std::string("\n\t\t(mk_orientation3d ") + ort->getSpace()->getName() + ".value "
+                        + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
+                        + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
+                        + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")");
+                    output_state.update( std::string("\n\t\t(mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")");
+                    output_state.update(")⟩");
+                    if(i<values.size()-1)
+                        output_state.update(",\n\t\t");
+                }
+                output_state.update("]|\n");
+            }
+
+            /*
+            output_state.update(std::string("def ") + getNextIdentifier(var_) + ":=" + getLastIdentifier(var_));
+            output_state.update(std::string("["));
+            if(expr_->hasValue()){
+                if(auto dci = dynamic_cast<domain::TimeStamped*>(expr_->getDomain()->getValue())){
+                    output_state.update("((|");
+                    auto astime = dci->getTime();
+                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]));
+                    auto exprbegin = output_state.getCurrentLoc();
+                    output_state.update("|↦|");
+                    if(auto astspose = dynamic_cast<domain::TimeStampedPose3D*>(dci)){
+                        auto aspose = astspose->getValue();
+                        auto ort = aspose->getOrientation();
+                        auto pos = aspose->getPosition();
+                        output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
+                        output_state.update( std::string("\n\t\t(mk_orientation3d ") + ort->getSpace()->getName() + ".value "
+                            + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
+                            + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
+                            + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")");
+                        output_state.update( std::string("\n\t\t(mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")");
+                    }
+                    else if(auto aststrans = dynamic_cast<domain::TimeStampedGeom3DTransform*>(dci)){
+                        auto astrans = aststrans->getValue();
+                        auto dom_ = astrans->getDomain();
+                        auto cod_ = astrans->getCodomain();
+                        output_state.update( dom_->getName() + ".value.mk_geom3d_transform_to " + cod_->getName() + ".value");
+                    }
+                    else{
+                        output_state.update("_");
+                    }
+            */
+        }
+        else if(auto dc = dynamic_cast<domain::Geom3DTransformSeries*>(ser))
+        {
+            output_state.update("def " + dc->getName() + " : geom3d_transform_series_expr "); 
+            output_state.update(dc->getTimeSpace()->getName() + " " + dc->getDomain()->getName() + " " + dc->getCodomain()->getName());
+
+            output_state.update(" := ");
+
+            auto values = dc->getValues();
+
+            if(values.size() == 0){
+                output_state.update("|mk_geom3d_transform_discrete_empty _ _ _|\n");
+            }
+            else {
+                output_state.update("|[\n\t\t");
+                for(int i = 0;i<values.size();i++){
+                    auto val_ = values[i];
+                    auto astime = val_->getTime();
+                    //⟨⟩
+
+                    output_state.update("⟨(");
+                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]) + "");
+               
+                    output_state.update("),(");
+                    
+                    auto astrans = val_->getValue();
+                    auto dom_ = astrans->getDomain();
+                    auto cod_ = astrans->getCodomain();
+                    output_state.update( dom_->getName() + ".value.mk_geom3d_transform_to " + cod_->getName() + ".value");
+                
+                    output_state.update(")⟩");
+                    if(i<values.size()-1)
+                        output_state.update(",\n\t\t");
+                }
+                output_state.update("]|\n");
+            }
+
+        }
+    }
+    output_state.update("\n");
     for(auto op: this->body){
         auto nodeBegin = output_state.getCurrentLoc();
         op->buildString();

@@ -56,8 +56,18 @@ std::string Interpretation::toStringAST(){
     std::string math = "";
 
     auto astInterp = coords2interp_->getInterp(this->AST);
+
+    auto global_timeseries = domain_->getTimeSeries();
+
+    for(auto coords_ : this->captureCache){
+        auto dom_ = this->coords2dom_->getDomain(coords_);
+        if(auto dc = dynamic_cast<domain::TimeSeries*>(dom_->getValue())){
+            global_timeseries.push_back(dc);
+        }
+    }
+
     if(astInterp){
-        math+= astInterp->toStringAST(domain_->getSpaces());
+        math+= astInterp->toStringAST(domain_->getSpaces(), global_timeseries);
     }
     else
         std::cout<<"Warning : No top-level AST node present";
@@ -128,7 +138,8 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
         
     }
     else if(capture){
-        this->captureCache.push_back(coords_);
+        if(nodeType.find("BOOL")==string::npos)//this shouldn't go here
+            this->captureCache.push_back(coords_);
     }
     if(isAST){
         this->AST = coords_;
@@ -220,13 +231,13 @@ void Interpretation::interpretConstructors(){
     
         
         if(needs_infer){
-            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             this->performInference();
             //I don't know why I need ot do this twice. this is a hack for an underlying bug
-            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
             this->performInference();
-            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
 
@@ -320,10 +331,10 @@ void Interpretation::interpretFunctions(){
     
         
         if(needs_infer){
-            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             this->performInference();
             //I don't know why I need ot do this twice. this is a hack for an underlying bug
-            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
             this->performInference();
             needs_infer = false;
@@ -450,7 +461,7 @@ void Interpretation::performInference(){
 }
 
 
-int optionSize = 6;
+int optionSize = 8;
 /*void Interpretation::printErrors(){
     int i = optionSize+1;//move to "menu offset" global variable
     for(auto coords_ : this->captureCache)
@@ -475,7 +486,7 @@ void Interpretation::printAllTerms()
     for(auto coords_ : this->allCoords)
     {
         auto nt = coords_->getNodeType();
-
+        //ugly shortcut for now
         if(nt.find("COMPOUND") != string::npos 
             or nt.find("FUNC") != string::npos 
             or nt.find("DECL") != string::npos
@@ -485,11 +496,9 @@ void Interpretation::printAllTerms()
         auto dom_ = this->coords2dom_->getDomain(coords_);
 
         std::string error_str_ = "No Error Detected";
-        //if(dom_->hasValue()){
-            if(dom_->hasError()){
-                error_str_ = dom_->getError()->toErrorString();
-            }
-        //}
+        if(dom_->hasError()){
+            error_str_ = dom_->getError()->toErrorString();
+        }
         auto code = coords_->state_->code_;
         code = code.size() > 100 ? code.substr(0,100):code;
 
@@ -532,15 +541,15 @@ void Interpretation::interpretProgram(){
     while(continue_)
     {
         //oracle_infer_->generateLeanChecker("PeirceOutput");
-        checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+        checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
         if(needs_infer){
             this->performInference();
             //I don't know why I need ot do this twice. this is a hack for an underlying bug
             //checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
-            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
             this->performInference();
-            checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
         this->printChoices();
@@ -554,10 +563,12 @@ void Interpretation::interpretProgram(){
             +"0 - Print Table of Annotatable Terms\n"
             +"1 - Print Available Coordinate Spaces\n"
             +"2 - Create Coordinate Space\n"
-            +"3 - Exit and Finish Type Checking\n"
-            +"4 - Print Table of All Terms\n"
-            +"5 - Annotate Constructors\n"
-            +"6 - Annotate Functions\n";
+            +"3 - Create Global Time Series\n"
+            +"4 - Add Time Stamped Value to Time Series\n"
+            +"5 - Print Table of All Terms\n"
+            +"6 - Annotate Constructors\n"
+            +"7 - Annotate Functions\n"
+            +"8 - Exit and Finish Type Checking\n";
         if(this->captureCache.size()>0){
             menu = menu+(std::to_string(optionSize+1))+"-"+std::to_string(menuSize)+" - Annotate Node\n";
         }
@@ -576,18 +587,24 @@ void Interpretation::interpretProgram(){
                 oracle_->getSpace();
             } break;
             case 3:{
-                continue_ = false;
+                oracle_->buildTimeSeries(nullptr);
             } break;
-            case 4: {
-                this->printAllTerms();
+            case 4:{
+                oracle_->addTimeStampedToTimeSeries();
             } break;
             case 5: {
+                this->printAllTerms();
+            } break;
+            case 6: {
                 this->interpretConstructors();
                 //needs_infer = true;
             } break;
-            case 6: {
+            case 7: {
                 this->interpretFunctions();
                 //needs_infer = true;
+            } break;
+            case 8: {
+                continue_ = false;
             } break;
             default:{
                 needs_infer = true;

@@ -116,7 +116,7 @@ public:
     Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_, std::vector<Interp*> body_) 
         : coords(coords_),domain(domain_),operands(operands_),body(body_), linked(nullptr),container(nullptr), constructor(nullptr) {};
     std::string toString();
-    std::string toStringAST(std::vector<domain::CoordinateSpace*> spaces);
+    std::string toStringAST(std::vector<domain::CoordinateSpace*> spaces, std::vector<domain::TimeSeries*> series);
 
     void buildString(bool withType=true);
 
@@ -166,6 +166,7 @@ public:
     }
 
     bool hasValue();
+    domain::DomainObject* getValue();
     std::string getType();
 
     void setStartLocation(std::shared_ptr<interp::Location> pos){

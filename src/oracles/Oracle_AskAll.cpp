@@ -214,6 +214,8 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
     To be improved substantially..
     move to configuration and/or type reflection as opposed to hard-coding in possible interpretations
     */
+    int choice = -1;
+    redo_ident:
     std::string menu = std::string("Choose Interpretation:\n")+
         "1 - Select Existing Interpretation\n"+
         "2 - Duration\n"+
@@ -228,9 +230,22 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
         "11 - Orientation3D\n" + 
         "12 - Rotation3D\n" + 
         "13 - Pose3D\n" + 
-        "14 - Geom3D Transform\n";
-    redo:
-    int choice = this->getValidChoice(1,15,menu);
+        "14 - Geom3D Transform\n" +
+        "15 - TimeStamped Pose3D\n" + 
+        "16 - TimeStamped Geom3D Transform\n" + 
+        "17 - TimeSeries Value\n";
+    int menuSize = 18;
+    
+    if(coords->getNodeType().find("IDENT") != string::npos){
+        menu+=
+            std::to_string(menuSize++)+" - Create a Time Series\n";    
+           // std::to_string(menuSize++)+" - Pose3D Time Series\n" +
+           // std::to_string(menuSize++)+" - Geom3D Transform Time Series";
+        menuSize +=1;
+    }
+
+    choice = this->getValidChoice(1,menuSize,menu);
+    
 
     //std::cin>>choice;
     switch(choice)
@@ -472,7 +487,161 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
             this->existing_interpretations.push_back(interpretation_);
             return interpretation_;
         } break;
-        default: goto redo;
+        case 15: {
+            //this is the timestamped pose
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            std::cout<<"Building Timestamp\n";
+            auto tsp =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            if(!tsp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto value = this->getValueVector<1>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto time_ = this->domain_->mkTime("", tsp, value);
+            std::cout<<"Building Pose\n";
+            auto gsp =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!gsp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Enter Orientation Coordinates\n";
+            value = this->getValueVector<9>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto ort = this->domain_->mkOrientation3D("", gsp, value);
+            std::cout<<"Enter Position Coordinates\n";
+            value = this->getValueVector<3>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto pos = this->domain_->mkPosition3D("", gsp, value);
+
+
+            auto pose_ = this->domain_->mkPose3D("", gsp, ort, pos);
+            
+            auto ts_ = this->domain_->mkTimeStampedPose3D(name, time_, pose_);
+            this->existing_interpretations.push_back(ts_);
+            return ts_;
+
+        } break;
+        case 16: {
+            //this is the timestamped transform
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            std::cout<<"Building Timestamp\n";
+            auto tsp =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            if(!tsp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto value = this->getValueVector<1>();
+            if(!value){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto time_ = this->domain_->mkTime("", tsp, value);
+            std::cout<<"Building Transform\n";
+            std::cout<<"Annotate Domain:\n";
+            auto tdom_ =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!tdom_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Annotate Codomain:\n";
+            auto tcod_ =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!tcod_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+
+            auto tr = this->domain_->mkGeom3DTransform(name, tdom_, tcod_);
+
+            auto ttr_ = this->domain_->mkTimeStampedGeom3DTransform(name, time_, tr);
+            this->existing_interpretations.push_back(ttr_);
+            return ttr_;
+        } break;
+        case 17: {
+            auto ts_ = selectTimeSeries();
+            if(!ts_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto sp = ts_->getTimeSpace();
+
+            std::cout<<"Choose Type of Index into Time Series : \n";
+            menu = std::string("1 - Get Latest Value from Time Series\n2 - Provide Specific Time\n");
+            choice = this->getValidChoice(1,3,menu);
+            if(choice == 1)
+            {
+                auto si = new domain::SeriesIndex(ts_, nullptr);
+                this->existing_interpretations.push_back(si);
+                return si;
+            }
+            else
+            {
+                std::cout<<"Provide Time Index : \n";
+                auto value = this->getValueVector<1>();
+                if(!value){
+                    std::cout<<"Interpretation building failed\n";
+                    return nullptr;
+                }
+                auto time_ = this->domain_->mkTime("", sp, value);
+                auto si = new domain::SeriesIndex(ts_, time_);
+                this->existing_interpretations.push_back(si);
+                return si;
+            }
+            return nullptr;
+
+        } break;
+        case 18:{
+            return this->buildTimeSeries(coords);
+        }
+        /*case 18: {
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            std::cout<<"Choose Timestamp Space\n";
+            auto tsp =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            if(!tsp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Choose Pose3D Space\n";
+            auto gsp =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!gsp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto tpose_ = this->domain_->mkPose3DSeries(name, tsp, gsp);
+            this->existing_interpretations.push_back(tpose_);
+            return tpose_;
+        } break;
+        case 19:{
+            auto name = coords->hasName() ? coords->getName() : this->getName();
+            std::cout<<"Choose Timestamp Space\n";
+            auto tsp =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            std::cout<<"Choose Geom3D Transform Space\n";
+            std::cout<<"Annotate Domain:\n";
+            auto tdom_ =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!tdom_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Annotate Codomain:\n";
+            auto tcod_ =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!tcod_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            auto ttr_ = this->domain_->mkGeom3DTransformSeries(name, tsp, tdom_, tcod_);
+            this->existing_interpretations.push_back(ttr_);
+            return ttr_;
+        } break;*/
+        default: goto redo_ident;
     }
 };
 
@@ -506,17 +675,184 @@ domain::DomainObject* Oracle_AskAll::selectExisting(){
     int i = 1;
     std::string menu("Choose From Existing Interpretations:\n");
     for(auto domain_ : this->existing_interpretations){
-        /*if(auto dc = dynamic_cast<domain::Time*>(interp_))
-            menu += std::to_string(i++) + " - " + dc->toString() + "\n";
-        else if(auto dc = dynamic_cast<domain::Duration*>(interp_))
-            menu += std::to_string(i++) + " - " + dc->toString() + "\n";
-        else if(auto dc = dynamic_cast<domain::Scalar*>(interp_))
-            menu += std::to_string(i++) + " - " + dc->toString() + "\n";
-        else if(auto dc = dynamic_cast<domain::TimeTransform*>(interp_))
-            menu += std::to_string(i++) + " - " + dc->toString() + "\n";
-        */
         menu += std::to_string(i++) + " - " + domain_->toString() + "\n";
     }
     int choice = getValidChoice(1, this->existing_interpretations.size()+1,menu)-1;
     return this->existing_interpretations[choice];
+}
+
+
+domain::TimeSeries* Oracle_AskAll::selectTimeSeries(){
+    std::vector<domain::TimeSeries*> ts_;
+    //std::copy_if no
+    for(auto dom_ : this->existing_interpretations){
+        if(auto dc=dynamic_cast<domain::TimeSeries*>(dom_)){
+            ts_.push_back(dc);
+        }
+    }
+    if(ts_.size()==0){
+        std::cout<<"No available Time Series to sample from";
+        return nullptr;
+    }
+    std::string menu("");
+    int i = 0;
+    for(auto domain_ : ts_){
+        menu += std::to_string(++i) + " - " + domain_->toString() + "\n";
+    }
+    int choice = getValidChoice(1, ts_.size()+1,menu)-1;
+    return ts_[choice];
+}
+
+domain::TimeSeries* Oracle_AskAll::buildTimeSeries(coords::Coords* coords){
+
+    std::string menu =     
+            std::string("1 - Pose3D Time Series\n") +
+            "2 - Geom3D Transform Time Series";
+    int choice = this->getValidChoice(1,3,menu);
+    switch(choice)
+    {
+        case 1:{
+            auto name = coords && coords->hasName() ? coords->getName() : this->getName();
+            std::cout<<"Choose Timestamp Space\n";
+            auto tsp =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            if(!tsp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Choose Pose3D Space\n";
+            auto gsp =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!gsp){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+
+            domain::Pose3DSeries* tpose_;
+            if(coords)//hairy issue of 
+                tpose_ = new domain::Pose3DSeries(name, tsp, gsp);
+            else
+                tpose_ = this->domain_->mkPose3DSeries(name, tsp, gsp);
+            
+            this->existing_interpretations.push_back(tpose_);
+            return tpose_;
+
+        }
+        case 2:{
+            auto name = coords && coords->hasName() ? coords->getName() : this->getName();
+            std::cout<<"Choose Timestamp Space\n";
+            auto tsp =  dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+            std::cout<<"Choose Geom3D Transform Space\n";
+            std::cout<<"Annotate Domain:\n";
+            auto tdom_ =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!tdom_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            std::cout<<"Annotate Codomain:\n";
+            auto tcod_ =  dynamic_cast<domain::Geom3DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom3DSpaces()));
+            if(!tcod_){
+                std::cout<<"Interpretation building failed\n";
+                return nullptr;
+            }
+            domain::Geom3DTransformSeries* ttr_;
+            if(coords)//hairy issue of 
+                ttr_ = new domain::Geom3DTransformSeries(name, tsp, tdom_, tcod_);
+            else
+                ttr_ = this->domain_->mkGeom3DTransformSeries(name, tsp, tdom_, tcod_);
+            this->existing_interpretations.push_back(ttr_);
+            return ttr_;
+
+        }
+    }
+}
+
+void Oracle_AskAll::addTimeStampedToTimeSeries(){
+    auto ts_ = this->selectTimeSeries();
+
+    if(!ts_){
+        std::cout<<"Invalid Time Series - Ending Add Time Stamped Procedure\n";
+        return;
+    }
+
+    if(auto dc = dynamic_cast<domain::Pose3DSeries*>(ts_)){
+
+        //auto name = coords->hasName() ? coords->getName() : this->getName();
+        std::cout<<"Building Timestamp\n";
+        auto tsp = dc->getTimeSpace();//
+        if(!tsp){
+            std::cout<<"Interpretation building failed\n";
+            return; //nullptr;
+        }
+        auto value = this->getValueVector<1>();
+        if(!value){
+            std::cout<<"Interpretation building failed\n";
+            return;// nullptr;
+        }
+        auto time_ = this->domain_->mkTime("", tsp, value);
+        std::cout<<"Building Pose\n";
+        auto gsp = dc->getSpace();
+        if(!gsp){
+            std::cout<<"Interpretation building failed\n";
+            return;// nullptr;
+        }
+        std::cout<<"Enter Orientation Coordinates\n";
+        value = this->getValueVector<9>();
+        if(!value){
+            std::cout<<"Interpretation building failed\n";
+            return;// nullptr;
+        }
+        auto ort = this->domain_->mkOrientation3D("", gsp, value);
+        std::cout<<"Enter Position Coordinates\n";
+        value = this->getValueVector<3>();
+        if(!value){
+            std::cout<<"Interpretation building failed\n";
+            return;// nullptr;
+        }
+        auto pos = this->domain_->mkPosition3D("", gsp, value);
+
+        auto pose_ = this->domain_->mkPose3D("", gsp, ort, pos);
+
+        auto tspose_ = this->domain_->mkTimeStampedPose3D("", time_, pose_);
+        
+        dc->insertValue(tspose_);
+
+    }
+    else if(auto dc = dynamic_cast<domain::Geom3DTransformSeries*>(ts_)){
+        //this is the timestamped transform
+        //auto name = coords->hasName() ? coords->getName() : this->getName();
+        std::cout<<"Building Timestamp\n";
+        auto tsp = dc->getTimeSpace();
+        if(!tsp){
+            std::cout<<"Interpretation building failed\n";
+            return;// nullptr;
+        }
+        auto value = this->getValueVector<1>();
+        if(!value){
+            std::cout<<"Interpretation building failed\n";
+            return;// nullptr;
+        }
+        auto time_ = this->domain_->mkTime("", tsp, value);
+        std::cout<<"Building Transform\n";
+        std::cout<<"Annotate Domain:\n";
+        auto tdom_ = dc->getDomain();
+        if(!tdom_){
+            std::cout<<"Interpretation building failed\n";
+            return;// nullptr;
+        }
+        std::cout<<"Annotate Codomain:\n";
+        auto tcod_ = dc->getCodomain();
+        if(!tcod_){
+            std::cout<<"Interpretation building failed\n";
+            return;// nullptr;
+        }
+
+        auto tr = this->domain_->mkGeom3DTransform("", tdom_, tcod_);
+
+        auto tstr = this->domain_->mkTimeStampedGeom3DTransform("", time_, tr);
+        
+        dc->insertValue(tstr);
+    } 
+    else{
+        std::cout<<"Did not recognize series type.\n";
+        return;
+    }
 }

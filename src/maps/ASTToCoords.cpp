@@ -83,7 +83,7 @@ void ASTToCoords::setASTState(coords::Coords* coords, std::shared_ptr<ast::NodeC
             "",
             "",
             (clang::dyn_cast<clang::NamedDecl>(decl)) ? (clang::dyn_cast<clang::NamedDecl>(decl))->getNameAsString() : "",
-            code,
+            (clang::dyn_cast<clang::NamedDecl>(decl)) ? (clang::dyn_cast<clang::NamedDecl>(decl))->getNameAsString() : "",
             begin.getSpellingLineNumber(),
             begin.getSpellingColumnNumber(),
             end.getSpellingLineNumber(),
