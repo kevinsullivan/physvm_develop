@@ -19,3 +19,5 @@ annotations.txt
 nohup.out
 *.pyc
 *.olean
+output.txt
+boot_data.txt
