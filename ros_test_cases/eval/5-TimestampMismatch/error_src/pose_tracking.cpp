@@ -82,6 +82,15 @@ PoseTrackingStatusCode PoseTracking::moveToPose(const Eigen::Vector3d& positiona
   // Wait a bit for a target pose message to arrive.
   // The target pose may get updated by new messages as the robot moves (in a callback function).
   const ros::Time start_time = ros::Time::now();
+  /*
+  
+bool PoseTracking::haveRecentTargetPose(const double timespan)
+{
+  std::lock_guard<std::mutex> lock(target_pose_mtx_);
+  return ((ros::Time::now() - target_pose_.header.stamp).toSec() < timespan);
+}
+
+  */
   while ((!haveRecentTargetPose(target_pose_timeout) || !haveRecentEndEffectorPose(target_pose_timeout)) &&
          ((ros::Time::now() - start_time).toSec() < target_pose_timeout))
   {

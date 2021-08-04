@@ -298,7 +298,7 @@ namespace RobotLocalization
 
       cartesian_world_transform_.mult(transform_world_pose_, cartesian_pose_with_orientation.inverse());
 
-      cartesian_world_trans_inverse_ = cartesian_world_transform_.inverse();
+      cartesian_world_transform_world_pose_trans_inverse_ = cartesian_world_transform_.inverse();
 
       ROS_INFO_STREAM("Transform world frame pose is: " << transform_world_pose_);
       ROS_INFO_STREAM("World frame->cartesian transform is " << cartesian_world_transform_);
@@ -325,6 +325,38 @@ namespace RobotLocalization
     }
   }
 
+  (navsat_transform.h declarations) 
+  double magnetic_declination_;
+  double utm_meridian_convergence_;
+  double yaw_offset_;
+  tf2::Quaternion transform_orientation_;//! @brief Latest IMU orientation
+  tf2::Transform transform_cartesian_pose_;//! @brief Latest GPS data, stored as Cartesian coords
+  tf2::Transform transform_world_pose_;//! @brief Latest odometry pose data
+  tf2::Transform cartesian_world_transform_;//! @brief Holds the Cartesian->odom transform
+  tf2::Transform cartesian_world_trans_inverse_;//! @brief Holds the odom->UTM transform for filtered GPS broadcast
+  ...
+  (navsat_transform.cpp)
+  (230) void NavSatTransform::computeTransform() 
+  ...
+  (242-250) tf2::Transform transform_cartesian_pose_corrected;
+  getRobotOriginCartesianPose(transform_cartesian_pose_, transform_cartesian_pose_corrected, ros::Time(0));
+  ...
+  (252-259)// Get the IMU's current RPY values. Need the raw values (for yaw, anyway).
+  tf2::Matrix3x3 mat(transform_orientation_);
+  mat.getRPY(imu_roll, imu_pitch, imu_yaw);
+  ...
+  (281)imu_yaw += (magnetic_declination_ + yaw_offset_ + utm_meridian_convergence_);
+  ...
+  (289-290)tf2::Quaternion imu_quat;
+  imu_quat.setRPY(0.0, 0.0, imu_yaw);
+  (295-301)tf2::Transform cartesian_pose_with_orientation;
+  cartesian_pose_with_orientation.setOrigin(transform_cartesian_pose_corrected.getOrigin());
+  cartesian_pose_with_orientation.setRotation(imu_quat);
+  cartesian_world_transform_.mult(transform_world_pose_, cartesian_pose_with_orientation.inverse());
+  cartesian_world_transform_world_pose_trans_inverse_ = cartesian_world_transform_.inverse();
+  ...
+  (323) cartesian_broadcaster_.sendTransform(cartesian_transform_stamped);
+  
   bool NavSatTransform::datumCallback(robot_localization::SetDatum::Request& request,
                                       robot_localization::SetDatum::Response&)
   {

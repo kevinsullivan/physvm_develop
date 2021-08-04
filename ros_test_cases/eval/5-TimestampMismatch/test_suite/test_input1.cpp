@@ -13,7 +13,6 @@
 
 
 #include <cmath>
-
 /*
 When looking up a transform, if there is a static transform available between two frames, 
 it may assign a timestamp of 0 to the resulting pose, which may indicate that the transform 
@@ -21,8 +20,8 @@ is old, but is misleading to consumers of this pose, as it is technically using 
 (and old, concurrently) version of the transform.
 */
 int main(int argc, char **argv){
-    ros::init(argc, argv, " ");
-    ros::NodeHandle node;  
+    //ros::init(argc, argv, " ");
+    //ros::NodeHandle node;  
 
     /*
     236-241
@@ -32,7 +31,7 @@ int main(int argc, char **argv){
           planning_frame_, target_pose_.header.frame_id, ros::Time(0), ros::Duration(0.1));
       tf2::doTransform(target_pose_, target_pose_, target_to_planning_frame);
     }
-
+3
 
     206-210
     bool PoseTracking::haveRecentTargetPose(const double timespan)
@@ -53,32 +52,28 @@ int main(int argc, char **argv){
     }
     */
     
-    //Declare a global Euclidean space, Time space, frame, measurement system
-    //Declare a World frame and Base link frame
+    //Declare world time space, world space, base link space
 
-    std::string planning_frame_ = "Base Link";
-    std::string target_pose_frame_ = "World";
+    //Add a global time series 
 
-    //Annotate this pose as being in the world frame
-    //with a timestamp of now (or equivalence class of some sort) 
-    tf2::Stamped<tf2::Pose> target_pose_before_;
-    
-    //Annotate this pose as being in the base link frame (after transform application),
-    //with a timestamp of 0 (or equivalence class of some sort) 
-    tf2::Stamped<tf2::Pose> target_pose_after_;
-    target_pose_.frame_id = target_pose_frame_;
+    //Annotate as "Pose3D Time Series" - add an initial value
+    geometry_msgs::PoseStamped target_pose_in_world;
+    //target_pose_in_world.header.frame_id = planning_frame_;
+
+    //Annotate 
+    geometry_msgs::PoseStamped target_pose_in_base_link;
 
     //Annotate this transform as being from World->Base Link
-    geometry_msgs::TransformStamped target_to_planning_frame = transform_buffer_.lookupTransform(
-          planning_frame_, target_pose_before_.header.frame_id, ros::Time(0), ros::Duration(0.1));
+    geometry_msgs::TransformStamped target_to_planning_frame; 
         
-    //This assignment is propagated automatically
-    tf2::doTransform(target_pose_before_, target_pose_after_, target_to_planning_frame);
+    //This assignment is propagated automatically. Target Pose in Base Link is updated
+    tf2::doTransform(target_pose_in_world, target_pose_in_base_link, target_to_planning_frame);
+////
+    //Annotate this either as a scalar or a duration...
+    double timespan = 1;
 
-    //Annotate this timespan with a value of 1 second
-    ros::Duration timespan = ros::Duration(1);
-
-    //Annotate hasRecentTargetPose as being true, but annotate ros::Time::now() as being a fairly large value (>> 1), 
-    //and Lean will need to calculate that this proposition evaluates to false.
-    bool hasRecentTargetPose = ros::Time::now() - target_pose_.header.stamp).toSec() < timespan
-}
+    //Annotate ros::Time::Now as having a value greater than 1. The toSec call can either be annotated as a 
+    //case to a scalar, or ignored, depending on timespan annotation
+    bool hasRecentTargetPose = (ros::Time::now() - target_pose_in_base_link.header.stamp).toSec() < timespan;
+    //
+}   

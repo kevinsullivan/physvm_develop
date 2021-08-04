@@ -46,13 +46,8 @@ int main(int argc, char **argv){
 		transform.setOrigin(tf::Vector3(pos_ned.y, pos_ned.x, -pos_ned.z));
     */
 
-    //Annote a global Euclidean space, frame, 
-
-    //Declare an NWU orientation (possibly), ENU, and NED
-
-    //Assign this vector to the base link, with orientation NWU
     tf::Vector pos_ned;
 	tf::Transform transform;
-    //Interpret the Vector Literal as having Orientation NED. This should draw a contradiction in Lang.
+
 	transform.setOrigin(tf::Vector3(pos_ned.y, pos_ned.x, -pos_ned.z));
 }

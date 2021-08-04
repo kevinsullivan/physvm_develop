@@ -1,6 +1,7 @@
 ## Overview
 
 This directory stores all of our evaluation code for Peirce.
+This document describes the structure of test cases, 
 
 ## Structure
 
@@ -42,4 +43,10 @@ These are whittled down into test cases contained in /test_case/. Each test case
 There may potentially be multiple test cases, which reflect my uncertainty on what code snippet is most appropriate as a test case. Also, certain projects may have multiple, separated snippets that to be broken into separate test cases.
 
 Finally, each project has a "short_description.md" and "detailed_description.md", which contain brief vs short paragraph notes on all relevant aspects of the test case, such as an issue link, commit hash, a portion of the erroneous code, a description of the error, a categorization, possibly the location of where an error occurs (where it's applicable or possible to find the error), and a description of changes required in Peirce.
+
+
+## How to run test cases
+
+    For each test case, you'll want to navigate to the test_suite folder. You will want to run peirce on either "test_file1.cpp"
+    or "test_file.cpp". Completed test cases are included in .vscode/launch.json. Uncomment out the test case that you want to run and press f5. OR, go to the test file in question and use the plugin on it.
 

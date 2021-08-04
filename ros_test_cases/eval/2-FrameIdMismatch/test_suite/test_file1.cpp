@@ -114,7 +114,7 @@ int main(int argc, char **argv){
         2812
           poseTmp.mult(targetFrameTrans, poseTmp);
     */
-
+  //
     //Declare a global Euclidean space, frame, measurement system
     //Declare an IMU and Target frame
     //Annotate this Pose as being in the IMU frame
@@ -125,19 +125,20 @@ int main(int argc, char **argv){
     std::string finalTargetFrame = "Target";
     poseTmp.frame_id_ = finalTargetFrame;
     /*
-    ...
+    ...//
     */
     //Give this tf2::Vector an interpretation as being in the IMU Frame
     //An automatically generated assertion you are attempting to assign a vector in one frame to a variable in another frame
     poseTmp.setOrigin(tf2::Vector3(msg.pose.pose.position.x,
                                    msg.pose.pose.position.y,
-                                   msg.pose.pose.position.z)); //broke
+                                   msg.pose.pose.position.z)); 
     tf2::Quaternion orientation;
 
-    tf2::fromMsg(msg.pose.pose.orientation, orientation);//broke
+    tf2::fromMsg(msg.pose.pose.orientation, orientation);
 
     // Similar to above, the orientation is in the IMU frame, and we are attempting to assign it to an orientation in the target frame,
     // which a failed assertion will demonstrate.
-    poseTmp.setRotation(orientation); //broke
+    poseTmp.setRotation(orientation); 
+
 
 }
