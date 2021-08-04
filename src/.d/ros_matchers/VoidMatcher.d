@@ -481,7 +481,9 @@
   /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread \
   ros_matchers/ROSTF2TransformStamped.h ros_matchers/ROSTF2Transform.h \
   ros_matchers/ROSTF2Vector3Matcher.h ros_matchers/ROSTF2Quaternion.h \
-  ros_matchers/ROSTFTransformMatcher.h ros_matchers/ROSGeomQuaternion.h
+  ros_matchers/ROSTFTransformMatcher.h ros_matchers/ROSGeomPoseStamped.h \
+  ros_matchers/ROSGeomTransformStamped.h \
+  ros_matchers/ROSGeomQuaternion.h
 
 /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchFinder.h:
 
@@ -1504,5 +1506,9 @@ ros_matchers/ROSTF2Vector3Matcher.h:
 ros_matchers/ROSTF2Quaternion.h:
 
 ros_matchers/ROSTFTransformMatcher.h:
+
+ros_matchers/ROSGeomPoseStamped.h:
+
+ros_matchers/ROSGeomTransformStamped.h:
 
 ros_matchers/ROSGeomQuaternion.h:

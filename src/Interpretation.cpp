@@ -138,7 +138,9 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
         
     }
     else if(capture){
-        if(nodeType.find("BOOL")==string::npos)//this shouldn't go here
+        if(nodeType.find("BOOL")==string::npos)//this doesn't go here. but just to show about bool uncertainty
+            this->captureCache.push_back(coords_);
+        else if(nodeType.find("IDENT_BOOL") != string::npos)
             this->captureCache.push_back(coords_);
     }
     if(isAST){
@@ -254,7 +256,11 @@ void Interpretation::interpretConstructors(){
                 needs_infer = true;
                 auto coords_ = constructorCache[choice-consOptionSize-1];
                 domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
-                auto new_dom = this->oracle_->getInterpretation(coords_);
+                domain::DomainObject* new_dom = nullptr; 
+                if(coords_->getNodeType().find("BOOL")==string::npos)
+                    new_dom = this->oracle_->getInterpretation(coords_);
+                else
+                    new_dom = this->oracle_->getBooleanInterpretation();
                 
                 if(new_dom){
 
@@ -610,7 +616,11 @@ void Interpretation::interpretProgram(){
                 needs_infer = true;
                 auto coords_ = this->captureCache[choice-optionSize-1];
                 domain::DomainContainer* dom_cont = this->coords2dom_->getDomain(coords_);
-                auto new_dom = this->oracle_->getInterpretation(coords_);
+                domain::DomainObject* new_dom = nullptr; 
+                if(coords_->getNodeType().find("BOOL")==string::npos)
+                    new_dom = this->oracle_->getInterpretation(coords_);
+                else
+                    new_dom = this->oracle_->getBooleanInterpretation();
                 
                 if(new_dom){
 

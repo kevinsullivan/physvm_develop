@@ -18,6 +18,7 @@ public:
     //virtual domain::Space* getSpaceInterpretation();
 
     domain::DomainObject* getInterpretation(coords::Coords* coords);
+    domain::DomainObject* getBooleanInterpretation();
 
     std::string getName();
     template<int Dimension>

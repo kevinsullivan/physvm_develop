@@ -478,7 +478,9 @@
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/g3log/logmessage.hpp /usr/include/g3log/time.hpp \
   /usr/include/g3log/moveoncopy.hpp \
-  /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread \
+  ros_matchers/ROSDurationBaseMatcher.h \
+  ros_matchers/ROSDurationMatcher.h
 
 /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchFinder.h:
 
@@ -1491,3 +1493,7 @@ ros_matchers/../maps/InterpToDomain.h:
 /usr/include/g3log/moveoncopy.hpp:
 
 /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread:
+
+ros_matchers/ROSDurationBaseMatcher.h:
+
+ros_matchers/ROSDurationMatcher.h:

@@ -645,6 +645,28 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
     }
 };
 
+domain::DomainObject* Oracle_AskAll::getBooleanInterpretation(){
+    
+    redo:
+
+    std::string menu("1 - True\n2- False");
+    
+    int choice = this->getValidChoice(1,3, menu);
+
+    switch(choice)
+    {
+        case 1: {
+            return new domain::BoolTrue();
+        } break;
+        case 2: {
+            return new domain::BoolFalse();
+        } break;
+        default: {
+            goto redo;
+        }
+    }
+}
+
 int Oracle_AskAll::getValidChoice(int lower, int upperExclusive, std::string selectionMenu)
 {
     if(lower >= upperExclusive)

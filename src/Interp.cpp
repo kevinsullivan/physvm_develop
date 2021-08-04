@@ -445,6 +445,19 @@ void Interp::buildString(bool withType){
         var_->buildString(); 
         output_state.update(" := \n\t\t");
         expr_->buildString();
+        if(var_->hasValue()){
+            output_state.update("\n");
+            if(auto bt = dynamic_cast<domain::BoolTrue*>(var_->getValue())){
+                output_state.update(std::string("def ") + var_->getCoords()->getName() + ".sem : bool_sem " + var_->getCoords()->getName());
+                output_state.update(" := ");
+                output_state.update(" bool_sem.bool_eval_true _ begin check_bool_true hasRecentTargetPose end\n");
+            }
+            else if(auto bt = dynamic_cast<domain::BoolFalse*>(var_->getValue())){
+                output_state.update(std::string("def ") + var_->getCoords()->getName() + ".sem : bool_sem " + var_->getCoords()->getName());
+                output_state.update(" := ");
+                output_state.update(" bool_sem.bool_eval_false _ begin check_bool_false hasRecentTargetPose end\n");
+            }
+        }
 
         //std::cout<<expr_->getCoords()->getNodeType()<<"\n";
     }

@@ -791,6 +791,24 @@ private:
 
 };
 
+class BoolTrue : public DomainObject {
+public: 
+    BoolTrue(){};
+    virtual std::string toString() const override {
+        return "True";
+    }
+};
+
+class BoolFalse : public DomainObject {
+public: 
+    BoolFalse(){};
+    virtual std::string toString() const override {
+        return "True";
+    }
+};
+
+
+
 
 } // end namespace
 

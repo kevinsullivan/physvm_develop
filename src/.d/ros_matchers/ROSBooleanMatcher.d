@@ -428,7 +428,7 @@
   /usr/lib/llvm-6.0/include/llvm/Support/ManagedStatic.h \
   /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchersMacros.h \
   /usr/lib/llvm-6.0/include/llvm/Support/Timer.h \
-  ros_matchers/ROSBooleanMatcher.h ros_matchers/../BaseMatcher.h \
+  ros_matchers/ROSBoolMatcher.h ros_matchers/../BaseMatcher.h \
   ros_matchers/../Interpretation.h ros_matchers/../Checker.h \
   /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
   /usr/include/x86_64-linux-gnu/bits/environments.h \
@@ -478,7 +478,8 @@
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/g3log/logmessage.hpp /usr/include/g3log/time.hpp \
   /usr/include/g3log/moveoncopy.hpp \
-  /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread \
+  ros_matchers/ROSBooleanMatcher.h ros_matchers/DoubleMatcher.h
 
 /usr/lib/llvm-6.0/include/clang/ASTMatchers/ASTMatchFinder.h:
 
@@ -1370,7 +1371,7 @@
 
 /usr/lib/llvm-6.0/include/llvm/Support/Timer.h:
 
-ros_matchers/ROSBooleanMatcher.h:
+ros_matchers/ROSBoolMatcher.h:
 
 ros_matchers/../BaseMatcher.h:
 
@@ -1491,3 +1492,7 @@ ros_matchers/../maps/InterpToDomain.h:
 /usr/include/g3log/moveoncopy.hpp:
 
 /usr/bin/../lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/thread:
+
+ros_matchers/ROSBooleanMatcher.h:
+
+ros_matchers/DoubleMatcher.h:
