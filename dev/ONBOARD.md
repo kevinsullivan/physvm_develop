@@ -17,10 +17,20 @@ git config --global core.autocrlf input
 3. Clone the Peirce repository, along with its subrepositories, using the following command:
 ```shell
 git clone --recursive  https://github.com/kevinsullivan/Peirce
-cd Peirce
-git submodule foreach git checkout master
-git submodule foreach git pull origin master
 ```
+4. You'll need to update our set of submodules using a script. If you're on a windows machine, type:
+```
+cd Peirce
+update_sm.bat
+```
+Or, if you're on a Linux machine, type:
+```
+cd Peirce
+sh update_sm.sh
+```
+If you're in our Docker development environment, cd to "/peirce/"
+
+
 
 Private Note to Kevin: Close folder in VM. Open again to /peirce/. Then do a git pull. Then you're ready to go.
 Private Note to Kevin: Each time you do this, be sure to stop and restart your docker container.
