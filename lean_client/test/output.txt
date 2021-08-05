@@ -1,7 +1,0 @@
-PeirceRange(begin_line=11, begin_column=5, end_line=11, end_column=18, error='command expected', type=None)
-PeirceRange(begin_line=11, begin_column=1, end_line=11, end_column=35, error='command expected', type=None)
-PeirceRange(begin_line=12, begin_column=44, end_line=12, end_column=51, error=None, type='⊢ ⁇')
-PeirceRange(begin_line=12, begin_column=1, end_line=12, end_column=52, error="don't know how to synthesize placeholder\ncontext:\n⊢ Type ?", type=None)
-PeirceRange(begin_line=11, begin_column=1, end_line=13, end_column=1, error=None, type=None)
-PeirceRange(begin_line=11, begin_column=1, end_line=14, end_column=1, error=None, type=None)
-PeirceRange(begin_line=1, begin_column=1, end_line=17, end_column=18, error='command expected', type=None)

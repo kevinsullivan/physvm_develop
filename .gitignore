@@ -21,3 +21,4 @@ nohup.out
 *.olean
 output.txt
 boot_data.txt
+boot.touch
