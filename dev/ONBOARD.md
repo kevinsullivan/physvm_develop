@@ -30,15 +30,12 @@ sh update_sm.sh
 ```
 If you're in our Docker development environment, cd to "/peirce/"
 
-
-
 Private Note to Kevin: Close folder in VM. Open again to /peirce/. Then do a git pull. Then you're ready to go.
 Private Note to Kevin: Each time you do this, be sure to stop and restart your docker container.
 
 This step may fail if git lacks access to any of the required submodules, (for example, phys, which is maintained in a separate Github repo).
 
-**The clone will not finish for ANY of the 4 subrepositories if you lack access to one. Click on each link and be sure you do not "404." If you do,
-contact Prof. Sullivan for access and be sure to accept any invitations he sends through git by email.**
+**The clone will not finish for ANY of the subrepositories if you lack access to any one of them.
 
 ## Set Up VSCode 
 
@@ -55,7 +52,7 @@ contact Prof. Sullivan for access and be sure to accept any invitations he sends
 
 2. Make an account with Docker and get permission from the owner of the docker to pull the current image (owner as of 5/26/2020 is Andrew Elsey).
 
-3. Configure docker to run on your machine. Check your hardware for amount of memory (Host_mem) and number of cores/threads (Host_cores) and change your Docker Preferences to allocate desired shares of these resources to Docker (VM_cores and VM_mem). We recommend starting by giving Docker at least, if available, 4GB of memory and 4 CPU cores. **UPDATE** 6-5. READ. You must give docker 8GB of memory. The lean server used in Peirce will crash on our math library using anything less than 8GB. This is not a required step but will improve the "build time" of Peirce, which can range up to 30 minutes on less powerful machines.
+3. Configure docker to run on your machine. Docker must be configured to provide conainters with at least 8GB of memory. We can confirm that the lean server used in Peirce will hang or crash when elaborating our Lean code using only 4 GB. 
 
 4. Issue the following command in a terminal window:
 ```shell
@@ -99,18 +96,10 @@ NOTE: It is important that your local Peirce repo directory be mounted on the VM
 
 
 
-## Install Mathlib (ANDREW 6-5 SHOULD BE DELETED. MATHLIB IS INSTALLED IN THE CONTAINER ALREADY.)
-1. Once you're in the container in VSCode, open a terminal window (Terminal -> New Terminal). 
-2. cd into the peirce/deps/phys directory. Confirm that you're editing or check out the master branch. 
-3. Run *leanpkg configure*, then, after that finishes, run *leanpkg build*. The build can take a while (up to 30 minutes perhaps), and might produce some error messages. Ignore these and let the build process run to completion. After it finishes, you should have a working Mathlib as part of your Lean Prover infrastructure for this project. 
-
-Private note to Kevin: The preceding instructions should specify the correct use of the leanproject command.
-
-
 ## Development Workflow
 
 1. Instructions do not vary much between developing on the "Peirce Docker Builder" or "Peirce" project.
-2. In general, you should do your on a "feature branch". As Prof. Sullivan for help. Branch names should be of the form "feature/%MY_DESCRIPTIVE_FEATURE-SPECIFIC_BRANCH_NAME%"
+2. In general, you should do your on a "feature branch". Ask Prof. Sullivan for help. Branch names should be of the form "feature/%MY_DESCRIPTIVE_FEATURE-SPECIFIC_BRANCH_NAME%"
 3. Switch to your branch to do your development work.
 4. Test your change to be sure that everything works; don't "break the build" 
 5. Push your changes to your branch at GitHub to share your updates with others working on the same branch. You will likely have to pull their changes before you're allowing to push your updates. You might run into merge conflicts at this point. You then have to manually decide how to resolve conflicts, one at a time. Avoid such merge conflicts by prior agreements with colleagues about who's changing what.  
