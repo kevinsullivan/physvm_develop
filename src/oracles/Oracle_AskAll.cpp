@@ -785,6 +785,7 @@ domain::TimeSeries* Oracle_AskAll::buildTimeSeries(coords::Coords* coords){
 
         }
     }
+    return nullptr;
 }
 
 void Oracle_AskAll::addTimeStampedToTimeSeries(){

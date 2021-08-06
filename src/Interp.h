@@ -59,6 +59,9 @@ public:
                 cur_line+=1;
                 cur_col=1;
             }
+            else if(upd_str[i] == '\t'){
+                cur_col+=2;
+            }
             else if(upd_str[i] < 0){
                 symb_ct += 1;
                 if(i == upd_str.size() - 1)
@@ -112,13 +115,20 @@ private:
 class Interp {
 public:
     Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_) 
-        : coords(coords_),domain(domain_),operands(operands_),linked(nullptr),container(nullptr), constructor(nullptr) {};
+        : coords(coords_),domain(domain_),operands(operands_),linked(nullptr),container(nullptr), constructor(nullptr) {
+            start_location = std::make_shared<Location>(1,1);
+            end_location = std::make_shared<Location>(1,1);
+
+        };
     Interp(coords::Coords* coords_, domain::DomainContainer* domain_, std::vector<Interp*> operands_, std::vector<Interp*> body_) 
-        : coords(coords_),domain(domain_),operands(operands_),body(body_), linked(nullptr),container(nullptr), constructor(nullptr) {};
+        : coords(coords_),domain(domain_),operands(operands_),body(body_), linked(nullptr),container(nullptr), constructor(nullptr) {
+            start_location = std::make_shared<Location>(1,1);
+            end_location = std::make_shared<Location>(1,1);
+        };
     std::string toString();
     std::string toStringAST(std::vector<domain::CoordinateSpace*> spaces, std::vector<domain::TimeSeries*> series);
 
-    void buildString(bool withType=true);
+    void buildString(bool withType=true, bool withLet=false);
 
     std::string toDefString(){
         return "def " + this->toString();
@@ -193,8 +203,8 @@ protected:
     std::vector<interp::Interp*> links;
     std::vector<interp::Interp*> properties;
     interp::Interp* linked;
-    interp::Interp* constructor;
     interp::Interp* container;
+    interp::Interp* constructor;
     std::shared_ptr<Location> start_location;
     std::shared_ptr<Location> end_location;
 };

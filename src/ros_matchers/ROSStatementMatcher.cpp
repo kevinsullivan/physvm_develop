@@ -81,6 +81,9 @@ void ROSStatementMatcher::setup(){
     StatementMatcher
         cxxMemberCallExpr_ = cxxMemberCallExpr().bind("CXXMemberCallExpr");
 
+    StatementMatcher
+        callExpr_ = callExpr().bind("CallExpr");
+
     //StatementMatcher
     //    functionDecl_ = functionDecl().bind("FunctionDecl");
 
@@ -95,6 +98,7 @@ void ROSStatementMatcher::setup(){
     localFinder_.addMatcher(whileStmt_, this);
     localFinder_.addMatcher(forStmt_, this);
     localFinder_.addMatcher(tryStmt_, this);
+    localFinder_.addMatcher(callExpr_, this);
     //localFinder_.addMatcher(functionDecl_, this);
     this->childExprStore_ = nullptr;
 };
@@ -116,7 +120,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
 
     const auto cmpdStmt_ = Result.Nodes.getNodeAs<clang::CompoundStmt>("CompoundStmt");
 
-    //const auto returnStmt_ = Result.Nodes.getNodeAs<clang::ReturnStmt>("ReturnStmt");
+    const auto returnStmt_ = Result.Nodes.getNodeAs<clang::ReturnStmt>("ReturnStmt");
 
     const auto whileStmt_ = Result.Nodes.getNodeAs<clang::WhileStmt>("WhileStmt");
 
@@ -127,6 +131,8 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
     const auto cxxMemberCallExpr_ = Result.Nodes.getNodeAs<clang::CXXMemberCallExpr>("CXXMemberCallExpr");
     
     //const auto functionDecl_ = Result.Nodes.getNodeAs<clang::FunctionDecl>("FunctionDecl");
+
+    const auto callExpr_ = Result.Nodes.getNodeAs<clang::CallExpr>("CallExpr");
 
     if(whileStmt_){
         auto wcond = whileStmt_->getCond();
@@ -197,233 +203,300 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
     //if(functionDecl_){
         
 
-    /*
+    
     if(returnStmt_){
         auto _expr = returnStmt_->getRetValue();
         auto typestr = ((clang::QualType)_expr->getType()).getAsString();
         if(false){}
         
-        else if (typestr == "geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped"  or typestr == "class geometry_msgs::PoseWithCovarianceStamped"  or typestr == "const class geometry_msgs::PoseWithCovarianceStamped"/*typestr.find("geometry_msgs::PoseWithCovarianceStamped") != string::npos) != string::npos){
+        else if (typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
             ROSGeometryPoseWithCovarianceStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R4X4",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped"  or typestr == "class geometry_msgs::TransformStamped"  or typestr == "const class geometry_msgs::TransformStamped"/*typestr.find("geometry_msgs::TransformStamped") != string::npos) != string::npos){
+        else if (typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
             ROSGeomTransformStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R4X4",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>"  or typestr == "class tf2::Stamped<tf2::Transform>"  or typestr == "const class tf2::Stamped<tf2::Transform>"/*typestr.find("tf2::Stamped<tf2::Transform>") != string::npos) != string::npos){
+        else if (typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
             ROSTF2TransformStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R4X4",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped"  or typestr == "class geometry_msgs::PoseStamped"  or typestr == "const class geometry_msgs::PoseStamped"/*typestr.find("geometry_msgs::PoseStamped") != string::npos) != string::npos){
+        else if (typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
             ROSGeomPoseStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R4X4",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion"  or typestr == "class geometry_msgs::Quaternion"  or typestr == "const class geometry_msgs::Quaternion"/*typestr.find("geometry_msgs::Quaternion") != string::npos) != string::npos){
+        else if (typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
             ROSGeomQuaternion m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R4",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "ros::DurationBase" or typestr == "const ros::DurationBase"  or typestr == "class ros::DurationBase"  or typestr == "const class ros::DurationBase"/*typestr.find("ros::DurationBase") != string::npos) != string::npos){
+        else if (typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
             ROSDurationBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R1",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "tf2::Quaternion" or typestr == "const tf2::Quaternion"  or typestr == "class tf2::Quaternion"  or typestr == "const class tf2::Quaternion"/*typestr.find("tf2::Quaternion") != string::npos) != string::npos){
+        else if (typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
             ROSTF2Quaternion m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R4",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "tf::Quaternion" or typestr == "const tf::Quaternion"  or typestr == "class tf::Quaternion"  or typestr == "const class tf::Quaternion"/*typestr.find("tf::Quaternion") != string::npos) != string::npos){
+        else if (typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
             ROSTFQuaternion m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R4",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "tf2::Transform" or typestr == "const tf2::Transform"  or typestr == "class tf2::Transform"  or typestr == "const class tf2::Transform"/*typestr.find("tf2::Transform") != string::npos) != string::npos){
+        else if (typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
             ROSTF2Transform m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R4X4",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "ros::TimeBase" or typestr == "const ros::TimeBase"  or typestr == "class ros::TimeBase"  or typestr == "const class ros::TimeBase"/*typestr.find("ros::TimeBase") != string::npos) != string::npos){
+        else if (typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
             ROSTimeBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R1",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "ros::Duration" or typestr == "const ros::Duration"  or typestr == "class ros::Duration"  or typestr == "const class ros::Duration"/*typestr.find("ros::Duration") != string::npos) != string::npos){
+        else if (typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
             ROSDurationMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R1",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "tf2::Duration" or typestr == "const tf2::Duration"  or typestr == "class tf2::Duration"  or typestr == "const class tf2::Duration"/*typestr.find("tf2::Duration") != string::npos) != string::npos){
+        else if (typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
             ROSTF2DurationMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R1",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "tf::Transform" or typestr == "const tf::Transform"  or typestr == "class tf::Transform"  or typestr == "const class tf::Transform"/*typestr.find("tf::Transform") != string::npos) != string::npos){
+        else if (typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
             ROSTFTransformMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R4X4",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "tf2::Vector3" or typestr == "const tf2::Vector3"  or typestr == "class tf2::Vector3"  or typestr == "const class tf2::Vector3"/*typestr.find("tf2::Vector3") != string::npos) != string::npos){
+        else if (typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
             ROSTF2Vector3Matcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R3",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "tf::Vector3" or typestr == "const tf::Vector3"  or typestr == "class tf::Vector3"  or typestr == "const class tf::Vector3"/*typestr.find("tf::Vector3") != string::npos) != string::npos){
+        else if (typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
             ROSTFVector3Matcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R3",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "ros::Time" or typestr == "const ros::Time"  or typestr == "class ros::Time"  or typestr == "const class ros::Time"/*typestr.find("ros::Time") != string::npos) != string::npos){
+        else if (typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
             ROSTimeMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R1",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "tfScalar" or typestr == "const tfScalar"  or typestr == "class tfScalar"  or typestr == "const class tfScalar"/*typestr.find("tfScalar") != string::npos) != string::npos){
+        else if (typestr == "operatortfScalar" or typestr =="tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar" or typestr == "const class tfScalar" or typestr ==  "::tfScalar_<allocator<void> >"){
             ROSTFScalarMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R1",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "double" or typestr == "const double"  or typestr == "class double"  or typestr == "const class double"/*typestr.find("double") != string::npos) != string::npos){
+        else if (typestr == "operatordouble" or typestr =="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double" or typestr ==  "::double_<allocator<void> >"){
             DoubleMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R1",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "_Bool" or typestr == "const _Bool"  or typestr == "class _Bool"  or typestr == "const class _Bool"/*typestr.find("_Bool") != string::npos) != string::npos){
+        else if (typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
             ROSBoolMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_BOOL",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "float" or typestr == "const float"  or typestr == "class float"  or typestr == "const class float"/*typestr.find("float") != string::npos) != string::npos){
+        else if (typestr == "operatorfloat" or typestr =="float" or typestr == "const float" or typestr == "class float" or typestr == "const class float" or typestr ==  "::float_<allocator<void> >"){
             FloatMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R1",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "bool" or typestr == "const bool"  or typestr == "class bool"  or typestr == "const class bool"/*typestr.find("bool") != string::npos) != string::npos){
+        else if (typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
             ROSBooleanMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_BOOL",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-        else if (typestr == "void" or typestr == "const void"  or typestr == "class void"  or typestr == "const class void"/*typestr.find("void") != string::npos) != string::npos){
+        else if (typestr == "operatorvoid" or typestr =="void" or typestr == "const void" or typestr == "class void" or typestr == "const class void" or typestr ==  "::void_<allocator<void> >"){
             VoidMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
             if(m.getChildExprStore()){
-                this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_Void",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
             }
             return;
         }
             
-    }*/
+        return;//no reason for control to fall thru?
+    }
 
     if(cmpdStmt_){
         std::vector<const clang::Stmt*> stmts;
@@ -3163,6 +3236,220 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             this->childExprStore_ = (clang::Stmt*)tryStmt_;//const_cast<clang::Stmt*>(innerMatcher.getChildExprStore());
             interp_->buffer_operand(innerMatcher.getChildExprStore());
             interp_->mkNode("TRY_STMT",tryStmt_);//,innerMatcher.getChildExprStore());
+            return;
+        }
+    }
+    else if(callExpr_){
+        auto func_ = callExpr_->getDirectCallee();
+        if(interp_->checkFuncExists(func_)){
+            std::vector<const clang::Stmt*> operands_;
+            for(auto arg : callExpr_->arguments()){
+                std::string typestr = "";
+                if(false){}
+    
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+                    ROSGeometryPoseWithCovarianceStamped m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                    ROSGeomTransformStamped m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,false);
+                if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+                    ROSTF2TransformStamped m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                    ROSGeomPoseStamped m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+                    ROSGeomQuaternion m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+                    ROSDurationBaseMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
+                    ROSTF2Quaternion m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
+                    ROSTFQuaternion m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
+                    ROSTF2Transform m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+                    ROSTimeBaseMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
+                    ROSDurationMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
+                    ROSTF2DurationMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
+                    ROSTFTransformMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
+                    ROSTF2Vector3Matcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
+                    ROSTFVector3Matcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
+                    ROSTimeMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortfScalar" or typestr =="tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar" or typestr == "const class tfScalar" or typestr ==  "::tfScalar_<allocator<void> >"){
+                    ROSTFScalarMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatordouble" or typestr =="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double" or typestr ==  "::double_<allocator<void> >"){
+                    DoubleMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
+                    ROSBoolMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorfloat" or typestr =="float" or typestr == "const float" or typestr == "class float" or typestr == "const class float" or typestr ==  "::float_<allocator<void> >"){
+                    FloatMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
+                    ROSBooleanMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatorvoid" or typestr =="void" or typestr == "const void" or typestr == "class void" or typestr == "const class void" or typestr ==  "::void_<allocator<void> >"){
+                    VoidMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+            }
+            interp_->buffer_link(func_);
+            interp_->buffer_operands(operands_);
+            interp_->mkFunctionCall(callExpr_,true);
+            this->childExprStore_ = (clang::Stmt*)callExpr_;
             return;
         }
     }

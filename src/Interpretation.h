@@ -89,6 +89,19 @@ public:
         return mkFunctionWithReturn(nodeRef, ast::mkContainer(node));
     }
 
+    bool tryMkCallExpr(std::shared_ptr<ast::NodeContainer> astNode);
+
+    void mkFunctionCall(std::shared_ptr<ast::NodeContainer> astNode, bool capture = false);
+
+    void mkFunctionCall(ast::Stmt* node, bool capture= false){
+        return mkFunctionCall(ast::mkContainer(node));
+    };
+
+    bool checkFuncExists(std::shared_ptr<ast::NodeContainer> astNode);
+    bool checkFuncExists(ast::FuncDecl* node){
+        return checkFuncExists(ast::mkContainer(node));
+    };
+
 	void mkNode(std::string internalNodeType, ast::Stmt* node, bool capture=false, bool isAST = false){
         mkNode(internalNodeType,ast::mkContainer(node),capture,isAST);
     };
