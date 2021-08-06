@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- Revolute-Revolute Manipulator -->
+<robot name="rrbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Used for fixing robot to Gazebo 'base_link' -->
+  <link name="world"/>
+
+  <joint name="wtobl" type="fixed">
+    <parent link="world"/>
+    <child link="baselink"/>
+  </joint>
+
+  <!-- Base Link -->
+  <link name="baselink">
+    <collision>
+      <origin xyz="1 1 1" rpy="0 0 0"/>
+      <geometry>
+  <box size="${width} ${width} ${height1}"/>
+      </geometry>
+    </collision>
+  </link>
+</robot>
