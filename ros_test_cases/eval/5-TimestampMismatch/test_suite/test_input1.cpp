@@ -10,48 +10,36 @@
 //#include "nav_msgs/MapMetaData.h"
 //#include "nav_msgs/OccupancyGrid.h"
 //#include "nav_msgs/GetMap.h"
-
-
+#include <kdl_parser/kdl_parser.hpp>
+#include <robot_state_publisher/robot_state_publisher.h>
+#include <urdf/Model.h>
 #include <cmath>
+#include <chrono>
+#include <threading>
 /*
 When looking up a transform, if there is a static transform available between two frames, 
 it may assign a timestamp of 0 to the resulting pose, which may indicate that the transform 
 is old, but is misleading to consumers of this pose, as it is technically using a recent 
 (and old, concurrently) version of the transform.
 */
+void publish_world_to_baselink(){
+    KDL::Tree servotree;
+    urdf::Model servomodel;
+    servomodel.initFile("/peirce/ros_test_cases/eval/5-TimestampMismatch/test_suite/test_urdf.xacro");
+    kdl_parser::treeFromUrdfModel(servomodel,servotree);
+    robot_state_publisher::RobotStatePublisher servopub(servotree);
+
+    while(true){
+        servopub.publishFixedTransforms();
+        std::this_thread->sleep_for(5000ms);
+    }
+};
+
+
 int main(int argc, char **argv){
-    //ros::init(argc, argv, " ");
-    //ros::NodeHandle node;  
+    ros::init(argc, argv, " ");
+    ros::NodeHandle node;  
 
-    /*
-    236-241
-    try
-    {
-      geometry_msgs::TransformStamped target_to_planning_frame = transform_buffer_.lookupTransform(
-          planning_frame_, target_pose_.header.frame_id, ros::Time(0), ros::Duration(0.1));
-      tf2::doTransform(target_pose_, target_pose_, target_to_planning_frame);
-    }
-3
-
-    206-210
-    bool PoseTracking::haveRecentTargetPose(const double timespan)
-    {
-    std::lock_guard<std::mutex> lock(target_pose_mtx_);
-    return ((ros::Time::now() - target_pose_.header.stamp).toSec() < timespan);
-    }
-
-    85-93
-    while ((!haveRecentTargetPose(target_pose_timeout) || !haveRecentEndEffectorPose(target_pose_timeout)) &&
-         ((ros::Time::now() - start_time).toSec() < target_pose_timeout))
-    {
-        if (servo_->getCommandFrameTransform(command_frame_transform_))
-        {
-        command_frame_transform_stamp_ = ros::Time::now();
-        }
-        ros::Duration(0.001).sleep();
-    }
-    */
-    
     //Declare world time space, world space, base link space
 
     //Add a global time series 

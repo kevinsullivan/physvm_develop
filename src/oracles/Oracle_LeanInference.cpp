@@ -728,7 +728,7 @@ void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
             //std::cout<<interp_->toString()<<"\n";
             //std::cout<<interp_->getCoords()->getNodeType()<<" "<<start->toString()<<" "<<end->toString()<<"\n";
             bool found = false;
-            for(int i = 0;i<beginLines.size();i++)
+            for(auto i = 0;i<beginLines.size();i++)
             {
                 if(
                     start->getLine() == beginLines[i] and
@@ -759,7 +759,7 @@ void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
         auto end = interp_->getEndLocation();
         if (start != nullptr and end != nullptr)
         {
-            for(int i = 0;i<beginLines.size();i++)
+            for(auto i = 0;i<beginLines.size();i++)
             {
                 if(
                     start->getLine() == beginLines[i] and
@@ -773,7 +773,7 @@ void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
         }
     }
 
-    for(int i = 0 ;i<this->all_nodes.size();i++){
+    for(auto i = 0 ;i<this->all_nodes.size();i++){
         //std::cout<<"RES"<<i<<this->all_nodes[i]->getCoords()->getNodeType()<<"\n";
         //std::cout<<this->all_nodes[i]->toString()<<"\n";
        // if(this->all_interpretations[i]){
@@ -792,7 +792,7 @@ void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
             //std::cout<<lhs_->getCoords()->getNodeType()<<" "<<lhs_->toString()<<"\n"<<rhs_->getCoords()->getNodeType()<<" "<<rhs_->toString()<<"\n";
             int lhsloc;
             //std::cout<<"CHECK FOR "<<interp_->toString();
-            for(int i = 0 ; i < this->all_nodes.size();i++)
+            for(auto i = 0 ; i < this->all_nodes.size();i++)
             {
                 auto interp__ = this->all_nodes[i];
                 if(lhs_ == interp__)
@@ -801,7 +801,7 @@ void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
             //std::cout<<"LHS LOC!!"<<lhsloc<<"\n";
             //std::cout<<this->all_nodes[lhsloc]->getCoords()->getNodeType()<<" "<<this->all_nodes[lhsloc]->toString()<<"\n";
 
-            for(int i = 0 ; i < this->all_nodes.size();i++)
+            for(auto i = 0 ; i < this->all_nodes.size();i++)
             {
                 auto interp__ = this->all_nodes[i];
                 if(rhs_ == interp__){
@@ -829,14 +829,14 @@ void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
                 }
             }
             lhsloc = -1;
-            for(int i = 0 ; i < this->ordered_nodes.size();i++)
+            for(auto i = 0 ; i < this->ordered_nodes.size();i++)
             {
                 auto interp__ = this->ordered_nodes[i];
                 if(lhs_ == interp__)
                     lhsloc = i;
             }
             if (lhsloc > -1){
-                for(int i = 0 ; i < this->ordered_nodes.size();i++)
+                for(auto i = 0 ; i < this->ordered_nodes.size();i++)
                 {
                     auto interp__ = this->ordered_nodes[i];
                     if(rhs_ == interp__){
@@ -868,7 +868,7 @@ void Oracle_LeanInference::buildInterpretations(std::string peirceOutputName){
         }
     }
 
-    for(int i = 0 ;i<this->all_nodes.size();i++){
+    for(auto i = 0 ;i<this->all_nodes.size();i++){
         //std::cout<<"RES"<<i<<this->all_nodes[i]->getCoords()->getNodeType()<<"\n";
         //std::cout<<this->all_nodes[i]->toString()<<"\n";
         if(this->all_interpretations[i]){

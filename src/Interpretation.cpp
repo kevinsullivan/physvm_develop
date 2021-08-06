@@ -173,6 +173,35 @@ void Interpretation::mkFunctionWithReturn(std::string nodeRef, std::shared_ptr<a
     this->functions_with_return.push_back(coords_);
 };
 
+bool Interpretation::tryMkCallExpr(std::shared_ptr<ast::NodeContainer> astNode){
+    auto func = this->link;
+    auto link_coords = this->ast2coords_->getCoords(this->link);
+
+    if(link_coords){
+        std::cout<<"found function!!!";
+        this->mkNode(std::string("CALL_")+link_coords->getNodeType(),astNode);
+        return true;
+    }
+    else 
+        return false;
+};
+
+
+void Interpretation::mkFunctionCall(std::shared_ptr<ast::NodeContainer> astNode, bool capture){
+    auto func = this->link;
+    auto link_coords = this->ast2coords_->getCoords(this->link);
+
+    this->mkNode(std::string("CALL_")+link_coords->getNodeType(),astNode);
+
+};
+
+bool Interpretation::checkFuncExists(std::shared_ptr<ast::NodeContainer> astNode){
+    auto link_coords = this->ast2coords_->getCoords(astNode);
+
+
+    return link_coords;
+};
+
 
 void Interpretation::printChoices(){
     aFile* f = new aFile;
@@ -350,7 +379,7 @@ void Interpretation::interpretFunctions(){
         switch(choice)
         {
             case 0:{
-                printConstructorTable();
+                printFunctionTable();
             } break;
             case 1:{
                 return;

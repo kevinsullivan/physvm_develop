@@ -35,11 +35,11 @@ LD := clang++
 TAR := tar
 
 # C flags
-CFLAGS := -O0 -g -Wall -Wextra -Wno-unknown-warning-option -Wno-unused-command-line-argument -Wno-unused-private-field -Wno-unused-value -Wno-reorder -Wno-sign-compare -Wno-unused-variable
+CFLAGS := -O0 -g -Wall -Wextra -Wno-unknown-warning-option -Wno-unused-command-line-argument# -Wno-unknown-warning-option -Wno-unused-command-line-argument -Wno-unused-private-field -Wno-unused-value -Wno-reorder -Wno-sign-compare -Wno-unused-variable
 # C++ flags
-CXXFLAGS := -O0 -g -Wall -Wextra -Wno-unknown-warning-option -Wno-unused-command-line-argument -Wno-unused-private-field -Wno-unused-value -Wno-reorder -Wno-sign-compare -Wno-unused-variable
+CXXFLAGS := -O0 -g -Wall -Wextra  -Wno-unknown-warning-option -Wno-unused-command-line-argument# -Wno-unknown-warning-option -Wno-unused-command-line-argument -Wno-unused-private-field -Wno-unused-value -Wno-reorder -Wno-sign-compare -Wno-unused-variable
 # C/C++ flags
-CPPFLAGS := -Wno-unused-variable
+CPPFLAGS := #-Wno-unused-variable
 # Clang C++ flags
 LLVM_CXXFLAGS := `llvm-config --cxxflags`
 
