@@ -202,6 +202,9 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
         std::string scalar_str("scalar_expr");
         type_.erase(std::remove(type_.begin(), type_.end(), '\''), type_.end());
         type_ = type_.substr(std::string("⊢ ").length());
+        if(type_.find("list ") != string::npos){
+            type_ = type_.substr(std::string("list ").length());
+        }
         //std::cout<<"TRY MATCH TYPE:"<<type_<<"\n";
         if(type_.find(time_str) != string::npos){
             //return nullptr;
