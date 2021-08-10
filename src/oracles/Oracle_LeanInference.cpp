@@ -200,7 +200,9 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
 
         std::string scalar_str("scalar_expr");
         type_.erase(std::remove(type_.begin(), type_.end(), '\''), type_.end());
-        type_ = type_.substr(type_.find("⊢") + std::string("⊢ ").length());
+
+        while(type_.find("⊢") != string::npos)
+            type_ = type_.substr(type_.find("⊢") + std::string("⊢ ").length());
         if(type_.find("list ") != string::npos){
             type_ = type_.substr(std::string("list ").length());
         }
@@ -246,11 +248,9 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
             auto codname = trim(domcodsub.substr(domcodsub.find(' ')));
 
             auto spaces = domain_->getTimeSpaces();
-            //std::cout<<"SIZE OF TIME SPACES??"<<spaces.size()<<"\n";
             auto domsp = spaces[0]; //fairly safely assume it's not empty
             auto codsp = spaces[0];
             for(auto sp_ : spaces){
-                //std::cout<<"sp???"<<sp_->getName()<<"\n";
                 if(sp_->getName() == domname){
                     domsp = sp_;
                 }

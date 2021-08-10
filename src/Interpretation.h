@@ -245,6 +245,7 @@ public:
     void interpretConstructors();
     void printFunctionTable();
     void interpretFunctions();
+    void clearInferredInterpretations();
     void performInference();
 	void interpretProgram();//central loop to interact with human
 
