@@ -37,3 +37,8 @@ cd Peirce-vscode-api
 git checkout master
 git pull origin master
 cd ..
+
+cd math
+git checkout master
+git pull origin master
+cd ..
