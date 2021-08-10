@@ -101,28 +101,28 @@ public:
     }*/
 
     StandardTimeCoordinateSpace* mkStandardTimeCoordinateSpace(string name);
-    DerivedTimeCoordinateSpace* mkDerivedTimeCoordinateSpace(string name, TimeCoordinateSpace* parent, float* originData, float** basisData);
+    DerivedTimeCoordinateSpace* mkDerivedTimeCoordinateSpace(string name, TimeCoordinateSpace* parent, std::string* originData, std::string** basisData);
 
     StandardGeom1DCoordinateSpace* mkStandardGeom1DCoordinateSpace(string name);
-    DerivedGeom1DCoordinateSpace* mkDerivedGeom1DCoordinateSpace(string name, Geom1DCoordinateSpace* parent, float* originData, float** basisData);
+    DerivedGeom1DCoordinateSpace* mkDerivedGeom1DCoordinateSpace(string name, Geom1DCoordinateSpace* parent, std::string* originData, std::string** basisData);
 
     StandardGeom3DCoordinateSpace* mkStandardGeom3DCoordinateSpace(string name);
-    DerivedGeom3DCoordinateSpace* mkDerivedGeom3DCoordinateSpace(string name, Geom3DCoordinateSpace* parent, float* originData, float** basisData);
+    DerivedGeom3DCoordinateSpace* mkDerivedGeom3DCoordinateSpace(string name, Geom3DCoordinateSpace* parent, std::string* originData, std::string** basisData);
 
-    Scalar* mkScalar(string name, float* value);
+    Scalar* mkScalar(string name, std::string* value);
 
-    Duration* mkDuration(string name, TimeCoordinateSpace* parent, float* value);
-    Time* mkTime(string name, TimeCoordinateSpace* parent, float* value);
+    Duration* mkDuration(string name, TimeCoordinateSpace* parent, std::string* value);
+    Time* mkTime(string name, TimeCoordinateSpace* parent, std::string* value);
     TimeTransform* mkTimeTransform(string name, TimeCoordinateSpace* domain_, TimeCoordinateSpace* codomain_); 
 
-    Displacement1D* mkDisplacement1D(string name, Geom1DCoordinateSpace* parent, float* value);
-    Position1D* mkPosition1D(string name, Geom1DCoordinateSpace* parent, float* value);
+    Displacement1D* mkDisplacement1D(string name, Geom1DCoordinateSpace* parent, std::string* value);
+    Position1D* mkPosition1D(string name, Geom1DCoordinateSpace* parent, std::string* value);
     Geom1DTransform* mkGeom1DTransform(string name, Geom1DCoordinateSpace* domain_, Geom1DCoordinateSpace* codomain_); 
 
-    Displacement3D* mkDisplacement3D(string name, Geom3DCoordinateSpace* parent, float* value);
-    Position3D* mkPosition3D(string name, Geom3DCoordinateSpace* parent, float* value);
-    Orientation3D* mkOrientation3D(string name, Geom3DCoordinateSpace* parent, float* value);
-    Rotation3D* mkRotation3D(string name, Geom3DCoordinateSpace* parent, float* value);
+    Displacement3D* mkDisplacement3D(string name, Geom3DCoordinateSpace* parent, std::string* value);
+    Position3D* mkPosition3D(string name, Geom3DCoordinateSpace* parent, std::string* value);
+    Orientation3D* mkOrientation3D(string name, Geom3DCoordinateSpace* parent, std::string* value);
+    Rotation3D* mkRotation3D(string name, Geom3DCoordinateSpace* parent, std::string* value);
     Pose3D* mkPose3D(string name, Geom3DCoordinateSpace* parent, Orientation3D* orientation_, Position3D* position_);
     Geom3DTransform* mkGeom3DTransform(string name, Geom3DCoordinateSpace* domain_, Geom3DCoordinateSpace* codomain_); 
 
@@ -291,36 +291,36 @@ public:
         delete basisData;
     };
     DerivedSpace(){
-        originData = new float[Dimension];
-        basisData = new float*[Dimension];
+        originData = new string[Dimension];
+        basisData = new std::string*[Dimension];
         for(int i = 0;i<Dimension;i++)
-            basisData[i] = new float[Dimension];
+            basisData[i] = new string[Dimension];
     }
     DerivedSpace(CoordinateSpace* parentSpace_) : DerivedSpace() {
         parentSpace = parentSpace_;
     };
-    DerivedSpace(CoordinateSpace* parentSpace_, float* originData_, float** basisData_) 
+    DerivedSpace(CoordinateSpace* parentSpace_, std::string* originData_, std::string** basisData_) 
         : DerivedSpace(parentSpace_){
         originData = originData_;
         basisData = basisData_;
         //setOrigin(originData_);
         //setBasis(basisData_);
     };
-    DerivedSpace(float* originData_, float** basisData_) : DerivedSpace() {
+    DerivedSpace(std::string* originData_, std::string** basisData_) : DerivedSpace() {
         originData = originData;
         basisData = basisData_;
         //setOrigin(originData_);
         //setBasis(basisData_);
     };
 
-    float* getOrigin() const { return originData; };//work on this
-    float** getBasis() const { return basisData; };
-    void setOrigin(float* originData_){
+    std::string* getOrigin() const { return originData; };//work on this
+    std::string** getBasis() const { return basisData; };
+    void setOrigin(std::string* originData_){
         for(auto i = 0;i<Dimension;i++){
             originData[i] = originData_[i];
         }
     };
-    void setBasis(float** basisData_){
+    void setBasis(std::string** basisData_){
         for(auto i = 0;i<Dimension;i++){
             for(auto j = 0;j<Dimension;j++){
                 basisData[i][j] = basisData_[i][j];
@@ -330,8 +330,8 @@ public:
 
     CoordinateSpace* getParent() const { return parentSpace; }
 protected:
-    float* originData;
-    float** basisData;
+    std::string* originData;
+    std::string** basisData;
     CoordinateSpace* parentSpace;
 };
 
@@ -355,14 +355,14 @@ private:
 class DerivedTimeCoordinateSpace : public TimeCoordinateSpace, public DerivedSpace<1> {
 public:
     DerivedTimeCoordinateSpace(std::string name, 
-        TimeCoordinateSpace* parentSpace_, float* originData, float** basisData)
+        TimeCoordinateSpace* parentSpace_, std::string* originData, std::string** basisData)
         : TimeCoordinateSpace(name), DerivedSpace<1>(parentSpace_,originData, basisData){};//, parentSpace(parentSpace_) {};
     TimeCoordinateSpace* getParent() const {
         return dynamic_cast<TimeCoordinateSpace*>(DerivedSpace::getParent());
     }
     virtual std::string toString() const override{
         return TimeCoordinateSpace::getName() + " DerivedTimeCoordinateSpace(parent:" 
-            + this->getParent()->getName() + ",origin:" + std::to_string(originData[0]) + ",basis:" + std::to_string(basisData[0][0]) + ")";
+            + this->getParent()->getName() + ",origin:" + originData[0] + ",basis:" + basisData[0][0] + ")";
     };
 
 private:
@@ -390,14 +390,14 @@ private:
 class DerivedGeom1DCoordinateSpace : public Geom1DCoordinateSpace, public DerivedSpace<1> {
 public:
     DerivedGeom1DCoordinateSpace(std::string name, 
-        Geom1DCoordinateSpace* parentSpace_, float* originData, float** basisData)
+        Geom1DCoordinateSpace* parentSpace_, std::string* originData, std::string** basisData)
         : Geom1DCoordinateSpace(name), DerivedSpace<1>(parentSpace_,originData, basisData){};//, parentSpace(parentSpace_) {};
     Geom1DCoordinateSpace* getParent() const {
         return dynamic_cast<Geom1DCoordinateSpace*>(DerivedSpace::getParent());
     }
     virtual std::string toString() const override{
         return Geom1DCoordinateSpace::getName() + " DerivedGeom1DCoordinateSpace(parent:" 
-            + this->getParent()->getName() + ",origin:" + std::to_string(originData[0]) + ",basis:" + std::to_string(basisData[0][0]) + ")";
+            + this->getParent()->getName() + ",origin:" + originData[0] + ",basis:" + basisData[0][0] + ")";
     };
 
 private:
@@ -425,14 +425,14 @@ private:
 class DerivedGeom3DCoordinateSpace : public Geom3DCoordinateSpace, public DerivedSpace<3> {
 public:
     DerivedGeom3DCoordinateSpace(std::string name, 
-        Geom3DCoordinateSpace* parentSpace_, float* originData, float** basisData)
+        Geom3DCoordinateSpace* parentSpace_, std::string* originData, std::string** basisData)
         : Geom3DCoordinateSpace(name), DerivedSpace<3>(parentSpace_,originData, basisData){};//, parentSpace(parentSpace_) {};
     Geom3DCoordinateSpace* getParent() const {
         return dynamic_cast<Geom3DCoordinateSpace*>(DerivedSpace::getParent());
     }
     virtual std::string toString() const override{
         return Geom3DCoordinateSpace::getName() + " DerivedGeom3DCoordinateSpace(parent:" 
-            + this->getParent()->getName() + ",origin:" + std::to_string(originData[0]) + ",basis:" + std::to_string(basisData[0][0]) + ")";
+            + this->getParent()->getName() + ",origin:" + originData[0] + ",basis:" + basisData[0][0] + ")";
     };
 
 private:
@@ -454,30 +454,30 @@ protected:
 
 class Duration : public DomainObject {
 public:
-    Duration(std::string name_, TimeCoordinateSpace* sp, float* value_) 
+    Duration(std::string name_, TimeCoordinateSpace* sp, std::string* value_) 
         : DomainObject(name_), space(sp), value(value_) {};
     virtual std::string toString() const override {
-        return this->getName() + " " + std::string("Duration(") + space->getName() + "," + std::to_string(value[0]) + ")"; 
+        return this->getName() + " " + std::string("Duration(") + space->getName() + "," + value[0] + ")"; 
     };
     virtual TimeCoordinateSpace* getSpace() const { return space; };
-    virtual float* getValue() const { return value; };
+    virtual std::string* getValue() const { return value; };
 private:
     TimeCoordinateSpace* space;
-    float* value;
+    std::string* value;
 };
 
 class Time : public DomainObject {
 public:
-    Time(std::string name_, TimeCoordinateSpace* sp, float* value_) 
+    Time(std::string name_, TimeCoordinateSpace* sp, std::string* value_) 
         : DomainObject(name_), space(sp), value(value_) {};
     virtual std::string toString() const override {
-        return this->getName() + " " + std::string("Time(") + space->getName() + "," + std::to_string(value[0]) + ")"; 
+        return this->getName() + " " + std::string("Time(") + space->getName() + "," + value[0] + ")"; 
     };
     virtual TimeCoordinateSpace* getSpace() const { return space; };
-    virtual float* getValue() const { return value; };
+    virtual std::string* getValue() const { return value; };
 private:
     TimeCoordinateSpace* space;
-    float* value;
+    std::string* value;
 };
 
 //for casting
@@ -517,7 +517,7 @@ public:
         }
     };
     virtual std::string toString() const override {
-        return std::string("SeriesIndex(" + series->getName() +',' + (latest?"Most Recent Value":std::to_string(time->getValue()[0])) + ")");
+        return std::string("SeriesIndex(" + series->getName() +',' + (latest?"Most Recent Value":time->getValue()[0]) + ")");
     };
     TimeSeries* getSeries() const { return series;}
     Time* getTime() const { return time;}
@@ -556,96 +556,96 @@ protected:
 
 class Displacement1D : public DomainObject {
 public:
-    Displacement1D(std::string name_, Geom1DCoordinateSpace* sp, float* value_) 
+    Displacement1D(std::string name_, Geom1DCoordinateSpace* sp, std::string* value_) 
         : DomainObject(name_), space(sp), value(value_) {};
     virtual std::string toString() const override {
-        return this->getName() + " " + std::string("Displacement1D(") + space->getName() + "," + std::to_string(value[0]) + ")"; 
+        return this->getName() + " " + std::string("Displacement1D(") + space->getName() + "," + value[0] + ")"; 
     };
     virtual Geom1DCoordinateSpace* getSpace() const { return space; };
-    virtual float* getValue() const { return value; };
+    virtual std::string* getValue() const { return value; };
 private:
     Geom1DCoordinateSpace* space;
-    float* value;
+    std::string* value;
 };
 
 class Position1D : public DomainObject {
 public:
-    Position1D(std::string name_, Geom1DCoordinateSpace* sp, float* value_) 
+    Position1D(std::string name_, Geom1DCoordinateSpace* sp, std::string* value_) 
         : DomainObject(name_), space(sp), value(value_) {};
     virtual std::string toString() const override {
-        return this->getName() + " " + std::string("Position1D(") + space->getName() + "," + std::to_string(value[0]) + ")"; 
+        return this->getName() + " " + std::string("Position1D(") + space->getName() + "," + value[0] + ")"; 
     };
     virtual Geom1DCoordinateSpace* getSpace() const { return space; };
-    virtual float* getValue() const { return value; };
+    virtual std::string* getValue() const { return value; };
 private:
     Geom1DCoordinateSpace* space;
-    float* value;
+    std::string* value;
 };
 
 class Displacement3D : public DomainObject {
 public:
-    Displacement3D(std::string name_, Geom3DCoordinateSpace* sp, float* value_) 
+    Displacement3D(std::string name_, Geom3DCoordinateSpace* sp, std::string* value_) 
         : DomainObject(name_), space(sp), value(value_) {};
     virtual std::string toString() const override {
-        return this->getName() + " " + std::string("Displacement3D(") + space->getName() + "," + std::to_string(value[0]) + ")"; 
+        return this->getName() + " " + std::string("Displacement3D(") + space->getName() + "," + value[0] + ")"; 
     };
     virtual Geom3DCoordinateSpace* getSpace() const { return space; };
-    virtual float* getValue() const { return value; };
+    virtual std::string* getValue() const { return value; };
 private:
     Geom3DCoordinateSpace* space;
-    float* value;
+    std::string* value;
 };
 
 class Position3D : public DomainObject {
 public:
-    Position3D(std::string name_, Geom3DCoordinateSpace* sp, float* value_) 
+    Position3D(std::string name_, Geom3DCoordinateSpace* sp, std::string* value_) 
         : DomainObject(name_), space(sp), value(value_) {};
     virtual std::string toString() const override {
         return this->getName() + " " + std::string(
             "Position3D(") + space->getName() + "," 
-            + std::to_string(value[0])+ "," + std::to_string(value[1]) + "," + std::to_string(value[2]) + ")"; 
+            + value[0] + "," + value[1] + "," + value[2] + ")"; 
     };
     virtual Geom3DCoordinateSpace* getSpace() const { return space; };
-    virtual float* getValue() const { return value; };
+    virtual std::string* getValue() const { return value; };
 private:
     Geom3DCoordinateSpace* space;
-    float* value;
+    std::string* value;
 };
 
 enum class OrientationFormat { EulerAngle, Quaternion, Basis };
 class Rotation3D : public DomainObject {
 public:
-    Rotation3D(std::string name_, Geom3DCoordinateSpace* sp, float* value_) 
+    Rotation3D(std::string name_, Geom3DCoordinateSpace* sp, std::string* value_) 
         : DomainObject(name_), space(sp), value(value_) {};
     virtual std::string toString() const override {
         return this->getName() + " " + std::string(
             "Rotation3D(") + space->getName() + "," 
-            + std::to_string(value[0])+ "," + std::to_string(value[1]) + "," + std::to_string(value[2]) + "," 
-            + std::to_string(value[3])+ "," + std::to_string(value[4]) + "," + std::to_string(value[5]) + "," 
-            + std::to_string(value[6])+ "," + std::to_string(value[7]) + "," + std::to_string(value[8]) + ")"; 
+            + value[0] + "," + value[1] + "," + value[2] + "," 
+            + value[3] + "," + value[4] + "," + value[5] + "," 
+            + value[6] + "," + value[7] + "," + value[8] + ")"; 
     };
     virtual Geom3DCoordinateSpace* getSpace() const { return space; };
-    virtual float* getValue() const { return value; };
+    virtual std::string* getValue() const { return value; };
 private:
     Geom3DCoordinateSpace* space;
-    float* value;
+    std::string* value;
 };
 class Orientation3D : public DomainObject {
 public:
-    Orientation3D(std::string name_, Geom3DCoordinateSpace* sp, float* value_) 
+    Orientation3D(std::string name_, Geom3DCoordinateSpace* sp, std::string* value_) 
         : DomainObject(name_), space(sp), value(value_) {};
     virtual std::string toString() const override {
         return this->getName() + " " + std::string(
             "Orientation3D(") + space->getName() + "," 
-            + std::to_string(value[0])+ "," + std::to_string(value[1]) + "," + std::to_string(value[2]) + "," 
-            + std::to_string(value[3])+ "," + std::to_string(value[4]) + "," + std::to_string(value[5]) + "," 
-            + std::to_string(value[6])+ "," + std::to_string(value[7]) + "," + std::to_string(value[8]) + ")"; 
+            + value[0] + "," + value[1] + "," + value[2] + "," 
+            + value[3] + "," + value[4] + "," + value[5] + "," 
+            + value[6] + "," + value[7] + "," + value[8] + ")"; 
     };
     virtual Geom3DCoordinateSpace* getSpace() const { return space; };
-    virtual float* getValue() const { return value; };
+    virtual std::string* getValue() const { return value; };
 private :
     Geom3DCoordinateSpace* space;
-    float* value;
+    std::string* value;
 };
 class Pose3D : public DomainObject {
 public:
@@ -693,14 +693,14 @@ private:
 
 class Scalar : public DomainObject {
 public:
-    Scalar(std::string name_, float* value_)
+    Scalar(std::string name_, std::string* value_)
         : DomainObject(name_), value(value_) {};
     virtual std::string toString() const override {
-        return this->getName() + " " + std::string("Scalar(") + std::to_string(value[0]) + ")"; 
+        return this->getName() + " " + std::string("Scalar(") + value[0] + ")"; 
     };
-    virtual float* getValue() const { return value; };
+    virtual std::string* getValue() const { return value; };
 private:
-    float* value;
+    std::string* value;
 };
 
 class TimeTransform : public CoordinateSpaceTransform {

@@ -87,19 +87,6 @@ aFile* openFile(std::string fname) {
 
 void generateMath(aFile* f, interp::Interpretation* interp) {
     std::string math = interp->toStringAST();
-    //math += "import .lang.imperative_DSL.physlang\n\n";
-    //math += "noncomputable theory\n\n";
-    //math += interp->toString_Spaces();
-    //math += interp->toString_PROGRAMs();
-   // math += interp->toString_COMPOUND_STMTs();
-    //math += interp->toString_ScalarDefs();
-    //math += interp->toString_Defs();
-    //math += interp->toString_TransformDefs();
-    //math += interp->toString_Assigns();
-    //math += interp->toString_ScalarAssigns();
-    //math += interp->toString_TransformAssigns();
-    //LOG(DEBUG) << "Checker::generateMath generated this: \n"
-    //           << math << "\n";
     fputs(math.c_str(), f->file);
     fclose(f->file);
 }

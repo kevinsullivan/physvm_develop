@@ -9,6 +9,7 @@
 #include "ROSTFScalarMatcher.h"
 #include "ROSTimeMatcher.h"
 #include "ROSTimeBaseMatcher.h"
+#include "ROSDurationBaseMatcher.h"
 #include "ROSDurationMatcher.h"
 #include "ROSDurationBaseMatcher.h"
 #include "ROSTFVector3Matcher.h"
@@ -59,6 +60,9 @@ void ROSGeomPoseStamped::setup(){
 		StatementMatcher cxxFunctionalCastExpr_=cxxFunctionalCastExpr().bind("CXXFunctionalCastExpr");
 		localFinder_.addMatcher(cxxFunctionalCastExpr_,this);
 	
+		StatementMatcher cxxOperatorCallExpr_=cxxOperatorCallExpr().bind("CXXOperatorCallExpr");
+		localFinder_.addMatcher(cxxOperatorCallExpr_,this);
+	
 		StatementMatcher declRefExpr_=declRefExpr().bind("DeclRefExpr");
 		localFinder_.addMatcher(declRefExpr_,this);
     this->childExprStore_ = nullptr;
@@ -86,6 +90,8 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
 	
 	auto cxxFunctionalCastExpr_ = Result.Nodes.getNodeAs<clang::CXXFunctionalCastExpr>("CXXFunctionalCastExpr");
 	
+	auto cxxOperatorCallExpr_ = Result.Nodes.getNodeAs<clang::CXXOperatorCallExpr>("CXXOperatorCallExpr");
+	
 	auto declRefExpr_ = Result.Nodes.getNodeAs<clang::DeclRefExpr>("DeclRefExpr");
     std::unordered_map<std::string,std::function<bool(std::string)>> arg_decay_exist_predicates;
     std::unordered_map<std::string,std::function<std::string(std::string)>> arg_decay_match_predicates;
@@ -111,7 +117,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["callExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typenm == "operatorPoseStamped" or typenm =="PoseStamped" or typenm == "const PoseStamped" or typenm == "class PoseStamped" or typenm == "const class PoseStamped" or typenm ==  "::PoseStamped_<allocator<void> >"){ return true; }
     else { return false; }
     };
     if(callExpr_){
@@ -123,7 +129,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                 if(false){}
     
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+                if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
                     ROSGeometryPoseWithCovarianceStamped m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -132,7 +138,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
                     ROSGeomTransformStamped m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -141,7 +147,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,false);
-                if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+                if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
                     ROSTF2TransformStamped m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -150,7 +156,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
                     ROSGeomPoseStamped m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -159,7 +165,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+                if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                     ROSGeomQuaternion m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -168,7 +174,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+                if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
                     ROSDurationBaseMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -177,7 +183,16 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
+                if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+                    ROSDurationBaseMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                     ROSTF2Quaternion m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -186,7 +201,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
+                if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                     ROSTFQuaternion m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -195,7 +210,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
+                if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                     ROSTF2Transform m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -204,7 +219,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+                if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
                     ROSTimeBaseMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -213,7 +228,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
+                if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                     ROSDurationMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -222,7 +237,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
+                if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                     ROSTF2DurationMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -231,7 +246,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
+                if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                     ROSTFTransformMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -240,7 +255,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
+                if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                     ROSTF2Vector3Matcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -249,7 +264,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
+                if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                     ROSTFVector3Matcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -258,7 +273,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
+                if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
                     ROSTimeMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -332,14 +347,14 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["memberExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
     if(false){return false;}
-		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typenm == "operatorPoseStamped" or typenm =="PoseStamped" or typenm == "const PoseStamped" or typenm == "class PoseStamped" or typenm == "const class PoseStamped" or typenm ==  "::PoseStamped_<allocator<void> >"){ return true; }
     else { return false; }
     };
     if(memberExpr_){
         auto inner = memberExpr_->getBase();
         auto typestr = this->getTypeAsString(inner,true);
         if(false){}
-        else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+        else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
             ROSGeomPoseStamped innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -352,7 +367,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["implicitCastExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){return false; }
-		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typenm == "operatorPoseStamped" or typenm =="PoseStamped" or typenm == "const PoseStamped" or typenm == "class PoseStamped" or typenm == "const class PoseStamped" or typenm ==  "::PoseStamped_<allocator<void> >"){ return true; }
         else { return false; } 
     };
 
@@ -364,431 +379,473 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
         if(false){}
         else if(hasmemb){
             while(auto memb = clang::dyn_cast<clang::MemberExpr>(inner))
-                {
-                    inner = memb->getBase();                
-                }
+            {
+                inner = memb->getBase();                
+            }
 
-                auto typestr = this->getTypeAsString(inner,true);
-                if(auto asRef = clang::dyn_cast<clang::DeclRefExpr>(inner))
-                {
-            
-                    if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+            auto typestr = this->getTypeAsString(inner,true);
+            if(auto asRef = clang::dyn_cast<clang::DeclRefExpr>(inner))
+            {
+        
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,false);
+                if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatortfScalar" or typestr =="tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar" or typestr == "const class tfScalar" or typestr ==  "::tfScalar_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatordouble" or typestr =="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double" or typestr ==  "::double_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatortfScalar" or typestr =="tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar" or typestr == "const class tfScalar" or typestr ==  "::tfScalar_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatordouble" or typestr =="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double" or typestr ==  "::double_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorfloat" or typestr =="float" or typestr == "const float" or typestr == "class float" or typestr == "const class float" or typestr ==  "::float_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorfloat" or typestr =="float" or typestr == "const float" or typestr == "class float" or typestr == "const class float" or typestr ==  "::float_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
     
-                    if(typestr == "operatorvoid" or typestr =="void" or typestr == "const void" or typestr == "class void" or typestr == "const class void" or typestr ==  "::void_<allocator<void> >"){
-                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(vardecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
-                            interp_->buffer_container(paramdecl_);
-                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
-                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
-                            return;
-                        }
-                        else {
-                            std::cout<<"Can't find declaration\n";
-                            asRef->getDecl()->dump();
-                        }
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
                     }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
+    
+                typestr = this->getTypeAsString(inner,true);
+                if(typestr == "operatorvoid" or typestr =="void" or typestr == "const void" or typestr == "class void" or typestr == "const class void" or typestr ==  "::void_<allocator<void> >"){
+                    if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(vardecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                        interp_->buffer_container(paramdecl_);
+                        this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                        interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                        return;
+                    }
+                    else {
+                        std::cout<<"Can't find declaration\n";
+                        asRef->getDecl()->dump();
+                    }
+                }
      
             }
             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -796,7 +853,9 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
             return;
 
         }
-        else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+        
+        typestr = this->getTypeAsString(inner,true);
+        if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
             ROSGeomPoseStamped innerm{this->context_,this->interp_};
             innerm.setup();
             innerm.visit(*inner);
@@ -820,7 +879,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                 if(auto asRef = clang::dyn_cast<clang::DeclRefExpr>(inner))
                 {
             
-                    if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+                    if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -839,7 +898,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                    if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -858,7 +917,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+                    if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -877,7 +936,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                    if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -896,7 +955,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+                    if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -915,7 +974,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+                    if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -934,7 +993,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
+                    if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -953,7 +1012,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
+                    if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -972,7 +1031,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
+                    if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -991,7 +1050,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+                    if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -1010,7 +1069,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
+                    if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -1029,7 +1088,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
+                    if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -1048,7 +1107,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
+                    if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -1067,7 +1126,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
+                    if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -1086,7 +1145,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
+                    if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -1105,7 +1164,26 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
                         }
                     }
     
-                    if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
+                    if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
+                        if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                            interp_->buffer_container(vardecl_);
+                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            return;
+                        }
+                        else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                            interp_->buffer_container(paramdecl_);
+                            this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
+                            interp_->mkNode("REF_R4X4",(clang::Stmt*)implicitCastExpr_);
+                            return;
+                        }
+                        else {
+                            std::cout<<"Can't find declaration\n";
+                            asRef->getDecl()->dump();
+                        }
+                    }
+    
+                    if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
                         if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
                             interp_->buffer_container(vardecl_);
                             this->childExprStore_ = (clang::Stmt*)implicitCastExpr_;
@@ -1249,7 +1327,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["cxxBindTemporaryExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){ return false; }
-		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typenm == "operatorPoseStamped" or typenm =="PoseStamped" or typenm == "const PoseStamped" or typenm == "class PoseStamped" or typenm == "const class PoseStamped" or typenm ==  "::PoseStamped_<allocator<void> >"){ return true; }
         else { return false; }
     };
     if (cxxBindTemporaryExpr_)
@@ -1270,7 +1348,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["materializeTemporaryExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typenm == "operatorPoseStamped" or typenm =="PoseStamped" or typenm == "const PoseStamped" or typenm == "class PoseStamped" or typenm == "const class PoseStamped" or typenm ==  "::PoseStamped_<allocator<void> >"){ return true; }
         else { return false; }
     };
     if (materializeTemporaryExpr_)
@@ -1292,7 +1370,7 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
 	
 	arg_decay_exist_predicates["parenExpr_geometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){return false;}
-		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ return true; }
+		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typenm == "operatorPoseStamped" or typenm =="PoseStamped" or typenm == "const PoseStamped" or typenm == "class PoseStamped" or typenm == "const class PoseStamped" or typenm ==  "::PoseStamped_<allocator<void> >"){ return true; }
         else { return false; } 
     };
     if (parenExpr_)
@@ -1345,6 +1423,685 @@ void ROSGeomPoseStamped::run(const MatchFinder::MatchResult &Result){
             }
         }
     
+	
+    if (cxxOperatorCallExpr_){
+        auto decl_ = cxxOperatorCallExpr_->getCalleeDecl();
+        if(auto dc = clang::dyn_cast<clang::NamedDecl>(decl_)){
+            auto name = dc->getNameAsString();
+            if(name == "operator="){
+
+                auto rhs = cxxOperatorCallExpr_->getArg(1);
+                ROSGeomPoseStamped rhsMatcher{ context_, interp_};
+                rhsMatcher.setup();
+                rhsMatcher.visit(*rhs);
+                    
+                auto lhs = cxxOperatorCallExpr_->getArg(0);
+                auto hasmemb = clang::dyn_cast<clang::MemberExpr>(lhs);
+                if(hasmemb){
+                    while(auto memb = clang::dyn_cast<clang::MemberExpr>(lhs))
+                    {
+                        lhs = memb->getBase();                
+                    }
+                    auto typestr = this->getTypeAsString(lhs,true);
+                    if(auto asRef = clang::dyn_cast<clang::DeclRefExpr>(lhs)){
+                
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,false);
+                        if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R4X4_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R3",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R3_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R3",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R3_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R3",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R3_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R3",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R3_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatortfScalar" or typestr =="tfScalar" or typestr == "const tfScalar" or typestr == "class tfScalar" or typestr == "const class tfScalar" or typestr ==  "::tfScalar_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatordouble" or typestr =="double" or typestr == "const double" or typestr == "class double" or typestr == "const class double" or typestr ==  "::double_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operator_Bool" or typestr =="_Bool" or typestr == "const _Bool" or typestr == "class _Bool" or typestr == "const class _Bool" or typestr ==  "::_Bool_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_BOOL",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_BOOL_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_BOOL",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_BOOL_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorfloat" or typestr =="float" or typestr == "const float" or typestr == "class float" or typestr == "const class float" or typestr ==  "::float_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_R1",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_R1_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorbool" or typestr =="bool" or typestr == "const bool" or typestr == "class bool" or typestr == "const class bool" or typestr ==  "::bool_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_BOOL",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_BOOL_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_BOOL",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_BOOL_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+            
+                        typestr = this->getTypeAsString(lhs,true);
+                        if(typestr == "operatorvoid" or typestr =="void" or typestr == "const void" or typestr == "class void" or typestr == "const class void" or typestr ==  "::void_<allocator<void> >"){
+                            if(auto vardecl_ = clang::dyn_cast<clang::VarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(vardecl_);
+                                interp_->mkNode("REF_Void",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_Void_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else if(auto paramdecl_ = clang::dyn_cast<clang::ParmVarDecl>(asRef->getDecl())){
+                                interp_->buffer_link(paramdecl_);
+                                interp_->mkNode("REF_Void",(clang::Stmt*)lhs);
+                                interp_->buffer_operand(lhs);
+                                interp_->buffer_operand(rhsMatcher.getChildExprStore());
+                                
+                                interp_->mkNode("ASSIGN_Void_AT_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                                this->childExprStore_ = (clang::Stmt*)cxxOperatorCallExpr_;
+                                return;
+                            }
+                            else {
+                                std::cout<<"Can't find declaration\n";
+                                asRef->getDecl()->dump();
+                            }
+                        }
+             
+                    }
+                }
+                else if(auto asRef = clang::dyn_cast<clang::DeclRefExpr>(lhs)){
+                    interp_->mkNode("REF_R4X4",(clang::Stmt*)lhs);
+                    interp_->buffer_operand(lhs);
+                    interp_->buffer_operand(rhs);
+                                
+                    interp_->mkNode("ASSIGN_R4X4",(clang::Stmt*)cxxOperatorCallExpr_);
+                    return;
+                }
+            }
+        }
+    }
 	
     if(declRefExpr_){
         if(auto dc = clang::dyn_cast<clang::VarDecl>(declRefExpr_->getDecl())){

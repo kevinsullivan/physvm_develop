@@ -128,7 +128,7 @@ void ROS1ProgramMatcher::setup()
                                     auto typestr = param_->getType().getAsString();
                                     if(false){}
                                  
-                                    else if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+                                    else if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R4X4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -142,7 +142,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                                    else if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R4X4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -156,7 +156,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+                                    else if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R4X4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -170,7 +170,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                                    else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R4X4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -184,7 +184,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+                                    else if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -198,7 +198,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+                                    else if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -212,7 +212,21 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
+                                    else if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+                                        //interp_->mkFunctionParam("R1", param_);
+
+                                        if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
+                                            interp_->mkNode("FUNCTION_PARAM", param_,false);
+                                            valid_params_.push_back(const_cast<clang::ParmVarDecl*>(param_));
+                                        }
+                                        else
+                                        {
+                                            std::cout << "Warning : Param is not a ParmVarDecl\n";
+                                            param_->dump();
+                                        }
+                                        //valid_params_.push_back(param_);
+                                    }
+                                    else if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -226,7 +240,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
+                                    else if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -240,7 +254,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
+                                    else if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R4X4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -254,7 +268,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+                                    else if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -268,7 +282,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
+                                    else if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -282,7 +296,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
+                                    else if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -296,7 +310,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
+                                    else if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R4X4", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -310,7 +324,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
+                                    else if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R3", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -324,7 +338,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
+                                    else if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R3", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -338,7 +352,7 @@ void ROS1ProgramMatcher::setup()
                                         }
                                         //valid_params_.push_back(param_);
                                     }
-                                    else if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
+                                    else if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
                                         //interp_->mkFunctionParam("R1", param_);
 
                                         if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(param_)){
@@ -443,22 +457,23 @@ void ROS1ProgramMatcher::setup()
                             auto typenm = retType.getAsString();
                             if(false){}
                         
-							else if(typenm == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typenm =="geometry_msgs::PoseWithCovarianceStamped" or typenm == "const geometry_msgs::PoseWithCovarianceStamped" or typenm == "class geometry_msgs::PoseWithCovarianceStamped" or typenm == "const class geometry_msgs::PoseWithCovarianceStamped" or typenm ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
-							else if(typenm == "operatorgeometry_msgs::TransformStamped" or typenm =="geometry_msgs::TransformStamped" or typenm == "const geometry_msgs::TransformStamped" or typenm == "class geometry_msgs::TransformStamped" or typenm == "const class geometry_msgs::TransformStamped" or typenm ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
-							else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
-							else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
-							else if(typenm == "operatorgeometry_msgs::Quaternion" or typenm =="geometry_msgs::Quaternion" or typenm == "const geometry_msgs::Quaternion" or typenm == "class geometry_msgs::Quaternion" or typenm == "const class geometry_msgs::Quaternion" or typenm ==  "::geometry_msgs::Quaternion_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4"; }
-							else if(typenm == "operatorros::DurationBase" or typenm =="ros::DurationBase" or typenm == "const ros::DurationBase" or typenm == "class ros::DurationBase" or typenm == "const class ros::DurationBase" or typenm ==  "::ros::DurationBase_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
-							else if(typenm == "operatortf2::Quaternion" or typenm =="tf2::Quaternion" or typenm == "const tf2::Quaternion" or typenm == "class tf2::Quaternion" or typenm == "const class tf2::Quaternion" or typenm ==  "::tf2::Quaternion_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4"; }
-							else if(typenm == "operatortf::Quaternion" or typenm =="tf::Quaternion" or typenm == "const tf::Quaternion" or typenm == "class tf::Quaternion" or typenm == "const class tf::Quaternion" or typenm ==  "::tf::Quaternion_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4"; }
-							else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
-							else if(typenm == "operatorros::TimeBase" or typenm =="ros::TimeBase" or typenm == "const ros::TimeBase" or typenm == "class ros::TimeBase" or typenm == "const class ros::TimeBase" or typenm ==  "::ros::TimeBase_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
-							else if(typenm == "operatorros::Duration" or typenm =="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration" or typenm ==  "::ros::Duration_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
-							else if(typenm == "operatortf2::Duration" or typenm =="tf2::Duration" or typenm == "const tf2::Duration" or typenm == "class tf2::Duration" or typenm == "const class tf2::Duration" or typenm ==  "::tf2::Duration_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
-							else if(typenm == "operatortf::Transform" or typenm =="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform" or typenm == "const class tf::Transform" or typenm ==  "::tf::Transform_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
-							else if(typenm == "operatortf2::Vector3" or typenm =="tf2::Vector3" or typenm == "const tf2::Vector3" or typenm == "class tf2::Vector3" or typenm == "const class tf2::Vector3" or typenm ==  "::tf2::Vector3_<allocator<void> >"){ hasReturn = true; nodePrefix = "R3"; }
-							else if(typenm == "operatortf::Vector3" or typenm =="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3" or typenm ==  "::tf::Vector3_<allocator<void> >"){ hasReturn = true; nodePrefix = "R3"; }
-							else if(typenm == "operatorros::Time" or typenm =="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time" or typenm ==  "::ros::Time_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typenm =="geometry_msgs::PoseWithCovarianceStamped" or typenm == "const geometry_msgs::PoseWithCovarianceStamped" or typenm == "class geometry_msgs::PoseWithCovarianceStamped" or typenm == "const class geometry_msgs::PoseWithCovarianceStamped" or typenm ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typenm == "operatorPoseWithCovarianceStamped" or typenm =="PoseWithCovarianceStamped" or typenm == "const PoseWithCovarianceStamped" or typenm == "class PoseWithCovarianceStamped" or typenm == "const class PoseWithCovarianceStamped" or typenm ==  "::PoseWithCovarianceStamped_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
+							else if(typenm == "operatorgeometry_msgs::TransformStamped" or typenm =="geometry_msgs::TransformStamped" or typenm == "const geometry_msgs::TransformStamped" or typenm == "class geometry_msgs::TransformStamped" or typenm == "const class geometry_msgs::TransformStamped" or typenm ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typenm == "operatorTransformStamped" or typenm =="TransformStamped" or typenm == "const TransformStamped" or typenm == "class TransformStamped" or typenm == "const class TransformStamped" or typenm ==  "::TransformStamped_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
+							else if(typenm == "operatortf2::Stamped<tf2::Transform>" or typenm =="tf2::Stamped<tf2::Transform>" or typenm == "const tf2::Stamped<tf2::Transform>" or typenm == "class tf2::Stamped<tf2::Transform>" or typenm == "const class tf2::Stamped<tf2::Transform>" or typenm ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typenm == "operatorStamped<tf2::Transform>" or typenm =="Stamped<tf2::Transform>" or typenm == "const Stamped<tf2::Transform>" or typenm == "class Stamped<tf2::Transform>" or typenm == "const class Stamped<tf2::Transform>" or typenm ==  "::Stamped<tf2::Transform>_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
+							else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typenm == "operatorPoseStamped" or typenm =="PoseStamped" or typenm == "const PoseStamped" or typenm == "class PoseStamped" or typenm == "const class PoseStamped" or typenm ==  "::PoseStamped_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
+							else if(typenm == "operatorgeometry_msgs::Quaternion" or typenm =="geometry_msgs::Quaternion" or typenm == "const geometry_msgs::Quaternion" or typenm == "class geometry_msgs::Quaternion" or typenm == "const class geometry_msgs::Quaternion" or typenm ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typenm == "operatorQuaternion" or typenm =="Quaternion" or typenm == "const Quaternion" or typenm == "class Quaternion" or typenm == "const class Quaternion" or typenm ==  "::Quaternion_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4"; }
+							else if(typenm == "operatorros::DurationBase" or typenm =="ros::DurationBase" or typenm == "const ros::DurationBase" or typenm == "class ros::DurationBase" or typenm == "const class ros::DurationBase" or typenm ==  "::ros::DurationBase_<allocator<void> >" or typenm == "operatorDurationBase" or typenm =="DurationBase" or typenm == "const DurationBase" or typenm == "class DurationBase" or typenm == "const class DurationBase" or typenm ==  "::DurationBase_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatorros::DurationBase" or typenm =="ros::DurationBase" or typenm == "const ros::DurationBase" or typenm == "class ros::DurationBase" or typenm == "const class ros::DurationBase" or typenm ==  "::ros::DurationBase_<allocator<void> >" or typenm == "operatorDurationBase" or typenm =="DurationBase" or typenm == "const DurationBase" or typenm == "class DurationBase" or typenm == "const class DurationBase" or typenm ==  "::DurationBase_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatortf2::Quaternion" or typenm =="tf2::Quaternion" or typenm == "const tf2::Quaternion" or typenm == "class tf2::Quaternion" or typenm == "const class tf2::Quaternion" or typenm ==  "::tf2::Quaternion_<allocator<void> >" or typenm == "operatorQuaternion" or typenm =="Quaternion" or typenm == "const Quaternion" or typenm == "class Quaternion" or typenm == "const class Quaternion" or typenm ==  "::Quaternion_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4"; }
+							else if(typenm == "operatortf::Quaternion" or typenm =="tf::Quaternion" or typenm == "const tf::Quaternion" or typenm == "class tf::Quaternion" or typenm == "const class tf::Quaternion" or typenm ==  "::tf::Quaternion_<allocator<void> >" or typenm == "operatorQuaternion" or typenm =="Quaternion" or typenm == "const Quaternion" or typenm == "class Quaternion" or typenm == "const class Quaternion" or typenm ==  "::Quaternion_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4"; }
+							else if(typenm == "operatortf2::Transform" or typenm =="tf2::Transform" or typenm == "const tf2::Transform" or typenm == "class tf2::Transform" or typenm == "const class tf2::Transform" or typenm ==  "::tf2::Transform_<allocator<void> >" or typenm == "operatorTransform" or typenm =="Transform" or typenm == "const Transform" or typenm == "class Transform" or typenm == "const class Transform" or typenm ==  "::Transform_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
+							else if(typenm == "operatorros::TimeBase" or typenm =="ros::TimeBase" or typenm == "const ros::TimeBase" or typenm == "class ros::TimeBase" or typenm == "const class ros::TimeBase" or typenm ==  "::ros::TimeBase_<allocator<void> >" or typenm == "operatorTimeBase" or typenm =="TimeBase" or typenm == "const TimeBase" or typenm == "class TimeBase" or typenm == "const class TimeBase" or typenm ==  "::TimeBase_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatorros::Duration" or typenm =="ros::Duration" or typenm == "const ros::Duration" or typenm == "class ros::Duration" or typenm == "const class ros::Duration" or typenm ==  "::ros::Duration_<allocator<void> >" or typenm == "operatorDuration" or typenm =="Duration" or typenm == "const Duration" or typenm == "class Duration" or typenm == "const class Duration" or typenm ==  "::Duration_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatortf2::Duration" or typenm =="tf2::Duration" or typenm == "const tf2::Duration" or typenm == "class tf2::Duration" or typenm == "const class tf2::Duration" or typenm ==  "::tf2::Duration_<allocator<void> >" or typenm == "operatorDuration" or typenm =="Duration" or typenm == "const Duration" or typenm == "class Duration" or typenm == "const class Duration" or typenm ==  "::Duration_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
+							else if(typenm == "operatortf::Transform" or typenm =="tf::Transform" or typenm == "const tf::Transform" or typenm == "class tf::Transform" or typenm == "const class tf::Transform" or typenm ==  "::tf::Transform_<allocator<void> >" or typenm == "operatorTransform" or typenm =="Transform" or typenm == "const Transform" or typenm == "class Transform" or typenm == "const class Transform" or typenm ==  "::Transform_<allocator<void> >"){ hasReturn = true; nodePrefix = "R4X4"; }
+							else if(typenm == "operatortf2::Vector3" or typenm =="tf2::Vector3" or typenm == "const tf2::Vector3" or typenm == "class tf2::Vector3" or typenm == "const class tf2::Vector3" or typenm ==  "::tf2::Vector3_<allocator<void> >" or typenm == "operatorVector3" or typenm =="Vector3" or typenm == "const Vector3" or typenm == "class Vector3" or typenm == "const class Vector3" or typenm ==  "::Vector3_<allocator<void> >"){ hasReturn = true; nodePrefix = "R3"; }
+							else if(typenm == "operatortf::Vector3" or typenm =="tf::Vector3" or typenm == "const tf::Vector3" or typenm == "class tf::Vector3" or typenm == "const class tf::Vector3" or typenm ==  "::tf::Vector3_<allocator<void> >" or typenm == "operatorVector3" or typenm =="Vector3" or typenm == "const Vector3" or typenm == "class Vector3" or typenm == "const class Vector3" or typenm ==  "::Vector3_<allocator<void> >"){ hasReturn = true; nodePrefix = "R3"; }
+							else if(typenm == "operatorros::Time" or typenm =="ros::Time" or typenm == "const ros::Time" or typenm == "class ros::Time" or typenm == "const class ros::Time" or typenm ==  "::ros::Time_<allocator<void> >" or typenm == "operatorTime" or typenm =="Time" or typenm == "const Time" or typenm == "class Time" or typenm == "const class Time" or typenm ==  "::Time_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
 							else if(typenm == "operatortfScalar" or typenm =="tfScalar" or typenm == "const tfScalar" or typenm == "class tfScalar" or typenm == "const class tfScalar" or typenm ==  "::tfScalar_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
 							else if(typenm == "operatordouble" or typenm =="double" or typenm == "const double" or typenm == "class double" or typenm == "const class double" or typenm ==  "::double_<allocator<void> >"){ hasReturn = true; nodePrefix = "R1"; }
 							else if(typenm == "operator_Bool" or typenm =="_Bool" or typenm == "const _Bool" or typenm == "class _Bool" or typenm == "const class _Bool" or typenm ==  "::_Bool_<allocator<void> >"){ hasReturn = true; nodePrefix = "BOOL"; }

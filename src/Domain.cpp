@@ -110,10 +110,10 @@ DomainContainer* Domain::mkDefaultDomainContainer(std::vector<DomainContainer*> 
 /*
 
     StandardTimeCoordinateSpace* mkStandardTimeCoordinateSpace(string name);
-    DerivedTimeCoordinateSpace* mkDerivedTimeCoordinateSpace(string name, TimeCoordinateSpace* parent, float* originData, float** basisData);
+    DerivedTimeCoordinateSpace* mkDerivedTimeCoordinateSpace(string name, TimeCoordinateSpace* parent, string* originData, string** basisData);
 
-    Duration* mkDuration(string name, TimeCoordinateSpace* parent, float* value);
-    Time* mkTime(string name, TimeCoordinateSpace* parent, float* value);
+    Duration* mkDuration(string name, TimeCoordinateSpace* parent, string* value);
+    Time* mkTime(string name, TimeCoordinateSpace* parent, string* value);
 
 */
 
@@ -124,7 +124,7 @@ StandardTimeCoordinateSpace* Domain::mkStandardTimeCoordinateSpace(std::string n
     return sp;
 };
 
-DerivedTimeCoordinateSpace* Domain::mkDerivedTimeCoordinateSpace(std::string name, TimeCoordinateSpace* parent, float* originData, float** basisData){
+DerivedTimeCoordinateSpace* Domain::mkDerivedTimeCoordinateSpace(std::string name, TimeCoordinateSpace* parent, string* originData, string** basisData){
     DerivedTimeCoordinateSpace* sp = new DerivedTimeCoordinateSpace(name, parent, originData, basisData);
     this->spaces.push_back(static_cast<TimeCoordinateSpace*>(sp));
     this->timeSpaces.push_back(sp);
@@ -137,7 +137,7 @@ StandardGeom1DCoordinateSpace* Domain::mkStandardGeom1DCoordinateSpace(std::stri
     return sp;
 };
 
-DerivedGeom1DCoordinateSpace* Domain::mkDerivedGeom1DCoordinateSpace(std::string name, Geom1DCoordinateSpace* parent, float* originData, float** basisData){
+DerivedGeom1DCoordinateSpace* Domain::mkDerivedGeom1DCoordinateSpace(std::string name, Geom1DCoordinateSpace* parent, string* originData, string** basisData){
     DerivedGeom1DCoordinateSpace* sp = new DerivedGeom1DCoordinateSpace(name, parent, originData, basisData);
     this->spaces.push_back(static_cast<Geom1DCoordinateSpace*>(sp));
     this->geom1dSpaces.push_back(sp);
@@ -151,7 +151,7 @@ StandardGeom3DCoordinateSpace* Domain::mkStandardGeom3DCoordinateSpace(std::stri
     return sp;
 };
 
-DerivedGeom3DCoordinateSpace* Domain::mkDerivedGeom3DCoordinateSpace(std::string name, Geom3DCoordinateSpace* parent, float* originData, float** basisData){
+DerivedGeom3DCoordinateSpace* Domain::mkDerivedGeom3DCoordinateSpace(std::string name, Geom3DCoordinateSpace* parent, string* originData, string** basisData){
     DerivedGeom3DCoordinateSpace* sp = new DerivedGeom3DCoordinateSpace(name, parent, originData, basisData);
     this->spaces.push_back(static_cast<Geom3DCoordinateSpace*>(sp));
     this->geom3dSpaces.push_back(sp);
@@ -159,17 +159,17 @@ DerivedGeom3DCoordinateSpace* Domain::mkDerivedGeom3DCoordinateSpace(std::string
 };
 
 
-Scalar* Domain::mkScalar(std::string name, float* value){
+Scalar* Domain::mkScalar(std::string name, string* value){
     auto scalar = new Scalar(name, value);
     return scalar;
 }
 
-Duration* Domain::mkDuration(std::string name, TimeCoordinateSpace* parent, float* value){
+Duration* Domain::mkDuration(std::string name, TimeCoordinateSpace* parent, string* value){
     auto dur = new Duration(name, parent, value);
     return dur;
 }
 
-Time* Domain::mkTime(std::string name, TimeCoordinateSpace* parent, float* value){
+Time* Domain::mkTime(std::string name, TimeCoordinateSpace* parent, string* value){
     auto time = new Time(name, parent, value);
     return time;
 }
@@ -179,12 +179,12 @@ TimeTransform* Domain::mkTimeTransform(std::string name, TimeCoordinateSpace* do
     return ttransform;
 }
 
-Displacement1D* Domain::mkDisplacement1D(std::string name, Geom1DCoordinateSpace* parent, float* value){
+Displacement1D* Domain::mkDisplacement1D(std::string name, Geom1DCoordinateSpace* parent, string* value){
     auto disp = new Displacement1D(name, parent, value);
     return disp;
 }
 
-Position1D* Domain::mkPosition1D(std::string name, Geom1DCoordinateSpace* parent, float* value){
+Position1D* Domain::mkPosition1D(std::string name, Geom1DCoordinateSpace* parent, string* value){
     auto pos = new Position1D(name, parent, value);
     return pos;
 }
@@ -194,21 +194,21 @@ Geom1DTransform* Domain::mkGeom1DTransform(std::string name, Geom1DCoordinateSpa
     return g1transform;
 }
 
-Displacement3D* Domain::mkDisplacement3D(std::string name, Geom3DCoordinateSpace* parent, float* value){
+Displacement3D* Domain::mkDisplacement3D(std::string name, Geom3DCoordinateSpace* parent, string* value){
     auto disp = new Displacement3D(name, parent, value);
     return disp;
 }
 
-Position3D* Domain::mkPosition3D(std::string name, Geom3DCoordinateSpace* parent, float* value){
+Position3D* Domain::mkPosition3D(std::string name, Geom3DCoordinateSpace* parent, string* value){
     auto pos = new Position3D(name, parent, value);
     return pos;
 }
 
-Orientation3D* Domain::mkOrientation3D(std::string name, Geom3DCoordinateSpace* parent, float* value){
+Orientation3D* Domain::mkOrientation3D(std::string name, Geom3DCoordinateSpace* parent, string* value){
     auto ort = new Orientation3D(name, parent, value);
     return ort;
 }
-Rotation3D* Domain::mkRotation3D(std::string name, Geom3DCoordinateSpace* parent, float* value){
+Rotation3D* Domain::mkRotation3D(std::string name, Geom3DCoordinateSpace* parent, string* value){
     auto rot = new Rotation3D(name, parent, value);
     return rot;
 }
@@ -219,8 +219,8 @@ Pose3D* Domain::mkPose3D(std::string name, Geom3DCoordinateSpace* parent, Orient
 
 
 /*
-Orientation3D* mkOrientation3D(string name, Geom3DCoordinateSpace* parent, float* value);
-Rotation3D* mkRotation3D(string name, Geom3DCoordinateSpace* parent, float* value);
+Orientation3D* mkOrientation3D(string name, Geom3DCoordinateSpace* parent, string* value);
+Rotation3D* mkRotation3D(string name, Geom3DCoordinateSpace* parent, string* value);
 Pose3D* mkPose3D(string name, Geom3DCoordinateSpace* parent, Orientation3D* orientation_, Position3D position_);
 */
 

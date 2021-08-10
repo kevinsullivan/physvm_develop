@@ -16,23 +16,15 @@
 #include <cmath>
 #include <chrono>
 #include <threading>
-/*
-When looking up a transform, if there is a static transform available between two frames, 
-it may assign a timestamp of 0 to the resulting pose, which may indicate that the transform 
-is old, but is misleading to consumers of this pose, as it is technically using a recent 
-(and old, concurrently) version of the transform.
-*/
-void publish_world_to_baselink(){
-    KDL::Tree servotree;
-    urdf::Model servomodel;
-    servomodel.initFile("/peirce/ros_test_cases/eval/5-TimestampMismatch/test_suite/test_urdf.xacro");
-    kdl_parser::treeFromUrdfModel(servomodel,servotree);
-    robot_state_publisher::RobotStatePublisher servopub(servotree);
 
-    while(true){
-        servopub.publishFixedTransforms();
-        std::this_thread->sleep_for(5000ms);
-    }
+tf::StampedTransform get_world_to_baselink(){
+    tf::StampedTransform world_to_baselink;
+    world_to_baselink.frame_id_ = "world";
+    world_to_baselink.child_frame_id_ = "baselink";
+    world_to_baselink.stamp_ = 0;
+    world_to_baselink.setOrigin(tf::Vector3(0,0,0));
+    world_to_baselink.setRotation(tf::Quaternion(0,0,0,1));
+    return world_to_baselink;
 };
 
 
@@ -53,6 +45,8 @@ int main(int argc, char **argv){
 
     //Annotate this transform as being from World->Base Link
     geometry_msgs::TransformStamped target_to_planning_frame; 
+
+    tf::transformStampedTFToMsg(get_world_to_baselink(),target_to_planning_frame);
         
     //This assignment is propagated automatically. Target Pose in Base Link is updated
     tf2::doTransform(target_pose_in_world, target_pose_in_base_link, target_to_planning_frame);

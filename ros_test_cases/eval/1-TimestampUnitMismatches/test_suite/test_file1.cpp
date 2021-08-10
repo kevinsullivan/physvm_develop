@@ -35,7 +35,7 @@ int main(int argc, char **argv){
     //Declare a Global Time Space (and bind a standard frame)
     //Declare measurement systems: an SI system and an SI system with nanoseconds
 
-    /*Annotate this list with a type constraint stating that all values emplaced or used must
+    /*//Annotate this list with a type constraint stating that all values emplaced or used must
     be in the global time space/standard frame and have units in seconds
     */
     std::vector<tf2::Duration> durations;

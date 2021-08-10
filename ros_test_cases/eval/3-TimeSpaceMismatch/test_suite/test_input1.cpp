@@ -28,14 +28,14 @@ noncomputable def de : duration_expr wt := |mk_duration wt2.value 2|
 
     ros::Time hardware_clock_time = ros::Time(1);//Time in hardware space
 
-    sensor_msgs::Imu imu_msg;//Timestamped IMU message using hardware time
+    geometry_msgs::PoseStamped msg;//Timestamped IMU message using hardware time
 
-    imu_msg.stamp = ros::Time(hardware_clock_time);//Fine assignment
+    msg.header.stamp = hardware_clock_time;//Fine assignment
 
-    ros::Time _ros_time_base = ros::Time::Now();//In System time
+    ros::Time _ros_time_base = ros::Time::now();//Offset In System time
 
-    ros::Time t(_ros_time_base.toSec() + imu_msg.header.stamp.toSec());//Error occurs here - invalid addition
+    double stamp_added_bias = _ros_time_base.toSec() + msg.header.stamp.toSec();//Error occurs here - invalid addition
     
-    imu_msg.header.stamp = t;//Error occurs here - invalid assignment
+    msg.header.stamp = ros::Time(stamp_added_bias);//Error occurs here - invalid assignment
 
 }

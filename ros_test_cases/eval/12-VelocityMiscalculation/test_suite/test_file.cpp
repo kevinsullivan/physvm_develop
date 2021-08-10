@@ -15,15 +15,11 @@
 
 #include <cmath>
 
-struct Pose {
+struct Vel {
 float x;
 float y;
 float yaw;
 
-/**
-    * \brief 3x3 covariance matrix in row-major order.
-    */
-std::vector<float> covariance;
 };
 
 typedef Pose Vel;
@@ -36,12 +32,21 @@ float getYawReading(){
     return rand();
 }
 
-float getDtReading(){
+float getTimeReading(){
     return rand();
 }
 
 int main(int argc, char **argv){
+    float t1 = getTimeReading();
     Vel vel;
-    vel.x = getXDistReading()/getDtReading();
-    vel.yaw = getYawReading()/getDtReading();
+
+    float xdist = getXDistReading();
+    float yawdist = getYawReading();
+
+    float t2 = getTimeReading();
+
+    float dt = t2 - t1;
+
+    vel.x = xdist/dt;
+    vel.yaw = yawdist/dt;
 }

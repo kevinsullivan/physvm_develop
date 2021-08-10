@@ -8,6 +8,9 @@
 #include <unordered_map>
 #include <vector>
 
+#include <sstream>
+#include <iomanip>
+#include <cmath>
 //using namespace g3; 
 
 namespace interp{
@@ -16,6 +19,29 @@ int ident_ = 0;
 std::unordered_map<Interp*, int> ident_map;
 
 OutputState output_state;
+/*
+std::string getFullPrecisionString(float& f){
+
+    std::stringstream ss;
+
+    float current = f;
+
+    int integral = (int)f;
+    std::string mantissa_str = "";
+    std::cout<<std::setprecision(20)<<current;
+    current = std::abs(current - integral);
+    while(current>0){
+        std::cout<<std::setprecision(20)<<current;
+        current *= 10;
+        mantissa_str += std::to_string(current - ((int)current));
+        current -= ((int)current);
+    }
+
+   // ss << std::setprecision(10) << f;
+
+    return std::to_string(integral) + "." + mantissa_str;//ss.str();
+};*/
+
 
 //std::shared_ptr<Location> global_loc;
 
@@ -143,13 +169,13 @@ std::string Interp::toString(){
 
             retval += "|";
             if(auto astime = dynamic_cast<domain::Time*>(this->domain->getValue())){
-                retval+= std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]);
+                retval+= std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0];
             }
             else if(auto asdur = dynamic_cast<domain::Duration*>(this->domain->getValue())){
-                retval+= std::string("mk_duration ") + asdur->getSpace()->getName() + ".value " + std::to_string(asdur->getValue()[0]);
+                retval+= std::string("mk_duration ") + asdur->getSpace()->getName() + ".value " + asdur->getValue()[0];
             }
             else if(auto asscalar = dynamic_cast<domain::Scalar*>(this->domain->getValue())){
-                retval+= std::string("(") + std::to_string(asscalar->getValue()[0]) + " : scalar)";
+                retval+= std::string("(") + asscalar->getValue()[0] + " : scalar)";
             }
             else if(auto astrans = dynamic_cast<domain::TimeTransform*>(this->domain->getValue())){
                 auto dom_ = astrans->getDomain();
@@ -157,10 +183,10 @@ std::string Interp::toString(){
                 retval+= dom_->getName() + ".value.mk_time_transform_to " + cod_->getName() + ".value";
             }
             else if(auto aspos = dynamic_cast<domain::Position1D*>(this->domain->getValue())){
-                retval+= std::string("mk_position1d ") + aspos->getSpace()->getName() + ".value " + std::to_string(aspos->getValue()[0]);
+                retval+= std::string("mk_position1d ") + aspos->getSpace()->getName() + ".value " + aspos->getValue()[0];
             }
             else if(auto asdisp = dynamic_cast<domain::Displacement1D*>(this->domain->getValue())){
-                retval+= std::string("mk_displacement1d ") + asdisp->getSpace()->getName() + ".value " + std::to_string(asdisp->getValue()[0]);
+                retval+= std::string("mk_displacement1d ") + asdisp->getSpace()->getName() + ".value " + asdisp->getValue()[0];
             }
             else if(auto astrans = dynamic_cast<domain::Geom1DTransform*>(this->domain->getValue())){
                 auto dom_ = astrans->getDomain();
@@ -168,35 +194,35 @@ std::string Interp::toString(){
                 retval+= dom_->getName() + ".value.mk_geom1d_transform_to " + cod_->getName() + ".value";
             }
             else if(auto aspos = dynamic_cast<domain::Position3D*>(this->domain->getValue())){
-                retval+= std::string("mk_position3d ") + aspos->getSpace()->getName() + ".value " + std::to_string(aspos->getValue()[0]) + " " + std::to_string(aspos->getValue()[1]) + " " + std::to_string(aspos->getValue()[2]);
+                retval+= std::string("mk_position3d ") + aspos->getSpace()->getName() + ".value " + aspos->getValue()[0] + " " + aspos->getValue()[1] + " " + aspos->getValue()[2];
             }
             else if(auto asdisp = dynamic_cast<domain::Displacement3D*>(this->domain->getValue())){
-                retval+= std::string("mk_displacement3d ") + asdisp->getSpace()->getName() + ".value " + std::to_string(asdisp->getValue()[0]) + " " + std::to_string(asdisp->getValue()[1]) + " " + std::to_string(asdisp->getValue()[2]);
+                retval+= std::string("mk_displacement3d ") + asdisp->getSpace()->getName() + ".value " + asdisp->getValue()[0] + " " + asdisp->getValue()[1] + " " + asdisp->getValue()[2];
             }
             else if(auto asort = dynamic_cast<domain::Orientation3D*>(this->domain->getValue())){
                 if(nodeType != "LIT_R4"){
                 retval+= std::string("mk_orientation3d ") + asort->getSpace()->getName() + ".value "
-                     + std::to_string(asort->getValue()[0]) + " " + std::to_string(asort->getValue()[1]) + " " + std::to_string(asort->getValue()[2]) + " " 
-                     + std::to_string(asort->getValue()[3]) + " " + std::to_string(asort->getValue()[4]) + " " + std::to_string(asort->getValue()[5]) + " " 
-                     + std::to_string(asort->getValue()[6]) + " " + std::to_string(asort->getValue()[7]) + " " + std::to_string(asort->getValue()[8]);
+                     + asort->getValue()[0] + " " + asort->getValue()[1] + " " + asort->getValue()[2] + " " 
+                     + asort->getValue()[3] + " " + asort->getValue()[4] + " " + asort->getValue()[5] + " " 
+                     + asort->getValue()[6] + " " + asort->getValue()[7] + " " + asort->getValue()[8];
                 }
                 else{
                     retval+= std::string("mk_orientation3d_from_quaternion ") + asort->getSpace()->getName() + ".value "
-                        + std::to_string(asort->getValue()[0]) + " " + std::to_string(asort->getValue()[1]) + " " + std::to_string(asort->getValue()[2]) + " " 
-                        + std::to_string(asort->getValue()[3]);
+                        + asort->getValue()[0] + " " + asort->getValue()[1] + " " + asort->getValue()[2] + " " 
+                        + asort->getValue()[3];
                 }
             }
             else if(auto asrot = dynamic_cast<domain::Rotation3D*>(this->domain->getValue())){
                 if(nodeType != "LIT_R4"){
                     retval+= std::string("mk_rotation3d ") + asrot->getSpace()->getName() + ".value "
-                        + std::to_string(asrot->getValue()[0]) + " " + std::to_string(asrot->getValue()[1]) + " " + std::to_string(asrot->getValue()[2]) + " " 
-                        + std::to_string(asrot->getValue()[3]) + " " + std::to_string(asrot->getValue()[4]) + " " + std::to_string(asrot->getValue()[5]) + " " 
-                        + std::to_string(asrot->getValue()[6]) + " " + std::to_string(asrot->getValue()[7]) + " " + std::to_string(asrot->getValue()[8]);
+                        + asrot->getValue()[0] + " " + asrot->getValue()[1] + " " + asrot->getValue()[2] + " " 
+                        + asrot->getValue()[3] + " " + asrot->getValue()[4] + " " + asrot->getValue()[5] + " " 
+                        + asrot->getValue()[6] + " " + asrot->getValue()[7] + " " + asrot->getValue()[8];
                 }
                 else{
                     retval+= std::string("mk_rotation3d_from_quaternion ") + asrot->getSpace()->getName() + ".value "
-                        + std::to_string(asrot->getValue()[0]) + " " + std::to_string(asrot->getValue()[1]) + " " + std::to_string(asrot->getValue()[2]) + " " 
-                        + std::to_string(asrot->getValue()[3]);
+                        + asrot->getValue()[0] + " " + asrot->getValue()[1] + " " + asrot->getValue()[2] + " " 
+                        + asrot->getValue()[3];
                 }
             }
             else if(auto aspose = dynamic_cast<domain::Pose3D*>(this->domain->getValue())){
@@ -204,10 +230,11 @@ std::string Interp::toString(){
                 auto pos = aspose->getPosition();
                 retval+= std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value " ;
                 retval+= std::string("\n    (mk_orientation3d ") + ort->getSpace()->getName() + ".value "
-                     + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
-                     + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
-                     + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")";
-                retval+= std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")";
+                     + ort->getValue()[0] + " " + ort->getValue()[1] + " " + ort->getValue()[2] + " " 
+                     + ort->getValue()[3] + " " + ort->getValue()[4] + " " + ort->getValue()[5] + " "
+                     + ort->getValue()[6] + " " + ort->getValue()[7] + " " + ort->getValue()[8] + ")";
+                retval+= std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " 
+                    + pos->getValue()[0] + " " + pos->getValue()[1] + " " + pos->getValue()[2] + ")";
             }
             else if(auto astrans = dynamic_cast<domain::Geom3DTransform*>(this->domain->getValue())){
                 auto dom_ = astrans->getDomain();
@@ -534,21 +561,6 @@ void Interp::buildString(bool withType, bool withLet){
         var_->buildString(); 
         output_state.update(" := \n    ");
         expr_->buildString();
-        /*if(var_->hasValue()){
-            output_state.update("\n");
-            if(auto bt = dynamic_cast<domain::BoolTrue*>(var_->getValue())){
-                output_state.update(std::string("def ") + var_->getCoords()->getName() + ".sem : bool_sem " + var_->getCoords()->getName());
-                output_state.update(" := ");
-                output_state.update(" bool_sem.bool_eval_true _ begin check_bool_true hasRecentTargetPose end\n");
-            }
-            else if(auto bt = dynamic_cast<domain::BoolFalse*>(var_->getValue())){
-                output_state.update(std::string("def ") + var_->getCoords()->getName() + ".sem : bool_sem " + var_->getCoords()->getName());
-                output_state.update(" := ");
-                output_state.update(" bool_sem.bool_eval_false _ begin check_bool_false hasRecentTargetPose end\n");
-            }
-        }*/
-
-        //std::cout<<expr_->getCoords()->getNodeType()<<"\n";
     }
     else if(nodeType == "DECL_INIT_R1" || nodeType == "DECL_INIT_R3" || nodeType == "DECL_INIT_R4X4"  || nodeType == "DECL_INIT_R3X3" || nodeType == "DECL_INIT_R4") {
             
@@ -577,7 +589,7 @@ void Interp::buildString(bool withType, bool withLet){
                 if(auto dci = dynamic_cast<domain::TimeStamped*>(expr_->getDomain()->getValue())){
                     output_state.update("((|");
                     auto astime = dci->getTime();
-                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]));
+                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0]);
                     auto exprbegin = output_state.getCurrentLoc();
                     output_state.update("|↦|");
                     if(auto astspose = dynamic_cast<domain::TimeStampedPose3D*>(dci)){
@@ -586,10 +598,11 @@ void Interp::buildString(bool withType, bool withLet){
                         auto pos = aspose->getPosition();
                         output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
                         output_state.update( std::string("\n    (mk_orientation3d ") + ort->getSpace()->getName() + ".value "
-                            + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
-                            + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
-                            + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")");
-                        output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")");
+                            + ort->getValue()[0] + " " + ort->getValue()[1] + " " + ort->getValue()[2] + " " 
+                            + ort->getValue()[3] + " " + ort->getValue()[4] + " " + ort->getValue()[5] + " "
+                            + ort->getValue()[6] + " " + ort->getValue()[7] + " " + ort->getValue()[8] + ")");
+                        output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " 
+                            + pos->getValue()[0] + " " + pos->getValue()[1] + " " + pos->getValue()[2] + ")");
                     }
                     else if(auto aststrans = dynamic_cast<domain::TimeStampedGeom3DTransform*>(dci)){
                         auto astrans = aststrans->getValue();
@@ -656,7 +669,7 @@ void Interp::buildString(bool withType, bool withLet){
             output_state.update(std::string("let "));
         else
             output_state.update(std::string("def "));
-        output_state.update(getNextIdentifier(this) + " : list (" + (this->getType()) + 
+        output_state.update(getNextIdentifier(this) + " : list (" + (this->getLinked()->getType()) + 
             ") := " + getLastIdentifier(this) + " ++ ["); 
         val_->buildString();
         output_state.update(std::string("]"));
@@ -681,13 +694,13 @@ void Interp::buildString(bool withType, bool withLet){
 
             output_state.update( "|");
             if(auto astime = dynamic_cast<domain::Time*>(this->domain->getValue())){
-                output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]));
+                output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0]);
             }
             else if(auto asdur = dynamic_cast<domain::Duration*>(this->domain->getValue())){
-                output_state.update( std::string("mk_duration ") + asdur->getSpace()->getName() + ".value " + std::to_string(asdur->getValue()[0]));
+                output_state.update( std::string("mk_duration ") + asdur->getSpace()->getName() + ".value " + asdur->getValue()[0]);
             }
             else if(auto asscalar = dynamic_cast<domain::Scalar*>(this->domain->getValue())){
-                output_state.update( std::string("(") + std::to_string(asscalar->getValue()[0]) + " : scalar)");
+                output_state.update( std::string("(") + asscalar->getValue()[0] + " : scalar)");
             }
             else if(auto astrans = dynamic_cast<domain::TimeTransform*>(this->domain->getValue())){
                 auto dom_ = astrans->getDomain();
@@ -695,10 +708,12 @@ void Interp::buildString(bool withType, bool withLet){
                 output_state.update( dom_->getName() + ".value.mk_time_transform_to " + cod_->getName() + ".value");
             }
             else if(auto aspos = dynamic_cast<domain::Position1D*>(this->domain->getValue())){
-                output_state.update( std::string("mk_position1d ") + aspos->getSpace()->getName() + ".value " + std::to_string(aspos->getValue()[0]));
+                output_state.update( std::string("mk_position1d ") + aspos->getSpace()->getName() 
+                + ".value " + aspos->getValue()[0]);
             }
             else if(auto asdisp = dynamic_cast<domain::Displacement1D*>(this->domain->getValue())){
-                output_state.update( std::string("mk_displacement1d ") + asdisp->getSpace()->getName() + ".value " + std::to_string(asdisp->getValue()[0]));
+                output_state.update( std::string("mk_displacement1d ") + asdisp->getSpace()->getName() 
+                + ".value " + asdisp->getValue()[0]);
             }
             else if(auto astrans = dynamic_cast<domain::Geom1DTransform*>(this->domain->getValue())){
                 auto dom_ = astrans->getDomain();
@@ -706,35 +721,37 @@ void Interp::buildString(bool withType, bool withLet){
                 output_state.update( dom_->getName() + ".value.mk_geom1d_transform_to " + cod_->getName() + ".value");
             }
             else if(auto aspos = dynamic_cast<domain::Position3D*>(this->domain->getValue())){
-                output_state.update( std::string("mk_position3d ") + aspos->getSpace()->getName() + ".value " + std::to_string(aspos->getValue()[0]) + " " + std::to_string(aspos->getValue()[1]) + " " + std::to_string(aspos->getValue()[2]));
+                output_state.update( std::string("mk_position3d ") + aspos->getSpace()->getName() + ".value " 
+                    + aspos->getValue()[0] + " " + aspos->getValue()[1] + " " + aspos->getValue()[2]);
             }
             else if(auto asdisp = dynamic_cast<domain::Displacement3D*>(this->domain->getValue())){
-                output_state.update( std::string("mk_displacement3d ") + asdisp->getSpace()->getName() + ".value " + std::to_string(asdisp->getValue()[0]) + " " + std::to_string(asdisp->getValue()[1]) + " " + std::to_string(asdisp->getValue()[2]));
+                output_state.update( std::string("mk_displacement3d ") + asdisp->getSpace()->getName() + ".value " 
+                    + asdisp->getValue()[0] + " " + asdisp->getValue()[1] + " " + asdisp->getValue()[2]);
             }
             else if(auto asort = dynamic_cast<domain::Orientation3D*>(this->domain->getValue())){
                 if(nodeType != "LIT_R4"){
                 output_state.update( std::string("mk_orientation3d ") + asort->getSpace()->getName() + ".value "
-                     + std::to_string(asort->getValue()[0]) + " " + std::to_string(asort->getValue()[1]) + " " + std::to_string(asort->getValue()[2]) + " " 
-                     + std::to_string(asort->getValue()[3]) + " " + std::to_string(asort->getValue()[4]) + " " + std::to_string(asort->getValue()[5]) + " " 
-                     + std::to_string(asort->getValue()[6]) + " " + std::to_string(asort->getValue()[7]) + " " + std::to_string(asort->getValue()[8]));
+                     + asort->getValue()[0] + " " + asort->getValue()[1] + " " + asort->getValue()[2] + " " 
+                     + asort->getValue()[3] + " " + asort->getValue()[4] + " " + asort->getValue()[5] + " " 
+                     + asort->getValue()[6] + " " + asort->getValue()[7] + " " + asort->getValue()[8]);
                 }
                 else{
                     output_state.update( std::string("mk_orientation3d_from_quaternion ") + asort->getSpace()->getName() + ".value "
-                        + std::to_string(asort->getValue()[0]) + " " + std::to_string(asort->getValue()[1]) + " " + std::to_string(asort->getValue()[2]) + " " 
-                        + std::to_string(asort->getValue()[3]));
+                        + asort->getValue()[0] + " " + asort->getValue()[1] + " " + asort->getValue()[2] + " " 
+                        + asort->getValue()[3]);
                 }
             }
             else if(auto asrot = dynamic_cast<domain::Rotation3D*>(this->domain->getValue())){
                 if(nodeType != "LIT_R4"){
                     output_state.update( std::string("mk_rotation3d ") + asrot->getSpace()->getName() + ".value "
-                        + std::to_string(asrot->getValue()[0]) + " " + std::to_string(asrot->getValue()[1]) + " " + std::to_string(asrot->getValue()[2]) + " " 
-                        + std::to_string(asrot->getValue()[3]) + " " + std::to_string(asrot->getValue()[4]) + " " + std::to_string(asrot->getValue()[5]) + " " 
-                        + std::to_string(asrot->getValue()[6]) + " " + std::to_string(asrot->getValue()[7]) + " " + std::to_string(asrot->getValue()[8]));
+                        + asrot->getValue()[0] + " " + asrot->getValue()[1] + " " + asrot->getValue()[2] + " " 
+                        + asrot->getValue()[3] + " " + asrot->getValue()[4] + " " + asrot->getValue()[5] + " " 
+                        + asrot->getValue()[6] + " " + asrot->getValue()[7] + " " + asrot->getValue()[8]);
                 }
                 else{
                     output_state.update( std::string("mk_rotation3d_from_quaternion ") + asrot->getSpace()->getName() + ".value "
-                        + std::to_string(asrot->getValue()[0]) + " " + std::to_string(asrot->getValue()[1]) + " " + std::to_string(asrot->getValue()[2]) + " " 
-                        + std::to_string(asrot->getValue()[3]));
+                        + asrot->getValue()[0] + " " + asrot->getValue()[1] + " " + asrot->getValue()[2] + " " 
+                        + asrot->getValue()[3]);
                 }
             }
             else if(auto aspose = dynamic_cast<domain::Pose3D*>(this->domain->getValue())){
@@ -742,10 +759,11 @@ void Interp::buildString(bool withType, bool withLet){
                 auto pos = aspose->getPosition();
                 output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
                 output_state.update( std::string("\n    (mk_orientation3d ") + ort->getSpace()->getName() + ".value "
-                     + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
-                     + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
-                     + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")");
-                output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")");
+                     + ort->getValue()[0] + " " + ort->getValue()[1] + " " + ort->getValue()[2] + " " 
+                     + ort->getValue()[3] + " " + ort->getValue()[4] + " " + ort->getValue()[5] + " "
+                     + ort->getValue()[6] + " " + ort->getValue()[7] + " " + ort->getValue()[8] + ")");
+                output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " 
+                    + pos->getValue()[0] + " " + pos->getValue()[1] + " " + pos->getValue()[2] + ")");
             }
             else if(auto astrans = dynamic_cast<domain::Geom3DTransform*>(this->domain->getValue())){
                 auto dom_ = astrans->getDomain();
@@ -754,21 +772,22 @@ void Interp::buildString(bool withType, bool withLet){
             }
             else if(auto astspose = dynamic_cast<domain::TimeStampedPose3D*>(this->domain->getValue())){
                 auto astime = astspose->getTime();
-                output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]));
+                output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0]);
                 output_state.update(",");
                 auto aspose = astspose->getValue();
                 auto ort = aspose->getOrientation();
                 auto pos = aspose->getPosition();
                 output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
                 output_state.update( std::string("\n    (mk_orientation3d ") + ort->getSpace()->getName() + ".value "
-                    + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
-                    + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
-                    + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")");
-                output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")");
+                    + ort->getValue()[0] + " " + ort->getValue()[1] + " " + ort->getValue()[2] + " " 
+                    + ort->getValue()[3] + " " + ort->getValue()[4] + " " + ort->getValue()[5] + " "
+                    + ort->getValue()[6] + " " + ort->getValue()[7] + " " + ort->getValue()[8] + ")");
+                output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " 
+                    + pos->getValue()[0] + " " + pos->getValue()[1] + " " + pos->getValue()[2] + ")");
             }
             else if(auto aststrans = dynamic_cast<domain::TimeStampedGeom3DTransform*>(this->domain->getValue())){
                 auto astime = aststrans->getTime();
-                output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]));
+                output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0]);
                 output_state.update(",");
                 auto astrans = aststrans->getValue();
                 auto dom_ = astrans->getDomain();
@@ -781,7 +800,7 @@ void Interp::buildString(bool withType, bool withLet){
                 }
                 else{
                     output_state.update(getCurrentIdentifier(as_si->getSeries()) + ".value.sample ");
-                    output_state.update(std::string("(mk_time _") + std::to_string(as_si->getTime()->getValue()[0]) +")");
+                    output_state.update(std::string("(mk_time _") + as_si->getTime()->getValue()[0] +")");
                 }
             }
             else output_state.update("_");
@@ -1162,7 +1181,7 @@ void Interp::buildString(bool withType, bool withLet){
             output_state.update(getNextIdentifier(member)
                 + " : " + (member->getType()) + " := |{\n    position:=("); 
             val->buildString();
-            output_state.update(").value,\n    .."+getLastIdentifier(member)+".value\n}|");
+            output_state.update(").value,\n    .." + getLastIdentifier(member) + ".value\n}|");
 
         }
         else{
@@ -1186,6 +1205,30 @@ void Interp::buildString(bool withType, bool withLet){
         if(auto pose = dynamic_cast<domain::Pose3D*>(member->getDomain()->getValue())){
             output_state.update(getNextIdentifier(member) 
                 + " : " + (member->getType()) + " := |{\n    orientation:=("); 
+            val->buildString();
+            output_state.update(").value,\n    .."+getLastIdentifier(member)+".value\n}|");
+        }
+        else{
+            output_state.update(getNextIdentifier(member)
+                + " : " + (member->getType()) + " := |{\n    .."+getLastIdentifier(member)+"\n}|");
+
+        }
+
+        if (withLet)
+            output_state.update(" in");
+    }
+    else if(nodeType=="ASSIGN_R4X4_AT_R1"){
+        auto member = this->operands[0]->getLinked();
+
+        if(withLet)
+            output_state.update(std::string("let "));
+        else
+            output_state.update(std::string("def "));
+
+        auto val = this->operands[1];
+        if(auto pose = dynamic_cast<domain::TimeStampedPose3D*>(member->getDomain()->getValue())){
+            output_state.update(getNextIdentifier(member) 
+                + " : " + (member->getType()) + " := |{\n    timestamp:=("); 
             val->buildString();
             output_state.update(").value,\n    .."+getLastIdentifier(member)+".value\n}|");
         }
@@ -1322,8 +1365,8 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std
             auto originData = dc->getOrigin();
             auto basisData = dc->getBasis();
             output_state.update("def " + space->getName() + "_fr : time_frame_expr := \n");
-            output_state.update(" let origin := |mk_time " + parentName + ".value " + std::to_string(originData[0]) + "| in\n");
-            output_state.update(" let basis := |mk_duration " + parentName + ".value " + std::to_string(basisData[0][0]) + "| in\n");
+            output_state.update(" let origin := |mk_time " + parentName + ".value " + originData[0] + "| in\n");
+            output_state.update(" let basis := |mk_duration " + parentName + ".value " + basisData[0][0] + "| in\n");
             output_state.update(" mk_time_frame_expr origin basis\n");
             output_state.update("def " + space->getName() + " : time_space_expr " + space->getName() + "_fr := mk_time_space_expr " + space->getName() + "_fr\n\n");
         }
@@ -1336,8 +1379,8 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std
             auto originData = dc->getOrigin();
             auto basisData = dc->getBasis();
             output_state.update("def " + space->getName() + "_fr : geom1d_frame_expr := \n");
-            output_state.update(" let origin := |mk_position1d " + parentName + ".value " + std::to_string(originData[0]) + "| in\n");
-            output_state.update(" let basis := |mk_displacement1d " + parentName + ".value " + std::to_string(basisData[0][0]) + "| in\n");
+            output_state.update(" let origin := |mk_position1d " + parentName + ".value " + originData[0] + "| in\n");
+            output_state.update(" let basis := |mk_displacement1d " + parentName + ".value " + basisData[0][0] + "| in\n");
             output_state.update(" mk_geom1d_frame_expr origin basis\n");
             output_state.update("def " + space->getName() + " : geom1d_space_expr " + space->getName() + "_fr := mk_geom1d_space_expr " + space->getName() + "_fr\n\n");
         }
@@ -1350,10 +1393,10 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std
             auto originData = dc->getOrigin();
             auto basisData = dc->getBasis();
             output_state.update("def " + space->getName() + "_fr : geom3d_frame_expr := \n");
-            output_state.update(" let origin := |mk_position3d " + parentName + ".value " + std::to_string(originData[0])+ " " + std::to_string(originData[1])+ " " + std::to_string(originData[2]) + "| in\n");
-            output_state.update(" let basis0 := |mk_displacement3d " + parentName + ".value " + std::to_string(basisData[0][0]) + " " + std::to_string(basisData[0][1]) + " " + std::to_string(basisData[0][2]) + "| in\n");
-            output_state.update(" let basis1 := |mk_displacement3d " + parentName + ".value " + std::to_string(basisData[1][0]) + " " + std::to_string(basisData[1][1]) + " " + std::to_string(basisData[1][2]) + "| in\n");
-            output_state.update(" let basis2 := |mk_displacement3d " + parentName + ".value " + std::to_string(basisData[2][0]) + " " + std::to_string(basisData[2][1]) + " " + std::to_string(basisData[2][2]) + "| in\n");
+            output_state.update(" let origin := |mk_position3d " + parentName + ".value " + originData[0]+ " " + originData[1]+ " " + originData[2] + "| in\n");
+            output_state.update(" let basis0 := |mk_displacement3d " + parentName + ".value " + basisData[0][0] + " " + basisData[0][1] + " " + basisData[0][2] + "| in\n");
+            output_state.update(" let basis1 := |mk_displacement3d " + parentName + ".value " + basisData[1][0] + " " + basisData[1][1] + " " + basisData[1][2] + "| in\n");
+            output_state.update(" let basis2 := |mk_displacement3d " + parentName + ".value " + basisData[2][0] + " " + basisData[2][1] + " " + basisData[2][2] + "| in\n");
             output_state.update(" mk_geom3d_frame_expr origin basis0 basis1 basis2\n");
             output_state.update("def " + space->getName() + " : geom3d_space_expr " + space->getName() + "_fr := mk_geom3d_space_expr " + space->getName() + "_fr\n\n");
         }
@@ -1379,17 +1422,18 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std
                     //⟨⟩
 
                     output_state.update("⟨(");
-                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]) + "");
+                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0] + "");
                     auto aspose = val_->getValue();
                     auto ort = aspose->getOrientation();
                     auto pos = aspose->getPosition();
                     output_state.update("),(");
                     output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
                     output_state.update( std::string("\n    (mk_orientation3d ") + ort->getSpace()->getName() + ".value "
-                        + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
-                        + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
-                        + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")");
-                    output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")");
+                        + ort->getValue()[0] + " " + ort->getValue()[1] + " " + ort->getValue()[2] + " " 
+                        + ort->getValue()[3] + " " + ort->getValue()[4] + " " + ort->getValue()[5] + " "
+                        + ort->getValue()[6] + " " + ort->getValue()[7] + " " + ort->getValue()[8] + ")");
+                    output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " 
+                        + pos->getValue()[0] + " " + pos->getValue()[1] + " " + pos->getValue()[2] + ")");
                     output_state.update(")⟩");
                     if(i<values.size()-1)
                         output_state.update(",\n    ");
@@ -1404,7 +1448,7 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std
                 if(auto dci = dynamic_cast<domain::TimeStamped*>(expr_->getDomain()->getValue())){
                     output_state.update("((|");
                     auto astime = dci->getTime();
-                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]));
+                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0]));
                     auto exprbegin = output_state.getCurrentLoc();
                     output_state.update("|↦|");
                     if(auto astspose = dynamic_cast<domain::TimeStampedPose3D*>(dci)){
@@ -1413,10 +1457,10 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std
                         auto pos = aspose->getPosition();
                         output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
                         output_state.update( std::string("\n    (mk_orientation3d ") + ort->getSpace()->getName() + ".value "
-                            + std::to_string(ort->getValue()[0]) + " " + std::to_string(ort->getValue()[1]) + " " + std::to_string(ort->getValue()[2]) + " " 
-                            + std::to_string(ort->getValue()[3]) + " " + std::to_string(ort->getValue()[4]) + " " + std::to_string(ort->getValue()[5]) + " "
-                            + std::to_string(ort->getValue()[6]) + " " + std::to_string(ort->getValue()[7]) + " " + std::to_string(ort->getValue()[8]) + ")");
-                        output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " + std::to_string(pos->getValue()[0]) + " " + std::to_string(pos->getValue()[1]) + " " + std::to_string(pos->getValue()[2]) + ")");
+                            + ort->getValue()[0]) + " " + ort->getValue()[1]) + " " + ort->getValue()[2]) + " " 
+                            + ort->getValue()[3]) + " " + ort->getValue()[4]) + " " + ort->getValue()[5]) + " "
+                            + ort->getValue()[6]) + " " + ort->getValue()[7]) + " " + ort->getValue()[8]) + ")");
+                        output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " + pos->getValue()[0]) + " " + pos->getValue()[1]) + " " + pos->getValue()[2]) + ")");
                     }
                     else if(auto aststrans = dynamic_cast<domain::TimeStampedGeom3DTransform*>(dci)){
                         auto astrans = aststrans->getValue();
@@ -1449,7 +1493,7 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std
                     //⟨⟩
 
                     output_state.update("⟨(");
-                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + std::to_string(astime->getValue()[0]) + "");
+                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0] + "");
                
                     output_state.update("),(");
                     

@@ -15,7 +15,7 @@ using namespace oracle;
 /*
     std::string getName();
     template<int Dimension>
-    float* getValueVector();
+    std::string* getValueVector();
     domain::CoordinateSpace* selectSpace(std::vector<domain::CoordinateSpace*>);
 */
 
@@ -28,11 +28,11 @@ std::string Oracle_AskAll::getName(){
 };
 
 template<int Dimension>
-float* Oracle_AskAll::getValueVector(){
-    float* values = new float[Dimension];
+std::string* Oracle_AskAll::getValueVector(){
+    std::string* values = new string[Dimension];
     redo:
     try{
-        float value = 0;
+        std::string value = "";
         for(auto i = 0; i<Dimension;i++){
             std::cout<<"Enter value at index : "<<i<<"\n";
             try{
@@ -42,10 +42,12 @@ float* Oracle_AskAll::getValueVector(){
             catch(std::exception ex){
                 goto redo;
             }
+            if(value[0] == '.')//need a lot more logic here
+                value = std::string("0") + value;
             values[i] = value;
         }
         for(auto i = 0; i< Dimension;i++)
-            this->choices.push_back(std::to_string(values[i]));
+            this->choices.push_back(values[i]);
         return values;
     }
     catch(std::exception ex){
@@ -54,13 +56,13 @@ float* Oracle_AskAll::getValueVector(){
     return nullptr;
 };
 template<int Dimension>
-float** Oracle_AskAll::getValueMatrix(){
-    float** values = new float*[Dimension];
+std::string** Oracle_AskAll::getValueMatrix(){
+    std::string** values = new std::string*[Dimension];
     redo:
     try{
         for(auto i = 0;i<Dimension;i++)
-            values[i] = new float[Dimension];
-        float value = 0;
+            values[i] = new string[Dimension];
+        std::string value = "";
         for(auto i = 0; i<Dimension;i++){
             for(auto j = 0;j<Dimension;j++){
                 std::cout<<"Enter value at index : "<<i<<","<<j<<"\n";
@@ -71,12 +73,14 @@ float** Oracle_AskAll::getValueMatrix(){
                 catch(std::exception ex){
                     goto redo;
                 }
+                if(value[0] == '.')//need a lot more logic here
+                    value = std::string("0") + value;
                 values[i][j] = value;
             }
         }
         for(auto i = 0; i<Dimension;i++)
             for(auto j = 0;j<Dimension;j++)
-                this->choices.push_back(std::to_string(values[i][j]));
+                this->choices.push_back(values[i][j]);
         return values;
     }
     catch(std::exception ex){
@@ -140,6 +144,9 @@ domain::CoordinateSpace* Oracle_AskAll::getSpace(){
                     auto name = this->getName();
                     std::cout<<"Choose Parent Coordinate Space : \n";
                     auto parent = dynamic_cast<domain::TimeCoordinateSpace*>(this->selectSpace(this->domain_->getTimeSpaces()));
+                    if(!parent){
+                        std::cout<<"Interpretation building failed\n";
+                    }
                     std::cout<<"Choose Origin Coordinates : \n";
                     auto originData = this->getValueVector<1>();
                     std::cout<<"Choose Basis Coordinates : \n";
@@ -165,6 +172,9 @@ domain::CoordinateSpace* Oracle_AskAll::getSpace(){
                     auto name = this->getName();
                     std::cout<<"Choose Parent Coordinate Space : \n";
                     auto parent = dynamic_cast<domain::Geom1DCoordinateSpace*>(this->selectSpace(this->domain_->getGeom1DSpaces()));
+                    if(!parent){
+                        std::cout<<"Interpretation building failed\n";
+                    }
                     std::cout<<"Choose Origin Coordinates : \n";
                     auto originData = this->getValueVector<1>();
                     std::cout<<"Choose Basis Coordinates : \n";
@@ -411,7 +421,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
                 std::cout<<"Interpretation building failed\n";
                 return nullptr;
             }
-            float* value = nullptr;
+            std::string* value = nullptr;
             if(coords->getNodeType().find("R4") != string::npos)
                 value = this->getValueVector<4>();
             else
@@ -431,7 +441,7 @@ domain::DomainObject* Oracle_AskAll::getInterpretation(coords::Coords* coords){
                 std::cout<<"Interpretation building failed\n";
                 return nullptr;
             }
-            float* value = nullptr;
+            std::string* value = nullptr;
             if(coords->getNodeType().find("R4") != string::npos)
                 value = this->getValueVector<4>();
             else

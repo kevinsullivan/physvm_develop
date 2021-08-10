@@ -176,7 +176,6 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
 
         if(type_=="None" and error_ == "None")
             return nullptr;
-
         if(error_ != "None" and (type_.find("⊢ ") == string::npos))
             return new domain::ErrorObject(error_);
 
@@ -201,7 +200,7 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
 
         std::string scalar_str("scalar_expr");
         type_.erase(std::remove(type_.begin(), type_.end(), '\''), type_.end());
-        type_ = type_.substr(std::string("⊢ ").length());
+        type_ = type_.substr(type_.find("⊢") + std::string("⊢ ").length());
         if(type_.find("list ") != string::npos){
             type_ = type_.substr(std::string("list ").length());
         }
@@ -218,8 +217,8 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     break;
                 }
             }
-            auto default_value = new float[1];
-            default_value[0] = 0;
+            auto default_value = new string[1];
+            default_value[0] = "0";
             return domain_->mkTime("INFERRED", sp,default_value);
 
         }
@@ -234,8 +233,8 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     break;
                 }
             }
-            auto default_value = new float[1];
-            default_value[0] = 0;
+            auto default_value = new string[1];
+            default_value[0] = "0";
             return domain_->mkDuration("INFERRED", sp,default_value);
 
         }
@@ -261,8 +260,8 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
             }
             //std::cout<<domcodsub<<" "<<domname<<" "<<codname<<"\n";
             //std::cout<<type_<<"\n"<<domsp->toString()<<"\n"<<codsp->toString()<<"\n";
-            //auto default_value = new float[1];
-            //default_value[0] = 0;
+            //auto default_value = new string[1];
+            //default_value[0] = "0";
             return domain_->mkTimeTransform("INFERRED", domsp, codsp);
             
         }
@@ -278,8 +277,8 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     break;
                 }
             }
-            auto default_value = new float[1];
-            default_value[0] = 0;
+            auto default_value = new string[1];
+            default_value[0] = "0";
             return domain_->mkPosition1D("INFERRED", sp,default_value);
 
         }
@@ -295,8 +294,8 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     break;
                 }
             }
-            auto default_value = new float[1];
-            default_value[0] = 0;
+            auto default_value = new string[1];
+            default_value[0] = "0";
             return domain_->mkDisplacement1D("INFERRED", sp,default_value);
 
         }
@@ -318,8 +317,8 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     codsp = sp_;
                 }
             }
-            //auto default_value = new float[1];
-            //default_value[0] = 0;
+            //auto default_value = new string[1];
+            //default_value[0] = "0";
             return domain_->mkGeom1DTransform("INFERRED", domsp, codsp);
             
         }
@@ -345,26 +344,26 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     sp = sp_;
                 }
             }
-            auto default_value_ort = new float[9];
-            default_value_ort[0] = 0;
-            default_value_ort[1] = 0;
-            default_value_ort[2] = 0;
-            default_value_ort[3] = 0;
-            default_value_ort[4] = 0;
-            default_value_ort[5] = 0;
-            default_value_ort[6] = 0;
-            default_value_ort[7] = 0;
-            default_value_ort[8] = 0;
+            auto default_value_ort = new string[9];
+            default_value_ort[0] = "0";
+            default_value_ort[1] = "0";
+            default_value_ort[2] = "0";
+            default_value_ort[3] = "0";
+            default_value_ort[4] = "0";
+            default_value_ort[5] = "0";
+            default_value_ort[6] = "0";
+            default_value_ort[7] = "0";
+            default_value_ort[8] = "0";
             auto ort = domain_->mkOrientation3D("INFERRED", sp,default_value_ort);
-            auto default_value_pos = new float[3];
-            default_value_pos[0] = 0;
-            default_value_pos[1] = 0;
-            default_value_pos[2] = 0;
+            auto default_value_pos = new string[3];
+            default_value_pos[0] = "0";
+            default_value_pos[1] = "0";
+            default_value_pos[2] = "0";
             auto pos = domain_->mkPosition3D("INFERRED", sp,default_value_pos);
             auto pose_ = domain_->mkPose3D("INFERRED",sp,ort,pos);
 
-            auto tm_value = new float[1];
-            tm_value[0] = 0;
+            auto tm_value = new string[1];
+            tm_value[0] = "0";
             auto time_ = domain_->mkTime("INFERRED",tmsp, tm_value);
             return domain_->mkTimeStampedPose3D("INFERRED", time_, pose_);
         }
@@ -395,11 +394,11 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     codsp = sp_;
                 }
             }
-            //auto default_value = new float[1];
-            //default_value[0] = 0;
+            //auto default_value = new string[1];
+            //default_value[0] = "0";
             auto tr = domain_->mkGeom3DTransform("INFERRED", domsp, codsp);
-            auto tm_value = new float[1];
-            tm_value[0] = 0;
+            auto tm_value = new string[1];
+            tm_value[0] = "0";
             auto time_ = domain_->mkTime("INFERRED",tmsp, tm_value);
             return domain_->mkTimeStampedGeom3DTransform("INFERRED", time_, tr);
         }
@@ -414,10 +413,10 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     sp = sp_;
                 }
             }
-            auto default_value = new float[3];
-            default_value[0] = 0;
-            default_value[1] = 0;
-            default_value[2] = 0;
+            auto default_value = new string[3];
+            default_value[0] = "0";
+            default_value[1] = "0";
+            default_value[2] = "0";
             return domain_->mkPosition3D("INFERRED", sp,default_value);
 
         }
@@ -432,10 +431,10 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     sp = sp_;
                 }
             }
-            auto default_value = new float[3];
-            default_value[0] = 0;
-            default_value[1] = 0;
-            default_value[2] = 0;
+            auto default_value = new string[3];
+            default_value[0] = "0";
+            default_value[1] = "0";
+            default_value[2] = "0";
             return domain_->mkDisplacement3D("INFERRED", sp,default_value);
 
         }
@@ -449,16 +448,16 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     sp = sp_;
                 }
             }
-            auto default_value = new float[9];
-            default_value[0] = 0;
-            default_value[1] = 0;
-            default_value[2] = 0;
-            default_value[3] = 0;
-            default_value[4] = 0;
-            default_value[5] = 0;
-            default_value[6] = 0;
-            default_value[7] = 0;
-            default_value[8] = 0;
+            auto default_value = new string[9];
+            default_value[0] = "0";
+            default_value[1] = "0";
+            default_value[2] = "0";
+            default_value[3] = "0";
+            default_value[4] = "0";
+            default_value[5] = "0";
+            default_value[6] = "0";
+            default_value[7] = "0";
+            default_value[8] = "0";
             return domain_->mkOrientation3D("INFERRED", sp,default_value);
         }
         else if(type_.find(rotation3d_str) != string::npos){
@@ -471,16 +470,16 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     sp = sp_;
                 }
             }
-            auto default_value = new float[9];
-            default_value[0] = 0;
-            default_value[1] = 0;
-            default_value[2] = 0;
-            default_value[3] = 0;
-            default_value[4] = 0;
-            default_value[5] = 0;
-            default_value[6] = 0;
-            default_value[7] = 0;
-            default_value[8] = 0;
+            auto default_value = new string[9];
+            default_value[0] = "0";
+            default_value[1] = "0";
+            default_value[2] = "0";
+            default_value[3] = "0";
+            default_value[4] = "0";
+            default_value[5] = "0";
+            default_value[6] = "0";
+            default_value[7] = "0";
+            default_value[8] = "0";
             return domain_->mkRotation3D("INFERRED", sp,default_value);
         }
         else if(type_.find(pose3d_str) != string::npos){
@@ -493,21 +492,21 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     sp = sp_;
                 }
             }
-            auto default_value_ort = new float[9];
-            default_value_ort[0] = 0;
-            default_value_ort[1] = 0;
-            default_value_ort[2] = 0;
-            default_value_ort[3] = 0;
-            default_value_ort[4] = 0;
-            default_value_ort[5] = 0;
-            default_value_ort[6] = 0;
-            default_value_ort[7] = 0;
-            default_value_ort[8] = 0;
+            auto default_value_ort = new string[9];
+            default_value_ort[0] = "0";
+            default_value_ort[1] = "0";
+            default_value_ort[2] = "0";
+            default_value_ort[3] = "0";
+            default_value_ort[4] = "0";
+            default_value_ort[5] = "0";
+            default_value_ort[6] = "0";
+            default_value_ort[7] = "0";
+            default_value_ort[8] = "0";
             auto ort = domain_->mkOrientation3D("INFERRED", sp,default_value_ort);
-            auto default_value_pos = new float[3];
-            default_value_pos[0] = 0;
-            default_value_pos[1] = 0;
-            default_value_pos[2] = 0;
+            auto default_value_pos = new string[3];
+            default_value_pos[0] = "0";
+            default_value_pos[1] = "0";
+            default_value_pos[2] = "0";
             auto pos = domain_->mkPosition3D("INFERRED", sp,default_value_pos);
             return domain_->mkPose3D("INFERRED",sp,ort,pos);
         }
@@ -529,8 +528,8 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
                     codsp = sp_;
                 }
             }
-            //auto default_value = new float[1];
-            //default_value[0] = 0;
+            //auto default_value = new string[1];
+            //default_value[0] = "0";
             return domain_->mkGeom3DTransform("INFERRED", domsp, codsp);
             
         }
@@ -538,8 +537,8 @@ domain::DomainObject* Oracle_LeanInference::parseInterpretation(std::string type
             //return nullptr;
             auto typesub = type_.substr(type_.find(scalar_str));
             auto spaces = domain_->getTimeSpaces();
-            auto default_value = new float[1];
-            default_value[0] = 0;
+            auto default_value = new string[1];
+            default_value[0] = "0";
             return domain_->mkScalar("INFERRED", default_value);
 
         }

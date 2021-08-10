@@ -13,6 +13,7 @@
 #include "ROSTFScalarMatcher.h"
 #include "ROSTimeMatcher.h"
 #include "ROSTimeBaseMatcher.h"
+#include "ROSDurationBaseMatcher.h"
 #include "ROSDurationMatcher.h"
 #include "ROSDurationBaseMatcher.h"
 #include "ROSTFVector3Matcher.h"
@@ -209,7 +210,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
         auto typestr = ((clang::QualType)_expr->getType()).getAsString();
         if(false){}
         
-        else if (typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+        else if (typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
             ROSGeometryPoseWithCovarianceStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -222,7 +223,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+        else if (typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
             ROSGeomTransformStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -235,7 +236,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+        else if (typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
             ROSTF2TransformStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -248,7 +249,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+        else if (typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
             ROSGeomPoseStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -261,7 +262,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+        else if (typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
             ROSGeomQuaternion m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -274,7 +275,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+        else if (typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
             ROSDurationBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -287,7 +288,20 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
+        else if (typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+            ROSDurationBaseMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*_expr);
+            if(m.getChildExprStore()){
+                interp_->buffer_operand(m.getChildExprStore());
+                //this->childExprStore_ = (clang::Stmt*)_expr;
+                interp_->mkNode("RETURN_R1",(clang::Stmt*)returnStmt_,false);
+                this->childExprStore_ = (clang::Stmt*)returnStmt_;
+            }
+            return;
+        }
+            
+        else if (typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
             ROSTF2Quaternion m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -300,7 +314,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
+        else if (typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
             ROSTFQuaternion m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -313,7 +327,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
+        else if (typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
             ROSTF2Transform m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -326,7 +340,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+        else if (typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
             ROSTimeBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -339,7 +353,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
+        else if (typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
             ROSDurationMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -352,7 +366,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
+        else if (typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
             ROSTF2DurationMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -365,7 +379,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
+        else if (typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
             ROSTFTransformMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -378,7 +392,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
+        else if (typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
             ROSTF2Vector3Matcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -391,7 +405,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
+        else if (typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
             ROSTFVector3Matcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -404,7 +418,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             return;
         }
             
-        else if (typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
+        else if (typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
             ROSTimeMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*_expr);
@@ -611,7 +625,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     std::string param_type = typestr.substr(vec_str.length(), typestr.length()-vec_str.length()-1);
                     if(false){}                
 
-                        else if(param_type == "operatorgeometry_msgs::PoseWithCovarianceStamped" or param_type =="geometry_msgs::PoseWithCovarianceStamped" or param_type == "const geometry_msgs::PoseWithCovarianceStamped" or param_type == "class geometry_msgs::PoseWithCovarianceStamped" or param_type == "const class geometry_msgs::PoseWithCovarianceStamped" or param_type ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+                        else if(param_type == "operatorgeometry_msgs::PoseWithCovarianceStamped" or param_type =="geometry_msgs::PoseWithCovarianceStamped" or param_type == "const geometry_msgs::PoseWithCovarianceStamped" or param_type == "class geometry_msgs::PoseWithCovarianceStamped" or param_type == "const class geometry_msgs::PoseWithCovarianceStamped" or param_type ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or param_type == "operatorPoseWithCovarianceStamped" or param_type =="PoseWithCovarianceStamped" or param_type == "const PoseWithCovarianceStamped" or param_type == "class PoseWithCovarianceStamped" or param_type == "const class PoseWithCovarianceStamped" or param_type ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4X4",vd, true);
                             if (vd->hasInit()){
@@ -633,7 +647,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatorgeometry_msgs::TransformStamped" or param_type =="geometry_msgs::TransformStamped" or param_type == "const geometry_msgs::TransformStamped" or param_type == "class geometry_msgs::TransformStamped" or param_type == "const class geometry_msgs::TransformStamped" or param_type ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                        else if(param_type == "operatorgeometry_msgs::TransformStamped" or param_type =="geometry_msgs::TransformStamped" or param_type == "const geometry_msgs::TransformStamped" or param_type == "class geometry_msgs::TransformStamped" or param_type == "const class geometry_msgs::TransformStamped" or param_type ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or param_type == "operatorTransformStamped" or param_type =="TransformStamped" or param_type == "const TransformStamped" or param_type == "class TransformStamped" or param_type == "const class TransformStamped" or param_type ==  "::TransformStamped_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4X4",vd, true);
                             if (vd->hasInit()){
@@ -655,7 +669,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatortf2::Stamped<tf2::Transform>" or param_type =="tf2::Stamped<tf2::Transform>" or param_type == "const tf2::Stamped<tf2::Transform>" or param_type == "class tf2::Stamped<tf2::Transform>" or param_type == "const class tf2::Stamped<tf2::Transform>" or param_type ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+                        else if(param_type == "operatortf2::Stamped<tf2::Transform>" or param_type =="tf2::Stamped<tf2::Transform>" or param_type == "const tf2::Stamped<tf2::Transform>" or param_type == "class tf2::Stamped<tf2::Transform>" or param_type == "const class tf2::Stamped<tf2::Transform>" or param_type ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or param_type == "operatorStamped<tf2::Transform>" or param_type =="Stamped<tf2::Transform>" or param_type == "const Stamped<tf2::Transform>" or param_type == "class Stamped<tf2::Transform>" or param_type == "const class Stamped<tf2::Transform>" or param_type ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4X4",vd, true);
                             if (vd->hasInit()){
@@ -677,7 +691,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatorgeometry_msgs::PoseStamped" or param_type =="geometry_msgs::PoseStamped" or param_type == "const geometry_msgs::PoseStamped" or param_type == "class geometry_msgs::PoseStamped" or param_type == "const class geometry_msgs::PoseStamped" or param_type ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                        else if(param_type == "operatorgeometry_msgs::PoseStamped" or param_type =="geometry_msgs::PoseStamped" or param_type == "const geometry_msgs::PoseStamped" or param_type == "class geometry_msgs::PoseStamped" or param_type == "const class geometry_msgs::PoseStamped" or param_type ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or param_type == "operatorPoseStamped" or param_type =="PoseStamped" or param_type == "const PoseStamped" or param_type == "class PoseStamped" or param_type == "const class PoseStamped" or param_type ==  "::PoseStamped_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4X4",vd, true);
                             if (vd->hasInit()){
@@ -699,7 +713,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatorgeometry_msgs::Quaternion" or param_type =="geometry_msgs::Quaternion" or param_type == "const geometry_msgs::Quaternion" or param_type == "class geometry_msgs::Quaternion" or param_type == "const class geometry_msgs::Quaternion" or param_type ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+                        else if(param_type == "operatorgeometry_msgs::Quaternion" or param_type =="geometry_msgs::Quaternion" or param_type == "const geometry_msgs::Quaternion" or param_type == "class geometry_msgs::Quaternion" or param_type == "const class geometry_msgs::Quaternion" or param_type ==  "::geometry_msgs::Quaternion_<allocator<void> >" or param_type == "operatorQuaternion" or param_type =="Quaternion" or param_type == "const Quaternion" or param_type == "class Quaternion" or param_type == "const class Quaternion" or param_type ==  "::Quaternion_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4",vd, true);
                             if (vd->hasInit()){
@@ -721,7 +735,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatorros::DurationBase" or param_type =="ros::DurationBase" or param_type == "const ros::DurationBase" or param_type == "class ros::DurationBase" or param_type == "const class ros::DurationBase" or param_type ==  "::ros::DurationBase_<allocator<void> >"){
+                        else if(param_type == "operatorros::DurationBase" or param_type =="ros::DurationBase" or param_type == "const ros::DurationBase" or param_type == "class ros::DurationBase" or param_type == "const class ros::DurationBase" or param_type ==  "::ros::DurationBase_<allocator<void> >" or param_type == "operatorDurationBase" or param_type =="DurationBase" or param_type == "const DurationBase" or param_type == "class DurationBase" or param_type == "const class DurationBase" or param_type ==  "::DurationBase_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
@@ -743,7 +757,29 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatortf2::Quaternion" or param_type =="tf2::Quaternion" or param_type == "const tf2::Quaternion" or param_type == "class tf2::Quaternion" or param_type == "const class tf2::Quaternion" or param_type ==  "::tf2::Quaternion_<allocator<void> >"){
+                        else if(param_type == "operatorros::DurationBase" or param_type =="ros::DurationBase" or param_type == "const ros::DurationBase" or param_type == "class ros::DurationBase" or param_type == "const class ros::DurationBase" or param_type ==  "::ros::DurationBase_<allocator<void> >" or param_type == "operatorDurationBase" or param_type =="DurationBase" or param_type == "const DurationBase" or param_type == "class DurationBase" or param_type == "const class DurationBase" or param_type ==  "::DurationBase_<allocator<void> >"){
+                            
+                            interp_->mkNode("IDENT_LIST_R1",vd, true);
+                            if (vd->hasInit()){
+                                //ROSDurationBaseMatcher argm{this->context_,this->interp_};
+                                //argm.setup();
+                               // argm.visit(*vd->getInit());
+                               // auto argstmt = argm.getChildExprStore();
+                               //interp_->buffer_operand(argstmt);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
+                                this->childExprStore_= (clang::Stmt*) declStmt;
+                                return;
+                            }
+                            else{
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_LIST_R1",declStmt, false);
+                                this->childExprStore_ = (clang::Stmt*) declStmt;
+                                return;
+                            }
+                        }
+                    
+                        else if(param_type == "operatortf2::Quaternion" or param_type =="tf2::Quaternion" or param_type == "const tf2::Quaternion" or param_type == "class tf2::Quaternion" or param_type == "const class tf2::Quaternion" or param_type ==  "::tf2::Quaternion_<allocator<void> >" or param_type == "operatorQuaternion" or param_type =="Quaternion" or param_type == "const Quaternion" or param_type == "class Quaternion" or param_type == "const class Quaternion" or param_type ==  "::Quaternion_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4",vd, true);
                             if (vd->hasInit()){
@@ -765,7 +801,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatortf::Quaternion" or param_type =="tf::Quaternion" or param_type == "const tf::Quaternion" or param_type == "class tf::Quaternion" or param_type == "const class tf::Quaternion" or param_type ==  "::tf::Quaternion_<allocator<void> >"){
+                        else if(param_type == "operatortf::Quaternion" or param_type =="tf::Quaternion" or param_type == "const tf::Quaternion" or param_type == "class tf::Quaternion" or param_type == "const class tf::Quaternion" or param_type ==  "::tf::Quaternion_<allocator<void> >" or param_type == "operatorQuaternion" or param_type =="Quaternion" or param_type == "const Quaternion" or param_type == "class Quaternion" or param_type == "const class Quaternion" or param_type ==  "::Quaternion_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4",vd, true);
                             if (vd->hasInit()){
@@ -787,7 +823,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatortf2::Transform" or param_type =="tf2::Transform" or param_type == "const tf2::Transform" or param_type == "class tf2::Transform" or param_type == "const class tf2::Transform" or param_type ==  "::tf2::Transform_<allocator<void> >"){
+                        else if(param_type == "operatortf2::Transform" or param_type =="tf2::Transform" or param_type == "const tf2::Transform" or param_type == "class tf2::Transform" or param_type == "const class tf2::Transform" or param_type ==  "::tf2::Transform_<allocator<void> >" or param_type == "operatorTransform" or param_type =="Transform" or param_type == "const Transform" or param_type == "class Transform" or param_type == "const class Transform" or param_type ==  "::Transform_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4X4",vd, true);
                             if (vd->hasInit()){
@@ -809,7 +845,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatorros::TimeBase" or param_type =="ros::TimeBase" or param_type == "const ros::TimeBase" or param_type == "class ros::TimeBase" or param_type == "const class ros::TimeBase" or param_type ==  "::ros::TimeBase_<allocator<void> >"){
+                        else if(param_type == "operatorros::TimeBase" or param_type =="ros::TimeBase" or param_type == "const ros::TimeBase" or param_type == "class ros::TimeBase" or param_type == "const class ros::TimeBase" or param_type ==  "::ros::TimeBase_<allocator<void> >" or param_type == "operatorTimeBase" or param_type =="TimeBase" or param_type == "const TimeBase" or param_type == "class TimeBase" or param_type == "const class TimeBase" or param_type ==  "::TimeBase_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
@@ -831,7 +867,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatorros::Duration" or param_type =="ros::Duration" or param_type == "const ros::Duration" or param_type == "class ros::Duration" or param_type == "const class ros::Duration" or param_type ==  "::ros::Duration_<allocator<void> >"){
+                        else if(param_type == "operatorros::Duration" or param_type =="ros::Duration" or param_type == "const ros::Duration" or param_type == "class ros::Duration" or param_type == "const class ros::Duration" or param_type ==  "::ros::Duration_<allocator<void> >" or param_type == "operatorDuration" or param_type =="Duration" or param_type == "const Duration" or param_type == "class Duration" or param_type == "const class Duration" or param_type ==  "::Duration_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
@@ -853,7 +889,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatortf2::Duration" or param_type =="tf2::Duration" or param_type == "const tf2::Duration" or param_type == "class tf2::Duration" or param_type == "const class tf2::Duration" or param_type ==  "::tf2::Duration_<allocator<void> >"){
+                        else if(param_type == "operatortf2::Duration" or param_type =="tf2::Duration" or param_type == "const tf2::Duration" or param_type == "class tf2::Duration" or param_type == "const class tf2::Duration" or param_type ==  "::tf2::Duration_<allocator<void> >" or param_type == "operatorDuration" or param_type =="Duration" or param_type == "const Duration" or param_type == "class Duration" or param_type == "const class Duration" or param_type ==  "::Duration_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
@@ -875,7 +911,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatortf::Transform" or param_type =="tf::Transform" or param_type == "const tf::Transform" or param_type == "class tf::Transform" or param_type == "const class tf::Transform" or param_type ==  "::tf::Transform_<allocator<void> >"){
+                        else if(param_type == "operatortf::Transform" or param_type =="tf::Transform" or param_type == "const tf::Transform" or param_type == "class tf::Transform" or param_type == "const class tf::Transform" or param_type ==  "::tf::Transform_<allocator<void> >" or param_type == "operatorTransform" or param_type =="Transform" or param_type == "const Transform" or param_type == "class Transform" or param_type == "const class Transform" or param_type ==  "::Transform_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R4X4",vd, true);
                             if (vd->hasInit()){
@@ -897,7 +933,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatortf2::Vector3" or param_type =="tf2::Vector3" or param_type == "const tf2::Vector3" or param_type == "class tf2::Vector3" or param_type == "const class tf2::Vector3" or param_type ==  "::tf2::Vector3_<allocator<void> >"){
+                        else if(param_type == "operatortf2::Vector3" or param_type =="tf2::Vector3" or param_type == "const tf2::Vector3" or param_type == "class tf2::Vector3" or param_type == "const class tf2::Vector3" or param_type ==  "::tf2::Vector3_<allocator<void> >" or param_type == "operatorVector3" or param_type =="Vector3" or param_type == "const Vector3" or param_type == "class Vector3" or param_type == "const class Vector3" or param_type ==  "::Vector3_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R3",vd, true);
                             if (vd->hasInit()){
@@ -919,7 +955,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatortf::Vector3" or param_type =="tf::Vector3" or param_type == "const tf::Vector3" or param_type == "class tf::Vector3" or param_type == "const class tf::Vector3" or param_type ==  "::tf::Vector3_<allocator<void> >"){
+                        else if(param_type == "operatortf::Vector3" or param_type =="tf::Vector3" or param_type == "const tf::Vector3" or param_type == "class tf::Vector3" or param_type == "const class tf::Vector3" or param_type ==  "::tf::Vector3_<allocator<void> >" or param_type == "operatorVector3" or param_type =="Vector3" or param_type == "const Vector3" or param_type == "class Vector3" or param_type == "const class Vector3" or param_type ==  "::Vector3_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R3",vd, true);
                             if (vd->hasInit()){
@@ -941,7 +977,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                             }
                         }
                     
-                        else if(param_type == "operatorros::Time" or param_type =="ros::Time" or param_type == "const ros::Time" or param_type == "class ros::Time" or param_type == "const class ros::Time" or param_type ==  "::ros::Time_<allocator<void> >"){
+                        else if(param_type == "operatorros::Time" or param_type =="ros::Time" or param_type == "const ros::Time" or param_type == "class ros::Time" or param_type == "const class ros::Time" or param_type ==  "::ros::Time_<allocator<void> >" or param_type == "operatorTime" or param_type =="Time" or param_type == "const Time" or param_type == "class Time" or param_type == "const class Time" or param_type ==  "::Time_<allocator<void> >"){
                             
                             interp_->mkNode("IDENT_LIST_R1",vd, true);
                             if (vd->hasInit()){
@@ -1097,7 +1133,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     
                 }
 
-                else if (typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+                else if (typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4X4",vd, true);
                     if (vd->hasInit())
@@ -1133,7 +1169,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                else if (typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4X4",vd, true);
                     if (vd->hasInit())
@@ -1169,7 +1205,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+                else if (typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4X4",vd, true);
                     if (vd->hasInit())
@@ -1205,7 +1241,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                else if (typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4X4",vd, true);
                     if (vd->hasInit())
@@ -1241,7 +1277,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+                else if (typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4",vd, true);
                     if (vd->hasInit())
@@ -1277,7 +1313,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+                else if (typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
@@ -1313,7 +1349,43 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
+                else if (typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+                    //interp_->mk(vd);
+                    interp_->mkNode("IDENT_R1",vd, true);
+                    if (vd->hasInit())
+                    {
+                        ROSDurationBaseMatcher m{ this->context_, this->interp_};
+                        m.setup();
+                        m.visit((*vd->getInit()));
+                        if (m.getChildExprStore())
+                        {
+                            //interp_->mk(declStmt, vd, m.getChildExprStore());
+                            interp_->buffer_operand(vd);
+                            interp_->buffer_operand(m.getChildExprStore());
+                            interp_->mkNode("DECL_INIT_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        //interp_->mk(declStmt, vd);
+                        interp_->buffer_operand(vd);
+                        interp_->mkNode("DECL_R1", declStmt);
+                        this->childExprStore_ = (clang::Stmt*)declStmt;
+                        return;
+                    }
+                }
+            
+                else if (typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4",vd, true);
                     if (vd->hasInit())
@@ -1349,7 +1421,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
+                else if (typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4",vd, true);
                     if (vd->hasInit())
@@ -1385,7 +1457,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
+                else if (typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4X4",vd, true);
                     if (vd->hasInit())
@@ -1421,7 +1493,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+                else if (typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
@@ -1457,7 +1529,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
+                else if (typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
@@ -1493,7 +1565,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
+                else if (typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
@@ -1529,7 +1601,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
+                else if (typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R4X4",vd, true);
                     if (vd->hasInit())
@@ -1565,7 +1637,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
+                else if (typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R3",vd, true);
                     if (vd->hasInit())
@@ -1601,7 +1673,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
+                else if (typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R3",vd, true);
                     if (vd->hasInit())
@@ -1637,7 +1709,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     }
                 }
             
-                else if (typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
+                else if (typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
                     //interp_->mk(vd);
                     interp_->mkNode("IDENT_R1",vd, true);
                     if (vd->hasInit())
@@ -1901,7 +1973,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     auto typestr = ((clang::QualType)vd->getType()).getAsString();
                     if(false){}
                 
-                    else if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+                    else if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R4X4",vd, true);
@@ -1935,7 +2007,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                    else if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R4X4",vd, true);
@@ -1969,7 +2041,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+                    else if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R4X4",vd, true);
@@ -2003,7 +2075,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                    else if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R4X4",vd, true);
@@ -2037,7 +2109,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+                    else if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R4",vd, true);
@@ -2071,7 +2143,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+                    else if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R1",vd, true);
@@ -2105,7 +2177,41 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
+                    else if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+                        //interp_->mk(vd);
+                        
+                        interp_->mkNode("IDENT_R1",vd, true);
+                        if (vd->hasInit())
+                        {
+                            ROSDurationBaseMatcher m{ this->context_, this->interp_};
+                            m.setup();
+                            m.visit((*vd->getInit()));
+                            if (m.getChildExprStore())
+                            {
+                                //interp_->mk(declStmt, vd, m.getChildExprStore());
+                                interp_->buffer_operand(vd);
+                                interp_->buffer_operand(m.getChildExprStore());
+                                interp_->mkNode("DECL_INIT_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                            else
+                            {
+                                //interp_->mk(declStmt, vd);
+                                interp_->buffer_operand(vd);
+                                interp_->mkNode("DECL_R1", declStmt);
+                                this->childExprStore_ =  (clang::Stmt*)declStmt;
+                            }
+                        }
+                        else
+                        {
+                            //interp_->mk(declStmt, vd);
+                            interp_->buffer_operand(vd);
+                            interp_->mkNode("DECL_R1", declStmt);
+                            this->childExprStore_ =  (clang::Stmt*)declStmt;
+                        }
+                        anyfound = true;
+                    }
+                    else if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R4",vd, true);
@@ -2139,7 +2245,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
+                    else if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R4",vd, true);
@@ -2173,7 +2279,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
+                    else if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R4X4",vd, true);
@@ -2207,7 +2313,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+                    else if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R1",vd, true);
@@ -2241,7 +2347,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
+                    else if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R1",vd, true);
@@ -2275,7 +2381,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
+                    else if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R1",vd, true);
@@ -2309,7 +2415,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
+                    else if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R4X4",vd, true);
@@ -2343,7 +2449,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
+                    else if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R3",vd, true);
@@ -2377,7 +2483,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
+                    else if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R3",vd, true);
@@ -2411,7 +2517,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         }
                         anyfound = true;
                     }
-                    else if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
+                    else if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
                         //interp_->mk(vd);
                         
                         interp_->mkNode("IDENT_R1",vd, true);
@@ -2687,7 +2793,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     std::string param_type = objstr.substr(vec_str.length(), objstr.length()-vec_str.length()-1);
                     if(false){}                
 
-                    else if(param_type == "operatorgeometry_msgs::PoseWithCovarianceStamped" or param_type =="geometry_msgs::PoseWithCovarianceStamped" or param_type == "const geometry_msgs::PoseWithCovarianceStamped" or param_type == "class geometry_msgs::PoseWithCovarianceStamped" or param_type == "const class geometry_msgs::PoseWithCovarianceStamped" or param_type ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+                    else if(param_type == "operatorgeometry_msgs::PoseWithCovarianceStamped" or param_type =="geometry_msgs::PoseWithCovarianceStamped" or param_type == "const geometry_msgs::PoseWithCovarianceStamped" or param_type == "class geometry_msgs::PoseWithCovarianceStamped" or param_type == "const class geometry_msgs::PoseWithCovarianceStamped" or param_type ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or param_type == "operatorPoseWithCovarianceStamped" or param_type =="PoseWithCovarianceStamped" or param_type == "const PoseWithCovarianceStamped" or param_type == "class PoseWithCovarianceStamped" or param_type == "const class PoseWithCovarianceStamped" or param_type ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSGeometryPoseWithCovarianceStamped argm{this->context_,this->interp_};
@@ -2701,7 +2807,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatorgeometry_msgs::TransformStamped" or param_type =="geometry_msgs::TransformStamped" or param_type == "const geometry_msgs::TransformStamped" or param_type == "class geometry_msgs::TransformStamped" or param_type == "const class geometry_msgs::TransformStamped" or param_type ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                    else if(param_type == "operatorgeometry_msgs::TransformStamped" or param_type =="geometry_msgs::TransformStamped" or param_type == "const geometry_msgs::TransformStamped" or param_type == "class geometry_msgs::TransformStamped" or param_type == "const class geometry_msgs::TransformStamped" or param_type ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or param_type == "operatorTransformStamped" or param_type =="TransformStamped" or param_type == "const TransformStamped" or param_type == "class TransformStamped" or param_type == "const class TransformStamped" or param_type ==  "::TransformStamped_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSGeomTransformStamped argm{this->context_,this->interp_};
@@ -2715,7 +2821,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatortf2::Stamped<tf2::Transform>" or param_type =="tf2::Stamped<tf2::Transform>" or param_type == "const tf2::Stamped<tf2::Transform>" or param_type == "class tf2::Stamped<tf2::Transform>" or param_type == "const class tf2::Stamped<tf2::Transform>" or param_type ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+                    else if(param_type == "operatortf2::Stamped<tf2::Transform>" or param_type =="tf2::Stamped<tf2::Transform>" or param_type == "const tf2::Stamped<tf2::Transform>" or param_type == "class tf2::Stamped<tf2::Transform>" or param_type == "const class tf2::Stamped<tf2::Transform>" or param_type ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or param_type == "operatorStamped<tf2::Transform>" or param_type =="Stamped<tf2::Transform>" or param_type == "const Stamped<tf2::Transform>" or param_type == "class Stamped<tf2::Transform>" or param_type == "const class Stamped<tf2::Transform>" or param_type ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTF2TransformStamped argm{this->context_,this->interp_};
@@ -2729,7 +2835,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatorgeometry_msgs::PoseStamped" or param_type =="geometry_msgs::PoseStamped" or param_type == "const geometry_msgs::PoseStamped" or param_type == "class geometry_msgs::PoseStamped" or param_type == "const class geometry_msgs::PoseStamped" or param_type ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                    else if(param_type == "operatorgeometry_msgs::PoseStamped" or param_type =="geometry_msgs::PoseStamped" or param_type == "const geometry_msgs::PoseStamped" or param_type == "class geometry_msgs::PoseStamped" or param_type == "const class geometry_msgs::PoseStamped" or param_type ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or param_type == "operatorPoseStamped" or param_type =="PoseStamped" or param_type == "const PoseStamped" or param_type == "class PoseStamped" or param_type == "const class PoseStamped" or param_type ==  "::PoseStamped_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSGeomPoseStamped argm{this->context_,this->interp_};
@@ -2743,7 +2849,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatorgeometry_msgs::Quaternion" or param_type =="geometry_msgs::Quaternion" or param_type == "const geometry_msgs::Quaternion" or param_type == "class geometry_msgs::Quaternion" or param_type == "const class geometry_msgs::Quaternion" or param_type ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+                    else if(param_type == "operatorgeometry_msgs::Quaternion" or param_type =="geometry_msgs::Quaternion" or param_type == "const geometry_msgs::Quaternion" or param_type == "class geometry_msgs::Quaternion" or param_type == "const class geometry_msgs::Quaternion" or param_type ==  "::geometry_msgs::Quaternion_<allocator<void> >" or param_type == "operatorQuaternion" or param_type =="Quaternion" or param_type == "const Quaternion" or param_type == "class Quaternion" or param_type == "const class Quaternion" or param_type ==  "::Quaternion_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSGeomQuaternion argm{this->context_,this->interp_};
@@ -2757,7 +2863,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatorros::DurationBase" or param_type =="ros::DurationBase" or param_type == "const ros::DurationBase" or param_type == "class ros::DurationBase" or param_type == "const class ros::DurationBase" or param_type ==  "::ros::DurationBase_<allocator<void> >"){
+                    else if(param_type == "operatorros::DurationBase" or param_type =="ros::DurationBase" or param_type == "const ros::DurationBase" or param_type == "class ros::DurationBase" or param_type == "const class ros::DurationBase" or param_type ==  "::ros::DurationBase_<allocator<void> >" or param_type == "operatorDurationBase" or param_type =="DurationBase" or param_type == "const DurationBase" or param_type == "class DurationBase" or param_type == "const class DurationBase" or param_type ==  "::DurationBase_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSDurationBaseMatcher argm{this->context_,this->interp_};
@@ -2771,7 +2877,21 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatortf2::Quaternion" or param_type =="tf2::Quaternion" or param_type == "const tf2::Quaternion" or param_type == "class tf2::Quaternion" or param_type == "const class tf2::Quaternion" or param_type ==  "::tf2::Quaternion_<allocator<void> >"){
+                    else if(param_type == "operatorros::DurationBase" or param_type =="ros::DurationBase" or param_type == "const ros::DurationBase" or param_type == "class ros::DurationBase" or param_type == "const class ros::DurationBase" or param_type ==  "::ros::DurationBase_<allocator<void> >" or param_type == "operatorDurationBase" or param_type =="DurationBase" or param_type == "const DurationBase" or param_type == "class DurationBase" or param_type == "const class DurationBase" or param_type ==  "::DurationBase_<allocator<void> >"){
+                        
+                        auto arg_=cxxMemberCallExpr_->getArg(0);
+                        ROSDurationBaseMatcher argm{this->context_,this->interp_};
+                        argm.setup();
+                        argm.visit(*arg_);
+                        auto argstmt = argm.getChildExprStore();
+                        interp_->buffer_link(objdecl);
+                        interp_->buffer_operand(argstmt);
+                        interp_->mkNode("APPEND_LIST_R1",cxxMemberCallExpr_, false);
+                        this->childExprStore_ = (clang::Stmt*)cxxMemberCallExpr_;
+                        return;
+                    }
+                    
+                    else if(param_type == "operatortf2::Quaternion" or param_type =="tf2::Quaternion" or param_type == "const tf2::Quaternion" or param_type == "class tf2::Quaternion" or param_type == "const class tf2::Quaternion" or param_type ==  "::tf2::Quaternion_<allocator<void> >" or param_type == "operatorQuaternion" or param_type =="Quaternion" or param_type == "const Quaternion" or param_type == "class Quaternion" or param_type == "const class Quaternion" or param_type ==  "::Quaternion_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTF2Quaternion argm{this->context_,this->interp_};
@@ -2785,7 +2905,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatortf::Quaternion" or param_type =="tf::Quaternion" or param_type == "const tf::Quaternion" or param_type == "class tf::Quaternion" or param_type == "const class tf::Quaternion" or param_type ==  "::tf::Quaternion_<allocator<void> >"){
+                    else if(param_type == "operatortf::Quaternion" or param_type =="tf::Quaternion" or param_type == "const tf::Quaternion" or param_type == "class tf::Quaternion" or param_type == "const class tf::Quaternion" or param_type ==  "::tf::Quaternion_<allocator<void> >" or param_type == "operatorQuaternion" or param_type =="Quaternion" or param_type == "const Quaternion" or param_type == "class Quaternion" or param_type == "const class Quaternion" or param_type ==  "::Quaternion_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTFQuaternion argm{this->context_,this->interp_};
@@ -2799,7 +2919,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatortf2::Transform" or param_type =="tf2::Transform" or param_type == "const tf2::Transform" or param_type == "class tf2::Transform" or param_type == "const class tf2::Transform" or param_type ==  "::tf2::Transform_<allocator<void> >"){
+                    else if(param_type == "operatortf2::Transform" or param_type =="tf2::Transform" or param_type == "const tf2::Transform" or param_type == "class tf2::Transform" or param_type == "const class tf2::Transform" or param_type ==  "::tf2::Transform_<allocator<void> >" or param_type == "operatorTransform" or param_type =="Transform" or param_type == "const Transform" or param_type == "class Transform" or param_type == "const class Transform" or param_type ==  "::Transform_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTF2Transform argm{this->context_,this->interp_};
@@ -2813,7 +2933,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatorros::TimeBase" or param_type =="ros::TimeBase" or param_type == "const ros::TimeBase" or param_type == "class ros::TimeBase" or param_type == "const class ros::TimeBase" or param_type ==  "::ros::TimeBase_<allocator<void> >"){
+                    else if(param_type == "operatorros::TimeBase" or param_type =="ros::TimeBase" or param_type == "const ros::TimeBase" or param_type == "class ros::TimeBase" or param_type == "const class ros::TimeBase" or param_type ==  "::ros::TimeBase_<allocator<void> >" or param_type == "operatorTimeBase" or param_type =="TimeBase" or param_type == "const TimeBase" or param_type == "class TimeBase" or param_type == "const class TimeBase" or param_type ==  "::TimeBase_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTimeBaseMatcher argm{this->context_,this->interp_};
@@ -2827,7 +2947,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatorros::Duration" or param_type =="ros::Duration" or param_type == "const ros::Duration" or param_type == "class ros::Duration" or param_type == "const class ros::Duration" or param_type ==  "::ros::Duration_<allocator<void> >"){
+                    else if(param_type == "operatorros::Duration" or param_type =="ros::Duration" or param_type == "const ros::Duration" or param_type == "class ros::Duration" or param_type == "const class ros::Duration" or param_type ==  "::ros::Duration_<allocator<void> >" or param_type == "operatorDuration" or param_type =="Duration" or param_type == "const Duration" or param_type == "class Duration" or param_type == "const class Duration" or param_type ==  "::Duration_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSDurationMatcher argm{this->context_,this->interp_};
@@ -2841,7 +2961,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatortf2::Duration" or param_type =="tf2::Duration" or param_type == "const tf2::Duration" or param_type == "class tf2::Duration" or param_type == "const class tf2::Duration" or param_type ==  "::tf2::Duration_<allocator<void> >"){
+                    else if(param_type == "operatortf2::Duration" or param_type =="tf2::Duration" or param_type == "const tf2::Duration" or param_type == "class tf2::Duration" or param_type == "const class tf2::Duration" or param_type ==  "::tf2::Duration_<allocator<void> >" or param_type == "operatorDuration" or param_type =="Duration" or param_type == "const Duration" or param_type == "class Duration" or param_type == "const class Duration" or param_type ==  "::Duration_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTF2DurationMatcher argm{this->context_,this->interp_};
@@ -2855,7 +2975,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatortf::Transform" or param_type =="tf::Transform" or param_type == "const tf::Transform" or param_type == "class tf::Transform" or param_type == "const class tf::Transform" or param_type ==  "::tf::Transform_<allocator<void> >"){
+                    else if(param_type == "operatortf::Transform" or param_type =="tf::Transform" or param_type == "const tf::Transform" or param_type == "class tf::Transform" or param_type == "const class tf::Transform" or param_type ==  "::tf::Transform_<allocator<void> >" or param_type == "operatorTransform" or param_type =="Transform" or param_type == "const Transform" or param_type == "class Transform" or param_type == "const class Transform" or param_type ==  "::Transform_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTFTransformMatcher argm{this->context_,this->interp_};
@@ -2869,7 +2989,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatortf2::Vector3" or param_type =="tf2::Vector3" or param_type == "const tf2::Vector3" or param_type == "class tf2::Vector3" or param_type == "const class tf2::Vector3" or param_type ==  "::tf2::Vector3_<allocator<void> >"){
+                    else if(param_type == "operatortf2::Vector3" or param_type =="tf2::Vector3" or param_type == "const tf2::Vector3" or param_type == "class tf2::Vector3" or param_type == "const class tf2::Vector3" or param_type ==  "::tf2::Vector3_<allocator<void> >" or param_type == "operatorVector3" or param_type =="Vector3" or param_type == "const Vector3" or param_type == "class Vector3" or param_type == "const class Vector3" or param_type ==  "::Vector3_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTF2Vector3Matcher argm{this->context_,this->interp_};
@@ -2883,7 +3003,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatortf::Vector3" or param_type =="tf::Vector3" or param_type == "const tf::Vector3" or param_type == "class tf::Vector3" or param_type == "const class tf::Vector3" or param_type ==  "::tf::Vector3_<allocator<void> >"){
+                    else if(param_type == "operatortf::Vector3" or param_type =="tf::Vector3" or param_type == "const tf::Vector3" or param_type == "class tf::Vector3" or param_type == "const class tf::Vector3" or param_type ==  "::tf::Vector3_<allocator<void> >" or param_type == "operatorVector3" or param_type =="Vector3" or param_type == "const Vector3" or param_type == "class Vector3" or param_type == "const class Vector3" or param_type ==  "::Vector3_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTFVector3Matcher argm{this->context_,this->interp_};
@@ -2897,7 +3017,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                         return;
                     }
                     
-                    else if(param_type == "operatorros::Time" or param_type =="ros::Time" or param_type == "const ros::Time" or param_type == "class ros::Time" or param_type == "const class ros::Time" or param_type ==  "::ros::Time_<allocator<void> >"){
+                    else if(param_type == "operatorros::Time" or param_type =="ros::Time" or param_type == "const ros::Time" or param_type == "class ros::Time" or param_type == "const class ros::Time" or param_type ==  "::ros::Time_<allocator<void> >" or param_type == "operatorTime" or param_type =="Time" or param_type == "const Time" or param_type == "class Time" or param_type == "const class Time" or param_type ==  "::Time_<allocator<void> >"){
                         
                         auto arg_=cxxMemberCallExpr_->getArg(0);
                         ROSTimeMatcher argm{this->context_,this->interp_};
@@ -3006,7 +3126,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
     {
         auto typestr = ((clang::QualType)exprStmt->getType()).getAsString();
         
-        if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+        if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
             ROSGeometryPoseWithCovarianceStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3016,7 +3136,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+        if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
             ROSGeomTransformStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3026,7 +3146,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+        if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
             ROSTF2TransformStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3036,7 +3156,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+        if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
             ROSGeomPoseStamped m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3046,7 +3166,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+        if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
             ROSGeomQuaternion m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3056,7 +3176,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+        if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
             ROSDurationBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3066,7 +3186,17 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
+        if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+            ROSDurationBaseMatcher m{ this->context_, this->interp_};
+            m.setup();
+            m.visit(*exprStmt);
+            if (m.getChildExprStore()){
+                this->childExprStore_ = const_cast<clang::Stmt*>(m.getChildExprStore());
+                return;
+            }
+                
+        }
+        if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
             ROSTF2Quaternion m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3076,7 +3206,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
+        if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
             ROSTFQuaternion m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3086,7 +3216,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
+        if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
             ROSTF2Transform m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3096,7 +3226,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+        if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
             ROSTimeBaseMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3106,7 +3236,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
+        if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
             ROSDurationMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3116,7 +3246,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
+        if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
             ROSTF2DurationMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3126,7 +3256,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
+        if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
             ROSTFTransformMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3136,7 +3266,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
+        if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
             ROSTF2Vector3Matcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3146,7 +3276,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
+        if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
             ROSTFVector3Matcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3156,7 +3286,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
             }
                 
         }
-        if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
+        if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
             ROSTimeMatcher m{ this->context_, this->interp_};
             m.setup();
             m.visit(*exprStmt);
@@ -3248,7 +3378,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                 if(false){}
     
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >"){
+                if(typestr == "operatorgeometry_msgs::PoseWithCovarianceStamped" or typestr =="geometry_msgs::PoseWithCovarianceStamped" or typestr == "const geometry_msgs::PoseWithCovarianceStamped" or typestr == "class geometry_msgs::PoseWithCovarianceStamped" or typestr == "const class geometry_msgs::PoseWithCovarianceStamped" or typestr ==  "::geometry_msgs::PoseWithCovarianceStamped_<allocator<void> >" or typestr == "operatorPoseWithCovarianceStamped" or typestr =="PoseWithCovarianceStamped" or typestr == "const PoseWithCovarianceStamped" or typestr == "class PoseWithCovarianceStamped" or typestr == "const class PoseWithCovarianceStamped" or typestr ==  "::PoseWithCovarianceStamped_<allocator<void> >"){
                     ROSGeometryPoseWithCovarianceStamped m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3257,7 +3387,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >"){
+                if(typestr == "operatorgeometry_msgs::TransformStamped" or typestr =="geometry_msgs::TransformStamped" or typestr == "const geometry_msgs::TransformStamped" or typestr == "class geometry_msgs::TransformStamped" or typestr == "const class geometry_msgs::TransformStamped" or typestr ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typestr == "operatorTransformStamped" or typestr =="TransformStamped" or typestr == "const TransformStamped" or typestr == "class TransformStamped" or typestr == "const class TransformStamped" or typestr ==  "::TransformStamped_<allocator<void> >"){
                     ROSGeomTransformStamped m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3266,7 +3396,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,false);
-                if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >"){
+                if(typestr == "operatortf2::Stamped<tf2::Transform>" or typestr =="tf2::Stamped<tf2::Transform>" or typestr == "const tf2::Stamped<tf2::Transform>" or typestr == "class tf2::Stamped<tf2::Transform>" or typestr == "const class tf2::Stamped<tf2::Transform>" or typestr ==  "::tf2::Stamped<tf2::Transform>_<allocator<void> >" or typestr == "operatorStamped<tf2::Transform>" or typestr =="Stamped<tf2::Transform>" or typestr == "const Stamped<tf2::Transform>" or typestr == "class Stamped<tf2::Transform>" or typestr == "const class Stamped<tf2::Transform>" or typestr ==  "::Stamped<tf2::Transform>_<allocator<void> >"){
                     ROSTF2TransformStamped m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3275,7 +3405,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >"){
+                if(typestr == "operatorgeometry_msgs::PoseStamped" or typestr =="geometry_msgs::PoseStamped" or typestr == "const geometry_msgs::PoseStamped" or typestr == "class geometry_msgs::PoseStamped" or typestr == "const class geometry_msgs::PoseStamped" or typestr ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typestr == "operatorPoseStamped" or typestr =="PoseStamped" or typestr == "const PoseStamped" or typestr == "class PoseStamped" or typestr == "const class PoseStamped" or typestr ==  "::PoseStamped_<allocator<void> >"){
                     ROSGeomPoseStamped m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3284,7 +3414,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >"){
+                if(typestr == "operatorgeometry_msgs::Quaternion" or typestr =="geometry_msgs::Quaternion" or typestr == "const geometry_msgs::Quaternion" or typestr == "class geometry_msgs::Quaternion" or typestr == "const class geometry_msgs::Quaternion" or typestr ==  "::geometry_msgs::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                     ROSGeomQuaternion m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3293,7 +3423,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >"){
+                if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
                     ROSDurationBaseMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3302,7 +3432,16 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >"){
+                if(typestr == "operatorros::DurationBase" or typestr =="ros::DurationBase" or typestr == "const ros::DurationBase" or typestr == "class ros::DurationBase" or typestr == "const class ros::DurationBase" or typestr ==  "::ros::DurationBase_<allocator<void> >" or typestr == "operatorDurationBase" or typestr =="DurationBase" or typestr == "const DurationBase" or typestr == "class DurationBase" or typestr == "const class DurationBase" or typestr ==  "::DurationBase_<allocator<void> >"){
+                    ROSDurationBaseMatcher m{ this->context_, this->interp_};
+                    m.setup();
+                    m.visit(*arg);
+                    if (m.getChildExprStore())
+                        operands_.push_back(m.getChildExprStore());
+                    continue;
+                }
+                typestr = this->getTypeAsString(arg,true);
+                if(typestr == "operatortf2::Quaternion" or typestr =="tf2::Quaternion" or typestr == "const tf2::Quaternion" or typestr == "class tf2::Quaternion" or typestr == "const class tf2::Quaternion" or typestr ==  "::tf2::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                     ROSTF2Quaternion m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3311,7 +3450,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >"){
+                if(typestr == "operatortf::Quaternion" or typestr =="tf::Quaternion" or typestr == "const tf::Quaternion" or typestr == "class tf::Quaternion" or typestr == "const class tf::Quaternion" or typestr ==  "::tf::Quaternion_<allocator<void> >" or typestr == "operatorQuaternion" or typestr =="Quaternion" or typestr == "const Quaternion" or typestr == "class Quaternion" or typestr == "const class Quaternion" or typestr ==  "::Quaternion_<allocator<void> >"){
                     ROSTFQuaternion m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3320,7 +3459,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >"){
+                if(typestr == "operatortf2::Transform" or typestr =="tf2::Transform" or typestr == "const tf2::Transform" or typestr == "class tf2::Transform" or typestr == "const class tf2::Transform" or typestr ==  "::tf2::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                     ROSTF2Transform m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3329,7 +3468,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >"){
+                if(typestr == "operatorros::TimeBase" or typestr =="ros::TimeBase" or typestr == "const ros::TimeBase" or typestr == "class ros::TimeBase" or typestr == "const class ros::TimeBase" or typestr ==  "::ros::TimeBase_<allocator<void> >" or typestr == "operatorTimeBase" or typestr =="TimeBase" or typestr == "const TimeBase" or typestr == "class TimeBase" or typestr == "const class TimeBase" or typestr ==  "::TimeBase_<allocator<void> >"){
                     ROSTimeBaseMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3338,7 +3477,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >"){
+                if(typestr == "operatorros::Duration" or typestr =="ros::Duration" or typestr == "const ros::Duration" or typestr == "class ros::Duration" or typestr == "const class ros::Duration" or typestr ==  "::ros::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                     ROSDurationMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3347,7 +3486,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >"){
+                if(typestr == "operatortf2::Duration" or typestr =="tf2::Duration" or typestr == "const tf2::Duration" or typestr == "class tf2::Duration" or typestr == "const class tf2::Duration" or typestr ==  "::tf2::Duration_<allocator<void> >" or typestr == "operatorDuration" or typestr =="Duration" or typestr == "const Duration" or typestr == "class Duration" or typestr == "const class Duration" or typestr ==  "::Duration_<allocator<void> >"){
                     ROSTF2DurationMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3356,7 +3495,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >"){
+                if(typestr == "operatortf::Transform" or typestr =="tf::Transform" or typestr == "const tf::Transform" or typestr == "class tf::Transform" or typestr == "const class tf::Transform" or typestr ==  "::tf::Transform_<allocator<void> >" or typestr == "operatorTransform" or typestr =="Transform" or typestr == "const Transform" or typestr == "class Transform" or typestr == "const class Transform" or typestr ==  "::Transform_<allocator<void> >"){
                     ROSTFTransformMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3365,7 +3504,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >"){
+                if(typestr == "operatortf2::Vector3" or typestr =="tf2::Vector3" or typestr == "const tf2::Vector3" or typestr == "class tf2::Vector3" or typestr == "const class tf2::Vector3" or typestr ==  "::tf2::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                     ROSTF2Vector3Matcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3374,7 +3513,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >"){
+                if(typestr == "operatortf::Vector3" or typestr =="tf::Vector3" or typestr == "const tf::Vector3" or typestr == "class tf::Vector3" or typestr == "const class tf::Vector3" or typestr ==  "::tf::Vector3_<allocator<void> >" or typestr == "operatorVector3" or typestr =="Vector3" or typestr == "const Vector3" or typestr == "class Vector3" or typestr == "const class Vector3" or typestr ==  "::Vector3_<allocator<void> >"){
                     ROSTFVector3Matcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);
@@ -3383,7 +3522,7 @@ void ROSStatementMatcher::run(const MatchFinder::MatchResult &Result){
                     continue;
                 }
                 typestr = this->getTypeAsString(arg,true);
-                if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >"){
+                if(typestr == "operatorros::Time" or typestr =="ros::Time" or typestr == "const ros::Time" or typestr == "class ros::Time" or typestr == "const class ros::Time" or typestr ==  "::ros::Time_<allocator<void> >" or typestr == "operatorTime" or typestr =="Time" or typestr == "const Time" or typestr == "class Time" or typestr == "const class Time" or typestr ==  "::Time_<allocator<void> >"){
                     ROSTimeMatcher m{ this->context_, this->interp_};
                     m.setup();
                     m.visit(*arg);

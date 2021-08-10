@@ -22,9 +22,9 @@ public:
 
     std::string getName();
     template<int Dimension>
-    float* getValueVector();/*not physical vector*/
+    std::string* getValueVector();/*not physical vector*/
     template<int Dimension>
-    float** getValueMatrix();/*not physical vector*/
+    std::string** getValueMatrix();/*not physical vector*/
     template<typename SpaceType>
     domain::CoordinateSpace* selectSpace(std::vector<SpaceType*>);
     domain::TimeSeries* selectTimeSeries();
