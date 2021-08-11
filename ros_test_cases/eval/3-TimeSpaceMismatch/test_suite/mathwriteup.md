@@ -1,5 +1,7 @@
 # Take 2
 
+## IGNORE FOR NOW
+
 The C++ code for which we need an interpretation is as follows:
 
 ```c++

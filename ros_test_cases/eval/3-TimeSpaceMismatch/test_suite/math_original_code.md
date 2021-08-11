@@ -1,3 +1,5 @@
+# Detailed analysis of original code. What is it actually doing?
+
 ``` c++
 void BaseRealSenseNode::imu_callback_sync(rs2::frame frame, imu_sync_method sync_method)
 /*
