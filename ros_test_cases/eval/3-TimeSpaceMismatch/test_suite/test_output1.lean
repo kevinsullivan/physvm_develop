@@ -34,13 +34,13 @@ def main : punit :=
   let msg0 : timestamped_pose3d_expr hw ww := |{
     timestamp:=(((hardware_clock_time : time_expr hw))).value,
     ..msg.value
-}| in
+  }| in
   let _ros_time_base : time_expr wt := ((|mk_time wt.value 0|:time_expr wt)) in
   let stamp_added_bias : time_expr hw := ((((_ros_time_base : time_expr wt))+ᵥ((|msg0.value.timestamp| : _)):time_expr hw)) in
   let msg1 : timestamped_pose3d_expr hw ww := |{
     timestamp:=(((|mk_time hw.value 5|:time_expr hw))).value,
     ..msg0.value
-}| in
+  }| in
 
   punit.star
 

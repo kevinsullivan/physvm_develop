@@ -32,7 +32,7 @@ class Interpretation
 public:
     Interpretation();
 
-    std::string toStringAST();
+    std::string toStringAST(bool typecheck_mode_ = true);
 
     void setOracle(oracle::Oracle_AskAll* oracle)
     {

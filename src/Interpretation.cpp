@@ -50,7 +50,7 @@ Interpretation::Interpretation() {
     checker_ = new Checker(this);
 }
 
-std::string Interpretation::toStringAST(){
+std::string Interpretation::toStringAST(bool typecheck_mode_){
     //this should technically be in Interp but OKAY this second
     //4/13 - nope move this 
     std::string math = "";
@@ -67,7 +67,7 @@ std::string Interpretation::toStringAST(){
     }
 
     if(astInterp){
-        math+= astInterp->toStringAST(domain_->getSpaces(), global_timeseries);
+        math+= astInterp->toStringAST(domain_->getSpaces(), global_timeseries,typecheck_mode_);
     }
     else
         std::cout<<"Warning : No top-level AST node present";
@@ -269,11 +269,11 @@ void Interpretation::interpretConstructors(){
             checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
             this->performInference();
-            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput(false);//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
         else 
-            checker_->RebuildOutput();
+            checker_->RebuildOutput(false);
 
         int choice = oracle_->getValidChoice(0, menuSize+1, menu);
         switch(choice)
@@ -376,11 +376,11 @@ void Interpretation::interpretFunctions(){
             checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
             this->performInference();
-            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput(false);//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
         else 
-            checker_->RebuildOutput();
+            checker_->RebuildOutput(false);
 
         int choice = oracle_->getValidChoice(0, menuSize+1, menu);
         switch(choice)
@@ -602,11 +602,11 @@ void Interpretation::interpretProgram(){
             checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
             this->performInference();
-            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            checker_->RebuildOutput(false);//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
         else 
-            checker_->RebuildOutput();
+            checker_->RebuildOutput(false);
         this->printChoices();
         std::cout << "********************************************\n";
         std::cout << "See type-checking output in "<<"/peirce/PeirceOutput.lean"<<"\n";

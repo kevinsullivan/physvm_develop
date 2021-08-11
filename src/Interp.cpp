@@ -18,6 +18,10 @@ namespace interp{
 int ident_ = 0;
 std::unordered_map<Interp*, int> ident_map;
 
+bool typecheck_mode = true;
+
+std::vector<Interp*> open_checks;
+
 OutputState output_state;
 /*
 std::string getFullPrecisionString(float& f){
@@ -44,6 +48,31 @@ std::string getFullPrecisionString(float& f){
 
 
 //std::shared_ptr<Location> global_loc;
+
+bool Interp::openCheck(){
+    if(typecheck_mode){
+        if(std::find(open_checks.begin(), open_checks.end(), this) != open_checks.end())
+            throw "Invalid call to openCheck - Type Check already opened at this node";
+        else
+            open_checks.push_back(this);
+        output_state.update("((");
+    }
+    return true;
+};
+
+bool Interp::closeCheck(){
+    if(typecheck_mode){
+        if(std::find(open_checks.begin(), open_checks.end(), this) == open_checks.end())
+            throw "Invalid call to closeCheck - Type Check not opened at this node";
+        else {
+            open_checks.erase(std::find(open_checks.begin(), open_checks.end(), this));
+        }
+        output_state.update(":");
+        output_state.update(this->getType());
+        output_state.update("))");
+    }
+    return true;
+};
 
 std::string getNextIdentifier(interp::Interp* interp_){
 
@@ -474,7 +503,7 @@ void Interp::buildString(bool withType, bool withLet){
             output_state.update(", ");
         }
         this->setStartLocation(output_state.getCurrentLoc());
-        output_state.update("((");
+        this->openCheck();
         output_state.update("\n");
         for(auto bo: body){
             output_state.update("");
@@ -484,7 +513,7 @@ void Interp::buildString(bool withType, bool withLet){
             output_state.update("");
 
         }
-        output_state.update("  :_))");
+        this->closeCheck();
         this->setEndLocation(output_state.getCurrentLoc());
         output_state.update("\n");
        // std::cout<<"FUNC LOC:"
@@ -516,13 +545,7 @@ void Interp::buildString(bool withType, bool withLet){
         output_state.update("  punit.star\n");
     }
     else if (nodeType.find("RETURN_") != string::npos){
-        //output_state.update("((");
         this->operands[0]->buildString();
-        //output_state.update(":");
-        //output_state.update(this->getType());
-        //output_state.update("))");
-        //this->start_location = this->operands[0]->getStartLocation();
-        //this->end_location = this->operands[0]->getEndLocation();
     }
     else if (nodeType == "RETURN"){
         output_state.update("punit.star");
@@ -587,7 +610,8 @@ void Interp::buildString(bool withType, bool withLet){
                 output_state.update(std::string("["));
                 auto exprbegin = output_state.getCurrentLoc();
                 if(auto dci = dynamic_cast<domain::TimeStamped*>(expr_->getDomain()->getValue())){
-                    output_state.update("((|");
+                    this->openCheck();
+                    output_state.update("|");
                     auto astime = dci->getTime();
                     output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0]);
                     auto exprbegin = output_state.getCurrentLoc();
@@ -614,27 +638,26 @@ void Interp::buildString(bool withType, bool withLet){
                         output_state.update("_");
                     }
                     
-                    output_state.update("|:_))");
+                    output_state.update("|");
+                    this->closeCheck();
                 }
                 else{
-                    output_state.update("((_↦");
+                    this->openCheck();
+                    output_state.update("_↦");
                     expr_->buildString();
-                    output_state.update(":_))");
+                    this->closeCheck();
                 }
                 expr_->setStartLocation(exprbegin);
                 expr_->setEndLocation(output_state.getCurrentLoc());
                 output_state.update(std::string("]"));
             }
             else {
-               // output_state.update("((_:_))");
                expr_->setStartLocation(output_state.getCurrentLoc());
                expr_->setEndLocation(output_state.getCurrentLoc());
             }
-            //output_state.update(std::string("]"));
 
         }
         else{
-            //output_state.update( std::string("def ") );
             var_->buildString(); 
             output_state.update(" := "); 
             expr_->buildString();
@@ -653,9 +676,9 @@ void Interp::buildString(bool withType, bool withLet){
         output_state.update(std::string(" := "));
 
         this->setStartLocation(output_state.getCurrentLoc());
-        output_state.update("((");
+        this->openCheck();
         output_state.update("[]");
-        output_state.update(":_))");
+        this->closeCheck();
         this->setEndLocation(output_state.getCurrentLoc());
         
         if (withLet)
@@ -680,7 +703,7 @@ void Interp::buildString(bool withType, bool withLet){
         || nodeType == "LIT_R4X4" || nodeType == "LIT_R4" 
         || nodeType == "LIT_R3X3") {
         
-        output_state.update("((");
+        this->openCheck();
 
         if(this->constructor and this->constructor->hasValue()){
             output_state.update( "(");
@@ -814,8 +837,8 @@ void Interp::buildString(bool withType, bool withLet){
         if(this->constructor and this->constructor->hasValue()){
             output_state.update( " : " + this->constructor->getType() + ")");
         }
-
-        output_state.update(":" + this->getType()+"))");
+        this->closeCheck();
+        //output_state.update(":" + this->getType()+"))");
     } 
     else if(nodeType == "IDENT_R1" || nodeType == "IDENT_R3" 
     || nodeType == "IDENT_R4X4" || nodeType == "IDENT_R4" 
@@ -847,42 +870,38 @@ void Interp::buildString(bool withType, bool withLet){
         }
     }
     else if(nodeType == "REF_R1" || nodeType == "REF_R4X4") {
-        /*if(auto dcts = dynamic_cast<domain::TimeSeries*>(this->getLinked()->getDomain()->getValue())){
-            if(!withType)
-                output_state.update(getLastIdentifier(this->getLinked())+".");
-            else
-                output_state.update("(("+ this->coords->getLinked()->getName() 
-                    + " : " + this->getLinked()->getType()+"))");
-        }*/
         if(0){}
         else if(this->hasContainer()){
             auto isTimestamped = dynamic_cast<domain::TimeStamped*>(this->getContainer()->getDomain()->getValue());
             auto isTimeSeries = dynamic_cast<domain::TimeSeries*>(this->getContainer()->getDomain()->getValue());
+            this->openCheck();
             if(!withType)
                 output_state.update(getCurrentIdentifier(this->getContainer()));
             else
                 if(isTimestamped)
-                    output_state.update("((|"+ getCurrentIdentifier(this->getContainer()) 
-                        + ".value.timestamp| : _))");
+                    output_state.update("|"+ getCurrentIdentifier(this->getContainer()) 
+                        + ".value.timestamp|");
                 else if(isTimeSeries)
-                    output_state.update("((|"+ getCurrentIdentifier(this->getContainer()) 
-                        + ".value.latest.timestamp| : _))");
+                    output_state.update("|"+ getCurrentIdentifier(this->getContainer()) 
+                        + ".value.latest.timestamp|");
                 else
-                    output_state.update("((|"+ getCurrentIdentifier(this->getContainer()) 
-                        + ".value.property| : _))");
+                    output_state.update("|"+ getCurrentIdentifier(this->getContainer()) 
+                        + ".value.property|");
+            this->closeCheck();
         }
         else{
             if(!withType)
                 output_state.update(getCurrentIdentifier(this));
-            else
-                output_state.update("(("+ getCurrentIdentifier(this) 
-                    + " : " + this->getLinked()->getType()+"))");
-
+            else {
+                this->getLinked()->openCheck();
+                output_state.update(getCurrentIdentifier(this));
+                this->getLinked()->closeCheck();
+            }
         }
     } 
     else if(nodeType == "REF_R3"){
         if(this->hasContainer()){
-            output_state.update("((");
+            this->openCheck();
             auto container = this->getContainer();
             if(auto aspose = dynamic_cast<domain::Pose3D*>(container->getDomain()->getValue())){
                 output_state.update(container->getCoords()->getName() + ".position");
@@ -890,15 +909,16 @@ void Interp::buildString(bool withType, bool withLet){
             else{
                 output_state.update(container->getCoords()->getName() + ".property");
             }
-            output_state.update(":_))");
+            this->closeCheck();
         }
         else{
             if(!withType)
                 output_state.update(this->coords->getLinked()->getName());
             else{
-                output_state.update("((");
+                this->getLinked()->openCheck();
                 output_state.update(this->coords->getLinked()->getName());
-                output_state.update(":"+this->getLinked()->getType()+"))");
+                //output_state.update(":"+this->getLinked()->getType()+"))");
+                this->getLinked()->closeCheck();
             }
         }
     }
@@ -906,48 +926,48 @@ void Interp::buildString(bool withType, bool withLet){
         if(this->getCoords()->hasContainer()){
             auto container = this->getCoords()->getContainer();
             if(auto aspose = dynamic_cast<domain::Pose3D*>(container)){
-                output_state.update("((");
+                this->openCheck();
                 output_state.update(container->getName() + ".orientation");
-                output_state.update(":_))");
+                this->closeCheck();
             }
             else{
-                output_state.update("((");
+                this->openCheck();
                 output_state.update( container->getName() + ".property");
-                output_state.update(":_))");
+                this->closeCheck();
             }
         }
         else{
             if(!withType)
                 output_state.update(this->coords->getLinked()->getName());
             else{
-                output_state.update("((");
+                this->getLinked()->openCheck();
                 output_state.update(this->coords->getLinked()->getName());
-                output_state.update(":" +this->getLinked()->getType() +"))");
+                this->getLinked()->closeCheck();
             }
         }
     }
     else if(nodeType == "ADD_R1_R1" || nodeType == "ADD_R3_R3") {
         auto lhs_ = (this->operands[0]);
         auto rhs_ = (this->operands[1]);
-        output_state.update("((");
+        this->openCheck();
         lhs_->buildString();
         output_state.update("+ᵥ");
         rhs_->buildString();
-        output_state.update(":" +this->getType() +"))");
+        this->closeCheck();
     }
     else if(nodeType == "SUB_R1_R1" || nodeType == "SUB_R3_R3") {
         auto lhs_ = (this->operands[0]);
         auto rhs_ = (this->operands[1]);
-        output_state.update("((");
+        this->openCheck();
         lhs_->buildString();
         output_state.update("-ᵥ");
         rhs_->buildString();
-        output_state.update(":" +this->getType() +"))");
+        this->closeCheck();
     }
     else if(nodeType == "MUL_R1_R1" || nodeType == "MUL_R1_R3") {
         auto lhs_ = (this->operands[0]);
         auto rhs_ = (this->operands[1]);
-        output_state.update("((");
+        this->openCheck();
 
         if(lhs_->getDomain()->hasValue()){
             
@@ -977,33 +997,34 @@ void Interp::buildString(bool withType, bool withLet){
                 output_state.update("•");
                 rhs_->buildString();
         }
-        output_state.update(":" +this->getType() +"))");
+        this->closeCheck();
     }
     else if(nodeType == "MUL_R4X4_R3"){
         auto lhs_ = (this->operands[0]);
         auto rhs_ = (this->operands[1]);
-        output_state.update("((");
+        this->openCheck();
         lhs_->buildString();
         output_state.update("⬝");
         rhs_->buildString();
         output_state.update(".value");
-        output_state.update(":" +this->getType() +"))");
+        this->closeCheck();
     }
     else if(nodeType == "MUL_R4X4_R4X4"){
         auto lhs_ = (this->operands[0]);
         auto rhs_ = (this->operands[1]);
-        output_state.update("((");
+        this->openCheck();
         lhs_->buildString();
         output_state.update(".value");
         output_state.update("∘");
         rhs_->buildString();
         output_state.update(".value");
-        output_state.update(":" +this->getType() +"))");
+        this->closeCheck();
     }
     else if(nodeType.find("INV") != string::npos){
-        output_state.update( "((");
+        this->openCheck();
         this->operands[0]->buildString();
-        output_state.update("⁻¹:" +this->getType() +"))");
+        output_state.update("⁻¹");
+        this->closeCheck();
     }
     else if(nodeType.find("ASSIGN_MUL_R4X4_R4X4") != string::npos){
         auto member_ = this->operands[0]->getLinked();
@@ -1141,7 +1162,7 @@ void Interp::buildString(bool withType, bool withLet){
             output_state.update(getNextIdentifier(member) + " : " + (member->getType()) + " := ");
             auto container = rhs->getContainer();
             auto old_ident = ident_map.count(container) 
-                ? container->getCoords()->getName() + std::to_string((ident_map[container])) 
+                ? container->getCoords()->getName() + std::to_string(ident_map[container]) 
                 : container->getCoords()->getName();
         
             if(auto aspose = dynamic_cast<domain::Pose3D*>(container->getDomain()->getValue())){
@@ -1167,9 +1188,6 @@ void Interp::buildString(bool withType, bool withLet){
     else if(nodeType=="ASSIGN_R4X4_AT_R3"){
         auto member = this->operands[0]->getLinked();//->getContainer();
 
-        //auto old_name = ident_map.count(member) ? member->getCoords()->getName() + std::to_string((ident_map[member])) : member->getCoords()->getName();
-        
-        //auto iident_ = ident_map.count(member) ? (ident_map[member] = ++ident_map[member]) : (ident_map[member] = ident_++);
         auto val = this->operands[1];
 
         if(withLet)
@@ -1344,8 +1362,10 @@ work in progress
 
 
 */
-std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std::vector<domain::TimeSeries*> series){
+std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std::vector<domain::TimeSeries*> series,bool typecheck_mode_){
     std::string retval = "";
+    
+    typecheck_mode = typecheck_mode_;
     ident_ = 0;
     ident_map.clear();
     output_state.reset();
@@ -1440,38 +1460,6 @@ std::string Interp::toStringAST(std::vector<domain::CoordinateSpace*> spaces,std
                 }
                 output_state.update("]|\n");
             }
-
-            /*
-            output_state.update(std::string("def ") + getNextIdentifier(var_) + ":=" + getLastIdentifier(var_));
-            output_state.update(std::string("["));
-            if(expr_->hasValue()){
-                if(auto dci = dynamic_cast<domain::TimeStamped*>(expr_->getDomain()->getValue())){
-                    output_state.update("((|");
-                    auto astime = dci->getTime();
-                    output_state.update( std::string("mk_time ") + astime->getSpace()->getName() + ".value " + astime->getValue()[0]));
-                    auto exprbegin = output_state.getCurrentLoc();
-                    output_state.update("|↦|");
-                    if(auto astspose = dynamic_cast<domain::TimeStampedPose3D*>(dci)){
-                        auto aspose = astspose->getValue();
-                        auto ort = aspose->getOrientation();
-                        auto pos = aspose->getPosition();
-                        output_state.update( std::string("mk_pose3d ") + aspose->getSpace()->getName() + ".value ");
-                        output_state.update( std::string("\n    (mk_orientation3d ") + ort->getSpace()->getName() + ".value "
-                            + ort->getValue()[0]) + " " + ort->getValue()[1]) + " " + ort->getValue()[2]) + " " 
-                            + ort->getValue()[3]) + " " + ort->getValue()[4]) + " " + ort->getValue()[5]) + " "
-                            + ort->getValue()[6]) + " " + ort->getValue()[7]) + " " + ort->getValue()[8]) + ")");
-                        output_state.update( std::string("\n    (mk_position3d ") + pos->getSpace()->getName() + ".value " + pos->getValue()[0]) + " " + pos->getValue()[1]) + " " + pos->getValue()[2]) + ")");
-                    }
-                    else if(auto aststrans = dynamic_cast<domain::TimeStampedGeom3DTransform*>(dci)){
-                        auto astrans = aststrans->getValue();
-                        auto dom_ = astrans->getDomain();
-                        auto cod_ = astrans->getCodomain();
-                        output_state.update( dom_->getName() + ".value.mk_geom3d_transform_to " + cod_->getName() + ".value");
-                    }
-                    else{
-                        output_state.update("_");
-                    }
-            */
         }
         else if(auto dc = dynamic_cast<domain::Geom3DTransformSeries*>(ser))
         {
