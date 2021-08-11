@@ -403,12 +403,12 @@ std::string Interp::toString(){
 
         if(auto pose = dynamic_cast<domain::Pose3D*>(member->getDomain()->getValue())){
             retval += std::string("def ") + getNextIdentifier(member)
-                + " : " + (member->getType()) + " := |{\n    position:=(" + val->toString() + ").value,\n    .."+old_name+".value\n}|";
+                + " : " + (member->getType()) + " := |{\n    position:=(" + val->toString() + ").value,\n    .."+old_name+".value\n  }|";
 
         }
         else{
             retval += std::string("def ") + getNextIdentifier(member)
-                + " : " + (member->getType()) + " := |{\n    .."+old_name+"\n}|";
+                + " : " + (member->getType()) + " := |{\n    .."+old_name+"\n  }|";
 
         }
 
@@ -420,12 +420,12 @@ std::string Interp::toString(){
         auto val = this->operands[1];
         if(auto pose = dynamic_cast<domain::Pose3D*>(member->getDomain()->getValue())){
             retval += std::string("def ") + getNextIdentifier(member)
-                + " : " + (member->getType()) + " := |{\n    orientation:=("  + val->toString() + ").value,\n    .."+old_name+".value\n}|";
+                + " : " + (member->getType()) + " := |{\n    orientation:=("  + val->toString() + ").value,\n    .."+old_name+".value\n  }|";
 
         }
         else{
             retval += std::string("def ") + getNextIdentifier(member)
-                + " : " + (member->getType()) + " := |{\n    .."+old_name+"\n}|";
+                + " : " + (member->getType()) + " := |{\n    .."+old_name+"\n  }|";
 
         }
     }
@@ -1181,12 +1181,12 @@ void Interp::buildString(bool withType, bool withLet){
             output_state.update(getNextIdentifier(member)
                 + " : " + (member->getType()) + " := |{\n    position:=("); 
             val->buildString();
-            output_state.update(").value,\n    .." + getLastIdentifier(member) + ".value\n}|");
+            output_state.update(").value,\n    .." + getLastIdentifier(member) + ".value\n  }|");
 
         }
         else{
             output_state.update(getNextIdentifier(member)
-                + " : " + (member->getType()) + " := |{\n    .."+getLastIdentifier(member)+"\n}|");
+                + " : " + (member->getType()) + " := |{\n    .."+getLastIdentifier(member)+"\n  }|");
         }
 
         if (withLet)
@@ -1206,11 +1206,11 @@ void Interp::buildString(bool withType, bool withLet){
             output_state.update(getNextIdentifier(member) 
                 + " : " + (member->getType()) + " := |{\n    orientation:=("); 
             val->buildString();
-            output_state.update(").value,\n    .."+getLastIdentifier(member)+".value\n}|");
+            output_state.update(").value,\n    .."+getLastIdentifier(member)+".value\n  }|");
         }
         else{
             output_state.update(getNextIdentifier(member)
-                + " : " + (member->getType()) + " := |{\n    .."+getLastIdentifier(member)+"\n}|");
+                + " : " + (member->getType()) + " := |{\n    .."+getLastIdentifier(member)+"\n  }|");
 
         }
 
@@ -1230,11 +1230,11 @@ void Interp::buildString(bool withType, bool withLet){
             output_state.update(getNextIdentifier(member) 
                 + " : " + (member->getType()) + " := |{\n    timestamp:=("); 
             val->buildString();
-            output_state.update(").value,\n    .."+getLastIdentifier(member)+".value\n}|");
+            output_state.update(").value,\n    .."+getLastIdentifier(member)+".value\n  }|");
         }
         else{
             output_state.update(getNextIdentifier(member)
-                + " : " + (member->getType()) + " := |{\n    .."+getLastIdentifier(member)+"\n}|");
+                + " : " + (member->getType()) + " := |{\n    .."+getLastIdentifier(member)+"\n  }|");
 
         }
 

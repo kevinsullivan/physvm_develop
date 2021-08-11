@@ -262,15 +262,18 @@ void Interpretation::interpretConstructors(){
     
         
         if(needs_infer){
-            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            this->clearInferredInterpretations();
+            checker_->RebuildOutput();
             this->performInference();
-            //I don't know why I need ot do this twice. this is a hack for an underlying bug
+            //checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
             this->performInference();
             checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
+        else 
+            checker_->RebuildOutput();
 
         int choice = oracle_->getValidChoice(0, menuSize+1, menu);
         switch(choice)
@@ -366,14 +369,18 @@ void Interpretation::interpretFunctions(){
     
         
         if(needs_infer){
-            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
+            this->clearInferredInterpretations();
+            checker_->RebuildOutput();
             this->performInference();
-            //I don't know why I need ot do this twice. this is a hack for an underlying bug
+            //checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
             this->performInference();
+            checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
+        else 
+            checker_->RebuildOutput();
 
         int choice = oracle_->getValidChoice(0, menuSize+1, menu);
         switch(choice)
@@ -405,6 +412,15 @@ void Interpretation::interpretFunctions(){
         }
     }
 }
+
+void Interpretation::clearInferredInterpretations(){
+    for(auto coords_ : this->allCoords){
+        auto dom_cont = this->coords2dom_->getDomain(coords_);
+        if(dom_cont->getAnnotationState() == domain::AnnotationState::Inferred){
+            dom_cont->removeInterpretation();
+        }
+    }
+};
 
 void Interpretation::performInference(){
     int totalInferred = 0;
@@ -475,7 +491,10 @@ void Interpretation::performInference(){
                         }
                         dom_cont->setAnnotationState(domain::AnnotationState::Inferred);
                     }
-
+                  //  std::cout<<"Index: "<<", Node Type : "<<coords_->getNodeType()<<", Annotation State : "<<dom_cont->getAnnotationStateStr()<<",\n\tSnippet: "<<coords_->state_->code_<<", \n\t"<<coords_->getSourceLoc()
+                   // <<"\n\tExisting Interpretation: "<<dom_cont->toString()<<"\n\tError Message: "<<""<<std::endl<<std::endl;
+                
+    
                 }
                 else{
                     dom_cont->removeError();
@@ -575,11 +594,10 @@ void Interpretation::interpretProgram(){
     bool needs_infer = true;
     while(continue_)
     {
-        //oracle_infer_->generateLeanChecker("PeirceOutput");
-        checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
         if(needs_infer){
+            this->clearInferredInterpretations();
+            checker_->RebuildOutput();
             this->performInference();
-            //I don't know why I need ot do this twice. this is a hack for an underlying bug
             //checker_->RebuildOutput(oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
 
@@ -587,6 +605,8 @@ void Interpretation::interpretProgram(){
             checker_->RebuildOutput();//oracle_infer_->leanInferenceOutputStr("PeirceOutput"));
             needs_infer = false;
         }
+        else 
+            checker_->RebuildOutput();
         this->printChoices();
         std::cout << "********************************************\n";
         std::cout << "See type-checking output in "<<"/peirce/PeirceOutput.lean"<<"\n";
