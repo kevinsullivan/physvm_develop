@@ -126,7 +126,7 @@ public:
             end_location = std::make_shared<Location>(1,1);
         };
     std::string toString();
-    std::string toStringAST(std::vector<domain::CoordinateSpace*> spaces, std::vector<domain::TimeSeries*> series);
+    std::string toStringAST(std::vector<domain::CoordinateSpace*> spaces, std::vector<domain::TimeSeries*> series,bool typecheck_mode_ = true);
 
     void buildString(bool withType=true, bool withLet=false);
 
@@ -194,6 +194,9 @@ public:
     std::shared_ptr<interp::Location> getEndLocation(){
         return this->end_location;
     }
+
+    bool openCheck();
+    bool closeCheck();
 
 protected:
     coords::Coords* coords;

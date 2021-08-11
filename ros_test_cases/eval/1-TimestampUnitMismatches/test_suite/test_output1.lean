@@ -7,6 +7,8 @@ open lang.bool_expr
 namespace peirce_output
 noncomputable theory
 
+#check lift_t
+
 def seconds_fr : time_frame_expr := |time_std_frame|
 def seconds : time_space_expr seconds_fr := |time_std_space|
 

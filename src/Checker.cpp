@@ -19,7 +19,7 @@ struct aFile {
 */
 aFile* openFile();
 aFile* openFile(std::string);
-void generateMath(aFile* f, interp::Interpretation* i);
+void generateMath(aFile* f, interp::Interpretation* i, bool typecheck_mode_ = true);
 bool checkMath(aFile*);
 void cleanup(aFile*);
 
@@ -35,10 +35,10 @@ bool Checker::Check() {
 std::string outputfile = "/peirce/PeirceOutput.lean";
 std::string checkfile = "/peirce/PeirceOutput_CHECK.lean";
 
-bool Checker::RebuildOutput(){//std::string check_data_){
+bool Checker::RebuildOutput(bool typecheck_mode_){//std::string check_data_){
     
     aFile* f = openFile(outputfile);
-    generateMath(f, interp_); 
+    generateMath(f, interp_, typecheck_mode_); 
     bool status = true;//checkMath(f);
     cleanup(f);
 
@@ -85,8 +85,8 @@ aFile* openFile(std::string fname) {
     return f;
 }
 
-void generateMath(aFile* f, interp::Interpretation* interp) {
-    std::string math = interp->toStringAST();
+void generateMath(aFile* f, interp::Interpretation* interp, bool typecheck_mode_) {
+    std::string math = interp->toStringAST(typecheck_mode_);
     fputs(math.c_str(), f->file);
     fclose(f->file);
 }

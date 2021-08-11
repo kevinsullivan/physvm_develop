@@ -1,4 +1,6 @@
-
+/*
+Get rid of this class
+*/
 
 #ifndef CHECKER_H
 #define CHECKER_H
@@ -15,7 +17,7 @@ class Checker {
 public:
     Checker(interp::Interpretation* i) : interp_(i) {}
     bool Check(); 
-    bool RebuildOutput();//std::string);
+    bool RebuildOutput(bool typecheck_mode_ = true);//std::string);
     bool Setup();
 private:
     interp::Interpretation* interp_;
