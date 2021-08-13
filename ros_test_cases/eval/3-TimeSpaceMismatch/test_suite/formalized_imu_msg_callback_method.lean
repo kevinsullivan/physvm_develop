@@ -20,16 +20,6 @@ def hardware_seconds : time_space _ :=
   let origin := mk_time hardware 0 in
   let basis := mk_duration hardware 1000 in
   mk_space (mk_time_frame origin basis)
-/-
-space|
-
-def IMU_fr : geom3d_frame_expr := 
- let origin := |mk_position3d World.value 1 2 3| in
- let basis0 := |mk_displacement3d World.value 1 2 3| in
- let basis1 := |mk_displacement3d World.value 1 2 3| in
- let basis2 := |mk_displacement3d World.value 1 2 3| in
- mk_geom3d_frame_expr origin basis0 basis1 basis2
--/
 
 /-
 This frame object is either timestamped Acceleration or Angular Velocity Vector. 
