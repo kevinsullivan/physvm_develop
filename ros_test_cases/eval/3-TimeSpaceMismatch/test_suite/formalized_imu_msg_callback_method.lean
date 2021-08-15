@@ -2,24 +2,106 @@ import .phys.time.time
 import .phys.time_series.geom3d
 import .standards.time_std
 noncomputable theory
+
 /-
-https://www.intelrealsense.com/how-to-getting-imu-data-from-d435i-and-t265/#Tracking_Sensor_Origin_and_CS
-1. The positive x-axis points to the right.
+This sensor-streaming application runs in some assumed 
+world with 3-d geometry and time as physical dimensions. 
+We import and will build from phys.geom and phys.time,
+each of which comes with an uninterpreted "standard"
+coordinate system.
+-/
+
+/-
+We need to assume a physical interpretation of the data
+that represents our world affine coordinate system. So
+here's what we'll assume.
+
+(1) ORIGIN: the world_geom_acs.origin represents the 
+northwest-ish (back right) lower corner of the Rice Hall
+Less Lab
+
+(2) BASIS VECTORS
+    basis0 
+      - points right/east along the wall
+      - unit length is 1m 
+      - right handed chirality
+    basis1 
+      - points to the door along the west wall, 
+      - unit length is 1m
+      - RHC
+    basis2 
+      - points up along the NW corner of the room, 
+      - unit length is one meter, 
+      - RHC
+
+Some notes on Chirality/"Handedness":
+https://en.wikipedia.org/wiki/Orientation_(vector_space)
+http://www.cs.cornell.edu/courses/cs4620/2008fa/asgn/ray1/fcg3-sec245-248.pdf
+
+
+(3) ACS is given by [Origin, b0, b1, b2]
+
+-/
+def world_geom_acs : geom3d_space _ := 
+ let origin := mk_position3d geom3d_std_space 0 0 0 in
+ let basis0 := mk_displacement3d geom3d_std_space 1 0 0 in
+ let basis1 := mk_displacement3d geom3d_std_space 0 1 0 in
+ let basis2 := mk_displacement3d geom3d_std_space 0 0 1 in
+ let fr := mk_geom3d_frame origin basis0 basis1 basis2 in
+  mk_geom3d_space fr
+  /-
+  Note that world_geom_acs is not definitionally equal to
+  geom3d_std_space because the latter uses fm.base as its
+  frame, while world-geom_acs uses a frame defined by the
+  fm.deriv constructor.
+  -/
+
+/-
+We need to assume a physical interpretation of the data
+representing our coordinate system on time.
+
+(1) ORIGIN: January 1, 1970 per UTC standard
+
+(2) BASIS VECTORS
+    basis0 
+      - points to the future
+      - unit length is 1 second 
+
+(3) ACS is given by [Origin, b0]
+-/
+def world_time_acs : time_space _ :=
+  let origin := mk_time time_std_space 0 in
+  let basis := mk_duration time_std_space 1 in
+  let fr := mk_time_frame origin basis in
+  mk_time_space fr
+
+
+/-
+We're assuming a RealSense D435I hardware
+unit. It comes with a defined coordinate
+system
+We'll assume that the camera_imu is two
+meters to the right along the back wall,
+one meter out from the wall and one meter
+high. We'll inhert the standard vector 
+space structure from the world_geom_acs.
+
+That's its position in space. As for its
+orientation, we'll assume that 
+
+1. The positive x-axis points to the subject.
 2. The positive y-axis points down.
 3. The positive z-axis points forward
 -/
-def camera_imu_fr : geom3d_frame := 
- let origin := mk_position3d geom3d_std_space 0 0 0 in
- let basis0 := mk_displacement3d geom3d_std_space 1.000000 0 0 in
- let basis1 := mk_displacement3d geom3d_std_space 0 0 (-1) in
- let basis2 := mk_displacement3d geom3d_std_space 0 1 0 in
- mk_geom3d_frame origin basis0 basis1 basis2
-def camera_imu : geom3d_space camera_imu_fr := mk_geom3d_space camera_imu_fr
-/-
-To avoid uninitended equality in Lean of "spaces" (because we conventionally use std_frame)
-should we always create an application-specific camera_imu_space of a type that's different than
-std_space?
--/
+def camera_imu_acs : geom3d_space _ := 
+ let origin := mk_position3d world_geom_acs 2 1 1 in
+ let basis0 := mk_displacement3d world_geom_acs 1 0 0 in
+ let basis1 := mk_displacement3d world_geom_acs 0 0 (-1) in
+ let basis2 := mk_displacement3d world_geom_acs 0 1 0 in
+ let fr := mk_geom3d_frame origin basis0 basis1 basis2 in
+  mk_geom3d_space fr
+-- https://www.intelrealsense.com/how-to-getting-imu-data-from-d435i-and-t265/#Tracking_Sensor_Origin_and_CS
+
 
 /-
 Note : 8/13
@@ -33,7 +115,7 @@ def hardware_time_ms : time_space _ :=
   let milliseconds := 1000 in
   let origin := mk_time coordinated_universal_time_in_seconds hardware_clock_time_offset in
   let basis := mk_duration coordinated_universal_time_in_seconds milliseconds in 
-  mk_space (mk_time_frame origin basis)
+  mk_time_space (mk_time_frame origin basis)
 /-
 Hardware time in what units?
 -/
@@ -43,7 +125,7 @@ def system_time_in_seconds :=
   let seconds := 0.001 in
   let origin := mk_time coordinated_universal_time_in_seconds local_system_clock_time_offset in
   let basis := mk_duration coordinated_universal_time_in_seconds seconds in 
-  mk_space (mk_time_frame origin basis)
+  mk_time_space (mk_time_frame origin basis)
 
 /-
 Isn't this the same as the one above? 
@@ -69,7 +151,7 @@ def hardware_time_seconds : time_space _ :=
   let milliseconds_to_seconds := 0.001 in
   let origin := mk_time hardware_time_ms 0 in
   let basis := mk_duration hardware_time_ms milliseconds_to_seconds in
-  mk_space (mk_time_frame origin basis)
+  mk_time_space (mk_time_frame origin basis)
 
 /-
 This frame object is either timestamped Acceleration or Angular Velocity Vector. 
@@ -77,7 +159,7 @@ We have no implementation for either in Peirce (or for sum types for that matter
 Per discussion on last Friday, this is replaced with a Position3D
 void BaseRealSenseNode::imu_callback_sync(rs2::frame frame, imu_sync_method sync_method)
 -/
-def imu_callback_sync : timestamped hardware_time_ms (position3d camera_imu) → punit := 
+def imu_callback_sync : timestamped hardware_time_ms (position3d camera_imu_acs) → punit := 
   λ frame,
   --double frame_time = frame.get_timestamp();
   let frame_time := frame.timestamp in 
@@ -95,14 +177,14 @@ def imu_callback_sync : timestamped hardware_time_ms (position3d camera_imu) →
         Eigen::Vector3d v(crnt_reading.x, crnt_reading.y, crnt_reading.z);
     -/
   let crnt_reading := frame.value in
-  let v := mk_position3d camera_imu crnt_reading.x crnt_reading.y crnt_reading.z in
+  let v := mk_position3d camera_imu_acs crnt_reading.x crnt_reading.y crnt_reading.z in
   --CimuData imu_data(stream_index, v, elapsed_camera_ms);
-  let imu_data : timestamped hardware_time_ms (position3d camera_imu) := ⟨elapsed_camera_ms, v⟩ in
+  let imu_data : timestamped hardware_time_ms (position3d camera_imu_acs) := ⟨elapsed_camera_ms, v⟩ in
   --std::deque<sensor_msgs::Imu> imu_msgs;
   --FillImuData_Copy(imu_data, imu_msgs);
   -- We can't really annotate these methods. We have no concept of an IMU message
 
-  let imu_msgs : list (timestamped hardware_time_ms (position3d camera_imu)) := [imu_data] in
+  let imu_msgs : list (timestamped hardware_time_ms (position3d camera_imu_acs)) := [imu_data] in
 
   --std::deque<sensor_msgs::Imu> imu_msgs;
   --FillImuData_Copy(imu_data, imu_msgs);
