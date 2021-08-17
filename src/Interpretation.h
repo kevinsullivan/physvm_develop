@@ -131,6 +131,10 @@ public:
 		auto node = ast::mkContainer(udecl);
 		this->link = node;
 	};
+	void buffer_link(ast::ParamDecl* paramDecl){
+		auto node = ast::mkContainer(paramDecl);
+		this->link = node;
+	};
 	void buffer_link(ast::VarDecl* varDecl){
 		auto node = ast::mkContainer(varDecl);
 		this->link = node;

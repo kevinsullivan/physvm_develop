@@ -2198,6 +2198,13 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
             return;
 
         }
+        else if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(declRefExpr_->getDecl())){
+            interp_->buffer_link(dc);
+            interp_->mkNode("REF_BOOL",declRefExpr_);
+            this->childExprStore_ = (clang::Stmt*)declRefExpr_;
+            return;
+
+        }
     }
 
 	
@@ -2209,7 +2216,7 @@ void ROSBooleanMatcher::run(const MatchFinder::MatchResult &Result){
     };
     if (cxxBoolLiteralExpr_)
     {
-        interp_->mkNode("BOOL_LIT",cxxBoolLiteralExpr_);
+        interp_->mkNode("LIT_BOOL",cxxBoolLiteralExpr_);
         this->childExprStore_ = (clang::Stmt*)cxxBoolLiteralExpr_;
         return;
     }

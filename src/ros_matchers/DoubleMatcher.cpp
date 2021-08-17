@@ -2231,6 +2231,13 @@ void DoubleMatcher::run(const MatchFinder::MatchResult &Result){
             return;
 
         }
+        else if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(declRefExpr_->getDecl())){
+            interp_->buffer_link(dc);
+            interp_->mkNode("REF_R1",declRefExpr_);
+            this->childExprStore_ = (clang::Stmt*)declRefExpr_;
+            return;
+
+        }
     }
 
 	

@@ -584,6 +584,9 @@ void Interp::buildString(bool withType, bool withLet){
         var_->buildString(); 
         output_state.update(" := \n    ");
         expr_->buildString();
+        
+        if(withLet)
+            output_state.update(std::string(" in"));
     }
     else if(nodeType == "DECL_INIT_R1" || nodeType == "DECL_INIT_R3" || nodeType == "DECL_INIT_R4X4"  || nodeType == "DECL_INIT_R3X3" || nodeType == "DECL_INIT_R4") {
             
@@ -698,6 +701,9 @@ void Interp::buildString(bool withType, bool withLet){
         output_state.update(std::string("]"));
         if (withLet)
             output_state.update(" in");
+    }
+    else if(nodeType == "LIT_BOOL"){
+        output_state.update("_");
     }
     else if(nodeType == "LIT_R1" || nodeType == "LIT_R3" 
         || nodeType == "LIT_R4X4" || nodeType == "LIT_R4" 

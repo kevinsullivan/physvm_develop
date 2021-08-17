@@ -1658,6 +1658,13 @@ void VoidMatcher::run(const MatchFinder::MatchResult &Result){
             return;
 
         }
+        else if(auto dc = clang::dyn_cast<clang::ParmVarDecl>(declRefExpr_->getDecl())){
+            interp_->buffer_link(dc);
+            interp_->mkNode("REF_Void",declRefExpr_);
+            this->childExprStore_ = (clang::Stmt*)declRefExpr_;
+            return;
+
+        }
     }
 
 	
@@ -1875,17 +1882,17 @@ void VoidMatcher::run(const MatchFinder::MatchResult &Result){
     }
 
 	
-	arg_decay_exist_predicates["CallExpr(geometry_msgs::PoseStamped,geometry_msgs::PoseStamped,geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::PoseStamped"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CallExpr(3-geometry_msgs::PoseStamped,1-geometry_msgs::PoseStamped,2-geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typenm == "operatorPoseStamped" or typenm =="PoseStamped" or typenm == "const PoseStamped" or typenm == "class PoseStamped" or typenm == "const class PoseStamped" or typenm ==  "::PoseStamped_<allocator<void> >"){ return true; }
         else {return false;}
     };
-	arg_decay_exist_predicates["CallExpr(geometry_msgs::PoseStamped,geometry_msgs::PoseStamped,geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::PoseStamped"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CallExpr(3-geometry_msgs::PoseStamped,1-geometry_msgs::PoseStamped,2-geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::PoseStamped"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm == "operatorgeometry_msgs::PoseStamped" or typenm =="geometry_msgs::PoseStamped" or typenm == "const geometry_msgs::PoseStamped" or typenm == "class geometry_msgs::PoseStamped" or typenm == "const class geometry_msgs::PoseStamped" or typenm ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or typenm == "operatorPoseStamped" or typenm =="PoseStamped" or typenm == "const PoseStamped" or typenm == "class PoseStamped" or typenm == "const class PoseStamped" or typenm ==  "::PoseStamped_<allocator<void> >"){ return true; }
         else {return false;}
     };
-	arg_decay_exist_predicates["CallExpr(geometry_msgs::PoseStamped,geometry_msgs::PoseStamped,geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::TransformStamped"] = [=](std::string typenm){
+	arg_decay_exist_predicates["CallExpr(3-geometry_msgs::PoseStamped,1-geometry_msgs::PoseStamped,2-geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::TransformStamped"] = [=](std::string typenm){
         if(false){return false;}
 		else if(typenm == "operatorgeometry_msgs::TransformStamped" or typenm =="geometry_msgs::TransformStamped" or typenm == "const geometry_msgs::TransformStamped" or typenm == "class geometry_msgs::TransformStamped" or typenm == "const class geometry_msgs::TransformStamped" or typenm ==  "::geometry_msgs::TransformStamped_<allocator<void> >" or typenm == "operatorTransformStamped" or typenm =="TransformStamped" or typenm == "const TransformStamped" or typenm == "class TransformStamped" or typenm == "const class TransformStamped" or typenm ==  "::TransformStamped_<allocator<void> >"){ return true; }
         else {return false;}
@@ -1912,9 +1919,9 @@ void VoidMatcher::run(const MatchFinder::MatchResult &Result){
 
                 clang::Stmt* arg2stmt = nullptr;
             
-                if (true and arg_decay_exist_predicates["CallExpr(geometry_msgs::PoseStamped,geometry_msgs::PoseStamped,geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::PoseStamped"](arg0str) and 
-                    arg_decay_exist_predicates["CallExpr(geometry_msgs::PoseStamped,geometry_msgs::PoseStamped,geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::PoseStamped"](arg1str) and 
-                    arg_decay_exist_predicates["CallExpr(geometry_msgs::PoseStamped,geometry_msgs::PoseStamped,geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::TransformStamped"](arg2str)){
+                if (true and arg_decay_exist_predicates["CallExpr(3-geometry_msgs::PoseStamped,1-geometry_msgs::PoseStamped,2-geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::PoseStamped"](arg0str) and 
+                    arg_decay_exist_predicates["CallExpr(3-geometry_msgs::PoseStamped,1-geometry_msgs::PoseStamped,2-geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::PoseStamped"](arg1str) and 
+                    arg_decay_exist_predicates["CallExpr(3-geometry_msgs::PoseStamped,1-geometry_msgs::PoseStamped,2-geometry_msgs::TransformStamped)@doTransform@Capture=falsegeometry_msgs::TransformStamped"](arg2str)){
                     if(false){}
                     else if(arg0str == "operatorgeometry_msgs::PoseStamped" or arg0str =="geometry_msgs::PoseStamped" or arg0str == "const geometry_msgs::PoseStamped" or arg0str == "class geometry_msgs::PoseStamped" or arg0str == "const class geometry_msgs::PoseStamped" or arg0str ==  "::geometry_msgs::PoseStamped_<allocator<void> >" or arg0str == "operatorPoseStamped" or arg0str =="PoseStamped" or arg0str == "const PoseStamped" or arg0str == "class PoseStamped" or arg0str == "const class PoseStamped" or arg0str ==  "::PoseStamped_<allocator<void> >"){
                         ROSGeomPoseStamped arg0m{this->context_,this->interp_};
@@ -1941,10 +1948,13 @@ void VoidMatcher::run(const MatchFinder::MatchResult &Result){
                         arg2stmt){
                         //interp_->mk(callExpr_,arg0stmt,arg1stmt,arg2stmt);
                         
-                        interp_->buffer_operand(arg0stmt);
                         interp_->buffer_operand(arg1stmt);
+
                         interp_->buffer_operand(arg2stmt);
-                        interp_->mkNode("ASSIGN_MUL_R4X4_R4X4_2",callExpr_,false);
+
+                        interp_->buffer_operand(arg0stmt);
+
+                        interp_->mkNode("ASSIGN_MUL_R4X4_R4X4",callExpr_,false);
                         this->childExprStore_ = (clang::Stmt*)callExpr_;
                         return;
                     }

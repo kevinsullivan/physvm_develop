@@ -110,16 +110,6 @@ void ROS1ProgramMatcher::setup()
                         }
                         else{
                             auto retType = (clang::QualType)fn->getReturnType();
-        
-                            auto fbody = fn->getBody();
-
-                            ROSStatementMatcher bodym{ this->context_, this->interp_};
-                            bodym.setup();
-                            bodym.visit(*fbody);
-
-                            if(!bodym.getChildExprStore()){
-                                std::cout<<"No detected nodes in body of function\n";
-                            }
 
                             std::vector<const clang::ParmVarDecl*> valid_params_;
                             auto params_ = fn->parameters();
@@ -482,6 +472,15 @@ void ROS1ProgramMatcher::setup()
 							else if(typenm == "operatorvoid" or typenm =="void" or typenm == "const void" or typenm == "class void" or typenm == "const class void" or typenm ==  "::void_<allocator<void> >"){ hasReturn = true; nodePrefix = "Void"; }
                             else {}
         
+                            auto fbody = fn->getBody();
+
+                            ROSStatementMatcher bodym{ this->context_, this->interp_};
+                            bodym.setup();
+                            bodym.visit(*fbody);
+
+                            if(!bodym.getChildExprStore()){
+                                std::cout<<"No detected nodes in body of function\n";
+                            }
 
                             if(valid_params_.size()>0){
                                 interp_->buffer_operands(valid_params_);

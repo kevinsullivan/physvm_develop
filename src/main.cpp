@@ -17,11 +17,8 @@
 
 
 #include "Interpretation.h"
-//#include "Checker.h"
 
-#include "ros_matchers/ROSFunctionMatcher.h"
 #include "ros_matchers/ROS1ProgramMatcher.h"
-//#include "ASTParse/VectorExprMatcher.h"
 
 /*
 Hack to get g3log working. Should be in std in c++14 and later libraries.

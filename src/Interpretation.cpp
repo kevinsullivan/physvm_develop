@@ -79,6 +79,17 @@ Simple implementation for all nodes - configuration can handle how to differenti
 */
 int global_index = 0; //auto increment for each AST Coords
 coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast::NodeContainer> astNode, bool capture, bool isAST){
+    /*
+    if(this->link){
+        auto link_coords = this->ast2coords_->getCoords(this->link);
+        if(!link_coords){
+            this->clear_buffer();
+            std::cout<<"WARNING: Did not parse Declaration for reference node. Unable to continue parsing this node\n";
+            return nullptr;
+            
+        }
+    }*/
+
     std::vector<coords::Coords*> operand_coords;
     std::vector<domain::DomainContainer*> operand_domains;
     std::vector<interp::Interp*> operand_interps;
@@ -121,20 +132,24 @@ coords::Coords* Interpretation::mkNode(std::string nodeType, std::shared_ptr<ast
 
     if(this->container){
         auto cont_coords_ = this->ast2coords_->getCoords(this->container);
-        cont_coords_->addProperty(coords_);
-        coords_->setContainer(cont_coords_);
-        auto cont_interp_ = this->coords2interp_->getInterp(cont_coords_);
-        cont_interp_->addProperty(interp_);
-        interp_->setContainer(cont_interp_);
+        if(cont_coords_){
+            cont_coords_->addProperty(coords_);
+            coords_->setContainer(cont_coords_);
+            auto cont_interp_ = this->coords2interp_->getInterp(cont_coords_);
+            cont_interp_->addProperty(interp_);
+            interp_->setContainer(cont_interp_);
+        }
     }
-
+    
     if(this->link){
         auto link_coords = this->ast2coords_->getCoords(this->link);
-        link_coords->addLink(coords_);
-        coords_->setLinked(link_coords);
-        auto link_interp = this->coords2interp_->getInterp(link_coords);
-        link_interp->addLink(interp_);
-        interp_->setLinked(link_interp);
+        if(link_coords){
+            link_coords->addLink(coords_);
+            coords_->setLinked(link_coords);
+            auto link_interp = this->coords2interp_->getInterp(link_coords);
+            link_interp->addLink(interp_);
+            interp_->setLinked(link_interp);
+        }
         
     }
     else if(capture){
