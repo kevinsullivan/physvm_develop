@@ -1,5 +1,0 @@
-<launch>
-
-  <node pkg="new_test_cases" type="transforms" name="transforms" output="screen" />
-
-</launch>

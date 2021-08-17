@@ -1,8 +1,0 @@
-prefix=/peirce/ros_test_cases/new_test_cases/devel
-
-Name: new
-Description: Description of new
-Version: 1.1.1
-Cflags: -I/peirce/ros_test_cases/new_test_cases/src/new_test_cases/include
-Libs: -L${prefix}/lib 
-Requires: 
