@@ -42,7 +42,7 @@ http://www.cs.cornell.edu/courses/cs4620/2008fa/asgn/ray1/fcg3-sec245-248.pdf
 (3) ACS is given by [Origin, b0, b1, b2]
 
 -/
-def world_geom_acs : geom3d_space _ := 
+def geometry3d_acs : geom3d_space _ := 
  let origin := mk_position3d geom3d_std_space 0 0 0 in
  let basis0 := mk_displacement3d geom3d_std_space 1 0 0 in
  let basis1 := mk_displacement3d geom3d_std_space 0 1 0 in
@@ -69,11 +69,11 @@ representing our coordinate system on time.
 
 (3) ACS is given by [Origin, b0]
 -/
-def world_time_acs : time_space _ :=
-  let origin := mk_time time_std_space 0 in
-  let basis := mk_duration time_std_space 1 in
-  let fr := mk_time_frame origin basis in
-  mk_time_space fr
+def time_acs : time_space _ := coordinated_universal_time_in_seconds
+--  let origin := mk_time time_std_space 0 in
+--  let basis := mk_duration time_std_space 1 in
+--  let fr := mk_time_frame origin basis in
+--  mk_time_space fr
 
 
 /-
@@ -94,54 +94,37 @@ orientation, we'll assume that
 3. The positive z-axis points forward
 -/
 def camera_imu_acs : geom3d_space _ := 
- let origin := mk_position3d world_geom_acs 2 1 1 in
- let basis0 := mk_displacement3d world_geom_acs 1 0 0 in
- let basis1 := mk_displacement3d world_geom_acs 0 0 (-1) in
- let basis2 := mk_displacement3d world_geom_acs 0 1 0 in
+ let origin := mk_position3d geometry3d_acs 2 1 1 in
+ let basis0 := mk_displacement3d geometry3d_acs 1 0 0 in
+ let basis1 := mk_displacement3d geometry3d_acs 0 0 (-1) in
+ let basis2 := mk_displacement3d geometry3d_acs 0 1 0 in
  let fr := mk_geom3d_frame origin basis0 basis1 basis2 in
   mk_geom3d_space fr
 -- https://www.intelrealsense.com/how-to-getting-imu-data-from-d435i-and-t265/#Tracking_Sensor_Origin_and_CS
 
 
+
 /-
-Note : 8/13
-We do not have access to the source code showing how this is populated. 
-All we know is that this measurement comes from the realsense camera -
-where the "system_time_in_seconds" clock comes from the local machine.
+We will assume that the origin of the camera's affine coordinate system is the same as UTC,
+so we're using the origin of UTC as the origin Camera's time frame.
+
+(1) ORIGIN: 0 seconds AHEAD of our standard UTC origin
+
+(2) BASIS VECTORS
+    basis0 
+      - points to the future
+      - unit length is 1 millisecond
+
+(3) ACS is given by [Origin, b0]
 -/
 
-def hardware_time_ms : time_space _ := 
-  let hardware_clock_time_offset : scalar := 0.470 in
+/-RealSense developers refer to this as the hardware domain-/
+def camera_time_acs : time_space _ := 
+  let hardware_clock_time_offset : scalar := 0.0 in
   let milliseconds := 1000 in
   let origin := mk_time coordinated_universal_time_in_seconds hardware_clock_time_offset in
   let basis := mk_duration coordinated_universal_time_in_seconds milliseconds in 
   mk_time_space (mk_time_frame origin basis)
-/-
-Hardware time in what units?
--/
-
-def system_time_in_seconds := 
-  let local_system_clock_time_offset : scalar := 0.870 in
-  let seconds := 0.001 in
-  let origin := mk_time coordinated_universal_time_in_seconds local_system_clock_time_offset in
-  let basis := mk_duration coordinated_universal_time_in_seconds seconds in 
-  mk_time_space (mk_time_frame origin basis)
-
-/-
-Isn't this the same as the one above? 
-
-What coordinates to use in these definitions
-is not well defined at the moment. We need a
-foundational time standard in terms of which 
-all our other coordinate systems are defined.
-
-Unix time rests of expression of origin time
-in UTC. UTC is based on International Atomic
-Time (TAI). That could be our foundational
-coordinate system. Or is there something even
-more fundamental. 
--/
-
 
 /-
 Question: hardware_time_seconds_but_what's_the_origin
@@ -149,8 +132,31 @@ The origin is 0 with respect to the hardware frame
 -/
 def hardware_time_seconds : time_space _ := 
   let milliseconds_to_seconds := 0.001 in
-  let origin := mk_time hardware_time_ms 0 in
-  let basis := mk_duration hardware_time_ms milliseconds_to_seconds in
+  let origin := mk_time camera_time_acs 0 in
+  let basis := mk_duration camera_time_acs milliseconds_to_seconds in
+  mk_time_space (mk_time_frame origin basis)
+/-
+Hardware time in what units?
+-/
+
+/-
+This is the consuming ROS node's system time expressed in units seconds
+
+(1) ORIGIN: .87 seconds AHEAD of our standard UTC origin
+
+(2) BASIS VECTORS
+    basis0 
+      - points to the future
+      - unit length is 1 second
+
+(3) ACS is given by [Origin, b0]
+-/
+
+def platform_time_in_seconds := 
+  let local_system_clock_time_offset : scalar := 0.870 in
+  let seconds := 0.001 in
+  let origin := mk_time coordinated_universal_time_in_seconds local_system_clock_time_offset in
+  let basis := mk_duration coordinated_universal_time_in_seconds seconds in 
   mk_time_space (mk_time_frame origin basis)
 
 /-
@@ -159,7 +165,7 @@ We have no implementation for either in Peirce (or for sum types for that matter
 Per discussion on last Friday, this is replaced with a Position3D
 void BaseRealSenseNode::imu_callback_sync(rs2::frame frame, imu_sync_method sync_method)
 -/
-def imu_callback_sync : timestamped hardware_time_ms (position3d camera_imu_acs) → punit := 
+def imu_callback_sync : timestamped camera_time_acs (position3d camera_imu_acs) → punit := 
   λ frame,
   --double frame_time = frame.get_timestamp();
   let frame_time := frame.timestamp in 
@@ -167,11 +173,11 @@ def imu_callback_sync : timestamped hardware_time_ms (position3d camera_imu_acs)
     _ros_time_base = ros::Time::now();
     _camera_time_base = frame_time;
   -/
-  let _ros_time_base := mk_time system_time_in_seconds 0 in
+  let _ros_time_base := mk_time platform_time_in_seconds 0 in
   let _camera_time_base := frame_time in
 --double elapsed_camera_ms = (/*ms*/ frame_time - /*ms*/ _camera_time_base) / 1000.0;
-  let elapsed_camera_ms : duration hardware_time_ms
-    := (hardware_time_ms.mk_time_transform_to hardware_time_seconds).transform_duration (frame_time -ᵥ _camera_time_base) in
+  let elapsed_camera_ms : duration camera_time_acs
+    := (camera_time_acs.mk_time_transform_to hardware_time_seconds).transform_duration (frame_time -ᵥ _camera_time_base) in
     /-
         auto crnt_reading = *(reinterpret_cast<const float3*>(frame.get_data()));
         Eigen::Vector3d v(crnt_reading.x, crnt_reading.y, crnt_reading.z);
@@ -179,12 +185,12 @@ def imu_callback_sync : timestamped hardware_time_ms (position3d camera_imu_acs)
   let crnt_reading := frame.value in
   let v := mk_position3d camera_imu_acs crnt_reading.x crnt_reading.y crnt_reading.z in
   --CimuData imu_data(stream_index, v, elapsed_camera_ms);
-  let imu_data : timestamped hardware_time_ms (position3d camera_imu_acs) := ⟨elapsed_camera_ms, v⟩ in
+  let imu_data : timestamped camera_time_acs (position3d camera_imu_acs) := ⟨elapsed_camera_ms, v⟩ in
   --std::deque<sensor_msgs::Imu> imu_msgs;
   --FillImuData_Copy(imu_data, imu_msgs);
   -- We can't really annotate these methods. We have no concept of an IMU message
 
-  let imu_msgs : list (timestamped hardware_time_ms (position3d camera_imu_acs)) := [imu_data] in
+  let imu_msgs : list (timestamped camera_time_acs (position3d camera_imu_acs)) := [imu_data] in
 
   --std::deque<sensor_msgs::Imu> imu_msgs;
   --FillImuData_Copy(imu_data, imu_msgs);
@@ -204,7 +210,7 @@ def imu_callback_sync : timestamped hardware_time_ms (position3d camera_imu_acs)
   let t : time hardware_time_seconds :=
     mk_time _ 
     ((
-      let _ros_time_base_toSec : time system_time_in_seconds → scalar := 
+      let _ros_time_base_toSec : time platform_time_in_seconds → scalar := 
       λt, 
         (t).coord in
       _ros_time_base_toSec _ros_time_base
@@ -212,10 +218,10 @@ def imu_callback_sync : timestamped hardware_time_ms (position3d camera_imu_acs)
     +
     (
       --casting time to duration discussed
-      let imu_time_as_duration := mk_duration hardware_time_ms imu_msg.timestamp.coord in 
-      let _imu_msg_timestamp_toSec : duration hardware_time_ms → scalar := 
+      let imu_time_as_duration := mk_duration camera_time_acs imu_msg.timestamp.coord in 
+      let _imu_msg_timestamp_toSec : duration camera_time_acs → scalar := 
         λt, 
-          let hardware_to_hardware_seconds := hardware_time_ms.mk_time_transform_to hardware_time_seconds in
+          let hardware_to_hardware_seconds := camera_time_acs.mk_time_transform_to hardware_time_seconds in
           (hardware_to_hardware_seconds.transform_duration t).coord in
       _imu_msg_timestamp_toSec imu_time_as_duration
     )) in 
