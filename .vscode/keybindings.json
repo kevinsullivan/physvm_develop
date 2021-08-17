@@ -2,10 +2,4 @@
 {
     "key": "alt+y",
     "command": "workbench.action.tasks.runTask"
-},
-{
-    "key": "alt+j",
-    "command": "workbench.action.tasks.runTask",
-    "args": "charlie_install"
 }
-]

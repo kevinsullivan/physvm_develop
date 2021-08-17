@@ -3,10 +3,10 @@
 	// Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
 	// List of extensions which should be recommended for users of this workspace.
 	"recommendations": [
-		"ms-vscode.cpptools",
 		"ms-vsliveshare.vsliveshare",
+		"ms-vsliveshare.vsliveshare-audio",
+		"ms-vsliveshare.vsliveshare-pack",
 		"ms-vscode-remote.remote-containers",
-		"mitaki28.vscode-clang",
 		"christian-kohler.path-intellisense",
 		"yzhang.markdown-all-in-one",
 		"goessner.mdmath",
@@ -16,16 +16,8 @@
 		"eamodio.gitlens",
 		"coenraads.bracket-pair-colorizer",
 		"stephanvs.dot",
-		"karigari.chat",
 		"jroesch.lean",
-		"llvm-vs-code-extensions.vscode-clangd",
-		"ms-vscode.vscode-typescript-next",
-		"rbbit.typescript-hero",
-		"tomoki1207.pdf",
-		"gitlab.gitlab-workflow",
-		"ms-vsliveshare.vsliveshare",
-		"ms-vsliveshare.vsliveshare-audio",
-		"ms-vsliveshare.vsliveshare-pack",
+		"ms-vscode-remote.remote-ssh"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": []

@@ -1,9 +1,0 @@
-#! /bin/sh
-
-# To run a lean docker mounted on a directory, cd into that 
-# directory and then do
-``` sh
-run_leanvm `pwd`
-```
-  
-docker run -it --cap-add=SYS_PTRACE --rm --security-opt seccomp=unconfined --name peirce_docker -v llvm-build:/llvm/build -v $chmod 755 b
