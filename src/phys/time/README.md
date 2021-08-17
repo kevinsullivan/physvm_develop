@@ -1,0 +1,2 @@
+This directly currently exports time as an affine space, with time and duration objects, and a supporting algebra with Lean-provided notations: for vector addition and scalaing, and for the
+affine-space operations of vector-point addition (vectors act on points by translating them) and point-point subtraction yielding vector. See time_test.lean for a demo.

@@ -1,0 +1,4 @@
+This directly currently exports 1-D geometry as an affine space, with position and translation objects, and a supporting algebra with Lean-provided notations: for translation (vector) addition and scalaing, and for the affine-space operations of translation-position addition (vectors act on points by translating them) and position-position subtraction yielding translation. See geom_test.lean for a demo.
+
+Note: This file and time.lean are going to be near repeats, varying in the names of the types of
+the position and translation objects. Lot of repetition. What's the best way, if any, in Lean, to avoid repeating ourselves like this?

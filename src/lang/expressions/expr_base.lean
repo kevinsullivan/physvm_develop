@@ -1,0 +1,1 @@
+structure var := (nm : string)
