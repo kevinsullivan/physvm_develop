@@ -14,4 +14,7 @@ Next task 2: Refactor Peirce DockerBuilder to build from the image produced by t
   - Customer creates new instance
   - It provides VSCode dev environment and a place to build new stuff
   - .devcontainer directory, each fork (project) has Dockerfile with hooks to extend platform image
+
+Next task 3: Create a project instance for working with Andrew on his case studies
+Next task 4: Create a project instance for the rest of Peirce
   
