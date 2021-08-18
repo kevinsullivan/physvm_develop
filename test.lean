@@ -1,6 +1,6 @@
 import .phys.time.time
 import .phys.time_series.geom3d
-import .standards.time_std
+import .std.time_std
 noncomputable theory
 
 /-
