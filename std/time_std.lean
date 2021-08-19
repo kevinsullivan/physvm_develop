@@ -1,6 +1,5 @@
 import ..phys.time.time
 
-
 /-
 Units are in seconds. Seconds are the smallest non-variable unit in UTC.
 -/

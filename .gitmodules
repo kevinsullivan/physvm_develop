@@ -7,3 +7,7 @@
 [submodule "lang"]
 	path = lang
 	url = https://github.com/kevinsullivan/lang
+[submodule "mathlib"]
+	path = _target/deps/mathlib
+	url = https://github.com/leanprover-community/mathlib
+
