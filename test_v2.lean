@@ -5,6 +5,7 @@ import .std.geom3d_std
 
 noncomputable theory
 
+-- Kevin: See http://petitjeanmichel.free.fr/itoweb.petitjean.symmetry.html
 
 /-
 We need to assume a physical interpretation of the data
