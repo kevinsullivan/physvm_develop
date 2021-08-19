@@ -1,13 +1,7 @@
-[submodule "affine_lib"]
-	path = math
-	url = https://github.com/kevinsullivan/affine_lib
 [submodule "phys"]
 	path = phys
 	url = https://github.com/kevinsullivan/phys
 [submodule "lang"]
 	path = lang
 	url = https://github.com/kevinsullivan/lang
-[submodule "mathlib"]
-	path = _target/deps/mathlib
-	url = https://github.com/leanprover-community/mathlib
 
