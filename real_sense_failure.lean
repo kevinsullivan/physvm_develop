@@ -4,11 +4,14 @@ import .standards.time_std
 noncomputable theory
 
 /-
-This sensor-streaming application runs in some assumed 
+This sensor-streaming application runs in an assumed 
 world with 3-d geometry and time as physical dimensions. 
-We import and will build from phys.geom and phys.time,
-each of which comes with an uninterpreted "standard"
-coordinate system.
+We import and will build from phys.geom and phys.time.
+These modules provide a 3d geometric affine space and
+1d temporal affine space, each with an uninterpreted 
+"standard" coordinate system. The user of the library
+must specify external-world interpretations for origin
+and basis vectors.
 -/
 
 /-
@@ -55,6 +58,24 @@ def geometry3d_acs : geom3d_space _ :=
   frame, while world-geom_acs uses a frame defined by the
   fm.deriv constructor.
   -/
+  /-
+  Another way to say the same thing perhaps?
+  But now it's clearer that this is where we
+  have to attach those extra semantics the raw
+  geometric objects used here. In particular,
+  the origin and each vector needs a physical
+  interpretation, including both orientation
+  and handedness.
+  -/
+  def geometry3d_acs' : geom3d_space _ := 
+  (mk_geom3d_space 
+    (mk_geom3d_frame 
+      (mk_position3d geom3d_std_space 0 0 0)
+      (mk_displacement3d geom3d_std_space 1 0 0)
+      (mk_displacement3d geom3d_std_space 0 1 0)
+      (mk_displacement3d geom3d_std_space 0 0 1)
+    )
+  )
 
 /-
 We need to assume a physical interpretation of the data
