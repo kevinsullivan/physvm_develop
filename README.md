@@ -1,4 +1,4 @@
-# Get Yourself A Mathematical Physics Development Environment Development Environment
+# Mathematical Physics Development Environment Development Environment
 
 You're here because, in just a few clicks, you *want* to create a complete, running, working mathematical physics development environment (MPDE) and supporting infrastructure for a new project that can build our libraries of foundationally formalized mathematical physics. 
 
