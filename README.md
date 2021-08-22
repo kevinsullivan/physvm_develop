@@ -1,4 +1,4 @@
-# The Mathematical Physics Development Environment (MPDE)
+# My Mathematical Physics Development Environment (MPDE)
 
 You're here because, in just a few clicks, you *want* to create a complete, running, working mathematical physics development environment (MPDE) and supporting infrastructure for a new project that can build our libraries of foundationally formalized mathematical physics. Good news! Follow the next  steps to instantiate a VSCode Window, opened to edit a containerized GitHub-backed fork and a local, containerized clone of this repository served up by a full Lean development environment based on Ubuntu 20.04 LTS, the Lean Prover (Community), and mathlib. Lean 4 is also (believed to be but not tested as being) supported. It's all just a few clicks away.
 
