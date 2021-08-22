@@ -12,11 +12,10 @@ You're here because, in just a few clicks, you *want* to create a complete, runn
 
 Features of the provided development environment include the following:
 
-- Cloning this repository properly from within VS Code will automatically build your complete working environment.
-- You will have a new fork of this project as one of your own, new GitHub repositories
-- Docker will launch our container technology to build and boot up your development environment. 
-- You will have Ubuntu 20.04 LTS, Lean Prover (Community), mathlib, Python3, and other nice features.
-- VSCode is a development environment preferred and well supported by the Lean Prover Community
+- Cloning this repository correctly within VS Code will build your complete working environment: Ubuntu 20.04 LTS, Lean Prover (Community), mathlib, Python3, and more
+- You will have a new fork of this repository as a new repository under your own GitHub account, with this repository as an "upstream repo".
+- VSCode will be automatically configured with the suite of extensions that are needed and recommended to make this solution work well 
+- VSCode is a widely used, free software development environment that is also preferred and very well supported by the Lean Prover Community
 
 ## What To Do
 - Update your operating system:
@@ -51,7 +50,8 @@ Features of the provided development environment include the following:
 We deliver a Lean development environment via VSCode and its *Remote-Containers* capabilities. In a nutshell, when you ask VSCode to clone our repository, it will actually fork it and then clone your fork into the container that it launches to provide the programming platform you will then use to develop your solutions. It is very important to commit changes you make to your container-local repository, but then also to push them to your GitHub repo to back them up and because that should be the main respository for your project. You can log into it by simply opening a Terminal in VSCode. The clone of your repo is in the /workspaces folder within the container file system (or storage *volume*, as it's called).
 
 ## Risk Alert and Avoidance
-It is important to understand that commits made to git are stored in the Docker container serving up the develop environment.  if you delete the container or its storage volume (which you could do through Docker Desktop), this will erase the work stored in the container. To make your container-local changes persistent, stage/add and then commit your local changes to the local repo, then push your container-repo-local changes to your repository on GitHub. 
+- Push Commits Often. Commits made within a container (including those executed from within VSCode) are stored *in the container serving up the develop environment*.  if the container or its storage volume is lost, your work will be gone. A good solution and practice is to push changes to your GitHub repo often, even if under a branch that is just for your work in progress. If nothing else, doing so creates a reliable backup, and it's easy and fun to do! 
+- It appears that Ubuntu out of the box goes to sleep after not being used for a while. We come back to work in the morning to find VSCode disconnected from the container we were using, but offering to Reload Window. Do that works well for us, though we do see Lean files being re-elaborated (dreaded orange "I'm thinking" bars) when the container restarts. We're careful to back up containerized work regularly.
 
 ## Help Make It Even Better
 Let us know what you think. Better yet, make it better and send us a PR. You'll be completely set up to do that by the results of this procedure. 
@@ -80,3 +80,8 @@ As part of a larger project, we are developing a constructive formalization of m
 - In terminal / container:
   - git submodule init
   - git submodule update
+
+## Copyright
+
+© 2021 By the Rector and Visitors of the University of Virginia
+Contact Author: Kevin Sullivan, UVa CS Dept. (sullivan@virginia.edu)
