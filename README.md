@@ -1,8 +1,24 @@
-# Affine Physics Development Environment
+# Get Yourself A Mathematical Physics Development Environment Development Environment
 
-# Lean-Based Project Builder
+You're here because, in just a few clicks, you *want* to create a complete, running, working mathematical physics development environment (MPDE) and supporting infrastructure for a new project that can build our libraries of foundationally formalized mathematical physics. 
 
-You're here because you want (someone) to build an Ubuntu and VSCode-based development environment, backed by your own GitHub repository, for professional writing and analyzing of logic and mathematics using the Lean Prover, with none of the daunting re-configuration of your local computer sometimes required to set up fully working environments. The good news is that you can have it all with just a few clicks of the mouse and keys, as long as you have VSCode and DockerDesktop running properly on Windows 10 (footnote below) or OSX machine. This work is intended to make Lean accessible to as many early students as possible, in part by removing all of the mundane but often complex, error-prone, and off-putting system administering tasks required to get a working environment set up. Simply follow these steps and in a few minutes you should have a GitHub-repo-backed, VSCode-provided IDE opened to edit a fork of this repository cloned into your own local Docker container, configured according to our specifications to provide a first-rate, trouble-free Lean Development Experience. 
+Good news! Just follow the next few steps to instantiate a VSCode Window, opened to edit a containerized GitHub-backed fork and a local, containerized clone of this repository served up by a full Lean development environment based on Ubuntu 20.04 LTS. 
+
+## System Requirements:
+
+- VSCode and DockerDesktop on a Windows 10 or MacOS machine. In own experience, Docker Desktop hasn't worked well on Windows 10 Home; so Pro, Enterprise, or Education might be needed. Students should check with their educational institutions to see if they are entitled to free upgrades under instititional agreements with Microsoft.
+- 16 GB memory  (might work with 8)
+- quad-core CPU (haven't tested dual core)
+
+## Features
+
+Features of the provided development environment include the following:
+
+- Cloning this repository properly from within VS Code will automatically build your complete working environment.
+- You will have a new fork of this project as one of your own, new GitHub repositories
+- Docker will launch our container technology to build and boot up your development environment. 
+- You will have Ubuntu 20.04 LTS, Lean Prover (Community), mathlib, Python3, and other nice features.
+- VSCode is a development environment preferred and well supported by the Lean Prover Community
 
 ## What To Do
 - Update your operating system:
@@ -47,6 +63,11 @@ Let us know what you think. Better yet, make it better and send us a PR. You'll 
 Copyright: © 2021 By the Rector and Visitors of the University of Virginia.
 Supervising Author: Kevin Sullivan. UVa CS Dept. sullivan@virginia.edu. 
 Acknowledgements: Thank you to multiple students for read, test, and fixing.
+
+## Context
+
+As part of a larger project, we are developing a constructive formalization of mathematical physics, starting with easy classical physics, with the goal of supporting linked abstract/analytic/coordinate-free, and parametric/synthetic/coordinatized, forms of physical (abstract) and computational (parametric) cyber-physical expression, where expressions are atomatically checked for dimensional consistency. Dimensional consistency in our view is both broad in scope and deep in mathematical structure, as suggested by Terrence Tao in his 2012 essay, "A mathematical formalization of dimensional analysis," (December 29, 2012),  https://terrytao.wordpress.com/2012/12/29/a-mathematical-formalisation-of-dimensional-analysis/. One impact of this work will be to eliminate a whole class of commonplace and dangerous software errors, those due to divergences between the physical dimensions of what software is meant to represent and what, if anything, it actually means.
+
 
 
 ## Old version
